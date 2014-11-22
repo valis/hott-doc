@@ -1,0 +1,576 @@
+\documentclass{amsart}
+
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{type1ec}
+\usepackage{stmaryrd}
+% \usepackage[T2A]{fontenc}
+
+\providecommand\WarningsAreErrors{false}
+\ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{теорема}{Теорема}
+\newref{lem}{лемма}{Лемма}
+\newref{prop}{утверждение}{Утверждение}
+\newref{cor}{следствие}{Следствие}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{замечание}{Замечание}
+
+\newcommand{\cat}[1]{\mathbf{#1}}
+% \newcommand{\C}{\cat{C}}
+\newcommand{\bs}{\beta\sigma}
+\newcommand{\ebs}{=_{\bs}}
+\newcommand{\rbs}{\to_{\bs}}
+\newcommand{\bst}{\bs\tau}
+\newcommand{\ebst}{=_{\bst}}
+\newcommand{\rbst}{\to_{\bst}}
+\newcommand{\sSet}{\cat{sSet}}
+
+\numberwithin{figure}{section}
+
+\begin{document}
+
+\makeatletter
+\def\@settitle{\begin{center}%
+    \baselineskip14\p@\relax
+    \bfseries
+    \@title
+  \end{center}%
+}
+
+\title{Гомотопическая теория типов с типом интервала}
+
+\author{Валерий Исаев}
+
+% \begin{abstract}
+% Abstract
+% \end{abstract}
+
+\maketitle
+
+\section{Введение}
+
+\section{Синтаксис}
+
+В данном разделе мы приведем правила вывода для базовой системы.
+Позже мы расширим их индуктивными типами данных и записями с условиями.
+
+\centerAlignProof
+
+\begin{table}
+
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\varnothing \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, $x : A \in \Gamma$}
+\UnaryInfC{$\Gamma \vdash x : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $A =_{\beta \sigma \tau} B$}
+\BinaryInfC{$\Gamma \vdash a : B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma \vdash f\ a : B[x := a]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash left : I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash right : I$}
+\DisplayProof
+% \quad
+% \AxiomC{$\Gamma \vdash i : I$}
+% \AxiomC{$\Gamma \vdash j : I$}
+% \BinaryInfC{$\Gamma \vdash squeeze\ i\ j : I$}
+% \DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash a : A[x := i]$}
+\AxiomC{$\Gamma \vdash j : I$}
+\QuaternaryInfC{$\Gamma \vdash coe_{\lambda x. A}\ i\ a\ j : A[x := j]$}
+\DisplayProof
+\end{center}
+
+\begin{comment}
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash a : A[x := i]$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash j : I$}
+\QuaternaryInfC{$\Gamma \vdash lift_{\lambda x. A}\ i\ a\ j : A[x := j]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash i : I$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash j : I$
+\Axiom$\fCenter \Gamma \vdash a : \Pi (y : I) A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash a' : \Pi (y : I) A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash f : I \to A[y := i]$
+\def\extraVskip{2pt}
+\RightLabel{, $a\ i =_\beta f\ left$, $f\ right =_\beta a'\ i$}
+\BinaryInfC{$\Gamma \vdash fill_{\lambda y. A}\ a\ a'\ i\ f\ j : I \to A[y := j]$}
+\DisplayProof
+\end{center}
+\end{comment}
+
+\bigskip
+\caption{Правила вывода.}
+\label{table:inf-rules}
+\end{table}
+
+Главное нововведение данной системы - это тип интервала $I$.
+У него есть два конструктора ($left$ и $right$) и одно правило элиминации ($coe$).
+% Также мы определили функцию $squeeze$, которая нам понадобится позже для определения элиминатора для типа путей $J$.
+
+Правила редукции:
+\begin{itemize}
+\item $(\lambda x.b)\ a \to_\beta b[x := a]$
+% \item $squeeze\ left\ j \to_\beta left$
+% \item $squeeze\ right\ j \to_\beta j$
+% \item $squeeze\ i\ left \to_\beta left$
+% \item $squeeze\ i\ right \to_\beta i$
+% \item $coe_{\lambda k.A}\ left\ a\ left \to_\beta a$
+% \item $coe_{\lambda k.A}\ right\ a\ right \to_\beta a$
+\item $coe_{\lambda k.A}\ i\ a\ i \to_\beta a$
+\item $coe_{\lambda k.A}\ i\ a\ j \to_\sigma a$, если $k \notin FV(A)$
+\end{itemize}
+
+% Первое правило - обычныая $\beta$-редукцию для лямбда-термов.
+% Следующие четыре правила описывают поведение функцию $squeeze$, таким образом она определяет ретракцию квадрата на отрезок.
+
+Поведение элиминатора $coe$ можно описать следующим образом:
+по расслоению $\lambda x. A$ над $I$ и по точке $a$ в слое над некоторой точкой $i$ интервала $coe_{\lambda x. A}\ i\ a$ конструирует сечение этого расслоения.
+% Первые два правила редукции для $coe$ говорят, что это сечение в точке $i$ возвращает $a$ (при $i$ равном $left$ и $right$).
+Первое правило редукции для $coe$ говорит, что это сечение в точке $i$ возвращает $a$.
+Последнее правило говорит, что есть расслоение тривиально, то сечение константно.
+Оно необходимо для того, чтобы $J$ удовлетворяло обычному правилу редукции для него.
+Без $\sigma$-правила для это будет верно только с точностью до эквивалетности, то есть мы всегда можем найти путь между $coe_{\lambda. A}\ i\ a\ j$ и $a$.
+Это правило несколько отличается от остальных правил редукций и не является настолько же важным, поэтому мы обозначаем его другой буквой.
+
+Одно из важных свойств систем типов, которое нам понадобится, - это свойство \emph{каноничности}.
+Мы будем говорить, что система обладает этим свойством, если все замкнутые термы в нормальной форме имеют канонический вид,
+    то есть являются конструктором, возможно примененным к аргументам.
+Система, описаная выше, не обладает этим свойством.
+Чтобы исправить эту проблему, мы добавим еще больше правил редукции.
+Нам нужно добавить $\tau$-правило для каждого типа в системе.
+Пока единственный тип у нас - это $\Pi$-тип, так что мы добавляем одно правило:
+\[ coe_{\lambda k. \Pi (a : A) B}\ i\ (\lambda a. b)\ j \to_\tau \lambda a'. coe_{\lambda k. B[a := coe_{\lambda k. A}\,j\,a'\,k]}\ i\ (b[a := coe_{\lambda k. A}\ j\ a'\ i])\ j \]
+
+Теперь мы сформулируем несколько стандартных мета-теоретических свойств системы.
+Все доказательства стандартны, поэтому мы будем приводить в основном только их наброски.
+Начнем со следующего простого утверждения, которое говорит, что типизация замкнута относительно редукций.
+\begin{prop}
+Пусть $A_1 \rbst A'_1$, \ldots $A_n \rbst A'_n$, $A \rbst A'$ и $a \rbst a'$.
+Тогда верны следующие утверждения:
+\begin{itemize}
+\item Если $x_1 : A_1, \ldots x_n : A_n \vdash$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash$.
+\item Если $x_1 : A_1, \ldots x_n : A_n \vdash A$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash A'$.
+\item Если $x_1 : A_1, \ldots x_n : A_n \vdash a : A$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash a' : A'$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+Единственный интересный случай - это $coe$.
+Для $\beta$ и $\sigma$ правил всё просто.
+Для доказательтсва $\tau$ правила нужно использовать $\beta$ правило.
+Именно поэтому $\beta$ правило для $coe$ определено для всех $i$, а не только для $left$ и $right$.
+\end{proof}
+
+Теперь мы докажем, что отношение $\rbst$ \emph{конфлюентно}.
+Это свойство говорит, что если $t \rbst q$ и $t \rbst r$, то существует терм $s$ такой, что $q \rbst s$ и $r \rbst s$.
+Доказательство в основном стандартно, единственный не очевидный момент - это правила для $coe$, но не сложно адаптировать доказательство и для них.
+Во-первых, мы введем новое отношение редукции $\to_p$, которое определяется индуктивно:
+\begin{itemize}
+\item $t \to_p t$.
+\item Если $b \to_p b'$ и $a \to_p a'$, то $(\lambda x. b)\ a \to_p b'[x := a']$.
+% \item $squeeze\ left\ j \to_p left$.
+% \item Если $j \to_p j'$, то $squeeze\ right\ j \to_p j'$.
+% \item $squeeze\ i\ left \to_p left$.
+% \item Если $i \to_p i'$, то $squeeze\ i\ right \to_p i'$.
+\item Если $a \to_p a'$ и $i \ebst j$, то $coe_{\lambda k. A}\ i\ a\ j\ \to_p a'$.
+\item Если $a \to_p a'$ и $k \notin FV(A)$, то $coe_{\lambda k. A}\ i\ a\ j\ \to_p a'$.
+\item Если $A \to_p A'$, $B \to_p B'$, $i \to_p i'$, $b \to_p b'$ и $j \to_p j'$, то
+    \[ coe_{\lambda k. \Pi (a : A) B}\ i\ (\lambda a. b)\ j \to_p \lambda a'. coe_{\lambda k. B'[a := coe_{\lambda k. A'}\,j'\,a'\,k]}\ i'\ (b'[a := coe_{\lambda k. A'}\ j'\ a'\ i'])\ j' \]
+\item Если $f \to_p f'$ и $a \to_p a'$, то $f\ a \to_p f'\ a'$.
+\item Если $a \to_p a'$, то $\lambda x. a \to_p \lambda x. a'$.
+\item Если $A \to_p A'$ и $B \to_p B'$, то $\Pi (a : A) B \to_p \Pi (a : A') B'$.
+% \item Если $i \to_p i'$ и $j \to_p j'$, то $squeeze\ i\ j \to_p squeeze\ i'\ j'$.
+\item Если $A \to_p A'$, $i \to_p i'$, $a \to_p a'$ и $j \to_p j'$, то $coe_{\lambda x. A}\ i\ a\ j \to_p coe_{\lambda x. A'}\ i'\ a'\ j'$.
+\end{itemize}
+
+Теперь мы хотим показать, что $\to_p$ конфлюентно.
+Чтобы доказать часть с $\beta$-редукцией для лямбда-термов, нам потребуются следующая лемма.
+
+\begin{lem}
+Если $b \to_p b'$ и $a \to_p a'$, то $b[x := a] \to_p b'[x := a']$.
+\end{lem}
+\begin{proof}
+Простая индукция по определению $b \to_p b'$.
+В случае $b \to_p b$ мы продолжаем индукцией по построению терма $b$.
+\end{proof}
+
+\begin{lem}
+Отношение $\to_p$ конфлюентно.
+\end{lem}
+\begin{proof}
+Пусть $b \to_p b'$ и $b \to_p b''$.
+Нужно показать, что существует терм $c$ такой, что $b' \to_p c$ и $b'' \to_p c$.
+Мы делаем это индукцией по определению отношений $b \to_p b'$ и $b \to_p b''$.
+Большинство пунктов элементарно.
+Для случая $(\lambda x. b)\ a \to_p b'[x := a']$ мы используем предыдущую лемму.
+Для случая $coe_{\lambda k. A}\ i\ a\ j \to_p a'$ когда $i \ebst j$ мы используем тот факт, что $t \to_p s$ влечет $t \ebst s$.
+\end{proof}
+
+\begin{prop}
+Отношение $\rbst$ конфлюентно.
+\end{prop}
+\begin{proof}
+Это следует из предыдущей леммы и того факта, что транзитивное замыкание $\to_p$ совпадает с $\rbst$.
+\end{proof}
+
+\begin{remark}
+Отношение $\rbs$ также конфлюентно.
+Доказательство этого факта аналогично доказательству предыдущего с тем отличием, что в определении $\to_p$ нужно опустить правило, касающееся $\tau$.
+\end{remark}
+
+Теперь докажем, что система обладает свойством каноничности.
+
+\begin{prop}
+Пусть $\Gamma$ - это контекст вида $x_1 : I, \ldots x_n : I$.
+Тогда верно следующее:
+\begin{itemize}
+\item Если $A$ - тип в контексте $\Gamma$, находящийся в нормальной форме, то $A$ является либо типом интервала, либо $\Pi$-типом.
+\item Если $a$ - терм типа $A$ в контексте $\Gamma$, находящийси в нормальной форме, и $A$ $\bst$-эквивалентно $\Pi$-типу, то $a$ имеет вид $\lambda x. a'$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+Доказательство индукцией по выводу $\Gamma \vdash A$ и $\Gamma \vdash a : A$.
+Случай $\Gamma \vdash x : A$, где $x$ - переменная, следует из конфлюентности.
+Единственный интересный случай - это правило для $coe$.
+По предположению индукции $A$ является либо типом интервала, либо $\Pi$-типом.
+Но тогда терм не находится в нормальной форме, так как в первом случае он редуцируется по $\sigma$-правилу, а во втором по $\tau$-правилу.
+\end{proof}
+
+\begin{cor}
+Описанная система с $\bst$-правилами редукций обладает свойством каноничности.
+\end{cor}
+
+Теперь мы докажем \emph{сильную нормализуемость}.
+Мы говорим, что терм сильно нормализуем, если не существует бесконечной последовательности редукций, начинающейся с этого терма.
+Мы говорим, что теория сильно нормализуема, если $\Gamma \vdash a : A$ влечет, что $a$ сильно нормалиуем, и $\Gamma \vdash A$ влечет, что $A$ сильно нормализуем.
+
+Так как мы работаем с зависимыми типами, то нам нужно быть аккуратными со свободными переменными.
+Поэтому нам нужно ввести несколько вспомогательных конструкций.
+Пусть $Var$ - множество всех переменных.
+Мы хотим рассматривать произвольные подмножества $Var$, но по техническим причинам мы должны потребовать, чтобы они были не пустые.
+Поэтому мы расширяем множество переменных новой фиктивной переменной $*$.
+Таким образом все множества переменных $V$, с которыми мы будем работать, будут удовлетворять $\{ * \} \subseteq V \subseteq Var \cup \{ * \}$.
+Мы предполагаем, что в правилах вывода по прежнему используются только переменные из $Var$.
+Если $V$ - множество переменных, то $Term_V$ - это множество термов, свободные переменные которых лежат в $V$.
+Такие термы мы будем называть $V$-термами.
+
+Теперь мы введем понятие \emph{насыщенного} множества.
+Множество сильно нормализуемых $V$-термов мы будем обозначать $SN_V \subseteq Term_V$.
+Если терм $t$ $\bst$-редуцируется к $s$ за один шаг, мы будем писать $t \to_1 s$.
+Множество термов $s$, к которым $t$ редуцируется за один шаг, мы будем обозначать $red_1(t)$ (то есть $red_1(t) = \{ s\ |\ t \to_1 s \}$).
+Термы, которые не являются ни абстракцией, ни $\Pi$-типом, мы будем называть \emph{простыми}, и множество простых $V$-термов обозначать $S_V \subseteq Term_V$.
+Мы будем говорить, что множество $V$-термов $X \subseteq Term_V$ насыщенно, если выполнены следующие условия:
+\begin{description}
+\item[(SAT1)] $X \subseteq SN_V$.
+\item[(SAT2)] Если $t \in X$ и $t \to_1 s$, то $s \in X$.
+\item[(SAT3)] Если $t \in S$, и $red_1(t)$ является подмножеством $X$, то $t \in X$.
+\end{description}
+
+Последнее условие, в частности, означает, что любой простой $V$-терм в нормальной форме должен принадлежать $X$.
+В частности, все переменные принадлежат $X$, следовательно $X$ не пусто.
+Если $X \subseteq SN_V$, то существует минимальное насыщенное множество, содержащее $X$.
+Мы называем это множество насыщением $X$ и обозначаем $sat_V(X)$.
+
+Чтобы доказать сильную нормализуемость, мы введем частичную функцию $\llbracket - \rrbracket_V : Term_V \to SAT_V$, где $SAT_V$ - множество насыщенных подмножеств $Term_V$.
+Для этого мы сначала определим ее график $G_V \subseteq Term_V \times SAT_V$ индуктивным образом.
+
+\begin{center}
+\AxiomC{$(t,A) \in G_V$}
+\RightLabel{, если $t \to_1 s$}
+\UnaryInfC{$(s,A) \in G_V$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\AxiomC{$\forall s \in red_1(t)\ (s,A) \in G_V$}
+\RightLabel{, если $t \in S$, и $red_1(t)$ не пусто}
+\UnaryInfC{$(t,A) \in G_V$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\AxiomC{}
+\RightLabel{, если $t \in S$, и $red_1(t)$ пусто}
+\UnaryInfC{$(t,SN) \in G_V$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$(I, sat_V(\{left, right\})) \in G_V$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\AxiomC{$(t,A) \in G_V$}
+\AxiomC{$\forall a \in A\ (s[x := a], B_a) \in G_V$}
+\BinaryInfC{$(\Pi (x : t) s, \{ f\ |\ \forall a \in A\ (f\ a \in B_a)\}) \in G_V$}
+\DisplayProof
+\end{center}
+
+Индукцией по построению $G_V$ не сложно показать, что если $t \ebst s$, $(t,A) \in G_V$ и $(s,A') \in G_V$, то $A = A'$.
+Следовательно $G_V$ действительно ялвяется графиком частичной функции $\llbracket - \rrbracket_V : Term_V \to SAT_V$.
+Пусть $Type_V \subseteq Term_V$ будет множество тех термов, на которых $\llbracket - \rrbracket_V$ определена.
+Не сложно показать, используя индукцию по построению $G_V$, что $Type_V$ насыщенно.
+
+Для заключительной части доказательства нам понадобится еще одно понятие.
+\emph{Означивание} - это частичная функцию из множества переменных в множество термов $Term_{Var \cup \{ * \}}$.
+Означивание, которое нигде не определено, мы обозначаем $\varnothing$.
+Если $\rho$ - означивание, и $t$ - терм, то $\rho[x := t]$ - это означивание, которое на $x$ возвращает $t$ и на остальных переменных определено также как и $\rho$.
+Если $\rho$ - означивание, и $t$ - терм, то $t[\rho]$ - это терм, который определяется как
+    $t[x_1 := \rho(x_1), \ldots x_n := \rho(x_n)]$, где $\{x_1, \ldots x_n$\} - это домен $\rho$.
+
+Теперь мы определим частичную функцию $\llbracket - \rrbracket$ из множества контекстов в множество подмножеств множества означиваний:
+\[ \llbracket \varnothing \rrbracket = \{ \varnothing \} \]
+\[ \llbracket \Gamma, x : A \rrbracket = \{ \rho[x := a]\ |\ \rho \in \llbracket \Gamma \rrbracket, a \in \llbracket A[\rho] \rrbracket_{dom(\rho) \cup \{ x, * \}} \} \]
+Причем, мы считаем, что $\llbracket \Gamma, x : A \rrbracket$ определено тогда и только тогда,
+    когда $\llbracket \Gamma \rrbracket$ определено, и для любого $\rho \in \llbracket \Gamma \rrbracket$ верно, что $A[\rho] \in Type_{dom(\rho) \cup \{ x, * \}}$.
+
+\begin{lem}
+Верны следующие утверждения:
+\begin{itemize}
+\item Если $\Gamma \vdash$, то $\llbracket \Gamma \rrbracket$ определено.
+\item Если $\Gamma \vdash A$, то $\llbracket \Gamma \rrbracket$ определено,
+    и для любого $\rho \in \llbracket \Gamma \rrbracket$ верно, что $A[\rho] \in Type_{dom(\rho) \cup \{ * \}}$.
+\item Если $\Gamma \vdash a : A$, то $\llbracket \Gamma \rrbracket$ определено,
+    и для любого $\rho \in \llbracket \Gamma \rrbracket$ верно, что $A[\rho] \in Type_{dom(\rho) \cup \{ * \}}$, и $a[\rho] \in \llbracket A[\rho] \rrbracket_{dom(\rho) \cup \{ * \}}$.
+\end{itemize}
+\end{lem}
+\begin{proof}
+Индукцией по выводу.
+\end{proof}
+
+Вышеприведенная лемма влечет тот факт, что система сильно нормализуема.
+Действительно, достаточно в качестве $\rho$ в условии леммы взять тривиальное окружение, которое каждую $x$ из $\Gamma$ отображает в $x$.
+
+\section{Бла}
+
+Now, we show how to add a univalent universe to the system.
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash Type$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash I : Type$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : Type$}
+\AxiomC{$\Gamma, x : A \vdash B : Type$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : Type$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\Axiom$\fCenter \Gamma \vdash A : Type$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash B : Type$
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash f : A \to B$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash g : B \to A$
+\Axiom$\fCenter \Gamma \vdash p : \Pi (a : A) (Path\ A\ (g\ (f\ a))\ a)$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash q : \Pi (b : B) (Path\ B\ (f\ (g\ b))\ b)$
+\def\extraVskip{2pt}
+\AxiomC{$\Gamma \vdash i : I$}
+\QuaternaryInfC{$\Gamma \vdash iso\ A\ B\ f\ g\ p\ q\ i : Type$}
+\DisplayProof
+\end{center}
+\medskip
+
+We also add the following reduction rules:
+\begin{itemize}
+\item $iso\ A\ B\ f\ g\ p\ q\ left \to_\beta A$
+\item $iso\ A\ B\ f\ g\ p\ q\ right \to_\beta B$
+\item $coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \to_\beta f\ a$
+\item $coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \to_\beta g\ b$
+\end{itemize}
+
+Later we will show that these rules imply the univalence axiom in its usual form.
+
+\subsection{Data types with conditions}
+
+An ordinary data type $D$ with parameters $a_1 : A_1, \ldots a_n : A_n$ is described by a list of its constructors:
+\[ c_1 : (x_1 : X_1) \ldots (x_{k_1} : X_{k_1}) \to D\ a_1 \ldots a_n \]
+\[ \vdots \]
+\[ c_m : (z_1 : Z_1) \ldots (z_{k_m} : Z_{k_m}) \to D\ a_1 \ldots a_n \]
+
+A data type with conditions also allows us to put a condition on a constructor.
+A condition on a constructor is simply a partial definition of a function with the type of this constructor.
+Syntactically, this means that constructors now can be evaluated if its arguments match one of the clauses of this partially defined function.
+Also, this means that when we define a function over such a data type we need to check that this definition respects conditions.
+
+Semantically, ordinary data types allow to define coproducts of types, and data types with conditions allow us to define pushouts.
+One of the maps in the pushout diagram must be given by a collection of constructors of a data type, which means it is (often can be interpreted as) a cofibration.
+This implies that this pushout is allways a correct homotopy pushout.
+
+Let us give an example. We can define integers as the data type with two constructors:
+\[ negative : \mathbb{N} \to \mathbb{Z} \]
+\[ positive : \mathbb{N} \to \mathbb{Z}. \]
+
+The problem is that we get two different zeros: $negative\ 0$ and $positive\ 0$.
+Of course, we can define $-1$ to be $negative\ 0$, $-2$ to be $negative\ 1$, and so one, but this can easily lead to a confusion.
+It is better to identify the positive and the negative zeros, that is to define $\mathbb{Z}$ as the pushout of $1 \overset{0}\to \mathbb{N}$ with itself.
+So, we add the following condition to the definition of $\mathbb{Z}$:
+\[ negative\ 0 = positive\ 0. \]
+Now, when we define a function $f$ over $\mathbb{Z}$, we need to check that $f\ (negative\ 0) \ebs f\ (positive\ 0)$.
+
+Using data types with conditions, we can define higher inductive types.
+For example, the circle $S^1$ can be defined as follows: it has two constructors
+\[ base : S^1 \]
+\[ loop : I \to S^1 \]
+and two conditions
+\[ loop\ left = base \]
+\[ loop\ right = base. \]
+
+After we add path types, it will be posible to describe elimination rules for such data types,
+but it is more convenient to simply define functions over them.
+
+\subsection{Records with conditions}
+
+Records with conditions are dual to data types with conditions.
+Ordinary records allow us to define product of types, and records with conditions allow us to define pullbacks.
+A record is given by a list of fields, and a record with conditions can additionally put conditions on some fields.
+A condition on a field is a partially defined function with the type of this field.
+Semantically, such a record is given by a pullback of a function $(B \to X) \to (A \to X)$ for some cofibration $A \to B$, which means that it is still fibrant.
+
+Let us show how to define path types as a record with conditions.
+It will be a record $Path$ with three parameters $A : I \to Type$, $a : A\ left$, and $a' : A\ right$.
+We will define a ``heterogeneous path type'' because it seems impossible to define useful elimination rules for higher inductive types using only homogeneous path types.
+We abbreviate $Path\ (\lambda _. A)\ a\ a'$ to $a = a'$.
+The record $Path\ (A : I \to Type)\ (a : A\ left)\ (a' : A\ right)$ has one constructor
+\[ path : ((i : I) \to A\ i) \to Path\ (A : I \to Type)\ (a : A\ left)\ (a' : A\ right), \]
+one field
+\[ at : (i : I) \to A\ i, \]
+and two conditions
+\[ at\ left = a \]
+\[ at\ right = a'. \]
+
+When we define an element of a record with conditions, we need to check that it satisfies them.
+And when we access fields with conitions, they might evaluate, if arguments to it match some condition on it.
+For example, if $p : a = a'$, then $p.at\ left$ evaluates to $a$, $p.at\ right$ evaluates to $a'$,
+and if we want to consruct a path of type $a = a'$, then we need to specify a function $f : I \to A$ such that $f\ left \ebs a$ and $f\ right \ebs a'$.
+
+We can define the $J$ rule as follows:
+\begin{itemize}
+\item[] $idp : (A : Type) (a : A) \to Path\ (\lambda _. A)\ a\ a$
+\item[] $idp\ A\ a = path (\lambda i. a)$
+\item[]
+\item[] $J : (A : Type) (C : (x\ y : A) \to x = y \to Type) \to$
+\item[] \qquad $((a : A) \to C\ a\ a\ (idp\ A\ a)) \to (a\ a' : A) (p : a = a') \to C\ a\ a'\ p$
+\item[] $J\ A\ C\ d\ a\ a'\ p =\ coe_{\lambda i.\,C\,a\,(p.at\,i)\,(path\,(\lambda j.\,p.at\,(squeeze\,i\,j)))}\ left\ (d\ a)\ right$
+\end{itemize}
+
+Now, we can prove the univalence axiom in its usual form, which states that a certain function $F$ is equivalence.
+Function $F$ maps path types $A = B$ to the type of functions $A \to B$ which are equivalences.
+We can construct an inverse $G$ to function $F$: given an equivalence $A \to B$, $G$ construct a path $A = B$ using $iso$.
+If $f : A \to B$ is an equivalence, then $F\ (G\ f)$ definitionally equals to $f$ because of the compuation rule for $iso$.
+If $p : A = B$, then we can show that there is a path between $G\ (F\ p)$ and $p$ using $J$.
+Actually, we can't use $J$ directly because of the size issues, but we can expand its definition, and then it works fine.
+
+\section{A model of data types and records with conditions}
+
+In this section, we will show how to interpret data types and records with conditions in simplicial sets.
+
+\subsection{Data types with conditions}
+
+Each constructor of a data type gives us an accessible functor $C_i : \sSet \to \sSet$.
+
+% If a data type without conditions has $n$ constructors, then we can interpret it as an algebra for endofunctor $\coprod_{1 \leq i \leq n} C_i$.
+
+\subsection{Records with conditions}
+
+% \bibliographystyle{amsplain}
+% \bibliography{ref}
+
+\end{document}

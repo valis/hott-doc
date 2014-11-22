@@ -34,6 +34,7 @@
 
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\C}{\cat{C}}
+\newcommand{\sSet}{\cat{sSet}}
 
 \numberwithin{figure}{section}
 
@@ -60,13 +61,10 @@ Using data types with condtions, we will show how to define higher inductive typ
 
 The second extension is called records with conditions and it is dual to the first one.
 Using this extensions, we can define path types for which the usual elimination principle J holds.
-An important application of records with conditions is a definition of simplicial types.
-This extension can be compared with another extension of the system proposed by Vladimir Voevodsky, the idea of which is to add a strict equality type.
-Records with conditions are not as powerful as this extension, but they have an advantage that all types are still fibrant.
 
 \section{Syntax}
 
-Let us describe the inference rules of the basic system.
+In this section, we will describe the inference rules of the basic system.
 
 \centerAlignProof
 
@@ -102,17 +100,17 @@ Let us describe the inference rules of the basic system.
 \begin{center}
 \AxiomC{$\Gamma \vdash A$}
 \AxiomC{$\Gamma, x : A \vdash B$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\BinaryInfC{$\Gamma \vdash (x : A) \to B$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma, x : A \vdash b : B$}
-\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
+\UnaryInfC{$\Gamma \vdash \lambda x. b : (x : A) \to B$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
+\AxiomC{$\Gamma \vdash f : (x : A) \to B$}
 \AxiomC{$\Gamma \vdash a : A$}
 \BinaryInfC{$\Gamma \vdash f\ a : B[x := a]$}
 \DisplayProof
@@ -165,9 +163,9 @@ Let us describe the inference rules of the basic system.
 \Axiom$\fCenter \Gamma \vdash i : I$
 \noLine
 \UnaryInf$\fCenter \Gamma \vdash j : I$
-\Axiom$\fCenter \Gamma \vdash a : \Pi (y : I) A$
+\Axiom$\fCenter \Gamma \vdash a : (y : I) \to A$
 \noLine
-\UnaryInf$\fCenter \Gamma \vdash a' : \Pi (y : I) A$
+\UnaryInf$\fCenter \Gamma \vdash a' : (y : I) \to A$
 \noLine
 \UnaryInf$\fCenter \Gamma \vdash f : I \to A[y := i]$
 \def\extraVskip{2pt}
@@ -193,7 +191,8 @@ Reduction rules:
 \item $squeeze\ right\ j \to_\beta j$
 \item $squeeze\ i\ left \to_\beta left$
 \item $squeeze\ i\ right \to_\beta i$
-\item $coe_{\lambda k.A}\ i\ a\ i \to_\beta a$
+\item $coe_{\lambda k.A}\ left\ a\ left \to_\beta a$
+\item $coe_{\lambda k.A}\ right\ a\ right \to_\beta a$
 \item $coe_{\lambda k.A}\ i\ a\ j \to_\sigma a$ if $k \notin FV(A)$
 \end{itemize}
 
@@ -210,34 +209,34 @@ Now, we show how to add a univalent universe to the system.
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash U$}
+\UnaryInfC{$\Gamma \vdash Type$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash I : U$}
+\UnaryInfC{$\Gamma \vdash I : Type$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A : U$}
-\AxiomC{$\Gamma, x : A \vdash B : U$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U$}
+\AxiomC{$\Gamma \vdash A : Type$}
+\AxiomC{$\Gamma, x : A \vdash B : Type$}
+\BinaryInfC{$\Gamma \vdash (x : A) \to B : Type$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\Axiom$\fCenter \Gamma \vdash A : U$
+\Axiom$\fCenter \Gamma \vdash A : Type$
 \noLine
-\UnaryInf$\fCenter \Gamma \vdash B : U$
+\UnaryInf$\fCenter \Gamma \vdash B : Type$
 \def\extraVskip{1pt}
 \Axiom$\fCenter \Gamma \vdash f : A \to B$
 \noLine
 \UnaryInf$\fCenter \Gamma \vdash g : B \to A$
-\Axiom$\fCenter \Gamma \vdash p : \Pi (a : A)\ Path\ A\ (g\ (f\ a))\ a$
+\Axiom$\fCenter \Gamma \vdash p : (a : A) \to Path\ A\ (g\ (f\ a))\ a$
 \noLine
-\UnaryInf$\fCenter \Gamma \vdash q : \Pi (b : B)\ Path\ B\ (f\ (g\ b))\ b$
+\UnaryInf$\fCenter \Gamma \vdash q : (b : B) \to Path\ B\ (f\ (g\ b))\ b$
 \def\extraVskip{2pt}
 \AxiomC{$\Gamma \vdash i : I$}
-\QuaternaryInfC{$\Gamma \vdash iso\ A\ B\ f\ g\ p\ q\ i : U$}
+\QuaternaryInfC{$\Gamma \vdash iso\ A\ B\ f\ g\ p\ q\ i : Type$}
 \DisplayProof
 \end{center}
 \medskip
@@ -252,12 +251,12 @@ We also add the following reduction rules:
 
 Later we will show that these rules imply the univalence axiom in its usual form.
 
-\section{Data types with conditions}
+\subsection{Data types with conditions}
 
 An ordinary data type $D$ with parameters $a_1 : A_1, \ldots a_n : A_n$ is described by a list of its constructors:
-\[ c_1 : \Pi (x_1 : X_1) \ldots \Pi (x_{k_1} : X_{k_1}) \to D\ a_1 \ldots a_n \]
+\[ c_1 : (x_1 : X_1) \ldots (x_{k_1} : X_{k_1}) \to D\ a_1 \ldots a_n \]
 \[ \vdots \]
-\[ c_m : \Pi (z_1 : Z_1) \ldots \Pi (z_{k_m} : Z_{k_m}) \to D\ a_1 \ldots a_n \]
+\[ c_m : (z_1 : Z_1) \ldots (z_{k_m} : Z_{k_m}) \to D\ a_1 \ldots a_n \]
 
 A data type with conditions also allows us to put a condition on a constructor.
 A condition on a constructor is simply a partial definition of a function with the type of this constructor.
@@ -273,7 +272,7 @@ Let us give an example. We can define integers as the data type with two constru
 \[ positive : \mathbb{N} \to \mathbb{Z}. \]
 
 The problem is that we get two different zeros: $negative\ 0$ and $positive\ 0$.
-Of course we can define $-1$ to be $negative\ 0$, $-2$ to be $negative\ 1$, and so one, but this can easily lead to a confusion.
+Of course, we can define $-1$ to be $negative\ 0$, $-2$ to be $negative\ 1$, and so one, but this can easily lead to a confusion.
 It is better to identify the positive and the negative zeros, that is to define $\mathbb{Z}$ as the pushout of $1 \overset{0}\to \mathbb{N}$ with itself.
 So, we add the following condition to the definition of $\mathbb{Z}$:
 \[ negative\ 0 = positive\ 0. \]
@@ -290,7 +289,7 @@ and two conditions
 After we add path types, it will be posible to describe elimination rules for such data types,
 but it is more convenient to simply define functions over them.
 
-\section{Records with conditions}
+\subsection{Records with conditions}
 
 Records with conditions are dual to data types with conditions.
 Ordinary records allow us to define product of types, and records with conditions allow us to define pullbacks.
@@ -298,13 +297,12 @@ A record is given by a list of fields, and a record with conditions can addition
 A condition on a field is a partially defined function with the type of this field.
 Semantically, such a record is given by a pullback of a function $(B \to X) \to (A \to X)$ for some cofibration $A \to B$, which means that it is still fibrant.
 
-\subsection{Path types}
-
-Here, we will define path types as a record $Path$ with three parameters $A : I \to U$, $a : A\ left$, and $a' : A\ right$.
+Let us show how to define path types as a record with conditions.
+It will be a record $Path$ with three parameters $A : I \to Type$, $a : A\ left$, and $a' : A\ right$.
 We will define a ``heterogeneous path type'' because it seems impossible to define useful elimination rules for higher inductive types using only homogeneous path types.
 We abbreviate $Path\ (\lambda _. A)\ a\ a'$ to $a = a'$.
-The record $Path\ (A : I \to U)\ (a : A\ left)\ (a' : A\ right)$ has one constructor
-\[ path : ((i : I) \to A\ i) \to Path\ (A : I \to U)\ (a : A\ left)\ (a' : A\ right), \]
+The record $Path\ (A : I \to Type)\ (a : A\ left)\ (a' : A\ right)$ has one constructor
+\[ path : ((i : I) \to A\ i) \to Path\ (A : I \to Type)\ (a : A\ left)\ (a' : A\ right), \]
 one field
 \[ at : (i : I) \to A\ i, \]
 and two conditions
@@ -314,16 +312,16 @@ and two conditions
 When we define an element of a record with conditions, we need to check that it satisfies them.
 And when we access fields with conitions, they might evaluate, if arguments to it match some condition on it.
 For example, if $p : a = a'$, then $p.at\ left$ evaluates to $a$, $p.at\ right$ evaluates to $a'$,
-and if we want to consruct a path of type $a = a'$, then we need to specify a function $f : I \to A$ such that $f\ left = a$ and $f\ right = a'$.
+and if we want to consruct a path of type $a = a'$, then we need to specify a function $f : I \to A$ such that $f\ left =_{\beta \sigma} a$ and $f\ right =_{\beta \sigma} a'$.
 
 We can define the $J$ rule as follows:
 \begin{itemize}
-\item[] $idp : \Pi (A : U) \Pi (a : A) (Path\ (\lambda _. A)\ a\ a)$
-\item[] $idp A\ a = path (\lambda i. a)$
+\item[] $idp : (A : Type) (a : A) \to Path\ (\lambda _. A)\ a\ a$
+\item[] $idp\ A\ a = path (\lambda i. a)$
 \item[]
-\item[] $J : \Pi (A : U) \Pi (C : \Pi (x\ y : A) \Pi (z : x = y)\ U)$
-\item[] \qquad $(\Pi (a : A) (C\ a\ a\ (idp\ A\ a))) \to \Pi (a\ a' : A) \Pi (p : a = a') (C\ a\ a'\ p)$
-\item[] $J A\ C\ d\ a\ a'\ p =\ coe_{\lambda i.\,C\,a\,(p.at\,i)\,(path\,(\lambda j.\,p.at\,(squeeze\,i\,j)))}\ left\ (d\ a)\ right$
+\item[] $J : (A : Type) (C : (x\ y : A) \to x = y \to Type) \to$
+\item[] \qquad $((a : A) \to C\ a\ a\ (idp\ A\ a)) \to (a\ a' : A) (p : a = a') \to C\ a\ a'\ p$
+\item[] $J\ A\ C\ d\ a\ a'\ p =\ coe_{\lambda i.\,C\,a\,(p.at\,i)\,(path\,(\lambda j.\,p.at\,(squeeze\,i\,j)))}\ left\ (d\ a)\ right$
 \end{itemize}
 
 Now, we can prove the univalence axiom in its usual form, which states that a certain function $F$ is equivalence.
@@ -333,30 +331,17 @@ If $f : A \to B$ is an equivalence, then $F\ (G\ f)$ definitionally equals to $f
 If $p : A = B$, then we can show that there is a path between $G\ (F\ p)$ and $p$ using $J$.
 Actually, we can't use $J$ directly because of the size issues, but we can expand its definition, and then it works fine.
 
-\subsection{Simplicial types}
+\section{A model of data types and records with conditions}
 
-Here, we will show how to define simplicial types using records with conditions.
+In this section, we will show how to interpret data types and records with conditions in simplicial sets.
 
-First of all, we need to define the simplex category.
-More precisely, for each pair of natural numbers $n,k : \mathbb{N}$, we define the set $n \rightsquigarrow k$ of maps from $n$ to $k$ in this category.
-It can be done in the usual way as the set of compositions of face and degeneracy maps which satisfy usual relations.
-Using data types with conditions, we can define it in such a way that compositions are strictly associative, but
-in order for this construction of simplicial types to work, the composition operation must be a constructor of a data type without conditions.
-So, the composition will be associative only up to a path.
+\subsection{Data types with conditions}
 
-Now, we can define simplicial types as the record with two constructors
-\[ spine : \mathbb{N} \to U \]
-\[ smap : \Pi (k\ n : \mathbb{N}) \to k \rightsquigarrow n \to spine\ n \to spine\ k \]
-and two conditions
-\[ smap\ k\ n\ (id\ p)\ x = transport\ spine\ (inv\ p)\ x \]
-\[ smap\ k\ n\ (comp\ m\ f\ g)\ x = smap\ k\ m\ f\ (smap\ m\ n\ g\ x), \]
-where $id : k = n \to k \rightsquigarrow n$ is the identity arrow in the simplex category,
-and $comp : \Pi (m : \mathbb{N})\ k \rightsquigarrow m \to m \rightsquigarrow n \to k \rightsquigarrow n$ is the composition.
+Each constructor of a data type gives us an accessible functor $C_i : \sSet \to \sSet$.
 
-We can use the same idea to define the type of presheaves on any 1-category $\C$.
-First, we define ``a fat version''  of $\C$, that is a category equivalent to $\C$ in which the composition of morphisms is a constructor.
-We can even write a function $Cat \to Cat$ that do this for us.
-Then we can define the type of presheaves on $\C$ in the same way we defined the type of simplicial types.
+% If a data type without conditions has $n$ constructors, then we can interpret it as an algebra for endofunctor $\coprod_{1 \leq i \leq n} C_i$.
+
+\subsection{Records with conditions}
 
 % \bibliographystyle{amsplain}
 % \bibliography{ref}
