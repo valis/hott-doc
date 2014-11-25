@@ -17,7 +17,7 @@
 
 \newcommand{\newref}[4][]{
 \ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
-\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname r#2\endcsname[1]{\ref{#2:##1}}
 \expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
 \newenvironmentx{#2}[2][1=,2=]{
 \ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
@@ -46,6 +46,8 @@
 \newcommand{\ebst}{=_{\bst}}
 \newcommand{\rbst}{\to_{\bst}}
 \newcommand{\sSet}{\cat{sSet}}
+\renewcommand{\ll}{\llbracket}
+\newcommand{\rr}{\rrbracket}
 
 \numberwithin{figure}{section}
 
@@ -290,6 +292,8 @@
 Большинство пунктов элементарно.
 Для случая $(\lambda x. b)\ a \to_p b'[x := a']$ мы используем предыдущую лемму.
 Для случая $coe_{\lambda k. A}\ i\ a\ j \to_p a'$ когда $i \ebst j$ мы используем тот факт, что $t \to_p s$ влечет $t \ebst s$.
+
+TODO: Написать подробнее?
 \end{proof}
 
 \begin{prop}
@@ -330,104 +334,276 @@
 Мы говорим, что терм сильно нормализуем, если не существует бесконечной последовательности редукций, начинающейся с этого терма.
 Мы говорим, что теория сильно нормализуема, если $\Gamma \vdash a : A$ влечет, что $a$ сильно нормалиуем, и $\Gamma \vdash A$ влечет, что $A$ сильно нормализуем.
 
-Так как мы работаем с зависимыми типами, то нам нужно быть аккуратными со свободными переменными.
-Поэтому нам нужно ввести несколько вспомогательных конструкций.
-Пусть $Var$ - множество всех переменных.
-Мы хотим рассматривать произвольные подмножества $Var$, но по техническим причинам мы должны потребовать, чтобы они были не пустые.
-Поэтому мы расширяем множество переменных новой фиктивной переменной $*$.
-Таким образом все множества переменных $V$, с которыми мы будем работать, будут удовлетворять $\{ * \} \subseteq V \subseteq Var \cup \{ * \}$.
-Мы предполагаем, что в правилах вывода по прежнему используются только переменные из $Var$.
-Если $V$ - множество переменных, то $Term_V$ - это множество термов, свободные переменные которых лежат в $V$.
-Такие термы мы будем называть $V$-термами.
-
-Теперь мы введем понятие \emph{насыщенного} множества.
-Множество сильно нормализуемых $V$-термов мы будем обозначать $SN_V \subseteq Term_V$.
+Для доказательства сильной нормализуемости нам понадобится понятие \emph{насыщенного} множества.
+Множество сильно нормализуемых термов мы будем обозначать $SN$.
 Если терм $t$ $\bst$-редуцируется к $s$ за один шаг, мы будем писать $t \to_1 s$.
 Множество термов $s$, к которым $t$ редуцируется за один шаг, мы будем обозначать $red_1(t)$ (то есть $red_1(t) = \{ s\ |\ t \to_1 s \}$).
-Термы, которые не являются ни абстракцией, ни $\Pi$-типом, мы будем называть \emph{простыми}, и множество простых $V$-термов обозначать $S_V \subseteq Term_V$.
-Мы будем говорить, что множество $V$-термов $X \subseteq Term_V$ насыщенно, если выполнены следующие условия:
+Термы, которые не являются ни абстракцией, ни $\Pi$-типом, мы будем называть \emph{простыми}, и множество простых термов обозначать $S$.
+Мы будем говорить, что множество термов $X$ насыщенно, если выполнены следующие условия:
 \begin{description}
-\item[(SAT1)] $X \subseteq SN_V$.
+\item[(SAT1)] $X \subseteq SN$.
 \item[(SAT2)] Если $t \in X$ и $t \to_1 s$, то $s \in X$.
 \item[(SAT3)] Если $t \in S$, и $red_1(t)$ является подмножеством $X$, то $t \in X$.
 \end{description}
 
-Последнее условие, в частности, означает, что любой простой $V$-терм в нормальной форме должен принадлежать $X$.
+Условие \textbf{(SAT3)}, в частности, означает, что любой простой терм в нормальной форме должен принадлежать $X$.
 В частности, все переменные принадлежат $X$, следовательно $X$ не пусто.
-Если $X \subseteq SN_V$, то существует минимальное насыщенное множество, содержащее $X$.
-Мы называем это множество насыщением $X$ и обозначаем $sat_V(X)$.
+Если $X \subseteq SN$, то существует минимальное насыщенное множество, содержащее $X$.
+Мы называем это множество насыщением $X$ и обозначаем $sat(X)$.
 
-Чтобы доказать сильную нормализуемость, мы введем частичную функцию $\llbracket - \rrbracket_V : Term_V \to SAT_V$, где $SAT_V$ - множество насыщенных подмножеств $Term_V$.
-Для этого мы сначала определим ее график $G_V \subseteq Term_V \times SAT_V$ индуктивным образом.
+Чтобы доказать сильную нормализуемость, мы введем частичную функцию $\ll - \rr : Term \to SAT$,
+    где $Term$ - множество термов, а $SAT$ - множество насыщенных подмножеств $Term$.
+Для этого мы сначала определим ее график $G \subseteq Term \times SAT$ индуктивным образом.
 
 \begin{center}
-\AxiomC{$(t,A) \in G_V$}
+\AxiomC{$(t,A) \in G$}
 \RightLabel{, если $t \to_1 s$}
-\UnaryInfC{$(s,A) \in G_V$}
+\UnaryInfC{$(s,A) \in G$}
 \DisplayProof
 \end{center}
 
 \begin{center}
-\AxiomC{$\forall s \in red_1(t)\ (s,A) \in G_V$}
+\AxiomC{$\forall s \in red_1(t)\ (s,A) \in G$}
 \RightLabel{, если $t \in S$, и $red_1(t)$ не пусто}
-\UnaryInfC{$(t,A) \in G_V$}
+\UnaryInfC{$(t,A) \in G$}
 \DisplayProof
 \end{center}
 
 \begin{center}
 \AxiomC{}
 \RightLabel{, если $t \in S$, и $red_1(t)$ пусто}
-\UnaryInfC{$(t,SN) \in G_V$}
+\UnaryInfC{$(t,SN) \in G$}
 \DisplayProof
 \end{center}
 
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$(I, sat_V(\{left, right\})) \in G_V$}
+\UnaryInfC{$(I, sat(\{left, right\})) \in G$}
 \DisplayProof
 \end{center}
 
 \begin{center}
-\AxiomC{$(t,A) \in G_V$}
-\AxiomC{$\forall a \in A\ (s[x := a], B_a) \in G_V$}
-\BinaryInfC{$(\Pi (x : t) s, \{ f\ |\ \forall a \in A\ (f\ a \in B_a)\}) \in G_V$}
+\AxiomC{$(t,A) \in G$}
+\AxiomC{$\forall a \in A\ (s[x := a], B_a) \in G$}
+\BinaryInfC{$(\Pi (x : t) s, \{ f\ |\ \forall a \in A\ (f\ a \in B_a)\}) \in G$}
 \DisplayProof
 \end{center}
 
-Индукцией по построению $G_V$ не сложно показать, что если $t \ebst s$, $(t,A) \in G_V$ и $(s,A') \in G_V$, то $A = A'$.
-Следовательно $G_V$ действительно ялвяется графиком частичной функции $\llbracket - \rrbracket_V : Term_V \to SAT_V$.
-Пусть $Type_V \subseteq Term_V$ будет множество тех термов, на которых $\llbracket - \rrbracket_V$ определена.
-Не сложно показать, используя индукцию по построению $G_V$, что $Type_V$ насыщенно.
+Индукцией по построению $G$ не сложно показать, что если $t \ebst s$, $(t,A) \in G$ и $(s,A') \in G$, то $A = A'$.
+Следовательно $G$ действительно ялвяется графиком частичной функции $\ll - \rr : Term \to SAT$.
+Пусть $Type \subseteq Term$ будет множество тех термов, на которых $\ll - \rr$ определена.
+Индукцией по построению $G$ не сложно показать, что $Type \subseteq SN$, откуда следует, что $Type$ насыщено.
 
 Для заключительной части доказательства нам понадобится еще одно понятие.
-\emph{Означивание} - это частичная функцию из множества переменных в множество термов $Term_{Var \cup \{ * \}}$.
+\emph{Означивание} - это частичная функцию из множества переменных в множество термов.
 Означивание, которое нигде не определено, мы обозначаем $\varnothing$.
 Если $\rho$ - означивание, и $t$ - терм, то $\rho[x := t]$ - это означивание, которое на $x$ возвращает $t$ и на остальных переменных определено также как и $\rho$.
 Если $\rho$ - означивание, и $t$ - терм, то $t[\rho]$ - это терм, который определяется как
     $t[x_1 := \rho(x_1), \ldots x_n := \rho(x_n)]$, где $\{x_1, \ldots x_n$\} - это домен $\rho$.
+Если $\rho$ - означивание, и $X$ - множество термов, то $X[\rho] = \{ t[\rho]\ |\ t \in X \}$.
 
-Теперь мы определим частичную функцию $\llbracket - \rrbracket$ из множества контекстов в множество подмножеств множества означиваний:
-\[ \llbracket \varnothing \rrbracket = \{ \varnothing \} \]
-\[ \llbracket \Gamma, x : A \rrbracket = \{ \rho[x := a]\ |\ \rho \in \llbracket \Gamma \rrbracket, a \in \llbracket A[\rho] \rrbracket_{dom(\rho) \cup \{ x, * \}} \} \]
-Причем, мы считаем, что $\llbracket \Gamma, x : A \rrbracket$ определено тогда и только тогда,
-    когда $\llbracket \Gamma \rrbracket$ определено, и для любого $\rho \in \llbracket \Gamma \rrbracket$ верно, что $A[\rho] \in Type_{dom(\rho) \cup \{ x, * \}}$.
+Теперь мы докажем простую техническую лемму.
 
-\begin{lem}
-Верны следующие утверждения:
-\begin{itemize}
-\item Если $\Gamma \vdash$, то $\llbracket \Gamma \rrbracket$ определено.
-\item Если $\Gamma \vdash A$, то $\llbracket \Gamma \rrbracket$ определено,
-    и для любого $\rho \in \llbracket \Gamma \rrbracket$ верно, что $A[\rho] \in Type_{dom(\rho) \cup \{ * \}}$.
-\item Если $\Gamma \vdash a : A$, то $\llbracket \Gamma \rrbracket$ определено,
-    и для любого $\rho \in \llbracket \Gamma \rrbracket$ верно, что $A[\rho] \in Type_{dom(\rho) \cup \{ * \}}$, и $a[\rho] \in \llbracket A[\rho] \rrbracket_{dom(\rho) \cup \{ * \}}$.
-\end{itemize}
+\begin{lem}[nat-of-int]
+Пусть $A \in Type$.
+Тогда для любой инволюции $\varphi$ (то есть такого означивания, что для любого терма $t$ верно $t[\varphi][\varphi] = t$)
+верно, что $A[\varphi] \in Type$, и $\ll A[\varphi] \rr = \ll A \rr [\varphi]$.
 \end{lem}
 \begin{proof}
-Индукцией по выводу.
+Индукцией по построению $(A, \ll A \rr) \in G$.
+Первые четыре случая легко следуют из того факта, что $A' \to_1 A$ влечет $A'[\varphi] \to_1 A[\varphi]$ для любого означивания $\varphi$.
+Откуда следует, что для любой инволюции $\varphi$ верно, что $red_1(A[\varphi]) = red_1(A)[\varphi]$, $SN[\varphi] = SN$, и $sat(X[\varphi]) = sat(X)[\varphi]$.
+
+Последний случай:
+\begin{center}
+\AxiomC{$(A, \ll A \rr) \in G$}
+\AxiomC{$\forall a \in \ll A \rr \ (B[x := a], \ll B[x := a] \rr) \in G$}
+\BinaryInfC{$(\Pi (x : A) B, \{ f\ |\ \forall a \in \ll A \rr\ (f\ a \in \ll B[x := a] \rr)\}) \in G$}
+\DisplayProof
+\end{center}
+По индукционной гипотезе мы знаем, что $(A[\varphi], \ll A \rr [\varphi]) \in G$, и $\forall a \in \ll A \rr\ (B[x := a][\varphi], \ll B[x := a] \rr [\varphi]) \in G$.
+Так как $B[x := a][\varphi] = B[\varphi][x := a[\varphi]]$, то последнее выражение можно переписать как
+    $\forall a \in \ll A \rr [\varphi]\ (B[\varphi][x := a], \ll B[x := a[\varphi]] \rr [\varphi]) \in G$.
+Откуда получаем, что \[ ((\Pi (x : A) B)[\varphi], \{ f\ |\ \forall a \in \ll A \rr [\varphi]\ (f\ a \in \ll B[x := a[\varphi]] \rr [\varphi]) \}) \in G \].
+Таким образом $(\Pi (x : A) B)[\varphi] \in Type$.
+Осталось убедиться, что множество, описанное выше, совпадает с множеством $\{ f[\varphi]\ |\ \forall a \in \ll A \rr\ (f\ a \in \ll B[x := a] \rr) \}$.
+Это легко следует из того факта, что $\varphi$ - инволюция.
 \end{proof}
 
-Вышеприведенная лемма влечет тот факт, что система сильно нормализуема.
-Действительно, достаточно в качестве $\rho$ в условии леммы взять тривиальное окружение, которое каждую $x$ из $\Gamma$ отображает в $x$.
+Так как множество переменных бесконечно, то его можно разбить на два бесконечных непересекающихся равномощных подмножества $Var$ и $Var'$.
+Мы будем предполагать, что в правилах вывода учавствуют только переменные из $Var$.
+Теперь мы определим частичную функцию $\ll - \rr$ из множества контекстов в множество подмножеств множества означиваний:
+\[ \ll \varnothing \rr = \{ \varnothing \} \]
+\[ \ll \Gamma, x : A \rr = \{ \rho[x := a]\ |\ \rho \in \ll \Gamma \rr, a \in \ll A[\rho] \rr, FV(a) \subseteq dom(\rho) \cup \{ x \} \cup Var' \} \]
+Причем, мы считаем, что $\ll \Gamma, x : A \rr$ определено тогда и только тогда,
+    когда $\ll \Gamma \rr$ определено, и для любого $\rho \in \ll \Gamma \rr$ верно, что $A[\rho] \in Type$.
+
+\begin{prop}[sn]
+Верны следующие утверждения:
+\begin{itemize}
+\item Если $\Gamma \vdash$, то $\ll \Gamma \rr$ определено.
+\item Если $\Gamma \vdash A$, то $\ll \Gamma \rr$ определено,
+    и для любого $\rho \in \ll \Gamma \rr$ верно, что $A[\rho] \in Type$.
+\item Если $\Gamma \vdash a : A$, то $\ll \Gamma \rr$ определено,
+    и для любого $\rho \in \ll \Gamma \rr$ верно, что $A[\rho] \in Type$, и $a[\rho] \in \ll A[\rho] \rr$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+Индукцией по выводу.
+\begin{itemize}
+\item Случаи
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\varnothing \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\end{center}
+следуют из определения $\ll - \rr$ для контекстов.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, $x : A \in \Gamma$}
+\UnaryInfC{$\Gamma \vdash x : A$}
+\DisplayProof
+\end{center}
+Мы знаем, что $\Gamma = \Gamma', x : A, \Gamma''$.
+Если $\rho \in \ll \Gamma \rr$, то $A[\rho]$ = $A[\rho|_{\Gamma'}]$, т.к. в $A$ не встречаются свободные переменные из $x : A, \Gamma''$.
+Так как $\ll \Gamma \rr$ опеделено, то $\ll \Gamma', x : A \rr$ также определено,
+    следовательно $A[\rho|_{\Gamma'}] \in Type$ и $\rho(x) \in \ll A[\rho|_{\Gamma'}] \rr$, что и требовалось.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $A =_{\beta \sigma \tau} B$}
+\BinaryInfC{$\Gamma \vdash a : B$}
+\DisplayProof
+\end{center}
+Так как $\ll A[\rho] \rr$ и $\ll B[\rho] \rr$ определены, и $A[\rho] \ebst B[\rho]$, то $\ll A[\rho] \rr = \ll B[\rho] \rr$.
+Следовательно $a[\rho] \in \ll A[\rho] \rr = \ll B[\rho] \rr$.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+Пусть $\rho \in \ll \Gamma \rr$. Нам нужно показать, что $(\Pi (x : A) B)[\rho] \in Type$.
+Для этого достаточно показать, что для любого $a \in \ll A[\rho] \rr$ верно, что $B[\rho][x := a] = B[\rho[x := a]] \in Type$.
+По индукционной гипотезе мы знаем, что если $FV(a) \subseteq dom(\rho) \cup \{ x \} \cup Var'$, то это верно.
+Пусть теперь $a$ - произвольный, и пусть $V = FV(a) \setminus dom(\rho) \cup \{ x \} \cup Var'$.
+Так как $V$ - конечное множество, то мы можем выбрать $V' \subseteq Var'$ равномощное $V$.
+Теперь мы можем определить означивание $\phi$, которое каждой переменной из $V$ сопоставляет соответствующую переменную из $V'$ и наоборот.
+Таким образом, $\phi$ - инволюция.
+
+По лемме~\rlem{nat-of-int} мы знаем, что $a[\varphi] \in \ll A[\rho][\varphi] \rr$, но $A[\rho][\varphi] = A[\rho]$, так как $\varphi$ не меняет свободные переменные $A[\rho]$.
+По построению $FV(a[\varphi]) \subseteq dom(\rho) \cup \{ x \} \cup Var'$, следовательно $B[\rho][x := a[\varphi]] \in Type$.
+Но $B[\rho][x := a[\varphi]] = B[\rho][x := a][\varphi]$, следовательно $B[\rho][x := a] \in Type$ по лемме~\rlem{nat-of-int}, что и требовалось показать.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma, x : A \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+Мы должны показать, что для любых $\rho \in \ll \Gamma \rr$ и $a \in \ll A[\rho] \rr$ верно, что $(\lambda x. b[\rho]) a \in \ll B[\rho][x := a] \rr$.
+По индукционной гипотезе мы знаем, что если $FV(a) \subseteq dom(\rho) \cup \{ x \} \cup Var'$, то $b[\rho][x := a] \in \ll B[\rho][x := a] \rr$.
+Так как $b[\rho]$ и $a$ сильно нормализуемы, то в любой достаточно длинной последовательности редукций, начинающейся с $(\lambda x. b[\rho]) a$ внешний редекс будет сокращен.
+При этом мы получим терм к которому редуцируется $b[\rho][x := a]$, следовательно по \textbf{(SAT2)} он лежит в $\ll B[\rho][x := a] \rr$.
+Так как любая последовательность редукций заканчивается термами в $\ll B[\rho][x := a] \rr$, то \textbf{(SAT3)} влечет, что $(\lambda x. b[\rho]) a$ сам принадлежит этому множеству.
+
+Теперь, если $a$ произвольный, то мы выбираем инволюцию $\varphi$ также как в предыдущем пункте.
+Тогда $a[\varphi] \in \ll A[\rho] \rr$, и, как мы только что видели, $(\lambda x. b[\rho]) (a[\varphi]) \in \ll B[\rho][x := a[\varphi]] \rr$.
+Так как $(\lambda x. b[\rho]) (a[\varphi]) = ((\lambda x. b[\rho]) a)[\varphi]$, и $B[\rho][x := a[\varphi]] = B[\rho][x := a][\varphi]$, то
+    по лемме~\rlem{nat-of-int} $(\lambda x. b[\rho]) a \in \ll B[\rho][x := a] \rr$, что и требовалось показать.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma \vdash f\ a : B[x := a]$}
+\DisplayProof
+\end{center}
+Пусть $\rho \in \ll \Gamma\rr$.
+По индукционной гипотезе мы знаем, что $f[\rho]\ a[\rho] \in \ll B[\rho][x := a[\rho]] \rr$.
+Но $B[\rho][x := a[\rho]] = B[x := a][\rho]$, следовательно $(f\ a)[\rho] \in \ll B[x := a][\rho]\rr$, что и требовалось показать.
+
+\item Случаи
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash left : I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash right : I$}
+\DisplayProof
+\end{center}
+элементарны.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash a : A[x := i]$}
+\AxiomC{$\Gamma \vdash j : I$}
+\QuaternaryInfC{$\Gamma \vdash coe_{\lambda x. A}\ i\ a\ j : A[x := j]$}
+\DisplayProof
+\end{center}
+Пусть $\rho \in \ll \Gamma \rr$.
+Сначала мы покажем, что $A[x := j][\rho] \in Type$.
+Действительно, $A[x := j][\rho] = A[\rho][x := j[\rho]] = A[\rho[x := j[\rho]]]$, и это множество принадлежит $Type$ по индукционной гипотезе.
+
+Теперь мы должны доказать, что $(coe_{\lambda x. A}\ i\ a\ j)[\rho] \in \ll A[x := j][\rho] \rr$.
+Мы сделаем это индукцией по выводу $\Gamma, x : I \vdash A$.
+Конкретно, мы докажем следующее утверждение.
+Пусть $\Gamma, x : I, z_1 : Z_1, \ldots z_n : Z_n \vdash A$, и дерево вывода для него является поддеревом вывода
+    $\Gamma, x : I \vdash A$ (чтобы мы смогли использовать условие утверждения~\rprop{sn} для него).
+Пусть $i_1, j_1 \in \ll I \rr$ такие, что $FV(i_1) \cup FV(j_1) \subseteq dom(\rho) \cup Vars'$.
+Пусть $t_1, \ldots t_n$ - такая последовательность термов, что $FV(t_i) \subseteq dom(\rho) \cup \{ x, z_1, \ldots z_n \} \cup Vars'$, и
+$\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x : I, z_1 : Z_1, \ldots z_n : Z_n \rr$, где $k \in \{ i_1, j_1 \}$.
+Мы будем обозначать это означивание $\rho_i$ при $k = i_1$ и $\rho_j$ при $k = j_1$, а также мы будем писать $\rho_x$ при $k = x$.
+Тогда если $a_1 \in \ll A[\rho_i] \rr$, то $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1 \in \ll A[\rho_j] \rr$.
+
+По аргументу, аналогичному тому, который мы приводили в случае аппликации, нам достаточно показать,
+    что $\beta$, $\sigma$ и $\tau$ редукции для $coe$ переводят $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1$ в терм, лежащий в множестве $\ll A[\rho_j] \rr$.
+Случаи $\beta$ и $\sigma$ редукций не представляют проблем, так как они сразу же следуют из того факта, что $a_1 \in \ll A[\rho_i] \rr$, и в обоих случаях $A[\rho_i] = A[\rho_j]$.
+Пусть теперь $coe_{\lambda x. \Pi (a : A[\rho_x]) B[\rho_x]}\ i_1\ (\lambda a. b_1)\ j_1$ редуцируется по $\tau$-правилу к
+    $\lambda a'. coe_{\lambda x. B[\rho_x][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a'\,x]}\ i_1\ (b_1[a := coe_{\lambda x. A[\rho_x]}\ j_1\ a'\ i_1])\ j_1$.
+Обозначим этот терм за $f$.
+
+Мы должны показать, что $f$ принадлежит $\ll (\Pi (a : A) B)[\rho_j] \rr = \ll \Pi (a : A[\rho_j]) B[\rho_j]\rr$.
+Для этого достаточно показать, что для любого $a_2 \in \ll A[\rho_j] \rr$ верно, что $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr$,
+    при этом мы можем предположить, что $FV(a_2) \subseteq dom(\rho) \cup \{ z_1, \ldots z_n \} \cup Vars'$, используя аргумент аналогичный тому, который мы применяли в случае абстракции.
+По индукционной гипотезе $coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1 \in \ll A[\rho_i] \rr$.
+Также мы знаем, что $\lambda a. b_1 \in \Pi (a : A[\rho_i]) B[\rho_i]$,
+    следовательно $b_1[a := coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1] \in B[\rho_i][a := coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1]$.
+Обозначим этот терм за $b_2$.
+
+Теперь нам нужно применить индукционную гипотезу для терма $coe_{\lambda x. B[\rho_x][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,x]}\ i_1\ b_2\ j_1$.
+Для этого возьмем $z_{n+1} = a$, $Z_{n+1} = A$ и $t_{n+1} = coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ x$.
+Тогда мы получим, что этот терм, а следовательно и $f\,a_2$ принадлежит $\ll B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1] \rr$.
+Так как термы $B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1]$ и $B[\rho_j][a := a_2]$ $\tau$-эквивалентны,
+    то $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr$, что и требовалось доказать.
+
+\end{itemize}
+\end{proof}
+
+\begin{cor}
+Система сильно нормализуема.
+\end{cor}
+\begin{proof}
+Действительно, достаточно в качестве $\rho$ в условии утверждения взять тривиальное окружение, которое каждую $x$ из $\Gamma$ отображает в $x$.
+\end{proof}
 
 \section{Бла}
 
