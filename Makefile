@@ -1,3 +1,5 @@
+all: rus.pdf doc.pdf
+
 rus.pdf: rus.tex
 	pdflatex -halt-on-error rus.tex
 	pdflatex -halt-on-error '\providecommand{\WarningsAreErrors}{true}\input{rus.tex}'
