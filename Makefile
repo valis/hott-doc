@@ -1,17 +1,9 @@
-all: rus.pdf doc.pdf
+all: rus.pdf tau-rus.pdf doc.pdf
 
-rus.pdf: rus.tex
-	pdflatex -halt-on-error rus.tex
-	pdflatex -halt-on-error '\providecommand{\WarningsAreErrors}{true}\input{rus.tex}'
+%.pdf: %.tex
+	pdflatex -halt-on-error $<
+	pdflatex -halt-on-error '\providecommand{\WarningsAreErrors}{true}\input{$<}'
 
-rus.bbl: rus.tex
-	pdflatex -halt-on-error rus.tex
-	bibtex rus.aux
-
-doc.pdf: doc.tex
-	pdflatex -halt-on-error doc.tex
-	pdflatex -halt-on-error '\providecommand{\WarningsAreErrors}{true}\input{doc.tex}'
-
-doc.bbl: doc.tex
-	pdflatex -halt-on-error doc.tex
-	bibtex doc.aux
+%.bbl: %.tex
+	pdflatex -halt-on-error $<
+	bibtex $*.aux

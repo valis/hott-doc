@@ -1,0 +1,662 @@
+\documentclass{amsart}
+
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{type1ec}
+\usepackage{stmaryrd}
+% \usepackage[T2A]{fontenc}
+
+\providecommand\WarningsAreErrors{false}
+\ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{теорема}{Теорема}
+\newref{lem}{лемма}{Лемма}
+\newref{prop}{утверждение}{Утверждение}
+\newref{cor}{следствие}{Следствие}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{замечание}{Замечание}
+
+\newcommand{\cat}[1]{\mathbf{#1}}
+% \newcommand{\C}{\cat{C}}
+\newcommand{\bs}{\beta\sigma}
+\newcommand{\ebs}{=_{\bs}}
+\newcommand{\rbs}{\to_{\bs}}
+\newcommand{\bst}{\bs\tau}
+\newcommand{\ebst}{=_{\bst}}
+\newcommand{\rbst}{\to_{\bst}}
+\newcommand{\sSet}{\cat{sSet}}
+\renewcommand{\ll}{\llbracket}
+\newcommand{\rr}{\rrbracket}
+
+\numberwithin{figure}{section}
+
+\begin{document}
+
+\makeatletter
+\def\@settitle{\begin{center}%
+    \baselineskip14\p@\relax
+    \bfseries
+    \@title
+  \end{center}%
+}
+
+\title{Гомотопическая теория типов с типом интервала}
+
+\author{Валерий Исаев}
+
+% \begin{abstract}
+% Abstract
+% \end{abstract}
+
+\maketitle
+
+\section{Введение}
+
+\section{Синтаксис}
+
+В данном разделе мы приведем правила вывода для базовой системы.
+Главное нововведение данной системы - это тип интервала $I$.
+У него есть два конструктора ($left$ и $right$) и одно правило элиминации ($coe$).
+
+\centerAlignProof
+
+\begin{table}
+
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\varnothing \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, $x : A \in \Gamma$}
+\UnaryInfC{$\Gamma \vdash x : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $A =_{\beta \sigma \tau} B$}
+\BinaryInfC{$\Gamma \vdash a : B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma \vdash f\ a : B[x := a]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash left : I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash right : I$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash a : A[x := i]$}
+\AxiomC{$\Gamma \vdash j : I$}
+\QuaternaryInfC{$\Gamma \vdash coe_{\lambda x. A}\ i\ a\ j : A[x := j]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash a  : A[x := left]$}
+\AxiomC{$\Gamma \vdash a' : A[x := right]$}
+\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x. A)\ a\ a'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash path\ (\lambda x. a) : Path\ (\lambda x. A)\ a[x := left]\ a[x := right]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : Path\ (\lambda x. A)\ a\ a'$}
+\AxiomC{$\Gamma \vdash i : I$}
+\BinaryInfC{$\Gamma \vdash p\ @\ i : A[x := i]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash Type$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : Type$}
+\UnaryInfC{$\Gamma \vdash A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash I : Type$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : Type$}
+\AxiomC{$\Gamma, x : A \vdash B : Type$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : Type$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A : Type$}
+\AxiomC{$\Gamma \vdash a  : A[x := left]$}
+\AxiomC{$\Gamma \vdash a' : A[x := right]$}
+\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x. A)\ a\ a' : Type$}
+\DisplayProof
+\end{center}
+
+\bigskip
+\caption{Правила вывода.}
+\label{table:inf-rules}
+\end{table}
+
+Правила редукции:
+\begin{itemize}
+\item $(\lambda x.b)\ a \to_\beta b[x := a]$
+\item $path\ (\lambda x. a)\ @\ i \to_\beta a[x := i]$
+\item $coe_{\lambda k.A}\ i\ a\ i \to_\beta a$
+\item $coe_{\lambda k.A}\ i\ a\ j \to_\sigma a$, если $k \notin FV(A)$
+\end{itemize}
+
+% Первое правило - обычныая $\beta$-редукцию для лямбда-термов.
+% Следующие четыре правила описывают поведение функцию $squeeze$, таким образом она определяет ретракцию квадрата на отрезок.
+
+Поведение элиминатора $coe$ можно описать следующим образом:
+по расслоению $\lambda x. A$ над $I$ и по точке $a$ в слое над некоторой точкой $i$ интервала $coe_{\lambda x. A}\ i\ a$ конструирует сечение этого расслоения.
+% Первые два правила редукции для $coe$ говорят, что это сечение в точке $i$ возвращает $a$ (при $i$ равном $left$ и $right$).
+Первое правило редукции для $coe$ говорит, что это сечение в точке $i$ возвращает $a$.
+Последнее правило говорит, что есть расслоение тривиально, то сечение константно.
+Оно необходимо для того, чтобы $J$ удовлетворяло обычному правилу редукции для него.
+Без $\sigma$-правила для это будет верно только с точностью до эквивалетности, то есть мы всегда можем найти путь между $coe_{\lambda. A}\ i\ a\ j$ и $a$.
+Это правило несколько отличается от остальных правил редукций и не является настолько же важным, поэтому мы обозначаем его другой буквой.
+
+Одно из важных свойств систем типов, которое нам понадобится, - это свойство \emph{каноничности}.
+Мы будем говорить, что система обладает этим свойством, если все замкнутые термы в нормальной форме имеют канонический вид,
+    то есть являются конструктором, возможно примененным к аргументам.
+Система, описаная выше, не обладает этим свойством.
+Чтобы исправить эту проблему, мы добавим еще больше правил редукции.
+Нам нужно добавить одно $\tau$-правило для $\Pi$-типа:
+\[ coe_{\lambda k. \Pi (a : A) B}\ i\ (\lambda a. b)\ j \to_\tau \lambda a'. coe_{\lambda k. B[a := coe_{\lambda k. A}\,j\,a'\,k]}\ i\ (b[a := coe_{\lambda k. A}\ j\ a'\ i])\ j \]
+Также нам нужно добавить аналогичное правило для $Path$-типов, но в этом случае ситуация значительно сложнее.
+Нам нужно расширить систему, добавив новые термы $fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}. a_n)\ (\lambda \overline{x}. a'_n) \ldots (\lambda \overline{x}. a_2)\ (\lambda \overline{x}. a'_2)\ i\ (\lambda \overline{x}. a_1)\ j_1 \ldots j_n$ для $n \geq 2$ и правила вывода для них:
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash i : I$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash j_1 : I$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash j_n : I$
+\Axiom$\fCenter \Gamma, x_1 : I, \ldots x_n : I \vdash a_n : A$
+\noLine
+\UnaryInf$\fCenter \Gamma, x_1 : I, \ldots x_n : I \vdash a'_n : A$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma, x_1 : I, \ldots x_n : I \vdash a_2 : A$
+\noLine
+\UnaryInf$\fCenter \Gamma, x_1 : I, \ldots x_n : I \vdash a'_2 : A$
+\noLine
+\UnaryInf$\fCenter \Gamma, x_1 : I, \ldots x_n : I \vdash a_1 : A$
+\def\extraVskip{2pt}
+\RightLabel{, $a\ i =_\beta f\ left$, $f\ right =_\beta a'\ i$}
+\BinaryInfC{$\Gamma \vdash fill_{\lambda \overline{x}. A}\ \overline{(\lambda \overline{x}. a_k)\ (\lambda \overline{x}. a'_k)}\ i\ (\lambda \overline{x}. a_1)\ \overline{j} : A[\overline{x} := \overline{j}]$}
+\DisplayProof
+\end{center}
+
+\[ coe_{\lambda k. Path\,(\lambda x. A)\,a_1\,a_2}\ i\ (path\ (\lambda x. a))\ j \to_\tau \lambda a'. coe_{\lambda k. B[a := coe_{\lambda k. A}\,j\,a'\,k]}\ i\ (b[a := coe_{\lambda k. A}\ j\ a'\ i])\ j \]
+
+Теперь мы сформулируем несколько стандартных мета-теоретических свойств системы.
+Все доказательства стандартны, поэтому мы будем приводить в основном только их наброски.
+Начнем со следующего простого утверждения, которое говорит, что типизация замкнута относительно редукций.
+\begin{prop}
+Пусть $A_1 \rbst A'_1$, \ldots $A_n \rbst A'_n$, $A \rbst A'$ и $a \rbst a'$.
+Тогда верны следующие утверждения:
+\begin{itemize}
+\item Если $x_1 : A_1, \ldots x_n : A_n \vdash$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash$.
+\item Если $x_1 : A_1, \ldots x_n : A_n \vdash A$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash A'$.
+\item Если $x_1 : A_1, \ldots x_n : A_n \vdash a : A$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash a' : A'$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+Единственный интересный случай - это $coe$.
+Для $\beta$ и $\sigma$ правил всё просто.
+Для доказательтсва $\tau$ правила нужно использовать $\beta$ правило.
+Именно поэтому $\beta$ правило для $coe$ определено для всех $i$, а не только для $left$ и $right$.
+\end{proof}
+
+Теперь мы докажем, что отношение $\rbst$ \emph{конфлюентно}.
+Это свойство говорит, что если $t \rbst q$ и $t \rbst r$, то существует терм $s$ такой, что $q \rbst s$ и $r \rbst s$.
+Доказательство в основном стандартно, единственный не очевидный момент - это правила для $coe$, но не сложно адаптировать доказательство и для них.
+Во-первых, мы введем новое отношение редукции $\to_p$, которое определяется индуктивно:
+\begin{itemize}
+\item $t \to_p t$.
+\item Если $b \to_p b'$ и $a \to_p a'$, то $(\lambda x. b)\ a \to_p b'[x := a']$.
+% \item $squeeze\ left\ j \to_p left$.
+% \item Если $j \to_p j'$, то $squeeze\ right\ j \to_p j'$.
+% \item $squeeze\ i\ left \to_p left$.
+% \item Если $i \to_p i'$, то $squeeze\ i\ right \to_p i'$.
+\item Если $a \to_p a'$ и $i \ebst j$, то $coe_{\lambda k. A}\ i\ a\ j\ \to_p a'$.
+\item Если $a \to_p a'$ и $k \notin FV(A)$, то $coe_{\lambda k. A}\ i\ a\ j\ \to_p a'$.
+\item Если $A \to_p A'$, $B \to_p B'$, $i \to_p i'$, $b \to_p b'$ и $j \to_p j'$, то
+    \[ coe_{\lambda k. \Pi (a : A) B}\ i\ (\lambda a. b)\ j \to_p \lambda a'. coe_{\lambda k. B'[a := coe_{\lambda k. A'}\,j'\,a'\,k]}\ i'\ (b'[a := coe_{\lambda k. A'}\ j'\ a'\ i'])\ j' \]
+\item Если $f \to_p f'$ и $a \to_p a'$, то $f\ a \to_p f'\ a'$.
+\item Если $a \to_p a'$, то $\lambda x. a \to_p \lambda x. a'$.
+\item Если $A \to_p A'$ и $B \to_p B'$, то $\Pi (a : A) B \to_p \Pi (a : A') B'$.
+% \item Если $i \to_p i'$ и $j \to_p j'$, то $squeeze\ i\ j \to_p squeeze\ i'\ j'$.
+\item Если $A \to_p A'$, $i \to_p i'$, $a \to_p a'$ и $j \to_p j'$, то $coe_{\lambda x. A}\ i\ a\ j \to_p coe_{\lambda x. A'}\ i'\ a'\ j'$.
+\end{itemize}
+
+Теперь мы хотим показать, что $\to_p$ конфлюентно.
+Чтобы доказать часть с $\beta$-редукцией для лямбда-термов, нам потребуются следующая лемма.
+
+\begin{lem}
+Если $b \to_p b'$ и $a \to_p a'$, то $b[x := a] \to_p b'[x := a']$.
+\end{lem}
+\begin{proof}
+Простая индукция по определению $b \to_p b'$.
+В случае $b \to_p b$ мы продолжаем индукцией по построению терма $b$.
+\end{proof}
+
+\begin{lem}
+Отношение $\to_p$ конфлюентно.
+\end{lem}
+\begin{proof}
+Пусть $b \to_p b'$ и $b \to_p b''$.
+Нужно показать, что существует терм $c$ такой, что $b' \to_p c$ и $b'' \to_p c$.
+Мы делаем это индукцией по определению отношений $b \to_p b'$ и $b \to_p b''$.
+Большинство пунктов элементарно.
+Для случая $(\lambda x. b)\ a \to_p b'[x := a']$ мы используем предыдущую лемму.
+Для случая $coe_{\lambda k. A}\ i\ a\ j \to_p a'$ когда $i \ebst j$ мы используем тот факт, что $t \to_p s$ влечет $t \ebst s$.
+
+TODO: Написать подробнее?
+\end{proof}
+
+\begin{prop}
+Отношение $\rbst$ конфлюентно.
+\end{prop}
+\begin{proof}
+Это следует из предыдущей леммы и того факта, что транзитивное замыкание $\to_p$ совпадает с $\rbst$.
+\end{proof}
+
+\begin{remark}
+Отношение $\rbs$ также конфлюентно.
+Доказательство этого факта аналогично доказательству предыдущего с тем отличием, что в определении $\to_p$ нужно опустить правило, касающееся $\tau$.
+\end{remark}
+
+Теперь докажем, что система обладает свойством каноничности.
+
+\begin{prop}
+Пусть $\Gamma$ - это контекст вида $x_1 : I, \ldots x_n : I$.
+Тогда верно следующее:
+\begin{itemize}
+\item Если $A$ - тип в контексте $\Gamma$, находящийся в нормальной форме, то либо $A = I$, либо $A = Type$, либо $A = \Pi (a : A') B'$ для некоторых $A',B'$.
+\item Если $a$ - терм типа $A$ в контексте $\Gamma$, находящийси в нормальной форме, и $A$ $\bst$-эквивалентно $\Pi$-типу, то $a$ имеет вид $\lambda x. a'$.
+\item Если $a$ - терм типа $A$ в контексте $\Gamma$, находящийси в нормальной форме, и $A$ $\bst$-эквивалентно $Type$, то либо $a = I$, либо $a$ имеет вид $\Pi (a : A') B'$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+Доказательство индукцией по выводу $\Gamma \vdash A$ и $\Gamma \vdash a : A$.
+Случай $\Gamma \vdash x : A$, где $x$ - переменная, следует из конфлюентности.
+Единственный интересный случай - это правило для $coe$.
+По предположению индукции $A$ является либо типом интервала, либо $\Pi$-типом.
+Но тогда терм не находится в нормальной форме, так как в первом случае он редуцируется по $\sigma$-правилу, а во втором по $\tau$-правилу.
+\end{proof}
+
+\begin{cor}
+Описанная система с $\bst$-правилами редукций обладает свойством каноничности.
+\end{cor}
+
+Теперь мы докажем \emph{сильную нормализуемость}.
+Мы говорим, что терм сильно нормализуем, если не существует бесконечной последовательности редукций, начинающейся с этого терма.
+Мы говорим, что теория сильно нормализуема, если $\Gamma \vdash a : A$ влечет, что $a$ сильно нормалиуем, и $\Gamma \vdash A$ влечет, что $A$ сильно нормализуем.
+
+Для доказательства сильной нормализуемости нам понадобится понятие \emph{насыщенного} множества.
+Множество сильно нормализуемых термов мы будем обозначать $SN$.
+Если терм $t$ $\bst$-редуцируется к $s$ за один шаг, мы будем писать $t \to_1 s$.
+Множество термов $s$, к которым $t$ редуцируется за один шаг, мы будем обозначать $red_1(t)$ (то есть $red_1(t) = \{ s\ |\ t \to_1 s \}$).
+Термы, которые не являются ни абстракцией, ни $\Pi$-типом, мы будем называть \emph{простыми}, и множество простых термов обозначать $S$.
+Мы будем говорить, что множество термов $X$ насыщенно, если выполнены следующие условия:
+\begin{description}
+\item[(SAT1)] $X \subseteq SN$.
+\item[(SAT2)] Если $t \in X$ и $t \to_1 s$, то $s \in X$.
+\item[(SAT3)] Если $t \in S$, и $red_1(t)$ является подмножеством $X$, то $t \in X$.
+\end{description}
+
+Условие \textbf{(SAT3)}, в частности, означает, что любой простой терм в нормальной форме должен принадлежать $X$.
+В частности, все переменные принадлежат $X$, следовательно $X$ не пусто.
+Если $X \subseteq SN$, то существует минимальное насыщенное множество, содержащее $X$.
+Мы называем это множество насыщением $X$ и обозначаем $sat(X)$.
+
+Чтобы доказать сильную нормализуемость, мы введем частичную функцию $\ll - \rr : Term \to SAT$,
+    где $Term$ - множество термов, а $SAT$ - множество насыщенных подмножеств $Term$.
+Для этого мы сначала определим ее график $G \subseteq Term \times SAT$ индуктивным образом.
+
+\medskip
+\begin{center}
+\AxiomC{$(t,A) \in G$}
+\RightLabel{, если $t \to_1 s$}
+\UnaryInfC{$(s,A) \in G$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\forall s \in red_1(t)\ (s,A) \in G$}
+\RightLabel{, если $t \in S$, и $red_1(t)$ не пусто}
+\UnaryInfC{$(t,A) \in G$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{}
+\RightLabel{, если $t \in S$, и $red_1(t)$ пусто}
+\UnaryInfC{$(t,SN) \in G$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$(I, sat(\{left, right\})) \in G$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$(t,A) \in G$}
+\AxiomC{$\forall a \in A\ (s[x := a], B_a) \in G$}
+\BinaryInfC{$(\Pi (x : t) s, \{ f\ |\ \forall a \in A\ (f\ a \in B_a)\}) \in G$}
+\DisplayProof
+\end{center}
+\medskip
+
+Индукцией по построению $G$ не сложно показать, что если $t \ebst s$, $(t,A) \in G$ и $(s,A') \in G$, то $A = A'$.
+Следовательно $G$ действительно ялвяется графиком частичной функции $\ll - \rr : Term \to SAT$.
+Пусть $Type \subseteq Term$ будет множество тех термов, на которых $\ll - \rr$ определена.
+Индукцией по построению $G$ не сложно показать, что $Type \subseteq SN$, откуда следует, что $Type$ насыщено.
+
+Для заключительной части доказательства нам понадобится еще одно понятие.
+\emph{Означивание} - это частичная функцию из множества переменных в множество термов.
+Означивание, которое нигде не определено, мы обозначаем $\varnothing$.
+Если $\rho$ - означивание, и $t$ - терм, то $\rho[x := t]$ - это означивание, которое на $x$ возвращает $t$ и на остальных переменных определено также как и $\rho$.
+Если $\rho$ - означивание, и $t$ - терм, то $t[\rho]$ - это терм, который определяется как
+    $t[x_1 := \rho(x_1), \ldots x_n := \rho(x_n)]$, где $\{x_1, \ldots x_n$\} - это домен $\rho$.
+Если $\rho$ - означивание, и $X$ - множество термов, то $X[\rho] = \{ t[\rho]\ |\ t \in X \}$.
+
+Теперь мы докажем простую техническую лемму.
+
+\begin{lem}[nat-of-int]
+Пусть $A \in Type$.
+Тогда для любой инволюции $\varphi$ (то есть такого означивания, что для любого терма $t$ верно $t[\varphi][\varphi] = t$)
+верно, что $A[\varphi] \in Type$, и $\ll A[\varphi] \rr = \ll A \rr [\varphi]$.
+\end{lem}
+\begin{proof}
+Индукцией по построению $(A, \ll A \rr) \in G$.
+Первые четыре случая легко следуют из того факта, что $A' \to_1 A$ влечет $A'[\varphi] \to_1 A[\varphi]$ для любого означивания $\varphi$.
+Откуда следует, что для любой инволюции $\varphi$ верно, что $red_1(A[\varphi]) = red_1(A)[\varphi]$, $SN[\varphi] = SN$, и $sat(X[\varphi]) = sat(X)[\varphi]$.
+
+Последний случай:
+\begin{center}
+\AxiomC{$(A, \ll A \rr) \in G$}
+\AxiomC{$\forall a \in \ll A \rr \ (B[x := a], \ll B[x := a] \rr) \in G$}
+\BinaryInfC{$(\Pi (x : A) B, \{ f\ |\ \forall a \in \ll A \rr\ (f\ a \in \ll B[x := a] \rr)\}) \in G$}
+\DisplayProof
+\end{center}
+По индукционной гипотезе мы знаем, что $(A[\varphi], \ll A \rr [\varphi]) \in G$, и $\forall a \in \ll A \rr\ (B[x := a][\varphi], \ll B[x := a] \rr [\varphi]) \in G$.
+Так как $B[x := a][\varphi] = B[\varphi][x := a[\varphi]]$, то последнее выражение можно переписать как
+    $\forall a \in \ll A \rr [\varphi]\ (B[\varphi][x := a], \ll B[x := a[\varphi]] \rr [\varphi]) \in G$.
+Откуда получаем, что \[ ((\Pi (x : A) B)[\varphi], \{ f\ |\ \forall a \in \ll A \rr [\varphi]\ (f\ a \in \ll B[x := a[\varphi]] \rr [\varphi]) \}) \in G \].
+Таким образом $(\Pi (x : A) B)[\varphi] \in Type$.
+Осталось убедиться, что множество, описанное выше, совпадает с множеством $\{ f[\varphi]\ |\ \forall a \in \ll A \rr\ (f\ a \in \ll B[x := a] \rr) \}$.
+Это легко следует из того факта, что $\varphi$ - инволюция.
+\end{proof}
+
+Так как множество переменных бесконечно, то его можно разбить на два бесконечных непересекающихся равномощных подмножества $Var$ и $Var'$.
+Мы будем предполагать, что в правилах вывода учавствуют только переменные из $Var$.
+Теперь мы определим частичную функцию $\ll - \rr$ из множества контекстов в множество подмножеств множества означиваний:
+\[ \ll \varnothing \rr = \{ \varnothing \} \]
+\[ \ll \Gamma, x : A \rr = \{ \rho[x := a]\ |\ \rho \in \ll \Gamma \rr, a \in \ll A[\rho] \rr, FV(a) \subseteq dom(\rho) \cup \{ x \} \cup Var' \} \]
+Причем, мы считаем, что $\ll \Gamma, x : A \rr$ определено тогда и только тогда,
+    когда $\ll \Gamma \rr$ определено, и для любого $\rho \in \ll \Gamma \rr$ верно, что $A[\rho] \in Type$.
+
+\begin{prop}[sn]
+Верны следующие утверждения:
+\begin{itemize}
+\item Если $\Gamma \vdash$, то $\ll \Gamma \rr$ определено.
+\item Если $\Gamma \vdash A$, то $\ll \Gamma \rr$ определено,
+    и для любого $\rho \in \ll \Gamma \rr$ верно, что $A[\rho] \in Type$.
+\item Если $\Gamma \vdash a : A$, то $\ll \Gamma \rr$ определено,
+    и для любого $\rho \in \ll \Gamma \rr$ верно, что $A[\rho] \in Type$, и $a[\rho] \in \ll A[\rho] \rr$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+Индукцией по выводу.
+\begin{itemize}
+\item Случаи
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\varnothing \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\end{center}
+следуют из определения $\ll - \rr$ для контекстов.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, $x : A \in \Gamma$}
+\UnaryInfC{$\Gamma \vdash x : A$}
+\DisplayProof
+\end{center}
+Мы знаем, что $\Gamma = \Gamma', x : A, \Gamma''$.
+Если $\rho \in \ll \Gamma \rr$, то $A[\rho]$ = $A[\rho|_{\Gamma'}]$, т.к. в $A$ не встречаются свободные переменные из $x : A, \Gamma''$.
+Так как $\ll \Gamma \rr$ опеделено, то $\ll \Gamma', x : A \rr$ также определено,
+    следовательно $A[\rho|_{\Gamma'}] \in Type$ и $\rho(x) \in \ll A[\rho|_{\Gamma'}] \rr$, что и требовалось.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $A =_{\beta \sigma \tau} B$}
+\BinaryInfC{$\Gamma \vdash a : B$}
+\DisplayProof
+\end{center}
+Так как $\ll A[\rho] \rr$ и $\ll B[\rho] \rr$ определены, и $A[\rho] \ebst B[\rho]$, то $\ll A[\rho] \rr = \ll B[\rho] \rr$.
+Следовательно $a[\rho] \in \ll A[\rho] \rr = \ll B[\rho] \rr$.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+Пусть $\rho \in \ll \Gamma \rr$. Нам нужно показать, что $(\Pi (x : A) B)[\rho] \in Type$.
+Для этого достаточно показать, что для любого $a \in \ll A[\rho] \rr$ верно, что $B[\rho][x := a] = B[\rho[x := a]] \in Type$.
+По индукционной гипотезе мы знаем, что если $FV(a) \subseteq dom(\rho) \cup \{ x \} \cup Var'$, то это верно.
+Пусть теперь $a$ - произвольный, и пусть $V = FV(a) \setminus dom(\rho) \cup \{ x \} \cup Var'$.
+Так как $V$ - конечное множество, то мы можем выбрать $V' \subseteq Var'$ равномощное $V$.
+Теперь мы можем определить означивание $\phi$, которое каждой переменной из $V$ сопоставляет соответствующую переменную из $V'$ и наоборот.
+Таким образом, $\phi$ - инволюция.
+
+По лемме~\rlem{nat-of-int} мы знаем, что $a[\varphi] \in \ll A[\rho][\varphi] \rr$, но $A[\rho][\varphi] = A[\rho]$, так как $\varphi$ не меняет свободные переменные $A[\rho]$.
+По построению $FV(a[\varphi]) \subseteq dom(\rho) \cup \{ x \} \cup Var'$, следовательно $B[\rho][x := a[\varphi]] \in Type$.
+Но $B[\rho][x := a[\varphi]] = B[\rho][x := a][\varphi]$, следовательно $B[\rho][x := a] \in Type$ по лемме~\rlem{nat-of-int}, что и требовалось показать.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma, x : A \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+Мы должны показать, что для любых $\rho \in \ll \Gamma \rr$ и $a \in \ll A[\rho] \rr$ верно, что $(\lambda x. b[\rho]) a \in \ll B[\rho][x := a] \rr$.
+По индукционной гипотезе мы знаем, что если $FV(a) \subseteq dom(\rho) \cup \{ x \} \cup Var'$, то $b[\rho][x := a] \in \ll B[\rho][x := a] \rr$.
+Так как $b[\rho]$ и $a$ сильно нормализуемы, то в любой достаточно длинной последовательности редукций, начинающейся с $(\lambda x. b[\rho]) a$ внешний редекс будет сокращен.
+При этом мы получим терм к которому редуцируется $b[\rho][x := a]$, следовательно по \textbf{(SAT2)} он лежит в $\ll B[\rho][x := a] \rr$.
+Так как любая последовательность редукций заканчивается термами в $\ll B[\rho][x := a] \rr$, то \textbf{(SAT3)} влечет, что $(\lambda x. b[\rho]) a$ сам принадлежит этому множеству.
+
+Теперь, если $a$ произвольный, то мы выбираем инволюцию $\varphi$ также как в предыдущем пункте.
+Тогда $a[\varphi] \in \ll A[\rho] \rr$, и, как мы только что видели, $(\lambda x. b[\rho]) (a[\varphi]) \in \ll B[\rho][x := a[\varphi]] \rr$.
+Так как $(\lambda x. b[\rho]) (a[\varphi]) = ((\lambda x. b[\rho]) a)[\varphi]$, и $B[\rho][x := a[\varphi]] = B[\rho][x := a][\varphi]$, то
+    по лемме~\rlem{nat-of-int} $(\lambda x. b[\rho]) a \in \ll B[\rho][x := a] \rr$, что и требовалось показать.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma \vdash f\ a : B[x := a]$}
+\DisplayProof
+\end{center}
+Пусть $\rho \in \ll \Gamma\rr$.
+По индукционной гипотезе мы знаем, что $f[\rho]\ a[\rho] \in \ll B[\rho][x := a[\rho]] \rr$.
+Но $B[\rho][x := a[\rho]] = B[x := a][\rho]$, следовательно $(f\ a)[\rho] \in \ll B[x := a][\rho]\rr$, что и требовалось показать.
+
+\item Случаи
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash left : I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash right : I$}
+\DisplayProof
+\end{center}
+элементарны.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash a : A[x := i]$}
+\AxiomC{$\Gamma \vdash j : I$}
+\QuaternaryInfC{$\Gamma \vdash coe_{\lambda x. A}\ i\ a\ j : A[x := j]$}
+\DisplayProof
+\end{center}
+Пусть $\rho \in \ll \Gamma \rr$.
+Сначала мы покажем, что $A[x := j][\rho] \in Type$.
+Действительно, $A[x := j][\rho] = A[\rho][x := j[\rho]] = A[\rho[x := j[\rho]]]$, и это множество принадлежит $Type$ по индукционной гипотезе.
+
+Теперь мы должны доказать, что $(coe_{\lambda x. A}\ i\ a\ j)[\rho] \in \ll A[x := j][\rho] \rr$.
+Мы сделаем это индукцией по выводу $\Gamma, x : I \vdash A$.
+Конкретно, мы докажем следующее утверждение.
+Пусть $\Gamma, x : I, z_1 : Z_1, \ldots z_n : Z_n \vdash A$, и дерево вывода для него является поддеревом вывода
+    $\Gamma, x : I \vdash A$ (чтобы мы смогли использовать условие утверждения~\rprop{sn} для него).
+Пусть $i_1, j_1 \in \ll I \rr$ такие, что $FV(i_1) \cup FV(j_1) \subseteq dom(\rho) \cup Vars'$.
+Пусть $t_1, \ldots t_n$ - такая последовательность термов, что $FV(t_i) \subseteq dom(\rho) \cup \{ x, z_1, \ldots z_n \} \cup Vars'$, и
+$\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x : I, z_1 : Z_1, \ldots z_n : Z_n \rr$, где $k \in \{ i_1, j_1 \}$.
+Мы будем обозначать это означивание $\rho_i$ при $k = i_1$ и $\rho_j$ при $k = j_1$, а также мы будем писать $\rho_x$ при $k = x$.
+Тогда если $a_1 \in \ll A[\rho_i] \rr$, то $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1 \in \ll A[\rho_j] \rr$.
+
+По аргументу, аналогичному тому, который мы приводили в случае аппликации, нам достаточно показать,
+    что $\beta$, $\sigma$ и $\tau$ редукции для $coe$ переводят $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1$ в терм, лежащий в множестве $\ll A[\rho_j] \rr$.
+Случаи $\beta$ и $\sigma$ редукций не представляют проблем, так как они сразу же следуют из того факта, что $a_1 \in \ll A[\rho_i] \rr$, и в обоих случаях $A[\rho_i] = A[\rho_j]$.
+Пусть теперь $coe_{\lambda x. \Pi (a : A[\rho_x]) B[\rho_x]}\ i_1\ (\lambda a. b_1)\ j_1$ редуцируется по $\tau$-правилу к
+    $\lambda a'. coe_{\lambda x. B[\rho_x][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a'\,x]}\ i_1\ (b_1[a := coe_{\lambda x. A[\rho_x]}\ j_1\ a'\ i_1])\ j_1$.
+Обозначим этот терм за $f$.
+
+Мы должны показать, что $f$ принадлежит $\ll (\Pi (a : A) B)[\rho_j] \rr = \ll \Pi (a : A[\rho_j]) B[\rho_j]\rr$.
+Для этого достаточно показать, что для любого $a_2 \in \ll A[\rho_j] \rr$ верно, что $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr$,
+    при этом мы можем предположить, что $FV(a_2) \subseteq dom(\rho) \cup \{ z_1, \ldots z_n \} \cup Vars'$, используя аргумент аналогичный тому, который мы применяли в случае абстракции.
+По индукционной гипотезе $coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1 \in \ll A[\rho_i] \rr$.
+Также мы знаем, что $\lambda a. b_1 \in \Pi (a : A[\rho_i]) B[\rho_i]$,
+    следовательно $b_1[a := coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1] \in B[\rho_i][a := coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1]$.
+Обозначим этот терм за $b_2$.
+
+Теперь нам нужно применить индукционную гипотезу для терма $coe_{\lambda x. B[\rho_x][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,x]}\ i_1\ b_2\ j_1$.
+Для этого возьмем $z_{n+1} = a$, $Z_{n+1} = A$ и $t_{n+1} = coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ x$.
+Тогда мы получим, что этот терм, а следовательно и $f\,a_2$ принадлежит $\ll B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1] \rr$.
+Так как термы $B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1]$ и $B[\rho_j][a := a_2]$ $\tau$-эквивалентны,
+    то $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr$, что и требовалось доказать.
+
+\end{itemize}
+\end{proof}
+
+\begin{cor}
+Система сильно нормализуема.
+\end{cor}
+\begin{proof}
+Действительно, достаточно в качестве $\rho$ в условии утверждения взять тривиальное окружение, которое каждую $x$ из $\Gamma$ отображает в $x$.
+\end{proof}
+
+% \bibliographystyle{amsplain}
+% \bibliography{ref}
+
+\end{document}
