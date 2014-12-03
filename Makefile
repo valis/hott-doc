@@ -1,4 +1,4 @@
-all: rus.pdf tau-rus.pdf doc.pdf
+all: rus.pdf tau-rus.pdf doc.pdf tau.pdf
 
 %.pdf: %.tex
 	pdflatex -halt-on-error $<

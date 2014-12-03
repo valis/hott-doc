@@ -1,0 +1,214 @@
+\documentclass{amsart}
+
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+
+\providecommand\WarningsAreErrors{false}
+\ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{theorem}{Theorem}
+\newref{lem}{lemma}{Lemma}
+\newref{prop}{proposition}{Proposition}
+\newref{cor}{corollary}{Corollary}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{remark}{Remark}
+
+\newcommand{\cat}[1]{\mathbf{#1}}
+% \newcommand{\C}{\cat{C}}
+\newcommand{\bs}{\beta\sigma}
+\newcommand{\ebs}{=_{\bs}}
+\newcommand{\rbs}{\to_{\bs}}
+\newcommand{\bst}{\bs\tau}
+\newcommand{\ebst}{=_{\bst}}
+\newcommand{\rbst}{\to_{\bst}}
+\newcommand{\sSet}{\cat{sSet}}
+
+\numberwithin{figure}{section}
+
+\begin{document}
+
+\title{Canonicity for homotopy type theory with an interval type}
+
+\author{Valery Isaev}
+
+\begin{abstract}
+In this paper, we prove canonicity for a version of homotopy type theory, which we call \emph{homotopy type theory with an interval type}.
+We show that this theory essentially equivalent to Martin-L\"{o}f type theory with the univalence axiom.
+In particular, this implies that every closed term of Martin-L\"{o}f type theory with one univalent universe is propositionally equivalent to a term in canonical form.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+\section{Syntax}
+
+In this section, we will give inference rules for MLTT-U and HoTT-I.
+First, let us describe inference and reduction rules for a basic system, which is a common part of MLTT-U and HoTT-I.
+It has $\Pi$-types, $\Sigma$-types, natural numbers, and a universe, and it can be extended with other (higher) inductive types.
+% It also has an interval type $I$, which has two constructors ($left$ and $right$) and one eliminator ($coe$).
+
+\centerAlignProof
+
+\begin{table}
+
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\varnothing \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, $x : A \in \Gamma$}
+\UnaryInfC{$\Gamma \vdash x : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $A =_{\beta \sigma \tau} B$}
+\BinaryInfC{$\Gamma \vdash a : B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma \vdash f\ a : B[x := a]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash b : B[x : = a]$}
+\AxiomC{$\Gamma \vdash B$}
+\TrinaryInfC{$\Gamma \vdash (a,b) : \Sigma (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Sigma (x : A) B$}
+\UnaryInfC{$\Gamma \vdash proj_1\ p : A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash p : \Sigma (x : A) B$}
+\UnaryInfC{$\Gamma \vdash proj_2\ p : B[x := proj_1\ p]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \mathbb{N}$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash 0 : \mathbb{N}$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash n : \mathbb{N}$}
+\UnaryInfC{$\Gamma \vdash S\ n : \mathbb{N}$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : \mathbb{N} \vdash A$}
+\AxiomC{$\Gamma \vdash b : A[x := 0]$}
+\AxiomC{$\Gamma, x : \mathbb{N}, r : A \vdash s : A[x := S\ x]$}
+\AxiomC{$\Gamma \vdash n : \mathbb{N}$}
+\QuaternaryInfC{$\Gamma \vdash R_{\lambda x. A}\ b\ (\lambda x r. s)\ n : A[x := n]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash Type$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : Type$}
+\UnaryInfC{$\Gamma \vdash A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \mathbb{N} : Type$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A : Type$}
+\AxiomC{$\Gamma, x : A \vdash B : Type$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : Type$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : Type$}
+\AxiomC{$\Gamma, x : A \vdash B : Type$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B : Type$}
+\DisplayProof
+\end{center}
+
+\bigskip
+\caption{Inference rules.}
+\label{table:inf-rules}
+\end{table}
+
+Reduction rules:
+\begin{itemize}
+\item $(\lambda x.b)\ a \to_\beta b[x := a]$
+\item $path\ (\lambda x. a)\ @\ i \to_\beta a[x := i]$
+\item $coe_{\lambda k.A}\ i\ a\ i \to_\beta a$
+\item $coe_{\lambda k.A}\ i\ a\ j \to_\sigma a$ if $k \notin FV(A)$
+\end{itemize}
+
+% \bibliographystyle{amsplain}
+% \bibliography{ref}
+
+\end{document}
