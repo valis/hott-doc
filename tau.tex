@@ -1,6 +1,7 @@
 \documentclass{amsart}
 
 \usepackage{amssymb}
+\usepackage{amsmath}
 \usepackage[all]{xy}
 \usepackage{verbatim}
 \usepackage{ifthen}
@@ -62,10 +63,20 @@ In particular, this implies that every closed term of Martin-L\"{o}f type theory
 
 \section{Syntax}
 
-In this section, we will give inference rules for MLTT-U and HoTT-I.
-First, let us describe inference and reduction rules for a basic system, which is a common part of MLTT-U and HoTT-I.
+% In this section, we will give inference rules for MLTT-U and HoTT-I.
+In table~\ref{table:inf-rules}, we give inference and reduction rules for a basic system, which is a common part of MLTT-U and HoTT-I.
 It has $\Pi$-types, $\Sigma$-types, natural numbers, and a universe, and it can be extended with other (higher) inductive types.
+In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inference and reduction rules for MLTT-U and HoTT-I respectively.
 % It also has an interval type $I$, which has two constructors ($left$ and $right$) and one eliminator ($coe$).
+
+\begin{align*}
+& fill^1_{\lambda x_1. A}\ i\ a_1\ j_1 = coe_{\lambda x_1. A}\ i\ a_1\ j_1 \\
+& fill^{n+1}_{\lambda \overline{x}_{n+1}. A}\ (\lambda \overline{x}_n. a_{n+1})\ (\lambda \overline{x}_n. a'_{n+1}) \ldots (\lambda \overline{x}_n. a_2)\ (\lambda \overline{x}_n. a'_2)\ i\ (\lambda \overline{x}_n. a_1)\ j_1 \ldots j_{n+1} = \\
+& \indent fill^n_{\lambda \overline{x}_n. Path\ (\lambda x_{n+1}. A)\ a_{n+1}\ a'_{n+1}} \\
+& \indent (\lambda \overline{x}_{n-1}. path (\lambda x_n. a_n))\ (\lambda \overline{x}_{n-1}. path (\lambda x_n. a'_n)) \ldots \\
+& \indent (\lambda \overline{x}_{n-1}. path (\lambda x_n. a_2))\ (\lambda \overline{x}_{n-1}. path (\lambda x_n. a'_2)) \\
+& \indent i\ (\lambda \overline{x}_{n-1}. path (\lambda x_n. a_1))\ j_1 \ldots j_n\ @\ j_{n+1}
+\end{align*}
 
 \centerAlignProof
 
@@ -195,18 +206,155 @@ It has $\Pi$-types, $\Sigma$-types, natural numbers, and a universe, and it can 
 \DisplayProof
 \end{center}
 
+\medskip
+\begin{align*}
+& (\lambda x.b)\ a \to_\beta b[x := a] \\
+& proj_1\ (a, b) \to_\beta a \\
+& proj_2\ (a, b) \to_\beta b \\
+& R_{\lambda x. A}\ b\ (\lambda x r. s)\ 0 \to_\beta b \\
+& R_{\lambda x. A}\ b\ (\lambda x r. s)\ (S\ n) \to_\beta s[x := n, r := R_{\lambda x. A}\ b\ (\lambda x r. s)\ n]
+\end{align*}
+
 \bigskip
-\caption{Inference rules.}
+\caption{Inference and reduction rules.}
 \label{table:inf-rules}
 \end{table}
 
-Reduction rules:
-\begin{itemize}
-\item $(\lambda x.b)\ a \to_\beta b[x := a]$
-\item $path\ (\lambda x. a)\ @\ i \to_\beta a[x := i]$
-\item $coe_{\lambda k.A}\ i\ a\ i \to_\beta a$
-\item $coe_{\lambda k.A}\ i\ a\ j \to_\sigma a$ if $k \notin FV(A)$
-\end{itemize}
+\begin{table}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash a' : A$}
+\TrinaryInfC{$\Gamma \vdash Id\ A\ a\ a'$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash refl\ a : Id\ A\ a\ a$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A, x' : A, q : Id\ A\ x\ x' \vdash C$}
+\AxiomC{$\Gamma, x : A \vdash d : C[x' := x, q := refl\ x]$}
+\AxiomC{$\Gamma \vdash p : Id\ A\ a\ a'$}
+\TrinaryInfC{$\Gamma \vdash J_{\lambda x x' q. C}\ (\lambda x. d)\ p : C[x := a, x' := a', q := p]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A : Type$}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash a' : A$}
+\TrinaryInfC{$\Gamma \vdash Id\ A\ a\ a' : Type$}
+\DisplayProof
+\end{center}
+
+\[ J_{\lambda x x' q. C}\ (\lambda x. d)\ (refl\ a) \to_\beta d[x := a] \]
+
+\bigskip
+\caption{Inference and reduction rules for MLTT-U.}
+\label{table:MLTT-U-rules}
+\end{table}
+
+\begin{table}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash left : I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash right : I$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash a : A[x := i]$}
+\AxiomC{$\Gamma \vdash j : I$}
+\QuaternaryInfC{$\Gamma \vdash coe_{\lambda x. A}\ i\ a\ j : A[x := j]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash a  : A[x := left]$}
+\AxiomC{$\Gamma \vdash a' : A[x := right]$}
+\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x. A)\ a\ a'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash path\ (\lambda x. a) : Path\ (\lambda x. A)\ a[x := left]\ a[x := right]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : Path\ (\lambda x. A)\ a\ a'$}
+\AxiomC{$\Gamma \vdash i : I$}
+\BinaryInfC{$\Gamma \vdash p\ @_{a,a'}\ i : A[x := i]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A : Type$}
+\AxiomC{$\Gamma \vdash a  : A[x := left]$}
+\AxiomC{$\Gamma \vdash a' : A[x := right]$}
+\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x. A)\ a\ a' : Type$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\Axiom$\fCenter \Gamma \vdash A : Type$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash B : Type$
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash f : A \to B$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash g : B \to A$
+\Axiom$\fCenter \Gamma \vdash p : (a : A) \to Path\ A\ (g\ (f\ a))\ a$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash q : (b : B) \to Path\ B\ (f\ (g\ b))\ b$
+\def\extraVskip{2pt}
+\AxiomC{$\Gamma \vdash i : I$}
+\QuaternaryInfC{$\Gamma \vdash iso\ A\ B\ f\ g\ p\ q\ i : Type$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{align*}
+& path\ (\lambda x. t)\ @_{a,a'}\ i \to_\beta t[x := i] \\
+& p\ @_{a,a'}\ left \to_\beta a \\
+& p\ @_{a,a'}\ right \to_\beta a' \\
+& coe_{\lambda k.A}\ i\ a\ i \to_\beta a \\
+& coe_{\lambda k.A}\ i\ a\ j \to_\sigma a \text{ if } k \notin FV(A) \\
+& iso\ A\ B\ f\ g\ p\ q\ left \to_\beta A \\
+& iso\ A\ B\ f\ g\ p\ q\ right \to_\beta B \\
+& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \to_\beta f\ a \\
+& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \to_\beta g\ b
+\end{align*}
+
+\bigskip
+\caption{Inference rules for HoTT-I.}
+\label{table:HoTT-I-rules}
+\end{table}
 
 % \bibliographystyle{amsplain}
 % \bibliography{ref}

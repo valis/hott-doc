@@ -38,7 +38,7 @@
 \newref{remark}{замечание}{Замечание}
 
 \newcommand{\cat}[1]{\mathbf{#1}}
-% \newcommand{\C}{\cat{C}}
+\renewcommand{\C}{\cat{C}}
 \newcommand{\bs}{\beta\sigma}
 \newcommand{\ebs}{=_{\bs}}
 \newcommand{\rbs}{\to_{\bs}}
@@ -50,6 +50,8 @@
 \newcommand{\rr}{\rrbracket}
 
 \numberwithin{figure}{section}
+
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
 
 \begin{document}
 
@@ -88,7 +90,7 @@
 \UnaryInfC{$\varnothing \vdash$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma \vdash A : U_\kappa$}
 \RightLabel{, $x \notin \Gamma$}
 \UnaryInfC{$\Gamma, x : A \vdash$}
 \DisplayProof
@@ -101,8 +103,21 @@
 
 \medskip
 \begin{center}
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, $\kappa' < \kappa \in \mathbb{N}$}
+\UnaryInfC{$\Gamma \vdash U_{\kappa'} : U_\kappa$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : U_{\kappa'}$}
+\RightLabel{, $\kappa' < \kappa$}
+\UnaryInfC{$\Gamma \vdash A : U_\kappa$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash B$}
+\AxiomC{$\Gamma \vdash B : U_\kappa$}
 \RightLabel{, $A =_{\beta \sigma \tau} B$}
 \BinaryInfC{$\Gamma \vdash a : B$}
 \DisplayProof
@@ -110,9 +125,9 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A$}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\AxiomC{$\Gamma \vdash A : U_\kappa$}
+\AxiomC{$\Gamma, x : A \vdash B : U_\kappa$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U_\kappa$}
 \DisplayProof
 \end{center}
 
@@ -131,7 +146,7 @@
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash I$}
+\UnaryInfC{$\Gamma \vdash I : U_\kappa$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash$}
@@ -150,7 +165,7 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma, x : I \vdash A : U_\kappa$}
 \AxiomC{$\Gamma \vdash i : I$}
 \AxiomC{$\Gamma \vdash a : A[x := i]$}
 \AxiomC{$\Gamma \vdash j : I$}
@@ -238,7 +253,6 @@
 Тогда верны следующие утверждения:
 \begin{itemize}
 \item Если $x_1 : A_1, \ldots x_n : A_n \vdash$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash$.
-\item Если $x_1 : A_1, \ldots x_n : A_n \vdash A$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash A'$.
 \item Если $x_1 : A_1, \ldots x_n : A_n \vdash a : A$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash a' : A'$.
 \end{itemize}
 \end{prop}
@@ -311,19 +325,16 @@ TODO: Написать подробнее?
 Теперь докажем, что система обладает свойством каноничности.
 
 \begin{prop}
-Пусть $\Gamma$ - это контекст вида $x_1 : I, \ldots x_n : I$.
-Тогда верно следующее:
-\begin{itemize}
-\item Если $A$ - тип в контексте $\Gamma$, находящийся в нормальной форме, то $A$ является либо типом интервала, либо $\Pi$-типом.
-\item Если $a$ - терм типа $A$ в контексте $\Gamma$, находящийси в нормальной форме, и $A$ $\bst$-эквивалентно $\Pi$-типу, то $a$ имеет вид $\lambda x. a'$.
-\end{itemize}
+Пусть $\Gamma$ - это контекст вида $x_1 : I, \ldots x_n : I$, $a$ - терм в нормальной форму, и верно $\Gamma \vdash a : A$.
+Тогда если $A \ebst U_\kappa$, то $a$ равен либо $I$, либо $U_{\kappa'}$, либо $\Pi$-типу.
+Если $A$ $\bst$-эквивалентно $\Pi$-типу, то $a$ имеет вид $\lambda x. a'$.
 \end{prop}
 \begin{proof}
-Доказательство индукцией по выводу $\Gamma \vdash A$ и $\Gamma \vdash a : A$.
+Доказательство индукцией по выводу $\Gamma \vdash a : A$.
 Случай $\Gamma \vdash x : A$, где $x$ - переменная, следует из конфлюентности.
 Единственный интересный случай - это правило для $coe$.
-По предположению индукции $A$ является либо типом интервала, либо $\Pi$-типом.
-Но тогда терм не находится в нормальной форме, так как в первом случае он редуцируется по $\sigma$-правилу, а во втором по $\tau$-правилу.
+По предположению индукции $A$ является либо вселенной, либо типом интервала, либо $\Pi$-типом.
+Но тогда терм не находится в нормальной форме, так как в первых двух случаях он редуцируется по $\sigma$-правилу, а во втором по $\tau$-правилу.
 \end{proof}
 
 \begin{cor}
@@ -332,7 +343,7 @@ TODO: Написать подробнее?
 
 Теперь мы докажем \emph{сильную нормализуемость}.
 Мы говорим, что терм сильно нормализуем, если не существует бесконечной последовательности редукций, начинающейся с этого терма.
-Мы говорим, что теория сильно нормализуема, если $\Gamma \vdash a : A$ влечет, что $a$ сильно нормалиуем, и $\Gamma \vdash A$ влечет, что $A$ сильно нормализуем.
+Мы говорим, что теория сильно нормализуема, если $\Gamma \vdash a : A$ влечет, что $a$ сильно нормалиуем.
 
 Для доказательства сильной нормализуемости нам понадобится понятие \emph{насыщенного} множества.
 Множество сильно нормализуемых термов мы будем обозначать $SN$.
@@ -351,82 +362,96 @@ TODO: Написать подробнее?
 Если $X \subseteq SN$, то существует минимальное насыщенное множество, содержащее $X$.
 Мы называем это множество насыщением $X$ и обозначаем $sat(X)$.
 
-Чтобы доказать сильную нормализуемость, мы введем частичную функцию $\ll - \rr : Term \to SAT$,
+Чтобы доказать сильную нормализуемость, мы введем частичные функции $\ll - \rr_\kappa : Term \to SAT$ для всех $\kappa \in \mathbb{N}$,
     где $Term$ - множество термов, а $SAT$ - множество насыщенных подмножеств $Term$.
-Для этого мы сначала определим ее график $G \subseteq Term \times SAT$ индуктивным образом.
+Для этого мы сначала определим их графики $G_\kappa \subseteq Term \times SAT$ индуктивным образом.
 
+\medskip
 \begin{center}
-\AxiomC{$(t,A) \in G$}
+\AxiomC{$(t,A) \in G_\kappa$}
 \RightLabel{, если $t \to_1 s$}
-\UnaryInfC{$(s,A) \in G$}
+\UnaryInfC{$(s,A) \in G_\kappa$}
 \DisplayProof
 \end{center}
 
+\medskip
 \begin{center}
-\AxiomC{$\forall s \in red_1(t)\ (s,A) \in G$}
+\AxiomC{$\forall s \in red_1(t)\ (s,A) \in G_\kappa$}
 \RightLabel{, если $t \in S$, и $red_1(t)$ не пусто}
-\UnaryInfC{$(t,A) \in G$}
+\UnaryInfC{$(t,A) \in G_\kappa$}
 \DisplayProof
 \end{center}
 
+\medskip
 \begin{center}
 \AxiomC{}
 \RightLabel{, если $t \in S$, и $red_1(t)$ пусто}
-\UnaryInfC{$(t,SN) \in G$}
+\UnaryInfC{$(t,SN) \in G_\kappa$}
 \DisplayProof
 \end{center}
 
+\medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$(I, sat(\{left, right\})) \in G$}
+\UnaryInfC{$(I, sat(\{left, right\})) \in G_\kappa$}
+\DisplayProof
+\quad
+\AxiomC{}
+\RightLabel{, $\kappa' < \kappa$}
+\UnaryInfC{$(U_{\kappa'}, Type_{\kappa'}) \in G_\kappa$}
 \DisplayProof
 \end{center}
 
+\medskip
 \begin{center}
-\AxiomC{$(t,A) \in G$}
-\AxiomC{$\forall a \in A\ (s[x := a], B_a) \in G$}
-\BinaryInfC{$(\Pi (x : t) s, \{ f\ |\ \forall a \in A\ (f\ a \in B_a)\}) \in G$}
+\AxiomC{$(t,A) \in G_\kappa$}
+\AxiomC{$\forall a \in A\ (s[x := a], B_a) \in G_\kappa$}
+\BinaryInfC{$(\Pi (x : t) s, \{ f\ |\ \forall a \in A\ (f\ a \in B_a)\}) \in G_\kappa$}
 \DisplayProof
 \end{center}
+\medskip
 
-Индукцией по построению $G$ не сложно показать, что если $t \ebst s$, $(t,A) \in G$ и $(s,A') \in G$, то $A = A'$.
-Следовательно $G$ действительно ялвяется графиком частичной функции $\ll - \rr : Term \to SAT$.
-Пусть $Type \subseteq Term$ будет множество тех термов, на которых $\ll - \rr$ определена.
-Индукцией по построению $G$ не сложно показать, что $Type \subseteq SN$, откуда следует, что $Type$ насыщено.
+Индукцией по построению $G_\kappa$ не сложно показать, что если $t \ebst s$, $(t,A) \in G_\kappa$ и $(s,A') \in G_\kappa$, то $A = A'$.
+Следовательно $G_\kappa$ действительно ялвяется графиком частичной функции $\ll - \rr_\kappa : Term \to SAT$.
+Множество $Type_\kappa \subseteq Term$ определяется как множество тех термов, на которых $\ll - \rr_\kappa$ определена.
+Индукцией по построению $G_\kappa$ не сложно показать, что $Type_\kappa \subseteq SN$, откуда следует, что $Type_\kappa$ насыщено.
+Несложно показать, что $Type_{\kappa'} \subseteq Type_\kappa$, если $\kappa' < \kappa$,
+    и функции $\ll - \rr_{\kappa'}$ и $\ll - \rr_\kappa$ совпадают на аргументах, на которых они обе определены.
+Мы определяем $Type \subseteq Term$ как объединение всех $Type_\kappa$, и функцию $\ll - \rr : Type \to SAT$ как $\ll t \rr = \ll t \rr_\kappa$ для достаточно большого $\kappa$.
 
 Для заключительной части доказательства нам понадобится еще одно понятие.
 \emph{Означивание} - это частичная функцию из множества переменных в множество термов.
 Означивание, которое нигде не определено, мы обозначаем $\varnothing$.
 Если $\rho$ - означивание, и $t$ - терм, то $\rho[x := t]$ - это означивание, которое на $x$ возвращает $t$ и на остальных переменных определено также как и $\rho$.
 Если $\rho$ - означивание, и $t$ - терм, то $t[\rho]$ - это терм, который определяется как
-    $t[x_1 := \rho(x_1), \ldots x_n := \rho(x_n)]$, где $\{x_1, \ldots x_n$\} - это домен $\rho$.
+    $t[x_1 := \rho(x_1), \ldots x_n := \rho(x_n)]$, где $\{x_1, \ldots x_n$\} - домен $\rho$.
 Если $\rho$ - означивание, и $X$ - множество термов, то $X[\rho] = \{ t[\rho]\ |\ t \in X \}$.
 
 Теперь мы докажем простую техническую лемму.
 
 \begin{lem}[nat-of-int]
-Пусть $A \in Type$.
+Пусть $A \in Type_\kappa$.
 Тогда для любой инволюции $\varphi$ (то есть такого означивания, что для любого терма $t$ верно $t[\varphi][\varphi] = t$)
-верно, что $A[\varphi] \in Type$, и $\ll A[\varphi] \rr = \ll A \rr [\varphi]$.
+верно, что $A[\varphi] \in Type_\kappa$, и $\ll A[\varphi] \rr_\kappa = \ll A \rr_\kappa [\varphi]$.
 \end{lem}
 \begin{proof}
-Индукцией по построению $(A, \ll A \rr) \in G$.
+Индукцией по построению $(A, \ll A \rr_\kappa) \in G_\kappa$.
 Первые четыре случая легко следуют из того факта, что $A' \to_1 A$ влечет $A'[\varphi] \to_1 A[\varphi]$ для любого означивания $\varphi$.
 Откуда следует, что для любой инволюции $\varphi$ верно, что $red_1(A[\varphi]) = red_1(A)[\varphi]$, $SN[\varphi] = SN$, и $sat(X[\varphi]) = sat(X)[\varphi]$.
 
 Последний случай:
 \begin{center}
-\AxiomC{$(A, \ll A \rr) \in G$}
-\AxiomC{$\forall a \in \ll A \rr \ (B[x := a], \ll B[x := a] \rr) \in G$}
-\BinaryInfC{$(\Pi (x : A) B, \{ f\ |\ \forall a \in \ll A \rr\ (f\ a \in \ll B[x := a] \rr)\}) \in G$}
+\AxiomC{$(A, \ll A \rr_\kappa) \in G_\kappa$}
+\AxiomC{$\forall a \in \ll A \rr_\kappa \ (B[x := a], \ll B[x := a] \rr_\kappa) \in G_\kappa$}
+\BinaryInfC{$(\Pi (x : A) B, \{ f\ |\ \forall a \in \ll A \rr_\kappa\ (f\ a \in \ll B[x := a] \rr_\kappa)\}) \in G_\kappa$}
 \DisplayProof
 \end{center}
-По индукционной гипотезе мы знаем, что $(A[\varphi], \ll A \rr [\varphi]) \in G$, и $\forall a \in \ll A \rr\ (B[x := a][\varphi], \ll B[x := a] \rr [\varphi]) \in G$.
+По индукционной гипотезе мы знаем, что $(A[\varphi], \ll A \rr_\kappa [\varphi]) \in G_\kappa$, и $\forall a \in \ll A \rr_\kappa\ (B[x := a][\varphi], \ll B[x := a] \rr_\kappa [\varphi]) \in G_\kappa$.
 Так как $B[x := a][\varphi] = B[\varphi][x := a[\varphi]]$, то последнее выражение можно переписать как
-    $\forall a \in \ll A \rr [\varphi]\ (B[\varphi][x := a], \ll B[x := a[\varphi]] \rr [\varphi]) \in G$.
-Откуда получаем, что \[ ((\Pi (x : A) B)[\varphi], \{ f\ |\ \forall a \in \ll A \rr [\varphi]\ (f\ a \in \ll B[x := a[\varphi]] \rr [\varphi]) \}) \in G \].
-Таким образом $(\Pi (x : A) B)[\varphi] \in Type$.
-Осталось убедиться, что множество, описанное выше, совпадает с множеством $\{ f[\varphi]\ |\ \forall a \in \ll A \rr\ (f\ a \in \ll B[x := a] \rr) \}$.
+    $\forall a \in \ll A \rr_\kappa [\varphi]\ (B[\varphi][x := a], \ll B[x := a[\varphi]] \rr_\kappa [\varphi]) \in G_\kappa$.
+Откуда получаем, что \[ ((\Pi (x : A) B)[\varphi], \{ f\ |\ \forall a \in \ll A \rr_\kappa [\varphi]\ (f\ a \in \ll B[x := a[\varphi]] \rr_\kappa [\varphi]) \}) \in G_\kappa \].
+Таким образом $(\Pi (x : A) B)[\varphi] \in Type_\kappa$.
+Осталось убедиться, что множество, описанное выше, совпадает с множеством $\{ f[\varphi]\ |\ \forall a \in \ll A \rr_\kappa\ (f\ a \in \ll B[x := a] \rr_\kappa) \}$.
 Это легко следует из того факта, что $\varphi$ - инволюция.
 \end{proof}
 
@@ -442,8 +467,6 @@ TODO: Написать подробнее?
 Верны следующие утверждения:
 \begin{itemize}
 \item Если $\Gamma \vdash$, то $\ll \Gamma \rr$ определено.
-\item Если $\Gamma \vdash A$, то $\ll \Gamma \rr$ определено,
-    и для любого $\rho \in \ll \Gamma \rr$ верно, что $A[\rho] \in Type$.
 \item Если $\Gamma \vdash a : A$, то $\ll \Gamma \rr$ определено,
     и для любого $\rho \in \ll \Gamma \rr$ верно, что $A[\rho] \in Type$, и $a[\rho] \in \ll A[\rho] \rr$.
 \end{itemize}
@@ -457,7 +480,7 @@ TODO: Написать подробнее?
 \UnaryInfC{$\varnothing \vdash$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma \vdash A : U_\kappa$}
 \RightLabel{, $x \notin \Gamma$}
 \UnaryInfC{$\Gamma, x : A \vdash$}
 \DisplayProof
@@ -479,7 +502,7 @@ TODO: Написать подробнее?
 \item Случай
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash B$}
+\AxiomC{$\Gamma \vdash B : U_\kappa$}
 \RightLabel{, $A =_{\beta \sigma \tau} B$}
 \BinaryInfC{$\Gamma \vdash a : B$}
 \DisplayProof
@@ -489,22 +512,22 @@ TODO: Написать подробнее?
 
 \item Случай
 \begin{center}
-\AxiomC{$\Gamma \vdash A$}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\AxiomC{$\Gamma \vdash A : U_\kappa$}
+\AxiomC{$\Gamma, x : A \vdash B : U_\kappa$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U_\kappa$}
 \DisplayProof
 \end{center}
-Пусть $\rho \in \ll \Gamma \rr$. Нам нужно показать, что $(\Pi (x : A) B)[\rho] \in Type$.
-Для этого достаточно показать, что для любого $a \in \ll A[\rho] \rr$ верно, что $B[\rho][x := a] = B[\rho[x := a]] \in Type$.
+Пусть $\rho \in \ll \Gamma \rr$. Нам нужно показать, что $(\Pi (x : A) B)[\rho] \in Type_\kappa$.
+Для этого достаточно показать, что для любого $a \in \ll A[\rho] \rr_\kappa$ верно, что $B[\rho][x := a] = B[\rho[x := a]] \in Type_\kappa$.
 По индукционной гипотезе мы знаем, что если $FV(a) \subseteq dom(\rho) \cup \{ x \} \cup Var'$, то это верно.
 Пусть теперь $a$ - произвольный, и пусть $V = FV(a) \setminus dom(\rho) \cup \{ x \} \cup Var'$.
 Так как $V$ - конечное множество, то мы можем выбрать $V' \subseteq Var'$ равномощное $V$.
 Теперь мы можем определить означивание $\phi$, которое каждой переменной из $V$ сопоставляет соответствующую переменную из $V'$ и наоборот.
 Таким образом, $\phi$ - инволюция.
 
-По лемме~\rlem{nat-of-int} мы знаем, что $a[\varphi] \in \ll A[\rho][\varphi] \rr$, но $A[\rho][\varphi] = A[\rho]$, так как $\varphi$ не меняет свободные переменные $A[\rho]$.
-По построению $FV(a[\varphi]) \subseteq dom(\rho) \cup \{ x \} \cup Var'$, следовательно $B[\rho][x := a[\varphi]] \in Type$.
-Но $B[\rho][x := a[\varphi]] = B[\rho][x := a][\varphi]$, следовательно $B[\rho][x := a] \in Type$ по лемме~\rlem{nat-of-int}, что и требовалось показать.
+По лемме~\rlem{nat-of-int} мы знаем, что $a[\varphi] \in \ll A[\rho][\varphi] \rr_\kappa$, но $A[\rho][\varphi] = A[\rho]$, так как $\varphi$ не меняет свободные переменные $A[\rho]$.
+По построению $FV(a[\varphi]) \subseteq dom(\rho) \cup \{ x \} \cup Var'$, следовательно $B[\rho][x := a[\varphi]] \in Type_\kappa$.
+Но $B[\rho][x := a[\varphi]] = B[\rho][x := a][\varphi]$, следовательно $B[\rho][x := a] \in Type_\kappa$ по лемме~\rlem{nat-of-int}, что и требовалось показать.
 
 \item Случай
 \begin{center}
@@ -537,7 +560,7 @@ TODO: Написать подробнее?
 \item Случаи
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash I$}
+\UnaryInfC{$\Gamma \vdash I : U_\kappa$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash$}
@@ -548,11 +571,23 @@ TODO: Написать подробнее?
 \UnaryInfC{$\Gamma \vdash right : I$}
 \DisplayProof
 \end{center}
+
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, $\kappa' < \kappa$}
+\UnaryInfC{$\Gamma \vdash U_{\kappa'} : U_\kappa$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : U_{\kappa'}$}
+\RightLabel{, $\kappa' < \kappa$}
+\UnaryInfC{$\Gamma \vdash A : U_\kappa$}
+\DisplayProof
+\end{center}
 элементарны.
 
 \item Случай
 \begin{center}
-\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma, x : I \vdash A : U_\kappa$}
 \AxiomC{$\Gamma \vdash i : I$}
 \AxiomC{$\Gamma \vdash a : A[x := i]$}
 \AxiomC{$\Gamma \vdash j : I$}
@@ -564,36 +599,36 @@ TODO: Написать подробнее?
 Действительно, $A[x := j][\rho] = A[\rho][x := j[\rho]] = A[\rho[x := j[\rho]]]$, и это множество принадлежит $Type$ по индукционной гипотезе.
 
 Теперь мы должны доказать, что $(coe_{\lambda x. A}\ i\ a\ j)[\rho] \in \ll A[x := j][\rho] \rr$.
-Мы сделаем это индукцией по выводу $\Gamma, x : I \vdash A$.
+Мы сделаем это индукцией по выводу $\Gamma, x : I \vdash A : U_\kappa$.
 Конкретно, мы докажем следующее утверждение.
-Пусть $\Gamma, x : I, z_1 : Z_1, \ldots z_n : Z_n \vdash A$, и дерево вывода для него является поддеревом вывода
-    $\Gamma, x : I \vdash A$ (чтобы мы смогли использовать условие утверждения~\rprop{sn} для него).
+Пусть $\Gamma, x : I, z_1 : Z_1, \ldots z_n : Z_n \vdash A : U_\kappa$, и дерево вывода для него является поддеревом вывода
+    $\Gamma, x : I \vdash A : U_\kappa$ (чтобы мы смогли использовать условие утверждения~\rprop{sn} для него).
 Пусть $i_1, j_1 \in \ll I \rr$ такие, что $FV(i_1) \cup FV(j_1) \subseteq dom(\rho) \cup Vars'$.
 Пусть $t_1, \ldots t_n$ - такая последовательность термов, что $FV(t_i) \subseteq dom(\rho) \cup \{ x, z_1, \ldots z_n \} \cup Vars'$, и
 $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x : I, z_1 : Z_1, \ldots z_n : Z_n \rr$, где $k \in \{ i_1, j_1 \}$.
 Мы будем обозначать это означивание $\rho_i$ при $k = i_1$ и $\rho_j$ при $k = j_1$, а также мы будем писать $\rho_x$ при $k = x$.
-Тогда если $a_1 \in \ll A[\rho_i] \rr$, то $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1 \in \ll A[\rho_j] \rr$.
+Тогда если $a_1 \in \ll A[\rho_i] \rr_\kappa$, то $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1 \in \ll A[\rho_j] \rr_\kappa$.
 
 По аргументу, аналогичному тому, который мы приводили в случае аппликации, нам достаточно показать,
-    что $\beta$, $\sigma$ и $\tau$ редукции для $coe$ переводят $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1$ в терм, лежащий в множестве $\ll A[\rho_j] \rr$.
-Случаи $\beta$ и $\sigma$ редукций не представляют проблем, так как они сразу же следуют из того факта, что $a_1 \in \ll A[\rho_i] \rr$, и в обоих случаях $A[\rho_i] = A[\rho_j]$.
+    что $\beta$, $\sigma$ и $\tau$ редукции для $coe$ переводят $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1$ в терм, лежащий в множестве $\ll A[\rho_j] \rr_\kappa$.
+Случаи $\beta$ и $\sigma$ редукций не представляют проблем, так как они сразу же следуют из того факта, что $a_1 \in \ll A[\rho_i] \rr_\kappa$, и в обоих случаях $A[\rho_i] = A[\rho_j]$.
 Пусть теперь $coe_{\lambda x. \Pi (a : A[\rho_x]) B[\rho_x]}\ i_1\ (\lambda a. b_1)\ j_1$ редуцируется по $\tau$-правилу к
     $\lambda a'. coe_{\lambda x. B[\rho_x][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a'\,x]}\ i_1\ (b_1[a := coe_{\lambda x. A[\rho_x]}\ j_1\ a'\ i_1])\ j_1$.
 Обозначим этот терм за $f$.
 
-Мы должны показать, что $f$ принадлежит $\ll (\Pi (a : A) B)[\rho_j] \rr = \ll \Pi (a : A[\rho_j]) B[\rho_j]\rr$.
-Для этого достаточно показать, что для любого $a_2 \in \ll A[\rho_j] \rr$ верно, что $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr$,
+Мы должны показать, что $f$ принадлежит $\ll (\Pi (a : A) B)[\rho_j] \rr_\kappa = \ll \Pi (a : A[\rho_j]) B[\rho_j]\rr_\kappa$.
+Для этого достаточно показать, что для любого $a_2 \in \ll A[\rho_j] \rr_\kappa$ верно, что $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr_\kappa$,
     при этом мы можем предположить, что $FV(a_2) \subseteq dom(\rho) \cup \{ z_1, \ldots z_n \} \cup Vars'$, используя аргумент аналогичный тому, который мы применяли в случае абстракции.
-По индукционной гипотезе $coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1 \in \ll A[\rho_i] \rr$.
+По индукционной гипотезе $coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1 \in \ll A[\rho_i] \rr_\kappa$.
 Также мы знаем, что $\lambda a. b_1 \in \Pi (a : A[\rho_i]) B[\rho_i]$,
     следовательно $b_1[a := coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1] \in B[\rho_i][a := coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1]$.
 Обозначим этот терм за $b_2$.
 
 Теперь нам нужно применить индукционную гипотезу для терма $coe_{\lambda x. B[\rho_x][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,x]}\ i_1\ b_2\ j_1$.
 Для этого возьмем $z_{n+1} = a$, $Z_{n+1} = A$ и $t_{n+1} = coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ x$.
-Тогда мы получим, что этот терм, а следовательно и $f\,a_2$ принадлежит $\ll B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1] \rr$.
-Так как термы $B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1]$ и $B[\rho_j][a := a_2]$ $\tau$-эквивалентны,
-    то $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr$, что и требовалось доказать.
+Тогда мы получим, что этот терм, а следовательно и $f\,a_2$ принадлежит $\ll B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1] \rr_\kappa$.
+Так как термы $B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1]$ и $B[\rho_j][a := a_2]$ $\beta$-эквивалентны,
+    то $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr_\kappa$, что и требовалось доказать.
 
 \end{itemize}
 \end{proof}
@@ -602,7 +637,7 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 Система сильно нормализуема.
 \end{cor}
 \begin{proof}
-Действительно, достаточно в качестве $\rho$ в условии утверждения взять тривиальное окружение, которое каждую $x$ из $\Gamma$ отображает в $x$.
+Действительно, достаточно в качестве $\rho$ в условии утверждения взять тривиальное означивание, которое каждую $x$ из $\Gamma$ отображает в $x$.
 \end{proof}
 
 \section{Типы данных с условиями}
@@ -619,19 +654,21 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 
 Объявленние типа данных состоит из следующего набора данных:
 \begin{itemize}
-\item Имя типа данных $D$.
+\item Имя типа данных $D$ и его размер $\kappa \in \mathbb{N}$.
 \item Контекст $x_1 : A_1, \ldots x_n : A_n$, задающий параметры $D$.
 \item Список конструкторов и их типов: $c_i : \Pi (b_1 : B_1) \ldots \Pi (b_k : B_k) \to D\ x_1 \ldots x_n$.
-    Мы требуем, чтобы типы конструкторов имели указаный вид, более того, для каждого из $B_j$ должно быть верно,
-    что либо $D \notin FV(B_j)$, либо $B_j$ имеет вид $\Pi (e_1 : E_1) \ldots \Pi (e_m : E_m) \to D\ a_1 \ldots a_n$, и $D \notin FV(E_i)$ для всех $i$.
-    Другими словами, мы требуем, чтобы определение типа данных было строго положительным.
+    Мы требуем, чтобы типы конструкторов имели указаный вид, более того, определение типа данных должно быть строго положительным.
+    Другими словами, каждый из $B_j$ должен иметь вид $\Pi (e_1 : E_1) \ldots \Pi (e_m : E_m) \to F\ (D\ a_1 \ldots a_n)$, и $D \notin FV(E_i)$ для всех $i$.
+    Здесь $F$ должна быть строго положительной функцией.
+    Мы не будем описывать как проверить это условие синтаксически в общем случае, лишь скажем, что примеры таких $F$ включают константные функции, тождественные функцию и
+        функции вида $F(X) = (x =_X x')$, а также строго положительные функции замкнуты относительно композиции.
 \item Список правил редукций для конструкторов.
     Эти правила редукций мы называем \emph{условиями} на соответствующий конструктор.
     Позже мы опишем как должны выглядеть эти правила редукций.
 \end{itemize}
 
 Если $\Sigma$ - сигнатура, то мы определяем правила вывода в этой сигнатуре.
-Если мы хотим подчеркнуть, что вывод происходит в сигнатуре $\Sigma$, мы будем писать $\Gamma \vdash_\Sigma$, $\Gamma \vdash_\Sigma A$ и $\Gamma \vdash_\Sigma a : A$.
+Если мы хотим подчеркнуть, что вывод происходит в сигнатуре $\Sigma$, мы будем писать $\Gamma \vdash_\Sigma$ и $\Gamma \vdash_\Sigma a : A$.
 Это будут все старые правила ввода, к которым мы добавляем следующие:
 
 \medskip
@@ -647,10 +684,10 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 \AxiomC{$\Gamma \vdash$}
 \AxiomC{$\Gamma \vdash a_{i+1} : A_{i+1}[x_1 := a_1] \ldots [x_i := a_i]$}
 \RightLabel{,}
-\BinaryInfC{$\Gamma \vdash D\ a_1 \ldots a_n$}
+\BinaryInfC{$\Gamma \vdash D\ a_1 \ldots a_n : U_\kappa$}
 \DisplayProof
 \end{center}
-где $D$ - тип данных в $\Sigma$ с параметрами $x_1 : A_1, \ldots x_n : A_n$.
+где $D$ - тип данных в $\Sigma$ размера $\kappa$ с параметрами $x_1 : A_1, \ldots x_n : A_n$.
 
 \medskip
 \begin{center}
@@ -672,7 +709,7 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 \[ f\ p_1 \ldots p_n \to_\beta t, \]
 где $p_1, \ldots p_n$ - шаблоны, $t$ - терм.
 Для каждого такого правила и каждой подстановки в шаблоны $p_1, \ldots p_n$ мы добавляем следующие правила $\beta$-редукции:
-\[ f\ (p_1[x^1_1 := t^1_1] \ldots [x^1_{k_1} := t^1_{k_1}]) \ldots (p_n[x_n := t^n_1] \ldots [y^n_{k_n} := s^n_{k_n}]) \to_\beta t[x^i_j := t^i_j] \]
+\[ f\ (p_1[x^1_1 := t^1_1] \ldots [x^1_{k_1} := t^1_{k_1}]) \ldots (p_n[x^n_1 := t^n_1] \ldots [x^n_{k_n} := t^n_{k_n}]) \to_\beta t[x^i_j := t^i_j] \]
 
 Пусть $f : A$ - объявление функции $f$.
 Мы будем говорить, что оно корректно в сигнатуре $\Sigma$, если $\vdash_\Sigma A$, и для любого правила редукции $f\ p_1 \ldots p_n \to_\beta t$
@@ -684,14 +721,46 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
     что $p_i[x^i_1 := t^i_1] \ldots [x^i_{k_i} := t^i_{k_i}] \ebst p_i[x^i_1 := s^i_1] \ldots [x^i_{k_i} := s^i_{k_i}]$,
     верно $t[x^i_j := t^i_j] \ebst t[x^i_j := s^i_j]$.
 
-Мы будем говорить, что объявление типа данных $D$ в сигнатуре $\Sigma$ корректно, если выполнены следующие условия:
+Мы будем говорить, что объявление типа данных $D$ размера $\kappa$ в сигнатуре $\Sigma$ корректно, если выполнены следующие условия:
 \begin{itemize}
 \item $\Gamma \vdash_\Sigma$, где $\Gamma$ - параметры $D$.
-\item $\Gamma \vdash_{\Sigma,D} C_i$, где $C_i$ - тип конструктора $c_i$.
+\item $\Gamma \vdash_{\Sigma,D} C_i : U_\kappa$, где $C_i$ - тип конструктора $c_i$.
 \item Для каждого правила редукции $c_i\ p_1 \ldots p_k \to_\beta t_i$ существует контекст $\Delta$ и терм $B$ такие,
     что $\Gamma, \Delta \vdash_{\Sigma,D} c_i\ p_1 \ldots p_k : B$ и $\Gamma, \Delta \vdash_{\Sigma,D} t_i : B$.
     Так же как и в случае функций, мы требуем, чтобы набор правил удовлетворял условиям, и был завершающимся, при этом он не обязан быть полон.
 \end{itemize}
+
+\section{Интерпретация типов с условиями}
+
+В этом разделе мы опишем интерпретацию языка в категории $\sSet$ симплициальных множеств.
+Каждой функции $f : A$ в сигнатуре мы сопоставляем симплициальное множество $\ll A \rr$ и точку в нем $\ll f \rr \in \ll A \rr_{[0]}$.
+Каждому контексту $\Gamma$ мы сопоставляем симплициальное множество $\ll \Gamma \rr$.
+Каждому типу данных $D$ с параметрами $\Gamma$ мы сопоставляем фильтрированный объект $X_0 \to X_1 \to \ldots \to \varinjlim X_i \in \sSet / \ll \Gamma \rr$ такой,
+    что каждый морфизм $X_i \to X_{i + 1}$ является мономорфизмом, и каждый $X_i$ расслоен в $\sSet / \ll \Gamma \rr$.
+
+Пусть $c_i$ - конструктор типа данных $D$.
+Для простоты мы предположим, что тип $c_i$ имеет вид $T \to D\ x_1\ \ldots x_n$ (мы всегда можем переписать тип конструктора в таком виде, используя $\Sigma$-типы).
+Функция $\lambda D. T$ задает функтор $\sSet / \ll \Gamma \rr \to \sSet / \ll \Gamma \rr$, который мы будем обозначать как $T_i$.
+Мы предполагаем, что этот функтор сохраняет $\kappa$-секвенциальные копределы для некоторого регулярного кардинала $\kappa$ (это верно для всех типов, допустимых синтаксически).
+Для простоты мы будем предполагать, что $\kappa = \omega$.
+
+Пусть теперь у нас есть набор условий на конструктор $c_i$:
+\begin{align*}
+& c_i\ p^1_1 \ldots p^1_{k_1} \to_\beta t^1_i, \\
+& \ldots \\
+& c_i\ p^n_1 \ldots p^n_{k_n} \to_\beta t^n_i.
+\end{align*}
+Предположим сначала, что ни один из шаблонов $p^i_j$ не является конструктором самого типа данных $D$.
+Тогда левая часть условий задает подфунктор $S_i$ функтора $T_i$, конкретно $S_i(X)$ состоит из тех симплексов $T_i(X)$ на котороых функия, которую задают условия на $c_i$, определена.
+Правая часть задает естественное преобразование $\alpha_i : S_i(X) \to T_1(X) \amalg \ldots \amalg T_{i-1}(X) \amalg X$.
+
+Теперь мы хотим описать интерпретацию типа данных $D$. Это должен быть некоторый фильтрированный объект $X_0 \to X_1 \to \ldots \varinjlim X_i \in \sSet / \ll \Gamma \rr$.
+Мы определяем объекты $X_i$ следующим образом: $X_0 = 0$, $X^0_{i+1} = X_i$ и $X_{i+1} = R(X^n_{i+1})$, где $n$ - число конструкторов, а $R$ - раслоенная замена.
+Объекты $X^{j+1}_{i+1}$ мы определяем через следующие кодекартовы квадраты (при $i = 0$ в верхнем левом углу будет стоять $S_{j+1}(X_0)$):
+\[ \xymatrix{ T_{j+1}(X_{i-1}) \amalg_{S_{j+1}(X_{i-1})} S_{j+1}(X_i) \ar[r] \ar[d] & X^j_{i+1} \ar[d] \\
+              T_{j+1}(X_i) \ar[r] & \po X^{j+1}_{i+1}.
+            } \]
+Горизонтальный морфизм здесь задается морфизмами $T_{j+1}(X_{i-1}) \to X_i \to X^j_{i+1}$ и $S_{j+1}(X_i) \xrightarrow{\alpha_{j+1}} T_1(X_i) \amalg \ldots \amalg T_j(X_i) \amalg X_i \to X^j_{i+1}$.
 
 % \bibliographystyle{amsplain}
 % \bibliography{ref}
