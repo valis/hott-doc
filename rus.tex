@@ -51,17 +51,10 @@
 
 \numberwithin{figure}{section}
 
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
 \newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
 
 \begin{document}
-
-\makeatletter
-\def\@settitle{\begin{center}%
-    \baselineskip14\p@\relax
-    \bfseries
-    \@title
-  \end{center}%
-}
 
 \title{Гомотопическая теория типов с типом интервала}
 
@@ -90,7 +83,7 @@
 \UnaryInfC{$\varnothing \vdash$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A : U_\kappa$}
+\AxiomC{$\Gamma \vdash A$}
 \RightLabel{, $x \notin \Gamma$}
 \UnaryInfC{$\Gamma, x : A \vdash$}
 \DisplayProof
@@ -112,12 +105,16 @@
 \RightLabel{, $\kappa' < \kappa$}
 \UnaryInfC{$\Gamma \vdash A : U_\kappa$}
 \DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : U_\kappa$}
+\UnaryInfC{$\Gamma \vdash A$}
+\DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash B : U_\kappa$}
+\AxiomC{$\Gamma \vdash B$}
 \RightLabel{, $A =_{\beta \sigma \tau} B$}
 \BinaryInfC{$\Gamma \vdash a : B$}
 \DisplayProof
@@ -125,6 +122,11 @@
 
 \medskip
 \begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\quad
 \AxiomC{$\Gamma \vdash A : U_\kappa$}
 \AxiomC{$\Gamma, x : A \vdash B : U_\kappa$}
 \BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U_\kappa$}
@@ -165,7 +167,7 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, x : I \vdash A : U_\kappa$}
+\AxiomC{$\Gamma, x : I \vdash A$}
 \AxiomC{$\Gamma \vdash i : I$}
 \AxiomC{$\Gamma \vdash a : A[x := i]$}
 \AxiomC{$\Gamma \vdash j : I$}
@@ -253,6 +255,7 @@
 Тогда верны следующие утверждения:
 \begin{itemize}
 \item Если $x_1 : A_1, \ldots x_n : A_n \vdash$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash$.
+\item Если $x_1 : A_1, \ldots x_n : A_n \vdash A$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash A'$.
 \item Если $x_1 : A_1, \ldots x_n : A_n \vdash a : A$, то $x_1 : A'_1, \ldots x_n : A'_n \vdash a' : A'$.
 \end{itemize}
 \end{prop}
@@ -325,12 +328,17 @@ TODO: Написать подробнее?
 Теперь докажем, что система обладает свойством каноничности.
 
 \begin{prop}
-Пусть $\Gamma$ - это контекст вида $x_1 : I, \ldots x_n : I$, $a$ - терм в нормальной форму, и верно $\Gamma \vdash a : A$.
-Тогда если $A \ebst U_\kappa$, то $a$ равен либо $I$, либо $U_{\kappa'}$, либо $\Pi$-типу.
-Если $A$ $\bst$-эквивалентно $\Pi$-типу, то $a$ имеет вид $\lambda x. a'$.
+Пусть $\Gamma$ - это контекст вида $x_1 : I, \ldots x_n : I$.
+Тогда верны следующие утверждения:
+\begin{itemize}
+\item Если $A$ - терм в нормальной форме, и верно $\Gamma \vdash A$, то $A$ равен либо $I$, либо $U_\kappa$, либо $\Pi$-типу.
+\item Пусть $a$ - терм в нормальной форме, и верно $\Gamma \vdash a : A$.
+    Тогда если $A \ebst U_\kappa$, то $a$ равен либо $I$, либо $U_{\kappa'}$, либо $\Pi$-типу.
+    Если $A$ $\bst$-эквивалентно $\Pi$-типу, то $a$ имеет вид $\lambda x. a'$.
+\end{itemize}
 \end{prop}
 \begin{proof}
-Доказательство индукцией по выводу $\Gamma \vdash a : A$.
+Доказательство индукцией по выводу.
 Случай $\Gamma \vdash x : A$, где $x$ - переменная, следует из конфлюентности.
 Единственный интересный случай - это правило для $coe$.
 По предположению индукции $A$ является либо вселенной, либо типом интервала, либо $\Pi$-типом.
@@ -343,7 +351,7 @@ TODO: Написать подробнее?
 
 Теперь мы докажем \emph{сильную нормализуемость}.
 Мы говорим, что терм сильно нормализуем, если не существует бесконечной последовательности редукций, начинающейся с этого терма.
-Мы говорим, что теория сильно нормализуема, если $\Gamma \vdash a : A$ влечет, что $a$ сильно нормалиуем.
+Мы говорим, что теория сильно нормализуема, если $\Gamma \vdash A$ влечет, что $A$ сильно нормализуем, и $\Gamma \vdash a : A$ влечет, что $a$ сильно нормалиуем.
 
 Для доказательства сильной нормализуемости нам понадобится понятие \emph{насыщенного} множества.
 Множество сильно нормализуемых термов мы будем обозначать $SN$.
@@ -467,6 +475,7 @@ TODO: Написать подробнее?
 Верны следующие утверждения:
 \begin{itemize}
 \item Если $\Gamma \vdash$, то $\ll \Gamma \rr$ определено.
+\item Если $\Gamma \vdash A$, то $\ll \Gamma \rr$ определено, и для любого $\rho \in \ll \Gamma \rr$ верно, что $A[\rho] \in Type$.
 \item Если $\Gamma \vdash a : A$, то $\ll \Gamma \rr$ определено,
     и для любого $\rho \in \ll \Gamma \rr$ верно, что $A[\rho] \in Type$, и $a[\rho] \in \ll A[\rho] \rr$.
 \end{itemize}
@@ -480,7 +489,7 @@ TODO: Написать подробнее?
 \UnaryInfC{$\varnothing \vdash$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A : U_\kappa$}
+\AxiomC{$\Gamma \vdash A$}
 \RightLabel{, $x \notin \Gamma$}
 \UnaryInfC{$\Gamma, x : A \vdash$}
 \DisplayProof
@@ -502,7 +511,7 @@ TODO: Написать подробнее?
 \item Случай
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash B : U_\kappa$}
+\AxiomC{$\Gamma \vdash B$}
 \RightLabel{, $A =_{\beta \sigma \tau} B$}
 \BinaryInfC{$\Gamma \vdash a : B$}
 \DisplayProof
@@ -528,6 +537,15 @@ TODO: Написать подробнее?
 По лемме~\rlem{nat-of-int} мы знаем, что $a[\varphi] \in \ll A[\rho][\varphi] \rr_\kappa$, но $A[\rho][\varphi] = A[\rho]$, так как $\varphi$ не меняет свободные переменные $A[\rho]$.
 По построению $FV(a[\varphi]) \subseteq dom(\rho) \cup \{ x \} \cup Var'$, следовательно $B[\rho][x := a[\varphi]] \in Type_\kappa$.
 Но $B[\rho][x := a[\varphi]] = B[\rho][x := a][\varphi]$, следовательно $B[\rho][x := a] \in Type_\kappa$ по лемме~\rlem{nat-of-int}, что и требовалось показать.
+
+\item Случай
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+аналогичен предыдущему.
 
 \item Случай
 \begin{center}
@@ -582,12 +600,16 @@ TODO: Написать подробнее?
 \RightLabel{, $\kappa' < \kappa$}
 \UnaryInfC{$\Gamma \vdash A : U_\kappa$}
 \DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : U_\kappa$}
+\UnaryInfC{$\Gamma \vdash A$}
+\DisplayProof
 \end{center}
 элементарны.
 
 \item Случай
 \begin{center}
-\AxiomC{$\Gamma, x : I \vdash A : U_\kappa$}
+\AxiomC{$\Gamma, x : I \vdash A$}
 \AxiomC{$\Gamma \vdash i : I$}
 \AxiomC{$\Gamma \vdash a : A[x := i]$}
 \AxiomC{$\Gamma \vdash j : I$}
@@ -599,36 +621,36 @@ TODO: Написать подробнее?
 Действительно, $A[x := j][\rho] = A[\rho][x := j[\rho]] = A[\rho[x := j[\rho]]]$, и это множество принадлежит $Type$ по индукционной гипотезе.
 
 Теперь мы должны доказать, что $(coe_{\lambda x. A}\ i\ a\ j)[\rho] \in \ll A[x := j][\rho] \rr$.
-Мы сделаем это индукцией по выводу $\Gamma, x : I \vdash A : U_\kappa$.
+Мы сделаем это индукцией по выводу $\Gamma, x : I \vdash A$.
 Конкретно, мы докажем следующее утверждение.
-Пусть $\Gamma, x : I, z_1 : Z_1, \ldots z_n : Z_n \vdash A : U_\kappa$, и дерево вывода для него является поддеревом вывода
-    $\Gamma, x : I \vdash A : U_\kappa$ (чтобы мы смогли использовать условие утверждения~\rprop{sn} для него).
+Пусть $\Gamma, x : I, z_1 : Z_1, \ldots z_n : Z_n \vdash A$, и дерево вывода для него является поддеревом вывода
+    $\Gamma, x : I \vdash A$ (чтобы мы смогли использовать условие утверждения~\rprop{sn} для него).
 Пусть $i_1, j_1 \in \ll I \rr$ такие, что $FV(i_1) \cup FV(j_1) \subseteq dom(\rho) \cup Vars'$.
 Пусть $t_1, \ldots t_n$ - такая последовательность термов, что $FV(t_i) \subseteq dom(\rho) \cup \{ x, z_1, \ldots z_n \} \cup Vars'$, и
 $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x : I, z_1 : Z_1, \ldots z_n : Z_n \rr$, где $k \in \{ i_1, j_1 \}$.
 Мы будем обозначать это означивание $\rho_i$ при $k = i_1$ и $\rho_j$ при $k = j_1$, а также мы будем писать $\rho_x$ при $k = x$.
-Тогда если $a_1 \in \ll A[\rho_i] \rr_\kappa$, то $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1 \in \ll A[\rho_j] \rr_\kappa$.
+Тогда если $a_1 \in \ll A[\rho_i] \rr$, то $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1 \in \ll A[\rho_j] \rr$.
 
 По аргументу, аналогичному тому, который мы приводили в случае аппликации, нам достаточно показать,
-    что $\beta$, $\sigma$ и $\tau$ редукции для $coe$ переводят $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1$ в терм, лежащий в множестве $\ll A[\rho_j] \rr_\kappa$.
-Случаи $\beta$ и $\sigma$ редукций не представляют проблем, так как они сразу же следуют из того факта, что $a_1 \in \ll A[\rho_i] \rr_\kappa$, и в обоих случаях $A[\rho_i] = A[\rho_j]$.
+    что $\beta$, $\sigma$ и $\tau$ редукции для $coe$ переводят $coe_{\lambda x. A[\rho_x]}\ i_1\ a_1\ j_1$ в терм, лежащий в множестве $\ll A[\rho_j] \rr$.
+Случаи $\beta$ и $\sigma$ редукций не представляют проблем, так как они сразу же следуют из того факта, что $a_1 \in \ll A[\rho_i] \rr$, и в обоих случаях $A[\rho_i] = A[\rho_j]$.
 Пусть теперь $coe_{\lambda x. \Pi (a : A[\rho_x]) B[\rho_x]}\ i_1\ (\lambda a. b_1)\ j_1$ редуцируется по $\tau$-правилу к
     $\lambda a'. coe_{\lambda x. B[\rho_x][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a'\,x]}\ i_1\ (b_1[a := coe_{\lambda x. A[\rho_x]}\ j_1\ a'\ i_1])\ j_1$.
 Обозначим этот терм за $f$.
 
-Мы должны показать, что $f$ принадлежит $\ll (\Pi (a : A) B)[\rho_j] \rr_\kappa = \ll \Pi (a : A[\rho_j]) B[\rho_j]\rr_\kappa$.
-Для этого достаточно показать, что для любого $a_2 \in \ll A[\rho_j] \rr_\kappa$ верно, что $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr_\kappa$,
+Мы должны показать, что $f$ принадлежит $\ll (\Pi (a : A) B)[\rho_j] \rr = \ll \Pi (a : A[\rho_j]) B[\rho_j]\rr$.
+Для этого достаточно показать, что для любого $a_2 \in \ll A[\rho_j] \rr$ верно, что $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr$,
     при этом мы можем предположить, что $FV(a_2) \subseteq dom(\rho) \cup \{ z_1, \ldots z_n \} \cup Vars'$, используя аргумент аналогичный тому, который мы применяли в случае абстракции.
-По индукционной гипотезе $coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1 \in \ll A[\rho_i] \rr_\kappa$.
+По индукционной гипотезе $coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1 \in \ll A[\rho_i] \rr$.
 Также мы знаем, что $\lambda a. b_1 \in \Pi (a : A[\rho_i]) B[\rho_i]$,
     следовательно $b_1[a := coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1] \in B[\rho_i][a := coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ i_1]$.
 Обозначим этот терм за $b_2$.
 
 Теперь нам нужно применить индукционную гипотезу для терма $coe_{\lambda x. B[\rho_x][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,x]}\ i_1\ b_2\ j_1$.
 Для этого возьмем $z_{n+1} = a$, $Z_{n+1} = A$ и $t_{n+1} = coe_{\lambda x. A[\rho_x]}\ j_1\ a_2\ x$.
-Тогда мы получим, что этот терм, а следовательно и $f\,a_2$ принадлежит $\ll B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1] \rr_\kappa$.
+Тогда мы получим, что этот терм, а следовательно и $f\,a_2$ принадлежит $\ll B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1] \rr$.
 Так как термы $B[\rho_j][a := coe_{\lambda x. A[\rho_x]}\,j_1\,a_2\,j_1]$ и $B[\rho_j][a := a_2]$ $\beta$-эквивалентны,
-    то $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr_\kappa$, что и требовалось доказать.
+    то $f\,a_2 \in \ll B[\rho_j][a := a_2] \rr$, что и требовалось доказать.
 
 \end{itemize}
 \end{proof}
@@ -656,12 +678,13 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 \begin{itemize}
 \item Имя типа данных $D$ и его размер $\kappa \in \mathbb{N}$.
 \item Контекст $x_1 : A_1, \ldots x_n : A_n$, задающий параметры $D$.
-\item Список конструкторов и их типов: $c_i : \Pi (b_1 : B_1) \ldots \Pi (b_k : B_k) \to D\ x_1 \ldots x_n$.
-    Мы требуем, чтобы типы конструкторов имели указаный вид, более того, определение типа данных должно быть строго положительным.
-    Другими словами, каждый из $B_j$ должен иметь вид $\Pi (e_1 : E_1) \ldots \Pi (e_m : E_m) \to F\ (D\ a_1 \ldots a_n)$, и $D \notin FV(E_i)$ для всех $i$.
+\item Список конструкторов $c_i$ и контекст для каждого конструктора $y_1 : C_1, \ldots y_k : C_k$, задающий типы аргументов $c_i$.
+    В этом случае мы будем говорить, что $\Pi (y_1 : C_1) \ldots \Pi (y_k : C_k) (D\ x_1\ \ldots\ x_n)$ - это тип конструктора $c_i$.
+    Мы требуем, чтобы определение типа данных должно быть строго положительным.
+    Другими словами, каждый из $C_j$ должен иметь вид $\Pi (e_1 : E_1) \ldots \Pi (e_m : E_m) \to F\ (D\ a_1 \ldots a_n)$, и $D \notin FV(E_i)$ для всех $i$.
     Здесь $F$ должна быть строго положительной функцией.
-    Мы не будем описывать как проверить это условие синтаксически в общем случае, лишь скажем, что примеры таких $F$ включают константные функции, тождественные функцию и
-        функции вида $F(X) = (x =_X x')$, а также строго положительные функции замкнуты относительно композиции.
+    Мы не будем описывать как проверить это условие синтаксически в общем случае, лишь скажем, что примеры таких $F$ включают константные функции, тождественную функцию и
+        функции вида $F(X) = (x =_X x')$ (когда мы введем этот тип), а также строго положительные функции замкнуты относительно композиции.
 \item Список правил редукций для конструкторов.
     Эти правила редукций мы называем \emph{условиями} на соответствующий конструктор.
     Позже мы опишем как должны выглядеть эти правила редукций.
@@ -679,6 +702,8 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 \DisplayProof
 \end{center}
 
+Для всех типов данных $D$ в $\Sigma$ размера $\kappa$ с параметрами $x_1 : A_1, \ldots x_n : A_n$.
+
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
@@ -687,7 +712,6 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 \BinaryInfC{$\Gamma \vdash D\ a_1 \ldots a_n : U_\kappa$}
 \DisplayProof
 \end{center}
-где $D$ - тип данных в $\Sigma$ размера $\kappa$ с параметрами $x_1 : A_1, \ldots x_n : A_n$.
 
 \medskip
 \begin{center}
@@ -697,7 +721,7 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 \BinaryInfC{$\Gamma \vdash c : C[x_1 := a_1] \ldots [x_n := a_n]$}
 \DisplayProof
 \end{center}
-где $c : C$ - конструктор типа данных $D$ в $\Sigma$ с параметрами $x_1 : A_1, \ldots x_n : A_n$.
+где $c$ - конструктор $D$, и $C$ - тип $c$.
 
 Правила редукции для функций и конструкторов задаются при помощи \emph{сопоставлений с образцом (шаблоном)}.
 Понятие шаблона определяется индуктивно.
@@ -712,7 +736,7 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 \[ f\ (p_1[x^1_1 := t^1_1] \ldots [x^1_{k_1} := t^1_{k_1}]) \ldots (p_n[x^n_1 := t^n_1] \ldots [x^n_{k_n} := t^n_{k_n}]) \to_\beta t[x^i_j := t^i_j] \]
 
 Пусть $f : A$ - объявление функции $f$.
-Мы будем говорить, что оно корректно в сигнатуре $\Sigma$, если $\vdash_\Sigma A$, и для любого правила редукции $f\ p_1 \ldots p_n \to_\beta t$
+Мы будем говорить, что оно корректно в сигнатуре $\Sigma$, если $\vdash_\Sigma A$ и для любого правила редукции $f\ p_1 \ldots p_n \to_\beta t$
     существует контекст $\Gamma$ и терм $B$ такие, что $\Gamma \vdash_{\Sigma,f} f\ p_1 \ldots p_n : B$ и $\Gamma \vdash_{\Sigma,f} t : B$.
 Также мы требуем, чтобы набор правил редукций был полным и завершающимся. TODO: Написать подробнее?
 
@@ -721,28 +745,157 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
     что $p_i[x^i_1 := t^i_1] \ldots [x^i_{k_i} := t^i_{k_i}] \ebst p_i[x^i_1 := s^i_1] \ldots [x^i_{k_i} := s^i_{k_i}]$,
     верно $t[x^i_j := t^i_j] \ebst t[x^i_j := s^i_j]$.
 
-Мы будем говорить, что объявление типа данных $D$ размера $\kappa$ в сигнатуре $\Sigma$ корректно, если выполнены следующие условия:
+Мы будем говорить, что объявление типа данных $D$ размера $\kappa$ с параметрами $x_1 : A_1, \ldots x_n : A_n$ в сигнатуре $\Sigma$ корректно, если выполнены следующие условия:
 \begin{itemize}
-\item $\Gamma \vdash_\Sigma$, где $\Gamma$ - параметры $D$.
-\item $\Gamma \vdash_{\Sigma,D} C_i : U_\kappa$, где $C_i$ - тип конструктора $c_i$.
-\item Для каждого правила редукции $c_i\ p_1 \ldots p_k \to_\beta t_i$ существует контекст $\Delta$ и терм $B$ такие,
-    что $\Gamma, \Delta \vdash_{\Sigma,D} c_i\ p_1 \ldots p_k : B$ и $\Gamma, \Delta \vdash_{\Sigma,D} t_i : B$.
+\item $x_1 : A_1, \ldots x_n : A_n \vdash_\Sigma$.
+\item $x_1 : A_1, \ldots x_n : A_n, D : \Pi (x_1 : A_1) \ldots \Pi (x_n : A_n) U_\kappa \vdash_\Sigma C_i : U_\kappa$, где $C_i$ - тип конструктора $c_i$.
+\item Для каждого правила редукции $c_i\ p_1 \ldots p_k \to_\beta t_i$ существует такой контекст $\Delta$,
+    что $\Gamma, \Delta \vdash_{\Sigma,D'} c_i\ p_1 \ldots p_k : D'\ x_1\ \ldots\ x_n$ и $\Gamma, \Delta \vdash_{\Sigma,D'} t_i : D'\ x_1\ \ldots\ x_n$,
+    где $D'$ - это тип данных с тем же размером и параметрами, что и $D$, конструкторами с $c_1$ по $c_i$, и без условий.
     Так же как и в случае функций, мы требуем, чтобы набор правил удовлетворял условиям, и был завершающимся, при этом он не обязан быть полон.
 \end{itemize}
 
-\section{Интерпретация типов с условиями}
+\section{Интерпретация теории}
+
+\begin{comment}
+В этом разделе мы опишем интерпретацию языка в категории $\C$. Сначала мы опишем требования на $\C$.
+Категория $\C$ должна быть снабжена комбинаторной правой точной (right proper) модельной структурой с мономорфизмами в качестве корасслоений.
+Также мы предполагаем, что в $\C$ выполнена следующая аксиома.
+Если $f : A \to B$ и $g : C \to D$ - корасслоения, то $f \wedge g : B \times C \amalg_{A \times C} A \times D \to B \times D$ также является корасслоением,
+    и если одно из этих корасслоений тривиально, то $f \wedge g$ также тривиально.
+
+Кроме того, $\C$ должна быть локально декартова замкнута, таким образом $\C$ является топосом Гротендика.
+Также мы требуем, чтобы в $\C$ существовало достаточное количество классификаторов объектов для интерпретации вселенных.
+Классификатор объектов - это некоторое отображение $\pi : \widehat{\mathcal{U}} \to \mathcal{U}$.
+Мы говорим, что $\pi$ классифицирует отображение $f : Y \to X$, если $f$ является обратным образом $\pi$ относительно некоторого отображения $\ulcorner f \urcorner : X \to \mathcal{U}$.
+Классификаторы объектов $\pi$ замкнут относительно $\Pi$-типов (соответственно, $\Sigma$-типов), если
+    для любой пары отображений $f : Z \to Y$ и $g : Y \to X$, которые классифицируются $\pi$, верно,
+    что $\Pi_g(f) \to X$ (соответственно, $g \circ f$) также классифицируется $\pi$.
+Классификаторы объектов $\pi$ замкнут относительно некоторого вида (ко)пределов, если для любой диаграмы такого вида в категории $\C / X$,
+    состоящей из морфизмов, классифицирующихся $\pi$, ее (ко)предел также классифицируется $\pi$.
+Мы требуем, чтобы в $\C$ существовала последовательность классификаторов объектов
+    $\pi_0 : \widehat{\mathcal{U}_0} \to \mathcal{U}_0, \pi_1 : \widehat{\mathcal{U}_1} \to \mathcal{U}_1, \ldots$ такая,
+    что для любого $\kappa$ существует мономорфизм $\mathcal{U}_\kappa \to \mathcal{U}_{\kappa + 1}$.
+
+Классификаторы объектов должны быть замкнуты относительно $\Pi$-типов, $\Sigma$-типов, конечных пределов и копределов и фибрантной замены.
+Это означает, что если $f : Z \to Y$ и $g : Y \to X$ классифицируются $\pi_\kappa$, то $\Pi_g(f) \to X$ и $g \circ f$ также должны классифицироваться $\pi_\kappa$.
+Если некоторая конечная диаграмма в категории $\C / X$ состоит из морфизмов, классифицирующихся $\pi_\kappa$, то ее предел и копредел также должен классифицироваться $\pi_\kappa$.
+Наконец, если домен и кодомен отображения $f$ классицируются $\pi_\kappa$, то $f$ факторизуется как тривиальное корасслоение и расслоение, классифицирующееся $\pi_\kappa$.
+\end{comment}
 
 В этом разделе мы опишем интерпретацию языка в категории $\sSet$ симплициальных множеств.
-Каждой функции $f : A$ в сигнатуре мы сопоставляем симплициальное множество $\ll A \rr$ и точку в нем $\ll f \rr \in \ll A \rr_{[0]}$.
-Каждому контексту $\Gamma$ мы сопоставляем симплициальное множество $\ll \Gamma \rr$.
-Каждому типу данных $D$ с параметрами $\Gamma$ мы сопоставляем фильтрированный объект $X_0 \to X_1 \to \ldots \to \varinjlim X_i \in \sSet / \ll \Gamma \rr$ такой,
-    что каждый морфизм $X_i \to X_{i + 1}$ является мономорфизмом, и каждый $X_i$ расслоен в $\sSet / \ll \Gamma \rr$.
+Мы предполагаем, что существует последовательность недостижимых кардиналов.
+Следовательно у нас есть последовательность классификаторов объектов $\pi_\kappa : \widehat{\mathcal{U}_\kappa} \to \mathcal{U}_\kappa$.
+Классификатор объектов $\pi_\kappa$ - это такое расслоение, что любое $\kappa$-малое расслоение $f : Y \to X$ является обратным образом $\pi$ относительно некоторого морфизма $\ulcorner f \urcorner : X \to \mathcal{U}_\kappa$.
+
+Правила вывода из таблицы~\ref{table:inf-rules} интерпретируются так же, как в \cite{kap-lum-voe}.
+Мы не будем описывать эту интерпретацию подробно, лишь установим нотацию.
+Каждому контексту $\Gamma \vdash$ сопоставляется объект $\ll \Gamma \rr \in \sSet$.
+Каждому типу $\Gamma \vdash A$ сопоставляется отображение $\ulcorner \ll A \rr \urcorner : \ll \Gamma \rr \to \mathcal{U}_\kappa$.
+Если $\Gamma \vdash A$, то мы будем обозначать обратный образ $\pi_\kappa$ относительно $\ulcorner \ll A \rr \urcorner$ как $\ll A \rr : \ll \Gamma \vdash A \rr \to \ll \Gamma \rr$.
+Каждому терму $\Gamma \vdash a : A$ сопоставляется морфизм $\ll \Gamma \vdash a : A \rr : \ll \Gamma \rr \to \widehat{\mathcal{U}_\kappa}$ такой, что следующая диаграмма коммутирует:
+\[ \xymatrix{ \ll \Gamma \rr \ar[r]^{\ll \Gamma \vdash a : A \rr} \ar[dr]_{\ulcorner \ll A \rr \urcorner} & \widehat{\mathcal{U}_\kappa} \ar[d]^{\pi_\kappa} \\
+                                                                                                          & \mathcal{U}_\kappa.
+            }\]
+
+Теперь мы покажем как интерпретируются некоторые правила вывода, интерпретация остальных аналогична таковой в \cite{kap-lum-voe}.
+\begin{itemize}
+\item
+\AxiomC{$\Gamma \vdash A : U_\kappa$}
+\UnaryInfC{$\Gamma \vdash A$}
+\DisplayProof
+\medskip
+
+Морфизм $\ll \Gamma \vdash A : U_\kappa \rr$ факторизуется через некоторое отображение $A' : \ll \Gamma \rr \to \mathcal{U}_\kappa$.
+Мы интерпретируем $\Gamma \vdash A$ как отображение $\ll \Gamma \rr \to \mathcal{U}_{\kappa'}$ для минимального $\kappa'$ для которого $A'$ факторизуется через мономорфизм $\mathcal{U}_{\kappa'} \to \mathcal{U}_\kappa$.
+
+\item
+\medskip
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash I : U_\kappa$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash left : I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash right : I$}
+\DisplayProof
+\medskip
+
+Факторизуем отображение $1 + 1 \to 1$ через корасслоение $[i_0,i_1] : 1 + 1 \to \ll I \rr$ и тривиальное расслоение $\ll I \rr \to 1$.
+Тогда $\Gamma \vdash I : U_\kappa$ интерпретируется как $\Gamma \to 1 \xrightarrow{\ulcorner \ll I \rr \urcorner} \mathcal{U}$
+Термы $left$ и $right$ интерпретируются как морфизмы $\Gamma \to 1 \xrightarrow{i_k} \ll I \rr \to \widehat{\mathcal{U}_0}$, где $k = 0$ для $left$ и $k = 1$ для $right$.
+
+\item
+\medskip
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash a : A[x := i]$}
+\AxiomC{$\Gamma \vdash j : I$}
+\QuaternaryInfC{$\Gamma \vdash coe_{\lambda x. A}\ i\ a\ j : A[x := j]$}
+\DisplayProof
+\medskip
+
+Пусть интерпретация $\Gamma, x : I \vdash A$ - это некоторый морфизм $\ll \Gamma \rr \times \ll I \rr \to \mathcal{U}_\kappa$.
+Во-первых, сконструируем вспомоготельные объект $Z$ следующим образом:
+\[ \xymatrix{ Z \ar[r]^f \ar[d]_{\langle A, i \rangle} \pb                   & \widehat{\mathcal{U}_\kappa} \ar[d]^{\pi_\kappa} \\
+              {\mathcal{U}_\kappa}^{\ll I \rr} \times \ll I \rr \ar[r]_-{ev} & \mathcal{U}_\kappa
+            }\]
+Теперь мы можем определить морфизм $\ll \Gamma \rr \to Z \times \ll I \rr$: на второй координате - это интерпретация $j$, на первой - это интерпретация $A$, $i$ и $a$.
+Мы можем определить интерпретацию $coe$ как комопозицию этого отображения и диагонального морфизма в следующей диаграме:
+\[ \xymatrix{ Z \ar[rr]^f \ar[d]_{\langle id, i \rangle}                          & & \widehat{\mathcal{U}_\kappa} \ar[d]^{\pi_\kappa} \\
+              Z \times \ll I \rr \ar[rr]_-{ev \circ (A \times id)} \ar@{-->}[urr] & & \mathcal{U}_\kappa
+            }\]
+Коммутирование верхнего треугольника означает, что выполнено $\beta$-правило для $coe$.
+Но $\sigma$ и $\tau$ правила при это не обязаны выполняться.
+Мы проигнорируем $\tau$ правила, так как они нужно только для каноничности.
+Но $\sigma$-правило необходимо для того, чтобы $J$ удовлетворял обычному правилу редукции, поэтому мы модифицируем определение интерпретации $coe$ так, чтобы $\sigma$-правило выполнялось.
+Для этого определим объект $Z'$ следующим образом:
+\[ \xymatrix{ Z' \ar[r]^g \ar[d]_{\langle A', i' \rangle} \pb           & Z \ar[d]^{\langle A, i \rangle} \\
+              \mathcal{U}_\kappa \times \ll I \rr \ar[r]_-{c \times id} & {\mathcal{U}_\kappa}^{\ll I \rr} \times \ll I \rr
+            }\]
+Здесь $c : \mathcal{U}_\kappa \to {\mathcal{U}_\kappa}^{\ll I \rr}$ - морфизм, по сопряжению соответствующий проекции $\mathcal{U}_\kappa \times \ll I \rr \to \mathcal{U}_\kappa$.
+Теперь мы можем сконструировать морфизм $h : Z \amalg_{Z'} Z' \times \ll I \rr \to Z \times \ll I \rr$ следующим образом:
+\[ \xymatrix{ Z' \ar[r]^g \ar[d]_{\langle id, i' \rangle}       & Z \ar[d] \ar[rdd]^{\langle id, i \rangle}             & \\
+              Z' \times \ll I \rr \ar[r] \ar[rrd]_{g \times id} & \po Z \amalg_{Z'} Z' \times \ll I \rr \ar@{-->}[rd]_h & \\
+                                                                &                                                       & Z \times \ll I \rr
+            }\]
+Морфизм $h$ является тривиальным корасслоением.
+Действительно, $\langle id, i' \rangle$ и $\langle id, i \rangle$ - тривиальные корасслоения, следовательно $h$ - слабая эквивалентность.
+Теперь покажем, что $h$ - мономорфизм.
+Пусть $\Delta[n] \rightrightarrows Z \amalg_{Z'} Z' \times \ll I \rr$ - пара симплексов таких, что они равны при композиции с $h$.
+Тогда они факторизуются либо через $Z$, либо через $Z' \times \ll I \rr$.
+Если они факторизуются через один объект, то они равны, т.к. $g \times id$ и $\langle id, i \rangle$ - мономорфизмы.
+Пусть один из них факторизуется через $x : \Delta[n] \to Z$, а другой через $y : \Delta[n] \to Z' \times \ll I \rr$.
+Тогда $\Delta[n] \xrightarrow{x} Z = \Delta \xrightarrow{x} Z \xrightarrow{\langle id, i \rangle} Z \times \ll I \rr \to Z = \Delta[n] \xrightarrow{y} Z' \times \ll I \rr \to Z' \xrightarrow{g} Z$.
+То есть $x$ факторизуется через $g$, а значит $\Delta[n] \xrightarrow{x} Z \to Z \amalg_{Z'} Z' \times \ll I \rr$ факторизуется через $Z' \times \ll I \rr$, что и требовалось.
+
+Теперь мы определяем интерпретацию $coe$ как комопозицию $\ll \Gamma \rr \to Z \times \ll I \rr$ и диагонального морфизма в следующей диаграме:
+\[ \xymatrix{ Z \amalg_{Z'} Z' \times \ll I \rr \ar[rr] \ar[d]_h                  & & \widehat{\mathcal{U}_\kappa} \ar[d]^{\pi_\kappa} \\
+              Z \times \ll I \rr \ar[rr]_-{ev \circ (A \times id)} \ar@{-->}[urr] & & \mathcal{U}_\kappa
+            }\]
+Верхний горизонтальный морфизм порождается морфизмами $Z \xrightarrow{f} \widehat{\mathcal{U}_\kappa}$
+    и $Z' \times \ll I \rr \to Z' \xrightarrow{g} Z \xrightarrow{f} \widehat{\mathcal{U}_\kappa}$.
+
+Теперь, если $\ll i \rr = \ll j \rr$, то $\ll coe_{\lambda x. A}\ i\ a\ j \rr$ факторизуется через $Z$ и, следовательно, равняется $\ll a \rr$.
+Если $x \notin FV(A)$, то $\ll coe_{\lambda x. A}\ i\ a\ j \rr$ факторизуется через $Z' \times \ll I \rr$ и, следовательно, опять равняется $\ll a \rr$.
+Таким образом $\beta$ и $\sigma$ правила выполнены.
+\end{itemize}
+
+Теперь мы опишем как мы будем интерпретировать объявления функций и типов данных.
+Если $f : A$ - объявление функции, то верно $\vdash A$, и мы сопоставляем $f$ некоторую точку в симплициальном множестве $\ll \vdash A \rr$.
+Каждому типу данных $D$ размера $\kappa$ с параметрами $\Gamma$ мы сопоставляем функтор $\ll D \rr : \sSet / \ll \Gamma \rr \to \sSet / \ll \Gamma \rr$, сохраняющий $\kappa$-малость.
+% Каждому типу данных $D$ размера $\kappa$ с параметрами $\Gamma$ мы сопоставляем фильтрированный объект $X_0 \to X_1 \to \ldots \to \varinjlim X_i \in \sSet / \ll \Gamma \rr$ такой,
+%     что каждый морфизм $X_i \to X_{i + 1}$ является мономорфизмом, и каждый $X_i$ является $\kappa$-малым расслоением над $\ll \Gamma \rr$.
 
 Пусть $c_i$ - конструктор типа данных $D$.
-Для простоты мы предположим, что тип $c_i$ имеет вид $T \to D\ x_1\ \ldots x_n$ (мы всегда можем переписать тип конструктора в таком виде, используя $\Sigma$-типы).
-Функция $\lambda D. T$ задает функтор $\sSet / \ll \Gamma \rr \to \sSet / \ll \Gamma \rr$, который мы будем обозначать как $T_i$.
-Мы предполагаем, что этот функтор сохраняет $\kappa$-секвенциальные копределы для некоторого регулярного кардинала $\kappa$ (это верно для всех типов, допустимых синтаксически).
-Для простоты мы будем предполагать, что $\kappa = \omega$.
+При интерпретации типа $c_i$ мы получаем морфизм $\mathcal{U}_\kappa^{\ll \Gamma \rr} \to \mathcal{U}_\kappa^{\ll \Gamma \rr}$.
+Более того, благодаря предположению положительности, этот морфизм можно доопределить до эндофунктора на категории, где объекты - морфизмы $\ll \Gamma \rr \to \mathcal{U}_\kappa$,
+    а $Hom(X,Y)$ - множество морфизмов в категории $\sSet / \ll \Gamma \rr$ между $X^*(\pi_\kappa)$ и $Y^*(\pi_\kappa)$.
+Этот функтор сохраняет $\lambda$-секвенциальные копределы для некоторого регулярного кардинала $\lambda < \kappa$.
+Для простоты мы будем предполагать, что $\lambda = \omega$.
 
 Пусть теперь у нас есть набор условий на конструктор $c_i$:
 \begin{align*}
@@ -762,7 +915,7 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
             } \]
 Горизонтальный морфизм здесь задается морфизмами $T_{j+1}(X_{i-1}) \to X_i \to X^j_{i+1}$ и $S_{j+1}(X_i) \xrightarrow{\alpha_{j+1}} T_1(X_i) \amalg \ldots \amalg T_j(X_i) \amalg X_i \to X^j_{i+1}$.
 
-% \bibliographystyle{amsplain}
-% \bibliography{ref}
+\bibliographystyle{amsplain}
+\bibliography{ref}
 
 \end{document}
