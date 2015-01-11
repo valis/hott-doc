@@ -749,9 +749,9 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 \begin{itemize}
 \item $x_1 : A_1, \ldots x_n : A_n \vdash_\Sigma$.
 \item $x_1 : A_1, \ldots x_n : A_n, D : \Pi (x_1 : A_1) \ldots \Pi (x_n : A_n) U_\kappa \vdash_\Sigma C_i : U_\kappa$, где $C_i$ - тип конструктора $c_i$.
-\item Для каждого правила редукции $c_i\ p_1 \ldots p_k \to_\beta t_i$ существует такой контекст $\Delta$,
+\item Для каждого условия $c_i\ p_1 \ldots p_k \to_\beta t_i$ существует такой контекст $\Delta$,
     что $\Gamma, \Delta \vdash_{\Sigma,D'} c_i\ p_1 \ldots p_k : D'\ x_1\ \ldots\ x_n$ и $\Gamma, \Delta \vdash_{\Sigma,D'} t_i : D'\ x_1\ \ldots\ x_n$,
-    где $D'$ - это тип данных с тем же размером и параметрами, что и $D$, конструкторами с $c_1$ по $c_i$, и без условий.
+    где $D'$ - это тип данных с тем же размером, параметрами и конструкторами, что и $D$, и с условиями с 1 по $i - 1$.
     Так же как и в случае функций, мы требуем, чтобы набор правил удовлетворял условиям, и был завершающимся, при этом он не обязан быть полон.
 \end{itemize}
 
@@ -859,7 +859,7 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 Здесь $c : \mathcal{U}_\kappa \to {\mathcal{U}_\kappa}^{\ll I \rr}$ - морфизм, по сопряжению соответствующий проекции $\mathcal{U}_\kappa \times \ll I \rr \to \mathcal{U}_\kappa$.
 Теперь мы можем сконструировать морфизм $h : Z \amalg_{Z'} Z' \times \ll I \rr \to Z \times \ll I \rr$ следующим образом:
 \[ \xymatrix{ Z' \ar[r]^g \ar[d]_{\langle id, i' \rangle}       & Z \ar[d] \ar[rdd]^{\langle id, i \rangle}             & \\
-              Z' \times \ll I \rr \ar[r] \ar[rrd]_{g \times id} & \po Z \amalg_{Z'} Z' \times \ll I \rr \ar@{-->}[rd]_h & \\
+              Z' \times \ll I \rr \ar[r] \ar[rrd]_{g \times id} & \po Z \amalg_{Z'} Z' \times \ll I \rr \ar@{-->}[rd]^h & \\
                                                                 &                                                       & Z \times \ll I \rr
             }\]
 Морфизм $h$ является тривиальным корасслоением.
@@ -884,6 +884,54 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
 Таким образом $\beta$ и $\sigma$ правила выполнены.
 \end{itemize}
 
+\subsection{Интерпретация типов данных с условиями}
+
+Каждому конструктору $c_i$ типа данных $D$ с параметрами $\Gamma$ мы сопоставляем функтор $F_i : \sSet / \Gamma \to \sSet / \Gamma$ стандартным образом.
+Пусть $F(X) = \coprod_{i \leq n} F_i(X)$ - сумма $F_i$ по всем конструкторам.
+Функтор $F$ сохраняет $\lambda$-фильтрированные копределы для некоторого регулярного кардинала $\lambda$.
+Мы определяем интерпретацию $D$ как копредел $\lambda$-последовательности $X_\alpha : \sSet / \Gamma$.
+Каждый $X_\alpha \to X_{\alpha + 1}$ определяется как композиция $X_\alpha \to Z_\alpha \to R Z_\alpha \xrightarrow{c_\alpha} X_{\alpha + 1}$,
+    где вторая стрелка - это фибрантная замена, а третья - коуравнитель пары стрелок $C_\alpha \rightrightarrows R Z_\alpha$, которые мы определим позже.
+Морфизмы $X_\alpha \to Z_\alpha$ определяются индуктивным образом вместе с морфизмами $f_\alpha : F X_\alpha \to Z_\alpha$ естественными по $\alpha < \lambda$.
+\begin{itemize}
+\item $X_0$ определяется как начальный объект, $Z_0 = F X_0$, и $f_0 = id_{F X_0}$.
+\item $Z_{\alpha + 1}$ и $f_{\alpha + 1}$ определяются следующим кодекартовым квадратом:
+\[ \xymatrix{ F X_\alpha \ar[r] \ar[d]_{f_\alpha} & F X_{\alpha + 1} \ar[d]^{f_{\alpha + 1}} \\
+              X_{\alpha + 1} \ar[r]               & \po Z_{\alpha + 1}.
+            } \]
+\item $X_\alpha = \varinjlim_{\beta < \alpha} (X_\beta)$ для предельного $\alpha$.
+$Z_\alpha$ и $f_\alpha$ определяются через следующий кодекартов квадрат:
+\[ \xymatrix{ \varinjlim_{\beta < \alpha} (F X_\beta) \ar[r] \ar[d] & F X_\alpha \ar[d]^{f_\alpha} \\
+              X_\alpha \ar[r]                                       & \po Z_\alpha,
+            } \]
+где левая стрелка порождается морфизмами $f_\beta$.
+\end{itemize}
+
+Если $D$ не содержит ни одного условия, то в качестве $C_\alpha$ берется начальный объект для всех $\alpha$.
+Таким образом, в качестве $c_\alpha$ можно взять $id$, и $\ll D \rr$ можно описать как копредел следующей последовательности:
+\[ 0 = X_0 \to F X_0 \to R F X_0 = X_1 \to X_1 \amalg_{F X_0} F X_0 \to R (X_1 \amalg_{F X_0} F X_0) = X_2 \to \ldots \]
+Пусть мы определили интерпретацию типа $D'$ как копредел последовательности $X'_\alpha$, и теперь мы хотим описать интерпретацию типа $D$, у которого на одно условие больше, чем у $D'$.
+Интерпретация левой и правой частей условия дает нам пару морфизмов $\ll \Gamma, \Delta \rr \rightrightarrows \ll D' \rr$ над $\ll \Gamma \rr$.
+Мы определим последовательность $X_\alpha$ вместе с коллекцией морфизмов $X'_\alpha \to X_\alpha$.
+Так как $X_\alpha$ почти совпадает с $X'_\alpha$, эти морфизмы определяется очевидным образом через универсальные свойства амальгам, коуравнителей и фибрантной замены.
+Чтобы определить $X_\alpha$ нам нужно только описать стрелки $C_\alpha \rightrightarrows R Z_\alpha$.
+Для этого для каждого $\alpha$ определим объект $C''_\alpha$ как предел следующей диаграмы:
+\[ \xymatrix@R-1pc{ R Z'_\alpha \ar[r] & \ll D' \rr & \\
+                                       &            & \ll \Gamma, \Delta \rr \ar[ul] \ar[dl] \\
+                    R Z'_\alpha \ar[r] & \ll D' \rr &
+            } \]
+Теперь мы определяем $C_\alpha$ как $C'_\alpha \amalg C''_\alpha$, где $C'_\alpha \rightrightarrows R Z'_\alpha$ - пара стрелок, которая использовалась при определении $D'$.
+Стрелки $C_\alpha \rightrightarrows R Z_\alpha$ определяются как композиция $C'_\alpha \amalg C''_\alpha \rightrightarrows R Z'_\alpha \to R Z_\alpha$,
+    где стрелки $C''_\alpha \rightrightarrows R Z'_\alpha$ берутся из предельного конуса.
+
+Так как $F$ сохраняет $\lambda$-фильтрированные копределы, мы можем определить морфизм $F \ll D \rr \simeq \lim_{\alpha < \lambda} F X_\alpha \to \ll D \rr$,
+    где последняя стрелка порождается морфизмами $f_\alpha$.
+Таким образом, $\ll D \rr$ является $F$-алгеброй, что дает нам интерпретацию конструкторов.
+TODO: Нам нужно проверить, что условия на них выполнены.
+
+TODO: Описать интерпретацию функций.
+
+\begin{comment}
 Теперь мы опишем как мы будем интерпретировать объявления функций и типов данных.
 Если $f : A$ - объявление функции, то верно $\vdash A$, и мы сопоставляем $f$ некоторую точку в симплициальном множестве $\ll \vdash A \rr$.
 Каждому типу данных $D$ размера $\kappa$ с параметрами $\Gamma$ мы сопоставляем функтор $\ll D \rr : \sSet / \ll \Gamma \rr \to \sSet / \ll \Gamma \rr$, сохраняющий $\kappa$-малость.
@@ -914,6 +962,7 @@ $\rho[x := k][z_1 := t_1[x := k]] \ldots [z_n := t_n[x := k]] \in \ll \Gamma, x 
               T_{j+1}(X_i) \ar[r] & \po X^{j+1}_{i+1}.
             } \]
 Горизонтальный морфизм здесь задается морфизмами $T_{j+1}(X_{i-1}) \to X_i \to X^j_{i+1}$ и $S_{j+1}(X_i) \xrightarrow{\alpha_{j+1}} T_1(X_i) \amalg \ldots \amalg T_j(X_i) \amalg X_i \to X^j_{i+1}$.
+\end{comment}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
