@@ -69,6 +69,7 @@ It has $\Pi$-types, $\Sigma$-types, natural numbers, and a universe, and it can 
 In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inference and reduction rules for MLTT-U and HoTT-I respectively.
 % It also has an interval type $I$, which has two constructors ($left$ and $right$) and one eliminator ($coe$).
 
+\begin{comment}
 \begin{align*}
 & fill^1_{\lambda x_1. A}\ i\ a_1\ j_1 = coe_{\lambda x_1. A}\ i\ a_1\ j_1 \\
 & fill^{n+1}_{\lambda \overline{x}_{n+1}. A}\ (\lambda \overline{x}_n. a_{n+1})\ (\lambda \overline{x}_n. a'_{n+1}) \ldots (\lambda \overline{x}_n. a_2)\ (\lambda \overline{x}_n. a'_2)\ i\ (\lambda \overline{x}_n. a_1)\ j_1 \ldots j_{n+1} = \\
@@ -77,6 +78,26 @@ In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inferen
 & \indent (\lambda \overline{x}_{n-1}. path (\lambda x_n. a_2))\ (\lambda \overline{x}_{n-1}. path (\lambda x_n. a'_2)) \\
 & \indent i\ (\lambda \overline{x}_{n-1}. path (\lambda x_n. a_1))\ j_1 \ldots j_n\ @\ j_{n+1}
 \end{align*}
+\end{comment}
+
+\[ coe_{\lambda k. \Sigma (x : A) B}\ i\ (a, b)\ j \to_\tau (coe_{\lambda k. A}\ i\ a\ j, coe_{\lambda k. B[x := coe_{\lambda k. A}\ i\ a\ k]}\ i\ b\ j) \]
+\[ coe_{\lambda k. \Pi (x : A) B}\ i\ (\lambda x. b)\ j \to_\tau \lambda x'. coe_{\lambda k. B[x := coe_{\lambda k. A}\,j\,x'\,k]}\ i\ (b[x := coe_{\lambda k. A}\ j\ x'\ i])\ j \]
+\[ coe_{\lambda k. Path\ (\lambda x. A)\ a\ a'}\ i\ (path\ (\lambda x. t))\ j \to_\tau path\ (\lambda j'. fill^2_{\lambda k x. A}\ (\lambda k. a)\ (\lambda k. a')\ i\ (\lambda x. t)\ j\ j') \]
+
+\[ fill^n_{\lambda \overline{x}. \Sigma (x : A) B}\ (\lambda \overline{x}_{\hat{n}}. (a_n, b_n))\ (\lambda \overline{x}_{\hat{n}}. (a'_n, b'_n))\ \ldots\ (\lambda \overline{x}_{\hat{2}}. (a_2, b_2))\ (\lambda \overline{x}_{\hat{2}}. (a'_2, b'_2))\ i\ (\lambda \overline{x}_{\hat{1}}. (a_1, b_1))\ j_1\ \ldots\ j_n \to_\tau \]
+\[ (fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots\ j_n, \]
+\[ fill^n_{\lambda \overline{x}. B[x := fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ x_1\ \ldots\ x_n]} \]
+\[ (\lambda \overline{x}_{\hat{n}}. b_n)\ (\lambda \overline{x}_{\hat{n}}. b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. b_2)\ (\lambda \overline{x}_{\hat{2}}. b'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. b_1)\ j_1\ \ldots\ j_n) \]
+
+\[ fill^n_{\lambda \overline{x}. \Pi (x : A) B}\ (\lambda \overline{x}_{\hat{n}}. \lambda x. b_n)\ (\lambda \overline{x}_{\hat{n}}. \lambda x. b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. \lambda x. b_2)\ (\lambda \overline{x}_{\hat{2}}. \lambda x. b'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. \lambda x. b_1)\ j_1\ \ldots\ j_n \to_\tau \]
+\[ \lambda x'. fill_{\lambda \overline{x}. B[x := coe^n_{\lambda \overline{x}. A}\,j_1\,\ldots\,j_n\,x'\,x_1\,\ldots\,x_n]} \]
+\[ (\lambda \overline{x}_{\hat{n}}. b_n[x := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ x'\ x_1\ \ldots\ x_{n-1}\ left]) \]
+\[ (\lambda \overline{x}_{\hat{n}}. b'_n[x := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ x'\ x_1\ \ldots\ x_{n-1}\ right])\ \ldots \]
+\[ (\lambda \overline{x}_{\hat{2}}. b_2[x := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ x'\ x_1\ left\ x_3\ \ldots\ x_n]) \]
+\[ (\lambda \overline{x}_{\hat{2}}. b'_2[x := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ x'\ x_1\ right\ x_3\ \ldots\ x_n]) \]
+\[ i\ (\lambda \overline{x}_{\hat{1}}. b_1[x := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ x'\ i\ x_2\ \ldots\ x_n])\ j_1\ \ldots\ j_n \]
+
+% \[ fill^n_{\lambda k. Path\ (\lambda x. A)\ a\ a'}\ i\ (path\ (\lambda x. t))\ j \to_\tau path\ (\lambda j'. fill^2_{\lambda k x. A}\ (\lambda k. a)\ (\lambda k. a')\ i\ (\lambda x. t)\ j\ j') \]
 
 \centerAlignProof
 
@@ -284,6 +305,24 @@ In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inferen
 \AxiomC{$\Gamma \vdash a : A[x := i]$}
 \AxiomC{$\Gamma \vdash j : I$}
 \QuaternaryInfC{$\Gamma \vdash coe_{\lambda x. A}\ i\ a\ j : A[x := j]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, \overline{x : I} \vdash A$}
+\AxiomC{$\Gamma \vdash i : I$}
+\def\extraVskip{1pt}
+\noLine
+\UnaryInfC{$\Gamma \vdash j_i : I$, $1 \leq i \leq n$}
+\AxiomC{$\Gamma, \overline{x : I}_{\hat{1}} \vdash a_1 : A[x_1 := i]$}
+\noLine
+\UnaryInfC{$\Gamma, \overline{x : I}_{\hat{i}} \vdash a_i : A[x_i := left]$, $2 \leq i \leq n$}
+\noLine
+\UnaryInfC{$\Gamma, \overline{x : I}_{\hat{i}} \vdash a'_i : A[x_i := right]$, $2 \leq i \leq n$}
+\def\extraVskip{2pt}
+\RightLabel{, $n \geq 2$}
+\TrinaryInfC{$\Gamma \vdash fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ \overline{j} : A \overline{[x := j]}$}
 \DisplayProof
 \end{center}
 
