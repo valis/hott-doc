@@ -7,6 +7,7 @@
 \usepackage{ifthen}
 \usepackage{xargs}
 \usepackage{bussproofs}
+\usepackage{stmaryrd}
 
 \providecommand\WarningsAreErrors{false}
 \ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
@@ -314,23 +315,52 @@ In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inferen
 \AxiomC{$\Gamma \vdash$}
 \UnaryInfC{$\Gamma \vdash right : I$}
 \DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash i : I$}
+\UnaryInfC{$\Gamma \vdash \bigsqcap_n i$}
+\DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, \overline{x : I} \vdash A$}
 \AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash j_1 : I \quad \ldots \quad \Gamma \vdash j_n : I$}
+\RightLabel{, $j_1 \ebst i$ or $\exists k \geq 2 (j_k \ebst left \text{ or } j_k \ebst right)$}
+\BinaryInfC{$\Gamma \vdash (j_1, \ldots j_n) : \bigsqcap_n i$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash h : \bigsqcap_n i$}
+\BinaryInfC{$\Gamma \vdash \pi_k(h) : I$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
 \def\extraVskip{1pt}
+\AxiomC{$\Gamma \vdash i : I$}
 \noLine
-\UnaryInfC{$\Gamma \vdash j_i : I$, $1 \leq i \leq n$}
-\AxiomC{$\Gamma, \overline{x : I}_{\hat{1}} \vdash a_1 : A[x_1 := i]$}
+\UnaryInfC{$\Gamma, x : \bigsqcap_{n+1} i \vdash A$}
+\AxiomC{$\Gamma, y : \bigsqcap_n i, j : I \vdash a : A[x := (\pi_1(y), \ldots \pi_n(y), j)]$}
 \noLine
-\UnaryInfC{$\Gamma, \overline{x : I}_{\hat{i}} \vdash a_i : A[x_i := left]$, $2 \leq i \leq n$}
+\UnaryInfC{$\Gamma, y_1 : I, \ldots y_n : I \vdash a_1 : A[x := (y_1, \ldots y_n, left)]$}
 \noLine
-\UnaryInfC{$\Gamma, \overline{x : I}_{\hat{i}} \vdash a'_i : A[x_i := right]$, $2 \leq i \leq n$}
+\UnaryInfC{$\Gamma, y_1 : I, \ldots y_n : I \vdash a_2 : A[x := (y_1, \ldots y_n, right)]$}
 \def\extraVskip{2pt}
-\RightLabel{, $n \geq 1$}
-\TrinaryInfC{$\Gamma \vdash fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ \overline{j} : A \overline{[x := j]}$}
+\AxiomC{$\Gamma \vdash h : \bigsqcap_{n+1} i$}
+\TrinaryInfC{$\Gamma \vdash (\bigsqcap_{n+1} i) \text{-} elim_{\lambda x. A}\ (\lambda y j. a)\ (\lambda y_1 \ldots y_n. a_1)\ (\lambda y_1 \ldots y_n. a_2)\ h : A[x := h]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x_1 : I, \ldots x_n : I \vdash A \quad \Gamma \vdash i : I$}
+\AxiomC{$\Gamma, h : \bigsqcap_n i \vdash a : A[x_k := \pi_k(h)]$}
+\AxiomC{$\Gamma \vdash j_k : I$}
+\TrinaryInfC{$\Gamma \vdash fill^n_{\lambda x_1 \ldots x_n. A}\ i\ (\lambda h. a)\ j_1\ \ldots\ j_n : A[x_1 := j_1] \ldots [x_n := j_n]$}
 \DisplayProof
 \end{center}
 
