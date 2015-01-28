@@ -47,7 +47,7 @@
 
 \begin{document}
 
-\title{Canonicity for homotopy type theory with an interval type}
+\title{Canonicity for homotopy type theory with one univalent universe}
 
 \author{Valery Isaev}
 
@@ -80,9 +80,16 @@ In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inferen
 \end{align*}
 \end{comment}
 
-% \[ coe_{\lambda k. \Sigma (y : A) B}\ i\ (a, b)\ j \to_\tau (coe_{\lambda k. A}\ i\ a\ j, coe_{\lambda k. B[y := coe_{\lambda k. A}\ i\ a\ k]}\ i\ b\ j) \]
-% \[ coe_{\lambda k. \Pi (y : A) B}\ i\ (\lambda y. b)\ j \to_\tau \lambda y'. coe_{\lambda k. B[y := coe_{\lambda k. A}\,j\,y'\,k]}\ i\ (b[y := coe_{\lambda k. A}\ j\ y'\ i])\ j \]
-% \[ coe_{\lambda k. Path\ (\lambda x. A)\ a\ a'}\ i\ (path\ (\lambda x. t))\ j \to_\tau path\ (\lambda j'. fill^2_{\lambda k x. A}\ (\lambda k. a)\ (\lambda k. a')\ i\ (\lambda x. t)\ j\ j') \]
+\[ coe_{\lambda k. \Sigma (y : A) B}\ i\ (a, b)\ j \to_\tau (coe_{\lambda k. A}\ i\ a\ j, coe_{\lambda k. B[y := coe_{\lambda k. A}\ i\ a\ k]}\ i\ b\ j) \]
+\[ coe_{\lambda k. \Pi (y : A) B}\ i\ (\lambda y. b)\ j \to_\tau \lambda y'. coe_{\lambda k. B[y := coe_{\lambda k. A}\,j\,y'\,k]}\ i\ (b[y := coe_{\lambda k. A}\ j\ y'\ i])\ j \]
+\[ coe_{\lambda k. Path\ (\lambda x. A)\ a\ a'}\ i\ (path\ (\lambda x. t))\ j \to_\tau path\ (\lambda j'. fill^2_{\lambda k x. A}\ (\lambda k. a)\ (\lambda k. a')\ i\ (\lambda x. t)\ j\ j') \]
+
+\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ i\ j_2\ \ldots j_n \to_\beta \]
+\[ a_1[x_2 := j_2] \ldots [x_n := j_n] \]
+\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots j_{i-1}\ left\ j_{i+1}\ \ldots\ j_n \to_\beta \]
+\[ a_i[x_1 := j_1] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
+\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots j_{i-1}\ right\ j_{i+1}\ \ldots\ j_n \to_\beta \]
+\[ a'_i[x_1 := j_1] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
 
 \[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots\ j_n \to_\sigma \]
 \[ a_1[x_2 := j_2] \ldots [x_n := j_n] \text{ if } x_1 \notin FV(A) \cup FV(a_n) \cup FV(a'_n) \cup \ldots \cup FV(a_2) \cup FV(a'_2) \]
@@ -104,6 +111,11 @@ In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inferen
 \[ (\lambda \overline{x}_{\hat{2}}. path\ (\lambda x_{n+1}. a_2))\ (\lambda \overline{x}_{\hat{2}}. path\ (\lambda x_{n+1}. a'_2))\ i\ (\lambda \overline{x}_{\hat{1}}. path\ (\lambda x_{n+1}. a_1))\ j_1\ \ldots\ j_n \to_\tau \]
 \[ path\ (\lambda j_{n+1}. fill^{n+1}_{\lambda \overline{x}. \lambda x_{n+1}. A}\ (\lambda \overline{x}. a_{n+1})\ (\lambda \overline{x}. a'_{n+1})\ \ldots \]
 \[ (\lambda \overline{x}_{\hat{2}}. \lambda x_{n+1}. a_2)\ (\lambda \overline{x}_{\hat{2}}. \lambda x_{n+1}. a'_2)\ \ldots\ i\ (\lambda \overline{x}_{\hat{1}}. \lambda x_{n+1}. a_1)\ j_1\ \ldots\ j_{n+1}) \]
+
+\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau fill^1_{\lambda x. A}\ i'\ a\ j' \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst left \]
+\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau f[x := j'] (fill^1_{\lambda x. A}\ i'\ a\ j') \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst right \]
+\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau g[x := j'] (fill^1_{\lambda x. B}\ i'\ a\ j') \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst left \]
+\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau fill^1_{\lambda x. B}\ i'\ a\ j' \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst right \]
 
 \centerAlignProof
 
@@ -378,7 +390,6 @@ In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inferen
 & path\ (\lambda x. t)\ @_{a,a'}\ i \to_\beta t[x := i] \\
 & p\ @_{a,a'}\ left \to_\beta a \\
 & p\ @_{a,a'}\ right \to_\beta a' \\
-& fill^1_{\lambda x_1. A}\ i\ a_1\ i \to_\beta a_1 \\
 & iso\ A\ B\ f\ g\ p\ q\ left \to_\beta A \\
 & iso\ A\ B\ f\ g\ p\ q\ right \to_\beta B \\
 & coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \to_\beta f\ a \\
