@@ -67,12 +67,18 @@ In particular, this implies that every closed term of Martin-L\"{o}f type theory
 In table~\ref{table:inf-rules}, we give inference and reduction rules for a basic system, which is a common part of MLTT-U and HoTT-I.
 It has $\Pi$-types, $\Sigma$-types, natural numbers, and a universe, and it can be extended with other (higher) inductive types.
 In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inference and reduction rules for MLTT-U and HoTT-I respectively.
-% It also has an interval type $I$, which has two constructors ($left$ and $right$) and one eliminator ($coe$).
 
-If $n$ is a natural number and $i, j_1, \ldots j_n$ are terms, then we will write $(j_1. \ldots j_n) \in \Lambda_n i$ for the following condition:
-\[ j_1 \ebst i \text{ or } \exists k \geq 2 (j_k \ebst left \text{ or } j_k \ebst right) \]
-The idea is that $j_k$ are points on the interval and  $(j_1, \ldots j_n)$ is a point in the $n$-cube.
-Then $(j_1, \ldots j_n) \in \Lambda_n i$ if and only if this point belongs to a specific cubical horn.
+Apart from the usual types, HoTT-I also has an interval type $I$, which has two constructors ($left$ and $right$) and one eliminator ($fill^1$).
+Since we have product types, the system also contains all $n$-dimensional cube types ($I^n = I \times \ldots \times I$).
+For each $n \in \mathbb{N}$ and $i : I$, we also define the cubical horn type $\Lambda_n i$.
+It is subtype of $I^n$ on those tuples $(j_1, \ldots j_n)$ which satisfy the following condition:
+\[ (j_1, \ldots j_n) \in \Lambda_n i \iff j_1 \ebst i \text{ or } \exists k \geq 2 (j_k \ebst left \text{ or } j_k \ebst right) \]
+So for $i = left$ and $i = right$, it is the usual cubical horns, but we need more general cubical horns for every $i : I$.
+
+Types $\Lambda_n i$ have tuples $(j_1, \ldots j_n)$ satisfying condition $(j_1, \ldots j_n) \in \Lambda_n i$ as constructors.
+And they have two sets of eliminators: usual projections $\pi_k$ and eliminators $(\Lambda_{n+1} i) \text{-} elim$.
+The latter show how to define a function from $\Lambda_{n+1} i$ using a function from $\Lambda_n i$.
+This simply reflects the fact that $\Lambda_{n+1} i$ is glued from $\Lambda_n i \times I$ and two copies of $I^n$.
 
 \begin{comment}
 \begin{align*}
@@ -83,7 +89,6 @@ Then $(j_1, \ldots j_n) \in \Lambda_n i$ if and only if this point belongs to a 
 & \indent (\lambda \overline{x}_{n-1}. path (\lambda x_n. a_2))\ (\lambda \overline{x}_{n-1}. path (\lambda x_n. a'_2)) \\
 & \indent i\ (\lambda \overline{x}_{n-1}. path (\lambda x_n. a_1))\ j_1 \ldots j_n\ @\ j_{n+1}
 \end{align*}
-\end{comment}
 
 \[ coe_{\lambda k. \Sigma (y : A) B}\ i\ (a, b)\ j \to_\tau (coe_{\lambda k. A}\ i\ a\ j, coe_{\lambda k. B[y := coe_{\lambda k. A}\ i\ a\ k]}\ i\ b\ j) \]
 \[ coe_{\lambda k. \Pi (y : A) B}\ i\ (\lambda y. b)\ j \to_\tau \lambda y'. coe_{\lambda k. B[y := coe_{\lambda k. A}\,j\,y'\,k]}\ i\ (b[y := coe_{\lambda k. A}\ j\ y'\ i])\ j \]
@@ -121,6 +126,7 @@ Then $(j_1, \ldots j_n) \in \Lambda_n i$ if and only if this point belongs to a 
 \[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau f[x := j'] (fill^1_{\lambda x. A}\ i'\ a\ j') \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst right \]
 \[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau g[x := j'] (fill^1_{\lambda x. B}\ i'\ a\ j') \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst left \]
 \[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau fill^1_{\lambda x. B}\ i'\ a\ j' \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst right \]
+\end{comment}
 
 \centerAlignProof
 
