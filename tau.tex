@@ -67,7 +67,33 @@ In particular, this implies that every closed term of Martin-L\"{o}f type theory
 In table~\ref{table:inf-rules}, we give inference and reduction rules for a basic system, which is a common part of MLTT-U and HoTT-I.
 It has $\Pi$-types, $\Sigma$-types, natural numbers, and a universe, and it can be extended with other (higher) inductive types.
 In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inference and reduction rules for MLTT-U and HoTT-I respectively.
-% It also has an interval type $I$, which has two constructors ($left$ and $right$) and one eliminator ($coe$).
+
+Apart from the usual types, HoTT-I also has an interval type $I$, which has two constructors ($left$ and $right$) and one eliminator ($fill^1$).
+Since we have product types, the system also contains all $n$-dimensional cube types ($I^n = I \times \ldots \times I$).
+For each $n \geq 1$, we also define functions $fill^n$, which construct fillers for cubical horns.
+
+We also need operators $coe^n$ which satisfy the following inference and reduction rules:
+
+\begin{center}
+\AxiomC{$\Gamma, x_1 : I, \ldots x_n : I \vdash A$}
+\AxiomC{$\Gamma \vdash i_k : I$}
+\AxiomC{$\Gamma \vdash a : A[x_k := i_k]$}
+\AxiomC{$\Gamma \vdash j_k : I$}
+\QuaternaryInfC{$\Gamma \vdash coe^n_{\lambda x_1 \ldots x_n. A}\ i_1\ \ldots\ i_n\ a\ j_1\ \ldots\ j_n : A[x_k := j_k]$}
+\DisplayProof
+\end{center}
+
+\[ coe^n_{\lambda x_1 \ldots x_n. A}\ i_1\ \ldots i_n\ a\ i_1\ \ldots i_n \to_\beta a \]
+
+Before we define $coe^n$ let us introduce a notation.
+We will write $\overline{x}_n$ for a sequence of variables or terms $x_1\ \ldots\ x_n$.
+Now we can define $coe^n$ in terms $fill^1$ as follows:
+
+\begin{align*}
+& coe^0_A a = a \\
+& coe^{n+1}_{\lambda \overline{x}_{n+1}. A}\ \overline{i}_{n+1}\ a\ \overline{j}_{n+1} = \\
+& \indent fill^1_{\lambda x_{n+1}. A[x_1 := j_1] \ldots [x_n := j_n]}\ i_{n+1}\ (\lambda _. coe^n_{\lambda \overline{x}_n. A[x_{n+1} := i_{n+1}]}\ \overline{i}_n\ a\ \overline{j}_n)\ j_{n+1}
+\end{align*}
 
 \begin{comment}
 \begin{align*}
