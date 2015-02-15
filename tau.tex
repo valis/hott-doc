@@ -86,13 +86,15 @@ We also need operators $coe^n$ which satisfy the following inference and reducti
 \[ coe^n_{\lambda x_1 \ldots x_n. A}\ i_1\ \ldots i_n\ a\ i_1\ \ldots i_n \to_\beta a \]
 
 Before we define $coe^n$ let us introduce a notation.
-We will write $\overline{x}_n$ for a sequence of variables or terms $x_1\ \ldots\ x_n$.
+We will write $\overline{x}$ for a sequence of variables or terms $x_1\ \ldots\ x_n$,
+    and we will write $\overline{x}_{\hat{i}}$ for the sequence $x_1\ \ldots\ x_{i - 1}\ x_{i + 1}\ \ldots\ x_n$.
+We use the same notation in other cases.
+For example, $\overline{x : I}$ denotes $x_1 : I, \ldots x_n : I$, and $A \overline{[x := j]}$ denotes $A[x_1 := j_1] \ldots [x_n := j_n]$.
 Now we can define $coe^n$ in terms $fill^1$ as follows:
 
 \begin{align*}
 & coe^0_A a = a \\
-& coe^{n+1}_{\lambda \overline{x}_{n+1}. A}\ \overline{i}_{n+1}\ a\ \overline{j}_{n+1} = \\
-& \indent fill^1_{\lambda x_{n+1}. A[x_1 := j_1] \ldots [x_n := j_n]}\ i_{n+1}\ (\lambda _. coe^n_{\lambda \overline{x}_n. A[x_{n+1} := i_{n+1}]}\ \overline{i}_n\ a\ \overline{j}_n)\ j_{n+1}
+& coe^{n+1}_{\lambda \overline{x} x_{n+1}. A}\ \overline{i}\ i_{n+1}\ a\ \overline{j}\ j_{n+1} = fill^1_{\lambda x_{n+1}. A \overline{[x := j]}}\ i_{n+1}\ (coe^n_{\lambda \overline{x}. A[x_{n+1} := i_{n+1}]}\ \overline{i}\ a\ \overline{j})\ j_{n+1}
 \end{align*}
 
 \begin{comment}
@@ -344,19 +346,32 @@ Now we can define $coe^n$ in terms $fill^1$ as follows:
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, \overline{x : I} \vdash A$}
-\AxiomC{$\Gamma \vdash i : I$}
+\Axiom$\fCenter \Gamma \vdash i : I$
 \def\extraVskip{1pt}
 \noLine
-\UnaryInfC{$\Gamma \vdash j_i : I$, $1 \leq i \leq n$}
-\AxiomC{$\Gamma, \overline{x : I}_{\hat{1}} \vdash a_1 : A[x_1 := i]$}
+\UnaryInf$\fCenter \Gamma \vdash j_k : I \text{, } 1 \leq k \leq n$
 \noLine
-\UnaryInfC{$\Gamma, \overline{x : I}_{\hat{i}} \vdash a_i : A[x_i := left]$, $2 \leq i \leq n$}
+\UnaryInf$\fCenter \Gamma, \overline{x : I} \vdash A$
 \noLine
-\UnaryInfC{$\Gamma, \overline{x : I}_{\hat{i}} \vdash a'_i : A[x_i := right]$, $2 \leq i \leq n$}
+\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{1}} \vdash a_1 : A[x_1 := i]$
+\noLine
+\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{k}} \vdash a_k : A[x_k := left] \text{, } 2 \leq k \leq n$
+\noLine
+\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{k}} \vdash a'_k : A[x_k := right] \text{, } 2 \leq k \leq n$
+\noLine
+\UnaryInf$\fCenter a_{i_1}[x_{i_2} := left] \ebst a_{i_2}[x_{i_1} := left] \text{, } 2 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a'_{i_1}[x_{i_2} := left] \ebst a_{i_2}[x_{i_1} := right] \text{, } 2 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a_{i_1}[x_{i_2} := right] \ebst a'_{i_2}[x_{i_1} := left] \text{, } 2 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a'_{i_1}[x_{i_2} := right] \ebst a'_{i_2}[x_{i_1} := right] \text{, } 2 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a_{i_1}[x_1 := i] \ebst a_1[x_{i_1} := left] \text{, } 2 \leq i_1 \leq n$
+\noLine
+\UnaryInf$\fCenter a'_{i_1}[x_1 := i] \ebst a_1[x_{i_1} := right] \text{, } 2 \leq i_1 \leq n$
 \def\extraVskip{2pt}
-\RightLabel{, $n \geq 1$}
-\TrinaryInfC{$\Gamma \vdash fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ \overline{j} : A \overline{[x := j]}$}
+\UnaryInf$\fCenter \Gamma \vdash fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ \overline{j} : A \overline{[x := j]}$
 \DisplayProof
 \end{center}
 
@@ -418,8 +433,8 @@ Now we can define $coe^n$ in terms $fill^1$ as follows:
 & p\ @_{a,a'}\ right \to_\beta a' \\
 & iso\ A\ B\ f\ g\ p\ q\ left \to_\beta A \\
 & iso\ A\ B\ f\ g\ p\ q\ right \to_\beta B \\
-& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \to_\beta f\ a \\
-& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \to_\beta g\ b
+& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \to_\beta f\ a \text{ if } k \notin FV(A\ B\ f\ g\ p\ q) \\
+& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \to_\beta g\ b \text{ if } k \notin FV(A\ B\ f\ g\ p\ q)
 \end{align*}
 
 \bigskip
