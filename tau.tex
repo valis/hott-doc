@@ -70,15 +70,7 @@ In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inferen
 
 Apart from the usual types, HoTT-I also has an interval type $I$, which has two constructors ($left$ and $right$) and one eliminator ($fill^1$).
 Since we have product types, the system also contains all $n$-dimensional cube types ($I^n = I \times \ldots \times I$).
-For each $n \in \mathbb{N}$ and $i : I$, we also define the cubical horn type $\Lambda_n i$.
-It is subtype of $I^n$ on those tuples $(j_1, \ldots j_n)$ which satisfy the following condition:
-\[ (j_1, \ldots j_n) \in \Lambda_n i \iff j_1 \ebst i \text{ or } \exists k \geq 2 (j_k \ebst left \text{ or } j_k \ebst right) \]
-So for $i = left$ and $i = right$, it is the usual cubical horns, but we need more general cubical horns for every $i : I$.
-
-Types $\Lambda_n i$ have tuples $(j_1, \ldots j_n)$ satisfying condition $(j_1, \ldots j_n) \in \Lambda_n i$ as constructors.
-And they have two sets of eliminators: usual projections $\pi_k$ and eliminators $(\Lambda_{n+1} i) \text{-} elim$.
-The latter show how to define a function from $\Lambda_{n+1} i$ using a function from $\Lambda_n i$.
-This simply reflects the fact that $\Lambda_{n+1} i$ is glued from $\Lambda_n i \times I$ and two copies of $I^n$.
+For each $n \geq 1$, we also define functions $fill^n$, which construct fillers for cubical horns.
 
 We also need operators $coe^n$ which satisfy the following inference and reduction rules:
 
@@ -94,20 +86,16 @@ We also need operators $coe^n$ which satisfy the following inference and reducti
 \[ coe^n_{\lambda x_1 \ldots x_n. A}\ i_1\ \ldots i_n\ a\ i_1\ \ldots i_n \to_\beta a \]
 
 Before we define $coe^n$ let us introduce a notation.
-We will write $\overline{x}_n$ for a sequence of variables or terms $x_1\ \ldots\ x_n$.
+We will write $\overline{x}$ for a sequence of variables or terms $x_1\ \ldots\ x_n$,
+    and we will write $\overline{x}_{\hat{i}}$ for the sequence $x_1\ \ldots\ x_{i - 1}\ x_{i + 1}\ \ldots\ x_n$.
+We use the same notation in other cases.
+For example, $\overline{x : I}$ denotes $x_1 : I, \ldots x_n : I$, and $A \overline{[x := j]}$ denotes $A[x_1 := j_1] \ldots [x_n := j_n]$.
 Now we can define $coe^n$ in terms $fill^1$ as follows:
 
 \begin{align*}
 & coe^0_A a = a \\
-& coe^{n+1}_{\lambda \overline{x}_{n+1}. A}\ \overline{i}_{n+1}\ a\ \overline{j}_{n+1} = \\
-& \indent fill^1_{\lambda x_{n+1}. A[x_1 := j_1] \ldots [x_n := j_n]}\ i_{n+1}\ (\lambda _. coe^n_{\lambda \overline{x}_n. A[x_{n+1} := i_{n+1}]}\ \overline{i}_n\ a\ \overline{j}_n)\ j_{n+1}
+& coe^{n+1}_{\lambda \overline{x} x_{n+1}. A}\ \overline{i}\ i_{n+1}\ a\ \overline{j}\ j_{n+1} = fill^1_{\lambda x_{n+1}. A \overline{[x := j]}}\ i_{n+1}\ (coe^n_{\lambda \overline{x}. A[x_{n+1} := i_{n+1}]}\ \overline{i}\ a\ \overline{j})\ j_{n+1}
 \end{align*}
-
-Now we introduce additional reduction rules.
-% Как сигма определить в такой нотации?
-
-% \[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots\ j_n \to_\sigma \]
-% \[ a_1[x_2 := j_2] \ldots [x_n := j_n] \text{ if } x_1 \notin FV(A) \cup FV(a_n) \cup FV(a'_n) \cup \ldots \cup FV(a_2) \cup FV(a'_2) \]
 
 \begin{comment}
 \begin{align*}
@@ -358,56 +346,33 @@ Now we introduce additional reduction rules.
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash i : I$}
-\UnaryInfC{$\Gamma \vdash \Lambda_n i$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash i : I$}
-\AxiomC{$\Gamma \vdash h : \Lambda_n i$}
-\RightLabel{, $1 \leq k \leq n$}
-\BinaryInfC{$\Gamma \vdash \pi_k(h) : I$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash i : I$}
-\AxiomC{$\Gamma \vdash j_1 : I \quad \ldots \quad \Gamma \vdash j_n : I$}
-\RightLabel{, $(j_1, \ldots j_n) \in \Lambda_n i$}
-\BinaryInfC{$\Gamma \vdash (j_1, \ldots j_n) : \Lambda_n i$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
+\Axiom$\fCenter \Gamma \vdash i : I$
 \def\extraVskip{1pt}
 \AxiomC{$\Gamma \vdash i : I$}
 \noLine
-\UnaryInfC{$\Gamma, x : \Lambda_{n+1} i \vdash A$}
+\UnaryInf$\fCenter \Gamma \vdash j_k : I \text{, } 1 \leq k \leq n$
 \noLine
-\UnaryInfC{$\Gamma \vdash h : \Lambda_{n+1} i$}
-\AxiomC{$\Gamma, y : \Lambda_n i, j : I \vdash a : A[x := (\pi_1(y), \ldots \pi_n(y), j)]$}
+\UnaryInf$\fCenter \Gamma, \overline{x : I} \vdash A$
 \noLine
-\UnaryInfC{$\Gamma, y_1 : I, \ldots y_n : I \vdash a_1 : A[x := (y_1, \ldots y_n, left)]$}
+\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{1}} \vdash a_1 : A[x_1 := i]$
 \noLine
-\UnaryInfC{$\Gamma, y_1 : I, \ldots y_n : I \vdash a_2 : A[x := (y_1, \ldots y_n, right)]$}
+\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{k}} \vdash a_k : A[x_k := left] \text{, } 2 \leq k \leq n$
+\noLine
+\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{k}} \vdash a'_k : A[x_k := right] \text{, } 2 \leq k \leq n$
+\noLine
+\UnaryInf$\fCenter a_{i_1}[x_{i_2} := left] \ebst a_{i_2}[x_{i_1} := left] \text{, } 2 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a'_{i_1}[x_{i_2} := left] \ebst a_{i_2}[x_{i_1} := right] \text{, } 2 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a_{i_1}[x_{i_2} := right] \ebst a'_{i_2}[x_{i_1} := left] \text{, } 2 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a'_{i_1}[x_{i_2} := right] \ebst a'_{i_2}[x_{i_1} := right] \text{, } 2 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a_{i_1}[x_1 := i] \ebst a_1[x_{i_1} := left] \text{, } 2 \leq i_1 \leq n$
+\noLine
+\UnaryInf$\fCenter a'_{i_1}[x_1 := i] \ebst a_1[x_{i_1} := right] \text{, } 2 \leq i_1 \leq n$
 \def\extraVskip{2pt}
-\RightLabel{, $(*)$}
-\BinaryInfC{$\Gamma \vdash (\Lambda_{n+1} i) \text{-} elim_{\lambda x. A}\ (\lambda y j. a)\ (\lambda y_1 \ldots y_n. a_1)\ (\lambda y_1 \ldots y_n. a_2)\ h : A[x := h]$}
-\DisplayProof
-
-\[ (*) \begin{array}{ll}
-a[j := left] \ebst a_1[y_1 := \pi_1(y)] \ldots [y_n := \pi_n(y)], \\
-a[j := right] \ebst a_2[y_1 := \pi_1(y)] \ldots [y_n := \pi_n(y)]
-\end{array} \]
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x_1 : I, \ldots x_n : I \vdash A \quad \Gamma \vdash i : I$}
-\AxiomC{$\Gamma, h : \Lambda_n i \vdash a : A[x_k := \pi_k(h)]$}
-\AxiomC{$\Gamma \vdash j_k : I$}
-\TrinaryInfC{$\Gamma \vdash fill^n_{\lambda x_1 \ldots x_n. A}\ i\ (\lambda h. a)\ j_1\ \ldots\ j_n : A[x_1 := j_1] \ldots [x_n := j_n]$}
+\UnaryInf$\fCenter \Gamma \vdash fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ \overline{j} : A \overline{[x := j]}$
 \DisplayProof
 \end{center}
 
@@ -485,8 +450,8 @@ a[j := right] \ebst a_2[y_1 := \pi_1(y)] \ldots [y_n := \pi_n(y)]
 \begin{align*}
 & iso\ A\ B\ f\ g\ p\ q\ left \to_\beta A \\
 & iso\ A\ B\ f\ g\ p\ q\ right \to_\beta B \\
-& coe_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,x}\ left\ a\ right \to_\beta f\ a \text{ if } x \notin FV(iso\ A\ B\ f\ g\ p\ q) \\
-& coe_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,x}\ right\ b\ left \to_\beta g\ b \text{ if } x \notin FV(iso\ A\ B\ f\ g\ p\ q)
+& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \to_\beta f\ a \text{ if } k \notin FV(A\ B\ f\ g\ p\ q) \\
+& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \to_\beta g\ b \text{ if } k \notin FV(A\ B\ f\ g\ p\ q)
 \end{align*}
 
 \bigskip
