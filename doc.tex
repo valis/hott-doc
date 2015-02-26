@@ -6,6 +6,7 @@
 \usepackage{ifthen}
 \usepackage{xargs}
 \usepackage{bussproofs}
+\usepackage{listings}
 
 \providecommand\WarningsAreErrors{false}
 \ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
@@ -35,8 +36,13 @@
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\C}{\cat{C}}
 \newcommand{\sSet}{\cat{sSet}}
+\newcommand{\bs}{\beta\sigma}
+\newcommand{\red}{\Rightarrow}
+\newcommand{\deq}{\Leftrightarrow}
 
 \numberwithin{figure}{section}
+
+\lstset{escapeinside={\#}{\#}}
 
 \begin{document}
 
@@ -53,7 +59,7 @@
 \section{Introduction}
 
 We define a version of homotopy type theory based on a notion of the interval type.
-We give a simple formulation of the univalence axiom and describe two extensions of the system.
+We give a simple formulation of the univalence axiom and describe a few extenisons of the system.
 
 The first extension is called data types with conditions.
 Data types with conditions generalize ordinary data types, allowing us to define not only coproducts of types, but also pushouts of certain functions (which we can call cofibrations).
@@ -65,6 +71,62 @@ Using this extensions, we can define path types for which the usual elimination 
 \section{Syntax}
 
 In this section, we will describe the inference rules of the basic system.
+It has $\Pi$-types, path types, and also the interval type $I$, which has two constructors ($left$ and $right$) and one elimination rule ($coe$).
+The behaviour of $coe$ can be described as follows:
+given a fibration $\lambda x \red A$ over $I$ and a point $a$ in the fibre over some point $i : I$, $coe_{\lambda x \red A}\ i\ a$ gives us a section of this fibration.
+
+Path types are heterogeneous, that is we can construct paths between different types (which are itself connected by a path).
+We write $a =_A a'$ (or simply $a = a'$) for usual homogeneous paths, which are defined as $Path (\lambda i \red A)\ a\ a'$.
+Also path types have unusual constructors ($path$) and eliminators ($@$).
+But we still can define usual functions for path types using these constructions:
+\begin{lstlisting}
+idp : (x : A) #$\to$# x = x
+idp = #$\lambda$#x #$\red$# path (#$\lambda$#i #$\red$# x)
+
+pmap : (f : A #$\to$# B) #$\to$# (a a' : A) #$\to$# a = a' #$\to$# f a = f a'
+pmap = #$\lambda$#f a a' p #$\red$# path (#$\lambda$#i #$\red$# f (p @ i))
+
+funExt : (f g : (a : A) #$\to$# B[x := a]) #$\to$#
+    ((a : A) #$\to$# f a = g a) #$\to$# f = g
+funExt = #$\lambda$#f g p #$\red$# path (#$\lambda$#i a #$\red$# p a @ i)
+
+transport : (a a' : A) #$\to$# a = a' #$\to$# B[x := a] #$\to$# B[x := a']
+transport = #$\lambda$#a a' p x #$\red$#
+    coe (#$\lambda$#i #$\red$# B[x := p @ i]) left x right
+\end{lstlisting}
+
+The definition of $J$ is a little bit more complicated.
+First, we need to define a function $squeeze$, satisfying the following rules:
+\begin{lstlisting}
+squeeze : I #$\to$# I #$\to$# I
+squueze left j #$\red$# left
+squueze right j #$\red$# j
+squueze i left #$\red$# left
+squueze i right #$\red$# i
+\end{lstlisting}
+
+We can define the following function:
+\begin{lstlisting}
+squeeze' : I #$\to$# I #$\to$# I
+squeeze' = #$\lambda$#i j #$\red$# coe (#$\lambda$#k #$\red$# left = k) left
+    (path (#$\lambda$#k #$\red$# left)) j @ i
+\end{lstlisting}
+It satisfies almost all of the rules except for the last one.
+But we can construct $squeeze$ which satisfies all of the rules using $squeeze'$:
+\begin{lstlisting}
+squeeze : I #$\to$# I #$\to$# I
+squeeze = #$\lambda$#i j #$\red$# coe (#$\lambda$#i #$\red$# Path (#$\lambda$#j #$\red$# left = squeeze' i j)
+    (path (#$\lambda$#k #$\red$# left)) (path (#$\lambda$#j #$\red$# squeeze' i j))) left
+    (path (#$\lambda$#k #$\red$# path (#$\lambda$#k #$\red$# left))) right @ i @ j
+\end{lstlisting}
+
+Now, we can define $J$:
+\begin{lstlisting}
+J : ((a : A) #$\to$# B[x := a, y := a, p := idp a]) #$\to$#
+    (a a' : A) (p : a = a') #$\to$# B[x := a, y := a']
+J = #$\lambda$#d a a' p #$\red$# coe (#$\lambda$#i #$\red$# B[x := a, y := p @ i,
+    p := path (#$\lambda$#j #$\red$# p @ squeeze i j)]) left (d a) right
+\end{lstlisting}
 
 \centerAlignProof
 
@@ -91,7 +153,7 @@ In this section, we will describe the inference rules of the basic system.
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
 \AxiomC{$\Gamma \vdash B$}
-\RightLabel{, $A =_{\beta \sigma} B$}
+\RightLabel{, $A \deq B$}
 \BinaryInfC{$\Gamma \vdash a : B$}
 \DisplayProof
 \end{center}
@@ -107,7 +169,7 @@ In this section, we will describe the inference rules of the basic system.
 \medskip
 \begin{center}
 \AxiomC{$\Gamma, x : A \vdash b : B$}
-\UnaryInfC{$\Gamma \vdash \lambda x. b : (x : A) \to B$}
+\UnaryInfC{$\Gamma \vdash \lambda x \red b : (x : A) \to B$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash f : (x : A) \to B$}
@@ -129,11 +191,6 @@ In this section, we will describe the inference rules of the basic system.
 \AxiomC{$\Gamma \vdash$}
 \UnaryInfC{$\Gamma \vdash right : I$}
 \DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash i : I$}
-\AxiomC{$\Gamma \vdash j : I$}
-\BinaryInfC{$\Gamma \vdash squeeze\ i\ j : I$}
-\DisplayProof
 \end{center}
 
 \medskip
@@ -142,68 +199,49 @@ In this section, we will describe the inference rules of the basic system.
 \AxiomC{$\Gamma \vdash i : I$}
 \AxiomC{$\Gamma \vdash a : A[x := i]$}
 \AxiomC{$\Gamma \vdash j : I$}
-\QuaternaryInfC{$\Gamma \vdash coe_{\lambda x. A}\ i\ a\ j : A[x := j]$}
+\QuaternaryInfC{$\Gamma \vdash coe_{\lambda x \red A}\ i\ a\ j : A[x := j]$}
 \DisplayProof
 \end{center}
 
-\begin{comment}
 \medskip
 \begin{center}
 \AxiomC{$\Gamma, x : I \vdash A$}
-\AxiomC{$\Gamma \vdash a : A[x := i]$}
-\AxiomC{$\Gamma \vdash i : I$}
-\AxiomC{$\Gamma \vdash j : I$}
-\QuaternaryInfC{$\Gamma \vdash lift_{\lambda x. A}\ i\ a\ j : A[x := j]$}
+\AxiomC{$\Gamma \vdash a : A[x := left]$}
+\AxiomC{$\Gamma \vdash a' : A[x := right]$}
+\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x \red A)\ a\ a'$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \vdash i : I$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash j : I$
-\Axiom$\fCenter \Gamma \vdash a : (y : I) \to A$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash a' : (y : I) \to A$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash f : I \to A[y := i]$
-\def\extraVskip{2pt}
-\RightLabel{, $a\ i =_\beta f\ left$, $f\ right =_\beta a'\ i$}
-\BinaryInfC{$\Gamma \vdash fill_{\lambda y. A}\ a\ a'\ i\ f\ j : I \to A[y := j]$}
+\AxiomC{$\Gamma, x : I \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash path\ (\lambda x \red a) : Path\ (\lambda x \red A)\ a[x := left]\ a[x := right]$}
 \DisplayProof
 \end{center}
-\end{comment}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : Path\ (\lambda x \red A)\ a\ a'$}
+\AxiomC{$\Gamma \vdash i : I$}
+\BinaryInfC{$\Gamma \vdash p\ @_{a,a'}\ i : A[x := i]$}
+\DisplayProof
+\end{center}
+
+\begin{align*}
+& (\lambda x \red b)\ a \red_\beta b[x := a] \\
+& coe_{\lambda k \red A}\ i\ a\ j \red_\beta a \text{ if } i \deq j \\
+& coe_{\lambda k \red A}\ i\ a\ j \red_\sigma a \text{ if } k \notin FV(A) \\
+& path\ (\lambda x \red t)\ @_{a,a'}\ i \red_\beta t[x := i] \\
+& p\ @_{a,a'}\ left \red_\beta a \\
+& p\ @_{a,a'}\ right \red_\beta a' \\
+\end{align*}
 
 \bigskip
-\caption{Inference rules.}
+\caption{Inference and reduction rules.}
 \label{table:inf-rules}
 \end{table}
 
-The main novelty of this system is the interval type $I$.
-It has two constructors ($left$ and $right$) and one elimination rule ($coe$).
-There is also a function $squeeze$ which we will use later to define $J$ for path types.
-
-Reduction rules:
-\begin{itemize}
-\item $(\lambda x.b)\ a \to_\beta b[x := a]$
-\item $squeeze\ left\ j \to_\beta left$
-\item $squeeze\ right\ j \to_\beta j$
-\item $squeeze\ i\ left \to_\beta left$
-\item $squeeze\ i\ right \to_\beta i$
-\item $coe_{\lambda k.A}\ left\ a\ left \to_\beta a$
-\item $coe_{\lambda k.A}\ right\ a\ right \to_\beta a$
-\item $coe_{\lambda k.A}\ i\ a\ j \to_\sigma a$ if $k \notin FV(A)$
-\end{itemize}
-
-The first rule is just a usual $\beta$-reduction for lambda-terms.
-The next four rules describes the behaviour of $squeeze$, so it defines a retraction of the square onto the interval.
-
-The behaviour of eliminator $coe$ can be described as follows:
-given a fibration $\lambda x. A$ over $I$ and a point $a$ in the fibre over some point $i : I$, $coe_{\lambda x. A}\ i\ a$ gives us a section of this fibration.
-The first rule for $coe$ tells us that at $i$ this section returns $a$, and the second rule tells that if the fibration is trivial, then the section is constant.
-The second rule is needed for $J$ to satisfy its usual reduction rule.
-
+\subsection{Univalent universes}
 Now, we show how to add a univalent universe to the system.
 
 \medskip
@@ -243,10 +281,10 @@ Now, we show how to add a univalent universe to the system.
 
 We also add the following reduction rules:
 \begin{itemize}
-\item $iso\ A\ B\ f\ g\ p\ q\ left \to_\beta A$
-\item $iso\ A\ B\ f\ g\ p\ q\ right \to_\beta B$
-\item $coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \to_\beta f\ a$
-\item $coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \to_\beta g\ b$
+\item $iso\ A\ B\ f\ g\ p\ q\ left \red_\beta A$
+\item $iso\ A\ B\ f\ g\ p\ q\ right \red_\beta B$
+\item $coe_{\lambda k \red iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \red_\beta f\ a$
+\item $coe_{\lambda k \red iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \red_\beta g\ b$
 \end{itemize}
 
 Later we will show that these rules imply the univalence axiom in its usual form.
@@ -276,7 +314,7 @@ Of course, we can define $-1$ to be $negative\ 0$, $-2$ to be $negative\ 1$, and
 It is better to identify the positive and the negative zeros, that is to define $\mathbb{Z}$ as the pushout of $1 \overset{0}\to \mathbb{N}$ with itself.
 So, we add the following condition to the definition of $\mathbb{Z}$:
 \[ negative\ 0 = positive\ 0. \]
-Now, when we define a function $f$ over $\mathbb{Z}$, we need to check that $f\ (negative\ 0) =_{\beta \sigma} f\ (positive\ 0)$.
+Now, when we define a function $f$ over $\mathbb{Z}$, we need to check that $f\ (negative\ 0) \deq f\ (positive\ 0)$.
 
 Using data types with conditions, we can define higher inductive types.
 For example, the circle $S^1$ can be defined as follows: it has two constructors
@@ -300,7 +338,7 @@ Semantically, such a record is given by a pullback of a function $(B \to X) \to 
 Let us show how to define path types as a record with conditions.
 It will be a record $Path$ with three parameters $A : I \to Type$, $a : A\ left$, and $a' : A\ right$.
 We will define a ``heterogeneous path type'' because it seems impossible to define useful elimination rules for higher inductive types using only homogeneous path types.
-We abbreviate $Path\ (\lambda _. A)\ a\ a'$ to $a = a'$.
+We abbreviate $Path\ (\lambda i \red A)\ a\ a'$ to $a = a'$.
 The record $Path\ (A : I \to Type)\ (a : A\ left)\ (a' : A\ right)$ has one constructor
 \[ path : ((i : I) \to A\ i) \to Path\ (A : I \to Type)\ (a : A\ left)\ (a' : A\ right), \]
 one field
@@ -312,16 +350,16 @@ and two conditions
 When we define an element of a record with conditions, we need to check that it satisfies them.
 And when we access fields with conitions, they might evaluate, if arguments to it match some condition on it.
 For example, if $p : a = a'$, then $p.at\ left$ evaluates to $a$, $p.at\ right$ evaluates to $a'$,
-and if we want to consruct a path of type $a = a'$, then we need to specify a function $f : I \to A$ such that $f\ left =_{\beta \sigma} a$ and $f\ right =_{\beta \sigma} a'$.
+and if we want to consruct a path of type $a = a'$, then we need to specify a function $f : I \to A$ such that $f\ left \deq a$ and $f\ right \deq a'$.
 
 We can define the $J$ rule as follows:
 \begin{itemize}
-\item[] $idp : (A : Type) (a : A) \to Path\ (\lambda _. A)\ a\ a$
-\item[] $idp\ A\ a = path (\lambda i. a)$
+\item[] $idp : (A : Type) (a : A) \to Path\ (\lambda i \red A)\ a\ a$
+\item[] $idp\ A\ a = path (\lambda i \red a)$
 \item[]
 \item[] $J : (A : Type) (C : (x\ y : A) \to x = y \to Type) \to$
 \item[] \qquad $((a : A) \to C\ a\ a\ (idp\ A\ a)) \to (a\ a' : A) (p : a = a') \to C\ a\ a'\ p$
-\item[] $J\ A\ C\ d\ a\ a'\ p =\ coe_{\lambda i.\,C\,a\,(p.at\,i)\,(path\,(\lambda j.\,p.at\,(squeeze\,i\,j)))}\ left\ (d\ a)\ right$
+\item[] $J\ A\ C\ d\ a\ a'\ p =\ coe_{\lambda i \red \,C\,a\,(p.at\,i)\,(path\,(\lambda j \red \,p.at\,(squeeze\,i\,j)))}\ left\ (d\ a)\ right$
 \end{itemize}
 
 Now, we can prove the univalence axiom in its usual form, which states that a certain function $F$ is equivalence.
