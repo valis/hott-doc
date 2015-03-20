@@ -1,4 +1,4 @@
-\documentclass{amsart}
+\documentclass[8pt]{amsart}
 
 \usepackage{amssymb}
 \usepackage[all]{xy}
@@ -6,7 +6,6 @@
 \usepackage{ifthen}
 \usepackage{xargs}
 \usepackage{bussproofs}
-\usepackage{listings}
 
 \providecommand\WarningsAreErrors{false}
 \ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
@@ -42,8 +41,6 @@
 
 \numberwithin{figure}{section}
 
-\lstset{escapeinside={\#}{\#}}
-
 \begin{document}
 
 \title{Homotopy Type Theory with an interval type}
@@ -70,63 +67,19 @@ Using this extensions, we can define path types for which the usual elimination 
 
 \section{Syntax}
 
-In this section, we will describe the inference rules of the basic system.
-It has $\Pi$-types, path types, and also the interval type $I$, which has two constructors ($left$ and $right$) and one elimination rule ($coe$).
+In this section, we will describe the inference rules of the basic system, which has $\Pi$-types and path types.
+We denote by $\deq$ the computational equality, which is a reflexive, symmetric, and transitive closure of a union of $\deq_\eta$ and $\red$, which is a union of $\red_\beta$ and $\red_\sigma$.
+Inference and reduction rules are defined in table~\ref{table:inf-rules}.
+
+The main ingridient of the system is the interval type $I$, which allows us to give a simple computational description of path types, univalence, and higher inductive types.
+The interval type has two constructors ($left$ and $right$) and one elimination rule ($coe$).
 The behaviour of $coe$ can be described as follows:
-given a fibration $\lambda x \red A$ over $I$ and a point $a$ in the fibre over some point $i : I$, $coe_{\lambda x \red A}\ i\ a$ gives us a section of this fibration.
+given a fibration $\lambda x \red A$ over $I$ and a point $a$ in the fibre over $left$, $\lambda i \red coe_{\lambda x \red A}\ a\ i$ gives us a section of this fibration.
 
 Path types are heterogeneous, that is we can construct paths between different types (which are itself connected by a path).
-We write $a =_A a'$ (or simply $a = a'$) for usual homogeneous paths, which are defined as $Path (\lambda i \red A)\ a\ a'$.
-Also path types have unusual constructors ($path$) and eliminators ($@$).
-But we still can define usual functions for path types using these constructions:
-\begin{lstlisting}
-idp : (x : A) #$\to$# x = x
-idp = #$\lambda$#x #$\red$# path (#$\lambda$#i #$\red$# x)
-
-pmap : (f : A #$\to$# B) #$\to$# (a a' : A) #$\to$# a = a' #$\to$# f a = f a'
-pmap = #$\lambda$#f a a' p #$\red$# path (#$\lambda$#i #$\red$# f (p @ i))
-
-funExt : (f g : (a : A) #$\to$# B[x := a]) #$\to$#
-    ((a : A) #$\to$# f a = g a) #$\to$# f = g
-funExt = #$\lambda$#f g p #$\red$# path (#$\lambda$#i a #$\red$# p a @ i)
-
-transport : (a a' : A) #$\to$# a = a' #$\to$# B[x := a] #$\to$# B[x := a']
-transport = #$\lambda$#a a' p x #$\red$#
-    coe (#$\lambda$#i #$\red$# B[x := p @ i]) left x right
-\end{lstlisting}
-
-The definition of $J$ is a little bit more complicated.
-First, we need to define a function $squeeze$, satisfying the following rules:
-\begin{lstlisting}
-squeeze : I #$\to$# I #$\to$# I
-squueze left j #$\red$# left
-squueze right j #$\red$# j
-squueze i left #$\red$# left
-squueze i right #$\red$# i
-\end{lstlisting}
-
-We can define the following function:
-\begin{lstlisting}
-squeeze' : I #$\to$# I #$\to$# I
-squeeze' = #$\lambda$#i j #$\red$# coe (#$\lambda$#k #$\red$# left = k) left
-    (path (#$\lambda$#k #$\red$# left)) j @ i
-\end{lstlisting}
-It satisfies almost all of the rules except for the last one.
-But we can construct $squeeze$ which satisfies all of the rules using $squeeze'$:
-\begin{lstlisting}
-squeeze : I #$\to$# I #$\to$# I
-squeeze = #$\lambda$#i j #$\red$# coe (#$\lambda$#i #$\red$# Path (#$\lambda$#j #$\red$# left = squeeze' i j)
-    (path (#$\lambda$#k #$\red$# left)) (path (#$\lambda$#j #$\red$# squeeze' i j))) left
-    (path (#$\lambda$#k #$\red$# path (#$\lambda$#k #$\red$# left))) right @ i @ j
-\end{lstlisting}
-
-Now, we can define $J$:
-\begin{lstlisting}
-J : ((a : A) #$\to$# B[x := a, y := a, p := idp a]) #$\to$#
-    (a a' : A) (p : a = a') #$\to$# B[x := a, y := a']
-J = #$\lambda$#d a a' p #$\red$# coe (#$\lambda$#i #$\red$# B[x := a, y := p @ i,
-    p := path (#$\lambda$#j #$\red$# p @ squeeze i j)]) left (d a) right
-\end{lstlisting}
+We write $a =_A a'$ (or simply $a = a'$) for usual homogeneous paths, which are defined as $Path\ (\lambda i \red A)\ a\ a'$.
+A path between $a$ and $a'$ over $\lambda x \red A$ is a function $p : (x : I) \to A$ such that $p\ left \deq a$ and $p\ right \deq a'$.
+But we still can define usual functions for path types using these constructions.
 
 \centerAlignProof
 
@@ -196,10 +149,9 @@ J = #$\lambda$#d a a' p #$\red$# coe (#$\lambda$#i #$\red$# B[x := a, y := p @ i
 \medskip
 \begin{center}
 \AxiomC{$\Gamma, x : I \vdash A$}
-\AxiomC{$\Gamma \vdash i : I$}
-\AxiomC{$\Gamma \vdash a : A[x := i]$}
+\AxiomC{$\Gamma \vdash a : A[x := left]$}
 \AxiomC{$\Gamma \vdash j : I$}
-\QuaternaryInfC{$\Gamma \vdash coe_{\lambda x \red A}\ i\ a\ j : A[x := j]$}
+\TrinaryInfC{$\Gamma \vdash coe_{\lambda x \red A}\ a\ j : A[x := j]$}
 \DisplayProof
 \end{center}
 
@@ -229,17 +181,135 @@ J = #$\lambda$#d a a' p #$\red$# coe (#$\lambda$#i #$\red$# B[x := a, y := p @ i
 
 \begin{align*}
 & (\lambda x \red b)\ a \red_\beta b[x := a] \\
-& coe_{\lambda k \red A}\ i\ a\ j \red_\beta a \text{ if } i \deq j \\
-& coe_{\lambda k \red A}\ i\ a\ j \red_\sigma a \text{ if } k \notin FV(A) \\
+& coe_{\lambda k \red A}\ a\ left \red_\beta a \\
+& coe_{\lambda k \red A}\ a\ i \red_\sigma a \text{ if } k \notin FV(A) \\
 & path\ (\lambda x \red t)\ @_{a,a'}\ i \red_\beta t[x := i] \\
 & p\ @_{a,a'}\ left \red_\beta a \\
 & p\ @_{a,a'}\ right \red_\beta a' \\
+& (\lambda x \red f\ x) \deq_\eta f \text{ if } x \notin FV(f) \\
+& path\ (\lambda x \red p\ @\ x) \deq_\eta p \text{ if } x \notin FV(p)
 \end{align*}
 
 \bigskip
 \caption{Inference and reduction rules.}
 \label{table:inf-rules}
 \end{table}
+
+Identity path (reflexivity) is a constant function $\lambda i \red x$.
+\begin{align*}
+    & idp : (x : A) \to x = x \\
+    & idp = \lambda x \red path\ (\lambda i \red x)
+\end{align*}
+
+Path map (congruence) is defined in terms of a function composition.
+If we have a function $p : I \to A$ and a function $f : A \to B$, then $f \circ p : I \to B$ is a path between $f\ (p\ left)$ and $f\ (p\ right)$.
+\begin{align*}
+    & pmap : (f : A \to B) \to (a\ a' : A) \to a = a' \to f\ a = f\ a' \\
+    & pmap = \lambda f\ a\ a'\ p \red path\ (\lambda i \red f\ (p\ @\ i))
+\end{align*}
+
+It is well known that functional extensionality can be defined in terms of an interval type.
+\begin{align*}
+    & funExt : (f\ g : (a : A) \to B[x := a]) \to ((a : A) \to f\ a = g\ a) \to f = g \\
+    & funExt = \lambda f\ g\ p \red path\ (\lambda i\ a \red p\ a\ @\ i)
+\end{align*}
+
+Transporting along a path (substitution) is defined as a coercion along a path in types:
+\begin{align*}
+    & transport : (a\ a' : A) \to a = a' \to B[x := a] \to B[x := a'] \\
+    & transport = \lambda a\ a'\ p\ b \red coe_{\lambda i \red B[x := p\ @\ i]}\ b\ right
+\end{align*}
+
+The definition of $J$ is a little bit more complicated.
+First, we need to define a function $squeeze$, satisfying the following rules:
+\begin{align*}
+    & squeeze : I \to I \to I \\
+    & squueze\ left\ j \red left \\
+    & squueze\ right\ j \red j \\
+    & squueze\ i\ left \red left \\
+    & squueze\ i\ right \red i
+\end{align*}
+
+The idea is that for each point on the interval $i : I$ function $squeeze\ i : I \to I$ maps $left$ to $left$ and $right$ to $i$, so it squeezes the interval.
+Using $squeeze$ we can defined a useful function $psqueeze$, which squeezes paths.
+\begin{align*}
+    & psqueeze : (x\ y : A) (p : x = y) (i : I) \to x = p\ @\ i \\
+    & psqueeze = \lambda x\ y\ p\ i \red path\ (\lambda j \red p\ @\ squeeze\ i\ j)
+\end{align*}
+Using $psqueeze$ we can define $J$ as follows:
+\begin{align*}
+    & J : ((a : A) \to B[x := a, y := a, p := idp\ a]) \to (x\ y : A) (p : x = y) \to B \\
+    & J = \lambda d\ x\ y\ p \red coe_{\lambda i \red B[y := p\ @\ i, p := psqueeze\ x\ y\ p\ i]}\ (d\ x)\ right
+\end{align*}
+This definition type checks since $psqueeze$ satisfies the following rules:
+\begin{align*}
+    & psqueeze\ x\ y\ p\ left \deq idp\ x \\
+    & psqueeze\ x\ y\ p\ right \deq p
+\end{align*}
+
+\subsection{Cubical fillers}
+
+The theory we are describing has many similarities to the theory of cubical sets.
+The reason is that we already have a $1$-cube, namely the interval type, and we can define an $n$-cube to be the product of intervals.
+We do not have the product type yet, but we can form a context $x_1 : I, \ldots x_n : I$, and a term of type $A$ in this context is simply an $n$-cube in $A$.
+Another reason is that $coe$ gives us all $n$-dimensional fillers for cubical horns.
+We will use this to define $squeeze$ in a similar way it is done in the appendix of \cite{cubical}.
+
+Given an $n$-dimensional cubical horn we can always find a filler for it as follows:
+\begin{align*}
+& fill^1_{\lambda x_1 \red A}\ a_1\ j_1 = coe_{\lambda x_1 \red A}\ a_1\ j_1 \\
+& fill^{n+1}_{\lambda \overline{x}_{n+1} \red A}\ (\lambda \overline{x}_n \red a_{n+1})\ (\lambda \overline{x}_n \red a'_{n+1}) \ldots \\
+& \indent (\lambda \overline{x}_{\hat{2},n+1} \red a_2)\ (\lambda \overline{x}_{\hat{2},n+1} \red a'_2)\ (\lambda \overline{x}_{\hat{1},n+1} \red a_1) = \\
+& \indent \lambda \overline{j}_{n+1} \red fill^n_{\lambda \overline{x}_n \red Path\ (\lambda x_{n+1} \red A)\ a_{n+1}\ a'_{n+1}} \\
+& \indent \indent (\lambda \overline{x}_{n-1} \red path\ (\lambda x_{n+1} \red a_n))\ (\lambda \overline{x}_{n-1} \red path\ (\lambda x_{n+1} \red a'_n)) \ldots \\
+& \indent \indent (\lambda \overline{x}_{\hat{2},n} \red path\ (\lambda x_{n+1} \red a_2))\ (\lambda \overline{x}_{\hat{2},n} \red path\ (\lambda x_{n+1} \red a'_2)) \\
+& \indent \indent (\lambda \overline{x}_{\hat{1},n} \red path\ (\lambda x_{n+1} \red a_1))\ j_1 \ldots j_n\ @\ j_{n+1}
+\end{align*}
+Here, $\overline{x}_k$ denotes the sequence $x_1 \ldots x_k$, and $\overline{x}_{\hat{i},k}$ denotes the sequence $x_1 \ldots x_{i-1}\ x_{i+1} \ldots x_k$.
+The idea is that $a_i$ and $a'_i$ are hyperfaces of an $n$-dimensional cube over $A$ that form a cubical horn, and $fill^n$ gives us a filler of this horn.
+
+In order for this to make sense, $A$, $a_i$, and $a'_i$ must satisfy the following rules:
+\[ \overline{x}_{n} \vdash A \qquad \overline{x}_{\hat{i},n} \vdash a_i : A[x_i := left] \qquad \overline{x}_{\hat{i},n} \vdash a'_i : A[x_i := right] \]
+\[ a_{i_1}[x_{i_2} := left] \deq a_{i_2}[x_{i_1} := left] \qquad a'_{i_1}[x_{i_2} := left] \deq a_{i_2}[x_{i_1} := right] \]
+\[ a_{i_1}[x_{i_2} := right] \deq a'_{i_2}[x_{i_1} := left] \qquad a'_{i_1}[x_{i_2} := right] \deq a'_{i_2}[x_{i_1} := right] \]
+In this case $fill^n$ satisfies the following typing rule:
+\begin{align*}
+    & \vdash fill^n_{\lambda \overline{x} \red A}\ (\lambda \overline{x}_{n-1} \red a_n)\ (\lambda \overline{x}_{n-1} \red a'_n) \ldots \\
+    & \indent (\lambda \overline{x}_{\hat{2},n} \red a_2)\ (\lambda \overline{x}_{\hat{2},n} \red a'_2)\ (\lambda \overline{x}_{\hat{1},n} \red a_1) \\
+    & : (\overline{j}_n : I) \to A[x_1 := j_1] \ldots [x_n := j_n].
+\end{align*}
+If $j_k$ is equal to $left$ or $right$ for some $k$, then $fill^n$ on $j_1 \ldots j_n$ equals to $a_k[x_1 := j_1] \ldots [x_n := j_n]$ or $a'_k[x_1 := j_1] \ldots [x_n := j_n]$ respectively.
+So $fill^n$ indeed returns an $n$-cube with given hyperfaces.
+
+Now, we can define function $squeeze$ which satisfies the required rules.
+There rules can be stated as follows.
+We need to find a function $squeeze : I \to I \to I$, which is given on borders by the following diagram:
+\[ \xymatrix{ left \ar[r]^{\lambda i \red left} \ar[d]_{\lambda j \red left} & left \ar[d]^{\lambda j \red j} \\
+              left \ar[r]_{\lambda i \red i} & right
+            }\]
+
+We can define function $sq$, which satisfies three of the four rules, by filling the following horn:
+\[ \xymatrix{ left \ar[r]^{\lambda i \red left} \ar[d]_{\lambda j \red left} & left \ar[d]^{\lambda j \red j} \\
+              left & right
+            }\]
+\begin{align*}
+    & sq : I \to I \to I \\
+    & sq = fill^2_{\lambda i\ j \red I}\ (\lambda j \red left)\ (\lambda j \red j)\ (\lambda i \red left)
+\end{align*}
+
+Now, we can construct $squeeze$, which satisfies all of the rules, by filling the following horn:
+\[ \xymatrix @C=0.5pc @R=0.5pc
+    { left \ar[rrrr] \ar[dddd] &          & &                      & left \ar[dddd] \\
+           & left \ar[rr] \ar[dd] \ar[ul] & & left \ar[dd] \ar[ur] & \\
+           &                              & &                      & \\
+           & left \ar[rr] \ar[dl]         & & left \ar[dr]         & \\
+      left \ar[rrrr]           &          & &                      & right
+    }\]
+The inner, left, and top squares are $\lambda i\ j \red left$, the bottom and right squares are $sq$, and the filler gives us the outter square which is the required function $squeeze$.
+\begin{align*}
+    & squeeze : I \to I \to I \\
+    & squeeze = fill^3_{\lambda x_1\,x_2\,x_3 \red I}\ (\lambda x_1\ x_2 \red left)\ sq\ (\lambda x_1\ x_3 \red left)\ sq\ (\lambda x_2\ x_3 \red left)\ right
+\end{align*}
 
 \subsection{Univalent universes}
 Now, we show how to add a univalent universe to the system.
@@ -381,7 +451,7 @@ Each constructor of a data type gives us an accessible functor $C_i : \sSet \to 
 
 \subsection{Records with conditions}
 
-% \bibliographystyle{amsplain}
-% \bibliography{ref}
+\bibliographystyle{amsplain}
+\bibliography{ref}
 
 \end{document}
