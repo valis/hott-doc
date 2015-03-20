@@ -70,64 +70,6 @@ Using this extensions, we can define path types for which the usual elimination 
 
 \section{Syntax}
 
-In this section, we will describe the inference rules of the basic system.
-It has $\Pi$-types, path types, and also the interval type $I$, which has two constructors ($left$ and $right$) and one elimination rule ($coe$).
-The behaviour of $coe$ can be described as follows:
-given a fibration $\lambda x \red A$ over $I$ and a point $a$ in the fibre over some point $i : I$, $coe_{\lambda x \red A}\ i\ a$ gives us a section of this fibration.
-
-Path types are heterogeneous, that is we can construct paths between different types (which are itself connected by a path).
-We write $a =_A a'$ (or simply $a = a'$) for usual homogeneous paths, which are defined as $Path (\lambda i \red A)\ a\ a'$.
-Also path types have unusual constructors ($path$) and eliminators ($@$).
-But we still can define usual functions for path types using these constructions:
-\begin{lstlisting}
-idp : (x : A) #$\to$# x = x
-idp = #$\lambda$#x #$\red$# path (#$\lambda$#i #$\red$# x)
-
-pmap : (f : A #$\to$# B) #$\to$# (a a' : A) #$\to$# a = a' #$\to$# f a = f a'
-pmap = #$\lambda$#f a a' p #$\red$# path (#$\lambda$#i #$\red$# f (p @ i))
-
-funExt : (f g : (a : A) #$\to$# B[x := a]) #$\to$#
-    ((a : A) #$\to$# f a = g a) #$\to$# f = g
-funExt = #$\lambda$#f g p #$\red$# path (#$\lambda$#i a #$\red$# p a @ i)
-
-transport : (a a' : A) #$\to$# a = a' #$\to$# B[x := a] #$\to$# B[x := a']
-transport = #$\lambda$#a a' p x #$\red$#
-    coe (#$\lambda$#i #$\red$# B[x := p @ i]) left x right
-\end{lstlisting}
-
-The definition of $J$ is a little bit more complicated.
-First, we need to define a function $squeeze$, satisfying the following rules:
-\begin{lstlisting}
-squeeze : I #$\to$# I #$\to$# I
-squueze left j #$\red$# left
-squueze right j #$\red$# j
-squueze i left #$\red$# left
-squueze i right #$\red$# i
-\end{lstlisting}
-
-We can define the following function:
-\begin{lstlisting}
-squeeze' : I #$\to$# I #$\to$# I
-squeeze' = #$\lambda$#i j #$\red$# coe (#$\lambda$#k #$\red$# left = k) left
-    (path (#$\lambda$#k #$\red$# left)) j @ i
-\end{lstlisting}
-It satisfies almost all of the rules except for the last one.
-But we can construct $squeeze$ which satisfies all of the rules using $squeeze'$:
-\begin{lstlisting}
-squeeze : I #$\to$# I #$\to$# I
-squeeze = #$\lambda$#i j #$\red$# coe (#$\lambda$#i #$\red$# Path (#$\lambda$#j #$\red$# left = squeeze' i j)
-    (path (#$\lambda$#k #$\red$# left)) (path (#$\lambda$#j #$\red$# squeeze' i j))) left
-    (path (#$\lambda$#k #$\red$# path (#$\lambda$#k #$\red$# left))) right @ i @ j
-\end{lstlisting}
-
-Now, we can define $J$:
-\begin{lstlisting}
-J : ((a : A) #$\to$# B[x := a, y := a, p := idp a]) #$\to$#
-    (a a' : A) (p : a = a') #$\to$# B[x := a, y := a']
-J = #$\lambda$#d a a' p #$\red$# coe (#$\lambda$#i #$\red$# B[x := a, y := p @ i,
-    p := path (#$\lambda$#j #$\red$# p @ squeeze i j)]) left (d a) right
-\end{lstlisting}
-
 \centerAlignProof
 
 \begin{table}
@@ -236,10 +178,67 @@ J = #$\lambda$#d a a' p #$\red$# coe (#$\lambda$#i #$\red$# B[x := a, y := p @ i
 & p\ @_{a,a'}\ right \red_\beta a' \\
 \end{align*}
 
-\bigskip
 \caption{Inference and reduction rules.}
 \label{table:inf-rules}
 \end{table}
+
+In this section, we will describe the inference rules of the basic system.
+It has $\Pi$-types, path types, and also the interval type $I$, which has two constructors ($left$ and $right$) and one elimination rule ($coe$).
+The behaviour of $coe$ can be described as follows:
+given a fibration $\lambda x \red A$ over $I$ and a point $a$ in the fibre over some point $i : I$, $coe_{\lambda x \red A}\ i\ a$ gives us a section of this fibration.
+
+Path types are heterogeneous, that is we can construct paths between different types (which are itself connected by a path).
+We write $a =_A a'$ (or simply $a = a'$) for usual homogeneous paths, which are defined as $Path (\lambda i \red A)\ a\ a'$.
+Also path types have unusual constructors ($path$) and eliminators ($@$).
+But we still can define usual functions for path types using these constructions:
+\begin{lstlisting}
+idp : (x : A) #$\to$# x = x
+idp = #$\lambda$#x #$\red$# path (#$\lambda$#i #$\red$# x)
+
+pmap : (f : A #$\to$# B) #$\to$# (a a' : A) #$\to$# a = a' #$\to$# f a = f a'
+pmap = #$\lambda$#f a a' p #$\red$# path (#$\lambda$#i #$\red$# f (p @ i))
+
+funExt : (f g : (a : A) #$\to$# B[x := a]) #$\to$#
+    ((a : A) #$\to$# f a = g a) #$\to$# f = g
+funExt = #$\lambda$#f g p #$\red$# path (#$\lambda$#i a #$\red$# p a @ i)
+
+transport : (a a' : A) #$\to$# a = a' #$\to$# B[x := a] #$\to$# B[x := a']
+transport = #$\lambda$#a a' p x #$\red$#
+    coe (#$\lambda$#i #$\red$# B[x := p @ i]) left x right
+\end{lstlisting}
+
+The definition of $J$ is a little bit more complicated.
+First, we need to define a function $squeeze$, satisfying the following rules:
+\begin{lstlisting}
+squeeze : I #$\to$# I #$\to$# I
+squueze left j #$\red$# left
+squueze right j #$\red$# j
+squueze i left #$\red$# left
+squueze i right #$\red$# i
+\end{lstlisting}
+
+We can define the following function:
+\begin{lstlisting}
+squeeze' : I #$\to$# I #$\to$# I
+squeeze' = #$\lambda$#i j #$\red$# coe (#$\lambda$#k #$\red$# left = k) left
+    (path (#$\lambda$#k #$\red$# left)) j @ i
+\end{lstlisting}
+It satisfies almost all of the rules except for the last one.
+But we can construct $squeeze$ which satisfies all of the rules using $squeeze'$:
+\begin{lstlisting}
+squeeze : I #$\to$# I #$\to$# I
+squeeze = #$\lambda$#i j #$\red$# coe (#$\lambda$#i #$\red$# Path (#$\lambda$#j #$\red$# left = squeeze' i j)
+    (path (#$\lambda$#k #$\red$# left)) (path (#$\lambda$#j #$\red$# squeeze' i j))) left
+    (path (#$\lambda$#k #$\red$# path (#$\lambda$#k #$\red$# left))) right @ i @ j
+\end{lstlisting}
+
+Now, we can define $J$:
+\begin{lstlisting}
+J : ((a : A) #$\to$# B[x := a, y := a, p := idp a]) #$\to$#
+    (a a' : A) (p : a = a') #$\to$# B[x := a, y := a']
+J = #$\lambda$#d a a' p #$\red$# coe (#$\lambda$#i #$\red$# B[x := a, y := p @ i,
+    p := path (#$\lambda$#j #$\red$# p @ squeeze i j)]) left (d a) right
+\end{lstlisting}
 
 \subsection{Univalent universes}
 Now, we show how to add a univalent universe to the system.
@@ -283,11 +282,35 @@ We also add the following reduction rules:
 \begin{itemize}
 \item $iso\ A\ B\ f\ g\ p\ q\ left \red_\beta A$
 \item $iso\ A\ B\ f\ g\ p\ q\ right \red_\beta B$
-\item $coe_{\lambda k \red iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \red_\beta f\ a$
-\item $coe_{\lambda k \red iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \red_\beta g\ b$
+\item $coe_{\lambda k \red iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \red_\beta f\ a$ if $k \notin FV(A\ B\ f\ g\ p\ q)$
+\item $coe_{\lambda k \red iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \red_\beta g\ b$ if $k \notin FV(A\ B\ f\ g\ p\ q)$
 \end{itemize}
 
-Later we will show that these rules imply the univalence axiom in its usual form.
+Usually, univalence is stated in the form of an axiom as follows:
+\begin{lstlisting}
+isContr A = #$\Sigma$#(a : A) ((a' : A) #$\to$# a = a')
+
+isEquiv f = (b : B) #$\to$# isContr (#$\Sigma$#(a : A) (f a = b))
+
+pte : (A B : Type) #$\to$# A = B #$\to$# #$\Sigma$#(f : A #$\to$# B) (isEquiv f)
+pte = #$\lambda$#A B p #$\red$# (transport A B p, ...)
+
+univalence = (A B : Type) #$\to$# isEquiv (pte A B)
+\end{lstlisting}
+Instead of dots there should be a proof that $transport\ A\ B\ p$ is an equivalence, which we omit because of its length.
+
+We can show that $univalence$ holds using $iso$.
+First, we construct the following function
+\begin{lstlisting}
+etp : (A B : Type) #$\to$# #$\Sigma$#(f : A #$\to$# B) (isEquiv f) #$\to$# A = B
+etp = #$\lambda$#A B p #$\red$# path (#$\lambda$#i #$\red$# iso A B f _ _ _ i)
+\end{lstlisting}
+Omitted terms can be constructed using a proof of $isEquiv\ f$.
+
+To prove that $pte\ A\ B$ is an equivalence it is enough to show that $etp\ A\ B$ is its inverse.
+The first components of pairs $pte\ A\ B\ (etp\ A\ B (f, e))$ and $(f, e)$ are equal definitionally, and its second components are equal since $isEquiv\ f$ is a proposition.
+Finally, we need to show that for each $p : A = B$ we have a path $etp\ A\ B\ (pte\ A\ B\ p) = p$.
+We can do this using $J$
 
 \subsection{Data types with conditions}
 
