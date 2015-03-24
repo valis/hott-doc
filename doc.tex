@@ -428,16 +428,17 @@ We also introduce another way of defining a function, which is writtern like thi
     & f' : (x_1 : A_1) \ldots (x_n : A_n) \to B \\
     & f'\ x_1\ \ldots\ x_n \elim b
 \end{align*}
+Such definitions are well typed if the following holds:
+\[ x_1 : A_1, \ldots x_n : A_n \vdash b : B \]
+
 The difference between these definitions lies in the computation rules.
 For the former definition we add usual computation rules:
-\[ f\ t_1\ \ldots\ t_n \red_\beta b[x_1 := t_1] \ldots [x_n := t_n] \text{ for each } t_1, \ldots t_n \]
+\[ f\ a_1\ \ldots\ a_n \red_\beta b[x_1 := a_1] \ldots [x_n := a_n] \]
 For the latter computation rules are defined by the following inductive rule:
 
-\medskip
 \begin{center}
-\AxiomC{$b[x_1 := t_1] \ldots [x_n := t_n] \red_t b'$}
-\RightLabel{for each $t_1, \ldots t_n$,}
-\UnaryInfC{$f'\ t_1\ \ldots t_n \red_\beta b'$}
+\AxiomC{$b[x_1 := a_1] \ldots [x_n := a_n] \red_t b'$}
+\UnaryInfC{$f'\ a_1\ \ldots\ a_n \red_\beta b'$}
 \DisplayProof
 \end{center}
 where $\red_t$ is the union of the basic reduction rules that we gave in table~\ref{table:inf-rules} and here for function definitions.
@@ -446,8 +447,58 @@ Such definitions are useful when the right hand side is a big term, which usuall
     and we want to reduce a function application only when this case analysis is satisfied.
 
 To allow definitions by pattern matching we introduce new primitive operator $elim$:
-\[ elim\ x\ \{\ c_1\ x_1\ \ldots\ x_{k_1} = b_1;\ \ldots;\ c_m\ x_1\ \ldots\ x_{k_m} = b_m\ \}, \]
-where each of the $=$ signs is either $\red$ or $\elim$, $x$ and $x_i$ are variables, $c_i$ are constructors of some data type, and $b_i$ are some terms.
+\[ elim\ e\ \{\ c_1\ x_1\ \ldots\ x_{k_1} = b_1;\ \ldots;\ c_m\ x_1\ \ldots\ x_{k_m} = b_m\ \}, \]
+where each of the $=$ signs is either $\red$ or $\elim$, $x_i$ are variables, $c_i$ are constructors of some data type, and $e$ and $b_i$ are some terms.
+The set of rules inside $\{$ $\}$ is unordered, and each constructor $c_i$ occurs exactly once.
+Reduction rules are the following:
+\begin{center}
+\AxiomC{$b_i[x_1 := a_1] \ldots [x_n := a_n] \red_t b'$}
+\RightLabel{,}
+\UnaryInfC{$elim\ c_i\ a_1\ \ldots\ a_{k_i}\ \{\ c_i\ x_1\ \ldots\ x_{k_i} \elim b_i;\ \ldots\ \} \red_\beta b' $}
+\DisplayProof
+\end{center}
+\[ elim\ c_i\ a_1\ \ldots\ a_{k_i}\ \{\ c_i\ x_1\ \ldots\ x_{k_i} \red b_i;\ \ldots\ \} \red_\beta b_i[x_1 := a_1] \ldots [x_{k_i} := a_{k_i}]. \]
+Inference rules for $elim$ are the following:
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom $\fCenter \Gamma, y : D\ p_1\ \ldots\ p_n \vdash B$
+\noLine
+\UnaryInf $\fCenter \Gamma \vdash e : D\ p_1\ \ldots\ p_n$
+\noLine
+\UnaryInf $\fCenter \Gamma, x_1 : A^i_1, \ldots x_{k_i} : A^i_{k_i} \vdash b_i : B[y := c_i\ x_1\ \ldots\ x_{k_i}] \text{ for each $1 \leq i \leq m$}$
+\def\extraVskip{2pt}
+\RightLabel{,}
+\UnaryInf $\fCenter \Gamma \vdash elim\ e\ \{\ c_1\ x_1\ \ldots\ x_{k_1} = b_1;\ \ldots;\ c_m\ x_1\ \ldots\ x_{k_m} = b_m\ \} : B[y := e]$
+\DisplayProof
+\end{center}
+where $c_i\ (x_1 : A^i_1)\ \ldots\ (x_{k_i} : A^i_{k_i})$ are constructors of data type $D$.
+
+To allow recursive definitions we introduce new context, which consists of recursive calls to the function we are defining.
+Now, judgements look like this $\Gamma; \rho \vdash a : A$.
+Here, $\Gamma$ is the usual context, and $\rho$ is the recursive calls context.
+A recursive function $f$ as before is well typed if the following holds:
+\[ x_1 : A_1, \ldots x_n : A_n; f\ x_1\ \ldots\ x_n : B \vdash b : B \]
+We add the following inference rule, which allows us to use recursive calls:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma; t : T, t_1 : T_1, \ldots t_n : T_n \vdash t_i : T_i$}
+\DisplayProof
+\end{center}
+The first entry $t : T$ is always a recursive call to the function with the same arguments, so we do not allow to use it.
+
+We add inference rules for $elim$, which extends recursive calls context appropriately:
+\begin{center}
+\AxiomC{$\fCenter \Gamma \vdash B$}
+\AxiomC{$\fCenter \Gamma'_i; \rho'_i \vdash b_i : B[z_j := c_i\ x_1\ \ldots\ x_{k_i}] \text{ for each $1 \leq i \leq m$}$}
+\RightLabel{,}
+\BinaryInfC{$\fCenter \Gamma; \rho \vdash elim\ z_j\ \{\ c_1\ x_1\ \ldots\ x_{k_1} = b_1;\ \ldots;\ c_m\ x_1\ \ldots\ x_{k_m} = b_m\ \} : B$}
+\DisplayProof
+\end{center}
+where $z_j$ is a variable in context $\Gamma$, and contexts $\Gamma'_i$ and $\rho'_i$ are defined as follows:
+\begin{itemize}
+\item If $\Gamma = z_1 : Z_1, \ldots z_s : Z_s$, then $\Gamma'_i = z_1 : Z_1, \ldots z_{j-1} : Z_{j-1}, x_1 : A^i_1, \ldots x_{k_i} : A^i_{k_i}, z_{j+1} : Z_{j+1}[z_j := c_i\ x_1\ \ldots\ x_{k_i}], \ldots z_s : Z_s[z_j := c_i\ x_1\ \ldots\ x_{k_i}]$.
+\item 
+\end{itemize}
 
 A data type with conditions also allows us to put a condition on a constructor.
 A condition on a constructor is simply a partial definition of a function with the type of this constructor.
