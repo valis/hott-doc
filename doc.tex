@@ -423,7 +423,31 @@ A function definition consists of a name of the function with its type and a bod
     & f\ x_1\ \ldots\ x_n \red b
 \end{align*}
 The definition is well typed if $x_1 : A_1, \ldots x_n : A_n \vdash b : B$.
-To allow definitions by pattern matching we introduce new primitive operator $elim$.
+We also introduce another way of defining a function, which is writtern like this:
+\begin{align*}
+    & f' : (x_1 : A_1) \ldots (x_n : A_n) \to B \\
+    & f'\ x_1\ \ldots\ x_n \elim b
+\end{align*}
+The difference between these definitions lies in the computation rules.
+For the former definition we add usual computation rules:
+\[ f\ t_1\ \ldots\ t_n \red_\beta b[x_1 := t_1] \ldots [x_n := t_n] \text{ for each } t_1, \ldots t_n \]
+For the latter computation rules are defined by the following inductive rule:
+
+\medskip
+\begin{center}
+\AxiomC{$b[x_1 := t_1] \ldots [x_n := t_n] \red_t b'$}
+\RightLabel{for each $t_1, \ldots t_n$,}
+\UnaryInfC{$f'\ t_1\ \ldots t_n \red_\beta b'$}
+\DisplayProof
+\end{center}
+where $\red_t$ is the union of the basic reduction rules that we gave in table~\ref{table:inf-rules} and here for function definitions.
+That is, $\red_t$ makes reductions only on the top level of the term, but not inside it.
+Such definitions are useful when the right hand side is a big term, which usually performs some sort of case analysis by pattern matching,
+    and we want to reduce a function application only when this case analysis is satisfied.
+
+To allow definitions by pattern matching we introduce new primitive operator $elim$:
+\[ elim\ x\ \{\ c_1\ x_1\ \ldots\ x_{k_1} = b_1;\ \ldots;\ c_m\ x_1\ \ldots\ x_{k_m} = b_m\ \}, \]
+where each of the $=$ signs is either $\red$ or $\elim$, $x$ and $x_i$ are variables, $c_i$ are constructors of some data type, and $b_i$ are some terms.
 
 A data type with conditions also allows us to put a condition on a constructor.
 A condition on a constructor is simply a partial definition of a function with the type of this constructor.
