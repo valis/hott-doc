@@ -197,74 +197,81 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \deq B \rr = H \dotsb \Gamma \times I$}
-\AxiomC{$\ll \Gamma \vdash a : A \rr = a : \langle id_\Gamma, i_0 \rangle^*(H) \dotsb \Gamma$}
-\BinaryInfC{$\ll \Gamma \vdash a : B \rr = a' : \langle id_\Gamma, i_1 \rangle^*(H) \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a : A \rr = a : A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash A \deq B \rr = h : \Gamma.A \to \Gamma.B$}
+\BinaryInfC{$\ll \Gamma \vdash a : B \rr = h \circ a : B \dotsb \Gamma$}
 \DisplayProof
 \end{center}
-
-где $a'$ определена ниже.
-Пусть $A = \langle id_\Gamma, i_0 \rangle^*(H)$, и $B = \langle id_\Gamma, i_1 \rangle^*(H)$.
-Сначала найдем поднятие в следующей диграмме:
-\[ \xymatrix{ \Gamma \ar[r]^a \ar[d]_{\langle id_\Gamma, i_0 \rangle} & \Gamma.A \ar[rr]^-{\langle id_\Gamma, i_0 \rangle.H} & & \Gamma \times I. H \ar[d]^{\pi_H} \\
-              \Gamma \times I \ar@{=}[rrr] \ar@{-->}[urrr]^s          &                                                      & & \Gamma \times I
-            }\]
-
-Теперь можно определить $a'$ как в следующей диаграме:
-\[ \xymatrix@-1pc{ \Gamma \ar[rddd]_{id_\Gamma} \ar[rrrrrd]^{s \circ \langle id_\Gamma, i_1 \rangle} \ar@{-->}[rd]^{a'} \\
-                        & \Gamma.B \ar[rrrr]_-{\langle id_\Gamma, i_1 \rangle.H} \ar[dd]^{\pi_B} \pb & & & & \Gamma \times I.H \ar[dd]^{\pi_H} \\
-                        &                                                                            & & & & \\
-                        & \Gamma \ar[rrrr]_{\langle id_\Gamma, i_1 \rangle}                          & & & & \Gamma \times I
-                 }\]
 
 Интерпретация правил редукций типов:
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \red B \rr = H \dotsb \Gamma \times I$}
-\UnaryInfC{$\ll \Gamma \vdash A \deq B \rr = H \dotsb \Gamma \times I$}
+\AxiomC{$\ll \Gamma \vdash A \red B \rr = h : A \to B \dotsb \Gamma$}
+\UnaryInfC{$\ll \Gamma \vdash A \deq B \rr = h : A \to B \dotsb \Gamma$}
 \DisplayProof
 \quad
-\AxiomC{$\ll \Gamma \vdash A \deq B \rr = H \dotsb \Gamma \times I$}
-\UnaryInfC{$\ll \Gamma \vdash B \deq A \rr = (id_\Gamma \times v)^*(H) \dotsb \Gamma \times I$}
+\AxiomC{$\ll \Gamma \vdash A \deq B \rr = h : A \to B \dotsb \Gamma$}
+\UnaryInfC{$\ll \Gamma \vdash B \deq A \rr = h^{-1} : B \to A \dotsb \Gamma$}
 \DisplayProof
 \end{center}
 
-где $v : I \to I$ определяется следующим образом:
-\[ \xymatrix{ 1 \amalg 1 \ar[r]^-{[i_1, i_0]} \ar[d]_{[i_0, i_1]} & I \\
-              I \ar@{-->}[ur]_v
+для всех гомотопически обратных к $h$ отображений $h^{-1}$.
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash A \deq B \rr = h_1 : A \to B \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash B \deq C \rr = h_2 : B \to C \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash A \deq C \rr = h_2 \circ h_1 : A \to C \dotsb \Gamma$}
+\DisplayProof
+\end{center}
+
+Интерпретация правил редукций термов:
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash a \red a' : A \rr = h : I \to A \dotsb \Gamma$}
+\UnaryInfC{$\ll \Gamma \vdash a \deq a' : A \rr = h : I \to A \dotsb \Gamma$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash a \deq a' : A \rr = h : I \to A \dotsb \Gamma$}
+\UnaryInfC{$\ll \Gamma \vdash a' \deq a : A \rr = h' : I \to A \dotsb \Gamma$}
+\DisplayProof
+\end{center}
+
+где $h' : \Gamma \times I \to \Gamma.A$ определяется следующим образом:
+\[ \xymatrix{ \Gamma \amalg \Gamma \ar[rrr]^{[\langle id_\Gamma, i_1 \rangle, \langle id_\Gamma, i_0 \rangle]} \ar[d]_{[\langle id_\Gamma, i_0 \rangle, \langle id_\Gamma, i_1 \rangle]} & & & \Gamma \times I \ar[r]^h & \Gamma.A \\
+              \Gamma \times I \ar@{-->}[urrrr]_{h'}
             }\]
 
-Интерпретация транзитивности:
-
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \deq B \rr = H_1 \dotsb \Gamma \times I$}
-\AxiomC{$\ll \Gamma \vdash B \deq C \rr = H_2 \dotsb \Gamma \times I$}
-\BinaryInfC{$\ll \Gamma \vdash A \deq C \rr = H_3 \dotsb \Gamma \times I$}
+\AxiomC{$\ll \Gamma \vdash a \deq a' : A \rr = h_1 : I \to A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a' \deq a'' : A \rr = h_2 : I \to A \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash a \deq a'' : A \rr = h_3 : I \to A \dotsb \Gamma$}
 \DisplayProof
 \end{center}
 
-где $H_3$ определяется следующим образом:
+Данное правило применимо при условии, что $h_1 \circ (id_\Gamma \times i_1) = h_2 \circ (id_\Gamma \times i_0)$.
+Определим $h_3$ в несколько шагов.
+Пусть $a,a',a'' : \Gamma \to \Gamma.A$ определяются соответственно как $h_1 \circ (id_\Gamma \times i_0)$, $h_1 \circ (id_\Gamma \times i_1)$ и $h_2 \circ (id_\Gamma \times i_1)$.
+Пусть $\Gamma.A \xrightarrow{t} P(\Gamma.A) \xrightarrow{\langle p_1, p_2 \rangle} \Gamma.A \times \Gamma.A$ - объект путей для $\Gamma.A$.
 
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a \red a' : A$}
-\UnaryInfC{$\Gamma \vdash a \deq a' : A$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash a \deq a' : A$}
-\UnaryInfC{$\Gamma \vdash a' \deq a : A$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a \deq a' : A$}
-\AxiomC{$\Gamma \vdash a' \deq a'' : A$}
-\BinaryInfC{$\Gamma \vdash a \deq a'' : A$}
-\DisplayProof
-\end{center}
+Во-первых, определим $h'_1 : \Gamma \to P(\Gamma.A)$ как композицию $p \circ \langle id_\Gamma, i_1 \rangle$, где $p$ определяется следующим образом:
+\[ \xymatrix{ \Gamma \ar[r]^-a \ar[d]_{\langle id_\Gamma, i_0 \rangle} & \Gamma.A \ar[r]^-t & P(\Gamma.A) \ar[d]^{\langle p_1, p_2 \rangle} \\
+              \Gamma \times I \ar[rr]_-{\langle h_1 \circ \langle id_\Gamma, i_0 \rangle \circ \pi_1, h_1 \rangle} \ar@{-->}[urr]^p & & \Gamma.A \times \Gamma.A
+            }\]
+Во-вторых, определим $h'_3 : \Gamma \to P(\Gamma.A)$ как композицию $q \circ \langle id_\Gamma, i_1 \rangle$, где $q$ определяется следующим образом:
+\[ \xymatrix{ \Gamma \ar[rr]^{h'_1} \ar[d]_{\langle id_\Gamma, i_0 \rangle}                  & & P(\Gamma.A) \ar[d]^{\langle p_1, p_2 \rangle} \\
+              \Gamma \times I \ar[rr]_-{\langle a \circ \pi_1, h_2 \rangle} \ar@{-->}[urr]^q & & \Gamma.A \times \Gamma.A
+            }\]
+Теперь определим $h_3 : \Gamma \times I \to \Gamma.A$ как композицию $p_2 \circ s$, где $s$ определяется следующим образом:
+\[ \xymatrix{ \Gamma \amalg \Gamma \ar[rr]^{[t \circ a, h'_3]} \ar[d] & & P(\Gamma.A) \ar[d]^{p_1} \\
+              \Gamma \times I \ar[r]_-{\pi_1} \ar@{-->}[urr]^s & \Gamma \ar[r]_-a & \Gamma.A
+            }\]
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
