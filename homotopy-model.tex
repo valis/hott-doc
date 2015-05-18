@@ -1,0 +1,272 @@
+\documentclass{amsart}
+
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{type1ec}
+\usepackage{stmaryrd}
+% \usepackage[T2A]{fontenc}
+
+\providecommand\WarningsAreErrors{false}
+\ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{theorem}{Theorem}
+\newref{lem}{lemma}{Lemma}
+\newref{prop}{proposition}{Proposition}
+\newref{cor}{corollary}{Corollary}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{remark}{Remark}
+
+\newcommand{\red}{\Rightarrow}
+\newcommand{\deq}{\Leftrightarrow}
+\renewcommand{\ll}{\llbracket}
+\newcommand{\rr}{\rrbracket}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\numberwithin{figure}{section}
+
+\begin{document}
+
+\title{An interpretation of homotopy type theory in categories with attributes}
+
+\author{Valery Isaev}
+
+% \begin{abstract}
+% Abstract
+% \end{abstract}
+
+\maketitle
+
+\section{Правила вывода}
+
+\begin{table}
+
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\varnothing \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash x : A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash x : A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $y \notin \Gamma$}
+\BinaryInfC{$\Gamma, y : B \vdash x : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash A \deq B$}
+\BinaryInfC{$\Gamma \vdash a : B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \red B$}
+\UnaryInfC{$\Gamma \vdash A \deq B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A \deq B$}
+\UnaryInfC{$\Gamma \vdash B \deq A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \deq B$}
+\AxiomC{$\Gamma \vdash B \deq C$}
+\BinaryInfC{$\Gamma \vdash A \deq C$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \red a' : A$}
+\UnaryInfC{$\Gamma \vdash a \deq a' : A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a \deq a' : A$}
+\UnaryInfC{$\Gamma \vdash a' \deq a : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \deq a' : A$}
+\AxiomC{$\Gamma \vdash a' \deq a'' : A$}
+\BinaryInfC{$\Gamma \vdash a \deq a'' : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\caption{Правила вывода.}
+\label{table:inf-rules}
+\end{table}
+
+\newpage
+
+\section{Интерпретация}
+
+Интерпретация контекстов:
+
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\ll \varnothing \vdash \rr = 1$}
+\DisplayProof
+\quad
+\AxiomC{$\ll \Gamma \vdash A \rr = A \dotsb \Gamma$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\ll \Gamma, x : A \vdash \rr = \Gamma.A$}
+\DisplayProof
+\end{center}
+
+для всех терминальных объектов $1$.
+
+Интерпретация переменных:
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash A \rr = A \dotsb \Gamma$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\ll \Gamma, x : A \vdash x : A \rr = a : \pi_A^*(A) \dotsb \Gamma.A$}
+\DisplayProof
+\end{center}
+
+где $a$ определяется как в следующей диаграме:
+\[ \xymatrix@-1pc{ \Gamma.A \ar[rddd]_{id_{\Gamma.A}} \ar[rrrd]^{id_{\Gamma.A}} \ar@{-->}[rd]_a & & & \\
+                        & \Gamma.A.\pi_A^*(A) \ar[rr]_-{\pi_A.A} \ar[dd]^{\pi_{\pi_A^*(A)}} \pb & & \Gamma.A \ar[dd]^{\pi_A} \\
+                        &                                                                       & & \\
+                        & \Gamma.A \ar[rr]_{\pi_A}                                              & & \Gamma
+                 }\]
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash x : A \rr = a : A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash B \rr = B \dotsb \Gamma$}
+\RightLabel{, $y \notin \Gamma$}
+\BinaryInfC{$\ll \Gamma, y : B \vdash x : A \rr = a' : \pi_B^*(A) \dotsb \Gamma.B$}
+\DisplayProof
+\end{center}
+
+где $a'$ определяется как в следующей диаграме:
+\[ \xymatrix@-1pc{ \Gamma.B \ar[rddd]_{id_{\Gamma.B}} \ar[rrrd]^{a \circ \pi_B} \ar@{-->}[rd]_{a'} & & & \\
+                        & \Gamma.B.\pi_B^*(A) \ar[rr]_-{\pi_B.A} \ar[dd]^{\pi_{\pi_B^*(A)}} \pb & & \Gamma.A \ar[dd]^{\pi_A} \\
+                        &                                                                       & & \\
+                        & \Gamma.B \ar[rr]_{\pi_B}                                              & & \Gamma
+                 }\]
+
+Интерпретация правила замены типа:
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash A \deq B \rr = H \dotsb \Gamma \times I$}
+\AxiomC{$\ll \Gamma \vdash a : A \rr = a : \langle id_\Gamma, i_0 \rangle^*(H) \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash a : B \rr = a' : \langle id_\Gamma, i_1 \rangle^*(H) \dotsb \Gamma$}
+\DisplayProof
+\end{center}
+
+где $a'$ определена ниже.
+Пусть $A = \langle id_\Gamma, i_0 \rangle^*(H)$, и $B = \langle id_\Gamma, i_1 \rangle^*(H)$.
+Сначала найдем поднятие в следующей диграмме:
+\[ \xymatrix{ \Gamma \ar[r]^a \ar[d]_{\langle id_\Gamma, i_0 \rangle} & \Gamma.A \ar[rr]^-{\langle id_\Gamma, i_0 \rangle.H} & & \Gamma \times I. H \ar[d]^{\pi_H} \\
+              \Gamma \times I \ar@{=}[rrr] \ar@{-->}[urrr]^s          &                                                      & & \Gamma \times I
+            }\]
+
+Теперь можно определить $a'$ как в следующей диаграме:
+\[ \xymatrix@-1pc{ \Gamma \ar[rddd]_{id_\Gamma} \ar[rrrrrd]^{s \circ \langle id_\Gamma, i_1 \rangle} \ar@{-->}[rd]^{a'} \\
+                        & \Gamma.B \ar[rrrr]_-{\langle id_\Gamma, i_1 \rangle.H} \ar[dd]^{\pi_B} \pb & & & & \Gamma \times I.H \ar[dd]^{\pi_H} \\
+                        &                                                                            & & & & \\
+                        & \Gamma \ar[rrrr]_{\langle id_\Gamma, i_1 \rangle}                          & & & & \Gamma \times I
+                 }\]
+
+Интерпретация правил редукций типов:
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash A \red B \rr = H \dotsb \Gamma \times I$}
+\UnaryInfC{$\ll \Gamma \vdash A \deq B \rr = H \dotsb \Gamma \times I$}
+\DisplayProof
+\quad
+\AxiomC{$\ll \Gamma \vdash A \deq B \rr = H \dotsb \Gamma \times I$}
+\UnaryInfC{$\ll \Gamma \vdash B \deq A \rr = (id_\Gamma \times v)^*(H) \dotsb \Gamma \times I$}
+\DisplayProof
+\end{center}
+
+где $v : I \to I$ определяется следующим образом:
+\[ \xymatrix{ 1 \amalg 1 \ar[r]^-{[i_1, i_0]} \ar[d]_{[i_0, i_1]} & I \\
+              I \ar@{-->}[ur]_v
+            }\]
+
+Интерпретация транзитивности:
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash A \deq B \rr = H_1 \dotsb \Gamma \times I$}
+\AxiomC{$\ll \Gamma \vdash B \deq C \rr = H_2 \dotsb \Gamma \times I$}
+\BinaryInfC{$\ll \Gamma \vdash A \deq C \rr = H_3 \dotsb \Gamma \times I$}
+\DisplayProof
+\end{center}
+
+где $H_3$ определяется следующим образом:
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \red a' : A$}
+\UnaryInfC{$\Gamma \vdash a \deq a' : A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a \deq a' : A$}
+\UnaryInfC{$\Gamma \vdash a' \deq a : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \deq a' : A$}
+\AxiomC{$\Gamma \vdash a' \deq a'' : A$}
+\BinaryInfC{$\Gamma \vdash a \deq a'' : A$}
+\DisplayProof
+\end{center}
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
