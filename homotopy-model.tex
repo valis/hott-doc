@@ -92,11 +92,13 @@
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash A \deq B$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $A \deq B$}
 \BinaryInfC{$\Gamma \vdash a : B$}
 \DisplayProof
 \end{center}
 
+\begin{comment}
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash A \red B$}
@@ -134,6 +136,7 @@
 \BinaryInfC{$\Gamma \vdash a \deq a'' : A$}
 \DisplayProof
 \end{center}
+\end{comment}
 
 \medskip
 \caption{Правила вывода.}
@@ -159,8 +162,7 @@
 \UnaryInfC{$\ll \Gamma, x : A \vdash \rr = \Gamma.A$}
 \DisplayProof
 \end{center}
-
-для всех терминальных объектов $1$.
+\bigskip
 
 Интерпретация переменных:
 
@@ -168,7 +170,7 @@
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash A \rr = A \dotsb \Gamma$}
 \RightLabel{, $x \notin \Gamma$}
-\UnaryInfC{$\ll \Gamma, x : A \vdash x : A \rr = a : \pi_A^*(A) \dotsb \Gamma.A$}
+\UnaryInfC{$\ll \Gamma, x : A \vdash x \Uparrow A \rr = a : \pi_A^*(A) \dotsb \Gamma.A$}
 \DisplayProof
 \end{center}
 
@@ -179,12 +181,11 @@
                         & \Gamma.A \ar[rr]_{\pi_A}                                              & & \Gamma
                  }\]
 
-\medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash x : A \rr = a : A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash x \Uparrow A \rr = a : A \dotsb \Gamma$}
 \AxiomC{$\ll \Gamma \vdash B \rr = B \dotsb \Gamma$}
 \RightLabel{, $y \notin \Gamma$}
-\BinaryInfC{$\ll \Gamma, y : B \vdash x : A \rr = a' : \pi_B^*(A) \dotsb \Gamma.B$}
+\BinaryInfC{$\ll \Gamma, y : B \vdash x \Uparrow A \rr = a' : \pi_B^*(A) \dotsb \Gamma.B$}
 \DisplayProof
 \end{center}
 
@@ -195,76 +196,70 @@
                         & \Gamma.B \ar[rr]_{\pi_B}                                              & & \Gamma
                  }\]
 
-Интерпретация правила замены типа:
+Интерпретация правила проверки типа:
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash a : A \rr = a : A \dotsb \Gamma$}
-\AxiomC{$\ll \Gamma \vdash A \deq B \rr = h : \Gamma.A \to \Gamma.B$}
-\BinaryInfC{$\ll \Gamma \vdash a : B \rr = h \circ a : B \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = a : A_1 \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash A_i \red^* B \rr = h_i : \Gamma.A_i \to \Gamma.B$, $i \in \{1, 2\}$}
+\RightLabel{, $B \in NF$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = h_2^{-1} \circ h_1 \circ a : A_2 \dotsb \Gamma$}
 \DisplayProof
 \end{center}
+\bigskip
 
 Интерпретация правил редукций типов:
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \red B \rr = h : A \to B \dotsb \Gamma$}
-\UnaryInfC{$\ll \Gamma \vdash A \deq B \rr = h : A \to B \dotsb \Gamma$}
-\DisplayProof
-\quad
-\AxiomC{$\ll \Gamma \vdash A \deq B \rr = h : A \to B \dotsb \Gamma$}
-\UnaryInfC{$\ll \Gamma \vdash B \deq A \rr = h^{-1} : B \to A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash A \rr = A \dotsb \Gamma$}
+\UnaryInfC{$\ll \Gamma \vdash A \red^* A \rr = id : A \to A \dotsb \Gamma$}
 \DisplayProof
 \end{center}
 
-для всех гомотопически обратных к $h$ отображений $h^{-1}$.
+где $id : \Gamma.A \to \Gamma.A$ - тождественное отображение.
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \deq B \rr = h_1 : A \to B \dotsb \Gamma$}
-\AxiomC{$\ll \Gamma \vdash B \deq C \rr = h_2 : B \to C \dotsb \Gamma$}
-\BinaryInfC{$\ll \Gamma \vdash A \deq C \rr = h_2 \circ h_1 : A \to C \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash A \red B \rr = h_1 : A \to B \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = h_2 : B \to C \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = h_2 \circ h_1 : A \to C \dotsb \Gamma$}
 \DisplayProof
 \end{center}
+\bigskip
 
 Интерпретация правил редукций термов:
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash a \red a' : A \rr = h : I \to A \dotsb \Gamma$}
-\UnaryInfC{$\ll \Gamma \vdash a \deq a' : A \rr = h : I \to A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a \Downarrow A \rr = a : A \dotsb \Gamma$}
+\UnaryInfC{$\ll \Gamma \vdash a \red^* a \Downarrow A \rr = h : I \to A \dotsb \Gamma$}
 \DisplayProof
 \end{center}
+
+где $h : \Gamma \times I \to \Gamma.A$ определяется как композиция $\Gamma \times I \xrightarrow{\pi_1} \Gamma \xrightarrow{a} \Gamma.A$.
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash a \deq a' : A \rr = h : I \to A \dotsb \Gamma$}
-\UnaryInfC{$\ll \Gamma \vdash a' \deq a : A \rr = h' : I \to A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a \red a' : A \rr = h_1 : I \to A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a' \red^* a'' : A \rr = h_2 : I \to A \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash a \red^* a'' : A \rr = h_3 : I \to A \dotsb \Gamma$}
 \DisplayProof
 \end{center}
-
-где $h' : \Gamma \times I \to \Gamma.A$ определяется следующим образом:
-\[ \xymatrix{ \Gamma \amalg \Gamma \ar[rrr]^{[\langle id_\Gamma, i_1 \rangle, \langle id_\Gamma, i_0 \rangle]} \ar[d]_{[\langle id_\Gamma, i_0 \rangle, \langle id_\Gamma, i_1 \rangle]} & & & \Gamma \times I \ar[r]^h & \Gamma.A \\
-              \Gamma \times I \ar@{-->}[urrrr]_{h'}
-            }\]
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash a \deq a' : A \rr = h_1 : I \to A \dotsb \Gamma$}
-\AxiomC{$\ll \Gamma \vdash a' \deq a'' : A \rr = h_2 : I \to A \dotsb \Gamma$}
-\BinaryInfC{$\ll \Gamma \vdash a \deq a'' : A \rr = h_3 : I \to A \dotsb \Gamma$}
-\DisplayProof
-\end{center}
+\bigskip
 
 Данное правило применимо при условии, что $h_1 \circ (id_\Gamma \times i_1) = h_2 \circ (id_\Gamma \times i_0)$.
-Определим $h_3$ в несколько шагов.
-Пусть $a,a',a'' : \Gamma \to \Gamma.A$ определяются соответственно как $h_1 \circ (id_\Gamma \times i_0)$, $h_1 \circ (id_\Gamma \times i_1)$ и $h_2 \circ (id_\Gamma \times i_1)$.
+Тогда $h_3$ определяется как отображение, соответствующее композиции $\Gamma \xrightarrow{\langle id_\Gamma, i_1 \rangle} \Gamma \times I \xrightarrow{s} \Gamma.A^I$, где $s$ определяется следующим образом:
+\[ \xymatrix{ \Gamma \ar[rrr]^{\overline{h_1}} \ar[d]_{\langle id_\Gamma, i_0 \rangle}                                        & & & \Gamma.A^I \ar[d] \\
+              \Gamma \times I \ar[rrr]_-{\langle h_1 \circ (id_\Gamma \times i_0) \circ \pi_1, h_2 \rangle} \ar@{-->}[urrr]^s & & & \Gamma.A \times \Gamma.A
+            }\]
+
+\begin{comment}
 Пусть $\Gamma.A \xrightarrow{t} P(\Gamma.A) \xrightarrow{\langle p_1, p_2 \rangle} \Gamma.A \times \Gamma.A$ - объект путей для $\Gamma.A$.
 
 Во-первых, определим $h'_1 : \Gamma \to P(\Gamma.A)$ как композицию $p \circ \langle id_\Gamma, i_1 \rangle$, где $p$ определяется следующим образом:
 \[ \xymatrix{ \Gamma \ar[r]^-a \ar[d]_{\langle id_\Gamma, i_0 \rangle} & \Gamma.A \ar[r]^-t & P(\Gamma.A) \ar[d]^{\langle p_1, p_2 \rangle} \\
-              \Gamma \times I \ar[rr]_-{\langle h_1 \circ \langle id_\Gamma, i_0 \rangle \circ \pi_1, h_1 \rangle} \ar@{-->}[urr]^p & & \Gamma.A \times \Gamma.A
+              \Gamma \times I \ar[rr]_-{\langle a \circ \pi_1, h_1 \rangle} \ar@{-->}[urr]^p & & \Gamma.A \times \Gamma.A
             }\]
 Во-вторых, определим $h'_3 : \Gamma \to P(\Gamma.A)$ как композицию $q \circ \langle id_\Gamma, i_1 \rangle$, где $q$ определяется следующим образом:
 \[ \xymatrix{ \Gamma \ar[rr]^{h'_1} \ar[d]_{\langle id_\Gamma, i_0 \rangle}                  & & P(\Gamma.A) \ar[d]^{\langle p_1, p_2 \rangle} \\
@@ -274,9 +269,11 @@
 \[ \xymatrix{ \Gamma \amalg \Gamma \ar[rr]^{[t \circ a, h'_3]} \ar[d] & & P(\Gamma.A) \ar[d]^{p_1} \\
               \Gamma \times I \ar[r]_-{\pi_1} \ar@{-->}[urr]^s & \Gamma \ar[r]_-a & \Gamma.A
             }\]
+\end{comment}
 
 \subsection{Свойства интерпретации}
 
+\begin{comment}
 \begin{lem}[weakening][Weakening lemma]
 Пусть $\ll \Gamma \vdash B\rr = B \ldots \Gamma$ и $x \notin \Gamma$.
 Тогда верны следующие утверждения:
@@ -285,13 +282,16 @@
 \item Если $\ll \Gamma \vdash a : A \rr = a : A \dotsb \Gamma$, то $\ll \Gamma, x : B \vdash A \rr = \langle id_{\Gamma.B}, a \circ \pi_B \rangle : \pi_B^*(A) \dotsb \Gamma.B$
 \end{itemize}
 \end{lem}
+\end{comment}
 
-Индукцией по выводу легко доказать следующие утверждения:
+\begin{lem}[correctness][Corectness of interpretation]
+Верны следующие утверждения:
 \begin{itemize}
 \item Если $\Gamma \vdash$, то существует $\Gamma'$ такой, что $\ll \Gamma \vdash \rr = \Gamma'$.
-\item Если $\Gamma \vdash A$, то существуют $\Gamma', A'$ такие, что $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
-\item Если $\Gamma \vdash a : A$, то существуют $\Gamma', A', a'$ такие, что $\ll \Gamma \vdash a : A \rr = a' : A' \dotsb \Gamma'$.
+\item Если $\Gamma \vdash A$, то для любого $\Gamma'$ такого, что $\ll \Gamma \vdash \rr = \Gamma'$, существует $A'$ такой, что $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
+\item Если $\Gamma \vdash a : A$, то для любых $\Gamma', A'$ таких, что $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, существует $a'$ такой, что $\ll \Gamma \vdash a : A \rr = a' : A' \dotsb \Gamma'$.
 \end{itemize}
+\end{lem}
 
 Индукцией по выводу легко доказать следующие утверждения:
 \begin{itemize}
