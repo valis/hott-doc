@@ -61,6 +61,7 @@
 
 \section{Правила вывода}
 
+\begin{comment}
 \begin{table}
 
 \medskip
@@ -95,6 +96,87 @@
 \AxiomC{$\Gamma \vdash B$}
 \RightLabel{, $A \deq B$}
 \BinaryInfC{$\Gamma \vdash a : B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \red B$}
+\UnaryInfC{$\Gamma \vdash A \deq B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A \deq B$}
+\UnaryInfC{$\Gamma \vdash B \deq A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \deq B$}
+\AxiomC{$\Gamma \vdash B \deq C$}
+\BinaryInfC{$\Gamma \vdash A \deq C$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \red a' : A$}
+\UnaryInfC{$\Gamma \vdash a \deq a' : A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a \deq a' : A$}
+\UnaryInfC{$\Gamma \vdash a' \deq a : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \deq a' : A$}
+\AxiomC{$\Gamma \vdash a' \deq a'' : A$}
+\BinaryInfC{$\Gamma \vdash a \deq a'' : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\caption{Правила вывода.}
+\label{table:inf-rules}
+\end{table}
+\end{comment}
+
+\begin{table}
+
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\varnothing \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash x \Uparrow A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash x \Uparrow A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $y \notin \Gamma$}
+\BinaryInfC{$\Gamma, y : B \vdash x \Uparrow A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \Uparrow A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $A \deq B$}
+\BinaryInfC{$\Gamma \vdash a \Downarrow B$}
 \DisplayProof
 \end{center}
 
@@ -140,7 +222,7 @@
 
 \medskip
 \caption{Правила вывода.}
-\label{table:inf-rules}
+\label{table:bi-inf-rules}
 \end{table}
 
 \newpage
@@ -201,9 +283,9 @@
 \medskip
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = a : A_1 \dotsb \Gamma$}
-\AxiomC{$\ll \Gamma \vdash A_i \red^* B \rr = h_i : \Gamma.A_i \to \Gamma.B$, $i \in \{1, 2\}$}
+\AxiomC{$\ll \Gamma \vdash A_i \red^* B \rr = f_i : A_i \to B \dotsb \Gamma$, $i \in \{1, 2\}$}
 \RightLabel{, $B \in NF$}
-\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = h_2^{-1} \circ h_1 \circ a : A_2 \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = f_2^{-1} \circ f_1 \circ a : A_2 \dotsb \Gamma$}
 \DisplayProof
 \end{center}
 \bigskip
@@ -221,9 +303,9 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \red B \rr = h_1 : A \to B \dotsb \Gamma$}
-\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = h_2 : B \to C \dotsb \Gamma$}
-\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = h_2 \circ h_1 : A \to C \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash A \red B \rr = f_1 : A \to B \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = f_2 : B \to C \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = f_2 \circ f_1 : A \to C \dotsb \Gamma$}
 \DisplayProof
 \end{center}
 \bigskip
@@ -241,9 +323,9 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash a \red a' : A \rr = h_1 : I \to A \dotsb \Gamma$}
-\AxiomC{$\ll \Gamma \vdash a' \red^* a'' : A \rr = h_2 : I \to A \dotsb \Gamma$}
-\BinaryInfC{$\ll \Gamma \vdash a \red^* a'' : A \rr = h_3 : I \to A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a \red a' \Downarrow A \rr = h_1 : I \to A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a' \red^* a'' \Downarrow A \rr = h_2 : I \to A \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash a \red^* a'' \Downarrow A \rr = h_3 : I \to A \dotsb \Gamma$}
 \DisplayProof
 \end{center}
 \bigskip
@@ -273,44 +355,102 @@
 
 \subsection{Свойства интерпретации}
 
-\begin{comment}
-\begin{lem}[weakening][Weakening lemma]
-Пусть $\ll \Gamma \vdash B\rr = B \ldots \Gamma$ и $x \notin \Gamma$.
-Тогда верны следующие утверждения:
-\begin{itemize}
-\item Если $\ll \Gamma \vdash A \rr = A \dotsb \Gamma$, то $\ll \Gamma, x : B \vdash A \rr = \pi_B^*(A) \dotsb \Gamma.B$
-\item Если $\ll \Gamma \vdash a : A \rr = a : A \dotsb \Gamma$, то $\ll \Gamma, x : B \vdash A \rr = \langle id_{\Gamma.B}, a \circ \pi_B \rangle : \pi_B^*(A) \dotsb \Gamma.B$
-\end{itemize}
-\end{lem}
-\end{comment}
-
-\begin{lem}[correctness][Corectness of interpretation]
+\begin{lem}[completeness][Completeness of the interpretation]
 Верны следующие утверждения:
-\begin{itemize}
-\item Если $\Gamma \vdash$, то существует $\Gamma'$ такой, что $\ll \Gamma \vdash \rr = \Gamma'$.
-\item Если $\Gamma \vdash A$, то для любого $\Gamma'$ такого, что $\ll \Gamma \vdash \rr = \Gamma'$, существует $A'$ такой, что $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
-\item Если $\Gamma \vdash a : A$, то для любых $\Gamma', A'$ таких, что $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, существует $a'$ такой, что $\ll \Gamma \vdash a : A \rr = a' : A' \dotsb \Gamma'$.
-\end{itemize}
+\begin{enumerate}
+\item Если $\ll \Gamma \vdash \rr = \Gamma'$, то $\Gamma \vdash$.
+\item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\Gamma \vdash A$.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, то $\Gamma \vdash a \Downarrow A$.
+\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a' : A' \dotsb \Gamma'$, то $\Gamma \vdash a \Uparrow A$.
+\item Если $\ll \Gamma \vdash A \red B \rr = A' \to B' \dotsb \Gamma'$, то $\Gamma \vdash A$, $\Gamma \vdash B$, и $A \red B$.
+\item Если $\ll \Gamma \vdash A \red^* B \rr = A' \to B' \dotsb \Gamma'$, то $\Gamma \vdash A$, $\Gamma \vdash B$, и $A \red^* B$.
+\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\Gamma \vdash a \Downarrow A$, $\Gamma \vdash b \Downarrow A$, и $a \red b$.
+\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\Gamma \vdash a \Downarrow A$, $\Gamma \vdash b \Downarrow A$, и $a \red^* b$.
+\end{enumerate}
 \end{lem}
+\begin{proof}
+Индукцией по определению отношения интерпретации.
+\end{proof}
 
-Индукцией по выводу легко доказать следующие утверждения:
-\begin{itemize}
-\item Если $\ll \Gamma \vdash A \rr = A \dotsb \Gamma$, то $\ll \Gamma \vdash \rr = \Gamma$.
-\item Если $\ll \Gamma \vdash a : A \rr = a : A \dotsb \Gamma$, то $\ll \Gamma \vdash A \rr = A \dotsb \Gamma$.
-\end{itemize}
+\begin{lem}[functionality][Functionality of the interpretation]
+Верны следующие утверждения:
+\begin{enumerate}
+\item Если $\ll \Gamma \vdash \rr = \Gamma_1$ и $\ll \Gamma \vdash \rr = \Gamma_2$, то $\Gamma_1 = \Gamma_2$.
+\item Если $\ll \Gamma \vdash A \rr = A_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash A \rr = A_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a_1 : A_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash a \Downarrow A \rr = a_2 : A_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $a_1 = a_2$.
+\item Если $\ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : A'_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash a \Uparrow A_2 \rr = a_2 : A'_2 \dotsb \Gamma_2$, то $A_1 = A_2$, $\Gamma_1 = \Gamma_2$, $A'_1 = A'_2$, и $a_1 = a_2$.
+\item Если $\ll \Gamma \vdash A \red B_1 \rr = A_1 \to B'_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash A \red B_2 \rr = A_2 \to B'_2 \dotsb \Gamma_2$, то $B_1 = B_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $B'_1 = B'_2$.
+\item Если $\ll \Gamma \vdash A \red^* B_1 \rr = A_1 \to B'_1 \dotsb \Gamma_1$, $\ll \Gamma \vdash A \red^* B_2 \rr = A_2 \to B'_2 \dotsb \Gamma_2$, и $B_1. B_2 \in NF$, то $B_1 = B_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $B'_1 = B'_2$.
+\item Если $\ll \Gamma \vdash a \red b_1 \Downarrow A \rr = h_1 : I \to A_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash a \red b_2 \rr = h_2 : I \to A_2 \dotsb \Gamma_2$, то $b_1 = b_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $h_1 = h_2$.
+\item Если $\ll \Gamma \vdash a \red^* b_1 \Downarrow A \rr = h_1 : I \to A_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash a \red^* b_2 \rr = h_2 : I \to A_2 \dotsb \Gamma_2$, и $b_1, b_2 \in NF$, то $b_1 = b_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $h_1 = h_2$.
+\end{enumerate}
+\end{lem}
+\begin{proof}
+Индукцией по определению отношения интерпретации.
 
-Заметим, что $\Gamma'$, $A'$ и $a'$ в утверждениях выше не уникальны.
+В шестом и восьмом пунктах используется полонота интерпретации и тот факт, что отношение $\red$ иррефлексивно, что следует из сильной нормализуемости.
+\end{proof}
 
+Таким образом отношения $\ll - \rr = -$ определяют частичные функции, которые мы будем обозначать $\ll - \rr$.
+
+\begin{comment}
 Пусть $\Gamma, x_1 : A_1, \ldots x_n : A_n$ - некоторые контексты, $\Gamma'$ - некоторый объект, а $A'_1, \ldots A'_n$ - последовательность такая, что $A'_1 \dotsb \Gamma'$ и $A'_{i+1} \dotsb \Gamma.A'_1.A'_2 \ldots A'_i$.
 Тогда мы будем писать, что $\ll \Gamma \backslash x_1 : A_1, \ldots x_n : A_n \rr = (A'_1, \ldots A'_n) \dotsb \Gamma'$, если $\ll \Gamma \vdash \rr = \Gamma'$ и для любого $i$ верно, что $\ll \Gamma, x_1 : A_1, \ldots x_{i-1} : A_{i-1} \vdash A_i \rr = A'_i \dotsb \Gamma'.A'_1.A'_2 \ldots A'_{i-1}$.
 
-\begin{lem}[subst-corr][Корректность подстановки]
+\begin{lem}[correctness-subst][Correctness of the substitution]
 Пусть $\ll \Gamma \vdash a : A \rr = a : A \dotsb \Gamma$.
 Тогда верны следующие утверждения:
-\begin{itemize}
+\begin{enumerate}
 \item Если $\ll \Gamma, x : A, \Delta \vdash \rr = D$, то 
 \item Если $\ll \Gamma, x : A, \Delta \vdash B \rr = B \dotsb D$
-\end{itemize}
+\end{enumerate}
+\end{lem}
+\end{comment}
+
+\begin{lem}[weakening][Weakening lemma]
+Пусть $\ll \Gamma \vdash B\rr = B \dotsb \Gamma$ и $x \notin \Gamma$.
+Тогда верны следующие утверждения:
+\begin{enumerate}
+\item Если $\ll \Gamma \vdash A \rr = A \dotsb \Gamma$, то $\ll \Gamma, x : B \vdash A \rr = \pi_B^*(A) \dotsb \Gamma.B$
+\item Если $\ll \Gamma \vdash a : A \rr = a : A \dotsb \Gamma$, то $\ll \Gamma, x : B \vdash A \rr = \langle id_{\Gamma.B}, a \circ \pi_B \rangle : \pi_B^*(A) \dotsb \Gamma.B$
+\end{enumerate}
+\end{lem}
+
+\begin{lem}[correctness-typing][Corectness of the typing]
+Верны следующие утверждения:
+\begin{enumerate}
+\item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\ll \Gamma \vdash \rr = \Gamma'$.
+\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a : A' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a : A' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
+\item Если $\ll \Gamma \vdash A \red B \rr = f : A' \to B' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$ и $\ll \Gamma \vdash B \rr = B' \dotsb \Gamma'$.
+\item Если $\ll \Gamma \vdash A \red^* B \rr = f : A' \to B' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$ и $\ll \Gamma \vdash B \rr = B' \dotsb \Gamma'$.
+\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma \vdash a \Downarrow A \rr = h \circ \langle id_{\Gamma'}, i_0 \rangle : A' \dotsb \Gamma'$ и $\ll \Gamma \vdash b \Downarrow A \rr = h \circ \langle id_{\Gamma'}, i_1 \rangle : A' \dotsb \Gamma'$.
+\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma \vdash a \Downarrow A \rr = h \circ \langle id_{\Gamma'}, i_0 \rangle : A' \dotsb \Gamma'$ и $\ll \Gamma \vdash b \Downarrow A \rr = h \circ \langle id_{\Gamma'}, i_1 \rangle : A' \dotsb \Gamma'$.
+\end{enumerate}
+\end{lem}
+
+\begin{lem}[correctness-reductions][Corectness of the interpretation of reductions]
+Верны следующие утверждения:
+\begin{enumerate}
+\item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, и $A \red B$, то $\ll \Gamma \vdash A \red B \rr$ определенно.
+\item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, и $A \red^* B$, то $\ll \Gamma \vdash A \red^* B \rr$ определенно.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, и $a \red b$, то $\ll \Gamma \vdash a \red b \Downarrow A \rr$ определенно.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, и $a \red^* b$, то $\ll \Gamma \vdash a \red^* b \Downarrow A \rr$ определенно.
+\end{enumerate}
+\end{lem}
+\begin{proof}
+Второй и четвертый пункты элементарно следуют из первого и третьего соответственно.
+Первый и третий пункты на данный момент тривиальны, т.к. мы не ввели пока никаких правил редукций.
+\end{proof}
+
+\begin{lem}[correctness][Corectness of the interpretation]
+Верны следующие утверждения:
+\begin{enumerate}
+\item Если $\Gamma \vdash$, то $\ll \Gamma \vdash \rr$ определенно.
+\item Если $\Gamma \vdash A$, то $\ll \Gamma \vdash A \rr$ определенно.
+\item Если $\Gamma \vdash a \Downarrow A$, то $\ll \Gamma \vdash a \Downarrow A \rr$ определенно.
+\item Если $\Gamma \vdash a \Uparrow A$, то $\ll \Gamma \vdash a \Uparrow A \rr$ определенно.
+\end{enumerate}
 \end{lem}
 
 \bibliographystyle{amsplain}
