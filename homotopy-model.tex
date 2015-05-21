@@ -67,7 +67,7 @@
 \medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$\varnothing \vdash$}
+\UnaryInfC{$\vdash$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash A$}
@@ -148,7 +148,7 @@
 \medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$\varnothing \vdash$}
+\UnaryInfC{$\vdash$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash A$}
@@ -229,6 +229,48 @@
 
 \section{Интерпретация}
 
+\subsection{Категории с атрибутами}
+
+Мы будем интерпретировать теорию в категории с аттрибутами.
+Такая категория состоит из следующего набора данных:
+\begin{itemize}
+\item Для каждого объекта категории $\Gamma$ класс типов над этим объектом $Type(\Gamma)$.
+    Мы будем писать $A \dotsb \Gamma$ для обозначения того факта, что $A \in Type(\Gamma)$.
+\item Для каждого типа $A \dotsb \Gamma$ объект над $\Gamma$, который мы будем обозначать $\pi_A : \Gamma.A \to \Gamma$.
+    Мы будем писать $a : A \dotsb \Gamma$ для обозначения того факта, что $A \in Type(\Gamma)$, и $a : \Gamma \to \Gamma.A$ - сечение $\pi_A$.
+\item Для каждого морфизма $f : \Delta \to \Gamma$ и типа $A \dotsb \Gamma$ тип над $\Delta$, который обозначается $f^*(A)$,
+    и морфизм $f.A : \Delta.f^*(A) \to \Gamma.A$ такой, что квадрат ниже является декартовым.
+\[ \xymatrix{ \Delta.f^*(A) \ar[d]_{\pi_{f^*(A)}} \ar[r]^-{f.A} & \Gamma.A \ar[d]^{\pi_A} \\
+              \Delta \ar[r]_f & \Gamma
+            } \]
+\end{itemize}
+
+Эти данные должны удовлетворять следующим требованиям строгости:
+\begin{itemize}
+\item $id^*(A) = A$.
+\item $(g \circ f)^*(A) = g^*(f^*(A))$.
+\item $id.A = id$.
+\item $(g \circ f).A = f.A \circ g.\Delta.f^*(A)$.
+\end{itemize}
+
+Также мы предполагаем, что в категории определены различные конструкции, необходимые для интерпретации правил теории.
+Часть этих конструкций ($\Sigma$-типы, $\Pi$-типы, и т.д.) мы опишем позже.
+Сейчас мы опишем часть, необходимую для интерпретации гомотопий и расслоений.
+
+Во-первых, категория должна быть конечно полной.
+Во-вторых, категория должна содержать интервальный объект $I$ вместе с парой морфизмов $i_0, i_1 : 1 \to I$.
+Любое отображение вида $X \to 1 \xrightarrow{i_k} I$ мы также будем обозначать $i_k$.
+Также в категории должен быть выбран насыщенный класс морфизмов, которые мы называем \emph{расслоениями}.
+Каждое расслоение должно иметь правое свойство поднятия по отношению к морфизмам вида $\langle id_X, i_0 \rangle : X \to X \times I$.
+
+Последнее требование, которое нам понадобится заключается в том, что поднятие гомотопий должно хорошо себя вести по отношению к структуре категории с атрибутами.
+Конкретно, мы требуем, чтобы для любого объекта $\Gamma$, для любого $A \dotsb \Gamma \times I$ и для любого $a : \Gamma \to \Gamma \times I.A$ таких, что квадрат ниже коммутирует,
+    существовал морфизм $coe(A,a)$ такой, что вся диаграмма коммутирует.
+\[ \xymatrix{ \Gamma \ar[r]^-a \ar[d]_{\langle id_\Gamma, i_0 \rangle} & \Gamma \times I.A \ar[d]^{\pi_A} \\
+              \Gamma \times I \ar@{=}[r] \ar@{-->}[ur]^{coe(A,a)}      & \Gamma \times I
+            } \]
+Более того, мы требуем, чтобы для любого морфизма $f : \Delta \to \Gamma$ было верно, что $coe(A, a) \circ (f \times id_I) = \pi_A^*(f \times id_I) \circ coe((f \times id_I)^*(A), (\pi_A^*(f \times id_I))^*(a))$.
+
 \subsection{Определение интерпретации}
 
 Интерпретация контекстов:
@@ -236,7 +278,7 @@
 \medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$\ll \varnothing \vdash \rr = 1$}
+\UnaryInfC{$\ll \vdash \rr = 1$}
 \DisplayProof
 \quad
 \AxiomC{$\ll \Gamma \vdash A \rr = A \dotsb \Gamma$}
@@ -355,6 +397,21 @@
 
 \subsection{Свойства интерпретации}
 
+Введем следующее вспомогательное отношение:
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash \Delta \rr = A'_n \ldots A'_1 \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma, \Delta \vdash A \rr = A' \dotsb (\Gamma.A'_1 \ldots A'_n)$}
+\RightLabel{, $x \notin \Gamma, \Delta$}
+\BinaryInfC{$\ll \Gamma \vdash \Delta, x : A \rr = A' \dotsb A'_n \ldots A'_1 \dotsb \Gamma'$}
+\DisplayProof
+\end{center}
+\bigskip
+
+Индукцией несложно показать, что если $\ll \Gamma \vdash \Delta \rr = A'_n \ldots A'_1 \dotsb \Gamma'$, то $\ll \Gamma \vdash \rr = \Gamma'$.
+Также в этом случае несложно определить очевидную проекцию, которую мы будем обозначать $\pi_{A'_1, \ldots A'_n} : \Gamma'.A'_1 \ldots A'_n \to \Gamma'$.
+
 \begin{lem}[completeness][Completeness of the interpretation]
 Верны следующие утверждения:
 \begin{enumerate}
@@ -394,9 +451,6 @@
 Таким образом отношения $\ll - \rr = -$ определяют частичные функции, которые мы будем обозначать $\ll - \rr$.
 
 \begin{comment}
-Пусть $\Gamma, x_1 : A_1, \ldots x_n : A_n$ - некоторые контексты, $\Gamma'$ - некоторый объект, а $A'_1, \ldots A'_n$ - последовательность такая, что $A'_1 \dotsb \Gamma'$ и $A'_{i+1} \dotsb \Gamma.A'_1.A'_2 \ldots A'_i$.
-Тогда мы будем писать, что $\ll \Gamma \backslash x_1 : A_1, \ldots x_n : A_n \rr = (A'_1, \ldots A'_n) \dotsb \Gamma'$, если $\ll \Gamma \vdash \rr = \Gamma'$ и для любого $i$ верно, что $\ll \Gamma, x_1 : A_1, \ldots x_{i-1} : A_{i-1} \vdash A_i \rr = A'_i \dotsb \Gamma'.A'_1.A'_2 \ldots A'_{i-1}$.
-
 \begin{lem}[correctness-subst][Correctness of the substitution]
 Пусть $\ll \Gamma \vdash a : A \rr = a : A \dotsb \Gamma$.
 Тогда верны следующие утверждения:
@@ -408,11 +462,12 @@
 \end{comment}
 
 \begin{lem}[weakening][Weakening lemma]
-Пусть $\ll \Gamma \vdash B\rr = B \dotsb \Gamma$ и $x \notin \Gamma$.
+Пусть $\ll \Gamma \vdash \Delta\rr = A'_n \ldots A'_1 \dotsb \Gamma'$.
 Тогда верны следующие утверждения:
 \begin{enumerate}
-\item Если $\ll \Gamma \vdash A \rr = A \dotsb \Gamma$, то $\ll \Gamma, x : B \vdash A \rr = \pi_B^*(A) \dotsb \Gamma.B$
-\item Если $\ll \Gamma \vdash a : A \rr = a : A \dotsb \Gamma$, то $\ll \Gamma, x : B \vdash A \rr = \langle id_{\Gamma.B}, a \circ \pi_B \rangle : \pi_B^*(A) \dotsb \Gamma.B$
+\item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash A \rr = \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \Downarrow A \rr = \langle id_{\Gamma.A'_1 \ldots A'_n}, a \circ \pi_{A'_1, \ldots A'_n} \rangle : \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma.A'_1 \ldots A'_n$.
+\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a' : A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \Uparrow A \rr = \langle id_{\Gamma.A'_1 \ldots A'_n}, a \circ \pi_{A'_1, \ldots A'_n} \rangle : \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma.A'_1 \ldots A'_n$.
 \end{enumerate}
 \end{lem}
 
