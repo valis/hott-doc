@@ -237,7 +237,6 @@
 \item Для каждого объекта категории $\Gamma$ класс типов над этим объектом $Type(\Gamma)$.
     Мы будем писать $A \dotsb \Gamma$ для обозначения того факта, что $A \in Type(\Gamma)$.
 \item Для каждого типа $A \dotsb \Gamma$ объект над $\Gamma$, который мы будем обозначать $\pi_A : \Gamma.A \to \Gamma$.
-    Мы будем писать $a : A \dotsb \Gamma$ для обозначения того факта, что $A \in Type(\Gamma)$, и $a : \Gamma \to \Gamma.A$ - сечение $\pi_A$.
 \item Для каждого морфизма $f : \Delta \to \Gamma$ и типа $A \dotsb \Gamma$ тип над $\Delta$, который обозначается $f^*(A)$,
     и морфизм $f.A : \Delta.f^*(A) \to \Gamma.A$ такой, что квадрат ниже является декартовым.
 \[ \xymatrix{ \Delta.f^*(A) \ar[d]_{\pi_{f^*(A)}} \ar[r]^-{f.A} & \Gamma.A \ar[d]^{\pi_A} \\
@@ -253,23 +252,32 @@
 \item $(g \circ f).A = f.A \circ g.\Delta.f^*(A)$.
 \end{itemize}
 
-Также мы предполагаем, что в категории определены различные конструкции, необходимые для интерпретации правил теории.
+Мы будем писать $a : A \dotsb \Gamma$ для обозначения того факта, что $A \in Type(\Gamma)$, и $a : \Gamma \to \Gamma.A$ - сечение $\pi_A$.
+Если $f : \Delta \to \Gamma$ - некоторый морфизм, и $a : A \dotsb \Gamma$, то мы будем обозначать $f^*(a) : f^*(A) \dotsb \Delta$ следующее сечение:
+\[ \xymatrix{ \Delta \ar[r]^f \ar[d]_{f^*(a)} \pb                   & \Gamma \ar[d]^a \\
+              \Delta.f^*(A) \ar[r]_-{f.A} \ar[d]_{\pi_{f^*(A)}} \pb & \Gamma.A \ar[d]^{\pi_A} \\
+              \Delta \ar[r]_f                                       & \Gamma
+                 }\]
+
+Мы предполагаем, что в категории определены различные конструкции, необходимые для интерпретации правил теории.
 Часть этих конструкций ($\Sigma$-типы, $\Pi$-типы, и т.д.) мы опишем позже.
 Сейчас мы опишем часть, необходимую для интерпретации гомотопий и расслоений.
 
 Во-первых, категория должна быть конечно полной.
 Во-вторых, категория должна содержать интервальный объект $I$ вместе с парой морфизмов $i_0, i_1 : 1 \to I$.
-Любое отображение вида $X \to 1 \xrightarrow{i_k} I$ мы также будем обозначать $i_k$.
+Любое отображение вида $X \simeq X \times 1 \xrightarrow{id_X \times i_k} X \times I$ мы будем также обозначать $i_k$.
 Также в категории должен быть выбран насыщенный класс морфизмов, которые мы называем \emph{расслоениями}.
-Каждое расслоение должно иметь правое свойство поднятия по отношению к морфизмам вида $\langle id_X, i_0 \rangle : X \to X \times I$.
+Каждое расслоение должно иметь правое свойство поднятия по отношению к морфизмам вида $i_0 : X \to X \times I$.
 
 Также мы требуем, чтобы поднятие гомотопий хорошо себя вело по отношению к структуре категории с атрибутами.
-Конкретно, мы требуем, чтобы для любого объекта $\Gamma$, для любого $A \dotsb \Gamma \times I$ и для любого $a : \Gamma \to \Gamma \times I.A$ таких, что квадрат ниже коммутирует,
-    существовал морфизм $coe(A,a)$ такой, что вся диаграмма коммутирует.
-\[ \xymatrix{ \Gamma \ar[r]^-a \ar[d]_{\langle id_\Gamma, i_0 \rangle} & \Gamma \times I.A \ar[d]^{\pi_A} \\
-              \Gamma \times I \ar@{=}[r] \ar@{-->}[ur]^{coe(A,a)}      & \Gamma \times I
+Конкретно, мы требуем, чтобы для любого объекта $\Gamma$, для любого $A \dotsb \Gamma \times I$ и для любого $a : i_0^*(A) \dotsb \Gamma$ существовало сечение $ext(A,a) : A \dotsb \Gamma \times I$ такое, что $i_0^*(ext(A,a)) = a$.
+Более того, мы требуем, чтобы для любого морфизма $f : \Delta \to \Gamma$ было верно, что $(f \times id_I)^*(ext(A,a)) = ext((f \times id_I)^*(A), f^*(a))$.
+Для этого достаточно проверить, что следующий квадрат коммутирует:
+\[ \xymatrix{ \Gamma \times I \ar[rr]^{f \times id_I} \ar[d]_{ext((f \times id_I)^*(A), f^*(a))} & & \Gamma \times I \ar[d]^{ext(A,a)} \\
+              \Gamma \times I.(f \times id_I)^*(A) \ar[rr]_-{(f \times id_I).A}                  & & \Gamma \times I.A
             } \]
-Более того, мы требуем, чтобы для любого морфизма $f : \Delta \to \Gamma$ было верно, что $coe(A, a) \circ (f \times id_I) = \pi_A^*(f \times id_I) \circ coe((f \times id_I)^*(A), (\pi_A^*(f \times id_I))^*(a))$.
+
+Последние две конструкции, которые нам сейчас понадобятся, - это обращение и конкатенация расслоений над интервалом.
 
 Если $H$ - тип над $\Gamma \times I$ со слоями $A_1, A_2 \dotsb \Gamma$, то $inv(H) \dotsb \Gamma \times I$ - тип со слоями $A_2$ и $A_1$.
 Если $f : \Delta \to \Gamma$, то $(f \times id_I)^*(inv(H)) = inv((f \times id_I)^*(H))$.
@@ -315,49 +323,41 @@
 \AxiomC{$\ll \Gamma \vdash x \Uparrow A \rr = a : A \dotsb \Gamma$}
 \AxiomC{$\ll \Gamma \vdash B \rr = B \dotsb \Gamma$}
 \RightLabel{, $y \notin \Gamma$}
-\BinaryInfC{$\ll \Gamma, y : B \vdash x \Uparrow A \rr = a' : \pi_B^*(A) \dotsb \Gamma.B$}
+\BinaryInfC{$\ll \Gamma, y : B \vdash x \Uparrow A \rr = \pi_B^*(a) : \pi_B^*(A) \dotsb \Gamma.B$}
 \DisplayProof
 \end{center}
-
-где $a'$ определяется как в следующей диаграме:
-\[ \xymatrix@-1pc{ \Gamma.B \ar[rddd]_{id_{\Gamma.B}} \ar[rrrd]^{a \circ \pi_B} \ar@{-->}[rd]_{a'} & & & \\
-                        & \Gamma.B.\pi_B^*(A) \ar[rr]_-{\pi_B.A} \ar[dd]^{\pi_{\pi_B^*(A)}} \pb & & \Gamma.A \ar[dd]^{\pi_A} \\
-                        &                                                                       & & \\
-                        & \Gamma.B \ar[rr]_{\pi_B}                                              & & \Gamma
-                 }\]
 
 Интерпретация правила проверки типа:
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = a : \langle id_\Gamma, i_0 \rangle^*(H_1) \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : i_0^*(H_1) \dotsb \Gamma$}
 \AxiomC{$\ll \Gamma \vdash A_i \red^* B \rr = H_i \dotsb \Gamma \times I$, $i \in \{1, 2\}$}
-\RightLabel{, $B \in NF$}
-\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = a' : \langle id_\Gamma, i_0 \rangle^*(H_2) \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = a_2 : i_0^*(H_2) \dotsb \Gamma$}
 \DisplayProof
 \end{center}
 
-где $a'$ 
+Данное правило применимо, если $B \in NF$, и $i_1^*(H_1) = i_1^*(H_2)$.
+Тогда мы определяем $H \dotsb \Gamma \times I$ как $con(H_1, inv(H_2))$, и $a_2$ как $i_1^*(ext(H, a_1))$.
 
 Интерпретация правил редукций типов:
 
 \medskip
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash A \rr = A \dotsb \Gamma$}
-\UnaryInfC{$\ll \Gamma \vdash A \red^* A \rr = id : A \to A \dotsb \Gamma$}
+\UnaryInfC{$\ll \Gamma \vdash A \red^* A \rr = \pi_1^*(A) \dotsb \Gamma \times I$}
 \DisplayProof
 \end{center}
-
-где $id : \Gamma.A \to \Gamma.A$ - тождественное отображение.
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \red B \rr = f_1 : A \to B \dotsb \Gamma$}
-\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = f_2 : B \to C \dotsb \Gamma$}
-\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = f_2 \circ f_1 : A \to C \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash A \red B \rr = H_1 \dotsb \Gamma \times I$}
+\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = H_2 \dotsb \Gamma \times I$}
+\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = con(H_1, H_2) \dotsb \Gamma \times I$}
 \DisplayProof
 \end{center}
-\bigskip
+
+Данное правило применимо при условии, что $i_1^*(H_1) = i_0^*(H_2)$.
 
 Интерпретация правил редукций термов:
 
@@ -379,21 +379,21 @@
 \end{center}
 \bigskip
 
-Данное правило применимо при условии, что $h_1 \circ (id_\Gamma \times i_1) = h_2 \circ (id_\Gamma \times i_0)$.
-Тогда $h_3$ определяется как отображение, соответствующее композиции $\Gamma \xrightarrow{\langle id_\Gamma, i_1 \rangle} \Gamma \times I \xrightarrow{s} \Gamma.A^I$, где $s$ определяется следующим образом:
-\[ \xymatrix{ \Gamma \ar[rrr]^{\overline{h_1}} \ar[d]_{\langle id_\Gamma, i_0 \rangle}                                        & & & \Gamma.A^I \ar[d] \\
-              \Gamma \times I \ar[rrr]_-{\langle h_1 \circ (id_\Gamma \times i_0) \circ \pi_1, h_2 \rangle} \ar@{-->}[urrr]^s & & & \Gamma.A \times \Gamma.A
+Данное правило применимо при условии, что $h_1 \circ i_1 = h_2 \circ i_0$.
+Тогда $h_3$ определяется как отображение, соответствующее композиции $\Gamma \xrightarrow{i_1} \Gamma \times I \xrightarrow{s} \Gamma.A^I$, где $s$ определяется следующим образом:
+\[ \xymatrix{ \Gamma \ar[rrr]^{\overline{h_1}} \ar[d]_{i_0}                                        & & & \Gamma.A^I \ar[d] \\
+              \Gamma \times I \ar[rrr]_-{\langle h_1 \circ i_0 \circ \pi_1, h_2 \rangle} \ar@{-->}[urrr]^s & & & \Gamma.A \times \Gamma.A
             }\]
 
 \begin{comment}
 Пусть $\Gamma.A \xrightarrow{t} P(\Gamma.A) \xrightarrow{\langle p_1, p_2 \rangle} \Gamma.A \times \Gamma.A$ - объект путей для $\Gamma.A$.
 
-Во-первых, определим $h'_1 : \Gamma \to P(\Gamma.A)$ как композицию $p \circ \langle id_\Gamma, i_1 \rangle$, где $p$ определяется следующим образом:
-\[ \xymatrix{ \Gamma \ar[r]^-a \ar[d]_{\langle id_\Gamma, i_0 \rangle} & \Gamma.A \ar[r]^-t & P(\Gamma.A) \ar[d]^{\langle p_1, p_2 \rangle} \\
+Во-первых, определим $h'_1 : \Gamma \to P(\Gamma.A)$ как композицию $p \circ i_1$, где $p$ определяется следующим образом:
+\[ \xymatrix{ \Gamma \ar[r]^-a \ar[d]_{i_0} & \Gamma.A \ar[r]^-t & P(\Gamma.A) \ar[d]^{\langle p_1, p_2 \rangle} \\
               \Gamma \times I \ar[rr]_-{\langle a \circ \pi_1, h_1 \rangle} \ar@{-->}[urr]^p & & \Gamma.A \times \Gamma.A
             }\]
-Во-вторых, определим $h'_3 : \Gamma \to P(\Gamma.A)$ как композицию $q \circ \langle id_\Gamma, i_1 \rangle$, где $q$ определяется следующим образом:
-\[ \xymatrix{ \Gamma \ar[rr]^{h'_1} \ar[d]_{\langle id_\Gamma, i_0 \rangle}                  & & P(\Gamma.A) \ar[d]^{\langle p_1, p_2 \rangle} \\
+Во-вторых, определим $h'_3 : \Gamma \to P(\Gamma.A)$ как композицию $q \circ i_1$, где $q$ определяется следующим образом:
+\[ \xymatrix{ \Gamma \ar[rr]^{h'_1} \ar[d]_{i_0}                  & & P(\Gamma.A) \ar[d]^{\langle p_1, p_2 \rangle} \\
               \Gamma \times I \ar[rr]_-{\langle a \circ \pi_1, h_2 \rangle} \ar@{-->}[urr]^q & & \Gamma.A \times \Gamma.A
             }\]
 Теперь определим $h_3 : \Gamma \times I \to \Gamma.A$ как композицию $p_2 \circ s$, где $s$ определяется следующим образом:
@@ -486,8 +486,8 @@
 \item Если $\ll \Gamma \vdash a \Downarrow A \rr = a : A' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
 \item Если $\ll \Gamma \vdash A \red B \rr = f : A' \to B' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$ и $\ll \Gamma \vdash B \rr = B' \dotsb \Gamma'$.
 \item Если $\ll \Gamma \vdash A \red^* B \rr = f : A' \to B' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$ и $\ll \Gamma \vdash B \rr = B' \dotsb \Gamma'$.
-\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma \vdash a \Downarrow A \rr = h \circ \langle id_{\Gamma'}, i_0 \rangle : A' \dotsb \Gamma'$ и $\ll \Gamma \vdash b \Downarrow A \rr = h \circ \langle id_{\Gamma'}, i_1 \rangle : A' \dotsb \Gamma'$.
-\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma \vdash a \Downarrow A \rr = h \circ \langle id_{\Gamma'}, i_0 \rangle : A' \dotsb \Gamma'$ и $\ll \Gamma \vdash b \Downarrow A \rr = h \circ \langle id_{\Gamma'}, i_1 \rangle : A' \dotsb \Gamma'$.
+\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma \vdash a \Downarrow A \rr = h \circ i_0 : A' \dotsb \Gamma'$ и $\ll \Gamma \vdash b \Downarrow A \rr = h \circ i_1 : A' \dotsb \Gamma'$.
+\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma \vdash a \Downarrow A \rr = h \circ i_0 : A' \dotsb \Gamma'$ и $\ll \Gamma \vdash b \Downarrow A \rr = h \circ i_1 : A' \dotsb \Gamma'$.
 \end{enumerate}
 \end{lem}
 
