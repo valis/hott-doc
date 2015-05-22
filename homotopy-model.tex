@@ -473,12 +473,28 @@
 Тогда верны следующие утверждения:
 \begin{enumerate}
 \item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash A \rr = \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
-\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \Downarrow A \rr = \langle id_{\Gamma.A'_1 \ldots A'_n}, a \circ \pi_{A'_1, \ldots A'_n} \rangle : \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma.A'_1 \ldots A'_n$.
-\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a' : A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \Uparrow A \rr = \langle id_{\Gamma.A'_1 \ldots A'_n}, a \circ \pi_{A'_1, \ldots A'_n} \rangle : \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma.A'_1 \ldots A'_n$.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(a') : \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
+\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a' : A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \Uparrow A \rr = \pi_{A'_1, \ldots A'_n}^*(a') : \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
+\item Если $\ll \Gamma \vdash A \red B \rr = H \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash A \red B \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H) \dotsb \Gamma'.A'_1 \ldots A'_n \times I$.
+\item Если $\ll \Gamma \vdash A \red^* B \rr = H \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash A \red^* B \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H) \dotsb \Gamma'.A'_1 \ldots A'_n \times I$.
+\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \red b \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(h) : I \to \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
+\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \red^* b \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(h) : I \to \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
 \end{enumerate}
 \end{lem}
+\begin{proof}
+Третий пункт в случае, когда $a$ - переменная, легко доказать индукцией по размеру $\Delta$.
+Остальные случаи доказываются индукцией по построению $\ll - \rr = -$.
+\begin{itemize}
+\item
+\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : i_0^*(H_1) \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash A_i \red^* B \rr = H_i \dotsb \Gamma \times I$, $i \in \{1, 2\}$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = i_1^*(ext(con(H_1,inv(H_2)),a_1)) : i_0^*(H_2) \dotsb \Gamma$}
+\DisplayProof
 
-\begin{lem}[correctness-typing][Corectness of the typing]
+\end{itemize}
+\end{proof}
+
+\begin{lem}[coherence-typing][Coherence of the typing]
 Верны следующие утверждения:
 \begin{enumerate}
 \item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\ll \Gamma \vdash \rr = \Gamma'$.
@@ -491,7 +507,7 @@
 \end{enumerate}
 \end{lem}
 
-\begin{lem}[correctness-reductions][Corectness of the interpretation of reductions]
+\begin{lem}[correctness-reductions][Correctness of the interpretation of the reductions rules]
 Верны следующие утверждения:
 \begin{enumerate}
 \item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, и $A \red B$, то $\ll \Gamma \vdash A \red B \rr$ определенно.
@@ -505,7 +521,7 @@
 Первый и третий пункты на данный момент тривиальны, т.к. мы не ввели пока никаких правил редукций.
 \end{proof}
 
-\begin{lem}[correctness][Corectness of the interpretation]
+\begin{lem}[correctness][Correctness of the interpretation of the typing rules]
 Верны следующие утверждения:
 \begin{enumerate}
 \item Если $\Gamma \vdash$, то $\ll \Gamma \vdash \rr$ определенно.
