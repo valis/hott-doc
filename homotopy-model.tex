@@ -430,7 +430,7 @@
 \end{center}
 \bigskip
 
-Индукцией несложно показать, что если $\ll \Gamma \vdash \Delta \rr = A'_n \ldots A'_1 \dotsb \Gamma'$, то $\ll \Gamma \vdash \rr = \Gamma'$.
+Индукцией несложно показать, что если $\ll \Gamma \vdash \Delta \rr = A'_n \ldots A'_1 \dotsb \Gamma'$, то $\ll \Gamma \vdash \rr = \Gamma'$, и $\ll \Gamma, \Delta \vdash \rr = \Gamma'.A'_1 \ldots A'_n$.
 Также в этом случае несложно определить очевидную проекцию, которую мы будем обозначать $\pi_{A'_1, \ldots A'_n} : \Gamma'.A'_1 \ldots A'_n \to \Gamma'$.
 
 \begin{lem}[completeness][Completeness of the interpretation]
@@ -455,6 +455,7 @@
 \begin{enumerate}
 \item Если $\ll \Gamma \vdash \rr = \Gamma_1$ и $\ll \Gamma \vdash \rr = \Gamma_2$, то $\Gamma_1 = \Gamma_2$.
 \item Если $\ll \Gamma \vdash A \rr = A_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash A \rr = A_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$.
+\item Если $\ll \Gamma \vdash \Delta \rr = A_n \ldots A_1 \dotsb \Gamma$ и $\ll \Gamma \vdash \Delta \rr = A'_n \ldots A'_1 \dotsb \Gamma'$, то $\Gamma = \Gamma'$, и $A_i = A'_i$.
 \item Если $\ll \Gamma \vdash a \Downarrow A \rr = a_1 : A_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash a \Downarrow A \rr = a_2 : A_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $a_1 = a_2$.
 \item Если $\ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : A'_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash a \Uparrow A_2 \rr = a_2 : A'_2 \dotsb \Gamma_2$, то $A_1 = A_2$, $\Gamma_1 = \Gamma_2$, $A'_1 = A'_2$, и $a_1 = a_2$.
 \item Если $\ll \Gamma \vdash A \red B_1 \rr = A_1 \to B'_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash A \red B_2 \rr = A_2 \to B'_2 \dotsb \Gamma_2$, то $B_1 = B_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $B'_1 = B'_2$.
@@ -466,21 +467,10 @@
 \begin{proof}
 Индукцией по определению отношения интерпретации.
 
-В шестом и восьмом пунктах используется полонота интерпретации и тот факт, что отношение $\red$ иррефлексивно, что следует из сильной нормализуемости.
+В седьмом и девятом пунктах используется полонота интерпретации и тот факт, что отношение $\red$ иррефлексивно, что следует из сильной нормализуемости.
 \end{proof}
 
 Таким образом отношения $\ll - \rr = -$ определяют частичные функции, которые мы будем обозначать $\ll - \rr$.
-
-\begin{comment}
-\begin{lem}[correctness-subst][Correctness of the substitution]
-Пусть $\ll \Gamma \vdash a : A \rr = a : A \dotsb \Gamma$.
-Тогда верны следующие утверждения:
-\begin{enumerate}
-\item Если $\ll \Gamma, x : A, \Delta \vdash \rr = D$, то 
-\item Если $\ll \Gamma, x : A, \Delta \vdash B \rr = B \dotsb D$
-\end{enumerate}
-\end{lem}
-\end{comment}
 
 \begin{lem}[weakening][Weakening lemma]
 Пусть $\ll \Gamma \vdash \Delta\rr = A'_n \ldots A'_1 \dotsb \Gamma'$.
@@ -549,7 +539,6 @@
 По индукционной гипотезе $\ll \Gamma, \Delta \vdash a \red a' \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(h_1)$,
     и $\ll \Gamma, \Delta \vdash a' \red a'' \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(h_2)$.
 Следовательно $\ll \Gamma, \Delta \vdash a \red a'' \Downarrow A \rr = con(\pi_{A'_1, \ldots A'_n}^*(h_1), \pi_{A'_1, \ldots A'_n}^*(h_2)) = \pi_{A'_1, \ldots A'_n}^*(con(h_1, h_2))$.
-
 \end{itemize}
 \end{proof}
 
@@ -570,6 +559,19 @@
 Третий пункт, когда $a$ - переменная, следует из леммы~\rlem{weakening}.
 Остальные пункты элементарны.
 \end{proof}
+
+Если $\ll \Gamma, \Delta \vdash \rr$, то предыдущая лемма влечет, что существуют $A'_1 \dotsb \Gamma'$, \ldots $A'_n \dotsb \Gamma'.A'_1 \ldots A'_{n-1}$ такие, что $\ll \Gamma \vdash \Delta \rr = A'_n \ldots A'_1 \dotsb \Gamma'$.
+
+\begin{lem}[correctness-subst][Correctness of the substitution]
+Пусть $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma$.
+Тогда верны следующие утверждения:
+\begin{enumerate}
+\item Если $\ll \Gamma, x : A, \Delta \vdash \rr = \Gamma'.A'_1 \ldots A'_n$, то $\ll \Gamma, \Delta[x := a] \vdash \rr = \Gamma'.a^*(A'_1) \ldots (a.A'_1 \ldots A'_{n-1})^*(A'_n)$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash B \rr = B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$, то $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \rr = (a.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma.a^*(A'_1) \ldots (a.A'_1 \ldots A'_{n-1})^*(A'_n)$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash b \Downarrow B \rr = b' : B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$, то $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Downarrow B[x := a] \rr = (a.A'_1 \ldots A'_n)^*(b') : (a.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma.a^*(A'_1) \ldots (a.A'_1 \ldots A'_{n-1})^*(A'_n)$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash b \Uparrow B \rr = b' : B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$, то $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Downarrow B[x := a] \rr = (a.A'_1 \ldots A'_n)^*(b') : (a.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma.a^*(A'_1) \ldots (a.A'_1 \ldots A'_{n-1})^*(A'_n)$.
+\end{enumerate}
+\end{lem}
 
 \begin{lem}[correctness-reductions][Correctness of the interpretation of the reductions rules]
 Верны следующие утверждения:
@@ -608,6 +610,35 @@
 В этом случае, используя свойства конфлюентности и сильной нормализации, мы получаем, что существует терм $B \in NF$ такой, что $A_1 \red^* B$, и $A_2 \red^* B$.
 Таким образом этот случай следует из леммы~\rlem{correctness-reductions}.
 \end{proof}
+
+\section{Конструкции}
+
+\subsection{Тип интервала}
+
+Мы добавляем следующие правила вывода:
+
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash left \Uparrow I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash right \Uparrow I$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash a \Downarrow A[x := left]$}
+\AxiomC{$\Gamma \vdash i \Downarrow I$}
+\TrinaryInfC{$\Gamma \vdash coe\ (\lambda x. A)\ a\ i \Uparrow A[x := i]$}
+\DisplayProof
+\end{center}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
