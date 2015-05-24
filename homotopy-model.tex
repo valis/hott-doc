@@ -10,15 +10,13 @@
 \usepackage{bussproofs}
 \usepackage{type1ec}
 \usepackage{stmaryrd}
-% \usepackage[T2A]{fontenc}
 
 \providecommand\WarningsAreErrors{false}
 \ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
 
 \newcommand{\newref}[4][]{
 \ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
-\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
-\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname r#2\endcsname[1]{\ref{#2:##1}}
 \newenvironmentx{#2}[2][1=,2=]{
 \ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
 \ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
@@ -92,10 +90,10 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash B$}
-\RightLabel{, $A \deq B$}
-\BinaryInfC{$\Gamma \vdash a : B$}
+\AxiomC{$\Gamma \vdash a : A_1$}
+\AxiomC{$\Gamma \vdash A_2$}
+\RightLabel{, $A_1 \deq A_2$}
+\BinaryInfC{$\Gamma \vdash a : A_2$}
 \DisplayProof
 \end{center}
 
@@ -173,10 +171,10 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash a \Uparrow A$}
-\AxiomC{$\Gamma \vdash B$}
-\RightLabel{, $A \deq B$}
-\BinaryInfC{$\Gamma \vdash a \Downarrow B$}
+\AxiomC{$\Gamma \vdash a \Uparrow A_1$}
+\AxiomC{$\Gamma \vdash A_2$}
+\RightLabel{, $A_1 \deq A_2$}
+\BinaryInfC{$\Gamma \vdash a \Downarrow A_2$}
 \DisplayProof
 \end{center}
 
@@ -265,17 +263,39 @@
 
 Во-первых, категория должна быть конечно полной.
 Во-вторых, категория должна содержать интервальный объект $I$ вместе с парой морфизмов $i_0, i_1 : 1 \to I$.
-Любое отображение вида $X \simeq X \times 1 \xrightarrow{id_X \times i_k} X \times I$ мы будем также обозначать $i_k$.
-Также в категории должен быть выбран насыщенный класс морфизмов, которые мы называем \emph{расслоениями}.
-Каждое расслоение должно иметь правое свойство поднятия по отношению к морфизмам вида $i_0 : X \to X \times I$.
+Любое отображение вида $\Gamma \simeq \Gamma \times 1 \xrightarrow{id_\Gamma \times i_k} \Gamma \times I$ мы будем также обозначать $i_k$.
+Морфизмы $h : \Gamma \times I \to X$ мы будем называть гомотопиями между морфизмами $h \circ i_0, h \circ i_1 : \Gamma \to X$.
+Если $A \dotsb \Gamma$, то записать $h : I \to A \dotsb \Gamma$ будет означать, что $h : \Gamma \times I \to \Gamma.A$ такое, что $\pi_A \circ h = \pi_1$.
+Если $f : \Delta \to \Gamma$ - некоторый морфизм, и $h : I \to A \dotsb \Gamma$, то мы будем обозначать $f^*(h) : I \to f^*(A) \dotsb \Delta$ следующий морфизм:
+\[ \xymatrix{ \Delta \times I \ar[r]^{f \times id_I} \ar[d]_{f^*(h)} \pb & \Gamma \times I \ar[d]^h \\
+              \Delta.f^*(A) \ar[r]_-{f.A} \ar[d]_{\pi_{f^*(A)}} \pb      & \Gamma.A \ar[d]^{\pi_A} \\
+              \Delta \ar[r]_f                                            & \Gamma
+                 }\]
 
-Также мы требуем, чтобы поднятие гомотопий хорошо себя вело по отношению к структуре категории с атрибутами.
-Конкретно, мы требуем, чтобы для любого объекта $\Gamma$, для любого $A \dotsb \Gamma \times I$ и для любого $a : i_0^*(A) \dotsb \Gamma$ существовало сечение $ext(A,a) : A \dotsb \Gamma \times I$ такое, что $i_0^*(ext(A,a)) = a$.
+\begin{comment}
+Также в категории должен быть выбран насыщенный класс морфизмов, которые мы называем \emph{тривиальными корасслоениями}.
+Морфизмы, которые имеют правое свойство поднятия по отношению к тривиальным корасслоениям, мы называем \emph{расслоениями}.
+Мы требуем, чтобы для любого $A \dotsb \Gamma$ морфизмы $\pi_A : \Gamma.A \to \Gamma$ являлись расслоениями.
+
+Тривиальные корасслоения должны содержать морфизмы вида $i_0 : \Gamma \to \Gamma \times I$ и
+    $(\Gamma \times I \amalg \Gamma \times I) \amalg_{\Gamma \amalg \Gamma} \Gamma \times I \to \Gamma \times I \times I$, которые определяются как в следующей диаграмме:
+\[ \xymatrix@-1pc{ \Gamma \amalg \Gamma \ar[rr]^{i_0 \amalg i_0} \ar[dd]_{[i_0, i_1]} & & \Gamma \times I \amalg \Gamma \times I \ar[dd] \ar[rddd]^{[i_0, i_1]} \\ \\
+                   \Gamma \times I \ar[rr] \ar[rrrd]_{i_0 \times id_I} & & \po (\Gamma \times I \amalg \Gamma \times I) \amalg_{\Gamma \amalg \Gamma} \Gamma \times I \ar@{-->}[rd] \\
+                                                                       & & & \Gamma \times I \times I
+                 } \]
+\end{comment}
+
+Также нам потребуются следующие конструкции.
+Для любого объекта $\Gamma$, для любого $A \dotsb \Gamma \times I$ и для любого $a : i_0^*(A) \dotsb \Gamma$ должно существовать сечение $ext(A,a) : A \dotsb \Gamma \times I$ такое, что $i_0^*(ext(A,a)) = a$.
 Более того, мы требуем, чтобы для любого морфизма $f : \Delta \to \Gamma$ было верно, что $(f \times id_I)^*(ext(A,a)) = ext((f \times id_I)^*(A), f^*(a))$.
 Для этого достаточно проверить, что следующий квадрат коммутирует:
 \[ \xymatrix{ \Gamma \times I \ar[rr]^{f \times id_I} \ar[d]_{ext((f \times id_I)^*(A), f^*(a))} & & \Gamma \times I \ar[d]^{ext(A,a)} \\
               \Gamma \times I.(f \times id_I)^*(A) \ar[rr]_-{(f \times id_I).A}                  & & \Gamma \times I.A
             } \]
+
+Если $h_1, h_2 : I \to A \dotsb \Gamma$ - гомотопии между $a_1, a_2 : \Gamma \to \Gamma.A$ и $a_2, a_3 : \Gamma \to \Gamma.A$ соответственно,
+    то $con(h_1, h_2) : I \to A \dotsb \Gamma$ - гомотопия между $a_1$ и $a_3$.
+Если $f : \Delta \to \Gamma$, то $f^*(con(h_1, h_2)) = con(f^*(h_1), f^*(h_2))$.
 
 Последние две конструкции, которые нам сейчас понадобятся, - это обращение и конкатенация расслоений над интервалом.
 
@@ -364,26 +384,20 @@
 \medskip
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash a \Downarrow A \rr = a : A \dotsb \Gamma$}
-\UnaryInfC{$\ll \Gamma \vdash a \red^* a \Downarrow A \rr = h : I \to A \dotsb \Gamma$}
+\UnaryInfC{$\ll \Gamma \vdash a \red^* a \Downarrow A \rr = a \circ \pi_1 : I \to A \dotsb \Gamma$}
 \DisplayProof
 \end{center}
-
-где $h : \Gamma \times I \to \Gamma.A$ определяется как композиция $\Gamma \times I \xrightarrow{\pi_1} \Gamma \xrightarrow{a} \Gamma.A$.
 
 \medskip
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash a \red a' \Downarrow A \rr = h_1 : I \to A \dotsb \Gamma$}
 \AxiomC{$\ll \Gamma \vdash a' \red^* a'' \Downarrow A \rr = h_2 : I \to A \dotsb \Gamma$}
-\BinaryInfC{$\ll \Gamma \vdash a \red^* a'' \Downarrow A \rr = h_3 : I \to A \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash a \red^* a'' \Downarrow A \rr = con(h_1, h_2) : I \to A \dotsb \Gamma$}
 \DisplayProof
 \end{center}
 \bigskip
 
 Данное правило применимо при условии, что $h_1 \circ i_1 = h_2 \circ i_0$.
-Тогда $h_3$ определяется как отображение, соответствующее композиции $\Gamma \xrightarrow{i_1} \Gamma \times I \xrightarrow{s} \Gamma.A^I$, где $s$ определяется следующим образом:
-\[ \xymatrix{ \Gamma \ar[rrr]^{\overline{h_1}} \ar[d]_{i_0}                                        & & & \Gamma.A^I \ar[d] \\
-              \Gamma \times I \ar[rrr]_-{\langle h_1 \circ i_0 \circ \pi_1, h_2 \rangle} \ar@{-->}[urrr]^s & & & \Gamma.A \times \Gamma.A
-            }\]
 
 \begin{comment}
 Пусть $\Gamma.A \xrightarrow{t} P(\Gamma.A) \xrightarrow{\langle p_1, p_2 \rangle} \Gamma.A \times \Gamma.A$ - объект путей для $\Gamma.A$.
@@ -490,6 +504,51 @@
 \AxiomC{$\ll \Gamma \vdash A_i \red^* B \rr = H_i \dotsb \Gamma \times I$, $i \in \{1, 2\}$}
 \BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = i_1^*(ext(con(H_1,inv(H_2)),a_1)) : i_0^*(H_2) \dotsb \Gamma$}
 \DisplayProof
+\medskip
+
+По индукционной гипотезе $\ll \Gamma, \Delta \vdash a \Uparrow A_1 \rr = \pi_{A'_1, \ldots A'_n}^*(a_1)$, и
+    $\ll \Gamma, \Delta \vdash A_i \red^* B \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_i) \dotsb \Gamma.A'_1 \ldots A'_n$.
+Следовательно $\ll \Gamma, \Delta \vdash a \Downarrow A_2 \rr = i_1^*(ext(con((\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_1), inv((\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_2))), \pi_{A'_1, \ldots A'_n}^*(a_1))) = i_1^*(ext((\pi_{A'_1, \ldots A'_n} \times id_I)^*(con(H_1,inv(H_2))),\pi_{A'_1, \ldots A'_n}^*(a_1))) = i_1^*(\pi_{A'_1, \ldots A'_n} \times id_I)^*(ext(con(H_1,inv(H_2)),a_1)) = \pi_{A'_1, \ldots A'_n}^* i_1^*(ext(con(H_1,inv(H_2)),a_1))$.
+
+\item
+\AxiomC{$\ll \Gamma \vdash A \rr = A \dotsb \Gamma$}
+\UnaryInfC{$\ll \Gamma \vdash A \red^* A \rr = \pi_1^*(A) \dotsb \Gamma \times I$}
+\DisplayProof
+\medskip
+
+По индукционной гипотезе $\ll \Gamma, \Delta \vdash A \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(A)$.
+Следовательно $\ll \Gamma, \Delta \vdash A \red^* A \rr = \pi_1^* (\pi_{A'_1, \ldots A'_n} \times id_I)^*(A) = \pi_{A'_1, \ldots A'_n}^* \pi_1^*(A)$.
+
+\item
+\AxiomC{$\ll \Gamma \vdash A \red B \rr = H_1 \dotsb \Gamma \times I$}
+\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = H_2 \dotsb \Gamma \times I$}
+\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = con(H_1, H_2) \dotsb \Gamma \times I$}
+\DisplayProof
+\medskip
+
+По индукционной гипотезе $\ll \Gamma, \Delta \vdash A \red B \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_1)$,
+    и $\ll \Gamma, \Delta \vdash B \red^* C \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_2)$.
+Следовательно $\ll \Gamma, \Delta \vdash A \red^* C \rr = con((\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_1), (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_2)) = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(con(H_1, H_2))$.
+
+\item
+\AxiomC{$\ll \Gamma \vdash a \Downarrow A \rr = a : A \dotsb \Gamma$}
+\UnaryInfC{$\ll \Gamma \vdash a \red^* a \Downarrow A \rr = a \circ \pi_1 : I \to A \dotsb \Gamma$}
+\DisplayProof
+\medskip
+
+По индукционной гипотезе $\ll \Gamma, \Delta \vdash a \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(a)$.
+Следовательно $\ll \Gamma, \Delta \vdash a \red^* a \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(a) \circ \pi_1 = \pi_{A'_1, \ldots A'_n}^*(a \circ \pi_1)$.
+
+\item
+\AxiomC{$\ll \Gamma \vdash a \red a' \Downarrow A \rr = h_1 : I \to A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a' \red^* a'' \Downarrow A \rr = h_2 : I \to A \dotsb \Gamma$}
+\BinaryInfC{$\ll \Gamma \vdash a \red^* a'' \Downarrow A \rr = con(h_1, h_2) : I \to A \dotsb \Gamma$}
+\DisplayProof
+\medskip
+
+По индукционной гипотезе $\ll \Gamma, \Delta \vdash a \red a' \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(h_1)$,
+    и $\ll \Gamma, \Delta \vdash a' \red a'' \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(h_2)$.
+Следовательно $\ll \Gamma, \Delta \vdash a \red a'' \Downarrow A \rr = con(\pi_{A'_1, \ldots A'_n}^*(h_1), \pi_{A'_1, \ldots A'_n}^*(h_2)) = \pi_{A'_1, \ldots A'_n}^*(con(h_1, h_2))$.
 
 \end{itemize}
 \end{proof}
@@ -498,14 +557,19 @@
 Верны следующие утверждения:
 \begin{enumerate}
 \item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\ll \Gamma \vdash \rr = \Gamma'$.
-\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a : A' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
 \item Если $\ll \Gamma \vdash a \Downarrow A \rr = a : A' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
-\item Если $\ll \Gamma \vdash A \red B \rr = f : A' \to B' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$ и $\ll \Gamma \vdash B \rr = B' \dotsb \Gamma'$.
-\item Если $\ll \Gamma \vdash A \red^* B \rr = f : A' \to B' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$ и $\ll \Gamma \vdash B \rr = B' \dotsb \Gamma'$.
+\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a : A' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
+\item Если $\ll \Gamma \vdash A \red B \rr = H \dotsb \Gamma' \times I$, то $\ll \Gamma \vdash A \rr = i_0^*(H) \dotsb \Gamma'$ и $\ll \Gamma \vdash B \rr = i_1^*(H) \dotsb \Gamma'$.
+\item Если $\ll \Gamma \vdash A \red^* B \rr = H \dotsb \Gamma' \times I$, то $\ll \Gamma \vdash A \rr = i_0^*(H) \dotsb \Gamma'$ и $\ll \Gamma \vdash B \rr = i_1^*(H) \dotsb \Gamma'$.
 \item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma \vdash a \Downarrow A \rr = h \circ i_0 : A' \dotsb \Gamma'$ и $\ll \Gamma \vdash b \Downarrow A \rr = h \circ i_1 : A' \dotsb \Gamma'$.
 \item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma \vdash a \Downarrow A \rr = h \circ i_0 : A' \dotsb \Gamma'$ и $\ll \Gamma \vdash b \Downarrow A \rr = h \circ i_1 : A' \dotsb \Gamma'$.
 \end{enumerate}
 \end{lem}
+\begin{proof}
+Индукцией по построению $\ll - \rr = -$.
+Третий пункт, когда $a$ - переменная, следует из леммы~\rlem{weakening}.
+Остальные пункты элементарны.
+\end{proof}
 
 \begin{lem}[correctness-reductions][Correctness of the interpretation of the reductions rules]
 Верны следующие утверждения:
@@ -521,7 +585,7 @@
 Первый и третий пункты на данный момент тривиальны, т.к. мы не ввели пока никаких правил редукций.
 \end{proof}
 
-\begin{lem}[correctness][Correctness of the interpretation of the typing rules]
+\begin{lem}[correctness-typing][Correctness of the interpretation of the typing rules]
 Верны следующие утверждения:
 \begin{enumerate}
 \item Если $\Gamma \vdash$, то $\ll \Gamma \vdash \rr$ определенно.
@@ -530,6 +594,20 @@
 \item Если $\Gamma \vdash a \Uparrow A$, то $\ll \Gamma \vdash a \Uparrow A \rr$ определенно.
 \end{enumerate}
 \end{lem}
+\begin{proof}
+Индукцией по построению $- \vdash -$, используя лемму~\rlem{coherence-typing}.
+Единственный нетривиальный случай:
+\begin{center}
+\AxiomC{$\Gamma \vdash a \Uparrow A_1$}
+\AxiomC{$\Gamma \vdash A_2$}
+\RightLabel{, $A_1 \deq A_2$}
+\BinaryInfC{$\Gamma \vdash a \Downarrow A_2$}
+\DisplayProof
+\end{center}
+
+В этом случае, используя свойства конфлюентности и сильной нормализации, мы получаем, что существует терм $B \in NF$ такой, что $A_1 \red^* B$, и $A_2 \red^* B$.
+Таким образом этот случай следует из леммы~\rlem{correctness-reductions}.
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
