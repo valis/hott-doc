@@ -418,20 +418,33 @@
 
 \subsection{Свойства интерпретации}
 
+Пусть $\Gamma$ - некоторый объект, и $\Delta$ - некоторая коллекция вида $A_1 \dotsb \Gamma$, \ldots, $A_n \dotsb \Gamma.A_1 \ldots A_{n-1}$.
+Тогда мы будем писать $\Delta \dotsb \Gamma$.
+Объект $\Gamma.A_1 \ldots A_n$ мы будем обозначать как $\Gamma.\Delta$,
+    и проекцию $\pi_{A_1} \circ \ldots \circ \pi_{A_n} : \Gamma.\Delta \to \Gamma$ как $\pi_\Delta : \Gamma.\Delta \to \Gamma$.
+Пустую коллекцию $\Delta$ мы будем обозначать как $()$.
+Если $A_{n+1} \dotsb \Gamma.\Delta$, то коллекцию $A_1, \ldots A_n, A_{n+1}$ мы будем обозначать как $\Delta.A_{n+1}$.
+Нотация $\Gamma.\Delta.A_{n+1}$ не является двусмысленной, т.к. оба объекта $(\Gamma.\Delta).A_{n+1}$ и $\Gamma.(\Delta.A_{n+1})$ означают один и тот же объект $\Gamma.A_1 \ldots A_n.A_{n+1}$.
+Если $f : \Gamma' \to \Gamma$, то мы будем обозначать $f^*(\Delta) \dotsb \Gamma'$ коллекцию $f^*(A_1) \dotsb \Gamma'$, \ldots, $(f.A_1 \ldots A_{n-1})^*(A_n) \dotsb \Gamma'.f^*(A_1) \ldots (f.A_1 \ldots A_{n-2})^*(A_{n-1})$,
+    и $f.\Delta : \Gamma'.f^*(\Delta) \to \Gamma.\Delta$ морфизм $f.A_1 \ldots A_n : \Gamma'.f^*(\Delta) \to \Gamma.\Delta$.
+
 Введем следующее вспомогательное отношение:
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash \Delta \rr = A'_n \ldots A'_1 \dotsb \Gamma'$}
-\AxiomC{$\ll \Gamma, \Delta \vdash A \rr = A' \dotsb (\Gamma.A'_1 \ldots A'_n)$}
+\AxiomC{$\ll \Gamma \vdash \rr = \Gamma'$}
+\UnaryInfC{$\ll \Gamma \vdash \rr = () \dotsb \Gamma'$}
+\DisplayProof
+\quad
+\AxiomC{$\ll \Gamma \vdash \Delta \rr = \Delta' \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma, \Delta \vdash A \rr = A' \dotsb \Gamma'.\Delta'$}
 \RightLabel{, $x \notin \Gamma, \Delta$}
-\BinaryInfC{$\ll \Gamma \vdash \Delta, x : A \rr = A' \dotsb A'_n \ldots A'_1 \dotsb \Gamma'$}
+\BinaryInfC{$\ll \Gamma \vdash \Delta, x : A \rr = \Delta'.A' \dotsb \Gamma'$}
 \DisplayProof
 \end{center}
 \bigskip
 
-Индукцией несложно показать, что если $\ll \Gamma \vdash \Delta \rr = A'_n \ldots A'_1 \dotsb \Gamma'$, то $\ll \Gamma \vdash \rr = \Gamma'$, и $\ll \Gamma, \Delta \vdash \rr = \Gamma'.A'_1 \ldots A'_n$.
-Также в этом случае несложно определить очевидную проекцию, которую мы будем обозначать $\pi_{A'_1, \ldots A'_n} : \Gamma'.A'_1 \ldots A'_n \to \Gamma'$.
+Индукцией несложно показать, что если $\ll \Gamma \vdash \Delta \rr = \Delta' \dotsb \Gamma'$, то $\ll \Gamma \vdash \rr = \Gamma'$, и $\ll \Gamma, \Delta \vdash \rr = \Gamma'.\Delta'$.
 
 \begin{lem}[completeness][Completeness of the interpretation]
 Верны следующие утверждения:
@@ -453,15 +466,15 @@
 \begin{lem}[functionality][Functionality of the interpretation]
 Верны следующие утверждения:
 \begin{enumerate}
-\item Если $\ll \Gamma \vdash \rr = \Gamma_1$ и $\ll \Gamma \vdash \rr = \Gamma_2$, то $\Gamma_1 = \Gamma_2$.
-\item Если $\ll \Gamma \vdash A \rr = A_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash A \rr = A_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$.
-\item Если $\ll \Gamma \vdash \Delta \rr = A_n \ldots A_1 \dotsb \Gamma$ и $\ll \Gamma \vdash \Delta \rr = A'_n \ldots A'_1 \dotsb \Gamma'$, то $\Gamma = \Gamma'$, и $A_i = A'_i$.
-\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a_1 : A_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash a \Downarrow A \rr = a_2 : A_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $a_1 = a_2$.
-\item Если $\ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : A'_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash a \Uparrow A_2 \rr = a_2 : A'_2 \dotsb \Gamma_2$, то $A_1 = A_2$, $\Gamma_1 = \Gamma_2$, $A'_1 = A'_2$, и $a_1 = a_2$.
-\item Если $\ll \Gamma \vdash A \red B_1 \rr = A_1 \to B'_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash A \red B_2 \rr = A_2 \to B'_2 \dotsb \Gamma_2$, то $B_1 = B_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $B'_1 = B'_2$.
+\item Если $\ll \Gamma \vdash \rr = \Gamma_1$, и $\ll \Gamma \vdash \rr = \Gamma_2$, то $\Gamma_1 = \Gamma_2$.
+\item Если $\ll \Gamma \vdash A \rr = A_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash A \rr = A_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$.
+\item Если $\ll \Gamma \vdash \Delta \rr = \Delta_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash \Delta \rr = \Delta_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, и $\Delta_1 = \Delta_2$.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a_1 : A_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash a \Downarrow A \rr = a_2 : A_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $a_1 = a_2$.
+\item Если $\ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : A'_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash a \Uparrow A_2 \rr = a_2 : A'_2 \dotsb \Gamma_2$, то $A_1 = A_2$, $\Gamma_1 = \Gamma_2$, $A'_1 = A'_2$, и $a_1 = a_2$.
+\item Если $\ll \Gamma \vdash A \red B_1 \rr = A_1 \to B'_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash A \red B_2 \rr = A_2 \to B'_2 \dotsb \Gamma_2$, то $B_1 = B_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $B'_1 = B'_2$.
 \item Если $\ll \Gamma \vdash A \red^* B_1 \rr = A_1 \to B'_1 \dotsb \Gamma_1$, $\ll \Gamma \vdash A \red^* B_2 \rr = A_2 \to B'_2 \dotsb \Gamma_2$, и $B_1. B_2 \in NF$, то $B_1 = B_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $B'_1 = B'_2$.
-\item Если $\ll \Gamma \vdash a \red b_1 \Downarrow A \rr = h_1 : I \to A_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash a \red b_2 \rr = h_2 : I \to A_2 \dotsb \Gamma_2$, то $b_1 = b_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $h_1 = h_2$.
-\item Если $\ll \Gamma \vdash a \red^* b_1 \Downarrow A \rr = h_1 : I \to A_1 \dotsb \Gamma_1$ и $\ll \Gamma \vdash a \red^* b_2 \rr = h_2 : I \to A_2 \dotsb \Gamma_2$, и $b_1, b_2 \in NF$, то $b_1 = b_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $h_1 = h_2$.
+\item Если $\ll \Gamma \vdash a \red b_1 \Downarrow A \rr = h_1 : I \to A_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash a \red b_2 \rr = h_2 : I \to A_2 \dotsb \Gamma_2$, то $b_1 = b_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $h_1 = h_2$.
+\item Если $\ll \Gamma \vdash a \red^* b_1 \Downarrow A \rr = h_1 : I \to A_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash a \red^* b_2 \rr = h_2 : I \to A_2 \dotsb \Gamma_2$, и $b_1, b_2 \in NF$, то $b_1 = b_2$, $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$, и $h_1 = h_2$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
@@ -473,16 +486,22 @@
 Таким образом отношения $\ll - \rr = -$ определяют частичные функции, которые мы будем обозначать $\ll - \rr$.
 
 \begin{lem}[weakening][Weakening lemma]
-Пусть $\ll \Gamma \vdash \Delta\rr = A'_n \ldots A'_1 \dotsb \Gamma'$.
+Пусть $\ll \Gamma \vdash \Delta\rr = \Delta' \dotsb \Gamma'$.
 Тогда верны следующие утверждения:
 \begin{enumerate}
-\item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash A \rr = \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
-\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(a') : \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
-\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a' : A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \Uparrow A \rr = \pi_{A'_1, \ldots A'_n}^*(a') : \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
-\item Если $\ll \Gamma \vdash A \red B \rr = H \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash A \red B \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H) \dotsb \Gamma'.A'_1 \ldots A'_n \times I$.
-\item Если $\ll \Gamma \vdash A \red^* B \rr = H \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash A \red^* B \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H) \dotsb \Gamma'.A'_1 \ldots A'_n \times I$.
-\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \red b \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(h) : I \to \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
-\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash a \red^* b \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(h) : I \to \pi_{A'_1, \ldots A'_n}^*(A') \dotsb \Gamma'.A'_1 \ldots A'_n$.
+\item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash A \rr = \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, \\
+    то $\ll \Gamma, \Delta \vdash a \Downarrow A \rr = \pi_{\Delta'}^*(a') : \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
+\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a' : A' \dotsb \Gamma'$, \\
+    то $\ll \Gamma, \Delta \vdash a \Uparrow A \rr = \pi_{\Delta'}^*(a') : \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
+\item Если $\ll \Gamma \vdash A \red B \rr = H \dotsb \Gamma'$, \\
+    то $\ll \Gamma, \Delta \vdash A \red B \rr = (\pi_{\Delta'} \times id_I)^*(H) \dotsb \Gamma'.\Delta' \times I$.
+\item Если $\ll \Gamma \vdash A \red^* B \rr = H \dotsb \Gamma'$, \\
+    то $\ll \Gamma, \Delta \vdash A \red^* B \rr = (\pi_{\Delta'} \times id_I)^*(H) \dotsb \Gamma'.\Delta' \times I$.
+\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, \\
+    то $\ll \Gamma, \Delta \vdash a \red b \Downarrow A \rr = \pi_{\Delta'}^*(h) : I \to \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
+\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : I \to A' \dotsb \Gamma'$, \\
+    то $\ll \Gamma, \Delta \vdash a \red^* b \Downarrow A \rr = \pi_{\Delta'}^*(h) : I \to \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
@@ -490,55 +509,61 @@
 Остальные случаи доказываются индукцией по построению $\ll - \rr = -$.
 \begin{itemize}
 \item
-\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : i_0^*(H_1) \dotsb \Gamma$}
-\AxiomC{$\ll \Gamma \vdash A_i \red^* B \rr = H_i \dotsb \Gamma \times I$, $i \in \{1, 2\}$}
-\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = i_1^*(ext(Con(H_1,Inv(H_2)),a_1)) : i_0^*(H_2) \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : i_0^*(H_1) \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash A_i \red^* B \rr = H_i \dotsb \Gamma' \times I$, $i \in \{1, 2\}$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = i_1^*(ext(Con(H_1,Inv(H_2)),a_1)) : i_0^*(H_2) \dotsb \Gamma'$}
 \DisplayProof
 \medskip
 
-По индукционной гипотезе $\ll \Gamma, \Delta \vdash a \Uparrow A_1 \rr = \pi_{A'_1, \ldots A'_n}^*(a_1)$, и
-    $\ll \Gamma, \Delta \vdash A_i \red^* B \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_i) \dotsb \Gamma.A'_1 \ldots A'_n$.
-Следовательно $\ll \Gamma, \Delta \vdash a \Downarrow A_2 \rr = i_1^*(ext(Con((\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_1), Inv((\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_2))), \pi_{A'_1, \ldots A'_n}^*(a_1))) = i_1^*(ext((\pi_{A'_1, \ldots A'_n} \times id_I)^*(Con(H_1,Inv(H_2))),\pi_{A'_1, \ldots A'_n}^*(a_1))) = i_1^*(\pi_{A'_1, \ldots A'_n} \times id_I)^*(ext(Con(H_1,Inv(H_2)),a_1)) = \pi_{A'_1, \ldots A'_n}^* i_1^*(ext(Con(H_1,Inv(H_2)),a_1))$.
+По индукционной гипотезе $\ll \Gamma, \Delta \vdash a \Uparrow A_1 \rr = \pi_{\Delta'}^*(a_1) : \pi_{\Delta'}^* i_0^*(H_1) \dotsb \Gamma'.\Delta'$, и
+    $\ll \Gamma, \Delta \vdash A_i \red^* B \rr = (\pi_{\Delta'} \times id_I)^*(H_i) \dotsb \Gamma'.\Delta' \times I$.
+Следовательно $\ll \Gamma, \Delta \vdash a \Downarrow A_2 \rr = i_1^*(ext(Con((\pi_{\Delta'} \times id_I)^*(H_1), Inv((\pi_{\Delta'} \times id_I)^*(H_2))), \pi_{\Delta'}^*(a_1))) : i_0^* (\pi_{\Delta'} \times id_I)^*(H_2) \dotsb \Gamma'.\Delta' = \pi_{\Delta'}^* i_1^*(ext(Con(H_1,Inv(H_2)),a_1)) : \pi_{\Delta'}^* i_0^*(H_2) \dotsb \Gamma'.\Delta'$.
 
+\bigskip
 \item
-\AxiomC{$\ll \Gamma \vdash A \rr = A \dotsb \Gamma$}
-\UnaryInfC{$\ll \Gamma \vdash A \red^* A \rr = \pi_1^*(A) \dotsb \Gamma \times I$}
+\AxiomC{$\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$}
+\UnaryInfC{$\ll \Gamma \vdash A \red^* A \rr = \pi_1^*(A') \dotsb \Gamma' \times I$}
 \DisplayProof
 \medskip
 
-По индукционной гипотезе $\ll \Gamma, \Delta \vdash A \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(A)$.
-Следовательно $\ll \Gamma, \Delta \vdash A \red^* A \rr = \pi_1^* (\pi_{A'_1, \ldots A'_n} \times id_I)^*(A) = \pi_{A'_1, \ldots A'_n}^* \pi_1^*(A)$.
+По индукционной гипотезе $\ll \Gamma, \Delta \vdash A \rr = \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$. \\
+Следовательно $\ll \Gamma, \Delta \vdash A \red^* A \rr = \pi_1^* \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta' \times I =$ \\
+    $(\pi_{\Delta'} \times id_I)^* \pi_1^*(A') \dotsb \Gamma.\Delta' \times I$.
 
+\bigskip
 \item
-\AxiomC{$\ll \Gamma \vdash A \red B \rr = H_1 \dotsb \Gamma \times I$}
-\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = H_2 \dotsb \Gamma \times I$}
-\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = Con(H_1, H_2) \dotsb \Gamma \times I$}
+\AxiomC{$\ll \Gamma \vdash A \red B \rr = H_1 \dotsb \Gamma' \times I$}
+\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = H_2 \dotsb \Gamma' \times I$}
+\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = Con(H_1, H_2) \dotsb \Gamma' \times I$}
 \DisplayProof
 \medskip
 
-По индукционной гипотезе $\ll \Gamma, \Delta \vdash A \red B \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_1)$,
-    и $\ll \Gamma, \Delta \vdash B \red^* C \rr = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_2)$.
-Следовательно $\ll \Gamma, \Delta \vdash A \red^* C \rr = Con((\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_1), (\pi_{A'_1, \ldots A'_n} \times id_I)^*(H_2)) = (\pi_{A'_1, \ldots A'_n} \times id_I)^*(Con(H_1, H_2))$.
+По индукционной гипотезе $\ll \Gamma, \Delta \vdash A \red B \rr = (\pi_{\Delta'} \times id_I)^*(H_1) \dotsb \Gamma'.\Delta' \times I$,
+    и $\ll \Gamma, \Delta \vdash B \red^* C \rr = (\pi_{\Delta'} \times id_I)^*(H_2) \dotsb \Gamma'.\Delta' \times I$.
+Следовательно $\ll \Gamma, \Delta \vdash A \red^* C \rr = Con((\pi_{\Delta'} \times id_I)^*(H_1), (\pi_{\Delta'} \times id_I)^*(H_2)) \dotsb \Gamma'.\Delta' \times I = (\pi_{\Delta'} \times id_I)^*(Con(H_1, H_2)) \dotsb \Gamma'.\Delta' \times I$.
 
+\bigskip
 \item
-\AxiomC{$\ll \Gamma \vdash a \Downarrow A \rr = a : A \dotsb \Gamma$}
-\UnaryInfC{$\ll \Gamma \vdash a \red^* a \Downarrow A \rr = a \circ \pi_1 : I \to A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$}
+\UnaryInfC{$\ll \Gamma \vdash a \red^* a \Downarrow A \rr = a' \circ \pi_1 : I \to A' \dotsb \Gamma'$}
 \DisplayProof
 \medskip
 
-По индукционной гипотезе $\ll \Gamma, \Delta \vdash a \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(a)$.
-Следовательно $\ll \Gamma, \Delta \vdash a \red^* a \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(a) \circ \pi_1 = \pi_{A'_1, \ldots A'_n}^*(a \circ \pi_1)$.
+По индукционной гипотезе $\ll \Gamma, \Delta \vdash a \Downarrow A \rr = \pi_{\Delta'}^*(a') : \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
+Следовательно $\ll \Gamma, \Delta \vdash a \red^* a \Downarrow A \rr = \pi_{\Delta'}^*(a') \circ \pi_1 : I \to \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta' = \pi_{\Delta'}^*(a' \circ \pi_1) : I \to \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
 
+\bigskip
 \item
-\AxiomC{$\ll \Gamma \vdash a \red a' \Downarrow A \rr = h_1 : I \to A \dotsb \Gamma$}
-\AxiomC{$\ll \Gamma \vdash a' \red^* a'' \Downarrow A \rr = h_2 : I \to A \dotsb \Gamma$}
-\BinaryInfC{$\ll \Gamma \vdash a \red^* a'' \Downarrow A \rr = con(h_1, h_2) : I \to A \dotsb \Gamma$}
+\AxiomC{$\ll \Gamma \vdash a \red a' \Downarrow A \rr = h_1 : I \to A' \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash a' \red^* a'' \Downarrow A \rr = h_2 : I \to A' \dotsb \Gamma'$}
+\BinaryInfC{$\ll \Gamma \vdash a \red^* a'' \Downarrow A \rr = con(h_1, h_2) : I \to A' \dotsb \Gamma'$}
 \DisplayProof
 \medskip
 
-По индукционной гипотезе $\ll \Gamma, \Delta \vdash a \red a' \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(h_1)$,
-    и $\ll \Gamma, \Delta \vdash a' \red a'' \Downarrow A \rr = \pi_{A'_1, \ldots A'_n}^*(h_2)$.
-Следовательно $\ll \Gamma, \Delta \vdash a \red a'' \Downarrow A \rr = con(\pi_{A'_1, \ldots A'_n}^*(h_1), \pi_{A'_1, \ldots A'_n}^*(h_2)) = \pi_{A'_1, \ldots A'_n}^*(con(h_1, h_2))$.
+По индукционной гипотезе $\ll \Gamma, \Delta \vdash a \red a' \Downarrow A \rr = \pi_{\Delta'}^*(h_1) : I \to \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$,
+    и $\ll \Gamma, \Delta \vdash a' \red a'' \Downarrow A \rr = \pi_{\Delta'}^*(h_2) : I \to \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
+Следовательно $\ll \Gamma, \Delta \vdash a \red a'' \Downarrow A \rr = con(\pi_{\Delta'}^*(h_1), \pi_{\Delta'}^*(h_2)) : I \to \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta' = \pi_{\Delta'}^*(con(h_1, h_2)) : I \to \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
+
 \end{itemize}
 \end{proof}
 
@@ -560,20 +585,18 @@
 Остальные пункты элементарны.
 \end{proof}
 
-Если $\ll \Gamma, \Delta \vdash \rr$ определено, то предыдущая лемма влечет, что существуют $A'_1 \dotsb \Gamma'$, \ldots $A'_n \dotsb \Gamma'.A'_1 \ldots A'_{n-1}$ такие, что $\ll \Gamma \vdash \Delta \rr = A'_n \ldots A'_1 \dotsb \Gamma'$.
-
 \begin{lem}[correctness-subst][Correctness of the substitution]
-Пусть $\ll \Gamma \vdash a \Uparrow A \rr = a' : A' \dotsb \Gamma$.
+Пусть $\ll \Gamma \vdash a \Uparrow A \rr = a' : A' \dotsb \Gamma'$, и $\ll \Gamma, x : A \vdash \Delta \rr = \Delta' \dotsb \Gamma'.A'$.
 Тогда верны следующие утверждения:
 \begin{enumerate}
-\item Если $\ll \Gamma, x : A, \Delta \vdash \rr = \Gamma'.A'.A'_1 \ldots A'_n$, то $\ll \Gamma, \Delta[x := a] \vdash \rr = \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-\item Если $\ll \Gamma, x : A, \Delta \vdash B \rr = B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$, то $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-\item Если $\ll \Gamma, x : A, \Delta \vdash b \Downarrow B \rr = b' : B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$, то $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Downarrow B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(b') : (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-\item Если $\ll \Gamma, x : A, \Delta \vdash b \Uparrow B \rr = b' : B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$, то $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Uparrow B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(b') : (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-\item Если $\ll \Gamma, x : A, \Delta \vdash B \red C \rr = H \dotsb \Gamma'.A'.A'_1 \ldots A'_n \times I$, то $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \red C[x := a] \rr = (a'.A'_1 \ldots A'_n \times id_I)^*(H) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n) \times I$.
-\item Если $\ll \Gamma, x : A, \Delta \vdash B \red^* C \rr = H \dotsb \Gamma'.A'.A'_1 \ldots A'_n \times I$, то $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \red^* C[x := a] \rr = (a'.A'_1 \ldots A'_n \times id_I)^*(H) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n) \times I$.
-\item Если $\ll \Gamma, x : A, \Delta \vdash b \red c \Downarrow B \rr = h : I \to B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$, то $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \red c[x := a] \Downarrow B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(h) : I \to (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-\item Если $\ll \Gamma, x : A, \Delta \vdash b \red^* c \Downarrow B \rr = h : I \to B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$, то $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \red^* c[x := a] \Downarrow B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(h) : I \to (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash \rr = \Gamma'.A'.\Delta'$, то $\ll \Gamma, \Delta[x := a] \vdash \rr = \Gamma'.a'^*(\Delta')$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash B \rr = B' \dotsb \Gamma'.A'.\Delta'$, то $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \rr = (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta')$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash b \Downarrow B \rr = b' : B' \dotsb \Gamma'.A'.\Delta'$, то $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Downarrow B[x := a] \rr = (a'.\Delta')^*(b') : (a'.\Delta')^*(B') \dotsb \Gamma.a'^*(\Delta')$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash b \Uparrow B \rr = b' : B' \dotsb \Gamma'.A'.\Delta'$, то $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Uparrow B[x := a] \rr = (a'.\Delta')^*(b') : (a'.\Delta')^*(B') \dotsb \Gamma.a'^*(\Delta')$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash B \red C \rr = H \dotsb \Gamma'.A'.\Delta' \times I$, то $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \red C[x := a] \rr = (a'.\Delta' \times id_I)^*(H) \dotsb \Gamma'.a'^*(\Delta') \times I$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash B \red^* C \rr = H \dotsb \Gamma'.A'.\Delta' \times I$, то $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \red^* C[x := a] \rr = (a'.\Delta' \times id_I)^*(H) \dotsb \Gamma'.a'^*(\Delta') \times I$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash b \red c \Downarrow B \rr = h : I \to B' \dotsb \Gamma'.A'.\Delta'$, то $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \red c[x := a] \Downarrow B[x := a] \rr = (a'.\Delta')^*(h) : I \to (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta')$.
+\item Если $\ll \Gamma, x : A, \Delta \vdash b \red^* c \Downarrow B \rr = h : I \to B' \dotsb \Gamma'.A'.\Delta'$, то $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \red^* c[x := a] \Downarrow B[x := a] \rr = (a'.\Delta')^*(h) : I \to (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta')$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
@@ -589,13 +612,13 @@
 
 \bigskip
 \item
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash A_{n+1} \rr = A'_{n+1} \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
-\UnaryInfC{$\ll \Gamma, x : A, \Delta, x_{n+1} : A_{n+1} \vdash \rr = \Gamma'.A'.A'_1 \ldots A'_n.A'_{n+1}$}
+\AxiomC{$\ll \Gamma, x : A, \Delta \vdash A_{n+1} \rr = A'_{n+1} \dotsb \Gamma'.A'.\Delta'$}
+\UnaryInfC{$\ll \Gamma, x : A, \Delta, x_{n+1} : A_{n+1} \vdash \rr = \Gamma'.A'.\Delta'.A'_{n+1}$}
 \DisplayProof
 \medskip
 
-По индукционному предположению $\ll \Gamma, \Delta[x := a] \vdash A_{n+1}[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(A'_{n+1}) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-Следовательно $\ll \Gamma, \Delta[x := a], x_{n+1} : A_{n+1}[x := a] \vdash \rr = \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_n)^*(A'_{n+1})$.
+По индукционному предположению $\ll \Gamma, \Delta[x := a] \vdash A_{n+1}[x := a] \rr = (a'.\Delta')^*(A'_{n+1}) \dotsb \Gamma'.a'^*(\Delta')$.
+Следовательно $\ll \Gamma, \Delta[x := a], x_{n+1} : A_{n+1}[x := a] \vdash \rr = \Gamma'.a'^*(\Delta').(a'.\Delta')^*(A'_{n+1}) = \Gamma'.a'^*(\Delta'.A'_{n+1})$.
 
 \bigskip
 \item
@@ -608,13 +631,13 @@
 
 \bigskip
 \item
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash A_{n+1} \rr = A'_{n+1} \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
-\UnaryInfC{$\ll \Gamma, x : A, \Delta, x_{n+1} : A_{n+1} \vdash x_{n+1} \Uparrow A_{n+1} \rr = \langle id, id \rangle : \pi_{A'_{n+1}}^*(A'_{n+1}) \dotsb \Gamma.A'.A'_1 \ldots A'_{n+1}$}
+\AxiomC{$\ll \Gamma, x : A, \Delta \vdash A_{n+1} \rr = A'_{n+1} \dotsb \Gamma'.A'.\Delta'$}
+\UnaryInfC{$\ll \Gamma, x : A, \Delta, x_{n+1} : A_{n+1} \vdash x_{n+1} \Uparrow A_{n+1} \rr = \langle id, id \rangle : \pi_{A'_{n+1}}^*(A'_{n+1}) \dotsb \Gamma.A'.\Delta'.A'_{n+1}$}
 \DisplayProof
 \medskip
 
-По индукционному предположению $\ll \Gamma, \Delta[x := a] \vdash A_{n+1}[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(A'_{n+1}) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-Следовательно $\ll \Gamma, \Delta[x := a], x_{n+1} : A_{n+1}[x := a] \vdash x_{n+1} \Uparrow A_{n+1}[x := a] \rr = \langle id, id \rangle : \pi_{(a'.A'_1 \ldots A'_n)^*(A'_{n+1})}^*(a'.A'_1 \ldots A'_n)^*(A'_{n+1}) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_n)^*(A'_{n+1}) = (a'.A'_1 \ldots A'_{n+1})^*(\langle id, id \rangle) : (a'.A'_1 \ldots A'_{n+1})^* \pi_{A'_{n+1}}^*(A'_{n+1}) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_n)^*(A'_{n+1})$.
+По индукционному предположению $\ll \Gamma, \Delta[x := a] \vdash A_{n+1}[x := a] \rr = (a'.\Delta')^*(A'_{n+1}) \dotsb \Gamma'.a'^*(\Delta')$. \\
+Следовательно $\ll \Gamma, \Delta[x := a], x_{n+1} : A_{n+1}[x := a] \vdash x_{n+1} \Uparrow A_{n+1}[x := a] \rr = \langle id, id \rangle : \pi_{(a'.\Delta')^*(A'_{n+1})}^*(a'.\Delta')^*(A'_{n+1}) \dotsb \Gamma'.a'^*(\Delta').(a'.\Delta')^*(A'_{n+1}) = (a'.\Delta'.A'_{n+1})^*(\langle id, id \rangle) : (a'.\Delta'.A'_{n+1})^* \pi_{A'_{n+1}}^*(A'_{n+1}) \dotsb \Gamma'.a'^*(\Delta'.A'_{n+1})$.
 
 \bigskip
 \item
@@ -628,72 +651,79 @@ $\ll \Gamma \vdash y[x := a] \Uparrow B[x := a] \rr = \ll \Gamma \vdash y \Uparr
 
 \bigskip
 \item
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash y \Uparrow B \rr = b : B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash A_{n+1} \rr = A'_{n+1} \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
-\BinaryInfC{$\ll \Gamma, x : A, \Delta, x_{n+1} : A_{n+1} \vdash y \Uparrow B \rr = \pi_{A'_{n+1}}^*(b) : \pi_{A'_{n+1}}^*(B') \dotsb \Gamma'.A'.A'_1 \ldots A'_{n+1}$}
+\AxiomC{$\ll \Gamma, x : A, \Delta \vdash y \Uparrow B \rr = b : B' \dotsb \Gamma'.A'.\Delta'$}
+\AxiomC{$\ll \Gamma, x : A, \Delta \vdash A_{n+1} \rr = A'_{n+1} \dotsb \Gamma'.A'.\Delta'$}
+\BinaryInfC{$\ll \Gamma, x : A, \Delta, x_{n+1} : A_{n+1} \vdash y \Uparrow B \rr = \pi_{A'_{n+1}}^*(b) : \pi_{A'_{n+1}}^*(B') \dotsb \Gamma'.A'.\Delta'.A'_{n+1}$}
 \DisplayProof
 \medskip
 
-По индукционному предположению $\ll \Gamma, \Delta[x := a] \vdash y[x := a] \Uparrow B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(b) : (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$,
-и $\ll \Gamma, \Delta[x := a] \vdash A_{n+1}[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(A'_{n+1}) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-По лемме~\rlem{weakening} $\ll \Gamma, \Delta[x := a], x_{n+1} : A_{n+1} \vdash y[x := a] \Uparrow B[x := a] \rr = \pi_{(a'.A'_1 \ldots A'_n)^*(A'_{n+1})}^*(a'.A'_1 \ldots A'_n)^*(b) : \pi_{(a'.A'_1 \ldots A'_n)^*(A'_{n+1})}^*(a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_n)^*(A'_{n+1})$,
-Теперь утверждение следует из того факта, что $a'.A'_1 \ldots A'_n \circ \pi_{(a'.A'_1 \ldots A'_n)^*(A'_{n+1})} = \pi_{A'_{n+1}} \circ a'.A'_1 \ldots A'_{n+1}$.
+По индукционному предположению $\ll \Gamma, \Delta[x := a] \vdash y[x := a] \Uparrow B[x := a] \rr = (a'.\Delta')^*(b) : (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta')$,
+    и $\ll \Gamma, \Delta[x := a] \vdash A_{n+1}[x := a] \rr = (a'.\Delta')^*(A'_{n+1}) \dotsb \Gamma'.a'^*(\Delta')$. \\
+По лемме~\rlem{weakening} $\ll \Gamma, \Delta[x := a], x_{n+1} : A_{n+1} \vdash y[x := a] \Uparrow B[x := a] \rr = \pi_{(a'.\Delta')^*(A'_{n+1})}^*(a'.\Delta')^*(b) : \pi_{(a'.\Delta')^*(A'_{n+1})}^*(a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta'.A'_{n+1})$,
+Теперь утверждение следует из того факта, что $a'.\Delta' \circ \pi_{(a'.\Delta')^*(A'_{n+1})} = \pi_{A'_{n+1}} \circ a'.\Delta'.A'_{n+1}$.
 
 \bigskip
 \item
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash b \Uparrow B_1 \rr = b_1 : i_0^*(H_1) \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash B_i \red^* C \rr = H_i \dotsb \Gamma'.A'.A'_1 \ldots A'_n \times I$, $i \in \{1, 2\}$}
-\BinaryInfC{$\ll \Gamma, x : A, \Delta \vdash b \Downarrow B_2 \rr = i_1^*(ext(Con(H_1,Inv(H_2)),b_1)) : i_0^*(H_2) \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
+\def\extraVskip{0.5pt}
+\Axiom$\fCenter \ll \Gamma, x : A, \Delta \vdash b \Uparrow B_1 \rr = b_1 : i_0^*(H_1) \dotsb \Gamma'.A'.\Delta'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma, x : A, \Delta \vdash B_i \red^* C \rr = H_i \dotsb \Gamma'.A'.\Delta' \times I \text{, } i \in \{1, 2\}$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \ll \Gamma, x : A, \Delta \vdash b \Downarrow B_2 \rr = i_1^*(ext(Con(H_1,Inv(H_2)),b_1)) : i_0^*(H_2) \dotsb \Gamma'.A'.\Delta'$
 \DisplayProof
 \medskip
 
-По индукционной гипотезе $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Uparrow B_1[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(b_1) : (a'.A'_1 \ldots A'_n)^* i_0^*(H_1) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$,
-    и $\ll \Gamma, \Delta[x := a] \vdash B_i[x := a] \red^* C[x := a] \rr = (a'.A'_1 \ldots A'_n \times id_I)^*(H_i) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n) \times I$.
-Следовательно $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Downarrow B_2[x := a] \rr = i_1^*(ext(Con((a'.A'_1 \ldots A'_n \times id_I)^*(H_1), Inv((a'.A'_1 \ldots A'_n \times id_I)^*(H_2))), (a'.A'_1 \ldots A'_n)^*(b_1))) : i_0^* (a'.A'_1 \ldots A'_n \times id_I)^*(H_2) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n) = (a'.A'_1 \ldots A'_n)^* i_1^*(ext(Con(H_1, Inv(H_2)), b_1)) : (a'.A'_1 \ldots A'_n)^* i_0^*(H_2) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
+По индукционной гипотезе $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Uparrow B_1[x := a] \rr = (a'.\Delta')^*(b_1) : (a'.\Delta')^* i_0^*(H_1) \dotsb \Gamma'.a'^*(\Delta')$,
+    и $\ll \Gamma, \Delta[x := a] \vdash B_i[x := a] \red^* C[x := a] \rr = (a'.\Delta' \times id_I)^*(H_i) \dotsb \Gamma'.a'^*(\Delta') \times I$.
+Следовательно $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Downarrow B_2[x := a] \rr = i_1^*(ext(Con((a'.\Delta' \times id_I)^*(H_1), Inv((a'.\Delta' \times id_I)^*(H_2))), (a'.\Delta')^*(b_1))) : i_0^* (a'.\Delta' \times id_I)^*(H_2) \dotsb \Gamma'.a'^*(\Delta') =$ \\
+    $(a'.\Delta')^* i_1^*(ext(Con(H_1, Inv(H_2)), b_1)) : (a'.\Delta')^* i_0^*(H_2) \dotsb \Gamma'.a'^*(\Delta')$.
 
 \bigskip
 \item
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash B \rr = B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
-\UnaryInfC{$\ll \Gamma, x : A, \Delta \vdash B \red^* B \rr = \pi_1^*(B') \dotsb \Gamma'.A'.A'_1 \ldots A'_n \times I$}
+\AxiomC{$\ll \Gamma, x : A, \Delta \vdash B \rr = B' \dotsb \Gamma'.A'.\Delta'$}
+\UnaryInfC{$\ll \Gamma, x : A, \Delta \vdash B \red^* B \rr = \pi_1^*(B') \dotsb \Gamma'.A'.\Delta' \times I$}
 \DisplayProof
 \medskip
 
-По индукционной гипотезе $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-Следовательно $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \red^* B[x := a] \rr = \pi_1^* (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n) \times I = (a'.A'_1 \ldots A'_n \times id_I)^* \pi_1^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n) \times I$.
+По индукционной гипотезе $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \rr = (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta')$.
+Следовательно $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \red^* B[x := a] \rr = \pi_1^* (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta') \times I = (a'.\Delta' \times id_I)^* \pi_1^*(B') \dotsb \Gamma'.a'^*(\Delta') \times I$.
 
 \bigskip
 \item
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash B \red C \rr = H_1 \dotsb \Gamma'.A'.A'_1 \ldots A'_n \times I$}
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash C \red^* D \rr = H_2 \dotsb \Gamma'.A'.A'_1 \ldots A'_n \times I$}
-\BinaryInfC{$\ll \Gamma, x : A, \Delta \vdash B \red^* D \rr = Con(H_1, H_2) \dotsb \Gamma'.A'.A'_1 \ldots A'_n \times I$}
+\AxiomC{$\ll \Gamma, x : A, \Delta \vdash B \red C \rr = H_1 \dotsb \Gamma'.A'.\Delta' \times I$}
+\AxiomC{$\ll \Gamma, x : A, \Delta \vdash C \red^* D \rr = H_2 \dotsb \Gamma'.A'.\Delta' \times I$}
+\BinaryInfC{$\ll \Gamma, x : A, \Delta \vdash B \red^* D \rr = Con(H_1, H_2) \dotsb \Gamma'.A'.\Delta' \times I$}
 \DisplayProof
 \medskip
 
-По индукционной гипотезе $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \red C[x := a] \rr = (a'.A'_1 \ldots A'_n \times id_I)^*(H_1) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$,
-    и $\ll \Gamma, \Delta[x := a] \vdash C[x := a] \red^* D[x := a] \rr = (a'.A'_1 \ldots A'_n \times id_I)^*(H_2) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-Следовательно $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \red^* D[x := a] \rr = Con((a'.A'_1 \ldots A'_n \times id_I)^*(H_1), (a'.A'_1 \ldots A'_n \times id_I)^*(H_2)) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n) = (a'.A'_1 \ldots A'_n \times id_I)^*(Con(H_1, H_2)) \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
+По индукционной гипотезе $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \red C[x := a] \rr = (a'.\Delta' \times id_I)^*(H_1) \dotsb \Gamma'.a'^*(\Delta')$,
+    и $\ll \Gamma, \Delta[x := a] \vdash C[x := a] \red^* D[x := a] \rr = (a'.\Delta' \times id_I)^*(H_2) \dotsb \Gamma'.a'^*(\Delta')$.
+Следовательно $\ll \Gamma, \Delta[x := a] \vdash B[x := a] \red^* D[x := a] \rr = Con((a'.\Delta' \times id_I)^*(H_1), (a'.\Delta' \times id_I)^*(H_2)) \dotsb \Gamma'.a'^*(\Delta') = (a'.\Delta' \times id_I)^*(Con(H_1, H_2)) \dotsb \Gamma'.a'^*(\Delta')$.
 
 \bigskip
 \item
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash b \Downarrow B \rr = b' : B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
-\UnaryInfC{$\ll \Gamma, x : A, \Delta \vdash b \red^* b \Downarrow B \rr = b' \circ \pi_1 : I \to B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
+\AxiomC{$\ll \Gamma, x : A, \Delta \vdash b \Downarrow B \rr = b' : B' \dotsb \Gamma'.A'.\Delta'$}
+\UnaryInfC{$\ll \Gamma, x : A, \Delta \vdash b \red^* b \Downarrow B \rr = b' \circ \pi_1 : I \to B' \dotsb \Gamma'.A'.\Delta'$}
 \DisplayProof
 \medskip
 
-По индукционной гипотезе $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Downarrow B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(b') : (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
-Следовательно $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \red^* b[x := a] \Downarrow B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(b') \circ \pi_1 : I \to (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n) = (a'.A'_1 \ldots A'_n)^*(b' \circ \pi_1) : I \to (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$.
+По индукционной гипотезе $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Downarrow B[x := a] \rr = (a'.\Delta')^*(b') : (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta')$.
+Следовательно $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \red^* b[x := a] \Downarrow B[x := a] \rr = (a'.\Delta')^*(b') \circ \pi_1 : I \to (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta') = (a'.\Delta')^*(b' \circ \pi_1) : I \to (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta')$.
 
 \bigskip
 \item
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash b \red c \Downarrow B \rr = h_1 : I \to B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
-\AxiomC{$\ll \Gamma, x : A, \Delta \vdash c \red^* d \Downarrow B \rr = h_2 : I \to B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
-\BinaryInfC{$\ll \Gamma, x : A, \Delta \vdash b \red^* d \Downarrow B \rr = con(h_1, h_2) : I \to B' \dotsb \Gamma'.A'.A'_1 \ldots A'_n$}
+\def\extraVskip{0.5pt}
+\Axiom$\fCenter \ll \Gamma, x : A, \Delta \vdash b \red c \Downarrow B \rr = h_1 : I \to B' \dotsb \Gamma'.A'.\Delta'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma, x : A, \Delta \vdash c \red^* d \Downarrow B \rr = h_2 : I \to B' \dotsb \Gamma'.A'.\Delta'$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \ll \Gamma, x : A, \Delta \vdash b \red^* d \Downarrow B \rr = con(h_1, h_2) : I \to B' \dotsb \Gamma'.A'.\Delta'$
 \DisplayProof
 \medskip
 
-По индукционной гипотезе $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \red c[x := a] \Downarrow B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(h_1) : (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$,
-    и $\ll \Gamma, \Delta[x := a] \vdash c[x := a] \red^* d[x := a] \Downarrow B[x := a] \rr = (a'.A'_1 \ldots A'_n)^*(h_2) : (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$,
-Следовательно $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \red^* d[x := a] \Downarrow B[x := a] \rr = con((a'.A'_1 \ldots A'_n)^*(h_1), (a'.A'_1 \ldots A'_n)^*(h_2)) : (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n) = (a'.A'_1 \ldots A'_n)^*(con(h_1, h_2)) : (a'.A'_1 \ldots A'_n)^*(B') \dotsb \Gamma'.a'^*(A'_1) \ldots (a'.A'_1 \ldots A'_{n-1})^*(A'_n)$,
+По индукционной гипотезе $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \red c[x := a] \Downarrow B[x := a] \rr = (a'.\Delta')^*(h_1) : (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta')$,
+    и $\ll \Gamma, \Delta[x := a] \vdash c[x := a] \red^* d[x := a] \Downarrow B[x := a] \rr = (a'.\Delta')^*(h_2) : (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta')$,
+Следовательно $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \red^* d[x := a] \Downarrow B[x := a] \rr = con((a'.\Delta')^*(h_1), (a'.\Delta')^*(h_2)) : (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta') = (a'.\Delta')^*(con(h_1, h_2)) : (a'.\Delta')^*(B') \dotsb \Gamma'.a'^*(\Delta')$,
 
 \end{itemize}
 \end{proof}
