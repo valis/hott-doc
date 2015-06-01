@@ -262,15 +262,11 @@
 Сейчас мы опишем часть, необходимую для интерпретации гомотопий и расслоений.
 
 Во-первых, категория должна быть конечно полной.
-Во-вторых, категория должна содержать интервальный объект $I'$ вместе с парой морфизмов $i_0, i_1 : 1 \to I'$.
-Любое отображение вида $\Gamma \simeq \Gamma \times 1 \xrightarrow{id_\Gamma \times i_k} \Gamma \times I'$ мы будем также обозначать $i_k$.
-Морфизмы $h : \Gamma \times I' \to X$ мы будем называть гомотопиями между морфизмами $h \circ i_0, h \circ i_1 : \Gamma \to X$.
-Если $A \dotsb \Gamma$, то записать $h : I' \to A \dotsb \Gamma$ будет означать, что $h : \Gamma \times I' \to \Gamma.A$ такое, что $\pi_A \circ h = \pi_1$.
-Если $f : \Delta \to \Gamma$ - некоторый морфизм, и $h : I' \to A \dotsb \Gamma$, то мы будем обозначать $f^*(h) : I' \to f^*(A) \dotsb \Delta$ следующий морфизм:
-\[ \xymatrix{ \Delta \times I' \ar[r]^{f \times id_{I'}} \ar[d]_{f^*(h)} \pb & \Gamma \times I' \ar[d]^h \\
-              \Delta.f^*(A) \ar[r]_-{f.A} \ar[d]_{\pi_{f^*(A)}} \pb          & \Gamma.A \ar[d]^{\pi_A} \\
-              \Delta \ar[r]_f                                                & \Gamma
-                 }\]
+Во-вторых, категория должна содержать интервальный тип $I' \dotsb 1$ вместе с парой сечений $i_0, i_1 : I' \dotsb 1$.
+Объект $1.I'$ мы будем обозначать просто $I'$.
+Если $!_\Gamma : \Gamma \to 1$, то $\Gamma.!_\Gamma^*(I')$ является декартовым произведением $\Gamma$ и $I'$, поэтому мы будем обозначать этот объект $\Gamma \times I'$.
+Сечения $k : !_\Gamma^*(I') \dotsb \Gamma$ мы будем обозначать просто $k : \Gamma \to \Gamma \times I'$.
+Сечения $!_\Gamma^*(i_0), !_\Gamma^*(i_1) : \Gamma \to \Gamma \times I'$ мы будем обозначать просто $i_0$ и $i_1$ соответственно.
 
 \begin{comment}
 Также в категории должен быть выбран насыщенный класс морфизмов, которые мы называем \emph{тривиальными корасслоениями}.
@@ -320,7 +316,7 @@
 \item Отношение $\ll - \vdash \rr = -$ на классе $Ctx' \times Ob$, где $Ob$ - класс объектов категории.
 \item Отношение $\ll - \vdash - \rr = -$ на классе $Ctx' \times Term \times Type$, где $Type$ - класс типов категории, т.е. пар $\Gamma \in Ob$ и $A \in Type(\Gamma)$, такую пару мы обозначаем просто $A \dotsb \Gamma$.
 \item Отношение $\ll - \vdash - \Uparrow - \rr = -$ на классе $Ctx' \times Term \times Term' \times Sec$, где $Sec$ - класс сечений категории, т.е. троек $\Gamma \in Ob$, $A \in Type(\Gamma)$ и $a$ - сечение $A$, такую тройку мы обозначаем просто $a : A \dotsb \Gamma$.
-\item Отношение $\ll - \vdash - \Downarrow - \rr = -$ на классе $Ctx' \times Term \times Term' \times Sec$.
+\item Отношение $\ll - \vdash - \Downarrow - \rr = -$ на классе $Ctx' \times Term \times Term \times Sec$.
 \end{itemize}
 
 Интерпретация контекстов:
@@ -334,6 +330,11 @@
 \AxiomC{$\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$}
 \RightLabel{, $x \notin \Gamma$}
 \UnaryInfC{$\ll \Gamma, x : A \vdash \rr = \Gamma'.A'$}
+\DisplayProof
+\quad
+\AxiomC{$\ll \Gamma \vdash \rr = \Gamma'$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\ll \Gamma, x : I' \vdash \rr = \Gamma' \times I'$}
 \DisplayProof
 \end{center}
 \bigskip
@@ -381,15 +382,21 @@
 \medskip
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$}
-\UnaryInfC{$\ll \Gamma, k : I' \vdash Red^*\ A\ A\ k \rr = \pi_1^*(A') \dotsb \Gamma' \times I'$}
+\AxiomC{$\ll \Gamma \vdash k \Uparrow I' \rr = k' : \Gamma' \to \Gamma' \times I'$}
+\BinaryInfC{$\ll \Gamma \vdash Red^*\ A\ A\ k \rr = A' \dotsb \Gamma'$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma, k : I' \vdash Red\ A\ B\ k \rr = H_1 \dotsb \Gamma' \times I'$}
-\AxiomC{$\ll \Gamma, k : I' \vdash Red^*\ B\ C\ k \rr = H_2 \dotsb \Gamma' \times I'$}
-\BinaryInfC{$\ll \Gamma, k : I' \vdash Red^*\ A\ C\ k \rr = Con(H_1, H_2) \dotsb \Gamma' \times I'$}
+\def\extraVskip{0.5pt}
+\Axiom$\fCenter \ll \Gamma, x : I' \vdash Red\ A\ B\ x \rr = H_1 \dotsb \Gamma' \times I'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma, x : I' \vdash Red^*\ B\ C\ x \rr = H_2 \dotsb \Gamma' \times I'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma \vdash k \Uparrow I' \rr = k' : \Gamma' \to \Gamma' \times I'$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \ll \Gamma \vdash Red^*\ A\ C\ k \rr = k'^*(Con(H_1, H_2)) \dotsb \Gamma'$
 \DisplayProof
 \end{center}
 
@@ -400,16 +407,23 @@
 \medskip
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$}
-\UnaryInfC{$\ll \Gamma, k : I' \vdash red^*\ a\ a\ k \Downarrow A \rr = \pi_1^*(a') : \pi_1^*(A') \dotsb \Gamma' \times I$}
+\AxiomC{$\ll \Gamma \vdash k \Uparrow I' \rr = k' : \Gamma' \to \Gamma' \times I'$}
+\BinaryInfC{$\ll \Gamma \vdash red^*\ a\ a\ k \Downarrow A \rr = a' : A' \dotsb \Gamma'$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$}
-\AxiomC{$\ll \Gamma, k : I' \vdash red\ a\ a'\ k \Downarrow A \rr = h_1 : \pi_1^*(A') \dotsb \Gamma' \times I'$}
-\AxiomC{$\ll \Gamma, k : I' \vdash red^*\ a'\ a''\ k \Downarrow A \rr = h_2 : \pi_1^*(A') \dotsb \Gamma' \times I'$}
-\TrinaryInfC{$\ll \Gamma, k : I' \vdash red^*\ a\ a''\ k \Downarrow A \rr = con(h_1, h_2) : \pi_1^*(A') \dotsb \Gamma' \times I'$}
+\def\extraVskip{0.5pt}
+\Axiom$\fCenter \ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma, x : I' \vdash red\ a\ a'\ x \Downarrow A \rr = h_1 : \pi_{\Gamma'}^*(A') \dotsb \Gamma' \times I'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma, x : I' \vdash red^*\ a'\ a''\ x \Downarrow A \rr = h_2 : \pi_{\Gamma'}^*(A') \dotsb \Gamma' \times I'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma \vdash k \Uparrow I' \rr = k' : \Gamma' \to \Gamma' \times I'$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \ll \Gamma \vdash red^*\ a\ a''\ k \Downarrow A \rr = k'^*(con(h_1, h_2)) : A' \dotsb \Gamma'$
 \DisplayProof
 \end{center}
 \bigskip
@@ -418,7 +432,30 @@
 
 Интерпретация правил для интервала:
 
-TODO
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash \rr = \Gamma'$}
+\UnaryInfC{$\ll \Gamma \vdash left' \Uparrow I' \rr = i_0 : \Gamma' \to \Gamma' \times I'$}
+\DisplayProof
+\quad
+\AxiomC{$\ll \Gamma \vdash \rr = \Gamma'$}
+\UnaryInfC{$\ll \Gamma \vdash right' \Uparrow I' \rr = i_1 : \Gamma' \to \Gamma' \times I'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{0.5pt}
+\Axiom$\fCenter \ll \Gamma, x : I' \vdash A \rr = A' \dotsb \Gamma' \times I'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma \vdash a \Downarrow A[x := left'] \rr = a' : i_0^*(A') \dotsb \Gamma'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma \vdash k \Uparrow I' \rr = k' : \Gamma' \to \Gamma' \times I'$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \ll \Gamma \vdash coe'\ (\lambda x. A)\ a\ k \Uparrow A[x := k] \rr = k'^*(ext(A', a')) : k'^*(A') \dotsb \Gamma'$
+\DisplayProof
+\end{center}
 
 \begin{comment}
 Пусть $\Gamma.A \xrightarrow{t} P(\Gamma.A) \xrightarrow{\langle p_1, p_2 \rangle} \Gamma.A \times \Gamma.A$ - объект путей для $\Gamma.A$.
