@@ -363,6 +363,7 @@
 \BinaryInfC{$\ll \Gamma, y : B \vdash x \Uparrow A \rr = \pi_{B'}^*(a) : \pi_{B'}^*(A') \dotsb \Gamma'.B'$}
 \DisplayProof
 \end{center}
+\bigskip
 
 Интерпретация правила проверки типа:
 
@@ -432,7 +433,6 @@
 
 Интерпретация правил для интервала:
 
-
 \medskip
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash \rr = \Gamma'$}
@@ -495,6 +495,14 @@
 \DisplayProof
 \quad
 \AxiomC{$\ll \Gamma \vdash \Delta \rr = \Delta' \dotsb \Gamma'$}
+\RightLabel{, $x \notin \Gamma, \Delta$}
+\UnaryInfC{$\ll \Gamma \vdash \Delta, x : I' \rr = \Delta'.!_{\Gamma'.\Delta'}^*(I') \dotsb \Gamma'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash \Delta \rr = \Delta' \dotsb \Gamma'$}
 \AxiomC{$\ll \Gamma, \Delta \vdash A \rr = A' \dotsb \Gamma'.\Delta'$}
 \RightLabel{, $x \notin \Gamma, \Delta$}
 \BinaryInfC{$\ll \Gamma \vdash \Delta, x : A \rr = \Delta'.A' \dotsb \Gamma'$}
@@ -507,10 +515,10 @@
 \begin{lem}[completeness][Completeness of the interpretation of the reduction rules]
 Верны следующие утверждения:
 \begin{enumerate}
-\item Если $\ll \Gamma \vdash A \red B \rr = A' \to B' \dotsb \Gamma'$, то $A \red B$.
-\item Если $\ll \Gamma \vdash A \red^* B \rr = A' \to B' \dotsb \Gamma'$, то $A \red^* B$.
-\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : I' \to A' \dotsb \Gamma'$, то $a \red b$.
-\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : I' \to A' \dotsb \Gamma'$, то $a \red^* b$.
+\item Если $\ll \Gamma \vdash Red\ A\ B\ k \rr = H \dotsb \Gamma'$, то $A \red B$.
+\item Если $\ll \Gamma \vdash Red^*\ A\ B\ k \rr = H \dotsb \Gamma'$, то $A \red^* B$.
+\item Если $\ll \Gamma \vdash red\ a\ b\ k \Downarrow A \rr = a' : A' \dotsb \Gamma'$, то $a \red b$.
+\item Если $\ll \Gamma \vdash red^*\ a\ b\ k \Downarrow A \rr = a' : A' \dotsb \Gamma'$, то $a \red^* b$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
@@ -525,37 +533,50 @@
 \item Если $\ll \Gamma \vdash \Delta \rr = \Delta_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash \Delta \rr = \Delta_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, и $\Delta_1 = \Delta_2$.
 \item Если $\ll \Gamma \vdash a \Downarrow A \rr = a_1 : A_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash a \Downarrow A \rr = a_2 : A_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $a_1 = a_2$.
 \item Если $\ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : A'_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash a \Uparrow A_2 \rr = a_2 : A'_2 \dotsb \Gamma_2$, то $A_1 = A_2$, $\Gamma_1 = \Gamma_2$, $A'_1 = A'_2$, и $a_1 = a_2$.
-\item Если $\ll \Gamma \vdash A \red B_1 \rr = A_1 \to B'_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash A \red B_2 \rr = A_2 \to B'_2 \dotsb \Gamma_2$, то $B_1 = B_2$, $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $B'_1 = B'_2$.
-\item Если $\ll \Gamma \vdash A \red^* B \rr = A_1 \to B_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash A \red^* B \rr = A_2 \to B_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $B_1 = B_2$.
-\item Если $\ll \Gamma \vdash a \red b_1 \Downarrow A \rr = h_1 : I' \to A_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash a \red b_2 \Downarrow A \rr = h_2 : I' \to A_2 \dotsb \Gamma_2$, то $b_1 = b_2$, $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $h_1 = h_2$.
-\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h_1 : I' \to A_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h_2 : I' \to A_2 \dotsb \Gamma_2$, то $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $h_1 = h_2$.
+\item Если $\ll \Gamma \vdash Red\ A\ B_1\ k \rr = H_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash Red\ A\ B_2\ k \rr = H_2 \dotsb \Gamma_2$, то $B_1 = B_2$, $\Gamma_1 = \Gamma_2$, и $H_1 = H_2$.
+\item Если $\ll \Gamma \vdash red\ a\ b_1\ k \Downarrow A \rr = a_1 : A_1 \dotsb \Gamma_1$, и $\ll \Gamma \vdash red\ a\ b_2\ k \Downarrow A \rr = a_2 : A_2 \dotsb \Gamma_2$, то $b_1 = b_2$, $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $a_1 = a_2$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
 Индукцией по определению отношения интерпретации.
+Покажем не очевидные пункты:
+\begin{itemize}
+\item
+\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : i_0^*(H_1) \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma, k : I' \vdash Red^*\ A_i\ B\ k \rr = H_i \dotsb \Gamma' \times I'$, $i \in \{1, 2\}$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = i_1^*(ext(Con(H_1, Inv(H_2)), a_1)) : i_0^*(H_2) \dotsb \Gamma'$}
+\DisplayProof
+\medskip
 
-В седьмом и девятом пунктах используется полонота интерпретации и тот факт, что отношение $\red$ иррефлексивно, что следует из сильной нормализуемости.
+Нам нужно показать, что $\Gamma$, $a$ и $A_2$ однозначно определяют $H_1$, $H_2$, $a_1$ и $\Gamma'$.
+По индукционной гипотезе $\Gamma$ и $a$ однозначно определяют $A_1$, $a_1$ и $\Gamma'$.
+По лемме~\rlem{completeness} $A_1 \red^* B$.
+Так как $B$ находится в нормальной форме, то по конфдюэнтности он однозначно определяется по $A_1$.
+Теперь по индукционной гипотезе $H_1$ и $H_2$ однозначно определяются по $\Gamma$, $A_1$ и $B$.
+
+\item Пусть $\ll \Gamma \vdash Red^*\ A\ C\ k \rr = H \dotsb \Gamma$, и $\ll \Gamma \vdash Red^*\ A\ C\ k \rr = H' \dotsb \Gamma'$.
+    Заметим, что оба этих отношения должны выводиться по одному и тому же правилу.
+    Действительно, если одно из них выводится по транзитивности, а другое по рефлексивности, тогда мы получаем, что $A \red B$, $B \red^* C$, и $A = C$, что протеворечит сильной нормализации.
+    Случай, когда оба отношения выводится по рефлексивности элементарен.
+    Если оба отношения выводятся по транзитивности, то $B$ и $H_1$ однозначно определяются по $\Gamma$ и $A$, а $H_2$ однозначно определяется по $\Gamma$, $B$ и $C$.
+
+\item Случай $red^*$ аналогичен предыдущему.
+\end{itemize}
 \end{proof}
 
 Таким образом отношения $\ll - \rr = -$ определяют частичные функции, которые мы будем обозначать $\ll - \rr$.
 
 \begin{lem}[weakening][Weakening lemma]
-Пусть $\ll \Gamma \vdash \Delta\rr = \Delta' \dotsb \Gamma'$.
+Пусть $\ll \Gamma_1 \vdash \Delta \rr = \Delta' \dotsb \Gamma_1'$, и $\ll \Gamma_1 \vdash \Gamma_2 \rr = \Gamma_2' \dotsb \Gamma_1'$.
 Тогда верны следующие утверждения:
 \begin{enumerate}
-\item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\ll \Gamma, \Delta \vdash A \rr = \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
+\item Если $\ll \Gamma_1, \Gamma_2 \vdash \rr = \Gamma_1'.\Gamma_2'$, то $\ll \Gamma_1, \Delta, \Gamma_2 \vdash \rr = \Gamma_1'.\Delta'.\pi_{\Delta'}^*(\Gamma_2')$.
+\item Если $\ll \Gamma_1, \Gamma_2 \vdash A \rr = A' \dotsb \Gamma_1'.\Gamma_2'$, \\
+    то $\ll \Gamma_1, \Delta, \Gamma_2 \vdash A \rr = \pi_{\Delta'.\Gamma_2'}^*(A') \dotsb \Gamma_1'.\Delta'.\pi_{\Delta'}^*(\Gamma_2')$.
 \item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, \\
     то $\ll \Gamma, \Delta \vdash a \Downarrow A \rr = \pi_{\Delta'}^*(a') : \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
 \item Если $\ll \Gamma \vdash a \Uparrow A \rr = a' : A' \dotsb \Gamma'$, \\
     то $\ll \Gamma, \Delta \vdash a \Uparrow A \rr = \pi_{\Delta'}^*(a') : \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
-\item Если $\ll \Gamma \vdash A \red B \rr = H \dotsb \Gamma'$, \\
-    то $\ll \Gamma, \Delta \vdash A \red B \rr = (\pi_{\Delta'} \times id_{I'})^*(H) \dotsb \Gamma'.\Delta' \times I'$.
-\item Если $\ll \Gamma \vdash A \red^* B \rr = H \dotsb \Gamma'$, \\
-    то $\ll \Gamma, \Delta \vdash A \red^* B \rr = (\pi_{\Delta'} \times id_{I'})^*(H) \dotsb \Gamma'.\Delta' \times I'$.
-\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : I' \to A' \dotsb \Gamma'$, \\
-    то $\ll \Gamma, \Delta \vdash a \red b \Downarrow A \rr = \pi_{\Delta'}^*(h) : I' \to \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
-\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : I' \to A' \dotsb \Gamma'$, \\
-    то $\ll \Gamma, \Delta \vdash a \red^* b \Downarrow A \rr = \pi_{\Delta'}^*(h) : I' \to \pi_{\Delta'}^*(A') \dotsb \Gamma'.\Delta'$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
