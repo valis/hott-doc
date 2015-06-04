@@ -60,7 +60,27 @@
 \section{Правила вывода}
 
 \begin{comment}
+Правила вывода для системы $S$ приведены в таблице~\ref{table:inf-rules-S}.
+Отношение~$\red$ определяется как минимальное отношение, замкнутое относительно всех конструкций термов и содержащее следующие правила:
+\begin{align*}
+& (\lambda x.b)\ a \red b[x := a] \\
+& proj_1\ (a, b) \red a \\
+& proj_2\ (a, b) \red b \\
+& J\ (\lambda x x' p. C)\ (\lambda x. d)\ a\ a\ refl \red d[x := a] \\
+& \lambda x. f\ x \deq_\eta f \text{ if } x \notin FV(f) \\
+& (proj_1\ p, proj_2\ p) \deq_\eta p
+\end{align*}
+
+Отношение~$\deq_\eta$ определяется как минимальное отношение, замкнутое относительно всех конструкций термов и содержащее правила в таблице~\ref{table:inf-rules-S}.
+Отношение~$\red^*$ - рефлексивное тринзитивное замыкание $\red$.
+Отношение~$\deq$ - рефлексивное симметричное тринзитивное замыкание объединения $\red$ и $\deq_\eta$.
+\end{comment}
+
 \begin{table}
+
+\[ Term = Var \]
+\[ Type = Var \]
+\[ Ctx = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_i \in Var, A_i \in Type \} \]
 
 \medskip
 \begin{center}
@@ -97,51 +117,139 @@
 \DisplayProof
 \end{center}
 
+\begin{comment}
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A \red B$}
-\UnaryInfC{$\Gamma \vdash A \deq B$}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash U_\alpha$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A \deq B$}
-\UnaryInfC{$\Gamma \vdash B \deq A$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A \deq B$}
-\AxiomC{$\Gamma \vdash B \deq C$}
-\BinaryInfC{$\Gamma \vdash A \deq C$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a \red a' : A$}
-\UnaryInfC{$\Gamma \vdash a \deq a' : A$}
+\AxiomC{$\Gamma \vdash A : U_\alpha$}
+\UnaryInfC{$\Gamma \vdash A$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash a \deq a' : A$}
-\UnaryInfC{$\Gamma \vdash a' \deq a : A$}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash U_\alpha : U_{\alpha + 1}$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : U_\alpha$}
+\UnaryInfC{$\Gamma \vdash A : U_{\alpha + 1}$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash a \deq a' : A$}
-\AxiomC{$\Gamma \vdash a' \deq a'' : A$}
-\BinaryInfC{$\Gamma \vdash a \deq a'' : A$}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : U_\alpha$}
+\AxiomC{$\Gamma, x : A \vdash B : U_\beta$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B : U_{max(\alpha, \beta)}$}
 \DisplayProof
 \end{center}
 
 \medskip
-\caption{Правила вывода.}
-\label{table:inf-rules}
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\AxiomC{$\Gamma \vdash b : B[x := a]$}
+\TrinaryInfC{$\Gamma \vdash (a, b) : \Sigma (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Sigma (x : A) B$}
+\UnaryInfC{$\Gamma \vdash proj_1\ p : A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash p : \Sigma (x : A) B$}
+\UnaryInfC{$\Gamma \vdash proj_2\ p : B[x := proj_1\ p]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : U_\alpha$}
+\AxiomC{$\Gamma, x : A \vdash B : U_\beta$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U_{max(\alpha, \beta)}$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma \vdash f\ a : B[x := a]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash a' : A$}
+\BinaryInfC{$\Gamma \vdash a =_A a'$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : U_\alpha$}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash a' : A$}
+\TrinaryInfC{$\Gamma \vdash a =_A a' : U_\alpha$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash refl : a =_A a$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A, x' : A, p : x =_A x' \vdash C$}
+\AxiomC{$\Gamma. x : A \vdash d : C[x' := x, p := refl]$}
+\AxiomC{$\Gamma \vdash q : a =_A a'$}
+\TrinaryInfC{$\Gamma \vdash J\ (\lambda x x' p. C)\ (\lambda x. d)\ a\ a'\ q : C[x := a, x' := a', p := q]$}
+\DisplayProof
+\end{center}
+\end{comment}
+
+\medskip
+\caption{Правила вывода теории $S$.}
+\label{table:inf-rules-S}
 \end{table}
+
+\begin{comment}
+Правила вывода для системы $T$ приведены в таблице~\ref{table:inf-rules-T}.
+Отношение~$\red$ определяется как минимальное отношение, замкнутое относительно всех конструкций термов и содержащее следующие правила:
+\begin{align*}
+& (\lambda x:A. b)\ a \red b[x := a] \\
+& proj_1\ (a, b)_{\Sigma (x : A) B} \red a \\
+& proj_2\ (a, b)_{\Sigma (x : A) B} \red b \\
+& J\ (\lambda x x' p. C)\ (\lambda x. d)\ a\ a\ (refl\ a) \red d[x := a] \\
+& \lambda x:A. f\ x \deq_\eta f \text{ if } x \notin FV(f) \\
+& (proj_1\ p, proj_2\ p)_{\Sigma (x : A) B} \deq_\eta p
+\end{align*}
+Отношения $\deq_\eta$, $\red^*$ и $\deq$ определяются так же как в системе $S$.
 \end{comment}
 
 \begin{table}
+
+\[ Term = Var \]
+\[ Type = Var \]
+\[ Ctx = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_i \in Var, A_i \in Type \} \]
 
 \medskip
 \begin{center}
@@ -181,46 +289,182 @@
 \begin{comment}
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A \red B$}
-\UnaryInfC{$\Gamma \vdash A \deq B$}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash U_\alpha$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A \deq B$}
-\UnaryInfC{$\Gamma \vdash B \deq A$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A \deq B$}
-\AxiomC{$\Gamma \vdash B \deq C$}
-\BinaryInfC{$\Gamma \vdash A \deq C$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a \red a' : A$}
-\UnaryInfC{$\Gamma \vdash a \deq a' : A$}
+\AxiomC{$\Gamma \vdash A \Downarrow U_\alpha$}
+\UnaryInfC{$\Gamma \vdash A$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash a \deq a' : A$}
-\UnaryInfC{$\Gamma \vdash a' \deq a : A$}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash U_\alpha \Uparrow U_{\alpha + 1}$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A \Downarrow U_\alpha$}
+\UnaryInfC{$\Gamma \vdash A \Downarrow U_{\alpha + 1}$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash a \deq a' : A$}
-\AxiomC{$\Gamma \vdash a' \deq a'' : A$}
-\BinaryInfC{$\Gamma \vdash a \deq a'' : A$}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \Uparrow C$}
+\AxiomC{$\Gamma, x : A \vdash B \Uparrow D$}
+\RightLabel{, $C \deq U_\alpha$ и $D \deq U_\beta$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B \Uparrow U_{max(\alpha, \beta)}$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \Downarrow A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\AxiomC{$\Gamma \vdash b \Downarrow B[x := a]$}
+\TrinaryInfC{$\Gamma \vdash (a, b)_{\Sigma (x : A) B} \Uparrow \Sigma (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p \Uparrow C$}
+\RightLabel{, $C \deq \Sigma (x : A) B$ и $A \in NF$}
+\UnaryInfC{$\Gamma \vdash proj_1\ p \Uparrow A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p \Uparrow C$}
+\RightLabel{, $C \deq \Sigma (x : A) B$ и $B \in NF$}
+\UnaryInfC{$\Gamma \vdash proj_2\ p \Uparrow B[x := proj_1\ p]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \Uparrow C$}
+\AxiomC{$\Gamma, x : A \vdash B \Uparrow D$}
+\RightLabel{, $C \deq U_\alpha$ и $D \deq U_\beta$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B \Uparrow U_{max(\alpha, \beta)}$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A \vdash b \Uparrow B$}
+\UnaryInfC{$\Gamma \vdash \lambda x : A. b \Uparrow \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash f \Uparrow C$}
+\AxiomC{$\Gamma \vdash a \Downarrow A$}
+\RightLabel{, $C \deq \Pi (x : A) B$ и $B \in NF$}
+\BinaryInfC{$\Gamma \vdash f\ a \Uparrow B[x := a]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \Downarrow A$}
+\AxiomC{$\Gamma \vdash a' \Downarrow A$}
+\BinaryInfC{$\Gamma \vdash a =_A a'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \Uparrow C$}
+\AxiomC{$\Gamma \vdash a \Downarrow A$}
+\AxiomC{$\Gamma \vdash a' \Downarrow A$}
+\RightLabel{, $C \deq U_\alpha$}
+\TrinaryInfC{$\Gamma \vdash a =_A a' \Uparrow U_\alpha$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \Uparrow A$}
+\UnaryInfC{$\Gamma \vdash refl\ a \Uparrow a =_A a$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A, x' : A, p : x =_A x' \vdash C$}
+\AxiomC{$\Gamma. x : A \vdash d \Downarrow C[x' := x, p := refl]$}
+\AxiomC{$\Gamma \vdash q \Downarrow a =_A a'$}
+\TrinaryInfC{$\Gamma \vdash J\ (\lambda x x' p. C)\ (\lambda x. d)\ a\ a'\ q \Uparrow C[x := a, x' := a', p := q]$}
 \DisplayProof
 \end{center}
 \end{comment}
 
 \medskip
-\caption{Правила вывода.}
-\label{table:bi-inf-rules}
+\caption{Правила вывода теории $T$.}
+\label{table:inf-rules-T}
+\end{table}
+
+\begin{table}
+
+\[ x \in Var, A, B, C, D \in Term = x\ |\ Red\ A\ B\ C\ |\ Red^*\ A\ B\ C\ |\ left'\ |\ right'\ |\ coe'\ (\lambda x. A)\ B\ C\ D \]
+\[ Type = Term \cup {I'} \]
+\[ Ctx = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_i \in Var, A_i \in Type \} \]
+
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash x \Uparrow A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash x \Uparrow A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $y \notin \Gamma$}
+\BinaryInfC{$\Gamma, y : B \vdash x \Uparrow A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \Uparrow A_1$}
+\AxiomC{$\Gamma \vdash A_2$}
+\RightLabel{, $A_1 \deq A_2$}
+\BinaryInfC{$\Gamma \vdash a \Downarrow A_2$}
+\DisplayProof
+\end{center}
+
+\medskip
+\caption{Правила вывода теории $U$.}
+\label{table:inf-rules-U}
 \end{table}
 
 \newpage
