@@ -457,7 +457,7 @@
 \begin{center}
 \AxiomC{$\Gamma \vdash a \Uparrow A_1$}
 \AxiomC{$\Gamma \vdash A_2$}
-\RightLabel{, $A_1 \deq A_2$}
+\RightLabel{, $A_1 \deq_\phi A_2$}
 \BinaryInfC{$\Gamma \vdash a \Downarrow A_2$}
 \DisplayProof
 \end{center}
@@ -613,19 +613,13 @@
 
 \medskip
 \begin{center}
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : i_0^*(H_1) \dotsb \Gamma'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash A_2 \rr = i_0^*(H_2) \dotsb \Gamma'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma, k : I' \vdash Red^*\ A_i\ B\ k \rr = H_i \dotsb \Gamma' \times I' \text{, } i \in \{1, 2\}$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \ll \Gamma \vdash a \Downarrow A_2 \rr = a_2 : i_0^*(H_2) \dotsb \Gamma'$
+\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = a' : A' \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash A_2 \rr = A' \dotsb \Gamma'$}
+\RightLabel{, $A_1 \deq_\phi A_2$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = a' : A' \dotsb \Gamma'$}
 \DisplayProof
 \end{center}
-
-Данное правило применимо, если $B \in NF$, и $i_1^*(H_1) = i_1^*(H_2)$.
-Тогда мы определяем $H \dotsb \Gamma' \times I'$ как $Con(H_1, Inv(H_2))$, и $a_2$ как $i_1^*(ext(H, a_1))$.
+\bigskip
 
 Интерпретация правил редукций типов:
 
@@ -791,34 +785,13 @@
 \end{lem}
 \begin{proof}
 Индукцией по определению отношения интерпретации.
-Покажем не очевидные пункты:
-\begin{itemize}
-\item
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \ll \Gamma \vdash a \Uparrow A_1 \rr = a_1 : i_0^*(H_1) \dotsb \Gamma'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash A_2 \rr = i_0^*(H_2) \dotsb \Gamma'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma, k : I' \vdash Red^*\ A_i\ B\ k \rr = H_i \dotsb \Gamma' \times I' \text{, } i \in \{1, 2\}$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \ll \Gamma \vdash a \Downarrow A_2 \rr = a_2 : i_0^*(H_2) \dotsb \Gamma'$
-\DisplayProof
-\medskip
-
-Нам нужно показать, что $\Gamma$, $a$ и $A_2$ однозначно определяют $H_1$, $H_2$, $a_1$ и $\Gamma'$.
-По индукционной гипотезе $\Gamma$ и $a$ однозначно определяют $A_1$, $a_1$ и $\Gamma'$.
-По лемме~\rlem{completeness} $A_1 \red^* B$.
-Так как $B$ находится в нормальной форме, то по конфлюэнтности он однозначно определяется по $A_1$.
-Теперь по индукционной гипотезе $H_1$ и $H_2$ однозначно определяются по $\Gamma$, $A_1$ и $B$.
-
-\item Пусть $\ll \Gamma \vdash Red^*\ A\ C\ k \rr = H \dotsb \Gamma$, и $\ll \Gamma \vdash Red^*\ A\ C\ k \rr = H' \dotsb \Gamma'$.
-    Заметим, что оба этих отношения должны выводиться по одному и тому же правилу.
-    Действительно, если одно из них выводится по транзитивности, а другое по рефлексивности, тогда мы получаем, что $A \red B$, $B \red^* C$, и $A = C$, что протеворечит сильной нормализации.
-    Случай, когда оба отношения выводится по рефлексивности элементарен.
-    Если оба отношения выводятся по транзитивности, то $B$ и $H_1$ однозначно определяются по $\Gamma$ и $A$, а $H_2$ однозначно определяется по $\Gamma$, $B$ и $C$.
-
-\item Случай $red^*$ аналогичен предыдущему.
-\end{itemize}
+Покажем не очевидные пункты.
+Пусть $\ll \Gamma \vdash Red^*\ A\ C\ k \rr = H \dotsb \Gamma$, и $\ll \Gamma \vdash Red^*\ A\ C\ k \rr = H' \dotsb \Gamma'$.
+Заметим, что оба этих отношения должны выводиться по одному и тому же правилу.
+Действительно, если одно из них выводится по транзитивности, а другое по рефлексивности, тогда мы получаем, что $A \red B$, $B \red^* C$, и $A = C$, что протеворечит сильной нормализации.
+Случай, когда оба отношения выводится по рефлексивности элементарен.
+Если оба отношения выводятся по транзитивности, то $B$ и $H_1$ однозначно определяются по $\Gamma$ и $A$, а $H_2$ однозначно определяется по $\Gamma$, $B$ и $C$.
+Случай $red^*$ аналогичен предыдущему.
 \end{proof}
 
 Таким образом отношения $\ll - \rr = -$ определяют частичные функции, которые мы будем обозначать $\ll - \rr$.
@@ -898,25 +871,16 @@
 
 \bigskip
 \item
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \ll \Gamma_1, \Gamma_2 \vdash a \Uparrow A_1 \rr = a_1 : i_0^*(H_1) \dotsb \Gamma_1'.\Gamma_2'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma_1, \Gamma_2 \vdash A_2 \rr = i_0^*(H_2) \dotsb \Gamma_1'.\Gamma_2'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma_1, \Gamma_2, k : I' \vdash Red^*\ A_i\ B\ k \rr = H_i \dotsb \Gamma_1'.\Gamma_2' \times I' \text{, } i \in \{1, 2\}$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \ll \Gamma_1, \Gamma_2 \vdash a \Downarrow A_2 \rr = i_1^*(ext(Con(H_1,Inv(H_2)),a_1)) : i_0^*(H_2) \dotsb \Gamma_1'.\Gamma_2'$
+\AxiomC{$\ll \Gamma_1, \Gamma_2 \vdash a \Uparrow A_1 \rr = a' : A' \dotsb \Gamma_1'.\Gamma_2'$}
+\AxiomC{$\ll \Gamma_1, \Gamma_2 \vdash A_2 \rr = A' \dotsb \Gamma_1'.\Gamma_2'$}
+\BinaryInfC{$\ll \Gamma_1, \Gamma_2 \vdash a \Downarrow A_2 \rr = a' : A' \dotsb \Gamma_1'.\Gamma_2'$}
 \DisplayProof
 \medskip
 
 По индукционной гипотезе
-    $\ll \Gamma_1, \Delta, \Gamma_2 \vdash a \Uparrow A_1 \rr = (\pi_{\Delta'}.\Gamma_2')^*(a') : (\pi_{\Delta'}.\Gamma_2')^* i_0^*(H_1) \dotsb \Gamma_1'.\Delta'.\pi_{\Delta'}^*(\Gamma_2')$,
-    $\ll \Gamma_1, \Delta, \Gamma_2 \vdash A_2 \rr = (\pi_{\Delta'}.\Gamma_2')^* i_0^*(H_2) \dotsb \Gamma_1'.\Delta'.\pi_{\Delta'}^*(\Gamma_2')$, и
-    $\ll \Gamma_1, \Delta, \Gamma_2, k : I' \vdash Red^*\ A_i\ B\ k \rr = (\pi_{\Delta'}.\Gamma_2' \times I')^*(H_i) \dotsb \Gamma'.\Delta'.\pi_{\Delta'}^*(\Gamma_2') \times I'$.
-Следовательно
-    $\ll \Gamma, \Delta \vdash a \Downarrow A_2 \rr =$
-    $i_1^*(ext(Con((\pi_{\Delta'}.\Gamma_2' \times I')^*(H_1), Inv((\pi_{\Delta'}.\Gamma_2' \times I')^*(H_2))), (\pi_{\Delta'}.\Gamma_2')^*(a_1))) : i_0^* (\pi_{\Delta'}.\Gamma_2' \times I')^*(H_2) \dotsb \Gamma'.\Delta'.\pi_{\Delta'}^*(\Gamma_2') \times I' =$
-    $(\pi_{\Delta'}.\Gamma_2')^* i_1^*(ext(Con(H_1,Inv(H_2)),a_1)) : (\pi_{\Delta'}.\Gamma_2')^* i_0^*(H_2) \dotsb \Gamma'.\Delta'.\pi_{\Delta'}^*(\Gamma_2' \times I') $.
+    $\ll \Gamma_1, \Delta, \Gamma_2 \vdash a \Uparrow A_1 \rr = (\pi_{\Delta'}.\Gamma_2')^*(a') : (\pi_{\Delta'}.\Gamma_2')^* A' \dotsb \Gamma_1'.\Delta'.\pi_{\Delta'}^*(\Gamma_2')$, и
+    $\ll \Gamma_1, \Delta, \Gamma_2 \vdash A_2 \rr = (\pi_{\Delta'}.\Gamma_2')^* A' \dotsb \Gamma_1'.\Delta'.\pi_{\Delta'}^*(\Gamma_2')$.
+Следовательно $\ll \Gamma, \Delta \vdash a \Downarrow A_2 \rr = (\pi_{\Delta'}.\Gamma_2')^*(a') : (\pi_{\Delta'}.\Gamma_2')^* A' \dotsb \Gamma_1'.\Delta'.\pi_{\Delta'}^*(\Gamma_2')$.
 
 \bigskip
 \item
@@ -1127,25 +1091,16 @@ $\ll \Gamma \vdash y[x := a] \Uparrow B[x := a] \rr = \ll \Gamma \vdash y \Uparr
 
 \bigskip
 \item
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \ll \Gamma, x : A, \Delta \vdash b \Uparrow B_1 \rr = b_1 : i_0^*(H_1) \dotsb \Gamma'.A'.\Delta'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma, x : A, \Delta \vdash B_2 \rr = i_0^*(H_2) \dotsb \Gamma'.A'.\Delta'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma, x : A, \Delta, k : I' \vdash Red^*\ B_i\ C\ k \rr = H_i \dotsb \Gamma'.A'.\Delta' \times I' \text{, } i \in \{1, 2\}$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \ll \Gamma, x : A, \Delta \vdash b \Downarrow B_2 \rr = i_1^*(ext(Con(H_1,Inv(H_2)),b_1)) : i_0^*(H_2) \dotsb \Gamma'.A'.\Delta'$
+\AxiomC{$\ll \Gamma, x : A, \Delta \vdash b \Uparrow B_1 \rr = b' : B' \dotsb \Gamma'.A'.\Delta'$}
+\AxiomC{$\ll \Gamma, x : A, \Delta \vdash B_2 \rr = B' \dotsb \Gamma'.A'.\Delta'$}
+\BinaryInfC{$\ll \Gamma, x : A, \Delta \vdash b \Downarrow B_2 \rr = b' : B' \dotsb \Gamma'.A'.\Delta'$}
 \DisplayProof
 \medskip
 
 По индукционной гипотезе
-    $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Uparrow B_1[x := a] \rr = (a'.\Delta')^*(b_1) : (a'.\Delta')^* i_0^*(H_1) \dotsb \Gamma'.a'^*(\Delta')$,
-    $\ll \Gamma, \Delta[x := a] \vdash B_2[x := a] \rr = (a'.\Delta')^* i_0^*(H_2) \dotsb \Gamma'.a'^*(\Delta')$, и
-    $\ll \Gamma, \Delta[x := a], k : I' \vdash Red^*\ B_i[x := a]\ C[x := a]\ k \rr = (a'.\Delta' \times I')^*(H_i) \dotsb \Gamma'.a'^*(\Delta' \times I')$.
-Следовательно
-    $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Downarrow B_2[x := a] \rr =$
-    $i_1^*(ext(Con((a'.\Delta' \times I')^*(H_1), Inv((a'.\Delta' \times I')^*(H_2))), (a'.\Delta')^*(b_1))) : i_0^* (a'.\Delta' \times I')^*(H_2) \dotsb \Gamma'.a'^*(\Delta') =$ \\
-    $(a'.\Delta')^* i_1^*(ext(Con(H_1, Inv(H_2)), b_1)) : (a'.\Delta')^* i_0^*(H_2) \dotsb \Gamma'.a'^*(\Delta')$.
+    $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Uparrow B_1[x := a] \rr = (a'.\Delta')^*(b') : (a'.\Delta')^* B' \dotsb \Gamma'.a'^*(\Delta')$, и
+    $\ll \Gamma, \Delta[x := a] \vdash B_2[x := a] \rr = (a'.\Delta')^* B' \dotsb \Gamma'.a'^*(\Delta')$.
+Следовательно $\ll \Gamma, \Delta[x := a] \vdash b[x := a] \Downarrow B_2[x := a] \rr = (a'.\Delta')^*(b') : (a'.\Delta')^* B' \dotsb \Gamma'.a'^*(\Delta')$.
 
 \bigskip
 \item
