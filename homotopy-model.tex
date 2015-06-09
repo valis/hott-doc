@@ -39,6 +39,8 @@
 \newcommand{\deq}{\Leftrightarrow}
 \renewcommand{\ll}{\llbracket}
 \newcommand{\rr}{\rrbracket}
+\newcommand{\cat}[1]{\mathbf{#1}}
+\renewcommand{\C}{\cat{C}}
 
 \newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
 \newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
@@ -47,7 +49,7 @@
 
 \begin{document}
 
-\title{An interpretation of homotopy type theory in categories with attributes}
+\title{An interpretation of homotopy type theory}
 
 \author{Valery Isaev}
 
@@ -59,197 +61,7 @@
 
 \section{Правила вывода}
 
-\begin{comment}
-Правила вывода для системы $S$ приведены в таблице~\ref{table:inf-rules-S}.
-Отношение~$\red$ определяется как минимальное отношение, замкнутое относительно всех конструкций термов и содержащее следующие правила:
-\begin{align*}
-& (\lambda x.b)\ a \red b[x := a] \\
-& proj_1\ (a, b) \red a \\
-& proj_2\ (a, b) \red b \\
-& J\ (\lambda x x' p. C)\ (\lambda x. d)\ a\ a\ refl \red d[x := a] \\
-& \lambda x. f\ x \deq_\eta f \text{ if } x \notin FV(f) \\
-& (proj_1\ p, proj_2\ p) \deq_\eta p
-\end{align*}
-
-Отношение~$\deq_\eta$ определяется как минимальное отношение, замкнутое относительно всех конструкций термов и содержащее правила в таблице~\ref{table:inf-rules-S}.
-Отношение~$\red^*$ - рефлексивное тринзитивное замыкание $\red$.
-Отношение~$\deq$ - рефлексивное симметричное тринзитивное замыкание объединения $\red$ и $\deq_\eta$.
-\end{comment}
-
 \begin{table}
-
-\[ Term = Var \]
-\[ Type = Var \]
-\[ Ctx = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_i \in Var, A_i \in Type \} \]
-
-\medskip
-\begin{center}
-\AxiomC{}
-\UnaryInfC{$\vdash$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A$}
-\RightLabel{, $x \notin \Gamma$}
-\UnaryInfC{$\Gamma, x : A \vdash$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A$}
-\RightLabel{, $x \notin \Gamma$}
-\UnaryInfC{$\Gamma, x : A \vdash x : A$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash x : A$}
-\AxiomC{$\Gamma \vdash B$}
-\RightLabel{, $y \notin \Gamma$}
-\BinaryInfC{$\Gamma, y : B \vdash x : A$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a : A_1$}
-\AxiomC{$\Gamma \vdash A_2$}
-\RightLabel{, $A_1 \deq A_2$}
-\BinaryInfC{$\Gamma \vdash a : A_2$}
-\DisplayProof
-\end{center}
-
-\begin{comment}
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash U_\alpha$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A : U_\alpha$}
-\UnaryInfC{$\Gamma \vdash A$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash U_\alpha : U_{\alpha + 1}$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A : U_\alpha$}
-\UnaryInfC{$\Gamma \vdash A : U_{\alpha + 1}$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A$}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A : U_\alpha$}
-\AxiomC{$\Gamma, x : A \vdash B : U_\beta$}
-\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B : U_{max(\alpha, \beta)}$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\AxiomC{$\Gamma \vdash b : B[x := a]$}
-\TrinaryInfC{$\Gamma \vdash (a, b) : \Sigma (x : A) B$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash p : \Sigma (x : A) B$}
-\UnaryInfC{$\Gamma \vdash proj_1\ p : A$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash p : \Sigma (x : A) B$}
-\UnaryInfC{$\Gamma \vdash proj_2\ p : B[x := proj_1\ p]$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A$}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A : U_\alpha$}
-\AxiomC{$\Gamma, x : A \vdash B : U_\beta$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U_{max(\alpha, \beta)}$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : A \vdash b : B$}
-\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
-\AxiomC{$\Gamma \vdash a : A$}
-\BinaryInfC{$\Gamma \vdash f\ a : B[x := a]$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash a' : A$}
-\BinaryInfC{$\Gamma \vdash a =_A a'$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A : U_\alpha$}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash a' : A$}
-\TrinaryInfC{$\Gamma \vdash a =_A a' : U_\alpha$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\UnaryInfC{$\Gamma \vdash refl : a =_A a$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : A, x' : A, p : x =_A x' \vdash C$}
-\AxiomC{$\Gamma. x : A \vdash d : C[x' := x, p := refl]$}
-\AxiomC{$\Gamma \vdash q : a =_A a'$}
-\TrinaryInfC{$\Gamma \vdash J\ (\lambda x x' p. C)\ (\lambda x. d)\ a\ a'\ q : C[x := a, x' := a', p := q]$}
-\DisplayProof
-\end{center}
-\end{comment}
-
-\medskip
-\caption{Правила вывода теории $S$.}
-\label{table:inf-rules-S}
-\end{table}
-
-\begin{comment}
-Правила вывода для системы $T$ приведены в таблице~\ref{table:inf-rules-T}.
-Отношение~$\red$ определяется как минимальное отношение, замкнутое относительно всех конструкций термов и содержащее следующие правила:
-\begin{align*}
-& (\lambda x:A. b)\ a \red b[x := a] \\
-& proj_1\ (a, b)_{\Sigma (x : A) B} \red a \\
-& proj_2\ (a, b)_{\Sigma (x : A) B} \red b \\
-& J\ (\lambda x x' p. C)\ (\lambda x. d)\ a\ a\ (refl\ a) \red d[x := a] \\
-& \lambda x:A. f\ x \deq_\eta f \text{ if } x \notin FV(f) \\
-& (proj_1\ p, proj_2\ p)_{\Sigma (x : A) B} \deq_\eta p
-\end{align*}
-Отношения $\deq_\eta$, $\red^*$ и $\deq$ определяются так же как в системе $S$.
-\end{comment}
-
-\begin{table}
-
-\[ Term = Var \]
-\[ Type = Var \]
-\[ Ctx = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_i \in Var, A_i \in Type \} \]
 
 \medskip
 \begin{center}
@@ -286,231 +98,55 @@
 \DisplayProof
 \end{center}
 
-\begin{comment}
 \medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash U_\alpha$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A \Downarrow U_\alpha$}
-\UnaryInfC{$\Gamma \vdash A$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash U_\alpha \Uparrow U_{\alpha + 1}$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A \Downarrow U_\alpha$}
-\UnaryInfC{$\Gamma \vdash A \Downarrow U_{\alpha + 1}$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A$}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A \Uparrow C$}
-\AxiomC{$\Gamma, x : A \vdash B \Uparrow D$}
-\RightLabel{, $C \deq U_\alpha$ и $D \deq U_\beta$}
-\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B \Uparrow U_{max(\alpha, \beta)}$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a \Downarrow A$}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\AxiomC{$\Gamma \vdash b \Downarrow B[x := a]$}
-\TrinaryInfC{$\Gamma \vdash (a, b)_{\Sigma (x : A) B} \Uparrow \Sigma (x : A) B$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash p \Uparrow C$}
-\RightLabel{, $C \deq \Sigma (x : A) B$ и $A \in NF$}
-\UnaryInfC{$\Gamma \vdash proj_1\ p \Uparrow A$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash p \Uparrow C$}
-\RightLabel{, $C \deq \Sigma (x : A) B$ и $B \in NF$}
-\UnaryInfC{$\Gamma \vdash proj_2\ p \Uparrow B[x := proj_1\ p]$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A$}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A \Uparrow C$}
-\AxiomC{$\Gamma, x : A \vdash B \Uparrow D$}
-\RightLabel{, $C \deq U_\alpha$ и $D \deq U_\beta$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B \Uparrow U_{max(\alpha, \beta)}$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : A \vdash b \Uparrow B$}
-\UnaryInfC{$\Gamma \vdash \lambda x : A. b \Uparrow \Pi (x : A) B$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash f \Uparrow C$}
-\AxiomC{$\Gamma \vdash a \Downarrow A$}
-\RightLabel{, $C \deq \Pi (x : A) B$ и $B \in NF$}
-\BinaryInfC{$\Gamma \vdash f\ a \Uparrow B[x := a]$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a \Downarrow A$}
-\AxiomC{$\Gamma \vdash a' \Downarrow A$}
-\BinaryInfC{$\Gamma \vdash a =_A a'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A \Uparrow C$}
-\AxiomC{$\Gamma \vdash a \Downarrow A$}
-\AxiomC{$\Gamma \vdash a' \Downarrow A$}
-\RightLabel{, $C \deq U_\alpha$}
-\TrinaryInfC{$\Gamma \vdash a =_A a' \Uparrow U_\alpha$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a \Uparrow A$}
-\UnaryInfC{$\Gamma \vdash refl\ a \Uparrow a =_A a$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : A, x' : A, p : x =_A x' \vdash C$}
-\AxiomC{$\Gamma. x : A \vdash d \Downarrow C[x' := x, p := refl]$}
-\AxiomC{$\Gamma \vdash q \Downarrow a =_A a'$}
-\TrinaryInfC{$\Gamma \vdash J\ (\lambda x x' p. C)\ (\lambda x. d)\ a\ a'\ q \Uparrow C[x := a, x' := a', p := q]$}
-\DisplayProof
-\end{center}
-\end{comment}
-
-\medskip
-\caption{Правила вывода теории $T$.}
-\label{table:inf-rules-T}
-\end{table}
-
-\begin{table}
-
-\[ x \in Var, A, B, C, D \in Term = x\ |\ Red\ A\ B\ C\ |\ Red^*\ A\ B\ C\ |\ left'\ |\ right'\ |\ coe'\ (\lambda x. A)\ B\ C\ D \]
-\[ Type = Term \cup {I'} \]
-\[ Ctx = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_i \in Var, A_i \in Type \} \]
-
-\medskip
-\begin{center}
-\AxiomC{}
-\UnaryInfC{$\vdash$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A$}
-\RightLabel{, $x \notin \Gamma$}
-\UnaryInfC{$\Gamma, x : A \vdash$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A$}
-\RightLabel{, $x \notin \Gamma$}
-\UnaryInfC{$\Gamma, x : A \vdash x \Uparrow A$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash x \Uparrow A$}
-\AxiomC{$\Gamma \vdash B$}
-\RightLabel{, $y \notin \Gamma$}
-\BinaryInfC{$\Gamma, y : B \vdash x \Uparrow A$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a \Uparrow A_1$}
-\AxiomC{$\Gamma \vdash A_2$}
-\RightLabel{, $A_1 \deq_\phi A_2$}
-\BinaryInfC{$\Gamma \vdash a \Downarrow A_2$}
-\DisplayProof
-\end{center}
-
-\medskip
-\caption{Правила вывода теории $U$.}
-\label{table:inf-rules-U}
+\caption{Правила вывода.}
+\label{table:inf-rules}
 \end{table}
 
 \newpage
 
 \section{Интерпретация}
 
-\subsection{Категории с атрибутами}
+\subsection{Контекстуальные категории}
 
-Мы будем интерпретировать теорию в категории с аттрибутами.
+Мы будем интерпретировать теорию в контекстуальной категории.
 Такая категория состоит из следующего набора данных:
 \begin{itemize}
-\item Для каждого объекта категории $\Gamma$ класс типов над этим объектом $Type(\Gamma)$.
-    Мы будем писать $A \dotsb \Gamma$ для обозначения того факта, что $A \in Type(\Gamma)$.
-\item Для каждого типа $A \dotsb \Gamma$ объект над $\Gamma$, который мы будем обозначать $\pi_A : \Gamma.A \to \Gamma$.
-\item Для каждого морфизма $f : \Delta \to \Gamma$ и типа $A \dotsb \Gamma$ тип над $\Delta$, который обозначается $f^*(A)$,
-    и морфизм $f.A : \Delta.f^*(A) \to \Gamma.A$ такой, что квадрат ниже является декартовым.
-\[ \xymatrix{ \Delta.f^*(A) \ar[d]_{\pi_{f^*(A)}} \ar[r]^-{f.A} & \Gamma.A \ar[d]^{\pi_A} \\
-              \Delta \ar[r]_f & \Gamma
-            } \]
+\item Категория $\C$.
+\item Градуировка объектов $Ob(\C) = \coprod_{n \in \mathbb{N}} Ob_n(\C)$.
+\item Морфизмы $ft : Ob_{n+1}(\C) \to Ob_n(\C)$.
+\item Для каждого $A \in Ob_{n+1}(\C)$ морфизм $\pi_A : A \to ft(A)$.
+\item Для каждого $A \in Ob_{n+1}(\C)$ и $f : \Delta \to ft(A)$ объект $f^*(A)$ и морфизм $q(f, A) : f^*(A) \to A$.
 \end{itemize}
-
-Эти данные должны удовлетворять следующим требованиям строгости:
+удовлетворяющих следующим условиям:
 \begin{itemize}
-\item $id^*(A) = A$.
-\item $(g \circ f)^*(A) = g^*(f^*(A))$.
-\item $id.A = id$.
-\item $(g \circ f).A = f.A \circ g.\Delta.f^*(A)$.
+\item $Ob_0(\C)$ состоит из единственного объекта, и этот объект терминальный. Мы будем обозначать его 1.
+\item Для каждого $A \in Ob_{n+1}(\C)$ и $f : \Delta \to ft(A)$ верно, что $ft(f^* A) = \Delta$ и следующий квадрат декартов:
+\[ \xymatrix{ f^*(A) \ar[d]_{\pi_{f^*(A)}} \ar[r]^-{q(f, A)} & A \ar[d]^{\pi_A} \\
+              \Delta \ar[r]_f & ft(A)
+            } \]
+\item Для каждого $A \in Ob_{n+1}(\C)$ верно, что $id^*(ft(A)) = A$, и $q(id_{ft(A), A}) = id_A$.
+\item Для каждого $A \in Ob_{n+1}(\C)$, $f : \Delta \to ft(A)$ и $g : E \to \Delta$ верно, что $(f \circ g)^*(A) = g^*(f^*(A))$, и $q(f \circ g, A) = q(f, A) \circ q(g, f^*(A))$.
 \end{itemize}
 
-Мы будем писать $a : A \dotsb \Gamma$ для обозначения того факта, что $A \in Type(\Gamma)$, и $a : \Gamma \to \Gamma.A$ - сечение $\pi_A$.
-Если $f : \Delta \to \Gamma$ - некоторый морфизм, и $a : A \dotsb \Gamma$, то мы будем обозначать $f^*(a) : f^*(A) \dotsb \Delta$ следующее сечение:
-\[ \xymatrix{ \Delta \ar[r]^f \ar[d]_{f^*(a)} \pb                   & \Gamma \ar[d]^a \\
-              \Delta.f^*(A) \ar[r]_-{f.A} \ar[d]_{\pi_{f^*(A)}} \pb & \Gamma.A \ar[d]^{\pi_A} \\
-              \Delta \ar[r]_f                                       & \Gamma
+Если $\Gamma \in Ob_m(\C)$ и $A \in Ob_{1+m}(\C)$, то мы будем писать $\Gamma \models A$, если $ft(A) = \Gamma$.
+Если $A \in Ob_{n+m}(\C)$, то мы будем обозначать $\pi^n_A : A \to ft^n(A)$ морфизм $\pi_{ft^{n-1}(A)} \circ \ldots \circ \pi_A$.
+Если $\Gamma \in Ob_m(\C)$, $A \in Ob_{n+m}(\C)$ и $a \in Hom(\C)$, то мы будем писать $\Gamma \models a : A$, если $ft^n(A) = \Gamma$, и $a : \Gamma \to A$ - сечение $\pi^n_A$.
+
+Если $f : \Delta \to \Gamma$ - некоторый морфизм, $ft(A) = \Gamma$ и $\Gamma \models a : A$, то мы будем обозначать $f^*(a)$ следующее сечение:
+\[ \xymatrix{ \Delta \ar[r]^f \ar[d]_{f^*(a)} \pb                & \Gamma \ar[d]^a \\
+              f^*(A) \ar[r]_-{q(f, A)} \ar[d]_{\pi_{f^*(A)}} \pb & A \ar[d]^{\pi_A} \\
+              \Delta \ar[r]_f                                    & \Gamma
                  }\]
 
 Мы предполагаем, что в категории определены различные конструкции, необходимые для интерпретации правил теории.
 Часть этих конструкций ($\Sigma$-типы, $\Pi$-типы, и т.д.) мы опишем позже.
 Сейчас мы опишем часть, необходимую для интерпретации гомотопий и расслоений.
 
-Во-первых, категория должна быть конечно полной.
-Во-вторых, категория должна содержать интервальный тип $I' \dotsb 1$ вместе с парой сечений $i_0, i_1 : I' \dotsb 1$.
-Если $!_\Gamma : \Gamma \to 1$, то $\Gamma.!_\Gamma^*(I')$ является декартовым произведением $\Gamma$ и $I'$, поэтому мы будем обозначать этот объект $\Gamma \times I'$.
-Проекцию $\pi_{!_\Gamma^*(I')} : \Gamma.!_\Gamma^*(I') \to \Gamma$ мы будем обозначать как $\pi_1 : \Gamma \times I' \to \Gamma$.
-Если $f : \Delta \to \Gamma$, то морфизм $f.!_\Gamma^*(I') : \Delta \times I' \to \Gamma \times I'$ мы будем обозначать как $f \times I'$.
-Сечения $k : !_\Gamma^*(I') \dotsb \Gamma$ мы будем обозначать просто $k : \Gamma \to \Gamma \times I'$.
+Категория должна содержать интервальный тип $I' \in Ob_1(\C)$ вместе с парой морфизмов $i_0, i_1 : 1 \to I'$.
+Если $!_\Gamma : \Gamma \to 1$, то $!_\Gamma^*(I')$ является декартовым произведением $\Gamma$ и $I'$, поэтому мы будем обозначать этот объект $\Gamma \times I'$.
+Проекцию $\pi_{!_\Gamma^*(I')} : !_\Gamma^*(I') \to \Gamma$ мы будем обозначать как $\pi_1 : \Gamma \times I' \to \Gamma$.
+Если $f : \Delta \to \Gamma$, то морфизм $q(f, !_\Gamma^*(I')) : \Delta \times I' \to \Gamma \times I'$ мы будем обозначать как $f \times I'$.
 Сечения $!_\Gamma^*(i_0), !_\Gamma^*(i_1) : \Gamma \to \Gamma \times I'$ мы будем обозначать просто $i_0$ и $i_1$ соответственно.
 
 \begin{comment}
@@ -527,40 +163,34 @@
 \end{comment}
 
 Также нам потребуются следующие конструкции.
-Для любого объекта $\Gamma$, для любого $A \dotsb \Gamma \times I'$ и для любого $a : i_0^*(A) \dotsb \Gamma$ должно существовать сечение $ext(A,a) : A \dotsb \Gamma \times I'$ такое, что $i_0^*(ext(A,a)) = a$.
-Более того, мы требуем, чтобы для любого морфизма $f : \Delta \to \Gamma$ было верно, что $(f \times I')^*(ext(A,a)) = ext((f \times I')^*(A), f^*(a))$.
+Для любых объектов $\Gamma, A$ таких, что $\Gamma \times I' \models A$ и для любого $a$ такого, что $\Gamma \models a : i_0^*(A)$ должно существовать сечение $\Gamma \times I' \models ext(A, a) : A$ такое, что $i_0^*(ext(A, a)) = a$.
+Более того, мы требуем, чтобы для любого морфизма $f : \Delta \to \Gamma$ было верно, что $(f \times I')^*(ext(A, a)) = ext((f \times I')^*(A), f^*(a))$.
 Для этого достаточно проверить, что следующий квадрат коммутирует:
-\[ \xymatrix{ \Gamma \times I' \ar[rr]^{f \times I'} \ar[d]_{ext((f \times I')^*(A), f^*(a))} & & \Gamma \times I' \ar[d]^{ext(A,a)} \\
-              \Gamma \times I'.(f \times I')^*(A) \ar[rr]_-{(f \times I').A}                  & & \Gamma \times I'.A
+\[ \xymatrix{ \Delta \times I' \ar[rr]^{f \times I'} \ar[d]_{ext((f \times I')^*(A), f^*(a))} & & \Gamma \times I' \ar[d]^{ext(A,a)} \\
+              (f \times I')^*(A) \ar[rr]_-{q(f \times I', A)}                                 & & A
             } \]
 
-Если $A \dotsb \Gamma$, $h_1, h_2 : \pi_1^*(A) \dotsb \Gamma \times I'$ - пара сечений таких, что $i_1^*(h_1) = i_0^*(h_2)$, то $con(h_1, h_2) : \pi_1^*(A) \dotsb \Gamma \times I'$ - сечение такое, что $i_0^*(con(h_1, h_2)) = i_0^*(h_1)$, и $i_1^*(con(h_1, h_2)) = i_1^*(h_2)$.
+Если $\Gamma \models A$ и $\Gamma \times I' \models h_1 : \pi_1^*(A)$, $\Gamma \times I' \models h_2 : \pi_1^*(A)$ - сечения такие, что $i_1^*(h_1) = i_0^*(h_2)$, то $\Gamma \times I' \models con(h_1, h_2) : \pi_1^*(A)$ - сечение такое, что $i_0^*(con(h_1, h_2)) = i_0^*(h_1)$, и $i_1^*(con(h_1, h_2)) = i_1^*(h_2)$.
 Если $f : \Delta \to \Gamma$, то $(f \times I')^*(con(h_1, h_2)) = con((f \times I')^*(h_1), (f \times I')^*(h_2))$.
 
-Последние две конструкции, которые нам сейчас понадобятся, - это обращение и конкатенация расслоений над интервалом.
-
-Если $H$ - тип над $\Gamma \times I'$ со слоями $A_1, A_2 \dotsb \Gamma$, то $Inv(H) \dotsb \Gamma \times I'$ - тип со слоями $A_2$ и $A_1$.
+Если $\Gamma \times I' \models H$, то $\Gamma \times I' \models Inv(H)$, $i_0^*(Inv(H)) = i_1^*(H)$, и $i_1^*(Inv(H)) = i_0^*(H)$.
 Если $f : \Delta \to \Gamma$, то $(f \times I')^*(Inv(H)) = Inv((f \times I')^*(H))$.
 
-Если $H_1$, $H_2$ - типы над $\Gamma \times I'$ со слоями $A_1, A_2 \dotsb \Gamma$ и $A_2, A_3 \dotsb \Gamma$ соответственно, то $Con(H_1, H_2) \dotsb \Gamma \times I'$ - тип со слоями $A_1$ и $A_3$.
+Если $\Gamma \times I' \models H_1$, $\Gamma \times I' \models H_2$ и $i_1^*(H_1) = i_0^*(H_2)$, то $\Gamma \times I' \models Con(H_1, H_2)$, $i_0^*(Con(H_1, H_2)) = i_0^*(H_1)$, и $i_1^*(Con(H_1, H_2)) = i_1^*(H_2)$.
 Если $f : \Delta \to \Gamma$, то $(f \times I')^*(Con(H_1, H_2)) = Con((f \times I')^*(H_1), (f \times I')^*(H_2))$.
 
 \subsection{Определение интерпретации}
 
-Мы опишем расширение системы, которое нам понадобится для доказательства свойств корректности интерпретации.
-Это расширение не является частью системы и лишь служит как вспомогательный инструмент.
-Во-первых, мы добаляем новые термы: $coe'\ (\lambda x. a)\ b\ c\ d$, $Red\ a\ b\ c$, $Red^*\ a\ b\ c$, $red\ a\ b\ c$, $red^*\ a\ b\ c$, $left'$, $right'$, где $x$ - переменная, и $a$, $b$, $c$, $d$ - термы.
-Во-вторых, определим множества $Term'$ и $Ctx'$.
-Пусть $Term$ - множество термов, тогда положим $Term' = Term \cup \{ I' \}$ и $Ctx' = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_i \text{ - переменные, } A_i \in Term' \}$.
-% Также введем отношение $\deq_\phi$ на множестве термов как минимальное отношение конгруэнтности (т.е. отношение эквивалентности, замкнутое относительно всех конструкций термов), содержащее правило $coe\ (\lambda x. A)\ i\ a\ i \deq_\phi a$.
-Также введем отношение $\red^*_\phi$ на множестве термов как минимальное рефлексивное, транзитивное отношение, замкнутое относительно всех конструкций термов и содержащее правило $coe\ (\lambda x. A)\ i\ a\ i \red^*_\phi a$.
-
-Теперь мы готовы определить интерпретацию, которая является набором следующих отношений:
+Интерпретация теории состоит из следующих отношений:
 \begin{itemize}
-\item Отношение $\ll - \vdash \rr = -$ на классе $Ctx' \times Ob$, где $Ob$ - класс объектов категории.
-\item Отношение $\ll - \vdash - \rr = -$ на классе $Ctx' \times Term \times Type$, где $Type$ - класс типов категории, т.е. пар $\Gamma \in Ob$ и $A \in Type(\Gamma)$, такую пару мы обозначаем просто $A \dotsb \Gamma$.
-\item Отношение $\ll - \vdash - \Uparrow - \rr = -$ на классе $Ctx' \times Term \times Term' \times Sec$, где $Sec$ - класс сечений категории, т.е. троек $\Gamma \in Ob$, $A \in Type(\Gamma)$ и $a$ - сечение $A$, такую тройку мы обозначаем просто $a : A \dotsb \Gamma$.
-\item Отношение $\ll - \vdash - \Downarrow - \rr = -$ на классе $Ctx' \times Term \times Term \times Sec$.
+\item Отношение $\ll - \rr = -$ на классе $Ctx \times Ob(\C)$, где $Ctx$ - множество контекстов.
+\item Отношение $\ll - \vdash - \rr = -$ на классе $Ctx \times Term \times Type$, где $Term$ - множество термов, и $Type = \{ \Gamma \models A\ |\ \Gamma, A \text{ такие, что } \Gamma \models A \}$.
+\item Отношение $\ll - \vdash - \Uparrow - \rr = -$ на классе $Ctx \times Term \times Term \times Sec$, где $Sec = \{ \Gamma \models a : A\ |\ \Gamma, a, A \text{ такие, что } \Gamma \models a : A \}$.
+\item Отношение $\ll - \vdash - \Downarrow - \rr = -$ на классе $Ctx \times Term \times Term \times Sec$.
+\item Отношение $\ll - \vdash - \red - \rr = -$ на классе $Ctx \times Term \times Term \times Type$.
+\item Отношение $\ll - \vdash - \red^* - \rr = -$ на классе $Ctx \times Term \times Term \times Type$.
+\item Отношение $\ll - \vdash - \red - \Downarrow - \rr = -$ на классе $Ctx \times Term \times Term \times Term \times Sec$.
+\item Отношение $\ll - \vdash - \red^* - \Downarrow - \rr = -$ на классе $Ctx \times Term \times Term \times Term \times Sec$.
 \end{itemize}
 
 Интерпретация контекстов:
@@ -568,17 +198,12 @@
 \medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$\ll \vdash \rr = 1$}
+\UnaryInfC{$\ll\ \rr = 1$}
 \DisplayProof
 \quad
-\AxiomC{$\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \models A'$}
 \RightLabel{, $x \notin \Gamma$}
-\UnaryInfC{$\ll \Gamma, x : A \vdash \rr = \Gamma'.A'$}
-\DisplayProof
-\quad
-\AxiomC{$\ll \Gamma \vdash \rr = \Gamma'$}
-\RightLabel{, $x \notin \Gamma$}
-\UnaryInfC{$\ll \Gamma, x : I' \vdash \rr = \Gamma' \times I'$}
+\UnaryInfC{$\ll \Gamma, x : A \rr = A'$}
 \DisplayProof
 \end{center}
 \bigskip
@@ -587,24 +212,24 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \models A'$}
 \RightLabel{, $x \notin \Gamma$}
-\UnaryInfC{$\ll \Gamma, x : A \vdash x \Uparrow A \rr = a : \pi_{A'}^*(A') \dotsb \Gamma'.A'$}
+\UnaryInfC{$\ll \Gamma, x : A \vdash x \Uparrow A \rr = A' \models a : \pi_{A'}^*(A')$}
 \DisplayProof
 \end{center}
 
 где $a$ определяется как в следующей диаграме:
-\[ \xymatrix@-1pc{ \Gamma'.A' \ar[rddd]_{id_{\Gamma'.A'}} \ar[rrrd]^{id_{\Gamma'.A'}} \ar@{-->}[rd]_a & & & \\
-                        & \Gamma'.A'.\pi_{A'}^*(A') \ar[rr]_-{\pi_{A'}.A'} \ar[dd]^{\pi_{\pi_{A'}^*(A')}} \pb & & \Gamma'.A' \ar[dd]^{\pi_{A'}} \\
-                        &                                                                       & & \\
-                        & \Gamma'.A' \ar[rr]_{\pi_{A'}}                                         & & \Gamma'
+\[ \xymatrix@-1pc{ A' \ar[rddd]_{id_{A'}} \ar[rrrd]^{id_{A'}} \ar@{-->}[rd]_a & & & \\
+                        & \pi_{A'}^*(A') \ar[rr]_-{q(\pi_{A'}, A')} \ar[dd]^{\pi_{\pi_{A'}^*(A')}} \pb & & A' \ar[dd]^{\pi_{A'}} \\
+                        &                                                                              & & \\
+                        & A' \ar[rr]_{\pi_{A'}}                                                        & & \Gamma'
                  }\]
 
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash x \Uparrow A \rr = a : A' \dotsb \Gamma'$}
-\AxiomC{$\ll \Gamma \vdash B \rr = B' \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash x \Uparrow A \rr = \Gamma' \models a : A'$}
+\AxiomC{$\ll \Gamma \vdash B \rr = \Gamma' \models B'$}
 \RightLabel{, $y \notin \Gamma$}
-\BinaryInfC{$\ll \Gamma, y : B \vdash x \Uparrow A \rr = \pi_{B'}^*(a) : \pi_{B'}^*(A') \dotsb \Gamma'.B'$}
+\BinaryInfC{$\ll \Gamma, y : B \vdash x \Uparrow A \rr = B' \models \pi_{B'}^*(a) : \pi_{B'}^*(A')$}
 \DisplayProof
 \end{center}
 \bigskip
@@ -613,36 +238,29 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = a' : A' \dotsb \Gamma'$}
-\AxiomC{$\ll \Gamma \vdash A_2 \rr = A' \dotsb \Gamma'$}
-\RightLabel{, $A_1 \deq_\phi A_2$}
-\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = a' : A' \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = \Gamma' \models a' : i_0^*(H_1)$}
+\AxiomC{$\ll \Gamma \vdash A_k \red^* B \rr = \Gamma' \times I' \models H_k$, $k \in \{ 1, 2 \}$}
+\RightLabel{, $B \in NF$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = \Gamma' \models i_1^*(ext(H,a')) : i_0^*(H_2)$}
 \DisplayProof
 \end{center}
-\bigskip
+
+Данное правило применимо если $i_1^*(H_1) = i_1^*(H_2)$, и $H = Con(H_1, Inv(H_2))$.
 
 Интерпретация правил редукций типов:
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$}
-\AxiomC{$\ll \Gamma \vdash k \Uparrow I' \rr = k' : \Gamma' \to \Gamma' \times I'$}
-\BinaryInfC{$\ll \Gamma \vdash Red^*\ A\ A\ k \rr = A' \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \models A'$}
+\UnaryInfC{$\ll \Gamma \vdash A \red^* A \rr = \Gamma' \times I' \models \pi_1^*(A')$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \ll \Gamma \vdash A \rr = i_0^*(H_1) \dotsb \Gamma'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma, x : I' \vdash Red\ A\ B\ x \rr = H_1 \dotsb \Gamma' \times I'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma, x : I' \vdash Red^*\ B\ C\ x \rr = H_2 \dotsb \Gamma' \times I'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash k \Uparrow I' \rr = k' : \Gamma' \to \Gamma' \times I'$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \ll \Gamma \vdash Red^*\ A\ C\ k \rr = k'^*(Con(H_1, H_2)) \dotsb \Gamma'$
+\AxiomC{$\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H_1$}
+\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = \Gamma' \times I' \models H_2$}
+\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = \Gamma' \times I' \models Con(H_1, H_2)$}
 \DisplayProof
 \end{center}
 
@@ -652,55 +270,26 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$}
-\AxiomC{$\ll \Gamma \vdash k \Uparrow I' \rr = k' : \Gamma' \to \Gamma' \times I'$}
-\BinaryInfC{$\ll \Gamma \vdash red^*\ a\ a\ k \Downarrow A \rr = a' : A' \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash a \Downarrow A \rr = \Gamma' \models a' : A'$}
+\UnaryInfC{$\ll \Gamma \vdash a \red^* a \Downarrow A \rr = \Gamma' \times I' \models \pi_1^*(a') : \pi_1^*(A')$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \def\extraVskip{0.5pt}
-\Axiom$\fCenter \ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$
+\Axiom$\fCenter \ll \Gamma \vdash \Downarrow A \rr = \Gamma' \models A'$
 \noLine
-\UnaryInf$\fCenter \ll \Gamma, x : I' \vdash red\ a\ a'\ x \Downarrow A \rr = h_1 : \pi_1^*(A') \dotsb \Gamma' \times I'$
+\UnaryInf$\fCenter \ll \Gamma \vdash a \red a' \Downarrow A \rr = \Gamma' \times I' \models h_1 : \pi_1^*(A')$
 \noLine
-\UnaryInf$\fCenter \ll \Gamma, x : I' \vdash red^*\ a'\ a''\ x \Downarrow A \rr = h_2 : \pi_1^*(A') \dotsb \Gamma' \times I'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash k \Uparrow I' \rr = k' : \Gamma' \to \Gamma' \times I'$
+\UnaryInf$\fCenter \ll \Gamma \vdash a' \red^* a'' \Downarrow A \rr = \Gamma' \times I' \models h_2 : \pi_1^*(A')$
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter \ll \Gamma \vdash red^*\ a\ a''\ k \Downarrow A \rr = k'^*(con(h_1, h_2)) : A' \dotsb \Gamma'$
+\UnaryInf$\fCenter \ll \Gamma \vdash a \red^* a'' \Downarrow A \rr = \Gamma' \times I' \models con(h_1, h_2) : \pi_1^*(A')$
 \DisplayProof
 \end{center}
 \bigskip
 
 Данное правило применимо при условии, что $h_1 \circ i_1 = h_2 \circ i_0$.
-
-Интерпретация правил для интервала:
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash \rr = \Gamma'$}
-\UnaryInfC{$\ll \Gamma \vdash left' \Uparrow I' \rr = i_0 : \Gamma' \to \Gamma' \times I'$}
-\DisplayProof
-\quad
-\AxiomC{$\ll \Gamma \vdash \rr = \Gamma'$}
-\UnaryInfC{$\ll \Gamma \vdash right' \Uparrow I' \rr = i_1 : \Gamma' \to \Gamma' \times I'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \ll \Gamma, x : I' \vdash A \rr = A' \dotsb \Gamma' \times I'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash a \Downarrow A[x := left'] \rr = a' : i_0^*(A') \dotsb \Gamma'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash k \Uparrow I' \rr = k' : \Gamma' \to \Gamma' \times I'$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \ll \Gamma \vdash coe'\ (\lambda x. A)\ a\ k \Uparrow A[x := k] \rr = k'^*(ext(A', a')) : k'^*(A') \dotsb \Gamma'$
-\DisplayProof
-\end{center}
 
 \begin{comment}
 Пусть $\Gamma.A \xrightarrow{t} P(\Gamma.A) \xrightarrow{\langle p_1, p_2 \rangle} \Gamma.A \times \Gamma.A$ - объект путей для $\Gamma.A$.
@@ -721,42 +310,26 @@
 
 \subsection{Свойства интерпретации}
 
-Пусть $\Gamma$ - некоторый объект, и $\Delta$ - некоторая коллекция вида $A_1 \dotsb \Gamma$, \ldots, $A_n \dotsb \Gamma.A_1 \ldots A_{n-1}$.
-Тогда мы будем писать $\Delta \dotsb \Gamma$.
-Объект $\Gamma.A_1 \ldots A_n$ мы будем обозначать как $\Gamma.\Delta$,
-    и проекцию $\pi_{A_1} \circ \ldots \circ \pi_{A_n} : \Gamma.\Delta \to \Gamma$ как $\pi_\Delta : \Gamma.\Delta \to \Gamma$.
-Пустую коллекцию $\Delta$ мы будем обозначать как $()$.
-Если $A_{n+1} \dotsb \Gamma.\Delta$, то коллекцию $A_1, \ldots A_n, A_{n+1}$ мы будем обозначать как $\Delta.A_{n+1}$.
-Нотация $\Gamma.\Delta.A_{n+1}$ не является двусмысленной, т.к. оба объекта $(\Gamma.\Delta).A_{n+1}$ и $\Gamma.(\Delta.A_{n+1})$ означают один и тот же объект $\Gamma.A_1 \ldots A_n.A_{n+1}$.
-Если $f : \Gamma' \to \Gamma$, то мы будем обозначать $f^*(\Delta) \dotsb \Gamma'$ коллекцию $f^*(A_1) \dotsb \Gamma'$, \ldots, $(f.A_1 \ldots A_{n-1})^*(A_n) \dotsb \Gamma'.f^*(A_1) \ldots (f.A_1 \ldots A_{n-2})^*(A_{n-1})$,
-    и $f.\Delta : \Gamma'.f^*(\Delta) \to \Gamma.\Delta$ морфизм $f.A_1 \ldots A_n : \Gamma'.f^*(\Delta) \to \Gamma.\Delta$.
-Таким образом $f^*(\Gamma.A) = f^*(\Gamma).(f.\Gamma)^*(A)$, и $\pi_{\Gamma.A} = \pi_{\Gamma} \circ \pi_{(f.\Gamma)^*(A)}$.
-
-Введем следующее вспомогательное отношение:
-
-\medskip
+Нам понадобится вспомогательное отношение $\ll - \vdash - \Uparrow - \rr = -$ на классе $Ctx \times Env \times Ctx \times Hom(\C)$, где $Env$ - множество частичных функций $Var \to Term$ с конечным носителем.
+Нигде неопределенную функцию мы будем обозначать $\bot : Var \to Term$.
+Если $\rho \in Env$, $x \in Var$ и $a \in Term$, то $\rho[x := a] \in Env$ - функция такая, что $\rho[x := a](x) = a$, и $\rho[x := a](y) = \rho(y)$, если $y \neq x$.
+Отношение определяется индуктивно:
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash \rr = \Gamma'$}
-\UnaryInfC{$\ll \Gamma \vdash \rr = () \dotsb \Gamma'$}
-\DisplayProof
-\quad
-\AxiomC{$\ll \Gamma \vdash \Delta \rr = \Delta' \dotsb \Gamma'$}
-\RightLabel{, $x \notin \Gamma, \Delta$}
-\UnaryInfC{$\ll \Gamma \vdash \Delta, x : I' \rr = \Delta'.!_{\Gamma'.\Delta'}^*(I') \dotsb \Gamma'$}
+\AxiomC{$\ll \Delta \rr = \Delta'$}
+\UnaryInfC{$\ll \Delta \vdash \bot \Uparrow\ \rr =\ !_{\Delta'} : \Delta' \to 1$}
 \DisplayProof
 \end{center}
-
 \medskip
+
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash \Delta \rr = \Delta' \dotsb \Gamma'$}
-\AxiomC{$\ll \Gamma, \Delta \vdash A \rr = A' \dotsb \Gamma'.\Delta'$}
-\RightLabel{, $x \notin \Gamma, \Delta$}
-\BinaryInfC{$\ll \Gamma \vdash \Delta, x : A \rr = \Delta'.A' \dotsb \Gamma'$}
+\AxiomC{$\ll \Delta \vdash \rho \Uparrow \Gamma \rr = \rho' : \Delta' \to \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \models A'$}
+\AxiomC{$\ll \Delta \vdash a \Uparrow A[\rho] \rr = \Delta' \models a' : \rho'^*(A')$}
+\RightLabel{, $x \notin \Delta,\Gamma$}
+\TrinaryInfC{$\ll \Delta \vdash \rho[x := a] \Uparrow \Gamma, x : A \rr = q(\rho', A') \circ a' : \Delta' \to A'$}
 \DisplayProof
 \end{center}
 \bigskip
-
-Индукцией несложно показать, что если $\ll \Gamma \vdash \Delta \rr = \Delta' \dotsb \Gamma'$, то $\ll \Gamma \vdash \rr = \Gamma'$, и $\ll \Gamma, \Delta \vdash \rr = \Gamma'.\Delta'$.
 
 \begin{lem}[completeness][Completeness of the interpretation of the reduction rules]
 Верны следующие утверждения:
@@ -795,6 +368,40 @@
 \end{proof}
 
 Таким образом отношения $\ll - \rr = -$ определяют частичные функции, которые мы будем обозначать $\ll - \rr$.
+
+\begin{lem}[subst-lemma][Correctness of the substitution]
+Пусть $\ll \Delta \vdash \rho \Uparrow \Gamma \rr = \rho' : \Delta' \to \Gamma'$.
+Тогда верны следующие утверждения:
+\begin{enumerate}
+\item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\ll \Delta \vdash A[\rho] \rr = \rho'^*(A') \dotsb \Delta'$.
+\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a' : A' \dotsb \Gamma'$, то $\ll \Delta \vdash a[\rho] \Uparrow A[\rho] \rr = \rho'^*(a') : \rho'^*(A') \dotsb \Delta'$.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, то $\ll \Delta \vdash a[\rho] \Downarrow A[\rho] \rr = \rho'^*(a') : \rho'^*(A') \dotsb \Delta'$.
+\item Если $\ll \Gamma \vdash A \red B \rr = H \dotsb \Gamma' \times I'$, то $\ll \Delta \vdash A[\rho] \red B[\rho] \rr = (\rho' \times I')^*(H) \dotsb \Delta' \times I'$.
+\item Если $\ll \Gamma \vdash A \red^* B \rr = H \dotsb \Gamma' \times I'$, то $\ll \Delta \vdash A[\rho] \red^* B[\rho] \rr = (\rho' \times I')^*(H) \dotsb \Delta' \times I'$.
+\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = h : \pi_1^*(A') \dotsb \Gamma' \times I'$, то $\ll \Delta \vdash a[\rho] \red b[\rho] \Downarrow A[\rho] \rr = (\rho' \times I')^*(h) : \pi_1^* \rho'^*(A') \dotsb \Delta' \times I'$.
+\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = h : \pi_1^*(A') \dotsb \Gamma' \times I'$, то $\ll \Delta \vdash a[\rho] \red^* b[\rho] \Downarrow A[\rho] \rr = (\rho' \times I')^*(h) : \pi_1^* \rho'^*(A') \dotsb \Delta' \times I'$.
+\end{enumerate}
+\end{lem}
+\begin{proof}
+Индукцией по построению $\ll - \rr = -$.
+\begin{itemize}
+\item
+\AxiomC{$\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$}
+\UnaryInfC{$\ll \Gamma, x : A \vdash x \Uparrow A \rr = \langle id_{\Gamma'.A'}, id_{\Gamma'.A'} \rangle : \pi_{A'}^*(A') \dotsb \Gamma'.A'$}
+\DisplayProof
+\medskip
+
+\bigskip
+\item
+\AxiomC{$\ll \Gamma \vdash x \Uparrow A \rr = a : A' \dotsb \Gamma'$}
+\AxiomC{$\ll \Gamma \vdash B \rr = B' \dotsb \Gamma'$}
+\RightLabel{, $y \notin \Gamma$}
+\BinaryInfC{$\ll \Gamma, y : B \vdash x \Uparrow A \rr = \pi_{B'}^*(a) : \pi_{B'}^*(A') \dotsb \Gamma'.B'$}
+\DisplayProof
+\medskip
+
+\end{itemize}
+\end{proof}
 
 \begin{lem}[weakening][Weakening lemma]
 Пусть $\ll \Gamma_1 \vdash \Delta \rr = \Delta' \dotsb \Gamma_1'$, и $\ll \Gamma_1 \vdash \Gamma_2 \rr = \Gamma_2' \dotsb \Gamma_1'$.
