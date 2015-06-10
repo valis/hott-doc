@@ -170,27 +170,38 @@
               (f \times I')^*(A) \ar[rr]_-{q(f \times I', A)}                                 & & A
             } \]
 
-Если $\Gamma \models A$ и $\Gamma \times I' \models h_1 : \pi_1^*(A)$, $\Gamma \times I' \models h_2 : \pi_1^*(A)$ - сечения такие, что $i_1^*(h_1) = i_0^*(h_2)$, то $\Gamma \times I' \models con(h_1, h_2) : \pi_1^*(A)$ - сечение такое, что $i_0^*(con(h_1, h_2)) = i_0^*(h_1)$, и $i_1^*(con(h_1, h_2)) = i_1^*(h_2)$.
-Если $f : \Delta \to \Gamma$, то $(f \times I')^*(con(h_1, h_2)) = con((f \times I')^*(h_1), (f \times I')^*(h_2))$.
-
 Если $\Gamma \times I' \models H$, то $\Gamma \times I' \models Inv(H)$, $i_0^*(Inv(H)) = i_1^*(H)$, и $i_1^*(Inv(H)) = i_0^*(H)$.
 Если $f : \Delta \to \Gamma$, то $(f \times I')^*(Inv(H)) = Inv((f \times I')^*(H))$.
 
 Если $\Gamma \times I' \models H_1$, $\Gamma \times I' \models H_2$ и $i_1^*(H_1) = i_0^*(H_2)$, то $\Gamma \times I' \models Con(H_1, H_2)$, $i_0^*(Con(H_1, H_2)) = i_0^*(H_1)$, и $i_1^*(Con(H_1, H_2)) = i_1^*(H_2)$.
 Если $f : \Delta \to \Gamma$, то $(f \times I')^*(Con(H_1, H_2)) = Con((f \times I')^*(H_1), (f \times I')^*(H_2))$.
+Для любых $\Gamma \times I' \models H$ верно, что $Con(\pi_1^* i_0^*(H), H) = H$, и $Con(H, Inv(H)) = \pi_1^* i_0^*(H)$.
 
 \subsection{Определение интерпретации}
+
+Сначала определим несколько классов.
+\[ Type = \{ \Gamma \models A\ |\ \Gamma, A \text{ такие, что } \Gamma \models A \} \]
+\[ Sec = \{ \Gamma \models a : A\ |\ \Gamma, a, A \text{ такие, что } \Gamma \models a : A \} \]
+
+Пусть $\Gamma \in Ob(\C)$.
+Тогда определим класс $Seq_\Gamma$ как класс последовательностей $A_1, \ldots A_{2 n + 1}$ объектов $\C$ таких, что для всех $1 \leq i \leq 2 n + 1$ верно, что $ft(A_i) = \Gamma \times I'$ если $i$ - четно, и $ft(A_i) = \Gamma$ иначе, и
+для любого $1 \leq i \leq n$ верно, что $i_0^*(A_{2 i}) = A_{2 i - 1}$, и $i_1^*(A_{2 i}) = A_{2 i + 1}$.
+\[ Seq = \{ \Gamma \times I' \models S\ |\ \Gamma \in Ob(\C), S \in Seq_\Gamma \} \]
+Если $S = (A_1, \ldots A_{2 n + 1}) \in Seq_\Gamma$, $\Gamma \times I' \models A$ и $i_1^*(A) = A_1$, то $(i_0^*(A), A, A_1, \ldots A_n) \in Seq_\Gamma$.
+Мы будем обозначать эту последовательность $A * S$.
+
+Пусть $S = (A_1, \ldots A_{2 n + 1}) \in Seq_\Gamma$ и $\rho : \Delta \to \Gamma$.
+Тогда мы определим $(\rho \times I')^*(S) \in Seq_\Delta$ как последовательность $(\rho^*(A_1), (\rho \times I')^*(A_2), \rho^*(A_3), \ldots \rho^*(A_{2 n + 1}))$.
 
 Интерпретация теории состоит из следующих отношений:
 \begin{itemize}
 \item Отношение $\ll - \rr = -$ на классе $Ctx \times Ob(\C)$, где $Ctx$ - множество контекстов.
-\item Отношение $\ll - \vdash - \rr = -$ на классе $Ctx \times Term \times Type$, где $Term$ - множество термов, и $Type = \{ \Gamma \models A\ |\ \Gamma, A \text{ такие, что } \Gamma \models A \}$.
-\item Отношение $\ll - \vdash - \Uparrow - \rr = -$ на классе $Ctx \times Term \times Term \times Sec$, где $Sec = \{ \Gamma \models a : A\ |\ \Gamma, a, A \text{ такие, что } \Gamma \models a : A \}$.
+\item Отношение $\ll - \vdash - \rr = -$ на классе $Ctx \times Term \times Type$, где $Term$ - множество термов.
+\item Отношение $\ll - \vdash - \Uparrow - \rr = -$ на классе $Ctx \times Term \times Term \times Sec$.
 \item Отношение $\ll - \vdash - \Downarrow - \rr = -$ на классе $Ctx \times Term \times Term \times Sec$.
 \item Отношение $\ll - \vdash - \red - \rr = -$ на классе $Ctx \times Term \times Term \times Type$.
-\item Отношение $\ll - \vdash - \red^* - \rr = -$ на классе $Ctx \times Term \times Term \times Type$.
+\item Отношение $\ll - \vdash - \red^* - \rr = -$ на классе $Ctx \times Term \times Term \times Seq$.
 \item Отношение $\ll - \vdash - \red - \Downarrow - \rr = -$ на классе $Ctx \times Term \times Term \times Term \times Sec$.
-\item Отношение $\ll - \vdash - \red^* - \Downarrow - \rr = -$ на классе $Ctx \times Term \times Term \times Term \times Sec$.
 \end{itemize}
 
 Интерпретация контекстов:
@@ -238,21 +249,34 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = \Gamma' \models a' : i_0^*(H_1)$}
-\AxiomC{$\ll \Gamma \vdash A_k \red^* B \rr = \Gamma' \times I' \models H_k$, $k \in \{ 1, 2 \}$}
+\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = \Gamma' \models a' : A_1'$}
+\AxiomC{$\ll \Gamma \vdash A_k \red^* B \rr = \Gamma' \times I' \models S_k$, $k \in \{ 1, 2 \}$}
 \RightLabel{, $B \in NF$}
-\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = \Gamma' \models i_1^*(ext(H,a')) : i_0^*(H_2)$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = \Gamma' \models i_1^*(ext(H,a')) : A_2'$}
 \DisplayProof
 \end{center}
 
-Данное правило применимо если $i_1^*(H_1) = i_1^*(H_2)$, и $H = Con(H_1, Inv(H_2))$.
+Данное правило применимо если $A_k'$ - первые элементы последовательностей $S_k$, и последние элементы последовательностей $S_1$ и $S_2$ совпадают.
+Чтобы определить $H$ сначала определим объект $CI(S_1, A, S_2)$ для любых последовательностей $S_1$, $S_2$ и объекта $A$ таких, что $\Gamma' \times I' \models A$, последний элемент $S_1$ равен $i_0^*(A)$, и последний элемент $S_2$ равен $i_1^*(A)$.
+Объект $CI(S_1, A, S_2)$ будет определяться индукцией по суммарной длине $S_1$ и $S_2$ и будет удовлетворять следующим совйствам: $\Gamma' \times I' \models CI(S_1, A, S_2)$, первый элемент $S_1$ равен $i_0^* CI(S_1, A, S_2)$, и первый элемент $S_2$ равен $i_1^* CI(S_1, A, S_2)$.
+\begin{itemize}
+\item Если $S_1 = (i_0^*(A))$, $S_2 = (i_1^*(A))$, то $CI(S_1, A, S_2) = A$.
+\item Если $S_1 = (i_0^*(A))$, $S_2 = (S_2', H_2, i_1^*(A))$, \\
+    то $CI(S_1, S_2) = CI(S_1, Con(A, Inv(H_2)), S_2')$.
+\item Если $S_1 = (S_1', H_1, i_0^*(A))$, $S_2 = (i_1^*(A))$, \\
+    то $CI(S_1, S_2) = CI(S_1', Con(H_1, A), S_2)$.
+\item Если $S_1 = (S_1', H_1, i_0^*(A))$, $S_2 = (S_2', H_2, i_1^*(A))$, \\
+    то $CI(S_1, S_2) = CI(S_1', Con(H_1, Con(A, Inv(H_2))), S_2')$.
+\end{itemize}
+Тогда $H = CI(S_1, \pi_1^*(B), S_2)$, где $B$ - последний элемент последовательностей $S_1$ и $S_2$.
+Основное свойство функции $CI$: для любых $S_1$, $S_2$, $B$ и $H$ верно, что $CI((S_1, H, B), \pi_1^*(B), (S_2, H, B)) = CI(S_1, \pi_1^*(B), S_2)$.
 
 Интерпретация правил редукций типов:
 
 \medskip
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \models A'$}
-\UnaryInfC{$\ll \Gamma \vdash A \red^* A \rr = \Gamma' \times I' \models \pi_1^*(A')$}
+\UnaryInfC{$\ll \Gamma \vdash A \red^* A \rr = \Gamma' \times I' \models (A')$}
 \DisplayProof
 \end{center}
 
@@ -260,36 +284,11 @@
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H_1$}
 \AxiomC{$\ll \Gamma \vdash B \red^* C \rr = \Gamma' \times I' \models H_2$}
-\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = \Gamma' \times I' \models Con(H_1, H_2)$}
+\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = \Gamma' \times I' \models H_1 * H_2$}
 \DisplayProof
 \end{center}
 
-Данное правило применимо при условии, что $i_1^*(H_1) = i_0^*(H_2)$.
-
-Интерпретация правил редукций термов:
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash a \Downarrow A \rr = \Gamma' \models a' : A'$}
-\UnaryInfC{$\ll \Gamma \vdash a \red^* a \Downarrow A \rr = \Gamma' \times I' \models \pi_1^*(a') : \pi_1^*(A')$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \ll \Gamma \vdash \Downarrow A \rr = \Gamma' \models A'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash a \red a' \Downarrow A \rr = \Gamma' \times I' \models h_1 : \pi_1^*(A')$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash a' \red^* a'' \Downarrow A \rr = \Gamma' \times I' \models h_2 : \pi_1^*(A')$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \ll \Gamma \vdash a \red^* a'' \Downarrow A \rr = \Gamma' \times I' \models con(h_1, h_2) : \pi_1^*(A')$
-\DisplayProof
-\end{center}
-\bigskip
-
-Данное правило применимо при условии, что $h_1 \circ i_1 = h_2 \circ i_0$.
+Данное правило применимо при условии, что первый элемент последовательности $H_2$ равен $i_1^*(H_1)$.
 
 \begin{comment}
 Пусть $\Gamma.A \xrightarrow{t} P(\Gamma.A) \xrightarrow{\langle p_1, p_2 \rangle} \Gamma.A \times \Gamma.A$ - объект путей для $\Gamma.A$.
@@ -338,10 +337,9 @@
 \item Если $\ll \Gamma \vdash A \rr = \Gamma' \models A'$, то $\Gamma \vdash A$.
 \item Если $\ll \Gamma \vdash a \Uparrow A \rr = \Gamma' \models a' : A'$, то $\Gamma \vdash a \Uparrow A$.
 \item Если $\ll \Gamma \vdash a \Downarrow A \rr = \Gamma' \models a' : A'$, то $\Gamma \vdash a \Downarrow A$.
-\item Если $\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H$, то $A \red B$.
-\item Если $\ll \Gamma \vdash A \red^* B \rr = \Gamma' \times I' \models H$, то $A \red^* B$.
-\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = \Gamma' \times I' \models h : A'$, то $a \red b$.
-\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = \Gamma' \times I' \models h : A'$, то $a \red^* b$.
+\item Если $\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H$, то $\Gamma \vdash A$, и $A \red B$.
+\item Если $\ll \Gamma \vdash A \red^* B \rr = \Gamma' \times I' \models H$, то $\Gamma \vdash A$, и $A \red^* B$.
+\item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = \Gamma' \times I' \models h : A'$, то $\Gamma \vdash a \Downarrow A$, и $a \red b$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
@@ -356,9 +354,8 @@
 \item Если $\ll \Gamma \vdash a \Uparrow A_1 \rr = \Gamma_1 \models a_1 : A'_1$, и $\ll \Gamma \vdash a \Uparrow A_2 \rr = \Gamma_2 \models a_2 : A'_2$, то $A_1 = A_2$, $\Gamma_1 = \Gamma_2$, $A'_1 = A'_2$, и $a_1 = a_2$.
 \item Если $\ll \Gamma \vdash a \Downarrow A \rr = \Gamma_1 \models a_1 : A_1$, и $\ll \Gamma \vdash a \Downarrow A \rr = \Gamma_2 \models a_2 : A_2$, то $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $a_1 = a_2$.
 \item Если $\ll \Gamma \vdash A \red B_1 \rr = \Gamma_1 \times I' \models H_1$, и $\ll \Gamma \vdash A \red B_2 \rr = \Gamma_2 \times I' \models H_2$, то $B_1 = B_2$, $\Gamma_1 = \Gamma_2$, и $H_1 = H_2$.
-\item Если $\ll \Gamma \vdash A \red^* B \rr = \Gamma_1 \times I' \models H_1$, и $\ll \Gamma \vdash A \red^* B \rr = \Gamma_2 \times I' \models H_2$, то $\Gamma_1 = \Gamma_2$, и $H_1 = H_2$.
+\item Если $\ll \Gamma \vdash A \red^* B \rr = \Gamma_1 \times I' \models S_1$, и $\ll \Gamma \vdash A \red^* B \rr = \Gamma_2 \times I' \models S_2$, то $\Gamma_1 = \Gamma_2$, и $S_1 = S_2$.
 \item Если $\ll \Gamma \vdash a \red b_1 \Downarrow A \rr = \Gamma_1 \times I' \models h_1 : A_1$, и $\ll \Gamma \vdash a \red b_2 \Downarrow A \rr = \Gamma_2 \times I' \models h_2 : A_2$, то $b_1 = b_2$, $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $h_1 = h_2$.
-\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = \Gamma_1 \times I' \models h_1 : A_1$, и $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = \Gamma_2 \times I' \models h_2 : A_2$, то $\Gamma_1 = \Gamma_2$, $A_1 = A_2$, и $h_1 = h_2$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
@@ -366,26 +363,25 @@
 Покажем не очевидные пункты:
 \begin{itemize}
 \item
-\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = \Gamma' \models a' : i_0^*(H_1)$}
-\AxiomC{$\ll \Gamma \vdash A_k \red^* B \rr = \Gamma' \times I' \models H_k$, $k \in \{ 1, 2 \}$}
-\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = \Gamma' \models i_1^*(ext(Con(H_1, Inv(H_2)), a')) : i_0^*(H_2)$}
+\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = \Gamma' \models a' : A_1'$}
+\AxiomC{$\ll \Gamma \vdash A_k \red^* B \rr = \Gamma' \times I' \models S_k$, $k \in \{ 1, 2 \}$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = \Gamma' \models i_1^*(ext(H, a')) : A_2'$}
 \DisplayProof
 \medskip
 
-Нам нужно показать, что $H_1$, $H_2$ и $a'$ однозначно определяются по $\Gamma$, $a$ и $A_2$.
+Нам нужно показать, что $S_1$, $S_2$ и $a'$ однозначно определяются по $\Gamma$, $a$ и $A_2$.
 По индукционной гипотезе $A_1$ и $a'$ однозначно определяется по $\Gamma$ и $a$.
 По лемме~\rlem{completeness} $A_1 \red^* B$.
 Так как $B \in NF$, то по конфлюэнтности $B$ однозначно определяется по $A_1$.
-По идукционной гипотезе $H_1$ и $H_2$ однозначно определяются по $\Gamma$, $A_1$, $A_2$ и $B$.
+По идукционной гипотезе $S_1$ и $S_2$ однозначно определяются по $\Gamma$, $A_1$, $A_2$ и $B$.
 
 \item
-Пусть $\ll \Gamma \vdash A \red^* C \rr = \Gamma_1 \times I' \models H_1$, и $\ll \Gamma \vdash A \red^* C \rr = \Gamma_2 \times I' \models H_2$.
+Пусть $\ll \Gamma \vdash A \red^* C \rr = \Gamma_1 \times I' \models S_1$, и $\ll \Gamma \vdash A \red^* C \rr = \Gamma_2 \times I' \models S_2$.
 Заметим, что оба этих отношения должны выводиться по одному и тому же правилу.
 Действительно, если одно из них выводится по транзитивности, а другое по рефлексивности, тогда мы получаем, что $A \red B$, $B \red^* C$, и $A = C$, что протеворечит сильной нормализации.
 Случай, когда оба отношения выводится по рефлексивности элементарен.
-Если оба отношения выводятся по транзитивности, то $B$ и $H_1$ однозначно определяются по $\Gamma$ и $A$, а $H_2$ однозначно определяется по $\Gamma$, $B$ и $C$.
+Если оба отношения выводятся по транзитивности, то $B$ и $S_1$ однозначно определяются по $\Gamma$ и $A$, а $S_2$ однозначно определяется по $\Gamma$, $B$ и $C$.
 
-\item Случай $\ll \Gamma \vdash a \red^* b \Downarrow A \rr$ аналогичен предыдущему.
 \end{itemize}
 \end{proof}
 
@@ -402,12 +398,10 @@
     то $\ll \Delta \vdash a[\rho] \Downarrow A[\rho] \rr = \Delta' \models \rho'^*(a') : \rho'^*(A')$.
 \item Если $\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H$, \\
     то $\ll \Delta \vdash A[\rho] \red B[\rho] \rr = \Delta' \times I' \models (\rho' \times I')^*(H)$.
-\item Если $\ll \Gamma \vdash A \red^* B \rr = \Gamma' \times I' \models H$, \\
-    то $\ll \Delta \vdash A[\rho] \red^* B[\rho] \rr = \Delta' \times I' \models (\rho' \times I')^*(H)$.
+\item Если $\ll \Gamma \vdash A \red^* B \rr = \Gamma' \times I' \models S$, \\
+    то $\ll \Delta \vdash A[\rho] \red^* B[\rho] \rr = \Delta' \times I' \models (\rho' \times I')^*(S)$.
 \item Если $\ll \Gamma \vdash a \red b \Downarrow A \rr = \Gamma' \times I' \models h : \pi_1^*(A')$, \\
     то $\ll \Delta \vdash a[\rho] \red b[\rho] \Downarrow A[\rho] \rr = \Delta' \times I' \models (\rho' \times I')^*(h) : \pi_1^* \rho'^*(A')$.
-\item Если $\ll \Gamma \vdash a \red^* b \Downarrow A \rr = \Gamma' \times I' \models h : \pi_1^*(A')$, \\
-    то $\ll \Delta \vdash a[\rho] \red^* b[\rho] \Downarrow A[\rho] \rr = \Delta' \times I' \models (\rho' \times I')^*(h) : \pi_1^* \rho'^*(A')$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
@@ -451,6 +445,11 @@
 \DisplayProof
 \medskip
 
+По индукционной гипотезе \\
+$\ll \Delta \vdash a[\rho] \Uparrow A[\rho] \rr = \Delta' \models \rho'^*(a') : \rho'^* i_0^*(H_1) $ \\
+$\ll \Delta \vdash A_k[\rho] \red^* B[\rho] \rr = \Delta' \models (\rho' \times I')^*(H_k) $ \\
+Следовательно $\ll \Delta $.
+
 \bigskip
 \item
 \AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \models A'$}
@@ -463,26 +462,6 @@
 \AxiomC{$\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H_1$}
 \AxiomC{$\ll \Gamma \vdash B \red^* C \rr = \Gamma' \times I' \models H_2$}
 \BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = \Gamma' \times I' \models Con(H_1, H_2)$}
-\DisplayProof
-\medskip
-
-\bigskip
-\item
-\AxiomC{$\ll \Gamma \vdash a \Downarrow A \rr = \Gamma' \models a' : A'$}
-\UnaryInfC{$\ll \Gamma \vdash a \red^* a \Downarrow A \rr = \Gamma' \times I' \models \pi_1^*(a') : \pi_1^*(A')$}
-\DisplayProof
-\medskip
-
-\bigskip
-\item
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \ll \Gamma \vdash \Downarrow A \rr = \Gamma' \models A'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash a \red a' \Downarrow A \rr = \Gamma' \times I' \models h_1 : \pi_1^*(A')$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash a' \red^* a'' \Downarrow A \rr = \Gamma' \times I' \models h_2 : \pi_1^*(A')$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \ll \Gamma \vdash a \red^* a'' \Downarrow A \rr = \Gamma' \times I' \models con(h_1, h_2) : \pi_1^*(A')$
 \DisplayProof
 \medskip
 
