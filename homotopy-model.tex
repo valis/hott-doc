@@ -251,7 +251,6 @@
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = \Gamma' \models a' : A_1'$}
 \AxiomC{$\ll \Gamma \vdash A_k \red^* B \rr = \Gamma' \times I' \models S_k$, $k \in \{ 1, 2 \}$}
-\RightLabel{, $B \in NF$}
 \BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = \Gamma' \models i_1^*(ext(H,a')) : A_2'$}
 \DisplayProof
 \end{center}
@@ -282,9 +281,9 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H_1$}
-\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = \Gamma' \times I' \models H_2$}
-\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = \Gamma' \times I' \models H_1 * H_2$}
+\AxiomC{$\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H$}
+\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = \Gamma' \times I' \models S$}
+\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = \Gamma' \times I' \models H * S$}
 \DisplayProof
 \end{center}
 
@@ -364,16 +363,19 @@
 \begin{itemize}
 \item
 \AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = \Gamma' \models a' : A_1'$}
-\AxiomC{$\ll \Gamma \vdash A_k \red^* B \rr = \Gamma' \times I' \models S_k$, $k \in \{ 1, 2 \}$}
-\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = \Gamma' \models i_1^*(ext(H, a')) : A_2'$}
+\AxiomC{$\ll \Gamma \vdash A_k \red^* B^j \rr = \Gamma' \times I' \models S^j_k$, $k \in \{ 1, 2 \}$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = \Gamma' \models i_1^*(ext(CI(S^j_1, \pi_1^*(B'^j), S^j_2), a')) : A_2'$}
 \DisplayProof
 \medskip
 
-Нам нужно показать, что $S_1$, $S_2$ и $a'$ однозначно определяются по $\Gamma$, $a$ и $A_2$.
-По индукционной гипотезе $A_1$ и $a'$ однозначно определяется по $\Gamma$ и $a$.
-По лемме~\rlem{completeness} $A_1 \red^* B$.
-Так как $B \in NF$, то по конфлюэнтности $B$ однозначно определяется по $A_1$.
-По идукционной гипотезе $S_1$ и $S_2$ однозначно определяются по $\Gamma$, $A_1$, $A_2$ и $B$.
+По индукционной гипотезе $A_1$, $\Gamma'$, $a'$ и $A_1'$ однозначно определяется по $\Gamma$ и $a$.
+Несложно видеть, что $A_2'$ однозначно определяется по $\Gamma$ и $A_2$.
+Нам осталось показать, что $CI(S^1_1, \pi_1^*(B'^1), S^1_2) = CI(S^2_1, \pi_1^*(B'^2), S^2_2)$.
+Легко видеть, что либо $\ll \Gamma \vdash B^1 \red^* B^2 \rr = \Gamma' \times I' \models T_k$, либо $\ll \Gamma \vdash B^2 \red^* B^1 \rr = \Gamma' \times I' \models T_k$, где $T_k$ - некоторые суффиксы либо $S^2_k$, либо $S^1_k$ соответственно.
+Заметим, что для каждого $k \in \{ 1, 2 \}$ должен быть верен либо первый случай, либо второй одновременно, иначе по лемме~\rlem{completeness} $B^1$ редуцируется сам к себе, что противоречит сильной нормализации.
+Пусть для определенности верен первый случай.
+Тогда $S^2_k$ суть конкатенации $S^1_k$ и $T_k$.
+По индукционной гипотезе $T_1 = T_2$, и по свойствам функции $CI$ мы получаем необходимое равенство.
 
 \item
 Пусть $\ll \Gamma \vdash A \red^* C \rr = \Gamma_1 \times I' \models S_1$, и $\ll \Gamma \vdash A \red^* C \rr = \Gamma_2 \times I' \models S_2$.
@@ -439,16 +441,19 @@
 
 \bigskip
 \item
-\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = \Gamma' \models a' : i_0^*(H_1)$}
-\AxiomC{$\ll \Gamma \vdash A_k \red^* B \rr = \Gamma' \times I' \models H_k$}
-\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = \Gamma' \models i_1^*(ext(Con(H_1, Inv(H_2)), a')) : i_0^*(H_2)$}
+\AxiomC{$\ll \Gamma \vdash a \Uparrow A_1 \rr = \Gamma' \models a' : A_1'$}
+\AxiomC{$\ll \Gamma \vdash A_k \red^* B \rr = \Gamma' \times I' \models S_k$}
+\BinaryInfC{$\ll \Gamma \vdash a \Downarrow A_2 \rr = \Gamma' \models i_1^*(ext(CI(S_1, \pi_1^*(B'), S_2), a')) : A_2'$}
 \DisplayProof
 \medskip
 
 По индукционной гипотезе \\
-$\ll \Delta \vdash a[\rho] \Uparrow A[\rho] \rr = \Delta' \models \rho'^*(a') : \rho'^* i_0^*(H_1) $ \\
-$\ll \Delta \vdash A_k[\rho] \red^* B[\rho] \rr = \Delta' \models (\rho' \times I')^*(H_k) $ \\
-Следовательно $\ll \Delta $.
+$\ll \Delta \vdash a[\rho] \Uparrow A_1[\rho] \rr = \Delta' \models \rho'^*(a') : \rho'^*(A_1') $ \\
+$\ll \Delta \vdash A_k[\rho] \red^* B[\rho] \rr = \Delta' \times I' \models (\rho' \times I')^*(S_k) $ \\
+Следовательно $\ll \Delta \vdash a[\rho] \Downarrow A_2[\rho] \rr =$ \\
+$\Delta' \models i_1^*(ext(CI((\rho' \times I')^*(S_1), \pi_1^* \rho'^*(B'), (\rho' \times I')^*(S_2)), \rho'^*(a'))) : \rho'^*(A_2') =$ \\
+$\Delta' \models i_1^*(ext((\rho' \times I')^*(CI(S_1, \pi_1^*(B'), S_2)), \rho'^*(a'))) : \rho'^*(A_2') =$ \\
+$\Delta' \models \rho'^* i_1^*(ext(CI(S_1, \pi_1^*(B'), S_2), a')) : \rho'^*(A_2')$.
 
 \bigskip
 \item
@@ -457,13 +462,22 @@ $\ll \Delta \vdash A_k[\rho] \red^* B[\rho] \rr = \Delta' \models (\rho' \times 
 \DisplayProof
 \medskip
 
+По индукционной гипотезе $\ll \Delta \vdash A[\rho] \rr = \Delta' \models \rho'^*(A')$.
+Следовательно $\ll \Delta \vdash A[\rho] \red^* A[\rho] \rr = \Delta' \times I' \models \pi_1^* \rho'^*(A') = \Delta' \times I' \models (\rho' \times I')^* \pi_1^*(A')$.
+
 \bigskip
 \item
-\AxiomC{$\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H_1$}
-\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = \Gamma' \times I' \models H_2$}
-\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = \Gamma' \times I' \models Con(H_1, H_2)$}
+\AxiomC{$\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H$}
+\AxiomC{$\ll \Gamma \vdash B \red^* C \rr = \Gamma' \times I' \models S$}
+\BinaryInfC{$\ll \Gamma \vdash A \red^* C \rr = \Gamma' \times I' \models H * S$}
 \DisplayProof
 \medskip
+
+По индукционной гипотезе \\
+$\ll \Delta \vdash A[\rho] \red B[\rho] \rr = \Delta' \times I' \models (\rho' \times I')^*(H)$, \\
+$\ll \Delta \vdash B[\rho] \red^* C[\rho] \rr = \Delta' \times I' \models (\rho' \times I')^*(S)$. \\
+Следовательно $\Delta \vdash A[\rho] \red^* C[\rho] \rr =$ \\
+$\Delta' \times I' \models (\rho' \times I')^*(H) * (\rho' \times I')^*(S) = \Delta' \times I' \models (\rho' \times I')^*(H * S)$.
 
 \end{itemize}
 \end{proof}
