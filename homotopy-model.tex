@@ -212,9 +212,10 @@
 \UnaryInfC{$\ll\ \rr = 1$}
 \DisplayProof
 \quad
+\AxiomC{$\ll \Gamma \rr = \Gamma'$}
 \AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \models A'$}
 \RightLabel{, $x \notin \Gamma$}
-\UnaryInfC{$\ll \Gamma, x : A \rr = A'$}
+\BinaryInfC{$\ll \Gamma, x : A \rr = A'$}
 \DisplayProof
 \end{center}
 \bigskip
@@ -916,20 +917,27 @@ $\ll \Gamma \vdash y[x := a] \Uparrow B[x := a] \rr = \ll \Gamma \vdash y \Uparr
 \begin{lem}[coherence-typing][Coherence of the typing]
 Верны следующие утверждения:
 \begin{enumerate}
-\item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $\ll \Gamma \vdash \rr = \Gamma'$.
-\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a : A' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
-\item Если $\ll \Gamma \vdash a \Uparrow A \rr = a : A' \dotsb \Gamma'$, то $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$.
-\begin{comment}
-\item Если $\ll \Gamma, x : I' \vdash Red\ A\ B\ x \rr = H \dotsb \Gamma' \times I'$, и $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $A' = i_0(H)$, и $\ll \Gamma \vdash B \rr = i_1^*(H) \dotsb \Gamma'$.
-\item Если $\ll \Gamma, x : I' \vdash Red^*\ A\ B\ x \rr = H \dotsb \Gamma' \times I'$, и $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, то $A' = i_0(H)$, и $\ll \Gamma \vdash B \rr = i_1^*(H) \dotsb \Gamma'$.
-\item Если $\ll \Gamma, x : I' \vdash red\ a\ b\ x \Downarrow A \rr = h : \pi_1^*(A') \dotsb \Gamma' \times I'$, и $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, то $a' = i_0^*(h)$, и $\ll \Gamma \vdash b \Downarrow A \rr = i_1^*(h) : A' \dotsb \Gamma'$.
-\item Если $\ll \Gamma, x : I' \vdash red^*\ a\ b\ x \Downarrow A \rr = h : \pi_1^*(A') \dotsb \Gamma' \times I'$, и $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, то $a' = i_0^*(h)$, и $\ll \Gamma \vdash b \Downarrow A \rr = i_1^*(h) : A' \dotsb \Gamma'$.
-\end{comment}
+\item Если $\ll \Gamma \vdash A \rr = \Gamma' \models A'$, то $\ll \Gamma \rr = \Gamma'$.
+\item Если $\ll \Gamma \vdash a \Uparrow A \rr = \Gamma' \models a : A'$, то $\ll \Gamma \vdash A \rr = \Gamma' \models A'$.
+\item Если $\ll \Gamma \vdash a \Downarrow A \rr = \Gamma' \models a : A'$, то $\ll \Gamma \vdash A \rr = \Gamma' \models A'$.
+\item Если $\ll \Gamma \vdash A \red B \rr = \Gamma' \times I' \models H$, то $\ll \Gamma \vdash A \rr = \Gamma' \models i_0^*(H)$, и $\ll \Gamma \vdash B \rr = \Gamma' \models i_1^*(H)$.
+\item Если $\ll \Gamma \vdash A \red^* B \rr = \Gamma' \times I' \models S$, то $\ll \Gamma \vdash A \rr = A'$, и $\ll \Gamma \vdash B \rr = B'$, где $A'$, $B'$ - первый и последний элементы последовательности $S$.
+\item Если $\ll \Gamma \vdash a \red b \Downarrow A\rr = \Gamma' \times I' \models h : \pi_1^*(A')$, то $\ll \Gamma \vdash a \Downarrow A \rr = \Gamma' \models i_0^*(h) : A'$, и $\ll \Gamma \vdash b \Downarrow A \rr = \Gamma' \models i_1^*(h) : A'$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
 Индукцией по построению $\ll - \rr = -$.
-TODO ...
+Единственный нетривиальный случай - правила для переменных.
+Для доказательства нам потребуется несколько вспомогательных утверждений.
+Во-первых, если $\Gamma = x_1 : A_1, \ldots x_n : A_n$, $\ll \Gamma \rr = \Gamma'$, то для всех $1 \leq k \leq n$ верно $\ll \Gamma \vdash x_k \Uparrow A_n \rr = \Gamma' \models \langle id_{\Gamma'}, \pi^{n-k}_{\Gamma'} \rangle : (\pi^{n-k+1}_{\Gamma'})^*(ft^{n-k}(\Gamma')) $.
+Это легко доказать индукцией по $n - k$.
+
+Во-вторых, для любых $\Gamma = x_1 : A_1, \ldots x_n : A_n$, $\Gamma'$ и $0 \leq k \leq n$ таких, что $\ll \Gamma \rr = \Gamma'$, верно $\ll \Gamma \vdash id_{x_1, \ldots x_k} \Uparrow x_1 : A_1, \ldots x_k : A_k \rr = \pi^{n-k}_{\Gamma'} : \Gamma' \to ft^{n-k}(\Gamma')$, где $id_{x_1, \ldots x_k}$ - подстановка $id_{x_1, \ldots x_n}(x_i) = x_i$.
+Это легко доказать индукцией по $k$, используя предыдущее замечание.
+
+Теперь мы можем доказать неоходимое свойство.
+Для этого достаточно показать, что если $\ll \Gamma \rr = \Gamma'$, $\ll \Gamma \vdash A \rr = \Gamma' \models A'$, $\ll \Gamma \vdash B \rr = \Gamma' \models B'$ и $y \notin \Gamma$, то $\ll \Gamma, y : B \vdash A \rr = B' \models \pi_{B'}^*(A')$.
+Это следует из леммы~\rlem{subst-lemma}, примененной к $\ll \Gamma, y : B \vdash id_{x_1, \ldots x_n} \Uparrow \Gamma \rr = \pi_{B'} : B' \to \Gamma'$.
 \end{proof}
 
 \begin{lem}[correctness-reductions][Correctness of the interpretation of the reductions rules]
@@ -938,12 +946,11 @@ TODO ...
 \item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, и $A \red B$, то $\ll \Gamma \vdash A \red B \rr$ определенно.
 \item Если $\ll \Gamma \vdash A \rr = A' \dotsb \Gamma'$, и $A \red^* B$, то $\ll \Gamma \vdash A \red^* B \rr$ определенно.
 \item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, и $a \red b$, то $\ll \Gamma \vdash a \red b \Downarrow A \rr$ определенно.
-\item Если $\ll \Gamma \vdash a \Downarrow A \rr = a' : A' \dotsb \Gamma'$, и $a \red^* b$, то $\ll \Gamma \vdash a \red^* b \Downarrow A \rr$ определенно.
 \end{enumerate}
 \end{lem}
 \begin{proof}
-Второй и четвертый пункты элементарно следуют из первого и третьего соответственно.
-Первый и третий пункты на данный момент тривиальны, т.к. мы не ввели пока никаких правил редукций.
+Второй пункт элементарно следует из первого и леммы~\rlem{coherence-typing}.
+Первый и третий пункты на данный момент тривиальны, так как мы не ввели пока никаких правил редукций.
 \end{proof}
 
 \begin{lem}[correctness-typing][Correctness of the interpretation of the typing rules]
@@ -951,8 +958,8 @@ TODO ...
 \begin{enumerate}
 \item Если $\Gamma \vdash$, то $\ll \Gamma \vdash \rr$ определенно.
 \item Если $\Gamma \vdash A$, то $\ll \Gamma \vdash A \rr$ определенно.
-\item Если $\Gamma \vdash a \Downarrow A$, то $\ll \Gamma \vdash a \Downarrow A \rr$ определенно.
 \item Если $\Gamma \vdash a \Uparrow A$, то $\ll \Gamma \vdash a \Uparrow A \rr$ определенно.
+\item Если $\Gamma \vdash a \Downarrow A$, то $\ll \Gamma \vdash a \Downarrow A \rr$ определенно.
 \end{enumerate}
 \end{lem}
 \begin{proof}
@@ -966,7 +973,7 @@ TODO ...
 \DisplayProof
 \end{center}
 
-В этом случае, используя свойства конфлюентности и сильной нормализации, мы получаем, что существует терм $B \in NF$ такой, что $A_1 \red^* B$, и $A_2 \red^* B$.
+В этом случае, используя свойства конфлюентности и сильной нормализации, мы получаем, что существует терм $B$ такой, что $A_1 \red^* B$, и $A_2 \red^* B$.
 Таким образом этот случай следует из леммы~\rlem{correctness-reductions}.
 \end{proof}
 
