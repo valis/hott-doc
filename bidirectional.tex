@@ -1,0 +1,760 @@
+\documentclass{amsart}
+
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{type1ec}
+\usepackage{stmaryrd}
+% \usepackage[T2A]{fontenc}
+
+\providecommand\WarningsAreErrors{false}
+\ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{теорема}{Теорема}
+\newref{lem}{лемма}{Лемма}
+\newref{prop}{утверждение}{Утверждение}
+\newref{cor}{следствие}{Следствие}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{замечание}{Замечание}
+
+\newcommand{\red}{\Rightarrow}
+\newcommand{\deq}{\Leftrightarrow}
+\renewcommand{\ll}{\llbracket}
+\newcommand{\rr}{\rrbracket}
+\newcommand{\cat}[1]{\mathbf{#1}}
+\renewcommand{\C}{\cat{C}}
+
+\numberwithin{figure}{section}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\title{Bidirectional type theory}
+
+\author{Валерий Исаев}
+
+% \begin{abstract}
+% Abstract
+% \end{abstract}
+
+\maketitle
+
+\section{Введение}
+
+\section{Теория типов Мартин-Лёфа}
+
+Теория типов Мартин-Лёфа $T_I$ состоит из счетного множества переменных $Var$, множества термов $Term_I$, отношения эквивалентности на нем $\deq$ и трех отношений $- \vdash$, $- \vdash -$, $- \vdash - : - $.
+Множество контекстов $Ctx_I$ определяется следующим образом:
+\[ Ctx_I = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_i \in Var, A_i \in Term_I \} \]
+Отношения $- \vdash$, $- \vdash -$ и $- \vdash - : -$ заданы на множествах $Ctx_I$, $Ctx_I \times Term_I$ и $Ctx_I \times Term_I \times Term_I$ соответственно.
+Они определяются в таблице~\ref{table:inf-rules}.
+
+\begin{table}
+
+\medskip
+\begin{center}
+\AxiomC{}
+\RightLabel{$(CTX_1)$}
+\UnaryInfC{$\vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$ $(CTX_2)$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, $x : A \in \Gamma$ $(VAR)$}
+\UnaryInfC{$\Gamma \vdash x : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $A \deq B$ $(CONV)$}
+\BinaryInfC{$\Gamma \vdash a : B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\RightLabel{$(PI)$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A \vdash b : B$}
+\RightLabel{$(LAM_I)$}
+\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\RightLabel{$(APP)$}
+\BinaryInfC{$\Gamma \vdash f\ a : B[x \mapsto a]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\RightLabel{$(SIGMA)$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\AxiomC{$\Gamma \vdash b : B[x \mapsto a]$}
+\RightLabel{$(PAIR_I)$}
+\TrinaryInfC{$\Gamma \vdash (a, b) : \Sigma (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Sigma (x : A) B$}
+\RightLabel{$(PROJ_1)$}
+\UnaryInfC{$\Gamma \vdash proj_1\ p : A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash p : \Sigma (x : A) B$}
+\RightLabel{$(PROJ_2)$}
+\UnaryInfC{$\Gamma \vdash proj_2\ p : B[x \mapsto proj_1\ p]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a_1 : A$}
+\AxiomC{$\Gamma \vdash a_2 : A$}
+\RightLabel{$(ID)$}
+\BinaryInfC{$\Gamma \vdash Id\ A\ a_1\ a_2$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a : A$}
+\RightLabel{$(REFL_I)$}
+\UnaryInfC{$\Gamma \vdash refl : Id\ A\ a\ a$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2 \vdash B$
+\noLine
+\UnaryInf$\fCenter \Gamma, x : A \vdash b : B[x_1 \mapsto x, x_2 \mapsto x, t \mapsto refl]$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash p : Id\ A\ a_1\ a_2$
+\RightLabel{$(J)$}
+\UnaryInf$\fCenter \Gamma \vdash J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p : B[x_1 \mapsto a_1, x_2 \mapsto a_2, t \mapsto p]$
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{$(U)$}
+\UnaryInfC{$\Gamma \vdash U$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : U$}
+\RightLabel{$(EL)$}
+\UnaryInfC{$\Gamma \vdash A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A : U$}
+\AxiomC{$\Gamma, x : A \vdash B : U$}
+\RightLabel{$(U \text{-} PI)$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A : U$}
+\AxiomC{$\Gamma, x : A \vdash B : U$}
+\RightLabel{$(U \text{-} SIGMA)$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B : U$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A : U$}
+\AxiomC{$\Gamma \vdash a_1 : A$}
+\AxiomC{$\Gamma \vdash a_2 : A$}
+\RightLabel{$(U \text{-} ID)$}
+\TrinaryInfC{$\Gamma \vdash Id\ A\ a_1\ a_2 : U$}
+\DisplayProof
+\end{center}
+
+\bigskip
+\caption{Правила вывода $T_I$.}
+\label{table:inf-rules}
+\end{table}
+
+Мы будем работать с теорией типов с $\Pi$ типами, $\Sigma$ типами, $Id$ типами и одной вселенной $U$.
+Разумеется, теория может быть расширена другими конструкциями.
+
+Множество термов определяется индуктивно следующим набором правил:
+\[ Term_I := x\ |\ U\ | \]
+\[ \Pi (x : A) B\ |\ \lambda x. b\ |\ b\ a\ | \]
+\[ \Sigma (x : A) B\ |\ (a, b)\ |\ proj_1\ p\ |\ proj_2\ p\ | \]
+\[ Id\ A\ a_1\ a_2\ |\ refl\ |\ J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p, \]
+где $x$ - переменная, $A$, $B$, $a$, $a_1$, $a_2$, $b$ и $p$ - термы.
+
+На множестве термов очевидным образом определяется операция подстановки.
+Если $b$ - терм, $\rho$ - частичная функция из $Var$ в $Term_I$, то $b[\rho]$ - терм, в котором все свободные вхождения переменных $x$ из домена $\rho$ заменены на $\rho(x)$.
+
+Отношение $\deq$ является наименьшим отношением конгруэнтности (то есть отношением эквивалентности, замкнутым относительно конструкций термов), удовлетворяющим следующим свойствам:
+\begin{itemize}
+\item $(\lambda x. b)\ a \deq b[x \mapsto a]$.
+\item $proj_1\ (a, b) \deq a$.
+\item $proj_2\ (a, b) \deq b$.
+\item $J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a\ a\ refl \deq b[x \mapsto a]$.
+\item $\lambda x. b\ x \deq b$, если $x \notin FV(b)$.
+\item $(proj_1\ p, proj_2\ p) \deq p$.
+\end{itemize}
+
+Контекстуальная категория теории $\C_{T_I}$ определяется следующим образом:
+\[ Ob(\C_{T_I}) = \{ \Gamma \in Ctx_I\ |\ \Gamma \vdash \}. \]
+Если $\Gamma = x_1 : A_1, \ldots x_n : A_n$ и $\Delta = y_1 : B_1, \ldots y_k : B_k$ - пара контекстов,
+то множество $CT_I(\Gamma, \Delta)$ определяется как множество функций $\rho : \{ y_1, \ldots y_k\} \to Term_I$ таких, что
+\[ \Gamma \vdash \rho(y_i) : B_i[\rho |_{y_1, \ldots y_{i-1}}] \text{ для всех } 1 \leq i \leq k. \]
+Тогда множество морфизмов $\C_{T_I}(\Gamma, \Delta)$ определяется как множество $CT_I(\Gamma, \Delta)$ с точностью до отношения эквивалентности $\deq$:
+\[ \rho \deq \rho' \text{ тогда и только тогда, когда } \rho(y_i) \deq \rho'(y_i) \text{ для всех } 1 \leq i \leq k. \]
+Тождественный морфизм $id_\Delta$ определяется как функция $id_\Delta(y_i) = y_i$.
+Если $\rho : \Gamma \to \Delta$, $\tau : \Delta \to E$, где $E = z_1 : C_1, \ldots z_m : C_m$, то композиция $\tau \circ \rho$ определяется как функция $(\tau \circ \rho)(z_i) = \tau(z_i)[\rho]$.
+Отношения типизации и эквивалентности определены так, что эти определения действительно задают категорию.
+
+\section{Вариации теории}
+
+\subsection{Теория типов с явно типизированными конструкторами}
+
+Мы опишем версию теории типов, в которой конструкторы типизированы явно.
+Подобная теория описывается в \cite{luo94}.
+Множество термов задается тем же набором правил за исключением того, что мы заменяем правила $\lambda x. b$, $(a, b)$ и $refl$:
+\[ Term_E := \ldots\ |\ \lambda x : A. b\ |\ (a, b)_{\Sigma (x : A) B}\ |\ refl\ a \]
+
+Правила вывода теории такие же как и раньше за исключением того, что мы заменяем $(LAM_I)$, $(PAIR_I)$ и $(REFL_I)$ следующими правилами:
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A \vdash b : B$}
+\RightLabel{$(LAM_E)$}
+\UnaryInfC{$\Gamma \vdash \lambda x : A. b : \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\AxiomC{$\Gamma \vdash b : B[x \mapsto a]$}
+\RightLabel{$(PAIR_E)$}
+\TrinaryInfC{$\Gamma \vdash (a, b)_{\Sigma (x : A) B} : \Sigma (x : A) B$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\RightLabel{$(REFL_E)$}
+\UnaryInfC{$\Gamma \vdash refl\ a : Id\ A\ a\ a$}
+\DisplayProof
+\end{center}
+\medskip
+
+Отношение $\deq$ определяется так же как и раньше за исключением того, что правила конгруэнтности не распространяются на подтерм $A$ в $\lambda x : A. b$, подтерм $B$ в $(a, b)_{\Sigma (x : A) B}$ и подтерм $a$ в $refl\ a$.
+Другими словами
+\begin{align*}
+& \lambda x : A. b \deq \lambda x : A'. b' \text{ только если } A = A' \text{ и } b \deq b'. \\
+& (a, b)_{\Sigma (x : A) B} \deq (a', b')_{\Sigma (x : A') B'} \text{ только если } a \deq a' \text{, } b \deq b' \text{, } A = A' \text{ и } B = B'. \\
+& refl\ a \deq refl\ a' \text{ только если } a = a'.
+\end{align*}
+
+Контекстуальная категория теории $\C_{T_E}$ определяется аналогичным $\C_{T_I}$ образом.
+Существует очевидная функция $F : Term_E \to Term_I$, удовлетворяющая следуюшим свойствам:
+\begin{align*}
+& F(\lambda x : A. b) = \lambda x. F(b) \\
+& F((a, b)_{\Sigma (x : A) B}) = (F(a), F(b)) \\
+& F(refl\ a) = refl
+\end{align*}
+Эта функция задает функтор $F : \C_{T_E} \to \C_{T_I}$ очевидным образом.
+Позже мы докажем, что этот функтор является эквивалентностью категорий.
+
+\subsection{Двунаправленная теория типов}
+
+Здесь мы определим теорию $T_B$.
+Данная теория имеет то же множество термов, что и предыдущая $Term_E$.
+Вместо отношения $- \vdash - : -$ мы вводим два отношения $- \vdash - \Uparrow -$ и $- \vdash - \Downarrow -$.
+Правила вывода приведены в таблице~\ref{table:bi-rules}.
+
+\begin{table}
+
+\medskip
+\begin{center}
+\AxiomC{}
+\RightLabel{$(CTX_1)$}
+\UnaryInfC{$\vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$ $(CTX_2)$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, $x : A \in \Gamma$ $(VAR)$}
+\UnaryInfC{$\Gamma \vdash x \Uparrow A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \Uparrow A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $A \deq B$ $(CONV)$}
+\BinaryInfC{$\Gamma \vdash a \Downarrow B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\RightLabel{$(PI)$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma, x : A \vdash b \Uparrow B$}
+\RightLabel{$(LAM_E)$}
+\UnaryInfC{$\Gamma \vdash \lambda x : A. b \Uparrow \Pi (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash f \Uparrow C$}
+\AxiomC{$\Gamma \vdash a \Downarrow A$}
+\RightLabel{, $C \red^*_h \Pi (x : A) B$ $(APP)$}
+\BinaryInfC{$\Gamma \vdash f\ a \Uparrow B[x \mapsto a]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\RightLabel{$(SIGMA)$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a \Downarrow A$}
+\AxiomC{$\Gamma, x : A \vdash B$}
+\AxiomC{$\Gamma \vdash b \Downarrow B[x \mapsto a]$}
+\RightLabel{$(PAIR_E)$}
+\TrinaryInfC{$\Gamma \vdash (a, b)_{\Sigma (x : A) B} \Uparrow \Sigma (x : A) B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p \Uparrow C$}
+\RightLabel{, $C \red^*_h \Sigma (x : A) B$ $(PROJ_1)$}
+\UnaryInfC{$\Gamma \vdash proj_1\ p \Uparrow A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p \Uparrow C$}
+\RightLabel{, $C \red^*_h \Sigma (x : A) B$ $(PROJ_2)$}
+\UnaryInfC{$\Gamma \vdash proj_2\ p \Uparrow B[x \mapsto proj_1\ p]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a_1 \Downarrow A$}
+\AxiomC{$\Gamma \vdash a_2 \Downarrow A$}
+\RightLabel{$(ID)$}
+\BinaryInfC{$\Gamma \vdash Id\ A\ a_1\ a_2$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a \Uparrow A$}
+\RightLabel{$(REFL_E)$}
+\UnaryInfC{$\Gamma \vdash refl\ a \Uparrow Id\ A\ a\ a$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{0.5pt}
+\Axiom$\fCenter \Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2 \vdash B$
+\noLine
+\UnaryInf$\fCenter \Gamma, x : A \vdash b \Downarrow B[x_1 \mapsto x, x_2 \mapsto x, t \mapsto refl\ x]$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash p \Downarrow Id\ A\ a_1\ a_2$
+\RightLabel{$(J)$}
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \Gamma \vdash J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p \Uparrow B[x_1 \mapsto a_1, x_2 \mapsto a_2, t \mapsto p]$
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{$(U)$}
+\UnaryInfC{$\Gamma \vdash U$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A \Downarrow U$}
+\RightLabel{$(EL)$}
+\UnaryInfC{$\Gamma \vdash A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \Downarrow U$}
+\AxiomC{$\Gamma, x : A \vdash B \Downarrow U$}
+\RightLabel{$(U \text{-} PI)$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B \Uparrow U$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \Downarrow U$}
+\AxiomC{$\Gamma, x : A \vdash B \Downarrow U$}
+\RightLabel{$(U \text{-} SIGMA)$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B \Uparrow U$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \Downarrow U$}
+\AxiomC{$\Gamma \vdash a_1 \Downarrow A$}
+\AxiomC{$\Gamma \vdash a_2 \Downarrow A$}
+\RightLabel{$(U \text{-} ID)$}
+\TrinaryInfC{$\Gamma \vdash Id\ A\ a_1\ a_2 \Uparrow U$}
+\DisplayProof
+\end{center}
+
+\bigskip
+\caption{Правила вывода $T_B$.}
+\label{table:bi-rules}
+\end{table}
+
+Отношение $\red^*_h$ определяется как рефллексивное транзитивное замыкание отношения $\red_h$:
+\begin{itemize}
+\item Если $b \red_h b'$, то $b\ a \red_h b'\ a$.
+\item $(\lambda x : A. b)\ a \red_h b[x \mapsto a]$.
+\item Если $p \red_h p'$, то $proj_1\ p \red_h proj_1\ p'$.
+\item Если $p \red_h p'$, то $proj_2\ p \red_h proj_2\ p'$.
+\item $proj_1\ (a, b)_{\Sigma (x : A) B} \red_h a$.
+\item $proj_2\ (a, b)_{\Sigma (x : A) B} \red_h b$.
+\item Если $p \red_h p'$, то $J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p \red_h J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p'$.
+\item $J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a\ a\ (refl\ a) \red_h b[x \mapsto a]$.
+\end{itemize}
+
+Контекстуальная категория $\C_{T_B}$ данной теории определяется аналогичным $\C_{T_I}$ образом, где в определении морфизмов вместо отношения $- \vdash - : -$ используется отношение $- \vdash - \Downarrow -$.
+
+\begin{prop}
+Верны следующие утверждения:
+\begin{itemize}
+\item Если в $T_B$ выводится $\Gamma \vdash$, то в $T_E$ также выводится $\Gamma \vdash$.
+\item Если в $T_B$ выводится $\Gamma \vdash A$, то в $T_E$ также выводится $\Gamma \vdash A$.
+\item Если в $T_B$ выводится $\Gamma \vdash a \Uparrow A$ или $\Gamma \vdash a \Downarrow A$, то в $T_E$ выводится $\Gamma \vdash a : A$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+Элементарная индукция по выводу.
+\end{proof}
+
+\begin{prop}
+Верны следующие утверждения:
+\begin{itemize}
+\item Если в $T_E$ выводится $\Gamma \vdash$, то в $T_B$ также выводится $\Gamma \vdash$.
+\item Если в $T_E$ выводится $\Gamma \vdash A$, то в $T_B$ также выводится $\Gamma \vdash A$.
+\item Если в $T_E$ выводится $\Gamma \vdash a : A$, то в $T_B$ выводится $\Gamma \vdash a \Downarrow A$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+TODO
+\end{proof}
+
+Предыдущие два утверждения доказывают, что отнашения $- \vdash$, $- \vdash -$ и $- \vdash - : -$ в $T_E$ и $- \vdash$, $- \vdash -$ и $- \vdash - \Downarrow -$ в $T_B$ совпадают.
+Отсюда следует, что категории $\C_{T_E}$ и $\C_{T_B}$ совпадают.
+Отношение $- \vdash - \Uparrow -$ является вспомогательным.
+Из правила $(CONV)$ следует, что оно является подмножеством $- \vdash - \Downarrow -$,
+и следующее утверждение показывает, что для любых $\Gamma$ и $a$ существует максимум один терм $A$ такой, что $\Gamma \vdash a \Uparrow A$.
+Таким образом, $\Gamma \vdash a \Uparrow A$ означает, что $A$ - это в некотором смысле канонический тип $a$.
+
+\begin{prop}
+Если $\Gamma \vdash a \Uparrow A_1$ и $\Gamma \vdash a \Uparrow A_2$, то $A_1 = A_2$.
+\end{prop}
+\begin{proof}
+Заметим, что если $a \red_h b_1$ и $a \red_h b_2$, то $b_1 = b_2$.
+Следовательно, если термы $b_1$ и $b_2$ находятся в $\red_h$-нормальной форме и $a \red^*_h b_1$ и $a \red^*_h b_2$, то $b_1 = b_2$.
+При этом термы вида $\Sigma (x : A) B$ и $\Pi (x : A) B$ находятся в $\red_h$-нормальной форме.
+
+Используя эти замечания, утверждение элементарно доказывается индукцией по выводу.
+\end{proof}
+
+\section{Эквивалентность теорий}
+
+Мы уже определили функтор $\C_{T_I} \to \C_{T_E}$ (и, следовательно, $\C_{T_I} \to \C_{T_B}$).
+Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная конструкция.
+Мы определим следующие отношения:
+\begin{itemize}
+\item $\ll - \vdash \rr = - \vdash$ на множестве $Ctx_I \times Ctx_E$.
+\item $\ll - \vdash - \rr = - \vdash -$ на множестве $Ctx_I \times Term_I \times Ctx_E \times Term_E$.
+\item $\ll - \vdash - : - \rr = - \vdash - \Uparrow -$ на множестве $Ctx_I \times Term_I \times Term_I \times Ctx_E \times Term_E \times Term_E$.
+\item $\ll - \vdash - : - \rr = - \vdash - \Downarrow -$ на множестве $Ctx_I \times Term_I \times Term_I \times Ctx_E \times Term_E \times Term_E$.
+\end{itemize}
+
+Отношения определяются индуктивным образом:
+
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\ll \vdash \rr = \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\ll \Gamma, x : A \vdash \rr = \Gamma', x : A' \vdash$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash \rr = \Gamma' \vdash$}
+\RightLabel{, $x : A \in \Gamma$, $x : A' \in \Gamma'$}
+\UnaryInfC{$\ll \Gamma \vdash x : A \rr = \Gamma' \vdash x \Uparrow A'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$}
+\AxiomC{$\ll \Gamma \vdash B \rr = \Gamma' \vdash B'$}
+\RightLabel{, $A \red^*_h B$}
+\BinaryInfC{$\ll \Gamma \vdash a : B \rr = \Gamma' \vdash a' \Uparrow A'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$}
+\AxiomC{$\ll \Gamma \vdash B \rr = \Gamma' \vdash B'$}
+\RightLabel{, $A \deq B$}
+\BinaryInfC{$\ll \Gamma \vdash a : B \rr = \Gamma' \vdash a' \Downarrow B'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$}
+\AxiomC{$\ll \Gamma, x : A \vdash B \rr = \Gamma', x : A' \vdash B'$}
+\BinaryInfC{$\ll \Gamma \vdash \Pi (x : A) B \rr = \Gamma' \vdash \Pi (x : A') B'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma, x : A \vdash b : B \rr = \Gamma', x : A' \vdash b' \Uparrow B'$}
+\UnaryInfC{$\ll \Gamma \vdash \lambda x. b : \Pi (x : A) B \rr = \Gamma' \vdash \lambda x : A'. b' \Uparrow \Pi (x : A') B'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash f : \Pi (x : A) B \rr = \Gamma' \vdash f' \Uparrow C'$}
+\AxiomC{$\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Downarrow A'$}
+\RightLabel{, $C' \red^*_h \Pi (x : A') B'$}
+\BinaryInfC{$\ll \Gamma \vdash f\ a : B[x \mapsto a] \rr = \Gamma' \vdash f'\ a' \Uparrow B'[x \mapsto a']$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$}
+\AxiomC{$\ll \Gamma, x : A \vdash B \rr = \Gamma', x : A' \vdash B'$}
+\BinaryInfC{$\ll \Gamma \vdash \Sigma (x : A) B \rr = \Gamma' \vdash \Sigma (x : A') B'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{0.5pt}
+\Axiom$\fCenter \ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Downarrow A'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma, x : A \vdash B \rr = \Gamma', x : A' \vdash B'$
+\noLine
+\UnaryInf$\fCenter \ll \Gamma \vdash b : B[x \mapsto a] \rr = \Gamma' \vdash b' \Downarrow B'[x \mapsto a']$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \ll \Gamma \vdash (a, b) : \Sigma (x : A) B \rr = \Gamma' \vdash (a', b')_{\Sigma (x : A') B'} \Uparrow \Sigma (x : A') B'$
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash p : \Sigma (x : A) B \rr = \Gamma' \vdash p' \Uparrow C'$}
+\RightLabel{, $C' \red^*_h \Sigma (x : A') B'$}
+\UnaryInfC{$\ll \Gamma \vdash proj_1\ p : A \rr = \Gamma' \vdash proj_1\ p' \Uparrow A'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash p : \Sigma (x : A) B \rr = \Gamma' \vdash p' \Uparrow C'$}
+\RightLabel{, $C' \red^*_h \Sigma (x : A') B'$}
+\UnaryInfC{$\ll \Gamma \vdash proj_2\ p : B[x \mapsto proj_1\ p] \rr = \Gamma' \vdash proj_2\ p' \Uparrow B'[x \mapsto proj_1\ p']$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash a_1 : A \rr = \Gamma' \vdash a_1' \Downarrow A'$}
+\AxiomC{$\ll \Gamma \vdash a_2 : A \rr = \Gamma' \vdash a_2' \Downarrow A'$}
+\BinaryInfC{$\ll \Gamma \vdash Id\ A\ a_1\ a_2 \rr = \Gamma' \vdash Id\ A'\ a_1'\ a_2'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$}
+\UnaryInfC{$\ll \Gamma \vdash refl : Id\ A\ a\ a \rr = \Gamma' \vdash refl\ a' \Uparrow Id\ A'\ a'\ a'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{0.5pt}
+\Axiom$\ll \fCenter \Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2 \vdash B \rr = \Gamma', x_1 : A', x_2 : A', t : Id\ A'\ x_1\ x_2 \vdash B'$
+\noLine
+\UnaryInf$\ll \fCenter \Gamma, x : A \vdash b : B[x_i \mapsto x, t \mapsto refl] \rr = \Gamma', x : A' \vdash b' \Downarrow B[x_i \mapsto x, t \mapsto refl\ x]$
+\noLine
+\UnaryInf$\ll \fCenter \Gamma \vdash p : Id\ A\ a_1\ a_2 \rr = \Gamma' \vdash p' \Downarrow Id\ A'\ a_1'\ a_2'$
+\def\extraVskip{2pt}
+\UnaryInf$\ll \fCenter \Gamma \vdash J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p : B[x_1 \mapsto a_1, x_2 \mapsto a_2, t \mapsto p] \rr =$
+\def\extraVskip{0.5pt}
+\noLine
+\UnaryInf$\fCenter \Gamma' \vdash J\ (\lambda x_1 x_2 t. B')\ (\lambda x. b')\ a_1'\ a_2'\ p' \Uparrow B'[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p']$
+\def\extraVskip{2pt}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash \rr = \Gamma' \vdash$}
+\UnaryInfC{$\ll \Gamma \vdash U \rr = \Gamma' \vdash U$}
+\DisplayProof
+\quad
+\AxiomC{$\ll \Gamma \vdash A : U \rr = \Gamma' \vdash A' \Downarrow U$}
+\UnaryInfC{$\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash A : U \rr = \Gamma' \vdash A' \Downarrow U $}
+\AxiomC{$\ll \Gamma, x : A \vdash B : U \rr = \Gamma', x : A' \vdash B' \Downarrow U$}
+\BinaryInfC{$\ll \Gamma \vdash \Pi (x : A) B : U \rr = \Gamma' \vdash \Pi (x : A') B' \Uparrow U$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash A : U \rr = \Gamma' \vdash A' \Downarrow U $}
+\AxiomC{$\ll \Gamma, x : A \vdash B : U \rr = \Gamma', x : A' \vdash B' \Downarrow U$}
+\BinaryInfC{$\ll \Gamma \vdash \Sigma (x : A) B : U \rr = \Gamma' \vdash \Sigma (x : A') B' \Uparrow U$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\ll \Gamma \vdash A : U \rr = \Gamma' \vdash A' \Downarrow U $}
+\AxiomC{$\ll \Gamma \vdash a_1 : A \rr = \Gamma' \vdash a_1' \Downarrow A'$}
+\AxiomC{$\ll \Gamma \vdash a_2 : A \rr = \Gamma' \vdash a_2' \Downarrow A'$}
+\TrinaryInfC{$\ll \Gamma \vdash Id\ A\ a_1\ a_2 : U \rr = \Gamma' \vdash Id\ A'\ a_1'\ a_2' \Uparrow U$}
+\DisplayProof
+\end{center}
+\bigskip
+
+Одна из проблем теории $T_I$, которую призвана исправить теория $T_E$ заключается в том, что тип терма не определяется по нему однозначно.
+Однако в некоторых случаях это может быть верно, как показывает следующее утверждение.
+
+\begin{prop}
+Если $\Gamma \vdash a : A_1$, $\Gamma \vdash a : A_2$ в $T_I$, $a$ находится в нормальной форме и не является конструктором (то есть не равен $\lambda x. b$, $(a, b)$ и $refl$), то $A_1 \deq A_2$.
+\end{prop}
+\begin{proof}
+Доказательство индукцией по выводу $\Gamma \vdash a : A_i$.
+Если один из выводов заканчивается правилом $(CONV)$, то утверждение верно по индукционной гипотезе.
+В противном случае они должны заканчиваться одним и тем же правилом.
+Случаи правил для контекстов, типов и вселенных, а так же правила $(VAR)$ и $(J)$ очевидны.
+Случаи $(LAM_I)$, $(PAIR_I)$ и $(REFL_I)$ невозможны, так как мы предположили, что терм не является конструктором.
+
+Осталось рассмотреть случаи $(APP)$, $(PROJ_1)$ и $(PROJ_2)$.
+В случае аппликации $f\ a$ терм $f$ не может быть конструктором, следовательно к нему применима индукционная гипотеза, следовательно его тип $\Pi (x : A) B$ определяется однозначно с точностью до отношения $\deq$.
+По конфлюэнтности следует, что $B$ и, следовательно, $B[x \mapsto a]$ также однозначно определены.
+Случаи $(PROJ_1)$ и $(PROJ_2)$ разбираются аналогично.
+\end{proof}
+
+Теперь мы хотим доказать, что отношения интерпретации определяют функции.
+\begin{prop}
+Верны следующие утверждения:
+\begin{itemize}
+\item Если $\ll \Gamma \rr = \Gamma_1$ и $\ll \Gamma \rr = \Gamma_2$, то $\Gamma_1 = \Gamma_2$.
+\item Если $\ll \Gamma \vdash A \rr = \Gamma_1 \vdash A_1$ и $\ll \Gamma \vdash A \rr = \Gamma_2 \vdash A_2$, то $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$.
+\item Если $\ll \Gamma \vdash a : A \rr = \Gamma_1 \vdash a_1 \Uparrow A_1$, $\ll \Gamma \vdash a : A \rr = \Gamma_2 \vdash a_2 \Uparrow A_2$ и $a$ находится в нормальной форме, то $\Gamma_1 = \Gamma_2$, $a_1 = a_2$ и $A_1 = A_2$.
+\item Если $\ll \Gamma \vdash a : A_1 \rr = \Gamma_1 \vdash a_1 \Downarrow A'_1$, $\ll \Gamma \vdash a : A_2 \rr = \Gamma_2 \vdash a_2 \Downarrow A'_2$, $a$ находится в нормальной форме и $A_1 \deq A_2$, то $\Gamma_1 = \Gamma_2$, $a_1 = a_2$ и $A_1' \deq A_2'$.
+\end{itemize}
+\end{prop}
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
