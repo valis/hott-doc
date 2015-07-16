@@ -102,10 +102,9 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A$}
 \AxiomC{$\Gamma, x : A \vdash B$}
 \RightLabel{$(PI)$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\UnaryInfC{$\Gamma \vdash \Pi (x : A) B$}
 \DisplayProof
 \end{center}
 
@@ -125,10 +124,9 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A$}
 \AxiomC{$\Gamma, x : A \vdash B$}
 \RightLabel{$(SIGMA)$}
-\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
+\UnaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
 \DisplayProof
 \end{center}
 
@@ -356,10 +354,9 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A$}
 \AxiomC{$\Gamma, x : A \vdash B$}
 \RightLabel{$(PI)$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B$}
+\UnaryInfC{$\Gamma \vdash \Pi (x : A) B$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma, x : A \vdash b \Uparrow B$}
@@ -379,10 +376,9 @@
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A$}
 \AxiomC{$\Gamma, x : A \vdash B$}
 \RightLabel{$(SIGMA)$}
-\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
+\UnaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
 \DisplayProof
 \end{center}
 
@@ -580,7 +576,7 @@ TODO
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$}
 \AxiomC{$\ll \Gamma \vdash B \rr = \Gamma' \vdash B'$}
-\RightLabel{, $A \red^*_h B$}
+\RightLabel{, $A \red_h^* B$}
 \BinaryInfC{$\ll \Gamma \vdash a : B \rr = \Gamma' \vdash a' \Uparrow A'$}
 \DisplayProof
 \end{center}
@@ -589,16 +585,15 @@ TODO
 \begin{center}
 \AxiomC{$\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$}
 \AxiomC{$\ll \Gamma \vdash B \rr = \Gamma' \vdash B'$}
-\RightLabel{, $A \deq B$}
+\RightLabel{, $A \deq B$ и $A' \deq B'$}
 \BinaryInfC{$\ll \Gamma \vdash a : B \rr = \Gamma' \vdash a' \Downarrow B'$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$}
 \AxiomC{$\ll \Gamma, x : A \vdash B \rr = \Gamma', x : A' \vdash B'$}
-\BinaryInfC{$\ll \Gamma \vdash \Pi (x : A) B \rr = \Gamma' \vdash \Pi (x : A') B'$}
+\UnaryInfC{$\ll \Gamma \vdash \Pi (x : A) B \rr = \Gamma' \vdash \Pi (x : A') B'$}
 \DisplayProof
 \end{center}
 
@@ -620,9 +615,8 @@ TODO
 
 \medskip
 \begin{center}
-\AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$}
 \AxiomC{$\ll \Gamma, x : A \vdash B \rr = \Gamma', x : A' \vdash B'$}
-\BinaryInfC{$\ll \Gamma \vdash \Sigma (x : A) B \rr = \Gamma' \vdash \Sigma (x : A') B'$}
+\UnaryInfC{$\ll \Gamma \vdash \Sigma (x : A) B \rr = \Gamma' \vdash \Sigma (x : A') B'$}
 \DisplayProof
 \end{center}
 
@@ -724,6 +718,16 @@ TODO
 \end{center}
 \bigskip
 
+Заметим, что очевидно верны следующие факты:
+\begin{itemize}
+\item Если $\ll \Gamma \vdash \rr = \Gamma' \vdash$, то $\Gamma' \vdash$.
+\item Если $\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$, то $\Gamma' \vdash A'$.
+\item Если $\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$, то $\Gamma' \vdash a' \Uparrow A'$.
+\item Если $\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Downarrow A'$, то $\Gamma' \vdash a' \Downarrow A'$.
+\end{itemize}
+Нам понадобится несколько вспомогательных утверждений об отношении интерпретации.
+
+\begin{comment}
 Одна из проблем теории $T_I$, которую призвана исправить теория $T_E$ заключается в том, что тип терма не определяется по нему однозначно.
 Однако в некоторых случаях это может быть верно, как показывает следующее утверждение.
 
@@ -744,15 +748,33 @@ TODO
 \end{proof}
 
 Теперь мы хотим доказать, что отношения интерпретации определяют функции.
-\begin{prop}
+\end{comment}
+
+\begin{lem}
 Верны следующие утверждения:
 \begin{itemize}
 \item Если $\ll \Gamma \rr = \Gamma_1$ и $\ll \Gamma \rr = \Gamma_2$, то $\Gamma_1 = \Gamma_2$.
 \item Если $\ll \Gamma \vdash A \rr = \Gamma_1 \vdash A_1$ и $\ll \Gamma \vdash A \rr = \Gamma_2 \vdash A_2$, то $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$.
-\item Если $\ll \Gamma \vdash a : A \rr = \Gamma_1 \vdash a_1 \Uparrow A_1$, $\ll \Gamma \vdash a : A \rr = \Gamma_2 \vdash a_2 \Uparrow A_2$ и $a$ находится в нормальной форме, то $\Gamma_1 = \Gamma_2$, $a_1 = a_2$ и $A_1 = A_2$.
-\item Если $\ll \Gamma \vdash a : A_1 \rr = \Gamma_1 \vdash a_1 \Downarrow A'_1$, $\ll \Gamma \vdash a : A_2 \rr = \Gamma_2 \vdash a_2 \Downarrow A'_2$, $a$ находится в нормальной форме и $A_1 \deq A_2$, то $\Gamma_1 = \Gamma_2$, $a_1 = a_2$ и $A_1' \deq A_2'$.
+\item Если $\ll \Gamma \vdash a : A_1 \rr = \Gamma_1 \vdash a_1 \Uparrow A_1'$, $\ll \Gamma \vdash a : A_2 \rr = \Gamma_2 \vdash a_2 \Uparrow A_2'$, $a$ находится в нормальной форме
+    и либо существует $C$ такой, что $A_1 \red_h^* C$ и $A_2 \red_h^* C$, либо $a$ не является конструктором (то есть не равен $\lambda x. b$, $(c, b)$ и $refl$), то $\Gamma_1 = \Gamma_2$, $a_1 = a_2$ и $A_1' = A_2'$.
+Более того, если 
+\item Если $\ll \Gamma \vdash a : A \rr = \Gamma_1 \vdash a_1 \Downarrow A_1$, $\ll \Gamma \vdash a : A \rr = \Gamma_2 \vdash a_2 \Downarrow A_2$ и $a$ находится в нормальной форме, то $\Gamma_1 = \Gamma_2$, $a_1 = a_2$ и $A_1 = A_2$.
 \end{itemize}
-\end{prop}
+\end{lem}
+\begin{proof}
+\end{proof}
+
+\begin{lem}
+Верны следующие утверждения:
+\begin{itemize}
+\item Если $\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$, то $\ll \Gamma \vdash \rr = \Gamma' \vdash$.
+\item Если $\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Downarrow A'$, то $\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$ и $\ll \Gamma \vdash \rr = \Gamma' \vdash$.
+\item Если $\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$, то $\ll \Gamma \vdash \rr = \Gamma' \vdash$.
+\end{itemize}
+\end{lem}
+\begin{proof}
+Элементарная индукция по выводу.
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
