@@ -298,14 +298,7 @@
 \end{center}
 \medskip
 
-Отношение $\deq$ определяется так же как и раньше за исключением того, что правила конгруэнтности не распространяются на подтерм $A$ в $\lambda x : A. b$, подтерм $B$ в $(a, b)_{\Sigma (x : A) B}$ и подтерм $a$ в $refl\ a$.
-Другими словами
-\begin{align*}
-& \lambda x : A. b \deq \lambda x : A'. b' \text{ только если } A = A' \text{ и } b \deq b'. \\
-& (a, b)_{\Sigma (x : A) B} \deq (a', b')_{\Sigma (x : A') B'} \text{ только если } a \deq a' \text{, } b \deq b' \text{, } A = A' \text{ и } B = B'. \\
-& refl\ a \deq refl\ a' \text{ только если } a = a'.
-\end{align*}
-
+Отношение $\deq$ определяется так же как и раньше.
 Контекстуальная категория теории $\C_{T_E}$ определяется аналогичным $\C_{T_I}$ образом.
 Существует очевидная функция $F : Term_E \to Term_I$, удовлетворяющая следуюшим свойствам:
 \begin{align*}
@@ -425,14 +418,18 @@
 \medskip
 \begin{center}
 \def\extraVskip{0.5pt}
-\Axiom$\fCenter \Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2 \vdash B$
+\Axiom$\Gamma \fCenter , x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2 \vdash B$
 \noLine
-\UnaryInf$\fCenter \Gamma, x : A \vdash b \Downarrow B[x_1 \mapsto x, x_2 \mapsto x, t \mapsto refl\ x]$
+\UnaryInf$\Gamma \fCenter , x : A \vdash b \Downarrow B[x_1 \mapsto x, x_2 \mapsto x, t \mapsto refl\ x]$
 \noLine
-\UnaryInf$\fCenter \Gamma \vdash p \Downarrow Id\ A\ a_1\ a_2$
-\RightLabel{$(J)$}
+\UnaryInf$\Gamma \fCenter \vdash p \Uparrow C$
+\RightLabel{, $C \red_h^* Id\ A\ a_1'\ a_2'$, $a_i \deq a_i'$ $(J)$}
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter \Gamma \vdash J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p \Uparrow B[x_1 \mapsto a_1, x_2 \mapsto a_2, t \mapsto p]$
+\UnaryInf$\Gamma \fCenter \vdash J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p \Uparrow$
+\def\extraVskip{0.5pt}
+\noLine
+\UnaryInf$\fCenter B[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p]$
+\def\extraVskip{2pt}
 \DisplayProof
 \end{center}
 
@@ -541,6 +538,44 @@ TODO
 \section{Эквивалентность теорий}
 
 Мы уже определили функтор $\C_{T_I} \to \C_{T_E}$ (и, следовательно, $\C_{T_I} \to \C_{T_B}$).
+Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная частичная функция $G : Ctx_E \times Term_I \times (Term_E \amalg \{ * \}) \to Term_E \times (Term_E \amalg \{ * \})$.
+Мы будем писать $term(\Gamma, a, A)$ и $type(\Gamma, a, A)$ для первой и второй проекции $G(\Gamma, a, A)$ соответственно.
+Функция $G$ определяется рекурсией по второму аргументу следующим образом:
+\begin{itemize}
+\item $G(\Gamma, x, \_) = (x, A)$, если $x : A \in \Gamma$.
+\item $G(\Gamma, \lambda x. b, C) = (\lambda x : A. b', \Pi (x : A) B')$, если \\
+    $C \red_h^* \Pi (x : A) B$ и $G((\Gamma, x : A), b, B) = (b', B')$.
+\item $G(\Gamma, f\ a, \_) = (f'\ a', B[x \mapsto a'])$, если \\
+    $G(\Gamma, f, *) = (f', C)$, $C \red_h^* \Pi (x : A) B$ и $term(\Gamma, a, A) = a'$.
+\item $G(\Gamma, (a, b), C) = ((a', b')_{\Sigma (x : A) B}, \Sigma (x : A) B)$, если \\
+    $C \red_h^* \Sigma (x : A) B$, $term(\Gamma, a, A) = a'$ и $term(\Gamma, b, B[x := a']) = b'$.
+\item $G(\Gamma, proj_1\ p, \_) = (proj_1\ p', A)$, если \\
+    $G(\Gamma, p, *) = (p', C)$ и $C \red_h^* \Sigma (x : A) B$.
+\item $G(\Gamma, proj_2\ p, \_) = (proj_2\ p', B[x \mapsto proj_1\ p'])$, если \\
+    $G(\Gamma, p, *) = (p', C)$ и $C \red_h^* \Sigma (x : A) B$.
+\item $G(\Gamma, refl, C) = (refl\ a, Id\ A\ a\ a)$, если $C \red_h^* Id\ A\ a\ a'$.
+\item $G(\Gamma, J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p, \_) = (J\ (\lambda x_1 x_2 t. B')\ (\lambda x. b')\ a_1'\ a_2'\ p', B[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p'])$, если
+    $G(\Gamma, p, *) = (p', C)$,
+    $C \red_h^* Id\ A\ a_1'\ a_2'$, \\
+    $term((\Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2), B, *) = B'$ и \\
+    $term((\Gamma, x : A), b, B'[x_1, \mapsto x, x_2 \mapsto x, t \mapsto refl\ x]) = b'$.
+\item $G(\Gamma, U, \_) = (U, *)$.
+\item $G(\Gamma, \Pi (x : A) B, \_) = (\Pi (x : A') B', *)$, если \\
+    $term(\Gamma, A, *) = A'$ и $term((\Gamma, x : A'), B, *) = B'$.
+\item $G(\Gamma, \Sigma (x : A) B, \_) = (\Pi (x : A') B', *)$, если \\
+    $term(\Gamma, A, *) = A'$ и $term((\Gamma, x : A'), B, *) = B'$.
+\item $G(\Gamma, Id\ A\ a_1\ a_2, \_) = (Id\ A'\ a_1'\ a_2', *)$, если \\
+    $term(\Gamma, A, *) = A'$, $term(\Gamma, a_1, A') = a_1'$ и $term(\Gamma, a_2, A') = a_2'$.
+\end{itemize}
+
+Теперь докажем ряд свойств функции $G$.
+Если $A_1, A_2 \in Term_E \amalg \{ * \}$, то мы будем писать $A_1 \deq A_2$ в случае, когда $A_1 = A_2 = *$ или $A_1, A_2 \in Term_E$ и $A_1 \deq A_2$.
+
+\begin{prop}
+Если $A_1 \deq A_2$, $a_1 \deq a_2$ и $G(\Gamma, a_i, A_i)$ определены, то $term(\Gamma, a_1, A_1) \deq term(\Gamma, a_2, A_2)$ и $A_i \deq type(\Gamma, a_i, A_i)$.
+\end{prop}
+
+\begin{comment}
 Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная конструкция.
 Мы определим следующие отношения:
 \begin{itemize}
@@ -726,6 +761,7 @@ TODO
 \item Если $\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Downarrow A'$, то $\Gamma' \vdash a' \Downarrow A'$.
 \end{itemize}
 Нам понадобится несколько вспомогательных утверждений об отношении интерпретации.
+\end{comment}
 
 \begin{comment}
 Одна из проблем теории $T_I$, которую призвана исправить теория $T_E$ заключается в том, что тип терма не определяется по нему однозначно.
@@ -750,6 +786,7 @@ TODO
 Теперь мы хотим доказать, что отношения интерпретации определяют функции.
 \end{comment}
 
+\begin{comment}
 \begin{lem}
 Верны следующие утверждения:
 \begin{itemize}
@@ -775,6 +812,7 @@ TODO
 \begin{proof}
 Элементарная индукция по выводу.
 \end{proof}
+\end{comment}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
