@@ -63,258 +63,28 @@
 
 \section{Введение}
 
-\section{Теория типов Мартин-Лёфа}
+\section{Двунаправленная теория типов}
 
-Теория типов Мартин-Лёфа $T_I$ состоит из счетного множества переменных $Var$, множества термов $Term_I$, отношения эквивалентности на нем $\deq$ и трех отношений $- \vdash$, $- \vdash -$, $- \vdash - : - $.
-Множество контекстов $Ctx_I$ определяется следующим образом:
-\[ Ctx_I = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_i \in Var, A_i \in Term_I \} \]
-Отношения $- \vdash$, $- \vdash -$ и $- \vdash - : -$ заданы на множествах $Ctx_I$, $Ctx_I \times Term_I$ и $Ctx_I \times Term_I \times Term_I$ соответственно.
-Они определяются в таблице~\ref{table:inf-rules}.
-
-\begin{table}
-
-\medskip
-\begin{center}
-\AxiomC{}
-\RightLabel{$(CTX_1)$}
-\UnaryInfC{$\vdash$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A$}
-\RightLabel{, $x \notin \Gamma$ $(CTX_2)$}
-\UnaryInfC{$\Gamma, x : A \vdash$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash$}
-\RightLabel{, $x : A \in \Gamma$ $(VAR)$}
-\UnaryInfC{$\Gamma \vdash x : A$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash B$}
-\RightLabel{, $A \deq B$ $(CONV)$}
-\BinaryInfC{$\Gamma \vdash a : B$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\RightLabel{$(PI)$}
-\UnaryInfC{$\Gamma \vdash \Pi (x : A) B$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : A \vdash b : B$}
-\RightLabel{$(LAM_I)$}
-\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
-\AxiomC{$\Gamma \vdash a : A$}
-\RightLabel{$(APP)$}
-\BinaryInfC{$\Gamma \vdash f\ a : B[x \mapsto a]$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\RightLabel{$(SIGMA)$}
-\UnaryInfC{$\Gamma \vdash \Sigma (x : A) B$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\AxiomC{$\Gamma \vdash b : B[x \mapsto a]$}
-\RightLabel{$(PAIR_I)$}
-\TrinaryInfC{$\Gamma \vdash (a, b) : \Sigma (x : A) B$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash p : \Sigma (x : A) B$}
-\RightLabel{$(PROJ_1)$}
-\UnaryInfC{$\Gamma \vdash proj_1\ p : A$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash p : \Sigma (x : A) B$}
-\RightLabel{$(PROJ_2)$}
-\UnaryInfC{$\Gamma \vdash proj_2\ p : B[x \mapsto proj_1\ p]$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a_1 : A$}
-\AxiomC{$\Gamma \vdash a_2 : A$}
-\RightLabel{$(ID)$}
-\BinaryInfC{$\Gamma \vdash Id\ A\ a_1\ a_2$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash a : A$}
-\RightLabel{$(REFL_I)$}
-\UnaryInfC{$\Gamma \vdash refl : Id\ A\ a\ a$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2 \vdash B$
-\noLine
-\UnaryInf$\fCenter \Gamma, x : A \vdash b : B[x_1 \mapsto x, x_2 \mapsto x, t \mapsto refl]$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash p : Id\ A\ a_1\ a_2$
-\RightLabel{$(J)$}
-\UnaryInf$\fCenter \Gamma \vdash J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p : B[x_1 \mapsto a_1, x_2 \mapsto a_2, t \mapsto p]$
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash$}
-\RightLabel{$(U)$}
-\UnaryInfC{$\Gamma \vdash U$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash A : U$}
-\RightLabel{$(EL)$}
-\UnaryInfC{$\Gamma \vdash A$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A : U$}
-\AxiomC{$\Gamma, x : A \vdash B : U$}
-\RightLabel{$(U \text{-} PI)$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A : U$}
-\AxiomC{$\Gamma, x : A \vdash B : U$}
-\RightLabel{$(U \text{-} SIGMA)$}
-\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B : U$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A : U$}
-\AxiomC{$\Gamma \vdash a_1 : A$}
-\AxiomC{$\Gamma \vdash a_2 : A$}
-\RightLabel{$(U \text{-} ID)$}
-\TrinaryInfC{$\Gamma \vdash Id\ A\ a_1\ a_2 : U$}
-\DisplayProof
-\end{center}
-
-\bigskip
-\caption{Правила вывода $T_I$.}
-\label{table:inf-rules}
-\end{table}
+Здесь мы определим теорию $T_B$.
+Как и обычная теория типов Мартин-Лёфа, $T_B$ состоит из счетного множества переменных $Var$, множества термов $Term_B$, отношения эквивалентности на нем $\deq$.
 
 Мы будем работать с теорией типов с $\Pi$ типами, $\Sigma$ типами, $Id$ типами и одной вселенной $U$.
 Разумеется, теория может быть расширена другими конструкциями.
 
 Множество термов определяется индуктивно следующим набором правил:
 \[ Term_I := x\ |\ U\ | \]
-\[ \Pi (x : A) B\ |\ \lambda x. b\ |\ b\ a\ | \]
-\[ \Sigma (x : A) B\ |\ (a, b)\ |\ proj_1\ p\ |\ proj_2\ p\ | \]
-\[ Id\ A\ a_1\ a_2\ |\ refl\ |\ J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p, \]
+\[ \Pi (x : A) B\ |\ \lambda x : A. b\ |\ b\ a\ | \]
+\[ \Sigma (x : A) B\ |\ (a, b)_{\Sigma (x : A) B}\ |\ proj_1\ p\ |\ proj_2\ p\ | \]
+\[ Id\ A\ a_1\ a_2\ |\ refl\ a\ |\ J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p, \]
 где $x$ - переменная, $A$, $B$, $a$, $a_1$, $a_2$, $b$ и $p$ - термы.
 
-На множестве термов очевидным образом определяется операция подстановки.
-Если $b$ - терм, $\rho$ - частичная функция из $Var$ в $Term_I$, то $b[\rho]$ - терм, в котором все свободные вхождения переменных $x$ из домена $\rho$ заменены на $\rho(x)$.
+В отличие от теории типов Мартин-Лёфа, все конструкторы типизированы.
+Множество контекстов $Ctx_I$ определяется следующим образом:
+\[ Ctx_B = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_i \in Var, A_i \in Term_B \} \]
+Пустой контекст мы будем обозначать $\diamond$.
 
-Отношение $\deq$ является наименьшим отношением конгруэнтности (то есть отношением эквивалентности, замкнутым относительно конструкций термов), удовлетворяющим следующим свойствам:
-\begin{itemize}
-\item $(\lambda x. b)\ a \deq b[x \mapsto a]$.
-\item $proj_1\ (a, b) \deq a$.
-\item $proj_2\ (a, b) \deq b$.
-\item $J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a\ a\ refl \deq b[x \mapsto a]$.
-\item $\lambda x. b\ x \deq b$, если $x \notin FV(b)$.
-\item $(proj_1\ p, proj_2\ p) \deq p$.
-\end{itemize}
-
-Контекстуальная категория теории $\C_{T_I}$ определяется следующим образом:
-\[ Ob(\C_{T_I}) = \{ \Gamma \in Ctx_I\ |\ \Gamma \vdash \}. \]
-Если $\Gamma = x_1 : A_1, \ldots x_n : A_n$ и $\Delta = y_1 : B_1, \ldots y_k : B_k$ - пара контекстов,
-то множество $CT_I(\Gamma, \Delta)$ определяется как множество функций $\rho : \{ y_1, \ldots y_k\} \to Term_I$ таких, что
-\[ \Gamma \vdash \rho(y_i) : B_i[\rho |_{y_1, \ldots y_{i-1}}] \text{ для всех } 1 \leq i \leq k. \]
-Тогда множество морфизмов $\C_{T_I}(\Gamma, \Delta)$ определяется как множество $CT_I(\Gamma, \Delta)$ с точностью до отношения эквивалентности $\deq$:
-\[ \rho \deq \rho' \text{ тогда и только тогда, когда } \rho(y_i) \deq \rho'(y_i) \text{ для всех } 1 \leq i \leq k. \]
-Тождественный морфизм $id_\Delta$ определяется как функция $id_\Delta(y_i) = y_i$.
-Если $\rho : \Gamma \to \Delta$, $\tau : \Delta \to E$, где $E = z_1 : C_1, \ldots z_m : C_m$, то композиция $\tau \circ \rho$ определяется как функция $(\tau \circ \rho)(z_i) = \tau(z_i)[\rho]$.
-Отношения типизации и эквивалентности определены так, что эти определения действительно задают категорию.
-
-\section{Вариации теории}
-
-\subsection{Теория типов с явно типизированными конструкторами}
-
-Мы опишем версию теории типов, в которой конструкторы типизированы явно.
-Подобная теория описывается в \cite{luo94}.
-Множество термов задается тем же набором правил за исключением того, что мы заменяем правила $\lambda x. b$, $(a, b)$ и $refl$:
-\[ Term_E := \ldots\ |\ \lambda x : A. b\ |\ (a, b)_{\Sigma (x : A) B}\ |\ refl\ a \]
-
-Правила вывода теории такие же как и раньше за исключением того, что мы заменяем $(LAM_I)$, $(PAIR_I)$ и $(REFL_I)$ следующими правилами:
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : A \vdash b : B$}
-\RightLabel{$(LAM_E)$}
-\UnaryInfC{$\Gamma \vdash \lambda x : A. b : \Pi (x : A) B$}
-\DisplayProof
-\end{center}
-\medskip
-
-\begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma, x : A \vdash B$}
-\AxiomC{$\Gamma \vdash b : B[x \mapsto a]$}
-\RightLabel{$(PAIR_E)$}
-\TrinaryInfC{$\Gamma \vdash (a, b)_{\Sigma (x : A) B} : \Sigma (x : A) B$}
-\DisplayProof
-\end{center}
-\medskip
-
-\begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\RightLabel{$(REFL_E)$}
-\UnaryInfC{$\Gamma \vdash refl\ a : Id\ A\ a\ a$}
-\DisplayProof
-\end{center}
-\medskip
-
-Отношение $\deq$ определяется так же как и раньше.
-Контекстуальная категория теории $\C_{T_E}$ определяется аналогичным $\C_{T_I}$ образом.
-Существует очевидная функция $F : Term_E \to Term_I$, удовлетворяющая следуюшим свойствам:
-\begin{align*}
-& F(\lambda x : A. b) = \lambda x. F(b) \\
-& F((a, b)_{\Sigma (x : A) B}) = (F(a), F(b)) \\
-& F(refl\ a) = refl
-\end{align*}
-Эта функция задает функтор $F : \C_{T_E} \to \C_{T_I}$ очевидным образом.
-Позже мы докажем, что этот функтор является эквивалентностью категорий.
-
-\subsection{Двунаправленная теория типов}
-
-Здесь мы определим теорию $T_B$.
-Данная теория имеет то же множество термов, что и предыдущая $Term_E$.
-Вместо отношения $- \vdash - : -$ мы вводим два отношения $- \vdash - \Uparrow -$ и $- \vdash - \Downarrow -$.
-Правила вывода приведены в таблице~\ref{table:bi-rules}.
+Мы вводим четыре отношения $- \vdash$, $- \vdash -$, $- \vdash - \Uparrow -$ и $- \vdash - \Downarrow -$ на множествах $Ctx_B$, $Ctx_B \times Term_B$, $Ctx_B \times Term_B \times Term_B$ и $Ctx_B \times Term_B \times Term_B$ соответственно.
+Они определяются в таблице~\ref{table:inf-rules}.
 
 \begin{table}
 
@@ -353,7 +123,7 @@
 \DisplayProof
 \quad
 \AxiomC{$\Gamma, x : A \vdash b \Uparrow B$}
-\RightLabel{$(LAM_E)$}
+\RightLabel{$(LAM)$}
 \UnaryInfC{$\Gamma \vdash \lambda x : A. b \Uparrow \Pi (x : A) B$}
 \DisplayProof
 \end{center}
@@ -380,7 +150,7 @@
 \AxiomC{$\Gamma \vdash a \Downarrow A$}
 \AxiomC{$\Gamma, x : A \vdash B$}
 \AxiomC{$\Gamma \vdash b \Downarrow B[x \mapsto a]$}
-\RightLabel{$(PAIR_E)$}
+\RightLabel{$(PAIR)$}
 \TrinaryInfC{$\Gamma \vdash (a, b)_{\Sigma (x : A) B} \Uparrow \Sigma (x : A) B$}
 \DisplayProof
 \end{center}
@@ -410,7 +180,7 @@
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash a \Uparrow A$}
-\RightLabel{$(REFL_E)$}
+\RightLabel{$(REFL)$}
 \UnaryInfC{$\Gamma \vdash refl\ a \Uparrow Id\ A\ a\ a$}
 \DisplayProof
 \end{center}
@@ -476,8 +246,21 @@
 
 \bigskip
 \caption{Правила вывода $T_B$.}
-\label{table:bi-rules}
+\label{table:inf-rules}
 \end{table}
+
+На множестве термов очевидным образом определяется операция подстановки.
+Если $b$ - терм, $\rho$ - частичная функция из $Var$ в $Term_B$, то $b[\rho]$ - терм, в котором все свободные вхождения переменных $x$ из домена $\rho$ заменены на $\rho(x)$.
+
+Отношение $\deq$ является наименьшим отношением конгруэнтности (то есть отношением эквивалентности, замкнутым относительно конструкций термов), удовлетворяющим следующим свойствам:
+\begin{itemize}
+\item $(\lambda x : A. b)\ a \deq b[x \mapsto a]$.
+\item $proj_1\ (a, b)_{\Sigma (x : A) B} \deq a$.
+\item $proj_2\ (a, b)_{\Sigma (x : A) B} \deq b$.
+\item $J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a\ a\ refl \deq b[x \mapsto a]$.
+\item $\lambda x : A. b\ x \deq b$, если $x \notin FV(b)$.
+\item $(proj_1\ p, proj_2\ p)_{\Sigma (x : A) B} \deq p$.
+\end{itemize}
 
 Отношение $\red^*_h$ определяется как рефллексивное транзитивное замыкание отношения $\red_h$:
 \begin{itemize}
@@ -491,7 +274,64 @@
 \item $J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a\ a\ (refl\ a) \red_h b[x \mapsto a]$.
 \end{itemize}
 
-Контекстуальная категория $\C_{T_B}$ данной теории определяется аналогичным $\C_{T_I}$ образом, где в определении морфизмов вместо отношения $- \vdash - : -$ используется отношение $- \vdash - \Downarrow -$.
+Из правила $(CONV)$ следует, что отношение $- \vdash - \Uparrow -$ является подмножеством отношения $- \vdash - \Downarrow -$.
+Отличие $- \vdash - \Uparrow -$ от $- \vdash - \Downarrow -$ заключается в том, что если $\Gamma \vdash a \Uparrow A$, то $A$ - в некотором смысле канонический тип $a$, а если $\Gamma \vdash a \Downarrow A'$, то верно только, что $A' \deq A$.
+Таким образом, $\Gamma \vdash a \Uparrow A$ означает, что $A$ - это в некотором смысле канонический тип $a$.
+Это замечание подтвержается следующим утверждением:
+
+\begin{prop}
+Если $\Gamma \vdash a \Uparrow A_1$ и $\Gamma \vdash a \Uparrow A_2$, то $A_1 = A_2$.
+\end{prop}
+\begin{proof}
+Заметим, что если $a \red_h b_1$ и $a \red_h b_2$, то $b_1 = b_2$.
+Следовательно, если термы $b_1$ и $b_2$ находятся в $\red_h$-нормальной форме и $a \red^*_h b_1$ и $a \red^*_h b_2$, то $b_1 = b_2$.
+При этом термы вида $\Sigma (x : A) B$ и $\Pi (x : A) B$ находятся в $\red_h$-нормальной форме.
+
+Используя эти замечания, утверждение элементарно доказывается индукцией по выводу.
+\end{proof}
+
+Мы будем обозначать $type : Ctx_E \times Term_E \to Term_E \amalg \{ * \}$ частичную функцию такую, что если $\Gamma \vdash a \Uparrow A$, то $type(\Gamma, a) = A$, если такого $A$ не существует и $\Gamma \vdash a$, то $type(\Gamma, a) = *$, иначе $type$ не определена.
+Мы будем писать $\Gamma \vdash A \Uparrow *$ как синоним для $\Gamma \vdash A$.
+Таким образом, $\Gamma \vdash a \Uparrow A$ тогда и только тогда, когда $type(\Gamma, a) = A$.
+
+Контекстуальная категория теории $\C_{T_B}$ определяется следующим образом:
+\[ Ob(\C_{T_B}) = \{ \Gamma \in Ctx_B\ |\ \Gamma \vdash \}. \]
+Если $\Gamma = x_1 : A_1, \ldots x_n : A_n$ и $\Delta = y_1 : B_1, \ldots y_k : B_k$ - пара контекстов,
+то множество $CT_B(\Gamma, \Delta)$ определяется как множество функций $\rho : \{ y_1, \ldots y_k\} \to Term_B$ таких, что
+\[ \Gamma \vdash \rho(y_i) \Downarrow B_i[\rho |_{y_1, \ldots y_{i-1}}] \text{ для всех } 1 \leq i \leq k. \]
+Тогда множество морфизмов $\C_{T_B}(\Gamma, \Delta)$ определяется как множество $CT_B(\Gamma, \Delta)$ с точностью до отношения эквивалентности $\deq$:
+\[ \rho \deq \rho' \text{ тогда и только тогда, когда } \rho(y_i) \deq \rho'(y_i) \text{ для всех } 1 \leq i \leq k. \]
+Тождественный морфизм $id_\Delta$ определяется как функция $id_\Delta(y_i) = y_i$.
+Если $\rho : \Gamma \to \Delta$, $\tau : \Delta \to E$, где $E = z_1 : C_1, \ldots z_m : C_m$, то композиция $\tau \circ \rho$ определяется как функция $(\tau \circ \rho)(z_i) = \tau(z_i)[\rho]$.
+Отношения типизации и эквивалентности определены так, что эти определения действительно задают категорию.
+
+\subsection{Теория типов Мартин-Лёфа}
+
+Множество термов $Term_I$ теории типов Мартин-Лёфа $T_I$ задается тем же набором правил, что и $Term_B$ за исключением того, что мы заменяем правила $\lambda x : A. b$, $(a, b)_{\Sigma (x : A) B}$ и $refl\ a$:
+\[ Term_I := \ldots\ |\ \lambda x. b\ |\ (a, b)\ |\ refl \]
+Существует очевидная функция $F : Term_B \to Term_I$, удовлетворяющая следуюшим свойствам:
+\begin{align*}
+& F(\lambda x : A. b) = \lambda x. F(b) \\
+& F((a, b)_{\Sigma (x : A) B}) = (F(a), F(b)) \\
+& F(refl\ a) = refl
+\end{align*}
+
+Отношения $- \vdash$, $- \vdash -$ и $- \vdash - : -$ задаются на множествах $Ctx_I$, $Ctx_I \times Term_I$ и $Ctx_I \times Term_I \times Term_I$ соответственно.
+Правила вывода такие же как в таблице~\ref{table:inf-rules}, если заменить все отношения $- \vdash - \Uparrow -$ и $- \vdash - \Downarrow -$ на $- \vdash - : -$ и ко всем термам применить функцию $F$.
+Контекстуальная категория $\C_{T_I}$ определяется аналогичным $\C_{T_B}$ образом.
+Функция $F$ задает функтор $F : \C_{T_E} \to \C_{T_I}$ очевидным образом.
+Наша основная цель заключается в доказательстве теоремы~\rthm{equiv}, утверждающей, что $F$ является эквивалентностью категорий.
+
+\subsection{Теория типов с явно типизированными конструкторами}
+
+Теории $T_B$ и $T_I$ отличаются в двух аспектах: во-первых, у первой в конструкторах явно присутствуют типы, во-вторых, вместо одного отношения типизации в $T_I$ у нас есть два в $T_B$.
+Чтобы лучше понять разницу между этими теориями, мы введем промежуточную теорию, в которой конструкторы будут явно типизированы, но отношение типизации будет такое же как в $T_I$.
+Подобная теория описывается в \cite{luo94}.
+Множество термов $Term_E$ совпадает с $Term_B$.
+Правила вывода такие же как в таблице~\ref{table:inf-rules}, если заменить все отношения $- \vdash - \Uparrow -$ и $- \vdash - \Downarrow -$ на $- \vdash - : -$.
+
+Отношение $\deq$ определяется так же как и раньше.
+Контекстуальная категория теории $\C_{T_E}$ определяется аналогичным $\C_{T_B}$ образом.
 
 \begin{prop}
 Верны следующие утверждения:
@@ -519,64 +359,46 @@ TODO
 
 Предыдущие два утверждения доказывают, что отнашения $- \vdash$, $- \vdash -$ и $- \vdash - : -$ в $T_E$ и $- \vdash$, $- \vdash -$ и $- \vdash - \Downarrow -$ в $T_B$ совпадают.
 Отсюда следует, что категории $\C_{T_E}$ и $\C_{T_B}$ совпадают.
-Отношение $- \vdash - \Uparrow -$ является вспомогательным.
-Из правила $(CONV)$ следует, что оно является подмножеством $- \vdash - \Downarrow -$,
-и следующее утверждение показывает, что для любых $\Gamma$ и $a$ существует максимум один терм $A$ такой, что $\Gamma \vdash a \Uparrow A$.
-Таким образом, $\Gamma \vdash a \Uparrow A$ означает, что $A$ - это в некотором смысле канонический тип $a$.
-
-\begin{prop}
-Если $\Gamma \vdash a \Uparrow A_1$ и $\Gamma \vdash a \Uparrow A_2$, то $A_1 = A_2$.
-\end{prop}
-\begin{proof}
-Заметим, что если $a \red_h b_1$ и $a \red_h b_2$, то $b_1 = b_2$.
-Следовательно, если термы $b_1$ и $b_2$ находятся в $\red_h$-нормальной форме и $a \red^*_h b_1$ и $a \red^*_h b_2$, то $b_1 = b_2$.
-При этом термы вида $\Sigma (x : A) B$ и $\Pi (x : A) B$ находятся в $\red_h$-нормальной форме.
-
-Используя эти замечания, утверждение элементарно доказывается индукцией по выводу.
-\end{proof}
 
 \section{Эквивалентность теорий}
 
-Мы уже определили функтор $\C_{T_I} \to \C_{T_E}$ (и, следовательно, $\C_{T_I} \to \C_{T_B}$).
-Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная частичная функция $G : Ctx_E \times Term_I \times (Term_E \amalg \{ *, \top \}) \to Term_E \times (Term_E \amalg \{ * \})$.
-Мы будем писать $term(\Gamma, a, A)$ и $type(\Gamma, a, A)$ для первой и второй проекции $G(\Gamma, a, A)$ соответственно.
-Сначала введем отношение предпорядка $\leq$ на множестве $Term_E \amalg \{ *, \top \}$. $a \leq b$ тогда и только тогда, когда выполнено одно из следующих условий: $b = \top$, $a \deq b$, $a = b$ или ($a \deq U$ и $b = *$).
-Мы будем писать $\Gamma \vdash A \leq B$ для обозначения того факта, что $A \leq B$ и либо $\Gamma \vdash B$, либо $B = \top$.
-Также мы будем писать $\Gamma \vdash a \Uparrow A$ для обозначения того факта, что $A \in Term_E$ и $\Gamma \vdash a \Uparrow A$, либо $A = *$ и $\Gamma \vdash a$.
-Наконец мы определим функцию $max : Term_E \amalg \{ * \} \times Term_E \amalg \{ * \} \to Term_E \amalg \{ * \}$: если один из аргументов равен $*$, то $max(a, b) = *$, иначе $max(a, b) = U$.
+Мы уже определили функтор $\C_{T_I} \to \C_{T_B}$.
+Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная частичная функция $G : Ctx_B \times Term_I \times (Term_B \amalg \{ *, \top \}) \to Term_B$.
+Сначала введем отношение предпорядка $\leq$ на множестве $Term_B \amalg \{ *, \top \}$. $a \leq b$ тогда и только тогда, когда выполнено одно из следующих условий: ($a \neq *$ и $b = \top$), $a \deq b$, $a = b$ или ($a \deq U$ и $b = *$).
+Мы будем писать $\Gamma \vdash A \leq B$ для обозначения того факта, что $A \leq B$ и либо $\Gamma \vdash B$, либо $B \in \{ *, \top \}$.
 
 Функция $G$ определяется рекурсией по второму аргументу следующим образом:
 \begin{itemize}
-\item $G(\Gamma, x, B) = (x, A)$, если $x : A \in \Gamma$ и $\Gamma \vdash A \leq B$.
-\item $G(\Gamma, \lambda x. b, C) = (\lambda x : A. b', \Pi (x : A) B')$, если \\
-    $\Gamma \vdash C$, $C \red_h^* \Pi (x : A) B$ и $G((\Gamma, x : A), b, B) = (b', B')$.
-\item $G(\Gamma, f\ a, D) = (f'\ a', B[x \mapsto a'])$, если $\Gamma \vdash B[x \mapsto a'] \leq D$, \\
-    $G(\Gamma, f, \top) = (f', C)$, $C \red_h^* \Pi (x : A) B$ и $term(\Gamma, a, A) = a'$.
-\item $G(\Gamma, (a, b), C) = ((a', b')_{\Sigma (x : A) B}, \Sigma (x : A) B)$, если $\Gamma \vdash C$, \\
-    $C \red_h^* \Sigma (x : A) B$, $term(\Gamma, a, A) = a'$ и $term(\Gamma, b, B[x := a']) = b'$.
-\item $G(\Gamma, proj_1\ p, D) = (proj_1\ p', A)$, если \\
-    $G(\Gamma, p, \top) = (p', C)$, $C \red_h^* \Sigma (x : A) B$ и $\Gamma \vdash A \leq D$.
-\item $G(\Gamma, proj_2\ p, D) = (proj_2\ p', B[x \mapsto proj_1\ p'])$, если \\
-    $G(\Gamma, p, \top) = (p', C)$, $C \red_h^* \Sigma (x : A) B$ и $\Gamma \vdash B[x \mapsto proj_1\ p'] \leq D$.
-\item $G(\Gamma, refl, C) = (refl\ a, Id\ A\ a\ a)$, если $\Gamma \vdash C$, $C \red_h^* Id\ A\ a\ a'$ и $a \deq a'$.
-\item $G(\Gamma, J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p, D) = (J\ (\lambda x_1 x_2 t. B')\ (\lambda x. b')\ a_1'\ a_2'\ p', B[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p'])$, если $\Gamma \vdash B[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p'] \leq D$, \\
-    $G(\Gamma, p, \top) = (p', C)$,
-    $C \red_h^* Id\ A\ a_1'\ a_2'$, \\
-    $term((\Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2), B, *) = B'$ и \\
-    $term((\Gamma, x : A), b, B'[x_1, \mapsto x, x_2 \mapsto x, t \mapsto refl\ x]) = b'$.
-\item $G(\Gamma, U, D) = (U, *)$, если $* \leq D$.
-\item $G(\Gamma, \Pi (x : A) B, D) = (\Pi (x : A') B', max(T_1, T_2))$, если $U \leq T_1$, $U \leq T_2$, \\
-    $G(\Gamma, A, D) = (A', T_1)$ и $G((\Gamma, x : A'), B, D) = (B', T_2)$.
-\item $G(\Gamma, \Sigma (x : A) B, D) = (\Pi (x : A') B', max(T_1, T_2))$, если $U \leq T_1$, $U \leq T_2$ \\
-    $G(\Gamma, A, D) = (A', T_1)$ и $G((\Gamma, x : A'), B, D) = (B', T_2)$.
-\item $G(\Gamma, Id\ A\ a_1\ a_2, D) = (Id\ A'\ a_1'\ a_2', max(T, T))$, если $U \leq T$, \\
-    $G(\Gamma, A, D) = (A', T)$, $term(\Gamma, a_1, A') = a_1'$ и $term(\Gamma, a_2, A') = a_2'$.
+\item $G(\Gamma, x, B) = x$, если $x : A \in \Gamma$ и $\Gamma \vdash A \leq B$.
+\item $G(\Gamma, \lambda x. b, C) = \lambda x : A. b'$, если \\
+    $\Gamma \vdash C$, $C \red_h^* \Pi (x : A) B$ и $G((\Gamma, x : A), b, B) = b'$.
+\item $G(\Gamma, f\ a, D) = f'\ a'$, если $\Gamma \vdash B[x \mapsto a'] \leq D$, \\
+    $G(\Gamma, f, \top) = f'$, $type(\Gamma, f') \red_h^* \Pi (x : A) B$ и $G(\Gamma, a, A) = a'$.
+\item $G(\Gamma, (a, b), C) = (a', b')_{\Sigma (x : A) B}$, если $\Gamma \vdash C$, \\
+    $C \red_h^* \Sigma (x : A) B$, $G(\Gamma, a, A) = a'$ и $G(\Gamma, b, B[x := a']) = b'$.
+\item $G(\Gamma, proj_1\ p, D) = proj_1\ p'$, если \\
+    $G(\Gamma, p, \top) = p'$, $type(\Gamma, p') \red_h^* \Sigma (x : A) B$ и $\Gamma \vdash A \leq D$.
+\item $G(\Gamma, proj_2\ p, D) = proj_2\ p'$, если \\
+    $G(\Gamma, p, \top) = p'$, $type(\Gamma, p') \red_h^* \Sigma (x : A) B$ и $\Gamma \vdash B[x \mapsto proj_1\ p'] \leq D$.
+\item $G(\Gamma, refl, C) = refl\ a$, если $\Gamma \vdash C$, $C \red_h^* Id\ A\ a\ a'$ и $a \deq a'$.
+\item $G(\Gamma, J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p, D) = J\ (\lambda x_1 x_2 t. B')\ (\lambda x. b')\ a_1'\ a_2'\ p'$, если $\Gamma \vdash B'[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p'] \leq D$, \\
+    $G(\Gamma, p, \top) = p'$,
+    $type(\Gamma, p') \red_h^* Id\ A\ a_1'\ a_2'$, \\
+    $G((\Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2), B, *) = B'$ и \\
+    $G((\Gamma, x : A), b, B'[x_1, \mapsto x, x_2 \mapsto x, t \mapsto refl\ x]) = b'$.
+\item $G(\Gamma, U, D) = U$, если $* \leq D$.
+\item $G(\Gamma, \Pi (x : A) B, D) = \Pi (x : A') B'$, если $\Gamma \vdash type(\Gamma, \Pi (x : A') B') \leq D$,
+    $G(\Gamma, A, *) = A'$ и $G((\Gamma, x : A'), B, *) = B'$.
+\item $G(\Gamma, \Sigma (x : A) B, D) = \Sigma (x : A') B'$, если $\Gamma \vdash type(\Gamma, \Sigma (x : A') B') \leq D$,
+    $G(\Gamma, A, *) = A'$ и $G((\Gamma, x : A'), B, *) = B'$.
+\item $G(\Gamma, Id\ A\ a_1\ a_2, D) = Id\ A'\ a_1'\ a_2'$, если $\Gamma \vdash type(\Gamma, A') \leq D$,
+    $G(\Gamma, A, *) = A'$, $G(\Gamma, a_1, A') = a_1'$ и $G(\Gamma, a_2, A') = a_2'$.
 \end{itemize}
 
-Также мы введем частичную функцию $G : Ctx_I \to Ctx_E$ следующим образом:
+Также мы введем частичную функцию $G : Ctx_I \to Ctx_B$ следующим образом:
 \begin{itemize}
 \item $G(\diamond) = \diamond$.
-\item $G(\Gamma, x : A) = \Gamma', x : A'$, если $G(\Gamma) = \Gamma'$ и $term(\Gamma, A, *) = A'$.
+\item $G(\Gamma, x : A) = \Gamma', x : A'$, если $G(\Gamma) = \Gamma'$ и $G(\Gamma', A, *) = A'$.
 \end{itemize}
 
 Теперь докажем ряд свойств функции $G$.
@@ -584,34 +406,50 @@ TODO
 Верны следующие утверждения:
 \begin{itemize}
 \item Если $G(\Gamma)$ определена, то $G(\Gamma) \vdash$.
-\item Если $\Gamma \vdash$, $G(\Gamma, a, A)$ определена, то $\Gamma \vdash type(\Gamma, a, A) \leq A$ и \\ $\Gamma \vdash term(\Gamma, a, A) \Uparrow type(\Gamma, a, A)$.
-    В частности, если $A \in Term_E$, то $type(\Gamma, a, A) \deq A$ и $\Gamma \vdash term(\Gamma, a, A) \Downarrow A$.
+\item Если $\Gamma \vdash$ и $G(\Gamma, a, A)$ определена, то $type(\Gamma, G(\Gamma, a, A))$ определена и $\Gamma \vdash type(\Gamma, G(\Gamma, a, A)) \leq A$.
+    В частности, если $A \in Term_B$, то $type(\Gamma, G(\Gamma, a, A)) \deq A$ и $\Gamma \vdash G(\Gamma, a, A) \Downarrow A$.
 \end{itemize}
 \end{lem}
 \begin{proof}
-Первое утверждение элементарно следует из второго, а второе доказывается индукций по $a$.
+Первое утверждение элементарно следует из второго, а второе легко доказывается индукций по $a$.
 \end{proof}
 
-Если $A_1, A_2 \in Term_E \amalg \{ * \}$, то мы будем писать $A_1 \deq A_2$ в случае, когда $A_1 = A_2 = *$ или $A_1, A_2 \in Term_E$ и $A_1 \deq A_2$.
+Теперь мы хотим доказать, что $G$ сохраняет подстановки.
+Для этого нам понадобится еще одна вспомогательная функция.
+Пусть $Env_I$ и $Env_B$ - множества частичных функций из $Var$ в $Term_I$ и в $Term_B$ соответственно.
+Тогда мы определим частичную функцию $G : Ctx_B \times Env_I \times Ctx_B \to Env_B$ следующим образом:
+\begin{itemize}
+\item $G(\Gamma, \rho, \diamond) = \bot$, где $\bot$ - нигде неопределенная функция.
+\item $G(\Gamma, \rho, (\Delta, y : B)) = \rho'[y \mapsto b]$, если $G(\Gamma, \rho, \Delta) = \rho'$ и $G(\Gamma, \rho(y), B[\rho']) = b$.
+\end{itemize}
+
+\begin{lem}[subst][Лемма о подстановке]
+Если $G(\Gamma, a, A) = a'$ и $G(\Gamma, \rho, \Delta) = \rho'$, то $G(\Delta, a[\rho], A[\rho']) = a'[\rho']$.
+\end{lem}
+\begin{proof}
+Индукцией по $a$.
+\end{proof}
+
+Если $A_1, A_2 \in Term_B \amalg \{ * \}$, то мы будем писать $A_1 \deq A_2$ в случае, когда $A_1 = A_2 = *$ или $A_1, A_2 \in Term_B$ и $A_1 \deq A_2$.
 
 \begin{lem}
-Если $\Gamma_1 \deq \Gamma_2$, $a_1 \deq a_2$, $A_1 \deq A_2$ и $G(\Gamma_i, a_i, A_i)$ определены, то $term(\Gamma_1, a_1, A_1) \deq term(\Gamma_2, a_2, A_2)$ и $type(\Gamma_1, a_1, A_1) \deq type(\Gamma_2, a_2, A_2)$.
+Если $\Gamma_1 \deq \Gamma_2$, $a_1 \deq a_2$, $A_1 \deq A_2$ и $G(\Gamma_i, a_i, A_i)$ определены, то $G(\Gamma_1, a_1, A_1) \deq G(\Gamma_2, a_2, A_2)$.
 \end{lem}
 \begin{proof}
 \end{proof}
 
 \begin{lem}
-Если $G(\Gamma, a, A)$ определена и $A \deq B$, то $G(\Gamma, a, B)$ также определена.
+Если $G(\Gamma, a, A)$ и $G(\Gamma, B, *)$ определены и $A \deq B$, то $G(\Gamma, a, B)$ также определена.
 \end{lem}
 \begin{proof}
 \end{proof}
 
 \begin{prop}
-Верны следующие утверждения:
+Пусть $a$ находится в нормальной форме, тогда:
 \begin{itemize}
-\item Если $\Gamma \vdash$, то $G(\Gamma)$ определена и $G(\Gamma) \vdash$.
-\item Если $\Gamma \vdash A$, то $G(\Gamma)$ и $G(G(\Gamma), A, *)$ определены и $G(\Gamma) \vdash G(G(\Gamma), A, *)$.
-\item Если $\Gamma \vdash a : A$, то $G(\Gamma)$, $G(\Gamma, A, *)$ и $G(G(\Gamma), a, term(G(\Gamma), A, *))$ определены, $G(\Gamma) \vdash term(G(\Gamma), a, term(G(\Gamma), A, *)) \Downarrow term(G(\Gamma), A, *)$ и $G(\Gamma) \vdash term(G(\Gamma), a, term(G(\Gamma), A, *)) \Uparrow type(G(\Gamma), a, term(G(\Gamma), A, *))$.
+\item Если $\Gamma \vdash$, то $G(\Gamma)$ определена.
+\item Если $\Gamma \vdash a$, то $G(\Gamma)$ и $G(G(\Gamma), a, *)$ определены.
+\item Если $\Gamma \vdash a : A$, то $G(\Gamma)$, $G(\Gamma, A, *)$ и $G(G(\Gamma), a, G(G(\Gamma), A, *))$ определены.
 \end{itemize}
 \end{prop}
 \begin{proof}
@@ -621,10 +459,10 @@ TODO
 Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная конструкция.
 Мы определим следующие отношения:
 \begin{itemize}
-\item $\ll - \vdash \rr = - \vdash$ на множестве $Ctx_I \times Ctx_E$.
-\item $\ll - \vdash - \rr = - \vdash -$ на множестве $Ctx_I \times Term_I \times Ctx_E \times Term_E$.
-\item $\ll - \vdash - : - \rr = - \vdash - \Uparrow -$ на множестве $Ctx_I \times Term_I \times Term_I \times Ctx_E \times Term_E \times Term_E$.
-\item $\ll - \vdash - : - \rr = - \vdash - \Downarrow -$ на множестве $Ctx_I \times Term_I \times Term_I \times Ctx_E \times Term_E \times Term_E$.
+\item $\ll - \vdash \rr = - \vdash$ на множестве $Ctx_I \times Ctx_B$.
+\item $\ll - \vdash - \rr = - \vdash -$ на множестве $Ctx_I \times Term_I \times Ctx_B \times Term_B$.
+\item $\ll - \vdash - : - \rr = - \vdash - \Uparrow -$ на множестве $Ctx_I \times Term_I \times Term_I \times Ctx_B \times Term_B \times Term_B$.
+\item $\ll - \vdash - : - \rr = - \vdash - \Downarrow -$ на множестве $Ctx_I \times Term_I \times Term_I \times Ctx_B \times Term_B \times Term_B$.
 \end{itemize}
 
 Отношения определяются индуктивным образом:
@@ -806,7 +644,7 @@ TODO
 \end{comment}
 
 \begin{comment}
-Одна из проблем теории $T_I$, которую призвана исправить теория $T_E$ заключается в том, что тип терма не определяется по нему однозначно.
+Одна из проблем теории $T_I$, которую призвана исправить теория $T_B$ заключается в том, что тип терма не определяется по нему однозначно.
 Однако в некоторых случаях это может быть верно, как показывает следующее утверждение.
 
 \begin{prop}
@@ -855,6 +693,10 @@ TODO
 Элементарная индукция по выводу.
 \end{proof}
 \end{comment}
+
+\begin{thm}[equiv]
+Категории $\C_{T_B}$ и $\C_{T_I}$ эквивалентны.
+\end{thm}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
