@@ -538,42 +538,84 @@ TODO
 \section{Эквивалентность теорий}
 
 Мы уже определили функтор $\C_{T_I} \to \C_{T_E}$ (и, следовательно, $\C_{T_I} \to \C_{T_B}$).
-Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная частичная функция $G : Ctx_E \times Term_I \times (Term_E \amalg \{ * \}) \to Term_E \times (Term_E \amalg \{ * \})$.
+Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная частичная функция $G : Ctx_E \times Term_I \times (Term_E \amalg \{ *, \top \}) \to Term_E \times (Term_E \amalg \{ * \})$.
 Мы будем писать $term(\Gamma, a, A)$ и $type(\Gamma, a, A)$ для первой и второй проекции $G(\Gamma, a, A)$ соответственно.
+Сначала введем отношение предпорядка $\leq$ на множестве $Term_E \amalg \{ *, \top \}$. $a \leq b$ тогда и только тогда, когда выполнено одно из следующих условий: $b = \top$, $a \deq b$, $a = b$ или ($a \deq U$ и $b = *$).
+Мы будем писать $\Gamma \vdash A \leq B$ для обозначения того факта, что $A \leq B$ и либо $\Gamma \vdash B$, либо $B = \top$.
+Также мы будем писать $\Gamma \vdash a \Uparrow A$ для обозначения того факта, что $A \in Term_E$ и $\Gamma \vdash a \Uparrow A$, либо $A = *$ и $\Gamma \vdash a$.
+Наконец мы определим функцию $max : Term_E \amalg \{ * \} \times Term_E \amalg \{ * \} \to Term_E \amalg \{ * \}$: если один из аргументов равен $*$, то $max(a, b) = *$, иначе $max(a, b) = U$.
+
 Функция $G$ определяется рекурсией по второму аргументу следующим образом:
 \begin{itemize}
-\item $G(\Gamma, x, \_) = (x, A)$, если $x : A \in \Gamma$.
+\item $G(\Gamma, x, B) = (x, A)$, если $x : A \in \Gamma$ и $\Gamma \vdash A \leq B$.
 \item $G(\Gamma, \lambda x. b, C) = (\lambda x : A. b', \Pi (x : A) B')$, если \\
-    $C \red_h^* \Pi (x : A) B$ и $G((\Gamma, x : A), b, B) = (b', B')$.
-\item $G(\Gamma, f\ a, \_) = (f'\ a', B[x \mapsto a'])$, если \\
-    $G(\Gamma, f, *) = (f', C)$, $C \red_h^* \Pi (x : A) B$ и $term(\Gamma, a, A) = a'$.
-\item $G(\Gamma, (a, b), C) = ((a', b')_{\Sigma (x : A) B}, \Sigma (x : A) B)$, если \\
+    $\Gamma \vdash C$, $C \red_h^* \Pi (x : A) B$ и $G((\Gamma, x : A), b, B) = (b', B')$.
+\item $G(\Gamma, f\ a, D) = (f'\ a', B[x \mapsto a'])$, если $\Gamma \vdash B[x \mapsto a'] \leq D$, \\
+    $G(\Gamma, f, \top) = (f', C)$, $C \red_h^* \Pi (x : A) B$ и $term(\Gamma, a, A) = a'$.
+\item $G(\Gamma, (a, b), C) = ((a', b')_{\Sigma (x : A) B}, \Sigma (x : A) B)$, если $\Gamma \vdash C$, \\
     $C \red_h^* \Sigma (x : A) B$, $term(\Gamma, a, A) = a'$ и $term(\Gamma, b, B[x := a']) = b'$.
-\item $G(\Gamma, proj_1\ p, \_) = (proj_1\ p', A)$, если \\
-    $G(\Gamma, p, *) = (p', C)$ и $C \red_h^* \Sigma (x : A) B$.
-\item $G(\Gamma, proj_2\ p, \_) = (proj_2\ p', B[x \mapsto proj_1\ p'])$, если \\
-    $G(\Gamma, p, *) = (p', C)$ и $C \red_h^* \Sigma (x : A) B$.
-\item $G(\Gamma, refl, C) = (refl\ a, Id\ A\ a\ a)$, если $C \red_h^* Id\ A\ a\ a'$.
-\item $G(\Gamma, J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p, \_) = (J\ (\lambda x_1 x_2 t. B')\ (\lambda x. b')\ a_1'\ a_2'\ p', B[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p'])$, если
-    $G(\Gamma, p, *) = (p', C)$,
+\item $G(\Gamma, proj_1\ p, D) = (proj_1\ p', A)$, если \\
+    $G(\Gamma, p, \top) = (p', C)$, $C \red_h^* \Sigma (x : A) B$ и $\Gamma \vdash A \leq D$.
+\item $G(\Gamma, proj_2\ p, D) = (proj_2\ p', B[x \mapsto proj_1\ p'])$, если \\
+    $G(\Gamma, p, \top) = (p', C)$, $C \red_h^* \Sigma (x : A) B$ и $\Gamma \vdash B[x \mapsto proj_1\ p'] \leq D$.
+\item $G(\Gamma, refl, C) = (refl\ a, Id\ A\ a\ a)$, если $\Gamma \vdash C$, $C \red_h^* Id\ A\ a\ a'$ и $a \deq a'$.
+\item $G(\Gamma, J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p, D) = (J\ (\lambda x_1 x_2 t. B')\ (\lambda x. b')\ a_1'\ a_2'\ p', B[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p'])$, если $\Gamma \vdash B[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p'] \leq D$, \\
+    $G(\Gamma, p, \top) = (p', C)$,
     $C \red_h^* Id\ A\ a_1'\ a_2'$, \\
     $term((\Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2), B, *) = B'$ и \\
     $term((\Gamma, x : A), b, B'[x_1, \mapsto x, x_2 \mapsto x, t \mapsto refl\ x]) = b'$.
-\item $G(\Gamma, U, \_) = (U, *)$.
-\item $G(\Gamma, \Pi (x : A) B, \_) = (\Pi (x : A') B', *)$, если \\
-    $term(\Gamma, A, *) = A'$ и $term((\Gamma, x : A'), B, *) = B'$.
-\item $G(\Gamma, \Sigma (x : A) B, \_) = (\Pi (x : A') B', *)$, если \\
-    $term(\Gamma, A, *) = A'$ и $term((\Gamma, x : A'), B, *) = B'$.
-\item $G(\Gamma, Id\ A\ a_1\ a_2, \_) = (Id\ A'\ a_1'\ a_2', *)$, если \\
-    $term(\Gamma, A, *) = A'$, $term(\Gamma, a_1, A') = a_1'$ и $term(\Gamma, a_2, A') = a_2'$.
+\item $G(\Gamma, U, D) = (U, *)$, если $* \leq D$.
+\item $G(\Gamma, \Pi (x : A) B, D) = (\Pi (x : A') B', max(T_1, T_2))$, если $U \leq T_1$, $U \leq T_2$, \\
+    $G(\Gamma, A, D) = (A', T_1)$ и $G((\Gamma, x : A'), B, D) = (B', T_2)$.
+\item $G(\Gamma, \Sigma (x : A) B, D) = (\Pi (x : A') B', max(T_1, T_2))$, если $U \leq T_1$, $U \leq T_2$ \\
+    $G(\Gamma, A, D) = (A', T_1)$ и $G((\Gamma, x : A'), B, D) = (B', T_2)$.
+\item $G(\Gamma, Id\ A\ a_1\ a_2, D) = (Id\ A'\ a_1'\ a_2', max(T, T))$, если $U \leq T$, \\
+    $G(\Gamma, A, D) = (A', T)$, $term(\Gamma, a_1, A') = a_1'$ и $term(\Gamma, a_2, A') = a_2'$.
+\end{itemize}
+
+Также мы введем частичную функцию $G : Ctx_I \to Ctx_E$ следующим образом:
+\begin{itemize}
+\item $G(\diamond) = \diamond$.
+\item $G(\Gamma, x : A) = \Gamma', x : A'$, если $G(\Gamma) = \Gamma'$ и $term(\Gamma, A, *) = A'$.
 \end{itemize}
 
 Теперь докажем ряд свойств функции $G$.
+\begin{lem}
+Верны следующие утверждения:
+\begin{itemize}
+\item Если $G(\Gamma)$ определена, то $G(\Gamma) \vdash$.
+\item Если $\Gamma \vdash$, $G(\Gamma, a, A)$ определена, то $\Gamma \vdash type(\Gamma, a, A) \leq A$ и \\ $\Gamma \vdash term(\Gamma, a, A) \Uparrow type(\Gamma, a, A)$.
+    В частности, если $A \in Term_E$, то $type(\Gamma, a, A) \deq A$ и $\Gamma \vdash term(\Gamma, a, A) \Downarrow A$.
+\end{itemize}
+\end{lem}
+\begin{proof}
+Первое утверждение элементарно следует из второго, а второе доказывается индукций по $a$.
+\end{proof}
+
 Если $A_1, A_2 \in Term_E \amalg \{ * \}$, то мы будем писать $A_1 \deq A_2$ в случае, когда $A_1 = A_2 = *$ или $A_1, A_2 \in Term_E$ и $A_1 \deq A_2$.
 
+\begin{lem}
+Если $\Gamma_1 \deq \Gamma_2$, $a_1 \deq a_2$, $A_1 \deq A_2$ и $G(\Gamma_i, a_i, A_i)$ определены, то $term(\Gamma_1, a_1, A_1) \deq term(\Gamma_2, a_2, A_2)$ и $type(\Gamma_1, a_1, A_1) \deq type(\Gamma_2, a_2, A_2)$.
+\end{lem}
+\begin{proof}
+\end{proof}
+
+\begin{lem}
+Если $G(\Gamma, a, A)$ определена и $A \deq B$, то $G(\Gamma, a, B)$ также определена.
+\end{lem}
+\begin{proof}
+\end{proof}
+
 \begin{prop}
-Если $A_1 \deq A_2$, $a_1 \deq a_2$ и $G(\Gamma, a_i, A_i)$ определены, то $term(\Gamma, a_1, A_1) \deq term(\Gamma, a_2, A_2)$ и $A_i \deq type(\Gamma, a_i, A_i)$.
+Верны следующие утверждения:
+\begin{itemize}
+\item Если $\Gamma \vdash$, то $G(\Gamma)$ определена и $G(\Gamma) \vdash$.
+\item Если $\Gamma \vdash A$, то $G(\Gamma)$ и $G(G(\Gamma), A, *)$ определены и $G(\Gamma) \vdash G(G(\Gamma), A, *)$.
+\item Если $\Gamma \vdash a : A$, то $G(\Gamma)$, $G(\Gamma, A, *)$ и $G(G(\Gamma), a, term(G(\Gamma), A, *))$ определены, $G(\Gamma) \vdash term(G(\Gamma), a, term(G(\Gamma), A, *)) \Downarrow term(G(\Gamma), A, *)$ и $G(\Gamma) \vdash term(G(\Gamma), a, term(G(\Gamma), A, *)) \Uparrow type(G(\Gamma), a, term(G(\Gamma), A, *))$.
+\end{itemize}
 \end{prop}
+\begin{proof}
+\end{proof}
 
 \begin{comment}
 Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная конструкция.
