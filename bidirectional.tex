@@ -91,18 +91,27 @@
 \medskip
 \begin{center}
 \AxiomC{}
-\RightLabel{$(CTX_1)$}
+\RightLabel{$(CTX_0)$}
 \UnaryInfC{$\vdash$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash A$}
-\RightLabel{, $x \notin \Gamma$ $(CTX_2)$}
+\RightLabel{, $x \notin \Gamma$ $(CTX_1)$}
 \UnaryInfC{$\Gamma, x : A \vdash$}
 \DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$ $(VAR_0)$}
+\UnaryInfC{$\Gamma, x : A \vdash x \Uparrow A$}
+\DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash$}
-\RightLabel{, $x : A \in \Gamma$ $(VAR)$}
-\UnaryInfC{$\Gamma \vdash x \Uparrow A$}
+\AxiomC{$\Gamma \vdash x \Uparrow A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $y \notin \Gamma$ $(VAR_1)$}
+\BinaryInfC{$\Gamma, y : B \vdash x \Uparrow A$}
 \DisplayProof
 \end{center}
 
@@ -363,93 +372,102 @@ TODO
 \section{Эквивалентность теорий}
 
 Мы уже определили функтор $\C_{T_I} \to \C_{T_B}$.
-Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная частичная функция $G : Ctx_B \times Term_I \times (Term_B \amalg \{ *, \top \}) \to Term_B$.
+Чтобы определить функтор в обратную сторону, нам понадобится вспомогательное отношение $R \subseteq Ctx_B \times Term_I \times Term_B \times (Term_B \amalg \{ *, \top \})$.
+Идея заключается в том, что если $R(\Gamma, a, a', A)$, то $a'$ - это $a$, в котором конструкторам приписаны типы.
+$\Gamma$ и $A$ являются вспомогательными данными, чтобы восстановить эту информацию.
+Отношение будет определено таким образом, что если $R(\Gamma, a, a', A)$ и $A \in Term_B$, то $\Gamma \vdash a' \Downarrow A$, если $A = *$, то $\Gamma \vdash a'$.
+Иногда информация о типе бывает недоступна, в этом случае $A$ будет равно $\top$.
+
 Сначала введем отношение предпорядка $\leq$ на множестве $Term_B \amalg \{ *, \top \}$. $a \leq b$ тогда и только тогда, когда выполнено одно из следующих условий: ($a \neq *$ и $b = \top$), $a \deq b$, $a = b$ или ($a \deq U$ и $b = *$).
-Мы будем писать $\Gamma \vdash A \leq B$ для обозначения того факта, что $A \leq B$ и либо $\Gamma \vdash B$, либо $B \in \{ *, \top \}$.
-
-Функция $G$ определяется рекурсией по второму аргументу следующим образом:
+Мы будем писать $\Gamma \vdash A \leq B$ для обозначения того факта, что $A \leq B$ и либо $\Gamma \vdash B$, либо $\Gamma \vdash$ и $B \in \{ *, \top \}$.
+Теперь отношение $R$ определяется рекурсией по второму аргументу следующим образом:
 \begin{itemize}
-\item $G(\Gamma, x, B) = x$, если $x : A \in \Gamma$ и $\Gamma \vdash A \leq B$.
-\item $G(\Gamma, \lambda x. b, C) = \lambda x : A. b'$, если \\
-    $\Gamma \vdash C$, $C \red_h^* \Pi (x : A) B$ и $G((\Gamma, x : A), b, B) = b'$.
-\item $G(\Gamma, f\ a, D) = f'\ a'$, если $\Gamma \vdash B[x \mapsto a'] \leq D$, \\
-    $G(\Gamma, f, \top) = f'$, $type(\Gamma, f') \red_h^* \Pi (x : A) B$ и $G(\Gamma, a, A) = a'$.
-\item $G(\Gamma, (a, b), C) = (a', b')_{\Sigma (x : A) B}$, если $\Gamma \vdash C$, \\
-    $C \red_h^* \Sigma (x : A) B$, $G(\Gamma, a, A) = a'$ и $G(\Gamma, b, B[x := a']) = b'$.
-\item $G(\Gamma, proj_1\ p, D) = proj_1\ p'$, если \\
-    $G(\Gamma, p, \top) = p'$, $type(\Gamma, p') \red_h^* \Sigma (x : A) B$ и $\Gamma \vdash A \leq D$.
-\item $G(\Gamma, proj_2\ p, D) = proj_2\ p'$, если \\
-    $G(\Gamma, p, \top) = p'$, $type(\Gamma, p') \red_h^* \Sigma (x : A) B$ и $\Gamma \vdash B[x \mapsto proj_1\ p'] \leq D$.
-\item $G(\Gamma, refl, C) = refl\ a$, если $\Gamma \vdash C$, $C \red_h^* Id\ A\ a\ a'$ и $a \deq a'$.
-\item $G(\Gamma, J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p, D) = J\ (\lambda x_1 x_2 t. B')\ (\lambda x. b')\ a_1'\ a_2'\ p'$, если $\Gamma \vdash B'[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p'] \leq D$, \\
-    $G(\Gamma, p, \top) = p'$,
+\item $R(\Gamma, x, x, B)$, если $x : A \in \Gamma$ и $\Gamma \vdash A \leq B$.
+\item $R(\Gamma, \lambda x. b, \lambda x : A. b', C)$, если \\
+    либо $\Gamma \vdash C$, $C \red_h^* \Pi (x : A) B$ и $R((\Gamma, x : A), b, b', B)$, \\
+    либо $C = \top$, $\Gamma \vdash A$ и $R((\Gamma, x : A), b, b', \top)$.
+\item $R(\Gamma, f\ a, f'\ a', D)$, если $\Gamma \vdash B[x \mapsto a'] \leq D$, \\
+    $R(\Gamma, f, f', \top)$, $type(\Gamma, f') \red_h^* \Pi (x : A) B$ и $R(\Gamma, a, a', A)$.
+\item $R(\Gamma, (a, b), (a', b')_{\Sigma (x : A) B}, C)$, если \\
+    $R(\Gamma, a, a', A)$, $R(\Gamma, b, b', B[x \mapsto a'])$ и \\
+    либо $\Gamma \vdash$ и $C = \top$, либо $\Gamma \vdash C$ и $C \red_h^* \Sigma (x : A) B$.
+\item $R(\Gamma, proj_1\ p, proj_1\ p', D)$, если \\
+    $R(\Gamma, p, p', \top)$, $type(\Gamma, p') \red_h^* \Sigma (x : A) B$ и $\Gamma \vdash A \leq D$.
+\item $R(\Gamma, proj_2\ p, proj_2\ p', D)$, если \\
+    $R(\Gamma, p, p', \top)$, $type(\Gamma, p') \red_h^* \Sigma (x : A) B$ и $\Gamma \vdash B[x \mapsto proj_1\ p'] \leq D$.
+\item $R(\Gamma, refl, refl\ a, C)$, если \\
+    либо $\Gamma \vdash C$, $C \red_h^* Id\ A\ a\ a'$ и $a \deq a'$, \\
+    либо $C = \top$ и $type(\Gamma, a)$ определено.
+\item $R(\Gamma, J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p, J\ (\lambda x_1 x_2 t. B')\ (\lambda x. b')\ a_1'\ a_2'\ p', D)$, если
+    $\Gamma \vdash B'[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p'] \leq D$, \\
+    $R(\Gamma, p, p', \top)$,
     $type(\Gamma, p') \red_h^* Id\ A\ a_1'\ a_2'$, \\
-    $G((\Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2), B, *) = B'$ и \\
-    $G((\Gamma, x : A), b, B'[x_1, \mapsto x, x_2 \mapsto x, t \mapsto refl\ x]) = b'$.
-\item $G(\Gamma, U, D) = U$, если $* \leq D$.
-\item $G(\Gamma, \Pi (x : A) B, D) = \Pi (x : A') B'$, если $\Gamma \vdash type(\Gamma, \Pi (x : A') B') \leq D$,
-    $G(\Gamma, A, *) = A'$ и $G((\Gamma, x : A'), B, *) = B'$.
-\item $G(\Gamma, \Sigma (x : A) B, D) = \Sigma (x : A') B'$, если $\Gamma \vdash type(\Gamma, \Sigma (x : A') B') \leq D$,
-    $G(\Gamma, A, *) = A'$ и $G((\Gamma, x : A'), B, *) = B'$.
-\item $G(\Gamma, Id\ A\ a_1\ a_2, D) = Id\ A'\ a_1'\ a_2'$, если $\Gamma \vdash type(\Gamma, A') \leq D$,
-    $G(\Gamma, A, *) = A'$, $G(\Gamma, a_1, A') = a_1'$ и $G(\Gamma, a_2, A') = a_2'$.
+    $R((\Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2), B, B', *)$ и \\
+    $R((\Gamma, x : A), b, b', B'[x_1, \mapsto x, x_2 \mapsto x, t \mapsto refl\ x])$.
+\item $R(\Gamma, U, U, D)$, если $\Gamma \vdash$ и $D = *$.
+\item $R(\Gamma, \Pi (x : A) B, \Pi (x : A') B', D)$, если \\
+    $\Gamma \vdash type(\Gamma, \Pi (x : A') B') \leq D$, $R(\Gamma, A, A', *)$ и $R((\Gamma, x : A'), B, B', *)$.
+\item $R(\Gamma, \Sigma (x : A) B, \Sigma (x : A') B', D)$, если \\
+    $\Gamma \vdash type(\Gamma, \Sigma (x : A') B') \leq D$, $R(\Gamma, A, A', *)$ и $R((\Gamma, x : A'), B, B', *)$.
+\item $R(\Gamma, Id\ A\ a_1\ a_2, Id\ A'\ a_1'\ a_2', D)$, если \\
+    $\Gamma \vdash type(\Gamma, A') \leq D$, $R(\Gamma, A, A', *)$, $R(\Gamma, a_1, a_1', A')$ и $R(\Gamma, a_2, a_2', A')$.
 \end{itemize}
 
-Также мы введем частичную функцию $G : Ctx_I \to Ctx_B$ следующим образом:
+Также мы введем еще два отношения: над контекстами $R_C \subseteq Ctx_I \times Ctx_B$ и над подстановками $R_S \subseteq Ctx_B \times Env_I \times Env_B \times Ctx_B$,
+где $Env_I$ и $Env_B$ - множества частичных функций из $Var$ в $Term_I$ и в $Term_B$ соответственно.
 \begin{itemize}
-\item $G(\diamond) = \diamond$.
-\item $G(\Gamma, x : A) = \Gamma', x : A'$, если $G(\Gamma) = \Gamma'$ и $G(\Gamma', A, *) = A'$.
+\item $R_C(\diamond, \diamond)$.
+\item $R_C((\Gamma, x : A), (\Gamma', x : A'))$, если $R_C(\Gamma, \Gamma')$ и $R(\Gamma', A, A', *)$.
+\end{itemize}
+\begin{itemize}
+\item $R_S(\Gamma, \rho, \bot, \diamond)$, если $\Gamma \vdash$, где $\bot$ - нигде неопределенная функция.
+\item $R_S(\Gamma, \rho, \rho', (\Delta, y : B))$, если $R_S(\Gamma, \rho, \rho'', \Delta)$ и $R(\Gamma, \rho(y), \rho'(y), B[\rho''])$,
+    где $\rho''$ - такая функция, что $\rho''(y) = \rho'(y)$ для любого $y$ в $\Delta$ и для остальных $y$ не определена.
 \end{itemize}
 
-Теперь докажем ряд свойств функции $G$.
+Теперь докажем ряд свойств отношений $R$, $R_C$ и $R_S$.
 \begin{lem}
 Верны следующие утверждения:
 \begin{itemize}
-\item Если $G(\Gamma)$ определена, то $G(\Gamma) \vdash$.
-\item Если $\Gamma \vdash$ и $G(\Gamma, a, A)$ определена, то $type(\Gamma, G(\Gamma, a, A))$ определена и $\Gamma \vdash type(\Gamma, G(\Gamma, a, A)) \leq A$.
-    В частности, если $A \in Term_B$, то $type(\Gamma, G(\Gamma, a, A)) \deq A$ и $\Gamma \vdash G(\Gamma, a, A) \Downarrow A$.
+\item Если $R(\Gamma, a, a', A)$, то $type(\Gamma, a')$ определено и $\Gamma \vdash type(\Gamma, a') \leq A$.
+    В частности, если $A \in Term_B$, то $type(\Gamma, a') \deq A$ и $\Gamma \vdash a' \Downarrow A$,
+    и если $A = *$, то $\Gamma \vdash a'$.
+\item Если $R_C(\Gamma, \Gamma')$, то $\Gamma' \vdash$.
+\item Если $R_S(\Gamma, \rho, \rho', \Delta)$, то $\rho' \in CT_B(\Gamma, \Delta)$.
 \end{itemize}
 \end{lem}
 \begin{proof}
-Первое утверждение элементарно следует из второго, а второе легко доказывается индукций по $a$.
+Последние два утверждения элементарно следуют из первого, а первое легко доказывается индукций по $a$.
 \end{proof}
 
-Теперь мы хотим доказать, что $G$ сохраняет подстановки.
-Для этого нам понадобится еще одна вспомогательная функция.
-Пусть $Env_I$ и $Env_B$ - множества частичных функций из $Var$ в $Term_I$ и в $Term_B$ соответственно.
-Тогда мы определим частичную функцию $G : Ctx_B \times Env_I \times Ctx_B \to Env_B$ следующим образом:
-\begin{itemize}
-\item $G(\Gamma, \rho, \diamond) = \bot$, где $\bot$ - нигде неопределенная функция.
-\item $G(\Gamma, \rho, (\Delta, y : B)) = \rho'[y \mapsto b]$, если $G(\Gamma, \rho, \Delta) = \rho'$ и $G(\Gamma, \rho(y), B[\rho']) = b$.
-\end{itemize}
-
-\begin{lem}[subst][Лемма о подстановке]
-Если $G(\Gamma, a, A) = a'$ и $G(\Gamma, \rho, \Delta) = \rho'$, то $G(\Delta, a[\rho], A[\rho']) = a'[\rho']$.
+Теперь мы хотим доказать, что $R$ сохраняет подстановки.
+\begin{lem}[subst][Лемма о подстановке] \ \\
+Если $R(\Gamma, a, a', A)$ и $R(\Delta, \rho, \rho', \Gamma)$, то $R(\Delta, a[\rho], a'[\rho'], A[\rho'])$.
 \end{lem}
 \begin{proof}
-Индукцией по $a$.
+Индукцией по $a$. TODO: Написать подробнее?
 \end{proof}
 
-Если $A_1, A_2 \in Term_B \amalg \{ * \}$, то мы будем писать $A_1 \deq A_2$ в случае, когда $A_1 = A_2 = *$ или $A_1, A_2 \in Term_B$ и $A_1 \deq A_2$.
+Если $A_1, A_2 \in Term_B \amalg \{ *, \top \}$, то мы будем писать $A_1 \deq A_2$ в случае, когда $A_1 = A_2$ или $A_1, A_2 \in Term_B$ и $A_1 \deq A_2$.
 
 \begin{lem}
-Если $\Gamma_1 \deq \Gamma_2$, $a_1 \deq a_2$, $A_1 \deq A_2$ и $G(\Gamma_i, a_i, A_i)$ определены, то $G(\Gamma_1, a_1, A_1) \deq G(\Gamma_2, a_2, A_2)$.
+Если $\Gamma_1 \deq \Gamma_2$, $a_1 \deq a_2$, $A_1 \deq A_2$ и $R(\Gamma_i, a_i, a_i', A_i)$, то $a_1' \deq a_2'$.
 \end{lem}
 \begin{proof}
 \end{proof}
 
 \begin{lem}
-Если $G(\Gamma, a, A)$ и $G(\Gamma, B, *)$ определены и $A \deq B$, то $G(\Gamma, a, B)$ также определена.
+Если $R(\Gamma, a, a', A)$, $R(\Gamma, B, B', *)$ и $A \deq B$, то существует $a'$ такой, что $R(\Gamma, a, a', B)$.
 \end{lem}
 \begin{proof}
 \end{proof}
 
 \begin{prop}
-Пусть $a$ находится в нормальной форме, тогда:
+Верны следующие утверждения:
 \begin{itemize}
-\item Если $\Gamma \vdash$, то $G(\Gamma)$ определена.
-\item Если $\Gamma \vdash a$, то $G(\Gamma)$ и $G(G(\Gamma), a, *)$ определены.
-\item Если $\Gamma \vdash a : A$, то $G(\Gamma)$, $G(\Gamma, A, *)$ и $G(G(\Gamma), a, G(G(\Gamma), A, *))$ определены.
+\item Если $\Gamma \vdash$, то существует $\Gamma'$ такой, что $R(\Gamma, \Gamma')$.
+\item Если $\Gamma \vdash A$, то существуют $\Gamma'$ и $A'$ такие, что $R(\Gamma, \Gamma')$ и $R(\Gamma', A, A', *)$.
+\item Если $\Gamma \vdash a : A$, то существуют $\Gamma'$, $a'$ и $A'$ такие, что $R(\Gamma, \Gamma')$, $R(\Gamma', A, A', *)$ и $R(\Gamma', a, a', A')$.
 \end{itemize}
 \end{prop}
 \begin{proof}
