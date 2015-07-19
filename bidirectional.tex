@@ -413,7 +413,7 @@ $\Gamma$ и $A$ являются вспомогательными данными
     $\Gamma \vdash type(\Gamma, A') \leq D$, $R(\Gamma, A, A', *)$, $R(\Gamma, a_1, a_1', A')$ и $R(\Gamma, a_2, a_2', A')$.
 \end{itemize}
 
-Также мы введем еще два отношения: над контекстами $R_C \subseteq Ctx_I \times Ctx_B$ и над подстановками $R_S \subseteq Ctx_B \times Env_I \times Env_B \times Ctx_B$,
+Теперь мы введем еще два отношения: над контекстами $R_C \subseteq Ctx_I \times Ctx_B$ и над подстановками $R_S \subseteq Ctx_B \times Env_I \times Env_B \times Ctx_B$,
 где $Env_I$ и $Env_B$ - множества частичных функций из $Var$ в $Term_I$ и в $Term_B$ соответственно.
 \begin{itemize}
 \item $R_C(\diamond, \diamond)$.
@@ -426,7 +426,7 @@ $\Gamma$ и $A$ являются вспомогательными данными
 \end{itemize}
 
 Теперь докажем ряд свойств отношений $R$, $R_C$ и $R_S$.
-\begin{lem}
+\begin{lem}[rel-complete]
 Верны следующие утверждения:
 \begin{itemize}
 \item Если $R(\Gamma, a, a', A)$, то $type(\Gamma, a')$ определено и $\Gamma \vdash type(\Gamma, a') \leq A$.
@@ -440,34 +440,67 @@ $\Gamma$ и $A$ являются вспомогательными данными
 Последние два утверждения элементарно следуют из первого, а первое легко доказывается индукций по $a$.
 \end{proof}
 
+Теперь докажем функциональность этих отношений.
+Если $R(\Gamma, a, a', A)$, то $a'$ не всегда однозначно определяется по $\Gamma$, $a$ и $A$, но при некаторых условиях это верно, как показывает следующая лемма:
+\begin{lem}
+Верны следующие утверждения:
+\begin{itemize}
+\item Пусть $a$ в нормальной форме, $R(\Gamma, a, a_1, A_1)$, $R(\Gamma, a, a_2, A_2)$ и либо $A_1 = A_2 \neq \top$, либо $a$ не является конструктором (то есть не равен $\lambda x. b$, $(b, c)$ и $refl$). Тогда $a_1 = a_2$.
+\item Пусть $\Gamma$ в нормальной форме, $R_C(\Gamma, \Gamma_1)$ и $R(\Gamma, \Gamma_2)$. Тогда $\Gamma_1 = \Gamma_2$.
+\item Пусть $\rho$ в нормальной форме (то есть для любого $y$ если $\rho(y)$ определено, то $\rho(y)$ в нормальной форме), $R_S(\Gamma, \rho, \rho_1, \Delta)$ и $R(\Gamma, \rho, \rho_2, \Delta)$. Тогда $\rho_1 = \rho_2$.
+\end{itemize}
+\end{lem}
+\begin{proof}
+Последние два утверждения элементарно следуют из первого, а первое легко доказывается индукций по $a$.
+\end{proof}
+
+Теперь мы хотим показать, что отношения $R$, $R_C$ и $R_S$ являются функциональными с точностью до отношения $\deq$.
+Для этого нам понадобится следующая лемма.
+\begin{lem}[func-lem]
+Если $\Gamma_1 \deq \Gamma_2$, $a_1 \red^* a_2$, $\Gamma_2 \vdash A_1 \leq A_2$ и $R(\Gamma_1, a_1, a_1', A_1)$, то существует $a_2'$ такой, что $a_1' \deq a_2'$ и $R(\Gamma_2, a_2, a_2', A_2)$.
+\end{lem}
+\begin{proof}
+TODO
+\end{proof}
+
+Теперь мы можем закончить доказательство функциональности.
+\begin{prop}
+Верны следующие утверждения:
+\begin{itemize}
+\item Если $\Gamma_1 \deq \Gamma_2$, $a_1 \deq a_2$, $A_1 \deq A_2$, $R(\Gamma_1, a_1, a_1', A_1)$ и $R(\Gamma_2, a_2, a_2', A_2)$, то $a_1' \deq a_2'$.
+\item Если $\Gamma_1 \deq \Gamma_2$, $R_C(\Gamma_1, \Gamma_1')$ и $R_C(\Gamma_2, \Gamma_2')$, то $\Gamma_1' \deq \Gamma_2'$.
+\item Если $\Gamma_1 \deq \Gamma_2$, $\rho_1 \deq \rho_2$, $\Delta_1 \deq \Delta_2$, $R_S(\Gamma_1, \rho_1, \rho_1', \Delta_1)$ и $R_S(\Gamma_2, \rho_2, \rho_2', \Delta_2)$, то $\rho_1' \deq \rho_2'$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+Последние два утверждения элементарно следуют из первого, а первое из лемм~\rlem{func-lem} и \rlem{rel-complete}.
+\end{proof}
+
 Теперь мы хотим доказать, что $R$ сохраняет подстановки.
 \begin{lem}[subst][Лемма о подстановке] \ \\
-Если $R(\Gamma, a, a', A)$ и $R(\Delta, \rho, \rho', \Gamma)$, то $R(\Delta, a[\rho], a'[\rho'], A[\rho'])$.
+Если $R(\Gamma, a, a', A)$ и $R(\Delta, \rho, \rho', \Gamma)$, то $R(\Delta, a[\rho], a'[\rho'], A[\rho'])$ (если $A = *$, то мы полагаем $A[\rho'] = *$).
 \end{lem}
 \begin{proof}
 Индукцией по $a$. TODO: Написать подробнее?
 \end{proof}
 
-Если $A_1, A_2 \in Term_B \amalg \{ *, \top \}$, то мы будем писать $A_1 \deq A_2$ в случае, когда $A_1 = A_2$ или $A_1, A_2 \in Term_B$ и $A_1 \deq A_2$.
+\begin{comment}
+% Если $A_1, A_2 \in Term_B \amalg \{ *, \top \}$, то мы будем писать $A_1 \deq A_2$ в случае, когда $A_1 = A_2$ или $A_1, A_2 \in Term_B$ и $A_1 \deq A_2$.
 
 \begin{lem}
-Если $\Gamma_1 \deq \Gamma_2$, $a_1 \deq a_2$, $A_1 \deq A_2$ и $R(\Gamma_i, a_i, a_i', A_i)$, то $a_1' \deq a_2'$.
+% Если $\Gamma_1 \deq \Gamma_2$, $a_1 \deq a_2$, $A_1 \deq A_2$ и $R(\Gamma_i, a_i, a_i', A_i)$, то $a_1' \deq a_2'$.
+Если $a_1 \deq a_2$, $R(\Gamma, a_1, a_1', A)$ и $R(\Gamma, a_2, a_2', A)$, то $a_1' \deq a_2'$.
 \end{lem}
 \begin{proof}
 \end{proof}
-
-\begin{lem}
-Если $R(\Gamma, a, a', A)$, $R(\Gamma, B, B', *)$ и $A \deq B$, то существует $a'$ такой, что $R(\Gamma, a, a', B)$.
-\end{lem}
-\begin{proof}
-\end{proof}
+\end{comment}
 
 \begin{prop}
 Верны следующие утверждения:
 \begin{itemize}
-\item Если $\Gamma \vdash$, то существует $\Gamma'$ такой, что $R(\Gamma, \Gamma')$.
-\item Если $\Gamma \vdash A$, то существуют $\Gamma'$ и $A'$ такие, что $R(\Gamma, \Gamma')$ и $R(\Gamma', A, A', *)$.
-\item Если $\Gamma \vdash a : A$, то существуют $\Gamma'$, $a'$ и $A'$ такие, что $R(\Gamma, \Gamma')$, $R(\Gamma', A, A', *)$ и $R(\Gamma', a, a', A')$.
+\item Если $\Gamma \vdash$, то существует $\Gamma'$ такой, что $R_C(\Gamma, \Gamma')$.
+\item Если $\Gamma \vdash A$, то существуют $\Gamma'$ и $A'$ такие, что $R_C(\Gamma, \Gamma')$, и $R(\Gamma', A, A', *)$.
+\item Если $\Gamma \vdash a : A$, то существуют $\Gamma'$, $a'$ и $A'$ такие, что $R_C(\Gamma, \Gamma')$, $R(\Gamma', A, A', *)$ и $R(\Gamma', a, a', A')$.
 \end{itemize}
 \end{prop}
 \begin{proof}
