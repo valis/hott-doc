@@ -315,6 +315,7 @@
 Отношения типизации и эквивалентности определены так, что эти определения действительно задают категорию.
 
 \subsection{Теория типов Мартин-Лёфа}
+\label{subsec:MLTT}
 
 Множество термов $Term_I$ теории типов Мартин-Лёфа $T_I$ задается тем же набором правил, что и $Term_B$ за исключением того, что мы заменяем правила $\lambda x : A. b$, $(a, b)_{\Sigma (x : A) B}$ и $refl\ a$:
 \[ Term_I := \ldots\ |\ \lambda x. b\ |\ (a, b)\ |\ refl \]
@@ -442,7 +443,7 @@ $\Gamma$ и $A$ являются вспомогательными данными
 
 Теперь докажем функциональность этих отношений.
 Если $R(\Gamma, a, a', A)$, то $a'$ не всегда однозначно определяется по $\Gamma$, $a$ и $A$, но при некаторых условиях это верно, как показывает следующая лемма:
-\begin{lem}
+\begin{lem}[func-strict]
 Верны следующие утверждения:
 \begin{itemize}
 \item Пусть $a$ в нормальной форме, $R(\Gamma, a, a_1, A_1)$, $R(\Gamma, a, a_2, A_2)$ и либо $A_1 = A_2 \neq \top$, либо $a$ не является конструктором (то есть не равен $\lambda x. b$, $(b, c)$ и $refl$). Тогда $a_1 = a_2$.
@@ -454,8 +455,14 @@ $\Gamma$ и $A$ являются вспомогательными данными
 Последние два утверждения элементарно следуют из первого, а первое легко доказывается индукций по $a$.
 \end{proof}
 
-Теперь мы хотим показать, что отношения $R$, $R_C$ и $R_S$ являются функциональными с точностью до отношения $\deq$.
-Для этого нам понадобится следующая лемма.
+Чтобы доказать, что отношения являются функциональными с точностью до $\deq$, нам понадобятся следующие две леммы.
+\begin{lem}[subst][Лемма о подстановке] \ \\
+Если $R(\Gamma, a, a', A)$ и $R(\Delta, \rho, \rho', \Gamma)$, то $R(\Delta, a[\rho], a'[\rho'], A[\rho'])$ (если $A = *$, то мы полагаем $A[\rho'] = *$).
+\end{lem}
+\begin{proof}
+Индукцией по $a$. TODO: Написать подробнее?
+\end{proof}
+
 \begin{lem}[func-lem]
 Если $\Gamma_1 \deq \Gamma_2$, $a_1 \red^* a_2$, $\Gamma_2 \vdash A_1 \leq A_2$ и $R(\Gamma_1, a_1, a_1', A_1)$, то существует $a_2'$ такой, что $a_1' \deq a_2'$ и $R(\Gamma_2, a_2, a_2', A_2)$.
 \end{lem}
@@ -476,278 +483,56 @@ TODO
 Последние два утверждения элементарно следуют из первого, а первое из лемм~\rlem{func-lem} и \rlem{rel-complete}.
 \end{proof}
 
-Теперь мы хотим доказать, что $R$ сохраняет подстановки.
-\begin{lem}[subst][Лемма о подстановке] \ \\
-Если $R(\Gamma, a, a', A)$ и $R(\Delta, \rho, \rho', \Gamma)$, то $R(\Delta, a[\rho], a'[\rho'], A[\rho'])$ (если $A = *$, то мы полагаем $A[\rho'] = *$).
-\end{lem}
-\begin{proof}
-Индукцией по $a$. TODO: Написать подробнее?
-\end{proof}
-
-\begin{comment}
-% Если $A_1, A_2 \in Term_B \amalg \{ *, \top \}$, то мы будем писать $A_1 \deq A_2$ в случае, когда $A_1 = A_2$ или $A_1, A_2 \in Term_B$ и $A_1 \deq A_2$.
-
-\begin{lem}
-% Если $\Gamma_1 \deq \Gamma_2$, $a_1 \deq a_2$, $A_1 \deq A_2$ и $R(\Gamma_i, a_i, a_i', A_i)$, то $a_1' \deq a_2'$.
-Если $a_1 \deq a_2$, $R(\Gamma, a_1, a_1', A)$ и $R(\Gamma, a_2, a_2', A)$, то $a_1' \deq a_2'$.
-\end{lem}
-\begin{proof}
-\end{proof}
-\end{comment}
-
-\begin{prop}
+Основной шаг в доказательстве теоремы~\rthm{equiv} - это оследующее утверждение:
+\begin{prop}[rel-correct]
 Верны следующие утверждения:
 \begin{itemize}
 \item Если $\Gamma \vdash$, то существует $\Gamma'$ такой, что $R_C(\Gamma, \Gamma')$.
 \item Если $\Gamma \vdash A$, то существуют $\Gamma'$ и $A'$ такие, что $R_C(\Gamma, \Gamma')$, и $R(\Gamma', A, A', *)$.
 \item Если $\Gamma \vdash a : A$, то существуют $\Gamma'$, $a'$ и $A'$ такие, что $R_C(\Gamma, \Gamma')$, $R(\Gamma', A, A', *)$ и $R(\Gamma', a, a', A')$.
+\item Если $\Gamma \vdash$, $\Delta \vdash$ и $\rho \in CT_I(\Gamma, \Delta)$, то существуют $\Gamma'$, $\Delta'$ и $\rho'$ такие, что $R_C(\Gamma, \Gamma')$, $R_C(\Delta, \Delta')$ и $R_S(\Gamma', \rho, \rho', \Delta')$.
 \end{itemize}
 \end{prop}
 \begin{proof}
+TODO
 \end{proof}
 
-\begin{comment}
-Чтобы определить функтор в обратную сторону, нам понадобится вспомогательная конструкция.
-Мы определим следующие отношения:
-\begin{itemize}
-\item $\ll - \vdash \rr = - \vdash$ на множестве $Ctx_I \times Ctx_B$.
-\item $\ll - \vdash - \rr = - \vdash -$ на множестве $Ctx_I \times Term_I \times Ctx_B \times Term_B$.
-\item $\ll - \vdash - : - \rr = - \vdash - \Uparrow -$ на множестве $Ctx_I \times Term_I \times Term_I \times Ctx_B \times Term_B \times Term_B$.
-\item $\ll - \vdash - : - \rr = - \vdash - \Downarrow -$ на множестве $Ctx_I \times Term_I \times Term_I \times Ctx_B \times Term_B \times Term_B$.
-\end{itemize}
+Используя это утверждение, мы можем сконструировать функтор $G : \C_{T_I} \to \C_{T_B}$ следующим обазом.
+Для любого $\Gamma \in Ctx_I$ такого, что $\Gamma \vdash$, мы определяем $G(\Gamma)$ как $\Gamma'$ такой, что $R_C(nf(\Gamma), \Gamma')$, где $nf(\Gamma)$ - нормальная форма $\Gamma$.
+По утверждению~\rprop{rel-correct} такой $\Gamma'$ существует, и по лемме~\rlem{func-strict} он уникален.
 
-Отношения определяются индуктивным образом:
+Если $\rho \in \C_{T_I}(\Gamma, \Delta)$, то мы определяем $G(\rho) \in \C_{T_B}(G(\Gamma), G(\Delta))$ как $\rho'$ такой, что $R_S(G(\Gamma), \rho, \rho', G(\Delta))$.
+По утверждению~\rprop{rel-correct} такой $\rho'$ существует, и по лемме~\rlem{func-lem} он уникален.
+Легко убедитьтся, что $G$ сохраняет тождественные морфизмы, и из леммы~\rlem{subst} следует, что он сохраняет композиции.
 
-\medskip
-\begin{center}
-\AxiomC{}
-\UnaryInfC{$\ll \vdash \rr = \vdash$}
-\DisplayProof
-\quad
-\AxiomC{$\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$}
-\RightLabel{, $x \notin \Gamma$}
-\UnaryInfC{$\ll \Gamma, x : A \vdash \rr = \Gamma', x : A' \vdash$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash \rr = \Gamma' \vdash$}
-\RightLabel{, $x : A \in \Gamma$, $x : A' \in \Gamma'$}
-\UnaryInfC{$\ll \Gamma \vdash x : A \rr = \Gamma' \vdash x \Uparrow A'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$}
-\AxiomC{$\ll \Gamma \vdash B \rr = \Gamma' \vdash B'$}
-\RightLabel{, $A \red_h^* B$}
-\BinaryInfC{$\ll \Gamma \vdash a : B \rr = \Gamma' \vdash a' \Uparrow A'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$}
-\AxiomC{$\ll \Gamma \vdash B \rr = \Gamma' \vdash B'$}
-\RightLabel{, $A \deq B$ и $A' \deq B'$}
-\BinaryInfC{$\ll \Gamma \vdash a : B \rr = \Gamma' \vdash a' \Downarrow B'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma, x : A \vdash B \rr = \Gamma', x : A' \vdash B'$}
-\UnaryInfC{$\ll \Gamma \vdash \Pi (x : A) B \rr = \Gamma' \vdash \Pi (x : A') B'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma, x : A \vdash b : B \rr = \Gamma', x : A' \vdash b' \Uparrow B'$}
-\UnaryInfC{$\ll \Gamma \vdash \lambda x. b : \Pi (x : A) B \rr = \Gamma' \vdash \lambda x : A'. b' \Uparrow \Pi (x : A') B'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash f : \Pi (x : A) B \rr = \Gamma' \vdash f' \Uparrow C'$}
-\AxiomC{$\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Downarrow A'$}
-\RightLabel{, $C' \red^*_h \Pi (x : A') B'$}
-\BinaryInfC{$\ll \Gamma \vdash f\ a : B[x \mapsto a] \rr = \Gamma' \vdash f'\ a' \Uparrow B'[x \mapsto a']$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma, x : A \vdash B \rr = \Gamma', x : A' \vdash B'$}
-\UnaryInfC{$\ll \Gamma \vdash \Sigma (x : A) B \rr = \Gamma' \vdash \Sigma (x : A') B'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Downarrow A'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma, x : A \vdash B \rr = \Gamma', x : A' \vdash B'$
-\noLine
-\UnaryInf$\fCenter \ll \Gamma \vdash b : B[x \mapsto a] \rr = \Gamma' \vdash b' \Downarrow B'[x \mapsto a']$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \ll \Gamma \vdash (a, b) : \Sigma (x : A) B \rr = \Gamma' \vdash (a', b')_{\Sigma (x : A') B'} \Uparrow \Sigma (x : A') B'$
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash p : \Sigma (x : A) B \rr = \Gamma' \vdash p' \Uparrow C'$}
-\RightLabel{, $C' \red^*_h \Sigma (x : A') B'$}
-\UnaryInfC{$\ll \Gamma \vdash proj_1\ p : A \rr = \Gamma' \vdash proj_1\ p' \Uparrow A'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash p : \Sigma (x : A) B \rr = \Gamma' \vdash p' \Uparrow C'$}
-\RightLabel{, $C' \red^*_h \Sigma (x : A') B'$}
-\UnaryInfC{$\ll \Gamma \vdash proj_2\ p : B[x \mapsto proj_1\ p] \rr = \Gamma' \vdash proj_2\ p' \Uparrow B'[x \mapsto proj_1\ p']$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash a_1 : A \rr = \Gamma' \vdash a_1' \Downarrow A'$}
-\AxiomC{$\ll \Gamma \vdash a_2 : A \rr = \Gamma' \vdash a_2' \Downarrow A'$}
-\BinaryInfC{$\ll \Gamma \vdash Id\ A\ a_1\ a_2 \rr = \Gamma' \vdash Id\ A'\ a_1'\ a_2'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$}
-\UnaryInfC{$\ll \Gamma \vdash refl : Id\ A\ a\ a \rr = \Gamma' \vdash refl\ a' \Uparrow Id\ A'\ a'\ a'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\def\extraVskip{0.5pt}
-\Axiom$\ll \fCenter \Gamma, x_1 : A, x_2 : A, t : Id\ A\ x_1\ x_2 \vdash B \rr = \Gamma', x_1 : A', x_2 : A', t : Id\ A'\ x_1\ x_2 \vdash B'$
-\noLine
-\UnaryInf$\ll \fCenter \Gamma, x : A \vdash b : B[x_i \mapsto x, t \mapsto refl] \rr = \Gamma', x : A' \vdash b' \Downarrow B[x_i \mapsto x, t \mapsto refl\ x]$
-\noLine
-\UnaryInf$\ll \fCenter \Gamma \vdash p : Id\ A\ a_1\ a_2 \rr = \Gamma' \vdash p' \Downarrow Id\ A'\ a_1'\ a_2'$
-\def\extraVskip{2pt}
-\UnaryInf$\ll \fCenter \Gamma \vdash J\ (\lambda x_1 x_2 t. B)\ (\lambda x. b)\ a_1\ a_2\ p : B[x_1 \mapsto a_1, x_2 \mapsto a_2, t \mapsto p] \rr =$
-\def\extraVskip{0.5pt}
-\noLine
-\UnaryInf$\fCenter \Gamma' \vdash J\ (\lambda x_1 x_2 t. B')\ (\lambda x. b')\ a_1'\ a_2'\ p' \Uparrow B'[x_1 \mapsto a_1', x_2 \mapsto a_2', t \mapsto p']$
-\def\extraVskip{2pt}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash \rr = \Gamma' \vdash$}
-\UnaryInfC{$\ll \Gamma \vdash U \rr = \Gamma' \vdash U$}
-\DisplayProof
-\quad
-\AxiomC{$\ll \Gamma \vdash A : U \rr = \Gamma' \vdash A' \Downarrow U$}
-\UnaryInfC{$\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash A : U \rr = \Gamma' \vdash A' \Downarrow U $}
-\AxiomC{$\ll \Gamma, x : A \vdash B : U \rr = \Gamma', x : A' \vdash B' \Downarrow U$}
-\BinaryInfC{$\ll \Gamma \vdash \Pi (x : A) B : U \rr = \Gamma' \vdash \Pi (x : A') B' \Uparrow U$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash A : U \rr = \Gamma' \vdash A' \Downarrow U $}
-\AxiomC{$\ll \Gamma, x : A \vdash B : U \rr = \Gamma', x : A' \vdash B' \Downarrow U$}
-\BinaryInfC{$\ll \Gamma \vdash \Sigma (x : A) B : U \rr = \Gamma' \vdash \Sigma (x : A') B' \Uparrow U$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\ll \Gamma \vdash A : U \rr = \Gamma' \vdash A' \Downarrow U $}
-\AxiomC{$\ll \Gamma \vdash a_1 : A \rr = \Gamma' \vdash a_1' \Downarrow A'$}
-\AxiomC{$\ll \Gamma \vdash a_2 : A \rr = \Gamma' \vdash a_2' \Downarrow A'$}
-\TrinaryInfC{$\ll \Gamma \vdash Id\ A\ a_1\ a_2 : U \rr = \Gamma' \vdash Id\ A'\ a_1'\ a_2' \Uparrow U$}
-\DisplayProof
-\end{center}
-\bigskip
-
-Заметим, что очевидно верны следующие факты:
-\begin{itemize}
-\item Если $\ll \Gamma \vdash \rr = \Gamma' \vdash$, то $\Gamma' \vdash$.
-\item Если $\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$, то $\Gamma' \vdash A'$.
-\item Если $\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$, то $\Gamma' \vdash a' \Uparrow A'$.
-\item Если $\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Downarrow A'$, то $\Gamma' \vdash a' \Downarrow A'$.
-\end{itemize}
-Нам понадобится несколько вспомогательных утверждений об отношении интерпретации.
-\end{comment}
-
-\begin{comment}
-Одна из проблем теории $T_I$, которую призвана исправить теория $T_B$ заключается в том, что тип терма не определяется по нему однозначно.
-Однако в некоторых случаях это может быть верно, как показывает следующее утверждение.
-
-\begin{prop}
-Если $\Gamma \vdash a : A_1$, $\Gamma \vdash a : A_2$ в $T_I$, $a$ находится в нормальной форме и не является конструктором (то есть не равен $\lambda x. b$, $(a, b)$ и $refl$), то $A_1 \deq A_2$.
-\end{prop}
-\begin{proof}
-Доказательство индукцией по выводу $\Gamma \vdash a : A_i$.
-Если один из выводов заканчивается правилом $(CONV)$, то утверждение верно по индукционной гипотезе.
-В противном случае они должны заканчиваться одним и тем же правилом.
-Случаи правил для контекстов, типов и вселенных, а так же правила $(VAR)$ и $(J)$ очевидны.
-Случаи $(LAM_I)$, $(PAIR_I)$ и $(REFL_I)$ невозможны, так как мы предположили, что терм не является конструктором.
-
-Осталось рассмотреть случаи $(APP)$, $(PROJ_1)$ и $(PROJ_2)$.
-В случае аппликации $f\ a$ терм $f$ не может быть конструктором, следовательно к нему применима индукционная гипотеза, следовательно его тип $\Pi (x : A) B$ определяется однозначно с точностью до отношения $\deq$.
-По конфлюэнтности следует, что $B$ и, следовательно, $B[x \mapsto a]$ также однозначно определены.
-Случаи $(PROJ_1)$ и $(PROJ_2)$ разбираются аналогично.
-\end{proof}
-
-Теперь мы хотим доказать, что отношения интерпретации определяют функции.
-\end{comment}
-
-\begin{comment}
+Чтобы доказать, что $G$ является эквивалентностью, нам нужно понять как функтор $F : \C_{T_B} \to \C_{T_I}$, определенный в разделе~\ref{subsec:MLTT}, взаимодействует с отношениями $R$ и $R_C$.
+Для этого мы докажем две простые леммы.
 \begin{lem}
-Верны следующие утверждения:
-\begin{itemize}
-\item Если $\ll \Gamma \rr = \Gamma_1$ и $\ll \Gamma \rr = \Gamma_2$, то $\Gamma_1 = \Gamma_2$.
-\item Если $\ll \Gamma \vdash A \rr = \Gamma_1 \vdash A_1$ и $\ll \Gamma \vdash A \rr = \Gamma_2 \vdash A_2$, то $\Gamma_1 = \Gamma_2$, и $A_1 = A_2$.
-\item Если $\ll \Gamma \vdash a : A_1 \rr = \Gamma_1 \vdash a_1 \Uparrow A_1'$, $\ll \Gamma \vdash a : A_2 \rr = \Gamma_2 \vdash a_2 \Uparrow A_2'$, $a$ находится в нормальной форме
-    и либо существует $C$ такой, что $A_1 \red_h^* C$ и $A_2 \red_h^* C$, либо $a$ не является конструктором (то есть не равен $\lambda x. b$, $(c, b)$ и $refl$), то $\Gamma_1 = \Gamma_2$, $a_1 = a_2$ и $A_1' = A_2'$.
-Более того, если 
-\item Если $\ll \Gamma \vdash a : A \rr = \Gamma_1 \vdash a_1 \Downarrow A_1$, $\ll \Gamma \vdash a : A \rr = \Gamma_2 \vdash a_2 \Downarrow A_2$ и $a$ находится в нормальной форме, то $\Gamma_1 = \Gamma_2$, $a_1 = a_2$ и $A_1 = A_2$.
-\end{itemize}
-\end{lem}
-\begin{proof}
-\end{proof}
-
-\begin{lem}
-Верны следующие утверждения:
-\begin{itemize}
-\item Если $\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Uparrow A'$, то $\ll \Gamma \vdash \rr = \Gamma' \vdash$.
-\item Если $\ll \Gamma \vdash a : A \rr = \Gamma' \vdash a' \Downarrow A'$, то $\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$ и $\ll \Gamma \vdash \rr = \Gamma' \vdash$.
-\item Если $\ll \Gamma \vdash A \rr = \Gamma' \vdash A'$, то $\ll \Gamma \vdash \rr = \Gamma' \vdash$.
-\end{itemize}
+Если $\Gamma \vdash$, то $R_C(F(\Gamma), \Gamma)$.
+Если $\Gamma \vdash a \Uparrow A$, то $R(\Gamma, F(a), a, A)$.
 \end{lem}
 \begin{proof}
 Элементарная индукция по выводу.
+TODO: подробнее?
 \end{proof}
-\end{comment}
 
+\begin{lem}
+Если $R(\Gamma, a, a', A)$, то $F(a') \deq a$.
+\end{lem}
+\begin{proof}
+Элементарная индукция по $a$.
+\end{proof}
+
+Теперь мы готовы доказать основной результат.
 \begin{thm}[equiv]
-Категории $\C_{T_B}$ и $\C_{T_I}$ эквивалентны.
+Функтор $F : \C_{T_B} \to \C_{T_I}$, определенный в разделе~\ref{subsec:MLTT}, и $G : \C_{T_I} \to \C_{T_B}$ задают эквивалентность категорий.
 \end{thm}
+\begin{proof}
+\end{proof}
+\begin{proof}
+Естественные эквивалентности $\alpha_\Gamma : \Gamma \to G(F(\Gamma)$ и $\beta_\Delta : \Delta \to F(G(\Delta))$ задаются условиями $\alpha_\Gamma(x) = x$ и $\beta_\Delta(x) = x$ для любого $x$.
+TODO: закончить.
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
