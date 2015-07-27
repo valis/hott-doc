@@ -1,0 +1,180 @@
+\documentclass{amsart}
+
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{type1ec}
+\usepackage{stmaryrd}
+% \usepackage[T2A]{fontenc}
+
+\providecommand\WarningsAreErrors{false}
+\ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{теорема}{Теорема}
+\newref{lem}{лемма}{Лемма}
+\newref{prop}{утверждение}{Утверждение}
+\newref{cor}{следствие}{Следствие}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{замечание}{Замечание}
+
+\newcommand{\red}{\Rightarrow}
+\newcommand{\deq}{\Leftrightarrow}
+\renewcommand{\ll}{\llbracket}
+\newcommand{\rr}{\rrbracket}
+\newcommand{\cat}[1]{\mathbf{#1}}
+\renewcommand{\C}{\cat{C}}
+
+\numberwithin{figure}{section}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\title{Абстрактные теории типов}
+
+\author{Валерий Исаев}
+
+% \begin{abstract}
+% Abstract
+% \end{abstract}
+
+\maketitle
+
+\section{Абстрактные теории типов}
+
+\begin{defn}
+\emph{Абстрактная теория типов} - это финитарная монада над категорией контекстуальных категорий.
+\end{defn}
+
+Покажем как по обобщенной алгебраической теории построить абстрактную теорию типов.
+Пусть $\C$ - контекстуальная категория и $S$ - множество симовлов теории.
+Тогда определим класс термов $Term$ индуктивным образом:
+\begin{itemize}
+\item Если $A \in Ob(\C)$, то $O(A) \in Term$.
+\item Если $f : A \to B$ и $t \in Term$, то $f(t) \in Term$.
+\item Если $s \in S$, $t_1, \ldots t_n \in Term$, то $s(t_1, \ldots t_n) \in Term$.
+\end{itemize}
+
+Класс контекстов определяется следующим образом:
+\[ Ctx = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_1, \ldots x_n \in Var, A_1, \ldots A_n \in Term \}. \]
+Пустой контекст обозначается $\diamond$.
+Каждому контексту $\Gamma$ мы сопоставляем объект категории $\C$ следующим образом:
+\begin{itemize}
+\item $| \diamond | = 1 \in Ob(\C)_0$.
+\item $| \Gamma, x : O(A) | = A$.
+\item $| \Gamma, x : A' | = | \Gamma |$, если $A'$ не имеет вид $O(A)$.
+\end{itemize}
+
+Теперь определим отношения типизации $- \vdash$, $- \vdash -$ и $- \vdash - : -$ на классах $Ctx$, $Ctx \times Term$ и $Ctx \times Term \times Term$ соответственно.
+
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\diamond \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{, $x \notin \Gamma$}
+\UnaryInfC{$\Gamma, x : A \vdash x : A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash x : A$}
+\AxiomC{$\Gamma \vdash B$}
+\RightLabel{, $y \notin \Gamma$}
+\BinaryInfC{$\Gamma, y : B \vdash x : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, $A \in Ob(\C)$}
+\UnaryInfC{$\Gamma \vdash O(A)$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a : O(A)$}
+\RightLabel{, $f : A \to B$}
+\UnaryInfC{$\Gamma \vdash f(a) : O(B)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \top$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash tt : \top$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a : \top$}
+\UnaryInfC{$\Gamma \vdash a \deq tt : \top$}
+\DisplayProof
+\end{center}
+
+\section{Обобщенные алгебраические теории}
+
+Большой класс примером абстрактных теорий типов строится при помощи обобщенных алгебраических теорий, которые были введены в \cite{GAT}.
+Мы будем использовать определенный частный случай таких теорий и слегка модифицируем определение.
+
+Обобщенная алгебраическая теория состоит из счетного множества переменных $Var$, множества символов $S$ и множества правил вывода, синтаксис описания которых приведен ниже.
+По множествам $Var$ и $S$ мы строим множество выражений $Expr_S$ индуктивным образом:
+\begin{itemize}
+\item Если $v \in Var$, то $v \in Expr_S$.
+\item Если $s \in S \cup \{ Ctx, Ty, Tm \}$, $e_1, \ldots e_n \in Expr_S$, то $s(e_1, \ldots e_n) \in Expr_S$.
+\end{itemize}
+
+Правило вывода состоит из последовательности посылок $P_1. \ldots P_n$ и заключения $C$.
+Такое правило записывается как $P_1, \ldots P_n \implies C$ или как
+\medskip
+\begin{center}
+\AxiomC{$P_1$}
+\AxiomC{$\ldots$}
+\AxiomC{$P_n$}
+\TrinaryInfC{$C$}
+\DisplayProof
+\end{center}
+
+Каждая посылка является парой из переменной $v$ и выражение $e$ и записывается как $v \in e$.
+Заключения имеют один из следующих видов:
+\begin{itemize}
+\item Заключения, вводящие типы. Такие заключения состоят из пары выраженией $e$ и $\Gamma$ и записываются как $e \in Ty(\Gamma)$.
+\item Заключения, вводящие термы. Такие заключения состоят из троек выраженией $e$, $\Gamma$ и $A$ и записываются как $e \in Tm(\Gamma, A)$.
+\item Заключения, вводящие равенства типов. Такие заключения состоят из троек выраженией $e_1$, $e_2$ и $\Gamma$ и записываются как $e_1 = e_2 \in Ty(\Gamma)$.
+\item Заключения, вводящие равенства термов. Такие заключения состоят из четверок выраженией $e_1$, $e_2$, $\Gamma$ и $A$ и записываются как $e_1 = e_2 \in Tm(\Gamma, A)$.
+\end{itemize}
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
