@@ -71,20 +71,14 @@
 Пусть $\C$ - контекстуальная категория и $S$ - множество симовлов теории.
 Тогда определим класс термов $Term$ индуктивным образом:
 \begin{itemize}
-\item Если $A \in Ob(\C)$, то $O(A) \in Term$.
-\item Если $f : A \to B$ и $t \in Term$, то $f(t) \in Term$.
-\item Если $s \in S$, $t_1, \ldots t_n \in Term$, то $s(t_1, \ldots t_n) \in Term$.
+\item Если $A \in Ob(\C)_{n + 1}$ и $a_1, \ldots a_n \in Term$ то $O(A, a_1, \ldots a_n) \in Term$.
+\item Если $A \in Ob(\C)_n$, $f : A \to B$ и $a_1, \ldots a_n \in Term$, то $f(a_1, \ldots a_n) \in Term$.
+\item Если $s \in S$, $a_1, \ldots a_n \in Term$, то $s(a_1, \ldots a_n) \in Term$.
 \end{itemize}
 
 Класс контекстов определяется следующим образом:
 \[ Ctx = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_1, \ldots x_n \in Var, A_1, \ldots A_n \in Term \}. \]
 Пустой контекст обозначается $\diamond$.
-Каждому контексту $\Gamma$ мы сопоставляем объект категории $\C$ следующим образом:
-\begin{itemize}
-\item $| \diamond | = 1 \in Ob(\C)_0$.
-\item $| \Gamma, x : O(A) | = A$.
-\item $| \Gamma, x : A' | = | \Gamma |$, если $A'$ не имеет вид $O(A)$.
-\end{itemize}
 
 Теперь определим отношения типизации $- \vdash$, $- \vdash -$ и $- \vdash - : -$ на классах $Ctx$, $Ctx \times Term$ и $Ctx \times Term \times Term$ соответственно.
 
@@ -117,13 +111,18 @@
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\RightLabel{, $A \in Ob(\C)$}
-\UnaryInfC{$\Gamma \vdash O(A)$}
+\AxiomC{$\Gamma \vdash a_1 : O(ft^n(A))\ \ldots\ \Gamma \vdash a_n : O(ft(A), a_1, \ldots a_{n-1})$}
+\RightLabel{, $A \in Ob(\C)_{n+1}$}
+\BinaryInfC{$\Gamma \vdash O(A, a_1, \ldots a_n)$}
 \DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash a : O(A)$}
-\RightLabel{, $f : A \to B$}
-\UnaryInfC{$\Gamma \vdash f(a) : O(B)$}
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\AxiomC{$\Gamma \vdash a_1 : O(ft^n(A))\ \ldots\ \Gamma \vdash a_n : O(ft(A), a_1, \ldots a_{n-1})$}
+\RightLabel{, $f : A \to B$, $B \in Ob(\C)_{m+1}$}
+\BinaryInfC{$\Gamma \vdash f(a_1, \ldots a_n) : O(B, \pi^m_B f(a_1, \ldots a_n), \ldots \pi_B f(a_1, \ldots a_n))$}
 \DisplayProof
 \end{center}
 
