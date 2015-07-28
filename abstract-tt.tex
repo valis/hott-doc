@@ -67,20 +67,38 @@
 \emph{Абстрактная теория типов} - это финитарная монада над категорией контекстуальных категорий.
 \end{defn}
 
-Покажем как по обобщенной алгебраической теории построить абстрактную теорию типов.
-Пусть $\C$ - контекстуальная категория и $S$ - множество симовлов теории.
-Тогда определим класс термов $Term$ индуктивным образом:
+Во-первых, мы опишем общую схему построения ряда примеров абстрактных теорий типов.
+Пусть $S$ - некоторое множество симовлов, каждому их которых сопоставлена конечная последовательность конечных множеств (его арность).
+Эта функция будет обозначаться $ar : S \to FinSet*$.
+
+Пусть $\C$ - контекстуальная категория.
+Тогда для любого множества $V$ определим класс термов $Term(V)$ индуктивным образом:
 \begin{itemize}
-\item Если $A \in Ob(\C)_{n + 1}$ и $a_1, \ldots a_n \in Term$ то $O(A, a_1, \ldots a_n) \in Term$.
-\item Если $A \in Ob(\C)_n$, $f : A \to B$ и $a_1, \ldots a_n \in Term$, то $f(a_1, \ldots a_n) \in Term$.
-\item Если $s \in S$, $a_1, \ldots a_n \in Term$, то $s(a_1, \ldots a_n) \in Term$.
+\item Если $x \in V$, то $v_x \in Term(V)$.
+\item Если $A \in Ob(\C)_{n + 1}$ и $a_1, \ldots a_n \in Term(V)$ то $O(A, a_1, \ldots a_n) \in Term(V)$.
+\item Если $A \in Ob(\C)_n$, $f : A \to B$ и $a_1, \ldots a_n \in Term(V)$, то $f(a_1, \ldots a_n) \in Term(V)$.
+\item Если $s \in S$, $ar(s) = (X_1, \ldots X_n)$, $a_1 \in Term(V \amalg X_1), \ldots a_n \in Term(V \amalg X_n)$, то $s(a_1, \ldots a_n) \in Term(V)$.
 \end{itemize}
 
-Класс контекстов определяется следующим образом:
-\[ Ctx = \{ x_1 : A_1, \ldots x_n : A_n\ |\ x_1, \ldots x_n \in Var, A_1, \ldots A_n \in Term \}. \]
-Пустой контекст обозначается $\diamond$.
+Означивание - это фукнция вида $\rho : U \to Term(V)$.
+Если $\rho$ - означивание и $X$ - множество, то означивание $\rho \amalg X : U \amalg X \to Term(V \amalg X)$ определяется как $(\rho \amalg X)(u) = Term(i)(\rho(u))$, если $u \in U$, где $i$ - вложение $V \to V \amalg X$, и $(\rho \amalg X)(x) = v_x$, если $x \in X$.
 
-Теперь определим отношения типизации $- \vdash$, $- \vdash -$ и $- \vdash - : -$ на классах $Ctx$, $Ctx \times Term$ и $Ctx \times Term \times Term$ соответственно.
+На множествах термов задается операция подстановки.
+Если $a \in Term(U)$ и $\rho : U \to Term(V)$, то мы определяем терм $a[\rho] \in Term(V)$ рекурсией по $a$:
+\begin{align*}
+& v_x[\rho] = \rho(x) \\
+& O(A, a_1, \ldots a_n)[\rho] = O(A, a_1[\rho], \ldots a_n[\rho]) \\
+& f(a_1, \ldots a_n)[\rho] = f(a_1[\rho], \ldots a_n[\rho]) \\
+& s(a_1, \ldots a_n)[\rho] = s(a_1[\rho \amalg X_1], \ldots a_n[\rho \amalg X_n]) \text{, если } ar(s) = (X_1, \ldots X_n)
+\end{align*}
+
+Класс $Ctx_n$ контекстов длины $n$ определяется индуктивно:
+\begin{itemize}
+\item $\diamond \in Ctx_0$.
+\item Если $\Gamma \in Ctx_n$, $A \in Term(\{ 0, \ldots n - 1 \})$, то $\Gamma, A \in Ctx_{n + 1}$.
+\end{itemize}
+
+Теперь определим отношения типизации $- \vdash$, $- \vdash -$, $- \vdash - : -$, $- \vdash - \deq -$ и $- \vdash - \deq - : -$ на классах $Ctx$, $Ctx \times Type$, $Ctx \times Term \times Type$, $Ctx \times Type \times Type$ и $Ctx \times Term \times Term \times Type$ соответственно.
 
 \medskip
 \begin{center}
@@ -120,8 +138,8 @@
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\AxiomC{$\Gamma \vdash a_1 : O(ft^n(A))\ \ldots\ \Gamma \vdash a_n : O(ft(A), a_1, \ldots a_{n-1})$}
-\RightLabel{, $f : A \to B$, $B \in Ob(\C)_{m+1}$}
+\AxiomC{$\Gamma \vdash a_1 : O(ft^{n-1}(A))\ \ldots\ \Gamma \vdash a_n : O(A, a_1, \ldots a_{n-1})$}
+\RightLabel{, $A \in Ob(\C)_n$, $B \in Ob(\C)_{m+1}$, $f : A \to B$}
 \BinaryInfC{$\Gamma \vdash f(a_1, \ldots a_n) : O(B, \pi^m_B f(a_1, \ldots a_n), \ldots \pi_B f(a_1, \ldots a_n))$}
 \DisplayProof
 \end{center}
@@ -129,17 +147,19 @@
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash \top$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash tt : \top$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash a : \top$}
-\UnaryInfC{$\Gamma \vdash a \deq tt : \top$}
+\AxiomC{$\Gamma \vdash a_1 : O(ft^{n-1}(A))\ \ldots\ \Gamma \vdash a_n : O(A, a_1, \ldots a_{n-1})$}
+\RightLabel{, $A \in Ob(\C)_n$, $B \in Ob(\C)_{m+1}$, $C \in Ob(\C)_{k+1}$, $f : A \to B$, $g : B \to C$}
+\BinaryInfC{$\Gamma \vdash g f(a_1, \ldots a_n) \deq g(\pi^m_B f(a_1, \ldots a_n), \ldots f(a_1, \ldots a_n)) : O(C, \pi^k_C g f(a_1, \ldots a_n), \ldots \pi_C g f(a_1, \ldots a_n))$}
 \DisplayProof
 \end{center}
+\medskip
+
+К этим правилам также добавляются правила для символов из $S$.
+
+Теперь мы можем определить контекстуальную категорию $T_S(\C)$.
+Объекты этой категории - это контексты.
+Для каждой пары контекстов $\Gamma$ и $\Delta = A_1, \ldots A_n$ мы определяем множество морфизмов $T_S(\C)(\Gamma, \Delta)$ как множество классов эквивалентностей множества последовательностей $(a_1, \ldots a_n)$ термов таких, что $\Gamma \vdash a_i : A_i[j \mapsto a_j]$.
+Две такие последовательности $(a_1, \ldots a_n)$ и $(a_1', \ldots a_n')$ эквивалентны, если $\Gamma \vdash a_i \deq a_i' : A_i[j \mapsto a_j]$.
 
 \section{Обобщенные алгебраические теории}
 
