@@ -70,9 +70,10 @@
 
 Для определения правил вывода мы будем использовать формализм логики первого порядка.
 Во-первых, определим сигнатуру логики первого порядка $\Sigma_{\mathcal{S}, \mathcal{R}}$.
-Множество функциональных символов этой сигнатуры состоит из $\mathcal{S} \amalg \{ subst \}$.
-Арность $f \in \mathcal{S}$ равна длине $a_\mathcal{S}(f)$ и арность $subst$ равна $2$.
-Терм $subst(a, b)$ мы будем записывать как $a[b]$.
+Множество функциональных символов этой сигнатуры состоит из $\mathcal{S} \amalg \{ subst_n\ |\ n \in \mathbb{N}, n \geq 1 \} \amalg \{ v_n\ |\ n \in \mathbb{N} \} \amalg \{ lift_{n,k}\ |\ n, k \in \mathbb{N} \} $.
+Арность $f \in \mathcal{S}$ равна длине $a_\mathcal{S}(f)$, арность $subst_n$ равна $n + 1$, арность $v_n$ равна $0$ и арность $lift_{n,k}$ равна $1$.
+Терм $subst_n(b, a_1, \ldots a_n)$ мы будем записывать как $b[a_1, \ldots a_n]$.
+Терм $lift_{n,k}(b)$ мы будем записывать как $\Uparrow^n_k b$, и вместо $\Uparrow^n_0 b$ мы будем писать просто $\Uparrow^n b$.
 Пусть $Term_{\mathcal{S}}$ - множество термов этой сигнатуры.
 Множество предикатных символов сигнатуры состоит из $\mathcal{R} \amalg \{ Ty_n\ |\ n \in \mathbb{N} \} \amalg \{ Tm_n\ |\ n \in \mathbb{N} \}$.
 Арность $R \in \mathcal{R}$ равна $a_\mathcal{R}(R)$, арность $Ty_n$ равна $n + 1$ и арность $Tm_n$ равна $n + 2$.
@@ -81,6 +82,7 @@
 Правило вывода теории $T$ - это замкнутая формула в сигнатуре $\Sigma_{\mathcal{S}_T, \mathcal{R}_T}$ вида $\forall x_1 \ldots \forall x_l (P_1 \land \ldots \land P_n \to C)$, где $P_1$, \ldots $P_n$ и $C$ - атомарные формулы.
 Формулы $P_i$ называются посылками правила, а формула $C$ - его заключением.
 
+\begin{comment}
 Пусть $Th$ - произвольная теория сигнатуры $\Sigma_{\mathcal{S}_T, \mathcal{R}_T}$.
 Мы будем говорить, что посылка или заключение $P_i$ правила вывода $\forall x_1 \ldots \forall x_l (P_1 \land \ldots \land P_n \to P_{n+1})$ корректно в $Th$, если выполнено одно из следующих условий:
 \begin{itemize}
@@ -91,15 +93,18 @@
 \end{itemize}
 
 Мы будем говорить, что правило вывода корректно в $Th$, если все посылки и заключение корректно в $Th$.
-Мы будем говорить, что множество правил вывода $\mathcal{I}$ корректно, если каждая правило вывода из $\mathcal{I}$ корректно в $Th_0 \cup \mathcal{I}$, где теория $Th_0$ состоит из следующих двух формул:
-\begin{align*}
-& \forall a \forall A \forall B (Ty_0(A) \land Tm_0(a, A) \land Ty_1(A, B) \to Ty_0(B[a])) \\
-& \forall a \forall A \forall b \forall B (Ty_0(A) \land Tm_0(a, A) \land Tm_1(A, b, B) \to Tm_0(b[a], B[a]))
-\end{align*}
+Мы будем говорить, что множество правил вывода $\mathcal{I}$ корректно, если каждая правило вывода из $\mathcal{I}$ корректно в $Th_0 \cup \mathcal{I}$, где теория $Th_0$ состоит из следующих формул:
+\end{comment}
 
 \begin{defn}
 Асбтрактная теория типов $T = (\mathcal{S}_T, a_{\mathcal{S}_T}, \mathcal{R}_T, a_{\mathcal{R}_T}, \mathcal{I}_T)$ состоит из множества функциональных символов $\mathcal{S}_T$, множества предикатных символов $\mathcal{R}_T$, их арностей $a_{\mathcal{S}_T}$ и $a_{\mathcal{R}_T}$ и корректного множества правил вывода $\mathcal{I}_T$.
 \end{defn}
+
+Пусть теория $Th_0$ состоит из следующего набора формул:
+\begin{itemize}
+\item $\forall a_0 \ldots \forall a_n \forall A_0 \ldots \forall A_n \forall B (Tm_0(a_0, A_0) \land \ldots \land Tm_0(a_n, A_n[a_0, \ldots a_{n-1}]) \land Ty_n(A_1, \ldots A_n, B) \to Ty_0(B[a_0, \ldots a_n]))$
+\item $\forall a_0 \ldots \forall a_n \forall A_0 \ldots \forall A_n \forall b \forall B (Tm_0(a_0, A_0) \land \ldots \land Tm_0(a_n, A_n[a_0, \ldots a_{n-1}]) \land Tm_n(A_1, \ldots A_n, b, B) \to Tm_0(b[a_0, \ldots a_n], B[a_0, \ldots a_n]))$
+\end{itemize}
 
 \section{Абстрактные теории типов как монады}
 
