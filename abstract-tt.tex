@@ -75,8 +75,12 @@
 Терм $subst_n(b, a_1, \ldots a_n)$ мы будем записывать как $b[a_1, \ldots a_n]$.
 Терм $lift_{n,k}(b)$ мы будем записывать как $\Uparrow^n_k b$, и вместо $\Uparrow^n_0 b$ мы будем писать просто $\Uparrow^n b$.
 Пусть $Term_{\mathcal{S}}$ - множество термов этой сигнатуры.
-Множество предикатных символов сигнатуры состоит из $\mathcal{R} \amalg \{ Ty_n\ |\ n \in \mathbb{N} \} \amalg \{ Tm_n\ |\ n \in \mathbb{N} \}$.
-Арность $R \in \mathcal{R}$ равна $a_\mathcal{R}(R)$, арность $Ty_n$ равна $n + 1$ и арность $Tm_n$ равна $n + 2$.
+Множество предикатных символов сигнатуры состоит из $\{ R_n\ |\ R \in \mathcal{R} \amalg \{ Ty, Tm \}, n \in \mathbb{N} \}$.
+Арность $R_n$ равна $\left\{ \begin{array}{c l}
+                                n + a_\mathcal{R}(R), & \text{ если } R \in \mathcal{R} \\
+                                n + 1, & \text{ если } R = Ty \\
+                                n + 2, & \text{ если } R = Tm
+                             \end{array}\right.$.
 
 Теперь мы можем дать определение правила вывода.
 Правило вывода теории $T$ - это замкнутая формула в сигнатуре $\Sigma_{\mathcal{S}_T, \mathcal{R}_T}$ вида $\forall x_1 \ldots \forall x_l (P_1 \land \ldots \land P_n \to C)$, где $P_1$, \ldots $P_n$ и $C$ - атомарные формулы.
@@ -97,14 +101,59 @@
 \end{comment}
 
 \begin{defn}
-Асбтрактная теория типов $T = (\mathcal{S}_T, a_{\mathcal{S}_T}, \mathcal{R}_T, a_{\mathcal{R}_T}, \mathcal{I}_T)$ состоит из множества функциональных символов $\mathcal{S}_T$, множества предикатных символов $\mathcal{R}_T$, их арностей $a_{\mathcal{S}_T}$ и $a_{\mathcal{R}_T}$ и корректного множества правил вывода $\mathcal{I}_T$.
+    \emph{Асбтрактная теория типов} (АТТ) $T = (\mathcal{S}_T, a_{\mathcal{S}_T}, \mathcal{R}_T, a_{\mathcal{R}_T}, \mathcal{I}_T)$ состоит из множества функциональных символов $\mathcal{S}_T$, множества предикатных символов $\mathcal{R}_T$, их арностей $a_{\mathcal{S}_T}$ и $a_{\mathcal{R}_T}$ и корректного множества правил вывода $\mathcal{I}_T$.
 \end{defn}
 
-Пусть теория $Th_0$ состоит из следующего набора формул:
+Пусть теория $Th^0$ состоит из следующего набора формул:
 \begin{itemize}
-\item $\forall a_0 \ldots \forall a_n \forall A_0 \ldots \forall A_n \forall B (Tm_0(a_0, A_0) \land \ldots \land Tm_0(a_n, A_n[a_0, \ldots a_{n-1}]) \land Ty_n(A_1, \ldots A_n, B) \to Ty_0(B[a_0, \ldots a_n]))$
-\item $\forall a_0 \ldots \forall a_n \forall A_0 \ldots \forall A_n \forall b \forall B (Tm_0(a_0, A_0) \land \ldots \land Tm_0(a_n, A_n[a_0, \ldots a_{n-1}]) \land Tm_n(A_1, \ldots A_n, b, B) \to Tm_0(b[a_0, \ldots a_n], B[a_0, \ldots a_n]))$
+\item $\Uparrow^n_k v_i = \left\{\begin{array}{c l}
+                                    v_i, & \text{ если } i < k \\
+                                    v_{i + n}, & \text{ если } i \geq k
+                                 \end{array}\right.$
+\item Для всех $f \in \mathcal{S}_T$ таких, что $a_{\mathcal{S}_T}(f) = (s_1, \ldots s_m)$, формула \\
+    $\forall a_1 \ldots \forall a_m (\Uparrow^n_k f(a_1, \ldots a_m) = f(\Uparrow^n_{k + s_1} a_1, \ldots \Uparrow^n_{k + s_m} a_m))$
+\item $v_i[a_1, \ldots a_n] = \left\{\begin{array}{c l}
+                                    a_{n - i}, & \text{ если } i < n \\
+                                    v_{i - n}, & \text{ если } i \geq n
+                                 \end{array}\right.$
+\item Для всех $f \in \mathcal{S}_T$ таких, что $a_{\mathcal{S}_T}(f) = (s_1, \ldots s_m)$, формула $\forall a_1 \ldots \forall a_n \forall b_1 \ldots \forall b_m$ $(f(b_1, \ldots b_m)[a_1, \ldots a_n] = f(b_1[\Uparrow^{s_1} a_1, \ldots \Uparrow^{s_1} a_n], \ldots b_m[\Uparrow^{s_m} a_1, \ldots \Uparrow^{s_m} a_n]))$
+\item Для всех $0 \leq i < m$ формула $\forall C_1 \ldots \forall C_m (Ty_{m - 1}(C_1, \ldots C_m) \to Tm_m(C_1, \ldots C_m, v_i, \Uparrow^{i + 1} C_{m - i}))$
+\item $\forall C_1 \ldots \forall C_m \forall a_0 \ldots \forall a_n \forall A_0 \ldots \forall A_n \forall B (Tm_m(C_1, \ldots C_m, a_0, A_0) \land \ldots \land Tm_m(C_1, \ldots C_m, a_n, A_n[a_0, \ldots a_{n-1}]) \land Ty_n(A_1, \ldots A_n, B) \to Ty_m(C_1, \ldots C_m, B[a_0, \ldots a_n]))$
+\item $\forall C_1 \ldots \forall C_m \forall a_0 \ldots \forall a_n \forall A_0 \ldots \forall A_n \forall b \forall B (Tm_m(C_1, \ldots C_m, a_0, A_0) \land \ldots \land Tm_m(C_1, \ldots C_m, a_n, A_n[a_0, \ldots a_{n-1}]) \land Tm_n(A_1, \ldots A_n, b, B) \to Tm_m(C_1, \ldots C_m, b[a_0, \ldots a_n], B[a_0, \ldots a_n]))$
 \end{itemize}
+Тогда определим теорию $Th^0_T$ как объединение $Th^0$ и $\mathcal{I}_T$.
+
+\begin{defn}
+\emph{Модель абстрактной теории типов} $T$ - это модель теории $Th^0_T$.
+\end{defn}
+
+Модели $T$ образуют категорию, это просто категория моделей $Th^0_T$.
+Мы будем обозначать эту категорию $Mod(T)$.
+
+\subsection{Теории с равенством}
+
+Абстрактная теория типов с равенством - это абстрактная теория типов с выбранными предикатными символами $eq$ и $Eq$ арности $3$ и $2$ соответственно.
+Определим теорию $Th$ как объединение $Th^0$ и следующего набора формул:
+\begin{itemize}
+\item $\forall C_1 \ldots \forall C_m \forall a \forall a' \forall A (eq_m(C_1, \ldots C_m, a, a', A) \to a = a')$
+\item $\forall C_1 \ldots \forall C_m \forall A \forall A' (Eq_m(C_1, \ldots C_m, A, A') \to A = A')$
+\end{itemize}
+Если $T$ - АТТ с равенством, то определим теорию $Th_T$ как объединение $Th$ и $\mathcal{I}_T$.
+
+Модель АТТ с равенством - это модель теории $Th_T$.
+Категория моделей $T$ будет обозначаться $Mod(T)$.
+Любой АТТ $T$ можно сопоставить АТТ с равенством $T'$, добавив два новых предикатных символа $eq$ и $Eq$.
+Заметим, что категории $Mod(T)$ и $Mod(T')$ могут быть различны.
+
+\subsection{Модели теорий}
+
+Пусть $D$ - модель теории $Th^0_T$.
+Тогда построим контекстуальную категорию $U(D)$ следующим образом.
+Множество объектов $Ob(U(D))_n$ определяется как следующее подмножество $D^n$:
+\[ \{ (C_1, \ldots C_n) \in D^n\ |\ D \models Ty_i(C_1, \ldots C_{i + 1}) \text{ для всех } 0 \leq i < n \} \]
+Множество морфизмов $Hom_{U(D)}((C_1, \ldots C_m), (B_1, \ldots B_n))$ определяется как следующее подмножество $D^n$:
+\[ \{ (b_1, \ldots b_n) \in D^n\ |\ D \models Tm_m(C_1, \ldots C_m, b_{i + 1}, \Uparrow^m B_{i + 1}[b_1, \ldots b_i]) \text{ для всех } 0 \leq i < n \} \]
+Тождественный морфизм $id_{(C_1, \ldots C_m)}$ определяется как $(v_{m - 1}, \ldots v_0)$.
 
 \section{Абстрактные теории типов как монады}
 
