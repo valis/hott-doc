@@ -1,0 +1,222 @@
+\documentclass{amsart}
+
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{type1ec}
+\usepackage{stmaryrd}
+% \usepackage[T2A]{fontenc}
+
+\providecommand\WarningsAreErrors{false}
+\ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{теорема}{Теорема}
+\newref{lem}{лемма}{Лемма}
+\newref{prop}{утверждение}{Утверждение}
+\newref{cor}{следствие}{Следствие}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{замечание}{Замечание}
+
+\newcommand{\red}{\Rightarrow}
+\newcommand{\deq}{\Leftrightarrow}
+\renewcommand{\ll}{\llbracket}
+\newcommand{\rr}{\rrbracket}
+\newcommand{\cat}[1]{\mathbf{#1}}
+\renewcommand{\C}{\cat{C}}
+\newcommand{\Set}{\cat{Set}}
+\newcommand{\ccat}{\cat{CCat}}
+
+\numberwithin{figure}{section}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\title{Composable type theories}
+
+\author{Валерий Исаев}
+
+% \begin{abstract}
+% Abstract
+% \end{abstract}
+
+\maketitle
+
+\section{Базовая теория}
+
+В этом разделе мы опишем базовую теорию, которую будут содержать все теории типов.
+Эта теория эквивалентна теории контекстуальных категорий, определенных в \cite{GAT}, так же известных как C-системы \cite{c-systems}.
+
+Мы будем работать с фиксированным множеством видов $\{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
+Большинство функциональных символов будут определены для каждого $n \in \mathbb{N}$, мы будем, как правило, опускать $n$ в нотации и писать $f$ вместо $f_n$.
+Теория $T_0$ состоит из функциональных символов $ft : Ctx_{n+1} \to Ctx_n$, $ty : Tm_n \to Ctx_{n+1}$ и $* : Ctx_0$.
+Множество аксиом теории $T_0$:
+\begin{align*}
+A : Ctx_{n+1} & \vdash ft(A) \downarrow \\
+a : Tm_n & \vdash ty(a) \downarrow \\
+& \vdash * \downarrow \\
+A : Ctx_0 & \vdash A = *
+\end{align*}
+Другими словами, $ft$ и $ty$ -- тотальные функции, и $*$ -- уникальный элемент $Ctx_0$.
+Таким образом, модели теории $T_0$ -- это предпучки на категории порядка $(S \setminus \{ Ctx_0 \}, \leq)$, где $\leq$ порождается следуюшими соотношениями: $Tm_n \leq Ctx_{n+1}$ и $Ctx_{n+1} \leq Ctx_n$.
+Мы определяем производные термы $ft^k : Ctx_{n+k} \to Ty_n$ как $ft^k(A) = ft( \ldots ft(A) \ldots )$.
+Мы будем, как правило, опускать $n$ в нотации $ft^k$ и $ty$.
+
+Теперь мы определим теорию $T_1$, которая будет надтеорией $T_0$.
+Множество функциональных символов $T_1$ состоит из сиволов из $T_0$, а также символов
+\begin{align*}
+v_i     & : Ctx_n \to Tm_n \text{, } 0 \leq i < n \\
+Subst_k & : Ctx_n \times Ctx_{k+1} \times Tm_n \times \ldots \times Tm_n \to Ctx_{n+1} \\
+subst_k & : Ctx_n \times Tm_k \times Tm_n \times \ldots \times Tm_n \to Tm_n
+\end{align*}
+Символы $Subst_k$ и $subst_k$ имеют $k$ аргументов вида $Tm_n$.
+Введем вспомогательные предикаты $Hom_k : Ctx_n \times Ctx_k \times Tm_n \times \ldots \times Tm_n$:
+% \[ Hom_k(B, A, a_1, \ldots a_k) \leftrightarrow ty(a_1) = Subst_0(B, ft^{k-1}(A)) \land \ldots \land ty(a_k) = Subst_{k-1}(B, A, a_1, \ldots a_{k-1}) \]
+\begin{align*}
+Hom_0(B, A) & \leftrightarrow \top \\
+Hom_{k+1}(B, A, a_1, \ldots a_{k+1}) & \leftrightarrow Hom_k(B, ft(A), a_1, \ldots a_k) \land ty(a_{k+1}) = Subst_k(B, A, a_1, \ldots a_k) \\
+\end{align*}
+
+Множество аксиом теории $T_1$:
+\begin{align*}
+A : Ctx_n & \vdash v_i(A) \downarrow \\
+B : Ctx_n, A : Ctx_{k+1}, a_i : Tm_n & \vdash Hom_k(B, ft(A), a_1, \ldots a_k) \leftrightarrow Subst_k(B, A, a_1, \ldots a_k) \downarrow \\
+B : Ctx_n, a : Tm_k, a_i : Tm_n & \vdash Hom_k(B, ft(ty(a)), a_1, \ldots a_k) \leftrightarrow subst_k(B, a, a_1, \ldots a_k) \downarrow \\
+A : Ctx_n & \vdash ty(v_i(A)) = Subst_{n-i-1}(A, ft^i(A), v_{n-1}(A), \ldots v_{i+1}(A)) \\
+B : Ctx_n, a : Tm_k, a_i : Tm_n & \vdash ty(subst_k(B, a, a_1, \ldots a_k)) \leftrightharpoons Subst_k(B, ty(a), a_1, \ldots a_k) \\
+B : Ctx_n, A : Ctx_{k+1}, a_i : Tm_n & \vdash ft(Subst_k(B, A, a_1, \ldots a_k)) \leftrightharpoons B \\
+A : Ctx_{n+1} & \vdash Subst_n(ft(A), A, v_{n-1}(ft(A)), \ldots v_0(ft(A))) = A \\
+a : Tm_n & \vdash subst_n(ft(ty(a)), a, v_{n-1}(ft(ty(a))), \ldots v_0(ft(ty(a)))) = a \\
+B : Ctx_n, a_i : Tm_n, A : Ctx_k & \vdash subst_k(B, v_i(A), a_1, \ldots a_k) \leftrightharpoons a_{k-i}
+\end{align*}
+\begin{align*}
+C : Ctx_n, b_i : Tm_n, B : Ctx_k, a_i : Tm_k, A : Ctx_{m+1} & \vdash \\
+    Hom_k(C, B, b_1, \ldots b_k) \land Hom_m(B, ft(A), a_1, \ldots a_m) & \to \\
+    Subst_k(C, Subst_m(B, A, a_1, \ldots a_m), b_1, \ldots b_k) & = \\
+    Subst_m(C, A, subst_k(C, a_1, b_1, \ldots b_k), \ldots subst_k(C, a_m, b_1, \ldots b_k))
+\end{align*}
+\begin{align*}
+C : Ctx_n, b_i : Tm_n, B : Ctx_k, a_i : Tm_k, a : Tm_m & \vdash \\
+    Hom_k(C, B, b_1, \ldots b_k) \land Hom_m(B, ft(ty(a)), a_1, \ldots a_m) & \to \\
+    subst_k(C, subst_m(B, a, a_1, \ldots a_m), b_1, \ldots b_k) & = \\
+    subst_m(C, a, subst_k(C, a_1, b_1, \ldots b_k), \ldots subst_k(C, a_m, b_1, \ldots b_k))
+\end{align*}
+
+\begin{prop}
+Категория моделей теории $T_1$ эквивалентна категории контекстуальных категорий.
+\end{prop}
+\begin{proof}
+Пусть $M$ -- модель теории $T_1$, тогда мы определим контекстуальную категорию $C_M$.
+Объекты $C_M$ уровня $n$ -- это просто множества $Ctx_n$.
+Чтобы определить множество морфизмов, сначала определим вспомогательную тотальную функцию конкатенации контекстов $con_k : Ctx_n \times Ctx_k \to Ctx_{n+k}$:
+$con_0(A, B) = A$ и $con_{k+1}(A, B)$ определяется как
+\[ Subst_k(con_k(A, ft(B)), B, v_{k-1}(con_k(A, ft(B))), \ldots v_0(con_k(A, ft(B)))). \]
+Если $A \in Ctx_n$ и $B \in Ctx_k$, то множество морфизмов $Hom_{n,k}(A, B)$ определяется как множество кортежей $(b_1, \ldots b_k)$ таких, что $b_i \in Tm_{n+i-1}$ и $ty(b_i) = con_i(A, ft^{k-i}(B))$.
+Тождественный морфизм $id_A$ и $p_A : A \to ft(A)$ определяются как кортежи $(a_0, \ldots a_{n-1})$ и $(a_0, \ldots a_{n-2})$ соответственно, где $a_i = v_{n-1}(con_i(A, ft^{n-i}(A)))$.
+Композиция морфизмов $(b_1, \ldots b_k) \in Hom_{n,k}(C, B)$ и $(a_1, \ldots a_m) \in Hom_{k,m}(B, A)$ определяется как кортеж $(a_1', \ldots a_m')$, где
+$a_i' = subst_{k+i-1}(C_i, a_i, b_1, \ldots b_k, v_{i-2}(C_i), \ldots v_0(C_i))$ и $C_i = con_{i-1}(C, ft^{m-i+1}(A))$.
+
+Если $A \in Ctx_n$, $B \in Ctx_{k+1}$ и $(b_1, \ldots b_k) : A \to ft(B)$, то $f^*(B)$ определяется как $Subst_k(A, B, b_1', \ldots b_k')$, где $b_i' = subst_{n+i-1}(A, b_i, v_{n-1}(B), \ldots v_0(B), b_1', \ldots b_{i-1}')$.
+
+\end{proof}
+
+\section{Синтаксическое представление теорий}
+
+В этом разделе мы опишем синтаксический способ задавать теории типов.
+Пусть $\Sigma_{tm}$ и $\Sigma_{ty}$ -- множества функциональных символов термов и типов соответственно.
+Пусть $ar : \Sigma_{tm} \amalg \Sigma_{ty} \to \mathbb{N}$ -- функция арности.
+Тогда мы можем определить финитарную монаду $Tm : \Set \to \Set$ термов и левый модуль $Ty : \Set \to \Set$ над $Tm$ следующим образом.
+Если $X$ -- множество, то $Tm(X)$ определяется индуктивно:
+\begin{itemize}
+\item Если $x \in X$, то $x \in Tm(X)$.
+\item Если $f \in \Sigma_{tm}$, $ar(f) = n$, $a_1, \ldots a_n \in Tm(X)$, то $f(a_1, \ldots a_n) \in Tm(X)$.
+\item Если $b, a_1, \ldots a_n \in Tm(X)$, то $b[a_1, \ldots a_n] \in Tm(X)$.
+\end{itemize}
+Если $X$ -- множество, то $Ty(X)$ определяется индуктивно:
+\begin{itemize}
+\item Если $f \in \Sigma_{tm}$, $ar(f) = n$, $a_1, \ldots a_n \in Tm(X) \amalg Ty(X)$, то $f(a_1, \ldots a_n) \in Ty(X)$.
+\item Если $b \in Ty(X)$, $a_1, \ldots a_n \in Tm(X)$, то $b[a_1, \ldots a_n] \in Ty(X)$.
+\end{itemize}
+Структура монады и левого модуля определяется очевидным образом.
+
+Теперь нам понадобится понятие суждения, которые бывают 7 видов.
+Пусть $V$ -- некоторое множество, тогда суждения с переменными в $V$ имеют один из следующих видов:
+\begin{itemize}
+\item Суждения вида $A_1, \ldots A_n \vdash A_{n+1}$, где $A_i \in Ty(V)$.
+\item Суждения вида $A_1, \ldots A_n \vdash a \Uparrow A_{n+1}$, где $A_i \in Ty(V)$ и $a \in Tm(V)$.
+\item Суждения вида $A_1, \ldots A_n \vdash a \Downarrow A_{n+1}$, где $A_i \in Ty(V)$ и $a \in Tm(V)$.
+\item Суждения вида $A_1, \ldots A_n \vdash A \red_h B$, где $A_i, A, B \in Ty(V)$.
+\item Суждения вида $A_1, \ldots A_n \vdash a \red_h b : A$, где $A_i, A \in Ty(V)$ и $a, b \in Tm(V)$.
+\item Суждения вида $A_1, \ldots A_n \vdash a \deq b : A$, где $A_i, A \in Ty(V)$ и $a, b \in Tm(V)$.
+\item Суждения вида $A_1, \ldots A_n \vdash A \deq B$, где $A_i, A, B \in Ty(V)$.
+\end{itemize}
+Мы будем говорить, что суждение является \emph{уравнивающим}, если оно имеет один из 4 последних видов, в противном случае мы будем говорить, что суждение является \emph{определяющим}.
+
+Правило вывода состоит из последовательности посылок $J_1, \ldots J_n$ и заключения $J$, каждая из посылок и заключение являются суждениями с переменными в некотором множестве $V$.
+Правило вывода записывается либо как $J_1, \ldots J_n; I_1, \ldots I_k \implies J$, где $J_i$ -- определяющие суждения, а $I_i$ -- уравнивающие, либо как
+\begin{center}
+\AxiomC{$J_1 \quad \ldots \quad J_n$}
+\AxiomC{$I_1 \quad \ldots \quad I_k$}
+\BinaryInfC{$J$}
+\DisplayProof
+\end{center}
+
+Пусть $S$ -- множество суждений с переменными в $V$, и пусть $U$ -- некоторое подмножество $V$.
+Тогда мы определим множество переменных $inf_S(U)$, выводящихся из $U$, как минимальное подмножество $V$, содержащее $U$ и удовлетворяющее следующим свойствам:
+\begin{itemize}
+\item Если суждение $A_1, \ldots A_n \vdash a \Uparrow A$ принадлежит $S$ и все переменные в $A_i$ и $a$ принадлежат $inf_S(U)$, то все переменные в $A$ также принадлежат $inf_S(U)$.
+\item Если суждение $A_1, \ldots A_n \vdash A \red_h B$ принадлежит $S$ и все переменные в $A_i$ и $A$ принадлежат $inf_S(U)$, то все переменные в $B$ также принадлежат $inf_S(U)$.
+\item Если суждение $A_1, \ldots A_n \vdash a \red_h b : A$ принадлежит $S$ и все переменные в $A_i$ и $a$ принадлежат $inf_S(U)$, то все переменные в $b$ и $A$ также принадлежат $inf_S(U)$.
+\end{itemize}
+
+Если $S$ -- множество правил вывода, то мы будем говорить, что правило $J_1, \ldots J_n; J_{n+1}, \ldots J_{n+k} \implies J$ допустимо в $S$, если существует последовательность суждений $J_{n+k+1}, \ldots J_{n+k+m}$ такая, что $J_{n+k+m} = J$ и для любого $n+k < i \leq n+k+m$ существует правило вывода в $S$ такое, что TODO.
+
+Мы будем говорить, что суждение \emph{определяет переменную} $x \in V$, если оно имеет один из слдедующих видов: $A_1, \ldots A_n \vdash x$, $A_1, \ldots A_n \vdash x \Uparrow A_{n+1}$ или $A_1, \ldots A_n \vdash x \Downarrow A_{n+1}$ для произвольных термов $A_1, \ldots A_{n+1}$.
+Мы будем говорить, что суждение \emph{определяет символ} $f \in \Sigma_{ty} \amalg \Sigma_{tm}$, если оно имеет вид $A_1, \ldots A_n \vdash f(x_1, \ldots x_k)$, либо вид $A_1, \ldots A_n \vdash f(x_1, \ldots x_k) \Uparrow A_{n+1}$ для проивзольных термов $A_i$ и переменных $x_i$.
+Мы будем говорить, что правило вывода $J_1, \ldots J_n; I_1, \ldots I_k \implies J$ \emph{корректно}, если каждая переменная, встртечающаяся в нем, определяется ровно одним суждением из посылок, и $inf_{\{ J \}}(U) \subseteq inf_{\{ J_1, \ldots J_n, I_1, \ldots I_k \}}(U)$ для любого $U$.
+
+Теория типов $(\Sigma_{tm}, \Sigma_{ty}, ir, R)$ состоит из множеств $\Sigma_{tm}$ и $\Sigma_{ty}$, функции $ir$, сопоставляющей каждому символу из $\Sigma_{tm} \amalg \Sigma_{ty}$ корректное правило вывода, определяющее его, и множества $R$ корректных правил вывода, каждое из которых имеет один из следующих видов: $A_1, \ldots A_n \vdash A \red_h B$, $A_1, \ldots A_n \vdash a \red_h b : A$ или $A_1, \ldots A_n \vdash A \deq B$.
+
+Такому синтаксическому описанию теории типов мы сопоставим алгебраическое.
+Множество функциональных символов теории определяется как множество символов $T_1$ вместе с множеством $\{ f_s\ |\ f \in \Sigma_{tm} \amalg \Sigma_{ty}, s \in \mathbb{N} \}$.
+Если $J_1, \ldots J_n; I_1, \ldots I_k \implies J_{n+1}$ -- правило вывода, определяющее $f \in \Sigma_{tm} \amalg \Sigma_{ty}$, то $f_s : S_1 \times \ldots \times S_n \to S$, где $S_i = Ctx_{s+m+1}$, если $J_i$ имеет вид $A_1, \ldots A_m \vdash A$, и $S_i = Tm_{s+m}$, если $J_i$ имеет вид $A_1, \ldots A_m \vdash a \Uparrow A$, либо вид $A_1, \ldots A_m \vdash a \Downarrow A$.
+
+\begin{comment}
+В \cite{c-systems-monad} приводится конструкция, сопоставляющая синтаксическому представлению теории типов ее синтаксическую контекстуальную категорию.
+В этом разделе мы введем обобщение этой конструкции, которая синтаксическому представлению сопоставляет алгебраическое.
+Синтаксическая категория тогда может быть восстановлена как начальная модель этой теории.
+
+Пусть $T : \Set \to \Set$ -- финитарный функтор, $\widetilde{T} : \Set \to \Set$ -- свободная монада над $T$, и $M : \Set \to \Set$ -- левый модуль над $\widetilde{T}$.
+Пусть $Ctx, Tm, Eq, eq : \Set \to \Set$ -- следующие функторы:
+\[ Ctx(X) = \coprod\limits_{n \geq 0} \prod_{0 \leq i < n} M(X \amalg \{ 1, \ldots i \}) \]
+\[ Tm(X) = \coprod\limits_{n \geq 0} \prod_{0 \leq i < n} M(X \amalg \{ 1, \ldots i \}) \times \widetilde{T}(X \amalg \{ 1, \ldots i \}) \times M(X \amalg \{ 1, \ldots i \}) \]
+\[ Eq(X) = \coprod\limits_{n \geq 0} \prod_{0 \leq i < n} M(X \amalg \{ 1, \ldots i \}) \times M(X \amalg \{ 1, \ldots i \})^2 \]
+\[ eq(X) = \coprod\limits_{n \geq 0} \prod_{0 \leq i < n} M(X \amalg \{ 1, \ldots i \}) \times \widetilde{T}(X \amalg \{ 1, \ldots i \})^2 \times M(X \amalg \{ 1, \ldots i \}) \]
+Синтаксическое представление теории типов состоит из финитарного функтора $T$, левого модуля $M$ над $\widetilde{T}$ и подфункторов $Ctx', Tm', Eq', eq' : \Set \to \Set$ функторов $Ctx$, $Tm$, $Eq$ и $eq$ соответственно.
+\end{comment}
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}

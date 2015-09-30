@@ -1,0 +1,210 @@
+\documentclass{amsart}
+
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{turnstile}
+
+\renewcommand{\turnstile}[6][s]
+    {\ifthenelse{\equal{#1}{d}}
+        {\sbox{\first}{$\displaystyle{#4}$}
+        \sbox{\second}{$\displaystyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{t}}
+        {\sbox{\first}{$\textstyle{#4}$}
+        \sbox{\second}{$\textstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{s}}
+        {\sbox{\first}{$\scriptstyle{#4}$}
+        \sbox{\second}{$\scriptstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{ss}}
+        {\sbox{\first}{$\scriptscriptstyle{#4}$}
+        \sbox{\second}{$\scriptscriptstyle{#5}$}}{}
+    \setlength{\dashthickness}{0.111ex}
+    \setlength{\ddashthickness}{0.35ex}
+    \setlength{\leasturnstilewidth}{2em}
+    \setlength{\extrawidth}{0.2em}
+    \ifthenelse{%
+      \equal{#3}{n}}{\setlength{\tinyverdistance}{0ex}}{}
+    \ifthenelse{%
+      \equal{#3}{s}}{\setlength{\tinyverdistance}{0.5\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{d}}{\setlength{\tinyverdistance}{0.5\ddashthickness}
+        \addtolength{\tinyverdistance}{\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{t}}{\setlength{\tinyverdistance}{1.5\dashthickness}
+        \addtolength{\tinyverdistance}{\ddashthickness}}{}
+        \setlength{\verdistance}{0.4ex}
+        \settoheight{\lengthvar}{\usebox{\first}}
+        \setlength{\raisedown}{-\lengthvar}
+        \addtolength{\raisedown}{-\tinyverdistance}
+        \addtolength{\raisedown}{-\verdistance}
+        \settodepth{\raiseup}{\usebox{\second}}
+        \addtolength{\raiseup}{\tinyverdistance}
+        \addtolength{\raiseup}{\verdistance}
+        \setlength{\lift}{0.8ex}
+        \settowidth{\firstwidth}{\usebox{\first}}
+        \settowidth{\secondwidth}{\usebox{\second}}
+        \ifthenelse{\lengthtest{\firstwidth = 0ex}
+            \and
+            \lengthtest{\secondwidth = 0ex}}
+                {\setlength{\turnstilewidth}{\leasturnstilewidth}}
+                {\setlength{\turnstilewidth}{2\extrawidth}
+        \ifthenelse{\lengthtest{\firstwidth < \secondwidth}}
+            {\addtolength{\turnstilewidth}{\secondwidth}}
+            {\addtolength{\turnstilewidth}{\firstwidth}}}
+        \ifthenelse{\lengthtest{\turnstilewidth < \leasturnstilewidth}}{\setlength{\turnstilewidth}{\leasturnstilewidth}}{}
+    \setlength{\turnstileheight}{1.5ex}
+    \sbox{\turnstilebox}
+    {\raisebox{\lift}{\ensuremath{
+        \makever{#2}{\dashthickness}{\turnstileheight}{\ddashthickness}
+        \makehor{#3}{\dashthickness}{\turnstilewidth}{\ddashthickness}
+        \hspace{-\turnstilewidth}
+        \raisebox{\raisedown}
+        {\makebox[\turnstilewidth]{\usebox{\first}}}
+            \hspace{-\turnstilewidth}
+            \raisebox{\raiseup}
+            {\makebox[\turnstilewidth]{\usebox{\second}}}
+        \makever{#6}{\dashthickness}{\turnstileheight}{\ddashthickness}}}}
+        \mathrel{\usebox{\turnstilebox}}}
+
+% \providecommand\WarningsAreErrors{false}
+% \ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{theorem}{Theorem}
+\newref{lem}{lemma}{Lemma}
+\newref{prop}{proposition}{Proposition}
+\newref{cor}{corollary}{Corollary}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{remark}{Remark}
+
+\newcommand{\red}{\Rightarrow}
+\newcommand{\deq}{\Leftrightarrow}
+\renewcommand{\ll}{\llbracket}
+\newcommand{\rr}{\rrbracket}
+\newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\C}{\cat{C}}
+\newcommand{\Set}{\cat{Set}}
+\newcommand{\ccat}{\cat{CCat}}
+\newcommand{\syntt}{\cat{SynTT}}
+\newcommand{\algtt}{\cat{AlgTT}}
+\newcommand{\ttvdash}{\vartriangleright}
+
+\numberwithin{figure}{section}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\title{Algebraic and Syntactic Presentations of Type Theories}
+
+\author{Valery Isaev}
+
+% \begin{abstract}
+% Abstract
+% \end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+\begin{comment}
+\section{Contextual categories}
+
+Contextual categories were defined by Cartmell \cite{GAT}.
+An equivalent definition was given by Voevodsky in \cite{c-systems}.
+In this section we will give another equivalent definition which is just a description of models of the initial algebraic type theory as we will see later.
+\end{comment}
+
+\section{Syntactic presentations of type theories}
+
+In this section we will describe a syntactic approach to defining type theories.
+We will define category $\syntt$ of syntactically presented type theories.
+Finally, we will give a few examples of such theories.
+
+% One of the main operation in type theories is the operation of substitution.
+
+We will consider partial horn theories in signatures $\Sigma$ satisfying the following conditions:
+\begin{itemize}
+\item The set of sorts $\Sigma$ is the set $\{ Ty, Tm \}$.
+\item The set of function symbols of $\Sigma$ contains symbols
+\begin{align*}
+v_n     & : Tm \\
+Subst_n & : Ty \times Tm^n \to Ty \\
+subst_n & : Tm^{n+1} \to Tm
+\end{align*}
+for each $n \in \mathbb{N}$.
+\item The set of predicate symbols of $\Sigma$ contains symbols
+\begin{align*}
+Context_n & : Ty^n \\
+Type_n & : Ty^{n+1} \\
+Term_n & : Ty^n \times Tm \times Ty \\
+Eq_n & : Ty^{n+2} \\
+eq_n & : Ty^n \times Tm^2 \times Ty
+\end{align*}
+for each $n \in \mathbb{N}$.
+\end{itemize}
+
+We use uppercase latin letters for variables of sort $Ty$ and lowercase latin letters for variables of sort $Tm$.
+We use uppercase greek letters for finite sequences of variables of sort $Ty$.
+We use the following standard notations:
+\begin{align*}
+B[a_1, \ldots a_n] & \text{ means } Subst_n(B, a_1, \ldots a_n) \\
+b[a_1, \ldots a_n] & \text{ means } subst_n(b, a_1, \ldots a_n) \\
+A_1, \ldots A_n \ttvdash & \text{ means } Context_n(A_1, \ldots A_n) \\
+A_1, \ldots A_n \ttvdash A & \text{ means } Type_n(A_1, \ldots A_n, A) \\
+A_1, \ldots A_n \ttvdash a : A & \text{ means } Term_n(A_1, \ldots A_n, a, A) \\
+A_1, \ldots A_n \ttvdash A \deq B & \text{ means } Eq_n(A_1, \ldots A_n, A, B) \\
+A_1, \ldots A_n \ttvdash a \deq b : A & \text{ means } eq_n(A_1, \ldots A_n, a, b, A)
+\end{align*}
+
+A syntactically presented type theory is a horn theory in a signature satisfying the above conditions and such that the following axioms hold in it:
+\begin{align*}
+\top & \sststile[d]{}{x_1, \ldots x_n} f(x_1, \ldots x_n) \downarrow \text{ for each function symbol $f$} \\
+\top & \sststile[d]{}{} \ \ttvdash \\
+\Gamma \ttvdash A & \ssststile{}{\Gamma, A} \Gamma, A \ttvdash \\
+\Gamma \ttvdash A & \sststile{}{\Gamma, A} \Gamma \\
+\Gamma \ttvdash a : A & \sststile{}{\Gamma, a, A} \Gamma \ttvdash A \\
+\Gamma \ttvdash A & \sststile{}{\Gamma, A} \Gamma, A \ttvdash v_0 : A[v_n, \ldots v_1] \text{ if } |\Gamma| = n \\
+\Gamma \ttvdash,\ A_1, \ldots A_n \ttvdash B,\ \Gamma \ttvdash a_i : A_i[a_1, \ldots a_{i-1}] & \sststile{}{\Gamma, A_1, \ldots A_n, a_1, \ldots a_n, B} \Gamma \ttvdash B[a_1, \ldots a_n] \\
+\Gamma \ttvdash,\ A_1, \ldots A_n \ttvdash b : B,\ \Gamma \ttvdash a_i : A_i[a_1, \ldots a_{i-1}] & \sststile{}{\Gamma, A_1, \ldots A_n, a_1, \ldots a_n, B, b} \Gamma \ttvdash b[a_1, \ldots a_n] : B[a_1, \ldots a_n]
+\end{align*}
+
+\section{Algebraic presentations of type theories}
+
+In this section we will describe an algebraic approach to defining type theories.
+We will define category $\algtt$ of algebraic type theories.
+Finally, we will give a few examples of such theories.
+
+We will consider quasi-equational theories in signatures $\Sigma$ which have the set of sorts $\{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
+Let $T_0$ be the theory with the set of function symbols $\{ * \} \cup \{ ft_n : Ctx_{n+1} \to Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ ty_n : Tm_n \to Ctx_{n+1}\ |\ n \in \mathbb{N} \}$ and the following axioms:
+\begin{align*}
+& \top \sststile{}{A} ft(A) \downarrow \\
+& \top \sststile{}{a} ty(a) \downarrow \\
+& \top \sststile{}{} * \downarrow \\
+& \top \sststile{}{A} A = *
+\end{align*}
+
+
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
