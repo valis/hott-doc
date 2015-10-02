@@ -1,0 +1,112 @@
+\documentclass{amsart}
+
+\usepackage{etex}
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{type1ec}
+\usepackage{stmaryrd}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+
+\providecommand\WarningsAreErrors{false}
+\ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{теорема}{Теорема}
+\newref{lem}{лемма}{Лемма}
+\newref{prop}{утверждение}{Утверждение}
+\newref{cor}{следствие}{Следствие}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{замечание}{Замечание}
+
+\newcommand{\red}{\Rightarrow}
+\newcommand{\deq}{\Leftrightarrow}
+\renewcommand{\ll}{\llbracket}
+\newcommand{\rr}{\rrbracket}
+\newcommand{\cat}[1]{\mathbf{#1}}
+\renewcommand{\C}{\cat{C}}
+\newcommand{\Set}{\cat{Set}}
+\newcommand{\ccat}{\cat{CCat}}
+
+\numberwithin{figure}{section}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\title{Vclang}
+
+\author{Валерий Исаев}
+
+% \begin{abstract}
+% Abstract
+% \end{abstract}
+
+\maketitle
+
+\section{Vccore}
+
+Язык vclang состоит из двух частей: ядра (vccore) и фронтенд (vclang).
+Пользователь пишет код на vclang, и он транслируется в vccore.
+Как это происходит мы обсудим позже, в этом разделе мы опишем ядро.
+
+Программа на vccore состоит из множества определений (то есть \emph{неупорядоченного} списка).
+Каждое определение имеет уникальное имя.
+Кроме того, каждое определение имеет контекст, который мы будем называть \emph{контекстом определения}.
+Этот контекст можно рассматривать просто как дополнительные параметры этого определения.
+Рассмотрим несколько примеров:
+\begin{itemize}
+\item Если в vclang объявлена функция $f$, то в vccore она будет представляться как определение с именем $f$ и пустым контекстом.
+\item Если в vclang в классе $A$ объявлена статическая функция $f$, то в vccore она будет представляться как определение с именем $A.f$ (имя может быть любое, главное обеспечить уникальность) и пустым контекстом.
+\item Если в vclang в классе $A$ объявлена нестатическая функция $f$, то в vccore она будет представляться как определение с именем $A.f$ и контекстом $x : A$, так как мы должны указать значение типа $A$ при вызове $f$.
+\item Если в vclang в классе $A$ объявлен нестатический класс $B$, а в классе $B$ объявлена статическая функция $f$, то в vccore $B$ будет представляться как определение с именем $A.B$ и контекстом $x : A$, а $f$ -- как определение с именем $A.B.f$ и контекстом $x : A$.
+\item Если в vclang в классе $A$ объявлен нестатический класс $B$, а в классе $B$ объявлена нестатическая функция $f$, то в vccore $f$ будет представляться как определение с именем $A.B.f$ и контекстом $x : A, y : B\ x$.
+\end{itemize}
+Формально это преобразование из vclang в vccore будет описано позже.
+
+Определения бывают четырех видов.
+Каждое из них состоит из данных, описанных выше, плюс дополнительный набор данных.
+\begin{itemize}
+\item \emph{Абстрактное} определение содержит сигнатуру, которая является просто произвольным типом (то есть выражением на vccore; выражения будут описаны ниже). Абстрактное определение не может иметь пустой контекст определения.
+\item \emph{Функция} содержит сигнатуру, которая является типом, и тело, которое также является выражением.
+\item \emph{Алгебраический тип данных} содержит некоторый контекст, описывающий параметры типа данных, и список конструкторов, каждый из которых состоит из имени и контекста, описывающего его параметры.
+\item \emph{Класс} содержит список имен определений (состоящий из нестатических определений, объявленных в этом классе). Таким образом, классы не содержат самих определений, а только ссылки на них, сами определения задаются отдельно.
+\end{itemize}
+
+Примеры определений приведены ниже. В квадранных скобках указан контекст определения.
+\begin{align*}
+& [\ ]\ \mathbf{function}\ b : Nat \to Nat => \lambda x \Rightarrow x \\
+& [\ ]\ \mathbf{class}\ A\ \{ p, q \} \\
+& [x : A]\ \mathbf{abstract}\ p : Nat \to Nat \\
+& [y : A]\ \mathbf{function}\ q : Nat => p\ y\ (b\ 7) \\
+& [\ ]\ \mathbf{data}\ List\ (A : \mathbf{Type}) \\
+& \qquad |\ nil \\
+& \qquad |\ cons\ (head : A)\ (tail : List\ A)
+\end{align*}
+Обратите внимание, что при вызове определения параметры из его контекста определения становятся просто дополнительными аргументами.
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
