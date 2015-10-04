@@ -269,66 +269,91 @@ Now, we want to show that the category of models of $T_1$ is equivalent to the c
 First, we construct a functor $F : T_1\Mod \to \ccat$.
 Let $M$ be a model of $T_1$.
 Then the set of objects of level $n$ of $F(M)$ is $M(Ctx_n)$.
-For each $A \in M(Ctx_n)$, $B \in M(Ctx_k)$ morphisms from $A$ to $B$ are tuples $(a_1, \ldots a_k)$ such that $a_i \in M(Tm_n)$ and $M(Hom_{n,k})(A, B, a_1, \ldots a_k)$.
+For each $A \in M(Ctx_n)$, $B \in M(Ctx_k)$ morphisms from $A$ to $B$ are tuples $(a_1, \ldots a_k)$ such that $a_i \in M(Tm_n)$ and $Hom_{n,k}(A, B, a_1, \ldots a_k)$.
 
 For each $0 \leq i \leq n$ axiom~\eqref{ax:type-var} implies
 \[ \sststile{}{A} Hom_{n,n-i}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i}(A)). \]
 For each $A \in M(Ctx_n)$ we define $id_A : A \to A$ as tuple
-\[ (M(v_{n,n-1})(A), \ldots M(v_{n,0})(A)) \]
+\[ (v_{n,n-1}(A), \ldots v_{n,0}(A)) \]
 and $p_A : A \to ft(A)$ as tuple
-\[ (M(v_{n,n-1})(A), \ldots M(v_{n,1})(A)). \]
+\[ (v_{n,n-1}(A), \ldots v_{n,1}(A)). \]
 
 Now, we introduce some notation.
-If $B \in M(Ctx_n)$, $A \in M(Ctx_{k+1})$, and $f = (a_1, \ldots a_k) : B \to M(ft_k)(A)$ is a morphism, then we define $A[f] \in M(Ctx_{n+1})$ as $Subst_{n,k}(B, A, a_1, \ldots a_k)$.
-If $a \in M(Tm_k)$ and $M(ty_k)(a) = A$, then we define $a[f] \in M(Tm_n)$ as $subst_{n,k}(B, a, a_1, \ldots a_k)$.
+If $B \in M(Ctx_n)$, $A \in M(Ctx_{k+1})$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$ is a morphism, then we define $A[f] \in M(Ctx_{n+1})$ as $Subst_{n,k}(B, A, a_1, \ldots a_k)$.
+If $a \in M(Tm_k)$ and $ty_k(a) = A$, then we define $a[f] \in M(Tm_n)$ as $subst_{n,k}(B, a, a_1, \ldots a_k)$.
 By axioms \eqref{ax:def-Subst} and \eqref{ax:def-subst} these constructions are total.
 
 If $A \in M(Ctx_n)$, $B \in M(Ctx_k)$, $C \in M(Ctx_m)$, $f : A \to B$, and $(c_1, \ldots c_m) : B \to C$, then we define composition $(c_1, \ldots c_m) \circ f$ as $(c_1[f], \ldots c_m[f])$.
 The following sequence of equations shows that $(c_1, \ldots c_m) \circ f : A \to C$.
 \begin{align*}
-M(ty_n)(c_i[f]) & = \text{(by axiom~\eqref{ax:type-subst})} \\
-M(ty_k)(c_i)[f] & = \text{(since $Hom_{k,m}(c_1, \ldots c_m)$)} \\
-M(ft^{m-i}_i)(C)[c_1, \ldots c_{i-1}][f] & = \text{(by axiom~\eqref{ax:Subst-Subst})} \\
-M(ft^{m-i}_i)(C)[c_1[f], \ldots c_{i-1}[f]] &
+ty_n(c_i[f]) & = \text{(by axiom~\eqref{ax:type-subst})} \\
+ty_k(c_i)[f] & = \text{(since $Hom_{k,m}(c_1, \ldots c_m)$)} \\
+ft^{m-i}_i(C)[c_1, \ldots c_{i-1}][f] & = \text{(by axiom~\eqref{ax:Subst-Subst})} \\
+ft^{m-i}_i(C)[c_1[f], \ldots c_{i-1}[f]] &
 \end{align*}
 
 With these notations we can rewrite axioms \eqref{ax:type-subst}, \eqref{ax:Subst-var}, \eqref{ax:subst-var}, \eqref{ax:Subst-Subst}, \eqref{ax:subst-subst} as follows:
 \begin{align}
 \setcounter{equation}{\ref{ax:type-subst}}
 \addtocounter{equation}{-1}
-M(ty_n)(a[f]) & = A[f] \\ \notag
-\text{ for each } f : B \to M(ft_k)(A) & \text{ where } A = M(ty_k)(a) \\
-A[id_{M(ft_n)(A)}] & = A \\
-a[id_{M(ft_n)(M(ty_n)(a))}] & = a \\
+ty_n(a[f]) & = A[f] \\ \notag
+\text{ for each } f : B \to ft_k(A) & \text{ where } A = ty_k(a) \\
+A[id_{ft_n(A)}] & = A \\
+a[id_{ft_n(ty_n(a))}] & = a \\
 \setcounter{equation}{\ref{ax:Subst-Subst}}
 \addtocounter{equation}{-1}
 A[g][f] & = A[g \circ f] \\ \notag
-\text{ for each } f : C \to B \text{ and } & g : B \to M(ft_m)(A) \\
+\text{ for each } f : C \to B \text{ and } & g : B \to ft_m(A) \\
 a[g][f] & = a[g \circ f] \\ \notag
-\text{ for each } f : C \to B \text{ and } & g : B \to M(ft_m)(M(ty_m)(a))
+\text{ for each } f : C \to B \text{ and } & g : B \to ft_m(ty_m(a))
 \end{align}
 
 Associativity of the composition follows from axiom~\eqref{ax:subst-subst}, and the fact that $id$ is identity for it follows from axioms \eqref{ax:subst-var} and \eqref{ax:var-subst}.
 
-If $A \in M(Ctx_{k+1})$, $B \in M(Ctx_n)$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$, then we define $f^*(B)$ as $A[f] = M(Subst_{n,k})(B, A, a_1, \ldots a_k)$.
+If $A \in M(Ctx_{k+1})$, $B \in M(Ctx_n)$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$, then we define $f^*(A)$ as $A[f] = Subst_{n,k}(B, A, a_1, \ldots a_k)$.
 Map $q(f,B)$ defined as the tuple with $i$-th component equals to
 \[ \left\{
   \begin{array}{lr}
-    a_i[M(v_{n+1,n})(f^*(B)), \ldots M(v_{n+1,1})(f^*(B))] & \text{ if } 1 \leq i \leq k \\
-    M(v_{n+1,0})(f^*(B))                                  & \text{ if } i = k+1
+    a_i[v_{n+1,n}(A[f]), \ldots v_{n+1,1}(A[f])] & \text{ if } 1 \leq i \leq k \\
+    v_{n+1,0}(A[f])                              & \text{ if } i = k+1
   \end{array}
 \right. \]
 If $(a_1, \ldots a_{k+1}) : B \to A$ is a morphism, then axiom~\eqref{ax:var-subst} implies that $p_A \circ (a_1, \ldots a_{k+1})$ equals to $(a_1, \ldots a_k)$.
 It follows that the following square commutes.
-\[ \xymatrix{ f^*(B) \ar[r]^-{q(f,B)} \ar[d]_{p_B} & A \ar[d]^{p_A} \\
-              B \ar[r]_-f                          & ft_k(A)
+\[ \xymatrix{ A[f] \ar[r]^-{q(f,A)} \ar[d]_{p_{A[f]}} & A \ar[d]^{p_A} \\
+              B \ar[r]_-f                             & ft_k(A)
             } \]
 Now we need to show that this square is cartesian.
-By proposition~2.3 of \cite{c-systems} it is enough to construct a map $s_{f'} : B \to f^*(B)$ for each $f' = (a_1, \ldots a_k, a_{k+1}) : B '\to A$ and prove a few properties of $s_{f'}$.
-Since $s_{f'}$ must be a section of $p_B$, first $n$ components of $s_{f'} = (b_1, \ldots b_{n+1})$ must be equal to identity on $B$, that is $(M(v_{n,n-1})(B), \ldots M(v_{n,0})(B))$.
-The last component $b_{n+1}$ of $s_{f'}$ must satisfy equation $M(ty_n)(b_{n+1}) = f^*(B)[b_1, \ldots b_n] = f^*(B)[id_B] = f^*(B)$.
+By proposition~2.3 of \cite{c-systems} it is enough to construct a map $s_{f'} : B \to A[f]$ for each $f' = (a_1, \ldots a_k, a_{k+1}) : B '\to A$ and prove a few properties of $s_{f'}$.
+Since $s_{f'}$ must be a section of $p_B$, first $n$ components of $s_{f'} = (b_1, \ldots b_{n+1})$ must be equal to identity on $B$, that is $(v_{n,n-1}(B), \ldots v_{n,0}(B))$.
+The last component $b_{n+1}$ of $s_{f'}$ must satisfy equation $ty_n(b_{n+1}) = A[f][b_1, \ldots b_n] = A[f][id_B] = A[f]$.
 We define $b_{n+1}$ to be equal to $a_{k+1}$.
 Axioms \eqref{ax:var-subst} and \eqref{ax:subst-subst} implies that $q(f, B) \circ s_{f'} = f$.
+
+If $g : ft_k(A) \to ft_m(C)$ and $A = C[g]$, then we need to show that $s_{f'} = s_{q(g,C) \circ f'}$.
+The first $n$ components of both morphisms is identity on $B$.
+The last component of $q(g,C) \circ f'$ equals to $v_{n+1,0}(C[g])[f'] = a_{k+1}$.
+Thus the last components of these morphisms also coincide.
+This completes the proof that the square above is cartesian.
+
+We are left to prove that operation $A[f]$ is functorial.
+Equations $A[id_{ft_k(A)}] = A$ and $A[f \circ g] = A[f][g]$ are precisely axioms \eqref{ax:Subst-var} and \eqref{ax:Subst-Subst}.
+The fact that $q(id_{ft_k(A)}, A) = id_A$ follows from axiom~\ref{ax:var-subst}.
+Now let $g : C \to B$ and $f : B \to ft_k(A)$ be morphisms; we need to show that $q(f \circ g, A) = q(f,A) \circ q(g,A[f])$.
+The last component of $q(f,A) \circ q(g,A[f])$ equals to $v_{n+1,0}(A[f])[q(g,A[f])] = v_{m+1,0}(A[f][g])$ which equals to the last component of $q(f \circ g, A)$, namely $v_{m+1,0}(A[f \circ g])$.
+If $1 \leq i \leq k$, then $i$-th component of $q(f,A) \circ q(g,A[f])$ equals to
+\[ a_i[v_{n+1,n}(A[f]), \ldots v_{n+1,1}(A[f])][q(g,A[f])] = \]
+\[ a_i[b_1[v_{m+1,m}(A[f][g]), \ldots v_{m+1,1}(A[f][g])], \ldots b_n[v_{m+1,m}(A[f][g]), \ldots v_{m+1,1}(A[f][g])]] \]
+where $a_i$ is $i$-th component of $f$ and $b_i$ is $i$-th component of $g$.
+$i$-th component of $q(f \circ g, A)$ equals to
+\[ a_i[g][v_{m+1,m}(A[f \circ g]), \ldots v_{m+1,1}(A[f \circ g])] = \]
+\[ a_i[b_1[v_{m+1,m}(A[f \circ g]), \ldots v_{m+1,1}(A[f \circ g])], \ldots b_n[v_{m+1,m}(A[f \circ g]), \ldots v_{m+1,1}(A[f \circ g])]]. \]
+Thus $q(f \circ g, A) = q(f,A) \circ q(g,A[f])$.
+This completes the construction of contextual category $F(M)$.
+
+\begin{prop}
+Mapping $F$ is functorial, and functor $F : T_1\Mod \to \ccat$ is an equivalence of categories.
+\end{prop}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
