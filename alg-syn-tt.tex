@@ -104,6 +104,7 @@
 \newcommand{\ccat}{\cat{CCat}}
 \newcommand{\syntt}{\cat{SynTT}}
 \newcommand{\algtt}{\cat{AlgTT}}
+\newcommand{\Mod}{\text{-}\cat{Mod}}
 \newcommand{\ttvdash}{\vartriangleright}
 
 \numberwithin{figure}{section}
@@ -196,13 +197,138 @@ Finally, we will give a few examples of such theories.
 We will consider quasi-equational theories in signatures $\Sigma$ which have the set of sorts $\{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
 Let $T_0$ be the theory with the set of function symbols $\{ * \} \cup \{ ft_n : Ctx_{n+1} \to Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ ty_n : Tm_n \to Ctx_{n+1}\ |\ n \in \mathbb{N} \}$ and the following axioms:
 \begin{align*}
-& \top \sststile{}{A} ft(A) \downarrow \\
-& \top \sststile{}{a} ty(a) \downarrow \\
+& \top \sststile{}{A} ft_n(A) \downarrow \\
+& \top \sststile{}{a} ty_n(a) \downarrow \\
 & \top \sststile{}{} * \downarrow \\
 & \top \sststile{}{A} A = *
 \end{align*}
+Let $ft^i_n : Ctx_{n+i} \to Ctx_n$ be the following derived operation:
+\begin{align*}
+& ft^0_n(A) = A \\
+& ft^{i+1}_n(A) = ft^i_n(ft_{n+i}(A))
+\end{align*}
 
+Now we describe theory $T_1$ which contains.
+The set of function symbols of $T_1$ consists of the symbols of $T_0$ and the following symbols:
+\begin{align*}
+v_{n,i}     & : Ctx_n \to Tm_n \text{, } 0 \leq i < n \\
+Subst_{n,k} & : Ctx_n \times Ctx_{k+1} \times Tm_n^k \to Ctx_{n+1} \\
+subst_{n,k} & : Ctx_n \times Tm_k \times Tm_n^k \to Tm_n
+\end{align*}
 
+Auxiliary predicates $Hom_{n,k} : Ctx_n \times Ctx_k \times Tm_n^k$ are defined as follows: $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if
+\[ ty_n(a_i) = Subst_{n,i-1}(B, ft^{k-i}_i(A), a_1, \ldots a_{i-1}) \text{ for each } 1 \leq i \leq k \]
+The idea is that a tuple of terms should represent a morphism in a contextual category.
+So $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if $(a_1, \ldots a_k)$ is a morphism with domain $A$ and codomain $B$.
+Note that if $Hom_{n,k}(B, A, a_1, \ldots a_k)$, then $ft_n(ty_n(a_i)) = B$.
+
+The set of axioms of $T_1$ consists of the axioms of $T_0$ and the axioms we list below.
+The following axioms describe when functions are defined:
+\begin{align}
+\label{ax:def-var}
+                                             & \sststile{}{A}           v_{n,i}(A) \downarrow \\
+\label{ax:def-Subst}
+Hom_{n,k}(B, ft_k(A), a_1, \ldots a_k)       & \ssststile{}{B, A, a_i}  Subst_{n,k}(B, A, a_1, \ldots a_k) \downarrow \\
+\label{ax:def-subst}
+Hom_{n,k}(B, ft_k(ty_k(a)), a_1, \ldots a_k) & \ssststile{}{B, a, a_i}  subst_{n,k}(B, a, a_1, \ldots a_k) \downarrow
+\end{align}
+
+The following axioms describe the ``typization'' of the constructions we have:
+\begin{align}
+\label{ax:type-var}
+& \sststile{}{A}         ty_n(v_{n,i}(A)) = Subst_{n,n-i-1}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i+1}(A)) \\
+\label{ax:type-Subst}
+& \sststile{}{B, A, a_i} ft_n(Subst_{n,k}(B, A, a_1, \ldots a_k)) \leftrightharpoons B \\
+\label{ax:type-subst}
+& \sststile{}{B, a, a_i} ty_n(subst_{n,k}(B, a, a_1, \ldots a_k)) \leftrightharpoons Subst_{n,k}(B, ty_k(a), a_1, \ldots a_k)
+\end{align}
+
+The following axioms prescribe how substitution ($Subst_{n,k}$ and $subst_{n,k}$) must be defined on indices ($v_{n,i}$):
+\begin{align}
+\label{ax:Subst-var}
+& \sststile{}{A}         Subst_{n,n}(ft_n(A), A, v_{n,n-1}(ft_n(A)), \ldots v_{n,0}(ft_n(A))) = A \\
+\label{ax:subst-var}
+& \sststile{}{a}         subst_{n,n}(ft_n(ty_n(a)), a, v_{n,n-1}(ft_n(ty_n(a))), \ldots v_{n,0}(ft_n(ty_n(a)))) = a \\
+\label{ax:var-subst}
+& Hom_{n,k}(B, A, a_1, \ldots a_k) \sststile{}{B, a_i, A} subst_{n,k}(B, v_{k,i}(A), a_1, \ldots a_k) = a_{k-i}
+\end{align}
+
+The following axioms say that substitution must be ``associative'':
+\begin{align}
+\label{ax:Subst-Subst}
+& Hom_{n,k}(C, B, b_1, \ldots b_k) \land Hom_{k,m}(B, ft_m(A), a_1, \ldots a_m) \sststile{}{C, b_i, B, a_i, A} \\ \notag
+& Subst_{n,k}(C, Subst_{k,m}(B, A, a_1, \ldots a_m), b_1, \ldots b_k) = \\ \notag
+& Subst_{n,m}(C, A, subst_{n,k}(C, a_1, b_1, \ldots b_k), \ldots subst_{n,k}(C, a_m, b_1, \ldots b_k)) \\
+\label{ax:subst-subst}
+& Hom_{n,k}(C, B, b_1, \ldots b_k) \land Hom_{k,m}(B, ft_m(ty_m(a)), a_1, \ldots a_m) \sststile{}{C, b_i, B, a_i, a} \\ \notag
+& subst_{n,k}(C, subst_{k,m}(B, a, a_1, \ldots a_m), b_1, \ldots b_k) = \\ \notag
+& subst_{n,m}(C, a, subst_{n,k}(C, a_1, b_1, \ldots b_k), \ldots subst_{n,k}(C, a_m, b_1, \ldots b_k))
+\end{align}
+
+Now, we want to show that the category of models of $T_1$ is equivalent to the category of contextual categories.
+First, we construct a functor $F : T_1\Mod \to \ccat$.
+Let $M$ be a model of $T_1$.
+Then the set of objects of level $n$ of $F(M)$ is $M(Ctx_n)$.
+For each $A \in M(Ctx_n)$, $B \in M(Ctx_k)$ morphisms from $A$ to $B$ are tuples $(a_1, \ldots a_k)$ such that $a_i \in M(Tm_n)$ and $M(Hom_{n,k})(A, B, a_1, \ldots a_k)$.
+
+For each $0 \leq i \leq n$ axiom~\eqref{ax:type-var} implies
+\[ \sststile{}{A} Hom_{n,n-i}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i}(A)). \]
+For each $A \in M(Ctx_n)$ we define $id_A : A \to A$ as tuple
+\[ (M(v_{n,n-1})(A), \ldots M(v_{n,0})(A)) \]
+and $p_A : A \to ft(A)$ as tuple
+\[ (M(v_{n,n-1})(A), \ldots M(v_{n,1})(A)). \]
+
+Now, we introduce some notation.
+If $B \in M(Ctx_n)$, $A \in M(Ctx_{k+1})$, and $f = (a_1, \ldots a_k) : B \to M(ft_k)(A)$ is a morphism, then we define $A[f] \in M(Ctx_{n+1})$ as $Subst_{n,k}(B, A, a_1, \ldots a_k)$.
+If $a \in M(Tm_k)$ and $M(ty_k)(a) = A$, then we define $a[f] \in M(Tm_n)$ as $subst_{n,k}(B, a, a_1, \ldots a_k)$.
+By axioms \eqref{ax:def-Subst} and \eqref{ax:def-subst} these constructions are total.
+
+If $A \in M(Ctx_n)$, $B \in M(Ctx_k)$, $C \in M(Ctx_m)$, $f : A \to B$, and $(c_1, \ldots c_m) : B \to C$, then we define composition $(c_1, \ldots c_m) \circ f$ as $(c_1[f], \ldots c_m[f])$.
+The following sequence of equations shows that $(c_1, \ldots c_m) \circ f : A \to C$.
+\begin{align*}
+M(ty_n)(c_i[f]) & = \text{(by axiom~\eqref{ax:type-subst})} \\
+M(ty_k)(c_i)[f] & = \text{(since $Hom_{k,m}(c_1, \ldots c_m)$)} \\
+M(ft^{m-i}_i)(C)[c_1, \ldots c_{i-1}][f] & = \text{(by axiom~\eqref{ax:Subst-Subst})} \\
+M(ft^{m-i}_i)(C)[c_1[f], \ldots c_{i-1}[f]] &
+\end{align*}
+
+With these notations we can rewrite axioms \eqref{ax:type-subst}, \eqref{ax:Subst-var}, \eqref{ax:subst-var}, \eqref{ax:Subst-Subst}, \eqref{ax:subst-subst} as follows:
+\begin{align}
+\setcounter{equation}{\ref{ax:type-subst}}
+\addtocounter{equation}{-1}
+M(ty_n)(a[f]) & = A[f] \\ \notag
+\text{ for each } f : B \to M(ft_k)(A) & \text{ where } A = M(ty_k)(a) \\
+A[id_{M(ft_n)(A)}] & = A \\
+a[id_{M(ft_n)(M(ty_n)(a))}] & = a \\
+\setcounter{equation}{\ref{ax:Subst-Subst}}
+\addtocounter{equation}{-1}
+A[g][f] & = A[g \circ f] \\ \notag
+\text{ for each } f : C \to B \text{ and } & g : B \to M(ft_m)(A) \\
+a[g][f] & = a[g \circ f] \\ \notag
+\text{ for each } f : C \to B \text{ and } & g : B \to M(ft_m)(M(ty_m)(a))
+\end{align}
+
+Associativity of the composition follows from axiom~\eqref{ax:subst-subst}, and the fact that $id$ is identity for it follows from axioms \eqref{ax:subst-var} and \eqref{ax:var-subst}.
+
+If $A \in M(Ctx_{k+1})$, $B \in M(Ctx_n)$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$, then we define $f^*(B)$ as $A[f] = M(Subst_{n,k})(B, A, a_1, \ldots a_k)$.
+Map $q(f,B)$ defined as the tuple with $i$-th component equals to
+\[ \left\{
+  \begin{array}{lr}
+    a_i[M(v_{n+1,n})(f^*(B)), \ldots M(v_{n+1,1})(f^*(B))] & \text{ if } 1 \leq i \leq k \\
+    M(v_{n+1,0})(f^*(B))                                  & \text{ if } i = k+1
+  \end{array}
+\right. \]
+If $(a_1, \ldots a_{k+1}) : B \to A$ is a morphism, then axiom~\eqref{ax:var-subst} implies that $p_A \circ (a_1, \ldots a_{k+1})$ equals to $(a_1, \ldots a_k)$.
+It follows that the following square commutes.
+\[ \xymatrix{ f^*(B) \ar[r]^-{q(f,B)} \ar[d]_{p_B} & A \ar[d]^{p_A} \\
+              B \ar[r]_-f                          & ft_k(A)
+            } \]
+Now we need to show that this square is cartesian.
+By proposition~2.3 of \cite{c-systems} it is enough to construct a map $s_{f'} : B \to f^*(B)$ for each $f' = (a_1, \ldots a_k, a_{k+1}) : B '\to A$ and prove a few properties of $s_{f'}$.
+Since $s_{f'}$ must be a section of $p_B$, first $n$ components of $s_{f'} = (b_1, \ldots b_{n+1})$ must be equal to identity on $B$, that is $(M(v_{n,n-1})(B), \ldots M(v_{n,0})(B))$.
+The last component $b_{n+1}$ of $s_{f'}$ must satisfy equation $M(ty_n)(b_{n+1}) = f^*(B)[b_1, \ldots b_n] = f^*(B)[id_B] = f^*(B)$.
+We define $b_{n+1}$ to be equal to $a_{k+1}$.
+Axioms \eqref{ax:var-subst} and \eqref{ax:subst-subst} implies that $q(f, B) \circ s_{f'} = f$.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
