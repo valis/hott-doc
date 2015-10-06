@@ -310,6 +310,16 @@ a[g][f] & = a[g \circ f] \\ \notag
 
 Associativity of the composition follows from axiom~\eqref{ax:subst-subst}, and the fact that $id$ is identity for it follows from axioms \eqref{ax:subst-var} and \eqref{ax:var-subst}.
 
+For every $A \in M(Ctx_{k+1})$ there is a bijection $\varphi$ between the set of $a \in M(Tm_k)$ such that $ty_k(a) = A$ and the set of morphisms $f : ft_k(A) \to A$ such that $p_A \circ f = id_{ft_k(A)}$.
+For every such $a \in M(Tm_k)$ we define $\varphi(a)$ as
+\[ (v_{k,k-1}(ft_k(A)), \ldots v_{k,0}(ft_k(A)), a). \]
+Note that if $(a_1, \ldots a_{k+1}) : B \to A$ is a morphism, then axiom~\eqref{ax:var-subst} implies that $p_A \circ (a_1, \ldots a_{k+1})$ equals to $(a_1, \ldots a_k)$.
+Thus $\varphi(a)$ is a section of $p_A$.
+Clearly, $\varphi$ is injective.
+Let $f : ft_k(A) \to A$ be a section of $p_A$; then first $k$ components of $f$ must be identity on $ft_k(A)$.
+So if $a$ is the last component of $f$, then $\varphi(a)$ equals to $f$.
+Hence $\varphi$ is bijective.
+
 If $A \in M(Ctx_{k+1})$, $B \in M(Ctx_n)$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$, then we define $f^*(A)$ as $A[f] = Subst_{n,k}(B, A, a_1, \ldots a_k)$.
 Map $q(f,B)$ defined as the tuple with $i$-th component equals to
 \[ \left\{
@@ -318,25 +328,19 @@ Map $q(f,B)$ defined as the tuple with $i$-th component equals to
     v_{n+1,0}(A[f])                              & \text{ if } i = k+1
   \end{array}
 \right. \]
-If $(a_1, \ldots a_{k+1}) : B \to A$ is a morphism, then axiom~\eqref{ax:var-subst} implies that $p_A \circ (a_1, \ldots a_{k+1})$ equals to $(a_1, \ldots a_k)$.
-It follows that the following square commutes.
+Now we have the following commutative square:
 \[ \xymatrix{ A[f] \ar[r]^-{q(f,A)} \ar[d]_{p_{A[f]}} & A \ar[d]^{p_A} \\
               B \ar[r]_-f                             & ft_k(A)
             } \]
-Now we need to show that this square is cartesian.
-By proposition~2.3 of \cite{c-systems} it is enough to construct a map $s_{f'} : B \to A[f]$ for each $f' = (a_1, \ldots a_k, a_{k+1}) : B '\to A$ and prove a few properties of $s_{f'}$.
-Since $s_{f'}$ must be a section of $p_B$, first $n$ components of $s_{f'} = (b_1, \ldots b_{n+1})$ must be equal to identity on $B$, that is $(v_{n,n-1}(B), \ldots v_{n,0}(B))$.
-The last component $b_{n+1}$ of $s_{f'}$ must satisfy equation $ty_n(b_{n+1}) = A[f][b_1, \ldots b_n] = A[f][id_B] = A[f]$.
-We define $b_{n+1}$ to be equal to $a_{k+1}$.
+We need to prove that this square is cartesian.
+By proposition~2.3 of \cite{c-systems} it is enough to construct a section $s_{f'} : B \to A[f]$ of $p_{A[f]}$ for each $f' = (a_1, \ldots a_k, a_{k+1}) : B \to A$ and prove a few properties of $s_{f'}$.
+We define $s_{f'}$ to be equal to $\varphi(a_{k+1})$.
 Axioms \eqref{ax:var-subst} and \eqref{ax:subst-subst} implies that $q(f, B) \circ s_{f'} = f$.
-
-If $g : ft_k(A) \to ft_m(C)$ and $A = C[g]$, then we need to show that $s_{f'} = s_{q(g,C) \circ f'}$.
-The first $n$ components of both morphisms is identity on $B$.
+To complete the proof that the square above is cartesian we need for every $g : ft_k(A) \to ft_m(C)$ and $A = C[g]$ prove that $s_{f'} = s_{q(g,C) \circ f'}$.
 The last component of $q(g,C) \circ f'$ equals to $v_{n+1,0}(C[g])[f'] = a_{k+1}$.
-Thus the last components of these morphisms also coincide.
-This completes the proof that the square above is cartesian.
+Thus the last components of $q(g,C) \circ f'$ and $f'$ coincide, hence $s_{f'} = s_{q(g,C) \circ f'}$.
 
-We are left to prove that operation $A[f]$ is functorial.
+We are left to prove that operations $A[f]$ and $q(f,A)$ are functorial.
 Equations $A[id_{ft_k(A)}] = A$ and $A[f \circ g] = A[f][g]$ are precisely axioms \eqref{ax:Subst-var} and \eqref{ax:Subst-Subst}.
 The fact that $q(id_{ft_k(A)}, A) = id_A$ follows from axiom~\ref{ax:var-subst}.
 Now let $g : C \to B$ and $f : B \to ft_k(A)$ be morphisms; we need to show that $q(f \circ g, A) = q(f,A) \circ q(g,A[f])$.
@@ -354,6 +358,21 @@ This completes the construction of contextual category $F(M)$.
 \begin{prop}
 Mapping $F$ is functorial, and functor $F : T_1\Mod \to \ccat$ is an equivalence of categories.
 \end{prop}
+\begin{proof}
+Given a map of $T_1$ models $\alpha : M \to N$, we define a map of contextual categories $F(\alpha) : F(M) \to F(N)$.
+$F(\alpha)$ is already defined on objects.
+Let $f = (a_1, \ldots a_k) \in Hom_{n,k}(B,A)$.
+We define $F(\alpha)(f)$ as $(\alpha(a_1), \ldots \alpha(a_k)) \in Hom_{n,k}(\alpha(B), \alpha(A))$.
+$F(\alpha)$ preserves identity morphisms, compositions, $f^*(A)$, and $q(f,A)$ since all of these operations are defined in terms of $T_1$ operations.
+Clearly, $F$ preserves identity maps and compositions of maps of $T_1$ models.
+Thus $F$ is a functor.
+
+Now we prove that $F$ is faithful.
+Let $\alpha,\beta : M \to N$ be a pair of maps of $T_1$ models such that $F(\alpha) = F(\beta)$.
+Then $\alpha$ and $\beta$ coincide on contexts.
+Given $a \in M(Tm_n)$ we conside the following equations:
+\[ \]
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
