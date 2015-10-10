@@ -194,7 +194,7 @@ In this section we will describe an algebraic approach to defining type theories
 We will define category $\algtt$ of algebraic type theories.
 Finally, we will give a few examples of such theories.
 
-We will consider quasi-equational theories in signatures $\Sigma$ which have the set of sorts $\{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
+We will consider quasi-equational theories in the the signature with the set of sorts $\{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
 Let $T_0$ be the theory with the set of function symbols $\{ * \} \cup \{ ft_n : Ctx_{n+1} \to Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ ty_n : Tm_n \to Ctx_{n+1}\ |\ n \in \mathbb{N} \}$ and the following axioms:
 \begin{align*}
 & \top \sststile{}{A} ft_n(A) \downarrow \\
@@ -400,6 +400,7 @@ Finally, we prove that $F$ is essentially surjective on objects.
 Given contextual category $C$ we define $T_1$ model $M$.
 Let $M(Ctx_n)$ be equal to $Ob_n(C)$ and $M(Tm_n)$ be the set of pairs of objects $A \in Ob_{n+1}(C)$ and sections of $p_A : A \to ft_n(A)$.
 Let $ty_n$ be the obvious projection.
+We will usually identify $a \in M(Tm_n)$ with the section $ft_n(ty_n(a)) \to ty_n(a)$.
 
 For each $n,k \in \mathbb{N}$ we define partial function
 \[ Subst_{n,k} : M(Ctx_n) \times M(Ctx_{k+1}) \times M(Tm_n)^k \to M(Ctx_{n+1}) \]
@@ -413,23 +414,78 @@ Let $Subst_{n,0}(B,A) = !_B^*(A)$ and $q_{n,0} = q(!_B,A)$ where $!_B : B \to Ob
               B \ar[r]_{!_B} & 1
             } \]
 Let $Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1})$ be defined whenever $Subst_{n,k}(B, ft_k(A), a_1, \ldots a_k)$ is defined and $ty_n(a_{k+1}) = Subst_{n,k}(B, ft_k(A), a_1, \ldots a_k)$.
-In this case we let $Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1}) = f^*(A)$ and $q_{n,k+1} = q(f,A)$ where $f$ is the composition of the section $s$ in $a_{k+1}$ and $q_{n,k}$.
+In this case we let $Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1}) = f^*(A)$ and $q_{n,k+1} = q(f,A)$ where $f$ is the composition of $a_{k+1}$ and $q_{n,k}$.
 \[ \xymatrix{ Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1}) \ar[rr]^-{q_{n,k+1}} \ar[d] \pb & & A \ar[d]^{p_A} \\
-              \ B \ar[r]_-{s} & Subst_{n,k}(B, ft_k(A), a_1, \ldots a_k) \ar[r]_-{q_{n,k}} & ft_k(A)
+              B \ar[r]_-{a_{k+1}} & Subst_{n,k}(B, ft_k(A), a_1, \ldots a_k) \ar[r]_-{q_{n,k}} & ft_k(A)
             } \]
 It is easy to see by induction on $k$ that axiom~\eqref{ax:def-Subst} holds.
 Axiom~\eqref{ax:type-Subst} holds by definition of $Subst_{n,k}$.
+
+The definition of predicates $Hom_{n,k}$ makes sense in $M$ now.
+Thus we can define as before the set $Hom^M_{n,k}(B,A)$ of morphisms in $M$ as the set of tuples $(a_1, \ldots a_k)$ such that $Hom_{n,k}(B, A, a_1, \ldots a_k)$.
+There is a bijection $\alpha : Hom^M_{n,k}(B,A) \to Hom_{n,k}(B,A)$ such that $Subst_{n,k}(B, A, a_1, \ldots a_k) = \alpha(a_1, \ldots a_k)^*(A)$ and $q_{n,k} = q(\alpha(a_1, \ldots a_k), A)$.
+We define $\alpha$ by induction on $k$.
+Both $Hom^M_{n,0}(B,A)$ and $Hom_{n,0}(B,A)$ are singletons, so there is a unique bijection between them.
+If $(a_1, \ldots a_k) \in Hom^M_{n,k}(B,ft_k(A))$, then there is a bijection between $f \in Hom_{n,k+1}(B,A)$ such that $p_A \circ f = \alpha(a_1, \ldots a_k)$ and sections of $p_{\alpha(a_1, \ldots a_k)^*(A)}$.
+By induction hypothesis these sections are just sections of $p_{Subst_{n,k}(B, A, a_1, \ldots a_k)}$.
+This gives us a bijection between $Hom^M_{n,k+1}(B,A)$ and $Hom_{n,k+1}(B,A)$, namely $\alpha(a_1, \ldots a_{k+1}) = q(\alpha(a_1, \ldots a_k), A) \circ a_{k+1}$.
+Then equations $Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1}) = \alpha(a_1, \ldots a_{k+1})^*(A)$ and $q_{n,k+1} = q(\alpha(a_1, \ldots a_k), A)$ hold by definition.
 
 Now we define total functions $v_{n,i} : M(Ctx_n) \to M(Tm_n)$.
 Let $v_{n,i}(A) = (p^{i+1}(A)^*(ft^i_{n-i}(A)), s_{p^i_A})$.
 \[ \xymatrix{ p^{i+1}(A)^*(ft^i_{n-i}(A)) \ar[r] \ar[d] \pb & ft^i_{n-i}(A) \ar[d]^{p_{ft^i_{n-i}(A)}} \\
               A \ar[r]_{p^{i+1}(A)} \ar@/^1pc/[u]^{s_{p^i_A}} \ar[ur]_{p^i_A} & ft^{i+1}_{n-i-1}(A)
             } \]
-Axioms \eqref{ax:def-var} and \eqref{ax:type-var} hold by definition.
+Axiom~\eqref{ax:def-var} holds by definition.
+By induction on $n - i$ it is easy to see that $\alpha(v_{n,n-1}(A), \ldots v_{n,i}(A))$ equals to $p_A^i : A \to ft^i_{n-i}(A)$.
+Axiom~\eqref{ax:type-var} follows from the following sequence of equations:
+\begin{align*}
+Subst_{n,n-i-1}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i+1}(A)) & = \\
+\alpha(v_{n,n-1}(A), \ldots v_{n,i+1}(A))^*(ft^i_{n-i}(A)) & = \\
+p^{i+1}(A)^*(ft^i_{n-i}(A)) & = \\
+ty_n(v_{n,i}(A)) & .
+\end{align*}
+Axiom~\eqref{ax:Subst-var} follows from the facts that $\alpha(v_{n,n-1}(ft_n(A)), \ldots v_{n,0}(ft_n(A))) = id_{ft_n(A)}$ and $id_{ft_n(A)}^*(A) = A$.
 
 Now we define partial functions $subst_{n,k} : M(Ctx_n) \times M(Tm_k) \times M(Tm_n)^k \to M(Tm_n)$.
-$subst_{n,k}(B, a, a_1, \ldots a_k)$ is defined whenever $Subst_{n,k}(B, ty_k(a), a_1, \ldots a_k)$ is defined.
-In this case we let $subst_{n,k}(B, a, a_1, \ldots a_k)$
+$subst_{n,k}(B, a, a_1, \ldots a_k)$ is defined whenever $Hom_{n,k}(B, ft_k(ty_k(a)), a_1, \ldots a_k)$ holds.
+In this case we let $subst_{n,k}(B, a, a_1, \ldots a_k) = a[\alpha(a_1, \ldots a_k)]$ where $a[f] = s_{a \circ f}$.
+Axioms \eqref{ax:def-subst} and \eqref{ax:type-subst} hold by definition.
+Axiom~\eqref{ax:subst-var} follows from the fact that $id_{ft_n(ty_n(a))}^*(a) = a$.
+
+To prove axiom~\eqref{ax:var-subst} note that $p_A \circ \alpha(a_1, \ldots a_{k+1}) = \alpha(a_1, \ldots a_k)$ by definition of $\alpha$.
+Hence $p^i(A) \circ \alpha(a_1, \ldots a_k) = \alpha(a_1, \ldots a_{k-i})$.
+Also note that $s_{\alpha(a_1, \ldots a_k)} = a_k$.
+Now the axiom follows from the following equations:
+\begin{align*}
+subst_{n,k}(B, v_{k,i}(A), a_1, \ldots a_k) & = \\
+s_{v_{k,i}(A) \circ \alpha(a_1, \ldots a_k)} & = \\
+s_{q(p^{i+1}(A), ft^i_{n-i}(A)) \circ v_{k,i}(A) \circ \alpha(a_1, \ldots a_k)} & = \\
+s_{p^i(A) \circ \alpha(a_1, \ldots a_k)} & = \\
+s_{\alpha(a_1, \ldots a_{k-i})} & = \\
+a_{k-i} & .
+\end{align*}
+
+Now we prove that $\alpha$ preserves compositions.
+To do this we need to show that $\alpha(a_1, \ldots a_k) \circ f = \alpha(a_1[f], \ldots a_k[f])$.
+We do this by induction on $k$.
+For $k = 0$ it is trivial and for $k > 0$ we have the following sequence of equations:
+\begin{align*}
+\alpha(a_1, \ldots a_k) \circ f & = \\
+q(\alpha(a_1, \ldots a_{k-1}), A) \circ a_k \circ f & = \\
+q(\alpha(a_1, \ldots a_{k-1}), A) \circ q(f, B[\alpha(a_1, \ldots a_k)]) \circ a_k[f] & = \\
+q(\alpha(a_1, \ldots a_{k-1}) \circ f, A) \circ a_k[f] & = \\
+q(\alpha(a_1[f], \ldots a_{k-1}[f]), A) \circ a_k[f] & = \\
+\alpha(a_1[f], \ldots a_k[f]) & .
+\end{align*}
+
+Now axioms \eqref{ax:Subst-Subst} and \eqref{ax:subst-subst} follow from the facts that $\alpha$ preserves compositions and $(f \circ g)^*(A) = f^*(g^*(A))$.
+This completes the construction of $T_1$ model $M$ from a contextual category $C$.
+To finish the proof we need to show that $F(M)$ is isomorphic to $C$.
+The isomorphism is given by bijection $\alpha$.
+We already saw that $\alpha$ preserves the structure of contextual categories.
+Thus $\alpha$ is a morphism of contextual categories, and it is easy to see that $\alpha^{-1}$ also preserves the structure.
+Hence $\alpha$ is isomorphism and $F$ is an equivalence.
 \end{proof}
 
 \bibliographystyle{amsplain}
