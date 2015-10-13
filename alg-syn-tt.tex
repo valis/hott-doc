@@ -188,13 +188,12 @@ A syntactically presented type theory is a horn theory in a signature satisfying
 \Gamma \ttvdash,\ A_1, \ldots A_n \ttvdash b : B,\ \Gamma \ttvdash a_i : A_i[a_1, \ldots a_{i-1}] & \sststile{}{\Gamma, A_1, \ldots A_n, a_1, \ldots a_n, B, b} \Gamma \ttvdash b[a_1, \ldots a_n] : B[a_1, \ldots a_n]
 \end{align*}
 
-\section{Algebraic presentations of type theories}
+\section{Theory $T_1$}
 
-In this section we will describe an algebraic approach to defining type theories.
-We will define category $\algtt$ of algebraic type theories.
-Finally, we will give a few examples of such theories.
+In this section we will describe a quasi-equational theory $T_1$ and prove that the category of models of $T_1$ is equivalent to the category of contextual categories.
+We will use this theory to define algebraic type theories.
 
-We will consider quasi-equational theories in the the signature with the set of sorts $\{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
+We will consider quasi-equational theories in signature $\Sigma_C$ with the set of sorts $\{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
 Let $T_0$ be the theory with the set of function symbols $\{ * \} \cup \{ ft_n : Ctx_{n+1} \to Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ ty_n : Tm_n \to Ctx_{n+1}\ |\ n \in \mathbb{N} \}$ and the following axioms:
 \begin{align*}
 & \top \sststile{}{A} ft_n(A) \downarrow \\
@@ -487,6 +486,96 @@ We already saw that $\alpha$ preserves the structure of contextual categories.
 Thus $\alpha$ is a morphism of contextual categories, and it is easy to see that $\alpha^{-1}$ also preserves the structure.
 Hence $\alpha$ is isomorphism and $F$ is an equivalence.
 \end{proof}
+
+\section{Algebraic presentations of type theories}
+
+In this section we will describe an algebraic approach to defining type theories.
+We will define category $\algtt$ of algebraic type theories.
+Finally, we will give a few examples of such theories.
+
+\begin{defn}
+An \emph{algebraic type theory} is a theory in signature $\Sigma_C$ with a map from $T_1$.
+Category $\algtt$ of algebraic type theory is the under category $T_1 / \Sigma_C \text{-} \cat{Th}$.
+\end{defn}
+
+We will usually omit subscript $n$ in function symbols $ft_n$, $ty_n$, $v_{n,i}$ and others.
+If $B$, $b$, and $a$ are terms of sorts $Ctx_{n+2}$, $Tm_{n+1}$, and $Tm_n$ respectively, then
+we write $B[a]$ for $Subst_{n,n+1}(ft(ty(a)), B, v_{n-1}(ft(ty(a))), \ldots v_0(ft(ty(a))), a)$
+and $b[a]$ for $subst_{n,n+1}(ft(ty(a)), b, v_{n-1}(ft(ty(a))), \ldots v_0(ft(ty(a))), a)$
+
+We will give a few examples of algebraic type theories
+All of our examples will contain $T_1$ as subtheory.
+Some of the theories have two variations: with or without eta rules.
+
+\subsection{Unit types with eta rules}
+The theory of unit types with eta rules has the following function symbols:
+\begin{align*}
+\top & : Ctx_n \to Ctx_{n+1} \\
+unit & : Ctx_n \to Tm_n
+\end{align*}
+
+The following axioms prescribe how substitution must be defined on the constructions we have:
+\begin{align*}
+& \sststile{}{A, B, a_1, \ldots a_k} Subst_{n,k}(B, \top(A), a_1, \ldots a_k) \leftrightharpoons \top(B) \\
+& \sststile{}{A, B, a_1, \ldots a_k} subst_{n,k}(B, unit(A), a_1, \ldots a_k) \leftrightharpoons unit(B)
+\end{align*}
+
+The following axioms describe when functions are defined:
+\begin{align*}
+& \sststile{}{A} \top(A) \downarrow \\
+& \sststile{}{A} unit(A) \downarrow
+\end{align*}
+
+The following axioms describe the ``typization'' of the constructions we have:
+\begin{align*}
+& \sststile{}{A} ft(\top(A)) = A \\
+& \sststile{}{A} ty(unit(A)) = \top(A)
+\end{align*}
+
+The following axiom describes the ``computation rule'' for unit types:
+\begin{align*}
+ty(x) = \top(A) & \sststile{}{A,x} unit(A) = x
+\end{align*}
+
+\subsection{Unit types without eta rules}
+The theory of unit types without eta rules has the following function symbols:
+\begin{align*}
+\top             & : Ctx_n \to Ctx_{n+1} \\
+unit             & : Ctx_n \to Tm_n \\
+\top\text{-}elim & : Ctx_{n+2} \times Tm_n \times Tm_n \to Tm_n
+\end{align*}
+
+\subsection{$\Sigma$ types}
+
+The theory of $\Sigma$ types has the following function symbols:
+\begin{align*}
+\Sigma & : Ctx_{n+2} \to Ctx_{n+1} \\
+pair   & : Ctx_{n+2} \times Tm_n \times Tm_n \to Tm_n \\
+proj_1 & : Ctx_{n+2} \times Tm_n \to Tm_n \\
+proj_2 & : Ctx_{n+2} \times Tm_n \to Tm_n \\
+& \end{align*}
+
+The following axioms describe when functions are defined:
+\begin{align*}
+                            & \sststile{}{B} \Sigma(B) \downarrow \\
+ty(a) = ft(B), ty(b) = B[a] & \ssststile{}{B,a,b} pair(B,a,b) \downarrow \\
+ty(p) = \Sigma(B)           & \ssststile{}{B,p} proj_1(B,p) \downarrow \\
+ty(p) = \Sigma(B)           & \ssststile{}{B,p} proj_2(B,p) \downarrow
+\end{align*}
+
+The following axioms describe the ``typization'' of the constructions we have:
+\begin{align*}
+& \sststile{}{B} ft(\Sigma(B)) = ft^2(B) \\
+& \sststile{}{B,a,b} ty(pair(B,a,b)) \leftrightharpoons \Sigma(B) \\
+& \sststile{}{B,p} ty(proj_1(B,p)) \leftrightharpoons ft(B) \\
+& \sststile{}{B,p} ty(proj_2(B,p)) \leftrightharpoons B[proj_1(B,p)]
+\end{align*}
+
+The following axioms describe the ``computation rules'':
+\begin{align*}
+& \sststile{}{B,a,b} proj_1(B,pair(B,a,b)) \leftrightharpoons a \\
+& \sststile{}{B,a,b} proj_2(B,pair(B,a,b)) \leftrightharpoons b \\
+\end{align*}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
