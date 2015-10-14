@@ -75,23 +75,218 @@
 Каждое объявление состоит из уникального имени и \emph{определения}, которые бывают трех видов:
 \begin{itemize}
 \item \emph{Функция} содержит сигнатуру, которая является типом, и тело, которое является выражением. Типы и выражения в vccore будут определены позже.
-\item \emph{Алгебраический тип данных} содержит некоторый контекст, описывающий параметры типа данных, и список конструкторов, каждый из которых состоит из имени и контекста, описывающего параметры конструктора.
+\item \emph{Алгебраический тип данных} содержит вселенную в которой он лежит, список типов, описывающий параметры типа данных, и список конструкторов, каждый из которых состоит из уникального имени и списка типов, описывающего параметры конструктора.
 \item \emph{Класс} содержит список полей. Каждое поле состоит из уникального имени и сигнатуры.
 \end{itemize}
 Классы в vccore устроенны очень просто, по сути, они являются просто записями.
 Классы не могут наследоваться друг от друга, но можно использовать анонимное наследование.
-Если $A$ -- некоторый класс, содержащий поля $f_1, \ldots f_n$, то $A\ \{\ f_1 \mapsto d_1,\ \ldots\ f_n \mapsto d_n\ \}$ -- анонимный наследник класса $A$.
-Здесь $d_i$ -- это определение либо функции, либо типа данных.
+Если $A$ -- некоторый класс, содержащий поля $f_1, \ldots f_n$, и $d_1$, \ldots $d_n$ -- некоторые термы, то $A\ \{\ f_1 \red d_1;\ \ldots\ f_n \red d_n\ \}$ -- анонимный наследник класса $A$.
 
-Если $A\ \{\ f_1 \mapsto d_1,\ \ldots\ f_n \mapsto d_n\ \}$ -- коректный тип и все поля $A$ присутствуют в списке $f_1, \ldots f_n$, то его элементы создаются при помощи конструкции $\mathbf{new}$:
-\[ \mathbf{new}\ A\ \{\ f_1 \mapsto d_1,\ \ldots\ f_n \mapsto d_n\ \} : A\ \{\ f_1 \mapsto d_1,\ \ldots\ f_n \mapsto d_n\ \} \]
+Если $A\ \{\ f_1 \red d_1;\ \ldots\ f_n \red d_n\ \}$ -- коректный тип и все поля $A$ присутствуют в списке $f_1, \ldots f_n$, то его элементы создаются при помощи конструкции $\mathbf{new}$:
+\[ \mathbf{new}\ A\ \{\ f_1 \red d_1,\ \ldots\ f_n \red d_n\ \} : A\ \{\ f_1 \red d_1,\ \ldots\ f_n \red d_n\ \} \]
 
 \subsection{Формальное определение термов vccore}
 
 Как обычно, мы сначала опишем множество сырых термов, после чего определим отношения типизации.
 Выражения и типы vccore тогда будут определятся как типизируемые термы.
 
-Множество термов
+Множество термов определяется следующим образом:
+\begin{align*}
+Term :=\ & v_i\ |\ D\ |\ f\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
+      |\ & \mathbf{let}\,\mathbf{it}\,A_1\,\ldots\,A_n = b\,\mathbf{in}\,d \\
+      |\ & \mathbf{new}\,C\,\{ S \}\ |\ C\,\{ S \} \\
+      |\ & b\,a\ |\ \lambda b\ |\ \Pi A B \\
+      |\ & (a,b)_B\ |\ \mathbf{proj}_1\,p\ |\ \mathbf{proj}_2\,p\ |\ \Sigma A B \\
+      |\ & \mathbf{Type}_i\ |\ \mathbf{Set}_i\ |\ \mathbf{Prop}
+\end{align*}
+где $i \in \mathbb{N}$, $a, b, d, A, B, p, a_1, \ldots a_n, A_1, \ldots A_n \in Term$, $D$ является именем типа данных, $c$ -- именем конструктора типа данных $D$, $C$ -- именем класса, $f$ -- именем поля некоторого класса и $S$ -- множеством пар $(f,d)$, где $f$ -- имя поля класса $C$ и $d$ -- терм.
+Такую пару $(f,d)$ мы будем записывать как $f \red d$.
+Как обычно, мы сокращаем $\Pi A (\uparrow B)$ до $A \to B$.
+
+Правила типизации будут определены относительно фиксированного множества определений $\Sigma$.
+Как отмечалось ранее, каждое определение является определением либо функции, либо типа данных, либо класса.
+
+Во-первых, опишем стандартные базовые правила для контекстов, индексов и типов:
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\vdash$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A$}
+\UnaryInfC{$\Gamma, A \vdash$}
+\DisplayProof
+\quad
+\AxiomC{$A_1, \ldots A_n \vdash$}
+\UnaryInfC{$A_1, \ldots A_n \vdash v_i \Uparrow (\uparrow^{i+1}\!\!A_{n-i})$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a \Uparrow A$}
+\RightLabel{, $A \leq B$}
+\UnaryInfC{$\Gamma \vdash a \Downarrow B$}
+\DisplayProof
+\end{center}
+\medskip
+
+Функция $max$ -- это частичная функция на множестве термов, определенная следующим образом:
+\begin{align*}
+max(\mathbf{Type}_i, \mathbf{Type}_j) & = \mathbf{Type}_{max(i,j)} \\
+max(\mathbf{Type}_i, \mathbf{Set}_j) & = \mathbf{Type}_{max(i,j)} \\
+max(\mathbf{Set}_i, \mathbf{Type}_j) & = \mathbf{Type}_{max(i,j)} \\
+max(\mathbf{Set}_i, \mathbf{Set}_j) & = \mathbf{Set}_{max(i,j)} \\
+max(\mathbf{Type}_i, \mathbf{Prop}) & = \mathbf{Type}_i \\
+max(\mathbf{Prop}, \mathbf{Type}_i) & = \mathbf{Type}_i \\
+max(\mathbf{Set}_i, \mathbf{Prop}) & = \mathbf{Set}_i \\
+max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
+\end{align*}
+Функция $max_\Pi$ определена так же как и $max$ за исключением того, что $max_\Pi(U, \mathbf{Prop}) = \mathbf{Prop}$ для любого $U$ из множества $\{ \mathbf{Type}_i, \mathbf{Set}_i, \mathbf{Prop} \}$.
+Для произвольного конечного множества термов $U_1$, \ldots $U_n$ мы определяем $max(U_1, \ldots U_n)$ как $max(U_1, \ldots max(U_{n-1}, U_n) \ldots)$.
+На пустом множестве мы определяем $max$ как $\mathbf{Prop}$.
+
+Теперь опишем правила для $\Pi$ и $\Sigma$ типов.
+В правилах ниже термы $U$ и $V$ принадлежат множеству $\{ \mathbf{Type}_i, \mathbf{Set}_i, \mathbf{Prop} \}$.
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A \Uparrow U$}
+\AxiomC{$\Gamma, A \vdash B \Uparrow V$}
+\BinaryInfC{$\Gamma \vdash \Pi A B \Uparrow max_\Pi(U,V)$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A \Uparrow U$}
+\AxiomC{$\Gamma, A \vdash B \Uparrow V$}
+\BinaryInfC{$\Gamma \vdash \Sigma A B \Uparrow max(U,V)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, A \vdash b \Uparrow B$}
+\UnaryInfC{$\Gamma \vdash \lambda b \Uparrow \Pi A B$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash b \Uparrow C$}
+\AxiomC{$\Gamma \vdash a \Downarrow A$}
+\RightLabel{, $C \red_h^* \Pi A B$}
+\BinaryInfC{$\Gamma \vdash b\,a \Uparrow B[a]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, A \vdash B$}
+\AxiomC{$\Gamma \vdash a \Uparrow A$}
+\AxiomC{$\Gamma \vdash b \Downarrow B[a]$}
+\TrinaryInfC{$\Gamma \vdash (a,b)_B \Uparrow \Sigma A B$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p \Uparrow C$}
+\RightLabel{, $C \red_h^* \Sigma A B$}
+\UnaryInfC{$\Gamma \vdash \mathbf{proj}_1\,p \Uparrow A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash p \Uparrow C$}
+\RightLabel{, $C \red_h^* \Sigma A B$}
+\UnaryInfC{$\Gamma \vdash \mathbf{proj}_2\,p \Uparrow B[\mathbf{proj}_1\,p]$}
+\DisplayProof
+\end{center}
+\medskip
+
+Следующие правила для вселенных:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \mathbf{Type}_i$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \mathbf{Set}_i$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \mathbf{Prop}$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A \Downarrow U$}
+\UnaryInfC{$\Gamma \vdash A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \mathbf{Prop} \Uparrow \mathbf{Set}_0$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \mathbf{Set}_i \Uparrow \mathbf{Type}_{i+1}$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \mathbf{Type}_i \Uparrow \mathbf{Type}_{i+1}$}
+\DisplayProof
+\end{center}
+\medskip
+
+Если $D$ является типом данных в сигнатуре $\Sigma$ с параметрами $A_1$, \ldots $A_n$ и вселенной $U$, то у нас есть следующее правило вывода:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash D \Uparrow \Pi A_1 (\ldots \Pi A_n U \ldots)$}
+\DisplayProof
+\end{center}
+\medskip
+
+Если $c$ является конструктором $D$ с типами аргументов $B_1$, \ldots $B_k$, то у нас есть следующее правило вывода:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\AxiomC{$\Gamma \vdash a_i \Downarrow A_i[a_1, \ldots a_{i-1}]$}
+\BinaryInfC{$\Gamma \vdash D\,a_1\,\ldots\,a_n\,.\,c \Uparrow \Pi (B_1[a_1, \ldots a_n]) (\ldots \Pi (B_k[a_1, \ldots a_n]) (D\,a_1\,\ldots\,a_n) \ldots)$}
+\DisplayProof
+\medskip
+\end{center}
+
+Если $C$ -- класс в сигнатуре $\Sigma$ и $f_1$, \ldots $f_n$ -- поля $C$ с типами $B_1$, \ldots $B_n$ соответственно, то для любого $1 \leq k \leq n$ у нас есть следующее правило вывода:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\AxiomC{$\Gamma, C\,\{ \} \vdash b_i \Downarrow B_i$, $1 \leq i < k$}
+\BinaryInfC{$\Gamma \vdash C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \}$}
+\DisplayProof
+\medskip
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\AxiomC{$\Gamma, C\,\{ \} \vdash b_i \Downarrow B_i$, $1 \leq i < k$}
+\AxiomC{$\Gamma, C\,\{ \} \vdash B_i \Uparrow U_i$, $k \leq i \leq n$}
+\TrinaryInfC{$\Gamma \vdash C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \} \Uparrow max(U_k, \ldots U_n)$}
+\DisplayProof
+\medskip
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\AxiomC{$\Gamma, C\,\{ \} \vdash b_i \Downarrow B_i$, $1 \leq i < k$}
+\AxiomC{$\Gamma, C\,\{ \} \vdash B_i$, $k \leq i \leq n$}
+\TrinaryInfC{$\Gamma \vdash \mathbf{new}\,C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \} \Uparrow C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \}$}
+\DisplayProof
+\medskip
+\end{center}
+
+Если $f$ является полем класса $C$ типа $B$, то у нас есть следующее правило вывода:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash f \Uparrow \Pi (C\,\{ \}) B$}
+\DisplayProof
+\medskip
+\end{center}
 
 \section{Vclang}
 
