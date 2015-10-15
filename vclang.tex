@@ -74,9 +74,9 @@
 Программа на vccore состоит из множества объявлений (то есть \emph{неупорядоченного} списка).
 Каждое объявление состоит из уникального имени и \emph{определения}, которые бывают трех видов:
 \begin{itemize}
-\item \emph{Функция} содержит сигнатуру, которая является типом, и тело, которое является выражением. Типы и выражения в vccore будут определены позже.
-\item \emph{Алгебраический тип данных} содержит вселенную в которой он лежит, список типов, описывающий параметры типа данных, и список конструкторов, каждый из которых состоит из уникального имени и списка типов, описывающего параметры конструктора.
-\item \emph{Класс} содержит список полей. Каждое поле состоит из уникального имени и сигнатуры.
+\item \emph{Функция} содержит тело и сигнатуру, состоящую из списка типов аргументов и типа возвращаемого значения.
+\item \emph{Алгебраический тип данных} содержит вселенную в которой он лежит, список типов, описывающий параметры типа данных, и множество конструкторов, каждый из которых состоит из уникального имени и списка типов, описывающего параметры конструктора.
+\item \emph{Класс} содержит список полей. Каждое поле состоит из уникального имени и типа.
 \end{itemize}
 Классы в vccore устроенны очень просто, по сути, они являются просто записями.
 Классы не могут наследоваться друг от друга, но можно использовать анонимное наследование.
@@ -90,18 +90,48 @@
 Как обычно, мы сначала опишем множество сырых термов, после чего определим отношения типизации.
 Выражения и типы vccore тогда будут определятся как типизируемые термы.
 
+При определении функции или связывания в $\mathbf{let}$ мы можем использовать один из двух способов их описания: либо $f\,x_1\,\ldots\,x_n \Rightarrow e$, либо $f\,x_1\,\ldots\,x_n \Leftarrow e$.
+Множество $\{ \Leftarrow, \Rightarrow \}$ мы будем обозначать $Def$.
+Какой из элементов множества $Def$ используется при определении функции влияет на то, как будет вычисляться эта функция.
+При выборе варианта $\Leftarrow$, мы можем использовать дополнительные конструкции для задания тела функции.
+Множество термов $Term$ будет определено ниже.
+Используя его, можно определить множество $Term_e$ индуктивным образом:
+\begin{itemize}
+\item Если $a \in Term$, то $a \in Term_e$.
+\item Пусть $k \in \mathbb{N}$, $p_i$ -- шаблоны, $d_i \in Def$, $b_i \in Term_e$ и $b_i \in Term$, если $d_i = \Rightarrow$.
+    Тогда $\mathbf{elim}\,v_k\,\{ p_1\,d_1\,b_1; \ldots p_n\,d_n\,b_n \} \in Term_e$.
+\end{itemize}
+Шаблон -- это либо имя конструктора, либо символ $var$.
+
 Множество термов определяется следующим образом:
 \begin{align*}
 Term :=\ & v_i\ |\ D\ |\ f\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
-      |\ & \mathbf{let}\,\mathbf{it}\,A_1\,\ldots\,A_n = b\,\mathbf{in}\,d \\
       |\ & \mathbf{new}\,C\,\{ S \}\ |\ C\,\{ S \} \\
+      |\ & \mathbf{let}\,\mathbf{it}\,A_1\,\ldots\,A_n : B \Rightarrow b\,\mathbf{in}\,a \\
+      |\ & \mathbf{let}\,\mathbf{it}\,A_1\,\ldots\,A_n : B \Leftarrow e\,\mathbf{in}\,a \\
       |\ & b\,a\ |\ \lambda b\ |\ \Pi A B \\
       |\ & (a,b)_B\ |\ \mathbf{proj}_1\,p\ |\ \mathbf{proj}_2\,p\ |\ \Sigma A B \\
       |\ & \mathbf{Type}_i\ |\ \mathbf{Set}_i\ |\ \mathbf{Prop}
 \end{align*}
-где $i \in \mathbb{N}$, $a, b, d, A, B, p, a_1, \ldots a_n, A_1, \ldots A_n \in Term$, $D$ является именем типа данных, $c$ -- именем конструктора типа данных $D$, $C$ -- именем класса, $f$ -- именем поля некоторого класса и $S$ -- множеством пар $(f,d)$, где $f$ -- имя поля класса $C$ и $d$ -- терм.
+где $i \in \mathbb{N}$, $a, b, A, B, p, a_1, \ldots a_n, A_1, \ldots A_n \in Term$, $e \in Term_e$, $D$ является именем типа данных, $c$ -- именем конструктора типа данных $D$, $C$ -- именем класса, $f$ -- именем поля некоторого класса и $S$ -- последовательностью пар $(f,d)$, где $f$ -- имя поля класса $C$ и $d$ -- терм.
 Такую пару $(f,d)$ мы будем записывать как $f \red d$.
 Как обычно, мы сокращаем $\Pi A (\uparrow B)$ до $A \to B$.
+
+TODO: Добавить конструкции для вселенных $\mathbf{Prop}$ и $\mathbf{Set}_i$.
+
+Определение редукций: TODO.
+
+На множестве термов существует предпорядок $\leq$, порождаемый следующими соотношениями:
+\begin{itemize}
+\item $\mathbf{Prop} \leq \mathbf{Set}_i$.
+\item $\mathbf{Set}_i \leq \mathbf{Type}_i$.
+\item Если $i \leq j$, то $\mathbf{Set}_i \leq \mathbf{Set}_j$.
+\item Если $i \leq j$, то $\mathbf{Type}_i \leq \mathbf{Type}_j$.
+\item Если $A \deq B$, то $A \leq B$.
+\item Если $A \leq A'$ и $B \leq B'$, то $\Sigma A B \leq \Sigma A' B'$.
+\item Если $A' \leq A$ и $B \leq B'$, то $\Pi A B \leq \Pi A' B'$.
+\item Если любой член последовательности $S$ встречается в $S'$, то $C\,\{ S' \} \leq C\,\{ S \}$.
+\end{itemize}
 
 Правила типизации будут определены относительно фиксированного множества определений $\Sigma$.
 Как отмечалось ранее, каждое определение является определением либо функции, либо типа данных, либо класса.
@@ -128,7 +158,12 @@ Term :=\ & v_i\ |\ D\ |\ f\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
 \end{center}
 \medskip
 
-Функция $max$ -- это частичная функция на множестве термов, определенная следующим образом:
+Термы $\mathbf{Type}_i$, $\mathbf{Set}_i$ и $\mathbf{Prop} \}$ мы будем называть \emph{вселенными в нормальной форме}, множество таких термов мы будем обозначать $\mathcal{U}_{nf}$.
+Мы будем называть \emph{вселенными} термы $U$, такие что $U \red_h^* U'$ для некоторого $U' \in \mathcal{U}_{nf}$.
+Множество вселенных мы будем обозначать $\mathcal{U}$.
+Тогда существует функция $nf : \mathcal{U} \to \mathcal{U}_{nf}$ каждой вселенной сопоставляющая ее нормальную форму.
+
+Определим функцию $max : \mathcal{U} \times \mathcal{U} \to \mathcal{U}_{nf}$ следующим образом:
 \begin{align*}
 max(\mathbf{Type}_i, \mathbf{Type}_j) & = \mathbf{Type}_{max(i,j)} \\
 max(\mathbf{Type}_i, \mathbf{Set}_j) & = \mathbf{Type}_{max(i,j)} \\
@@ -139,7 +174,8 @@ max(\mathbf{Prop}, \mathbf{Type}_i) & = \mathbf{Type}_i \\
 max(\mathbf{Set}_i, \mathbf{Prop}) & = \mathbf{Set}_i \\
 max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
 \end{align*}
-Функция $max_\Pi$ определена так же как и $max$ за исключением того, что $max_\Pi(U, \mathbf{Prop}) = \mathbf{Prop}$ для любого $U$ из множества $\{ \mathbf{Type}_i, \mathbf{Set}_i, \mathbf{Prop} \}$.
+Для произвольных $U$ и $V$ мы полагаем $max(U,V) = max(nf(U), nf(V))$.
+Функция $max_\Pi$ определена так же как и $max$ за исключением того, что $max_\Pi(U, V) = \mathbf{Prop}$ для любого $U$ и $V$, такого что $nf(V) = \mathbf{Prop}$.
 Для произвольного конечного множества термов $U_1$, \ldots $U_n$ мы определяем $max(U_1, \ldots U_n)$ как $max(U_1, \ldots max(U_{n-1}, U_n) \ldots)$.
 На пустом множестве мы определяем $max$ как $\mathbf{Prop}$.
 
@@ -249,11 +285,11 @@ max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
 \medskip
 \end{center}
 
-Если $C$ -- класс в сигнатуре $\Sigma$ и $f_1$, \ldots $f_n$ -- поля $C$ с типами $B_1$, \ldots $B_n$ соответственно, то для любого $1 \leq k \leq n$ у нас есть следующее правило вывода:
+Если $C$ -- класс в сигнатуре $\Sigma$ и $f_1$, \ldots $f_n$ -- поля $C$ с типами $B_1$, \ldots $B_n$ соответственно, то для любого $1 \leq k \leq n$ у нас есть следующие правила вывода:
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\AxiomC{$\Gamma, C\,\{ \} \vdash b_i \Downarrow B_i$, $1 \leq i < k$}
+\AxiomC{$\Gamma, C\,\{ f_1 \red b_1; \ldots f_{i-1} \red b_{i-1} \} \vdash b_i \Downarrow B_i$, $1 \leq i < k$}
 \BinaryInfC{$\Gamma \vdash C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \}$}
 \DisplayProof
 \medskip
@@ -262,9 +298,12 @@ max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\AxiomC{$\Gamma, C\,\{ \} \vdash b_i \Downarrow B_i$, $1 \leq i < k$}
-\AxiomC{$\Gamma, C\,\{ \} \vdash B_i \Uparrow U_i$, $k \leq i \leq n$}
-\TrinaryInfC{$\Gamma \vdash C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \} \Uparrow max(U_k, \ldots U_n)$}
+\def\extraVskip{0.5pt}
+\Axiom$\fCenter \Gamma, C\,\{ f_1 \red b_1; \ldots f_{i-1} \red b_{i-1} \} \vdash b_i \Downarrow B_i \text{, } 1 \leq i < k$
+\noLine
+\UnaryInf$\fCenter \Gamma, C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \} \vdash B_i \Uparrow U_i \text{, } k \leq i \leq n$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \vdash C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \} \Uparrow max(U_k, \ldots U_n)$}
 \DisplayProof
 \medskip
 \end{center}
@@ -272,9 +311,8 @@ max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\AxiomC{$\Gamma, C\,\{ \} \vdash b_i \Downarrow B_i$, $1 \leq i < k$}
-\AxiomC{$\Gamma, C\,\{ \} \vdash B_i$, $k \leq i \leq n$}
-\TrinaryInfC{$\Gamma \vdash \mathbf{new}\,C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \} \Uparrow C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \}$}
+\AxiomC{$\Gamma, C\,\{ f_1 \red b_1; \ldots f_{i-1} \red b_{i-1} \} \vdash b_i \Downarrow B_i$, $1 \leq i < k$}
+\BinaryInfC{$\Gamma \vdash \mathbf{new}\,C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \} \Uparrow C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \}$}
 \DisplayProof
 \medskip
 \end{center}
@@ -288,9 +326,59 @@ max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
 \medskip
 \end{center}
 
+Для конструкции $\mathbf{elim}$ мы вводим отношение $\Gamma \vdash^n a \Downarrow A$, где $\Gamma$ -- последовательность термов из $Term$, $n \in \mathbb{N}$, $a \in Term_e$ и $A \in Term$.
+Правило для $\mathbf{elim}$ тогда выглядит следующим образом: TODO.
+
+Правило для $\mathbf{let}$: TODO.
+
+Теперь мы опишем как расширять сигнатуру новыми определениями.
+Мы будем писать $- \vdash_\Sigma -$ для обозначения того факта, что это отношение верно в сигнатуре $\Sigma$.
+Сначала мы введем вспомогательное понятие абстрактной функции, необходимое для описания рекурсивных функций.
+Пусть $\Sigma$ -- корректная сигнатура, $f$ -- имя функции и $B_1, \ldots B_n, A \in Term$.
+Тогда $(f, (B_1, \ldots B_n), A)$ является корректным определением абстрактной функции в сигнатуре $\Sigma$, если
+\[ B_1, \ldots B_n \vdash^n_\Sigma A. \]
+
+Пусть $\Sigma$ -- корректная сигнатура, $f$ -- имя функции, $d \in Def$, $B_1, \ldots B_n, A \in Term$, $a \in Term_e$ и если $d = \Rightarrow$, то $a \in Term$.
+Тогда $(f, (B_1, \ldots B_n), A, d, a)$ является корректным определением функции в сигнатуре $\Sigma$, если $(f, (B_1, \ldots B_n), A)$ является корректной абстрактной функцией в $\Sigma$ и
+\[ B_1, \ldots B_n \vdash^n_{\Sigma, (f, (B_1, \ldots B_n), A)} a \Downarrow A. \]
+Кроме того, мы требуем, чтобы определение было завершающимся, что проверяется отдельно.
+
+Пусть $\Sigma$ -- корректная сигнатура, $D$ -- имя типа данных, $A_1, \ldots A_n \in Term$ и $C$ -- множество пар $(c,B)$, где $c$ -- имя конструктора и $B = B_1, \ldots B_k$ -- список типов.
+Тогда $(D, (A_1, \ldots A_n), C)$ является корректным определением типа данных в сигнатуре $\Sigma$, если
+\[ A_1, \ldots A_n \vdash_\Sigma \]
+и для любой пары $(c, (B_1, \ldots B_k)) \in C$ верно, что
+\[ A_1, \ldots A_n, B_1, \ldots B_k \vdash_{\Sigma, (D, (A_1, \ldots A_n), \varnothing)}. \]
+
+Пусть $\Sigma$ -- корректная сигнатура, $C$ -- имя класса и $F$ -- конечное множество пар $(f,B)$, где $f$ -- имя поля и $B \in Term$.
+Тогда $(C, F)$ является корректным определением класса, если элементы $F$ можно упорядочить $(f_1, B_1)$, \ldots $(f_n, B_n)$ таким образом, что для любого $1 \leq i \leq n$ выполняется следующее свойство:
+\[ C\,\{ \} \vdash_{\Sigma, (C, \{ (f_1, B_1), \ldots (f_{i-1}, B_{i-1}) \})} B_i. \]
+
 \section{Vclang}
 
+Язык vclang имеет ряд отличий от vccore:
+\begin{itemize}
+\item В vclang есть полноценные классы.
+Они могут быть вложенными, а также могут наследоваться.
+В vclang, так же как и в vccore, есть анонимное наследование.
+\item В vclang есть неявные аргументы.
+\item В vclang будет реализован механизм, аналогичный классам типов.
+\end{itemize}
 
+Множество термов $Term_{vc}$ языка vclang определяется следующим образом:
+\begin{align*}
+Term_{vc} :=\ & x\ |\ D\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
+      |\ & \mathbf{new}\,C\,\{ S \}\ |\ C\,\{ S \} \\
+      |\ & b\,.\,D\ |\ b\,.\,f\ |\ b\,.\,D\,a_1\,\ldots\,a_n\,.\,c \\
+      |\ & \mathbf{new}\,b\,.\,C\,\{ S \}\ |\ b\,.\,C\,\{ S \} \\
+      |\ & \mathbf{let}\,x\,A_1\,\ldots\,A_n : B \Rightarrow b\,\mathbf{in}\,a \\
+      |\ & \mathbf{let}\,x\,A_1\,\ldots\,A_n : B \Leftarrow e\,\mathbf{in}\,a \\
+      |\ & b\,a\ |\ \lambda x. b\ |\ \lambda x : A. b\ |\ \Pi (x : A) B \\
+      |\ & (a,b)\ |\ \Sigma (x : A) B\,.\,(a,b)\ |\ \mathbf{proj}_1\,p\ |\ \mathbf{proj}_2\,p\ |\ \Sigma (x : A) B \\
+      |\ & \mathbf{Type}_i\ |\ \mathbf{Set}_i\ |\ \mathbf{Prop}
+\end{align*}
+где $x$ -- имя переменной, $a, b, A, B, p, a_1, \ldots a_n, A_1, \ldots A_n \in Term$, $e \in Term_e$, $D$ является именем типа данных, $c$ -- именем конструктора типа данных $D$, $C$ -- именем класса, $f$ -- именем поля некоторого класса и $S$ -- последовательностью пар $(f,d)$, где $f$ -- имя поля класса $C$ и $d$ -- терм.
+Такую пару $(f,d)$ мы будем записывать как $f \red d$.
+Как обычно, мы сокращаем $\Pi (x : A) B$ до $A \to B$, если $x \notin FV(B)$.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
