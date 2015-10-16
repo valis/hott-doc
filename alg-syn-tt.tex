@@ -504,15 +504,16 @@ we write $B[a]$ for $Subst_{n,n+1}(ft(ty(a)), B, v_{n-1}(ft(ty(a))), \ldots v_0(
 and $b[a]$ for $subst_{n,n+1}(ft(ty(a)), b, v_{n-1}(ft(ty(a))), \ldots v_0(ft(ty(a))), a)$
 
 If $B$ and $a$ are terms of sorts $Ctx_{n+1}$ and $Tm_n$ respectively, then we write $wk(B,a)$ for $subst_{n+1,n}(B, a, v_n(B), \ldots v_1(B))$.
-If $A$ is a terms of sort $Ctx_{k+2}$, $B$ is a term of sort $Ctx_{n+1}$, and $a_1$, \ldots $a_k$ are terms of sort $Tm_n$, then we write $Subst^w_{n,k}(B, A, a_1, \ldots a_k)$ for
-\[ Subst_{n+1,k+1}(B, A, wk(B, a_1), \ldots wk(B, a_k), v_0(B)). \]
+If $A$ is a term of sort $Ctx_{k+2}$, $B$ is a term of sort $Ctx_n$, and $a_1$, \ldots $a_k$ are terms of sort $Tm_n$, then we write $Subst^2_{n,k}(B, A, a_1, \ldots a_k)$ for
+\[ Subst_{n+1,k+1}(B', A, wk(B', a_1), \ldots wk(B', a_k), v_0(B')) \]
+where $B' = Subst_{n,k}(B, ft(A), a_1, \ldots a_k)$.
 
 If $B$ and $a$ are terms of sorts $Ctx_{n+2}$ and $Tm_n$ respectively, then we write $B[a]$ for
 \[ Subst_{n,n+1}(ft^2(B), B, v_{n-1}(ft^2(B)), \ldots v_0(ft^2(B)), a). \]
 If $b$ and $a$ are terms of sorts $Tm_{n+1}$ and $Tm_n$ respectively, then we write $b[a]$ for
 \[ subst_{n,n+1}(ft^2(ty(b)), b, v_{n-1}(ft^2(ty(b))), \ldots v_0(ft^2(ty(b))), a). \]
 
-We will give a few examples of algebraic type theories
+We will give a few examples of algebraic type theories.
 All of our examples will contain $T_1$ as subtheory.
 Some of the theories have two variations: with or without eta rules.
 
@@ -525,8 +526,8 @@ unit & : Ctx_n \to Tm_n
 
 The following axioms prescribe how substitution must be defined on the constructions we have:
 \begin{align*}
-& \sststile{}{A, B, a_1, \ldots a_k} Subst_{n,k}(B, \top(A), a_1, \ldots a_k) \leftrightharpoons \top(B) \\
-& \sststile{}{A, B, a_1, \ldots a_k} subst_{n,k}(B, unit(A), a_1, \ldots a_k) \leftrightharpoons unit(B)
+& \sststile{}{B, A, a_1, \ldots a_k} Subst_{n,k}(B, \top(A), a_1, \ldots a_k) \leftrightharpoons \top(B) \\
+& \sststile{}{B, A, a_1, \ldots a_k} subst_{n,k}(B, unit(A), a_1, \ldots a_k) \leftrightharpoons unit(B)
 \end{align*}
 
 The following axioms describe when functions are defined:
@@ -556,10 +557,10 @@ unit             & : Ctx_n \to Tm_n \\
 
 The following axioms prescribe how substitution must be defined on the constructions we have:
 \begin{align*}
-& \sststile{}{A, B, a_1, \ldots a_k} Subst_{n,k}(B, \top(A), a_1, \ldots a_k) \leftrightharpoons \top(B) \\
-& \sststile{}{A, B, a_1, \ldots a_k} subst_{n,k}(B, unit(A), a_1, \ldots a_k) \leftrightharpoons unit(B) \\
+& \sststile{}{B, A, a_1, \ldots a_k} Subst_{n,k}(B, \top(A), a_1, \ldots a_k) \leftrightharpoons \top(B) \\
+& \sststile{}{B, A, a_1, \ldots a_k} subst_{n,k}(B, unit(A), a_1, \ldots a_k) \leftrightharpoons unit(B) \\
 & \sststile{}{D, d, t, B, a_1, \ldots a_k} subst_{n,k}(B, \top\text{-}elim(D, d, t), a_1, \ldots a_k) \leftrightharpoons \\
-& \top\text{-}elim(Subst^w_{n,k}(\top(B), D, a_1, \ldots a_k)), subst_{n,k}(B, d, a_1, \ldots a_k), subst_{n,k}(B, t, a_1, \ldots a_k))
+& \qquad \top\text{-}elim(Subst^2_{n,k}(B, D, a_1, \ldots a_k)), subst_{n,k}(B, d, a_1, \ldots a_k), subst_{n,k}(B, t, a_1, \ldots a_k))
 \end{align*}
 
 The following axioms describe when functions are defined:
@@ -581,15 +582,26 @@ The following axiom describes the ``computation rule'' for unit types:
 & \sststile{}{D, d} \top\text{-}elim(D, d, unit(ft^2(D))) = d
 \end{align*}
 
-\subsection{$\Sigma$ types}
+\subsection{$\Sigma$ types with eta rules}
 
-The theory of $\Sigma$ types has the following function symbols:
+The theory of $\Sigma$ types with eta rules has the following function symbols:
 \begin{align*}
 \Sigma & : Ctx_{n+2} \to Ctx_{n+1} \\
 pair   & : Ctx_{n+2} \times Tm_n \times Tm_n \to Tm_n \\
 proj_1 & : Ctx_{n+2} \times Tm_n \to Tm_n \\
-proj_2 & : Ctx_{n+2} \times Tm_n \to Tm_n \\
+proj_2 & : Ctx_{n+2} \times Tm_n \to Tm_n
 & \end{align*}
+
+The following axioms prescribe how substitution must be defined on the constructions we have:
+\begin{align*}
+& \sststile{}{C, B, a_1, \ldots a_k} Subst_{n,k}(C, \Sigma(B), a_1, \ldots a_k) \leftrightharpoons \Sigma(Subst^2_{n,k}(C, B, a_1, \ldots a_k)) \\
+& \sststile{}{C, B, a, b, a_1, \ldots a_k} subst_{n,k}(C, pair(B, a, b), a_1, \ldots a_k) \leftrightharpoons \\
+& \qquad pair(Subst^2_{n,k}(C, B, a_1, \ldots a_k), subst_{n,k}(C, a, a_1, \ldots a_k), subst_{n,k}(C, b, a_1, \ldots a_k)) \\
+& \sststile{}{C, B, p, a_1, \ldots a_k} subst_{n,k}(C, proj_1(B, p), a_1, \ldots a_k) \leftrightharpoons \\
+& \qquad proj_1(Subst^2_{n,k}(C, B, a_1, \ldots a_k), subst_{n,k}(C, p, a_1, \ldots a_k)) \\
+& \sststile{}{C, B, p, a_1, \ldots a_k} subst_{n,k}(C, proj_2(B, p), a_1, \ldots a_k) \leftrightharpoons \\
+& \qquad proj_2(Subst^2_{n,k}(C, B, a_1, \ldots a_k), subst_{n,k}(C, p, a_1, \ldots a_k))
+\end{align*}
 
 The following axioms describe when functions are defined:
 \begin{align*}
@@ -611,7 +623,39 @@ The following axioms describe the ``computation rules'':
 \begin{align*}
 & \sststile{}{B,a,b} proj_1(B,pair(B,a,b)) \leftrightharpoons a \\
 & \sststile{}{B,a,b} proj_2(B,pair(B,a,b)) \leftrightharpoons b \\
+& \sststile{}{B,p} pair(B, proj_1(B,p), proj_2(B,p)) \leftrightharpoons p \\
 \end{align*}
+
+\subsection{$\Sigma$ types without eta rules}
+
+\subsection{Universe}
+
+First, we describe the basic theory $U$ of universes.
+It has the following function symbols:
+\begin{align*}
+Type & : Ctx_n \to Ctx_{n+1} \\
+El   & : Tm_n \to Ctx_{n+1}
+& \end{align*}
+
+The following axioms prescribe how substitution must be defined on the constructions we have:
+\begin{align*}
+& \sststile{}{B, A, a_1, \ldots a_k} Subst_{n,k}(B, Type(A), a_1, \ldots a_k) \leftrightharpoons Type(B) \\
+& \sststile{}{B, a, a_1, \ldots a_k} Subst_{n,k}(B, El(a), a_1, \ldots a_k) \leftrightharpoons subst_{n,k}(B, a, a_1, \ldots a_k)
+\end{align*}
+
+The following axioms describe when functions are defined:
+\begin{align*}
+                        & \sststile{}{A} Type(A) \downarrow \\
+ty(A) = Type(ft(ty(A))) & \ssststile{}{A} El(A) \downarrow
+\end{align*}
+
+The following axioms describe the ``typization'' of the constructions we have:
+\begin{align*}
+& \sststile{}{A} ft(Type(A)) = A \\
+& \sststile{}{A} ft(El(A)) = ft(ty(A))
+\end{align*}
+
+Now, usually universes are assumed to be closed under different type constructions.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
