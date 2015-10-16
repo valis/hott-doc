@@ -364,21 +364,49 @@ max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
 \item В vclang будет реализован механизм, аналогичный классам типов.
 \end{itemize}
 
-Множество термов $Term_{vc}$ языка vclang определяется следующим образом:
+Множество термов $Term^{vc}$ языка vclang определяется следующим образом:
 \begin{align*}
-Term_{vc} :=\ & x\ |\ D\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
+Term^{vc} :=\ & x\ |\ D\ |\ c\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
       |\ & \mathbf{new}\,C\,\{ S \}\ |\ C\,\{ S \} \\
-      |\ & b\,.\,D\ |\ b\,.\,f\ |\ b\,.\,D\,a_1\,\ldots\,a_n\,.\,c \\
+      |\ & b\,.\,D\ |\ b\,.\,f\ |\ b\,.\,c\ |\ b\,.\,D\,a_1\,\ldots\,a_n\,.\,c \\
       |\ & \mathbf{new}\,b\,.\,C\,\{ S \}\ |\ b\,.\,C\,\{ S \} \\
-      |\ & \mathbf{let}\,x\,A_1\,\ldots\,A_n : B \Rightarrow b\,\mathbf{in}\,a \\
-      |\ & \mathbf{let}\,x\,A_1\,\ldots\,A_n : B \Leftarrow e\,\mathbf{in}\,a \\
+      |\ & \mathbf{let}\,x\,[x_1 : A_1]\,\ldots\,[x_n : A_n] : B \Rightarrow b\,\mathbf{in}\,a \\
+      |\ & \mathbf{let}\,x\,[x_1 : A_1]\,\ldots\,[x_n : A_n] : B \Leftarrow e\,\mathbf{in}\,a \\
       |\ & b\,a\ |\ \lambda x. b\ |\ \lambda x : A. b\ |\ \Pi (x : A) B \\
+      |\ & b\,\{a\}\ |\ \lambda \{x\}. b\ |\ \lambda \{x : A\}. b\ |\ \Pi \{x : A\} B \\
       |\ & (a,b)\ |\ \Sigma (x : A) B\,.\,(a,b)\ |\ \mathbf{proj}_1\,p\ |\ \mathbf{proj}_2\,p\ |\ \Sigma (x : A) B \\
       |\ & \mathbf{Type}_i\ |\ \mathbf{Set}_i\ |\ \mathbf{Prop}
 \end{align*}
-где $x$ -- имя переменной, $a, b, A, B, p, a_1, \ldots a_n, A_1, \ldots A_n \in Term$, $e \in Term_e$, $D$ является именем типа данных, $c$ -- именем конструктора типа данных $D$, $C$ -- именем класса, $f$ -- именем поля некоторого класса и $S$ -- последовательностью пар $(f,d)$, где $f$ -- имя поля класса $C$ и $d$ -- терм.
+где $x$, $x_1$, \ldots $x_n$ -- имена переменных, $a, b, A, B, p, a_1, \ldots a_n, A_1, \ldots A_n \in Term^{vc}$, $e \in Term^{vc}_e$, $D$ является именем типа данных, $c$ -- именем конструктора типа данных $D$, $C$ -- именем класса, $f$ -- именем поля некоторого класса и $S$ -- последовательностью пар $(f,d)$, где $f$ -- имя поля класса $C$ и $d$ -- терм.
 Такую пару $(f,d)$ мы будем записывать как $f \red d$.
+Запись $[x_i : A_i]$ означает либо $(x_i : A_i)$, либо $\{x_i : A_i\}$.
+Фигурные скобки используются для обозначения неявных аргументов.
 Как обычно, мы сокращаем $\Pi (x : A) B$ до $A \to B$, если $x \notin FV(B)$.
+
+Мы определяем функцию $int$ для vclang, которая проверяет корректность типизации, а также транслирует термы из $Term^{vc}$ в термы из $Term$.
+Пусть $Env$ -- множество конечных последовательностей пар $(x,A)$, где $x$ -- имя переменной и $A \in Term$.
+Функция $ctx$ сопоставляет каждому элементу $Env$ последовательность термов из $Term$, отбрасывая первый элемент пары.
+Тогда $int : Env \times Term^{vc} \times (Term + 1) \to Term \times Term + 1$ обладает следующими свойствами:
+\begin{itemize}
+\item Если $int(\rho, t, s) = inl(a, A)$, то $ctx(\rho) \vdash a \Uparrow A$.
+\item Если $int(\rho, t, inl(A')) = inl(a, A)$, то $A \leq A'$.
+\end{itemize}
+
+Мы определяем функцию $int$ через вспомогательную функцию $apps : Env \times Term^{vc} \times (\{ I, E \} \times Term^{vc})^* \times (Term + 1) \to Term \times Term + 1$ как
+\[ int(\rho, t, s) = apps(\rho, t, [], s). \]
+Функция $apps$ определяется через функцию $int' : Env \times Term^{vc} \times (Term + 1) \to Term \times Term + 1$:
+\begin{itemize}
+\item $apps(\rho, t_1\,t_2, a, s) = apps(\rho, t_1, ((E, t_2), a), s)$.
+\item $apps(\rho, t_1\,\{t_2\}, a, s) = apps(\rho, t_1, ((I, t_2), a), s)$.
+\item $apps(\rho, t, a, s) = $ (TODO: закончить определение $apps$)
+\end{itemize}
+Функция $int'$ определяется индукцией по размеру второго аргумента (TODO: закончить определение $int'$):
+\begin{itemize}
+\item $int'(\rho, C\,\{ f_1 \red d_1; \ldots f_n \red d_n \}, inr(*)) = inl(C\,\{ f_1 \red d'_1; \ldots f_n \red d'_n \}, T)$, если
+    $int'((\rho, (\mathbf{this}, C\,\{ f_1 \red d'_1; \ldots f_{i-1} \red d'_{i-1} \})), d_i, [], T_i) = inl(d'_i, T'_i)$
+    для всех $1 \leq i \leq n$, где $T_i$ -- это тип поля $f_i$, а $T$ -- это максимум по типам всех полей, которых нет в списке $f_1$, \ldots $f_n$.
+\item $int'(\rho, C\,\{ S \}, inl(A)) = inl(C', A')$, если $int'(\rho, C\,\{ S \}, inr(*)) = inl(C', A')$ и $A' \leq A$, иначе $int'(\rho, C\,\{ S \}, inl(A)) = inr(*)$.
+\end{itemize}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
