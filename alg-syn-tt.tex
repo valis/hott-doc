@@ -503,15 +503,20 @@ If $B$, $b$, and $a$ are terms of sorts $Ctx_{n+2}$, $Tm_{n+1}$, and $Tm_n$ resp
 we write $B[a]$ for $Subst_{n,n+1}(ft(ty(a)), B, v_{n-1}(ft(ty(a))), \ldots v_0(ft(ty(a))), a)$
 and $b[a]$ for $subst_{n,n+1}(ft(ty(a)), b, v_{n-1}(ft(ty(a))), \ldots v_0(ft(ty(a))), a)$
 
-If $B$ and $a$ are terms of sorts $Ctx_{n+1}$ and $Tm_n$ respectively, then we write $wk(B,a)$ for $subst_{n+1,n}(B, a, v_n(B), \ldots v_1(B))$.
-If $A$ is a term of sort $Ctx_{k+2}$, $B$ is a term of sort $Ctx_n$, and $a_1$, \ldots $a_k$ are terms of sort $Tm_n$, then we write $Subst^2_{n,k}(B, A, a_1, \ldots a_k)$ for
-\[ Subst_{n+1,k+1}(B', A, wk(B', a_1), \ldots wk(B', a_k), v_0(B')) \]
-where $B' = Subst_{n,k}(B, ft(A), a_1, \ldots a_k)$.
+We define auxiliary derived operations $wk^m_n : Ctx_{n+m} \times Tm_n \to Tm_{n+m}$, $Subst^m_{n,k} : Ctx_n \times Ctx_{k+m} \times Tm^k_n \to Ctx_{n+m}$, $subst^m_{n,k} : Ctx_n \times Tm_{k+m-1} \times Tm^k_n \to Tm_{n+m-1}$.
+Terms $wk^m_n(B,a)$ are defined as follows:
+\[ subst_{n+m,n}(B, a, v_{n+m-1}(B), \ldots v_m(B)) \]
+Let $Subst^0_{n,k}(B, A, a_1, \ldots a_k)$ be equal to $B$.
+Then we define $Subst^{m+1}_{n,k}(B, A, a_1, \ldots a_k)$ as
+\[ Subst_{n+m,k+m}(B', A, wk^m_n(B',a_1), \ldots wk^m_n(B', a_k), v_{m-1}(B'), \ldots v_0(B')) \]
+and $subst^{m+1}_{n,k}(B, a, a_1, \ldots a_k)$ as
+\[ subst_{n+m+1,k+m+1}(B', a, wk^m_n(B', a_1), \ldots wk^m_n(B', a_k), v_{m-1}(B'), \ldots v_0(B')) \]
+where $B' = Subst^m_{n,k}(B, ft(A), a_1, \ldots a_k)$.
 
-If $B$ and $a$ are terms of sorts $Ctx_{n+2}$ and $Tm_n$ respectively, then we write $B[a]$ for
-\[ Subst_{n,n+1}(ft^2(B), B, v_{n-1}(ft^2(B)), \ldots v_0(ft^2(B)), a). \]
-If $b$ and $a$ are terms of sorts $Tm_{n+1}$ and $Tm_n$ respectively, then we write $b[a]$ for
-\[ subst_{n,n+1}(ft^2(ty(b)), b, v_{n-1}(ft^2(ty(b))), \ldots v_0(ft^2(ty(b))), a). \]
+If $B$ is a term of sort $Ctx_{n+k+1}$ and $a_1$, \ldots $a_k$ are terms of sort $Tm_n$, then we write $B[a_1, \ldots a_k]$ for
+\[ Subst_{n,n+k}(ft^{k+1}(B), B, v_{n-1}(ft^{k+1}(B)), \ldots v_0(ft^{k+1}(B)), a_1, \ldots a_k). \]
+If $b$ is a term of sort $Tm_{n+k}$ and $a_1$, \ldots $a_k$ are terms of sort $Tm_n$, then we write $b[a_1, \ldots a_k]$ for
+\[ subst_{n,n+k}(ft^{k+1}(ty(b)), b, v_{n-1}(ft^{k+1}(ty(b))), \ldots v_0(ft^{k+1}(ty(b))), a_1, \ldots a_k). \]
 
 We will give a few examples of algebraic type theories.
 All of our examples will contain $T_1$ as subtheory.
@@ -590,7 +595,7 @@ The theory of $\Sigma$ types with eta rules has the following function symbols:
 pair   & : Ctx_{n+2} \times Tm_n \times Tm_n \to Tm_n \\
 proj_1 & : Ctx_{n+2} \times Tm_n \to Tm_n \\
 proj_2 & : Ctx_{n+2} \times Tm_n \to Tm_n
-& \end{align*}
+\end{align*}
 
 The following axioms prescribe how substitution must be defined on the constructions we have:
 \begin{align*}
@@ -628,6 +633,50 @@ The following axioms describe the ``computation rules'':
 
 \subsection{$\Sigma$ types without eta rules}
 
+\subsection{$\Pi$ types with eta rules}
+
+\subsection{$\Pi$ types without eta rules}
+
+\subsection{Identity types}
+
+The theory of identity types has the following function symbols:
+\begin{align*}
+Id   & : Tm_n \times Tm_n \to Ctx_{n+1} \\
+refl & : Tm_n \to Tm_n \\
+J    & : Ctx_{n+4} \times Tm_{n+1} \times Tm_n \times Tm_n \times Tm_n \to Tm_n
+\end{align*}
+
+The following axioms prescribe how substitution must be defined on the constructions we have:
+\begin{align*}
+& \sststile{}{B, a, a', a_1, \ldots a_k} Subst_{n,k}(B, Id(a,a'), a_1, \ldots a_k) \leftrightharpoons \\
+& \qquad Id(subst_{n,k}(B, a, a_1, \ldots a_k), subst_{n,k}(B, a', a_1, \ldots a_k)) \\
+& \sststile{}{B, a, a_1, \ldots a_k} subst_{n,k}(B, refl(a), a_1, \ldots a_k) \leftrightharpoons refl(subst_{n,k}(B, a, a_1, \ldots a_k)) \\
+& \sststile{}{B, D, d, a, a', t, a_1, \ldots a_k} subst_{n,k}(C, J(D, d, a, a', t), a_1, \ldots a_k) \leftrightharpoons \\
+& \qquad J(Subst^4_{n,k}(B, D, a_1, \ldots a_k), subst^2_{n,k}(B, d, a_1, \ldots a_k), subst_{n,k}(B, a, a_1, \ldots a_k), subst_{n,k}(B, a', a_1, \ldots a_k), subst_{n,k}(B, t, a_1, \ldots a_k)) \\
+\end{align*}
+
+The following axioms describe when functions are defined:
+\begin{align*}
+ty(a) = ty(a') & \ssststile{}{a,a'} Id(a,a') \downarrow \\
+               & \sststile{}{a} refl(a) \downarrow \\
+ft(D) = Id(v_1(A'), v_0(A')), ty(d) = ..., ty(a) = ft^3(D), ty(a') = ty(a), ty(p) = Id(a,a') & \ssststile{}{D,d,a,a',t} J(D,d,a,a',t) \downarrow
+\end{align*}
+
+The following axioms describe the ``typization'' of the constructions we have:
+\begin{align*}
+& \sststile{}{B} ft(\Sigma(B)) = ft^2(B) \\
+& \sststile{}{B,a,b} ty(pair(B,a,b)) \leftrightharpoons \Sigma(B) \\
+& \sststile{}{B,p} ty(proj_1(B,p)) \leftrightharpoons ft(B) \\
+& \sststile{}{B,p} ty(proj_2(B,p)) \leftrightharpoons B[proj_1(B,p)]
+\end{align*}
+
+The following axioms describe the ``computation rules'':
+\begin{align*}
+& \sststile{}{B,a,b} proj_1(B,pair(B,a,b)) \leftrightharpoons a \\
+& \sststile{}{B,a,b} proj_2(B,pair(B,a,b)) \leftrightharpoons b \\
+& \sststile{}{B,p} pair(B, proj_1(B,p), proj_2(B,p)) \leftrightharpoons p \\
+\end{align*}
+
 \subsection{Universe}
 
 First, we describe the basic theory $U$ of universes.
@@ -635,7 +684,7 @@ It has the following function symbols:
 \begin{align*}
 Type & : Ctx_n \to Ctx_{n+1} \\
 El   & : Tm_n \to Ctx_{n+1}
-& \end{align*}
+\end{align*}
 
 The following axioms prescribe how substitution must be defined on the constructions we have:
 \begin{align*}
@@ -656,6 +705,27 @@ The following axioms describe the ``typization'' of the constructions we have:
 \end{align*}
 
 Now, usually universes are assumed to be closed under different type constructions.
+
+\section{Models of algebraic type theories}
+
+In this section we show how to construct a model of the theories we described in previous sections from a category $\C$ (with some additional data).
+For our constructions we will use ideas from \cite{local-universes}.
+
+Let $\C$ be a category with finite limits and $F$ a class of maps of $\C$.
+Suppose $\C$ is equipped with chosen terminal object $1$ and pullbacks $g^*(E)$ for each $g : X \to B$ and $f : E \to B \in F$.
+Then we can define a $T_1$ model $M = M(\C,F)$.
+Class $Ctx_n$ consists of sequences $(C_1, \ldots C_n)$ where each $C_i$ is a diagram of the form
+\[ \xymatrix{                  & E_i \ar[d]^{f_i} \\
+              X_i \ar[r]_{g_i} & B_i
+            } \]
+where $f_i \in F$, $X_1 = 1$, and $X_{i+1} = g_i^*(E_i)$.
+Class $Tm_n$ consists of pairs $(C,s)$ where $C = (C_1, \ldots C_{n+1}) \in Ctx_{n+1}$ and $s : X_{n+1} \to E_{n+1}$ is a map such that the following diagram commutes:
+\[ \xymatrix{                                    & E_{n+1} \ar[d]^{f_{n+1}} \\
+              X_{n+1} \ar[r]_{g_{n+1}} \ar[ur]^s & B_{n+1}
+            } \]
+Functions $ft$ and $ty$ are defined in the obvious way.
+This construction gives us a $T_0$ model.
+Note that, in general, we need to work with large models, but if $\C$ is locally small and $F$ is small, then classes $Ctx_n$ and $Tm_n$ are small too.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
