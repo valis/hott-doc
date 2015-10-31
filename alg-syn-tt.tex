@@ -439,7 +439,7 @@ In this section we will describe a syntactic approach to defining type theories.
 We will define category $\syntt$ of syntactically presented type theories.
 Finally, we will give a few examples of such theories.
 
-Let $\mathcal{K} = \{ Tm, Ty \}$ and let $\mathcal{S} = \mathcal{K} \times \mathbb{N}$ be the set of sorts.
+Let $\mathcal{K} = \{ tm, ty \}$ and let $\mathcal{S} = \mathcal{K} \times \mathbb{N}$ be the set of sorts.
 Let $l : \mathcal{S} \to \mathbb{N}$ be the function $l(k,n) = n$.
 Let $\Sigma$ be a set of function symbols together with a signature, that is expressions of the form
 \[ f : s_1 \times \ldots \times s_n \to (p,0) \]
@@ -448,50 +448,62 @@ Then let $\overline{\Sigma}$ be the following set of function symbols:
 \[ \{ f_k\ |\ f \in \Sigma, k \in \mathbb{N} \} \cup \{ v_{n,i}\ |\ n,i \in \mathbb{N}, 0 \leq i < n \} \cup \{ subst_{p,n,k}\ |\ p \in \mathcal{K}, n,k \in \mathbb{N} \}. \]
 Signatures of these symbols are defined as follows:
 \begin{align*}
-v_{n,i} & : (Tm,n) \\
-subst_{p,n,k} & : (p,k) \times (Tm,n)^k \to (p,n) \\
+v_{n,i} & : (tm,n) \\
+subst_{p,n,k} & : (p,k) \times (tm,n)^k \to (p,n) \\
 f_k\ & : (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,k)
 \end{align*}
 where $f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$.
 
-Let $T$ be the algebraic theory in signature $\overline{\Sigma}$ with the following set of axioms:
+Let $T_\Sigma$ be the algebraic theory in signature $\overline{\Sigma}$ with the following set of axioms:
 \begin{align*}
 subst_{p,n,n}(a, v_{n,n-1}, \ldots v_{n,0}) & = a \\
-subst_{Tm,n,k}(v_{k,i}, a_1, \ldots a_k) & = a_{k-i} \\
+subst_{tm,n,k}(v_{k,i}, a_1, \ldots a_k) & = a_{k-i} \\
 subst_{p,m,n}(subst_{p,n,k}(a, b_1, \ldots b_k), c_1, \ldots c_n) & = subst_{p,m,k}(a, b_1', \ldots b_k')
 \end{align*}
-where $b_i' = subst_{Tm,m,n}(b_i, c_1, \ldots c_n)$, and
+where $b_i' = subst_{tm,m,n}(b_i, c_1, \ldots c_n)$, and
 \[ subst_{p,n,k}(f_k(a_1, \ldots a_m), b_1, \ldots b_k) = f_k(a_1', \ldots a_m') \]
 where $f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$,
 $a_i' = subst_{p_i,n+q_i,k+q_i}(a_i, b_1', \ldots b_k', \allowbreak v_{n+q_i,q_i-1}, \ldots v_{n+q_i,0})$,
-and $b_j' = subst_{Tm,n+q_j,n}(b_j, v_{n+q_j,n+q_j-1}, \ldots v_{n+q_j,q_j})$.
+and $b_j' = subst_{tm,n+q_j,n}(b_j, v_{n+q_j,n+q_j-1}, \ldots v_{n+q_j,q_j})$.
 
+There is a monad $T_\Sigma : \Set^\mathcal{S} \to \Set^\mathcal{S}$ corresponding to the theory $T_\Sigma$.
+If $V \in \Set^\mathcal{S}$, then we say that $T_\Sigma(V)_s$ is the set of terms of sort $s$ with free variables in $V$.
+A morphism of signatures $\Sigma$ and $\Sigma'$ if a function that to each $(f : s_1 \times \ldots s_k \to s) \in \Sigma$ assigns
+a term of sort $s$ in signature $\Sigma'$ with free variables $x_1$, \ldots $x_k$ of sorts $s_1$, \ldots $s_k$ respectively.
+Such a function $F$ extends to functions $\overline{F} : T_\Sigma(V)_s \to T_{\Sigma'}(V)_s$ in the obvious way.
+Compositions of morphisms $F : \Sigma \to \Sigma'$ and $G : \Sigma' \to \Sigma''$ is defined as follows: $(G \circ F)(f) = \overline{G}(F(f))$.
+An identity morphism assigns to each $f$ the term $f(x_1, \ldots x_k)$.
+
+A context is a sequence $A_1$, \ldots $A_n$ of terms of sorts $(ty,0)$, \ldots $(ty,n-1)$ respectively.
+A judgement is simply a predicate of a certain form.
 We will consider judgements of the forms $\Gamma \vdash$, $\Gamma \vdash A$, $\Gamma \vdash A \deq A'$, $\Gamma \vdash a : A$, and $\Gamma \vdash a \deq a' : A$
-where $\Gamma$ is a finite sequence of terms and $a,a',A,A'$ are terms.
-An inference rule consists of finite set of judgements $J_1$, \ldots $J_n$ called premises and a judgement $J$ called conclusion.
-It is usually written as
+where $\Gamma$ is context of length $n$, $A$, $A'$ are terms of sort $(ty,n)$, and $a$, $a'$ are terms of sort $(tm,n)$.
+An inference rule consists of a finite set of judgements $J_1$, \ldots $J_n$ called premises and a judgement $J$ called conclusion.
+All terms in a judgement or in an inference rule have the same set of free variables which is left implicit.
+An inference rule is usually written as
 \begin{center}
 \AxiomC{$J_1 \quad \ldots \quad J_n$}
 \UnaryInfC{$J$}
 \DisplayProof
 \end{center}
+Thus an inference rule is simply a horn formula with a single conclusion.
 If $\mathcal{I}$ is a set of inference rules, then the set $D(\mathcal{I})$ of derived rules is defined in the usual way.
 
 \begin{defn}
 A \emph{syntactic type theory} consists of a set $\Sigma$ of function symbols and a set $\mathcal{I}$ of inference rules.
 \end{defn}
-Let $F$ be a function that to each $f \in \Sigma_T$ of arity $(n_1, \ldots n_k)$ assigns a term in $Term_S$ with free variables $x_1$, \ldots $x_k$.
-Then $F$ can be extended to a function $\widehat{F} : Term_T \to Term_S$ in the obvious way.
-If $J$ is a judgement of $T$ then we can define a judgement $\widehat{F}(J)$ of $S$ by applying $\widehat{F}$ to every term in $J$.
-If $R$ is an inference rule of $T$, then we can define an inference rule $\widehat{F}(R)$ of $S$ by applying $\widehat{F}$ to every judgement in $R$.
-
-A morphism of theories $T = (\Sigma_T, \mathcal{I}_T)$ and $S = (\Sigma_S, \mathcal{I}_S)$ is a function $F$ as described above such that
-$\widehat{F}(R)$ is a derived inference rules of $S$ for every $R \in \mathcal{I}_T$.
-Identity morphism $id_T$ is defined as $id_T(f) = f(x_1, \ldots x_k)$.
-Compositions of morphisms $F : T \to S$ and $G : S \to P$ is defined as follows: $(G \circ F)(f) = \widehat{G}(F(f))$.
+Let $F$ be a morphisms of signatures $\Sigma$ and $\Sigma'$.
+If $J$ is a judgement of $\Sigma$, then we can define a judgement $\overline{F}(J)$ of $\Sigma'$ by applying $\overline{F}$ to every term in $J$.
+If $R$ is an inference rule of $\Sigma$, then we can define an inference rule $\overline{F}(R)$ of $\Sigma'$ by applying $\overline{F}$ to every judgement in $R$.
+A morphism of theories $T = (\Sigma_T, \mathcal{I}_T)$ and $S = (\Sigma_S, \mathcal{I}_S)$ is a morphism $F$ of signatures $\Sigma$ and $\Sigma'$
+such that $\overline{F}(R)$ is a derived inference rules of $S$ for every $R \in \mathcal{I}_T$.
 This defines a cateogry $\syntt$ of syntactic type theories.
 
-Now we describe a functor $I : \syntt \to \algtt$.
+Now we introduce a few auxiliary constructions.
+If $b$ is a term of sort $(p,n+k)$ and $a_1$, \ldots $a_k$ are terms of sort $(tm,n)$, then we write $b[a_1, \ldots a_k]$ for
+\[ subst_{p,n,n+k}(b, v_{n,n-1}, \ldots v_{n,0}, a_1, \ldots a_k). \]
+If $b$ is a term of sort $(p,n)$, then we write $b \uparrow$ for
+\[ subst_{p,n+1,n}(b, v_{n+1,n}, \ldots v_{n+1,1}). \]
 
 \section{Algebraic presentations of type theories}
 
@@ -503,6 +515,8 @@ Finally, we will give a few examples of such theories.
 An \emph{algebraic type theory} is a theory in signature $\Sigma_C$ with a map from $T_1$.
 Category $\algtt$ of algebraic type theory is the under category $T_1 / \Sigma_C \text{-} \cat{Th}$.
 \end{defn}
+
+% Now we describe a functor $I : \syntt \to \algtt$.
 
 We will usually omit subscript $n$ in function symbols $ft_n$, $ty_n$, $v_{n,i}$ and others.
 If $B$, $b$, and $a$ are terms of sorts $Ctx_{n+2}$, $Tm_{n+1}$, and $Tm_n$ respectively, then
