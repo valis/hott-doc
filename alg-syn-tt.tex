@@ -439,32 +439,32 @@ In this section we will describe a syntactic approach to defining type theories.
 We will define category $\syntt$ of syntactically presented type theories.
 Finally, we will give a few examples of such theories.
 
-Let $\mathcal{S} = \{ Tm_n\ |\ n \in \mathbb{N} \} \cup \{ Ty_n\ |\ n \in \mathbb{N} \}$ be the set of sorts.
+Let $\mathcal{K} = \{ Tm, Ty \}$ and let $\mathcal{S} = \mathcal{K} \times \mathbb{N}$ be the set of sorts.
+Let $l : \mathcal{S} \to \mathbb{N}$ be the function $l(k,n) = n$.
 Let $\Sigma$ be a set of function symbols together with a signature, that is expressions of the form
-\[ f : s_1 \times \ldots \times s_n \to s \]
-where $s_1, \ldots s_n, s \in \mathcal{S}$.
-Moreover, we require that either $s = Tm_0$ or $s = Ty_0$.
-Let $Var$ be a set of variables.
-Then we define the sets of terms $Term$ and types $Type$ inductively:
-\begin{itemize}
-\item $v_i \in Term$ for every $i \in \mathbb{N}$.
-\item If $k \in \mathbb{N}$, $f : s_1 \times \ldots \times s_n \to s$, $a_1, \ldots a_n \in Term \cup Type$, $a_i \in Term$ if $s_i = Tm_m$ for some $m$ and $a_i \in Type$ if $s_i = Ty_m$ for some $m$,
-    then $f^k(a_1, \ldots a_n) \in Term$ if $s = Tm_0$ and $f^k(a_1, \ldots a_n) \in Type$ if $s = Ty_0$.
-\item If $x \in Var$, $a_1, \ldots a_n \in Term$, then $x[a_1, \ldots a_n] \in Term$ and $x[a_1, \ldots a_n] \in Type$.
-    If $n = 0$, then we write $x[]$ simply as $x$.
-\end{itemize}
-The set $Ctx$ of contexts is defined as the set of finite sequences of types.
+\[ f : s_1 \times \ldots \times s_n \to (p,0) \]
+where $s_1, \ldots s_n \in \mathcal{S}$ and $p \in \mathcal{K}$.
+Then let $\overline{\Sigma}$ be the following set of function symbols:
+\[ \{ f_k\ |\ f \in \Sigma, k \in \mathbb{N} \} \cup \{ v_{n,i}\ |\ n,i \in \mathbb{N}, 0 \leq i < n \} \cup \{ subst_{p,n,k}\ |\ p \in \mathcal{K}, n,k \in \mathbb{N} \}. \]
+Signatures of these symbols are defined as follows:
+\begin{align*}
+v_{n,i} & : (Tm,n) \\
+subst_{p,n,k} & : (p,k) \times (Tm,n)^k \to (p,n) \\
+f_k\ & : (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,k)
+\end{align*}
+where $f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$.
 
-We define the operation of substitution on terms and types.
-If $t \in Term$ or $t \in Type$ and $a_1, \ldots a_n \in Term$, then we define $t[a_1, \ldots a_n]$ as follows:
-\begin{itemize}
-\item $v_i[a_1, \ldots a_n] = a_{n-i}$ if $i < n$.
-\item $v_i[a_1, \ldots a_n] = v_{i-n}$ if $i \geq n$.
-\item If $k \in \mathbb{N}$, $f : s_1 \times \ldots \times s_n \to s$, $a_1, \ldots a_n \in Term \cup Type$, $a_i \in Term$ if $s_i = Tm_m$ for some $m$ and $a_i \in Type$ if $s_i = Ty_m$ for some $m$,
-    then $f^k(a_1, \ldots a_n) \in Term$ if $s = Tm_0$ and $f^k(a_1, \ldots a_n) \in Type$ if $s = Ty_0$.
-\item If $x \in Var$, $a_1, \ldots a_n \in Term$, then $x[a_1, \ldots a_n] \in Term$ and $x[a_1, \ldots a_n] \in Type$.
-    If $n = 0$, then we write $x[]$ simply as $x$.
-\end{itemize}
+Let $T$ be the algebraic theory in signature $\overline{\Sigma}$ with the following set of axioms:
+\begin{align*}
+subst_{p,n,n}(a, v_{n,n-1}, \ldots v_{n,0}) & = a \\
+subst_{Tm,n,k}(v_{k,i}, a_1, \ldots a_k) & = a_{k-i} \\
+subst_{p,m,n}(subst_{p,n,k}(a, b_1, \ldots b_k), c_1, \ldots c_n) & = subst_{p,m,k}(a, b_1', \ldots b_k')
+\end{align*}
+where $b_i' = subst_{Tm,m,n}(b_i, c_1, \ldots c_n)$, and
+\[ subst_{p,n,k}(f_k(a_1, \ldots a_m), b_1, \ldots b_k) = f_k(a_1', \ldots a_m') \]
+where $f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$,
+$a_i' = subst_{p_i,n+q_i,k+q_i}(a_i, b_1', \ldots b_k', \allowbreak v_{n+q_i,q_i-1}, \ldots v_{n+q_i,0})$,
+and $b_j' = subst_{Tm,n+q_j,n}(b_j, v_{n+q_j,n+q_j-1}, \ldots v_{n+q_j,q_j})$.
 
 We will consider judgements of the forms $\Gamma \vdash$, $\Gamma \vdash A$, $\Gamma \vdash A \deq A'$, $\Gamma \vdash a : A$, and $\Gamma \vdash a \deq a' : A$
 where $\Gamma$ is a finite sequence of terms and $a,a',A,A'$ are terms.
