@@ -134,60 +134,6 @@ An equivalent definition was given by Voevodsky in \cite{c-systems}.
 In this section we will give another equivalent definition which is just a description of models of the initial algebraic type theory as we will see later.
 \end{comment}
 
-\section{Syntactic presentations of type theories}
-
-In this section we will describe a syntactic approach to defining type theories.
-We will define category $\syntt$ of syntactically presented type theories.
-Finally, we will give a few examples of such theories.
-
-% One of the main operation in type theories is the operation of substitution.
-
-We will consider partial horn theories in signatures $\Sigma$ satisfying the following conditions:
-\begin{itemize}
-\item The set of sorts $\Sigma$ is the set $\{ Ty, Tm \}$.
-\item The set of function symbols of $\Sigma$ contains symbols
-\begin{align*}
-v_n     & : Tm \\
-Subst_n & : Ty \times Tm^n \to Ty \\
-subst_n & : Tm^{n+1} \to Tm
-\end{align*}
-for each $n \in \mathbb{N}$.
-\item The set of predicate symbols of $\Sigma$ contains symbols
-\begin{align*}
-Context_n & : Ty^n \\
-Type_n & : Ty^{n+1} \\
-Term_n & : Ty^n \times Tm \times Ty \\
-Eq_n & : Ty^{n+2} \\
-eq_n & : Ty^n \times Tm^2 \times Ty
-\end{align*}
-for each $n \in \mathbb{N}$.
-\end{itemize}
-
-We use uppercase latin letters for variables of sort $Ty$ and lowercase latin letters for variables of sort $Tm$.
-We use uppercase greek letters for finite sequences of variables of sort $Ty$.
-We use the following standard notations:
-\begin{align*}
-B[a_1, \ldots a_n] & \text{ means } Subst_n(B, a_1, \ldots a_n) \\
-b[a_1, \ldots a_n] & \text{ means } subst_n(b, a_1, \ldots a_n) \\
-A_1, \ldots A_n \ttvdash & \text{ means } Context_n(A_1, \ldots A_n) \\
-A_1, \ldots A_n \ttvdash A & \text{ means } Type_n(A_1, \ldots A_n, A) \\
-A_1, \ldots A_n \ttvdash a : A & \text{ means } Term_n(A_1, \ldots A_n, a, A) \\
-A_1, \ldots A_n \ttvdash A \deq B & \text{ means } Eq_n(A_1, \ldots A_n, A, B) \\
-A_1, \ldots A_n \ttvdash a \deq b : A & \text{ means } eq_n(A_1, \ldots A_n, a, b, A)
-\end{align*}
-
-A syntactically presented type theory is a horn theory in a signature satisfying the above conditions and such that the following axioms hold in it:
-\begin{align*}
-\top & \sststile[d]{}{x_1, \ldots x_n} f(x_1, \ldots x_n) \downarrow \text{ for each function symbol $f$} \\
-\top & \sststile[d]{}{} \ \ttvdash \\
-\Gamma \ttvdash A & \ssststile{}{\Gamma, A} \Gamma, A \ttvdash \\
-\Gamma \ttvdash A & \sststile{}{\Gamma, A} \Gamma \\
-\Gamma \ttvdash a : A & \sststile{}{\Gamma, a, A} \Gamma \ttvdash A \\
-\Gamma \ttvdash A & \sststile{}{\Gamma, A} \Gamma, A \ttvdash v_0 : A[v_n, \ldots v_1] \text{ if } |\Gamma| = n \\
-\Gamma \ttvdash,\ A_1, \ldots A_n \ttvdash B,\ \Gamma \ttvdash a_i : A_i[a_1, \ldots a_{i-1}] & \sststile{}{\Gamma, A_1, \ldots A_n, a_1, \ldots a_n, B} \Gamma \ttvdash B[a_1, \ldots a_n] \\
-\Gamma \ttvdash,\ A_1, \ldots A_n \ttvdash b : B,\ \Gamma \ttvdash a_i : A_i[a_1, \ldots a_{i-1}] & \sststile{}{\Gamma, A_1, \ldots A_n, a_1, \ldots a_n, B, b} \Gamma \ttvdash b[a_1, \ldots a_n] : B[a_1, \ldots a_n]
-\end{align*}
-
 \section{Theory $T_1$}
 
 In this section we will describe a quasi-equational theory $T_1$ and prove that the category of models of $T_1$ is equivalent to the category of contextual categories.
@@ -486,6 +432,66 @@ We already saw that $\alpha$ preserves the structure of contextual categories.
 Thus $\alpha$ is a morphism of contextual categories, and it is easy to see that $\alpha^{-1}$ also preserves the structure.
 Hence $\alpha$ is isomorphism and $F$ is an equivalence.
 \end{proof}
+
+\section{Syntactic presentations of type theories}
+
+In this section we will describe a syntactic approach to defining type theories.
+We will define category $\syntt$ of syntactically presented type theories.
+Finally, we will give a few examples of such theories.
+
+Let $\mathcal{S} = \{ Tm_n\ |\ n \in \mathbb{N} \} \cup \{ Ty_n\ |\ n \in \mathbb{N} \}$ be the set of sorts.
+Let $\Sigma$ be a set of function symbols together with a signature, that is expressions of the form
+\[ f : s_1 \times \ldots \times s_n \to s \]
+where $s_1, \ldots s_n, s \in \mathcal{S}$.
+Moreover, we require that either $s = Tm_0$ or $s = Ty_0$.
+Let $Var$ be a set of variables.
+Then we define the sets of terms $Term$ and types $Type$ inductively:
+\begin{itemize}
+\item $v_i \in Term$ for every $i \in \mathbb{N}$.
+\item If $k \in \mathbb{N}$, $f : s_1 \times \ldots \times s_n \to s$, $a_1, \ldots a_n \in Term \cup Type$, $a_i \in Term$ if $s_i = Tm_m$ for some $m$ and $a_i \in Type$ if $s_i = Ty_m$ for some $m$,
+    then $f^k(a_1, \ldots a_n) \in Term$ if $s = Tm_0$ and $f^k(a_1, \ldots a_n) \in Type$ if $s = Ty_0$.
+\item If $x \in Var$, $a_1, \ldots a_n \in Term$, then $x[a_1, \ldots a_n] \in Term$ and $x[a_1, \ldots a_n] \in Type$.
+    If $n = 0$, then we write $x[]$ simply as $x$.
+\end{itemize}
+The set $Ctx$ of contexts is defined as the set of finite sequences of types.
+
+We define the operation of substitution on terms and types.
+If $t \in Term$ or $t \in Type$ and $a_1, \ldots a_n \in Term$, then we define $t[a_1, \ldots a_n]$ as follows:
+\begin{itemize}
+\item $v_i[a_1, \ldots a_n] = a_{n-i}$ if $i < n$.
+\item $v_i[a_1, \ldots a_n] = v_{i-n}$ if $i \geq n$.
+\item If $k \in \mathbb{N}$, $f : s_1 \times \ldots \times s_n \to s$, $a_1, \ldots a_n \in Term \cup Type$, $a_i \in Term$ if $s_i = Tm_m$ for some $m$ and $a_i \in Type$ if $s_i = Ty_m$ for some $m$,
+    then $f^k(a_1, \ldots a_n) \in Term$ if $s = Tm_0$ and $f^k(a_1, \ldots a_n) \in Type$ if $s = Ty_0$.
+\item If $x \in Var$, $a_1, \ldots a_n \in Term$, then $x[a_1, \ldots a_n] \in Term$ and $x[a_1, \ldots a_n] \in Type$.
+    If $n = 0$, then we write $x[]$ simply as $x$.
+\end{itemize}
+
+We will consider judgements of the forms $\Gamma \vdash$, $\Gamma \vdash A$, $\Gamma \vdash A \deq A'$, $\Gamma \vdash a : A$, and $\Gamma \vdash a \deq a' : A$
+where $\Gamma$ is a finite sequence of terms and $a,a',A,A'$ are terms.
+An inference rule consists of finite set of judgements $J_1$, \ldots $J_n$ called premises and a judgement $J$ called conclusion.
+It is usually written as
+\begin{center}
+\AxiomC{$J_1 \quad \ldots \quad J_n$}
+\UnaryInfC{$J$}
+\DisplayProof
+\end{center}
+If $\mathcal{I}$ is a set of inference rules, then the set $D(\mathcal{I})$ of derived rules is defined in the usual way.
+
+\begin{defn}
+A \emph{syntactic type theory} consists of a set $\Sigma$ of function symbols and a set $\mathcal{I}$ of inference rules.
+\end{defn}
+Let $F$ be a function that to each $f \in \Sigma_T$ of arity $(n_1, \ldots n_k)$ assigns a term in $Term_S$ with free variables $x_1$, \ldots $x_k$.
+Then $F$ can be extended to a function $\widehat{F} : Term_T \to Term_S$ in the obvious way.
+If $J$ is a judgement of $T$ then we can define a judgement $\widehat{F}(J)$ of $S$ by applying $\widehat{F}$ to every term in $J$.
+If $R$ is an inference rule of $T$, then we can define an inference rule $\widehat{F}(R)$ of $S$ by applying $\widehat{F}$ to every judgement in $R$.
+
+A morphism of theories $T = (\Sigma_T, \mathcal{I}_T)$ and $S = (\Sigma_S, \mathcal{I}_S)$ is a function $F$ as described above such that
+$\widehat{F}(R)$ is a derived inference rules of $S$ for every $R \in \mathcal{I}_T$.
+Identity morphism $id_T$ is defined as $id_T(f) = f(x_1, \ldots x_k)$.
+Compositions of morphisms $F : T \to S$ and $G : S \to P$ is defined as follows: $(G \circ F)(f) = \widehat{G}(F(f))$.
+This defines a cateogry $\syntt$ of syntactic type theories.
+
+Now we describe a functor $I : \syntt \to \algtt$.
 
 \section{Algebraic presentations of type theories}
 
