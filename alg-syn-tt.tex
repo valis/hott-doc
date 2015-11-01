@@ -442,17 +442,17 @@ Finally, we will give a few examples of such theories.
 Let $\mathcal{K} = \{ tm, ty \}$ and let $\mathcal{S} = \mathcal{K} \times \mathbb{N}$ be the set of sorts.
 Let $l : \mathcal{S} \to \mathbb{N}$ be the function $l(k,n) = n$.
 Let $\Sigma$ be a set of function symbols together with a signature, that is expressions of the form
-\[ f : s_1 \times \ldots \times s_n \to (p,0) \]
-where $s_1, \ldots s_n \in \mathcal{S}$ and $p \in \mathcal{K}$.
+\[ f : s_1 \times \ldots \times s_n \to s \]
+where $s_1, \ldots s_n, s \in \mathcal{S}$.
 Then let $\overline{\Sigma}$ be the following set of function symbols:
 \[ \{ f_k\ |\ f \in \Sigma, k \in \mathbb{N} \} \cup \{ v_{n,i}\ |\ n,i \in \mathbb{N}, 0 \leq i < n \} \cup \{ subst_{p,n,k}\ |\ p \in \mathcal{K}, n,k \in \mathbb{N} \}. \]
 Signatures of these symbols are defined as follows:
 \begin{align*}
 v_{n,i} & : (tm,n) \\
 subst_{p,n,k} & : (p,k) \times (tm,n)^k \to (p,n) \\
-f_k\ & : (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,k)
+f_k\ & : (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,q+k)
 \end{align*}
-where $f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$.
+where $f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,q)$.
 We will omit subscripts $k$ in $f_k$ and $n$ in $v_{n,i}$ if it is clear from the context.
 
 Let $T_\Sigma$ be the algebraic theory in signature $\overline{\Sigma}$ with the following set of axioms:
@@ -462,10 +462,11 @@ subst_{tm,n,k}(v_{k,i}, a_1, \ldots a_k) & = a_{k-i} \\
 subst_{p,m,n}(subst_{p,n,k}(a, b_1, \ldots b_k), c_1, \ldots c_n) & = subst_{p,m,k}(a, b_1', \ldots b_k')
 \end{align*}
 where $b_i' = subst_{tm,m,n}(b_i, c_1, \ldots c_n)$, and
-\[ subst_{p,n,k}(f_k(a_1, \ldots a_m), b_1, \ldots b_k) = f_k(a_1', \ldots a_m') \]
-where $f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$,
-$a_i' = subst_{p_i,n+q_i,k+q_i}(a_i, b_1', \ldots b_k', \allowbreak v_{n+q_i,q_i-1}, \ldots v_{n+q_i,0})$,
-and $b_j' = subst_{tm,n+q_j,n}(b_j, v_{n+q_j,n+q_j-1}, \ldots v_{n+q_j,q_j})$.
+\[ subst_{p,n+q,k+q}(f_k(a_1, \ldots a_m), b_1'', \ldots b_k'', v_{n+q,q-1}, \ldots v_{n+1,0}) = f_n(a_1', \ldots a_m') \]
+for each $f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,q)$ and $b_j : (tm,n)$ where
+\[ b_j'' = subst_{tm,n+q,n} (b_j, v_{n+q,n+q-1}, \ldots v_{n+q,q}), \]
+\[ a_i' = subst_{p_i,n+q_i,k+q_i}(a_i, b_{i,1}', \ldots b_{i,k}', v_{n+q_i,q_i-1}, \ldots v_{n+q_i,0}) \text{, and} \]
+\[ b_{i,j}' = subst_{tm,n+q_i,n}(b_j, v_{n+q_i,n+q_i-1}, \ldots v_{n+q_i,q_i}). \]
 
 There is a monad $T_\Sigma : \Set^\mathcal{S} \to \Set^\mathcal{S}$ corresponding to the theory $T_\Sigma$.
 If $V \in \Set^\mathcal{S}$, then we say that $T_\Sigma(V)_s$ is the set of terms of sort $s$ with free variables in $V$.
