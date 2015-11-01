@@ -555,7 +555,8 @@ and the following inference rules:
 
 \begin{example}
 The theory of $\Sigma$ types with eta rules has function symbols
-$\Sigma : (ty,0) \times (ty,1) \to (ty,0)$, $pair : (tm,0) \times (tm,0) \to (tm,0)$, $proj_1 : (tm,0) \to (tm,0)$ and $proj_2 : (tm,0) \to (tm,0)$
+$\Sigma : (ty,0) \times (ty,1) \to (ty,0)$, $pair : (ty,0) \times (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$,
+$proj_1 : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0)$ and $proj_2 : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0)$
 and the following inference rules:
 \medskip
 \begin{center}
@@ -566,18 +567,18 @@ and the following inference rules:
 \AxiomC{$\Gamma, A \vdash B$}
 \AxiomC{$\Gamma \vdash a : A$}
 \AxiomC{$\Gamma \vdash b : B[a]$}
-\TrinaryInfC{$\Gamma \vdash pair(B, a, b)$}
+\TrinaryInfC{$\Gamma \vdash pair(A, B, a, b)$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\Gamma \vdash proj_1(p) : A$}
+\UnaryInfC{$\Gamma \vdash proj_1(A, B, p) : A$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\Gamma \vdash proj_2(p) : B[proj_1(p)]$}
+\UnaryInfC{$\Gamma \vdash proj_2(A, B, p) : B[proj_1(A, B, p)]$}
 \DisplayProof
 \end{center}
 
@@ -586,7 +587,7 @@ and the following inference rules:
 \AxiomC{$\Gamma, A \vdash B$}
 \AxiomC{$\Gamma \vdash a : A$}
 \AxiomC{$\Gamma \vdash b : B[a]$}
-\TrinaryInfC{$\Gamma \vdash proj_1(pair(B,a,b)) \deq a : A$}
+\TrinaryInfC{$\Gamma \vdash proj_1(A, B, pair(A, B, a, b)) \deq a : A$}
 \DisplayProof
 \end{center}
 
@@ -595,14 +596,14 @@ and the following inference rules:
 \AxiomC{$\Gamma, A \vdash B$}
 \AxiomC{$\Gamma \vdash a : A$}
 \AxiomC{$\Gamma \vdash b : B[a]$}
-\TrinaryInfC{$\Gamma \vdash proj_2(pair(B,a,b)) \deq b : B[a]$}
+\TrinaryInfC{$\Gamma \vdash proj_2(A, B, pair(A, B, a, b)) \deq b : B[a]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\Gamma \vdash pair(B, proj_1(p), proj_2(p)) \deq p : \Sigma(A, B)$}
+\UnaryInfC{$\Gamma \vdash pair(A, B, proj_1(A, B, p), proj_2(A, B, p)) \deq p : \Sigma(A, B)$}
 \DisplayProof
 \end{center}
 \end{example}
@@ -620,35 +621,36 @@ The theory of $\Pi$ types without eta rules.
 \end{example}
 
 \begin{example}
-The theory of identity types has function symbols $Id : (tm,0) \times (tm,0) \to (ty,0)$, $refl : (tm,0) \to (tm,0)$ and $J : (ty,3) \times (tm,1) \times (tm,0) \to (tm,0)$
+The theory of identity types has function symbols $Id : (ty,0) \times (tm,0) \times (tm,0) \to (ty,0)$,
+$refl : (ty,0) \times (tm,0) \to (tm,0)$ and $J : (ty,0) \times (ty,3) \times (tm,1) \times (tm,0) \times (tm,0) \times (tm,0) \to (tm,0)$
 and the following inference rules:
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
 \AxiomC{$\Gamma \vdash a' : A$}
-\BinaryInfC{$\Gamma \vdash Id(a, a')$}
+\BinaryInfC{$\Gamma \vdash Id(A, a, a')$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash a : A$}
-\UnaryInfC{$\Gamma \vdash refl(a) : Id(a, a)$}
+\UnaryInfC{$\Gamma \vdash refl(A, a) : Id(A, a, a)$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, A, A\!\uparrow, Id(v_1, v_0) \vdash D$}
-\AxiomC{$\Gamma, A \vdash d : D[v_0, v_0, refl(v_0)]$}
-\AxiomC{$\Gamma \vdash p : Id(a, a')$}
-\TrinaryInfC{$\Gamma \vdash J(D, d, p) : D[a, a', p]$}
+\AxiomC{$\Gamma, A, A\!\uparrow, Id(A\!\uparrow\uparrow, v_1, v_0) \vdash D$}
+\AxiomC{$\Gamma, A \vdash d : D[v_0, v_0, refl(A\!\uparrow, v_0)]$}
+\AxiomC{$\Gamma \vdash p : Id(A, a, a')$}
+\TrinaryInfC{$\Gamma \vdash J(A, D, d, a, a', p) : D[a, a', p]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, A, A\!\uparrow, Id(v_1, v_0) \vdash D$}
-\AxiomC{$\Gamma, A \vdash d : D[v_0, v_0, refl(v_0)]$}
+\AxiomC{$\Gamma, A, A\!\uparrow, Id(A\!\uparrow\uparrow, v_1, v_0) \vdash D$}
+\AxiomC{$\Gamma, A \vdash d : D[v_0, v_0, refl(A\!\uparrow, v_0)]$}
 \AxiomC{$\Gamma \vdash a : A$}
-\TrinaryInfC{$\Gamma \vdash J(D, d, refl(a)) \deq d[a] : D[a, a, refl(a)]$}
+\TrinaryInfC{$\Gamma \vdash J(A, D, d, a, a, refl(A, a)) \deq d[a] : D[a, a, refl(A, a)]$}
 \DisplayProof
 \end{center}
 \end{example}
