@@ -453,6 +453,7 @@ subst_{p,n,k} & : (p,k) \times (tm,n)^k \to (p,n) \\
 f_k\ & : (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,k)
 \end{align*}
 where $f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$.
+We will omit subscripts $k$ in $f_k$ and $n$ in $v_{n,i}$ if it is clear from the context.
 
 Let $T_\Sigma$ be the algebraic theory in signature $\overline{\Sigma}$ with the following set of axioms:
 \begin{align*}
@@ -502,8 +503,171 @@ This defines a cateogry $\syntt$ of syntactic type theories.
 Now we introduce a few auxiliary constructions.
 If $b$ is a term of sort $(p,n+k)$ and $a_1$, \ldots $a_k$ are terms of sort $(tm,n)$, then we write $b[a_1, \ldots a_k]$ for
 \[ subst_{p,n,n+k}(b, v_{n,n-1}, \ldots v_{n,0}, a_1, \ldots a_k). \]
-If $b$ is a term of sort $(p,n)$, then we write $b \uparrow$ for
+If $b$ is a term of sort $(p,n)$, then we write $b\!\uparrow$ for
 \[ subst_{p,n+1,n}(b, v_{n+1,n}, \ldots v_{n+1,1}). \]
+
+\begin{example}
+The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and $unit : (tm,0)$ and the following inference rules:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \top$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash unit : \top$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash t : \top$}
+\UnaryInfC{$\Gamma \vdash t \deq unit : \top$}
+\DisplayProof
+\end{center}
+\end{example}
+
+\begin{example}
+The theory of unit types without eta rules has function symbols $\top : (ty,0)$, $unit : (tm,0)$ and $\top\text{-}elim : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$
+and the following inference rules:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \top$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash unit : \top$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma, \top \vdash D$}
+\AxiomC{$\Gamma \vdash d : D[unit]$}
+\AxiomC{$\Gamma \vdash t : \top$}
+\TrinaryInfC{$\Gamma \vdash \top\text{-}elim(D, d, t) : D[t]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, \top \vdash D$}
+\AxiomC{$\Gamma \vdash d : D[unit]$}
+\BinaryInfC{$\Gamma \vdash \top\text{-}elim(D, d, unit) \deq d : D[unit]$}
+\DisplayProof
+\end{center}
+\end{example}
+
+\begin{example}
+The theory of $\Sigma$ types with eta rules has function symbols
+$\Sigma : (ty,0) \times (ty,1) \to (ty,0)$, $pair : (tm,0) \times (tm,0) \to (tm,0)$, $proj_1 : (tm,0) \to (tm,0)$ and $proj_2 : (tm,0) \to (tm,0)$
+and the following inference rules:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, A \vdash B$}
+\UnaryInfC{$\Gamma \vdash \Sigma(A, B)$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma, A \vdash B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash b : B[a]$}
+\TrinaryInfC{$\Gamma \vdash pair(B, a, b)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
+\UnaryInfC{$\Gamma \vdash proj_1(p) : A$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
+\UnaryInfC{$\Gamma \vdash proj_2(p) : B[proj_1(p)]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, A \vdash B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash b : B[a]$}
+\TrinaryInfC{$\Gamma \vdash proj_1(pair(B,a,b)) \deq a : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, A \vdash B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash b : B[a]$}
+\TrinaryInfC{$\Gamma \vdash proj_2(pair(B,a,b)) \deq b : B[a]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
+\UnaryInfC{$\Gamma \vdash pair(B, proj_1(p), proj_2(p)) \deq p : \Sigma(A, B)$}
+\DisplayProof
+\end{center}
+\end{example}
+
+\begin{example}
+The theory of $\Sigma$ types without eta rules.
+\end{example}
+
+\begin{example}
+The theory of $\Pi$ types with eta rules.
+\end{example}
+
+\begin{example}
+The theory of $\Pi$ types without eta rules.
+\end{example}
+
+\begin{example}
+The theory of identity types has function symbols $Id : (tm,0) \times (tm,0) \to (ty,0)$, $refl : (tm,0) \to (tm,0)$ and $J : (ty,3) \times (tm,1) \times (tm,0) \to (tm,0)$
+and the following inference rules:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash a' : A$}
+\BinaryInfC{$\Gamma \vdash Id(a, a')$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash refl(a) : Id(a, a)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, A, A\!\uparrow, Id(v_1, v_0) \vdash D$}
+\AxiomC{$\Gamma, A \vdash d : D[v_0, v_0, refl(v_0)]$}
+\AxiomC{$\Gamma \vdash p : Id(a, a')$}
+\TrinaryInfC{$\Gamma \vdash J(D, d, p) : D[a, a', p]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, A, A\!\uparrow, Id(v_1, v_0) \vdash D$}
+\AxiomC{$\Gamma, A \vdash d : D[v_0, v_0, refl(v_0)]$}
+\AxiomC{$\Gamma \vdash a : A$}
+\TrinaryInfC{$\Gamma \vdash J(D, d, refl(a)) \deq d[a] : D[a, a, refl(a)]$}
+\DisplayProof
+\end{center}
+\end{example}
+
+\begin{example}
+The theory a universe has function symbols $Type : (ty,0)$ and $El : (tm,0) \to (ty,0)$ and the following inference rules:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash Type$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : Type$}
+\UnaryInfC{$\Gamma \vdash El(A)$}
+\DisplayProof
+\end{center}
+\end{example}
+
+% Now, usually universes are assumed to be closed under different type constructions.
 
 \section{Algebraic presentations of type theories}
 
@@ -541,190 +705,6 @@ If $b$ is a term of sort $Tm_{n+k}$ and $a_1$, \ldots $a_k$ are terms of sort $T
 We will give a few examples of algebraic type theories.
 All of our examples will contain $T_1$ as subtheory.
 Some of the theories have two variations: with or without eta rules.
-
-\subsection{Unit types with eta rules}
-The theory of unit types with eta rules has the following function symbols:
-\begin{align*}
-\top & : Ctx_n \to Ctx_{n+1} \\
-unit & : Ctx_n \to Tm_n
-\end{align*}
-
-The following axioms prescribe how substitution must be defined on the constructions we have:
-\begin{align*}
-& \sststile{}{B, A, a_1, \ldots a_k} Subst_{n,k}(B, \top(A), a_1, \ldots a_k) \leftrightharpoons \top(B) \\
-& \sststile{}{B, A, a_1, \ldots a_k} subst_{n,k}(B, unit(A), a_1, \ldots a_k) \leftrightharpoons unit(B)
-\end{align*}
-
-The following axioms describe when functions are defined:
-\begin{align*}
-& \sststile{}{A} \top(A) \downarrow \\
-& \sststile{}{A} unit(A) \downarrow
-\end{align*}
-
-The following axioms describe the ``typization'' of the constructions we have:
-\begin{align*}
-& \sststile{}{A} ft(\top(A)) = A \\
-& \sststile{}{A} ty(unit(A)) = \top(A)
-\end{align*}
-
-The following axiom describes the ``computation rule'' for unit types:
-\begin{align*}
-ty(x) = \top(A) & \sststile{}{A,x} unit(A) = x
-\end{align*}
-
-\subsection{Unit types without eta rules}
-The theory of unit types without eta rules has the following function symbols:
-\begin{align*}
-\top             & : Ctx_n \to Ctx_{n+1} \\
-unit             & : Ctx_n \to Tm_n \\
-\top\text{-}elim & : Ctx_{n+2} \times Tm_n \times Tm_n \to Tm_n
-\end{align*}
-
-The following axioms prescribe how substitution must be defined on the constructions we have:
-\begin{align*}
-& \sststile{}{B, A, a_1, \ldots a_k} Subst_{n,k}(B, \top(A), a_1, \ldots a_k) \leftrightharpoons \top(B) \\
-& \sststile{}{B, A, a_1, \ldots a_k} subst_{n,k}(B, unit(A), a_1, \ldots a_k) \leftrightharpoons unit(B) \\
-& \sststile{}{D, d, t, B, a_1, \ldots a_k} subst_{n,k}(B, \top\text{-}elim(D, d, t), a_1, \ldots a_k) \leftrightharpoons \\
-& \qquad \top\text{-}elim(Subst^2_{n,k}(B, D, a_1, \ldots a_k)), subst_{n,k}(B, d, a_1, \ldots a_k), subst_{n,k}(B, t, a_1, \ldots a_k))
-\end{align*}
-
-The following axioms describe when functions are defined:
-\begin{align*}
-& \sststile{}{A} \top(A) \downarrow \\
-& \sststile{}{A} unit(A) \downarrow \\
-ft(D) = \top(ft^2(D)), ty(t) = \top(ft^2(D)), ty(d) = D[unit(ft^2(D))] & \ssststile{}{D, d, t} \top\text{-}elim(D, d, t) \downarrow
-\end{align*}
-
-The following axioms describe the ``typization'' of the constructions we have:
-\begin{align*}
-& \sststile{}{A} ft(\top(A)) = A \\
-& \sststile{}{A} ty(unit(A)) = \top(A) \\
-& \sststile{}{D, d, t} ty(\top\text{-}elim(D, d, t)) = D[t]
-\end{align*}
-
-The following axiom describes the ``computation rule'' for unit types:
-\begin{align*}
-& \sststile{}{D, d} \top\text{-}elim(D, d, unit(ft^2(D))) = d
-\end{align*}
-
-\subsection{$\Sigma$ types with eta rules}
-
-The theory of $\Sigma$ types with eta rules has the following function symbols:
-\begin{align*}
-\Sigma & : Ctx_{n+2} \to Ctx_{n+1} \\
-pair   & : Ctx_{n+2} \times Tm_n \times Tm_n \to Tm_n \\
-proj_1 & : Ctx_{n+2} \times Tm_n \to Tm_n \\
-proj_2 & : Ctx_{n+2} \times Tm_n \to Tm_n
-\end{align*}
-
-The following axioms prescribe how substitution must be defined on the constructions we have:
-\begin{align*}
-& \sststile{}{C, B, a_1, \ldots a_k} Subst_{n,k}(C, \Sigma(B), a_1, \ldots a_k) \leftrightharpoons \Sigma(Subst^2_{n,k}(C, B, a_1, \ldots a_k)) \\
-& \sststile{}{C, B, a, b, a_1, \ldots a_k} subst_{n,k}(C, pair(B, a, b), a_1, \ldots a_k) \leftrightharpoons \\
-& \qquad pair(Subst^2_{n,k}(C, B, a_1, \ldots a_k), subst_{n,k}(C, a, a_1, \ldots a_k), subst_{n,k}(C, b, a_1, \ldots a_k)) \\
-& \sststile{}{C, B, p, a_1, \ldots a_k} subst_{n,k}(C, proj_1(B, p), a_1, \ldots a_k) \leftrightharpoons \\
-& \qquad proj_1(Subst^2_{n,k}(C, B, a_1, \ldots a_k), subst_{n,k}(C, p, a_1, \ldots a_k)) \\
-& \sststile{}{C, B, p, a_1, \ldots a_k} subst_{n,k}(C, proj_2(B, p), a_1, \ldots a_k) \leftrightharpoons \\
-& \qquad proj_2(Subst^2_{n,k}(C, B, a_1, \ldots a_k), subst_{n,k}(C, p, a_1, \ldots a_k))
-\end{align*}
-
-The following axioms describe when functions are defined:
-\begin{align*}
-                            & \sststile{}{B} \Sigma(B) \downarrow \\
-ty(a) = ft(B), ty(b) = B[a] & \ssststile{}{B,a,b} pair(B,a,b) \downarrow \\
-ty(p) = \Sigma(B)           & \ssststile{}{B,p} proj_1(B,p) \downarrow \\
-ty(p) = \Sigma(B)           & \ssststile{}{B,p} proj_2(B,p) \downarrow
-\end{align*}
-
-The following axioms describe the ``typization'' of the constructions we have:
-\begin{align*}
-& \sststile{}{B} ft(\Sigma(B)) = ft^2(B) \\
-& \sststile{}{B,a,b} ty(pair(B,a,b)) \leftrightharpoons \Sigma(B) \\
-& \sststile{}{B,p} ty(proj_1(B,p)) \leftrightharpoons ft(B) \\
-& \sststile{}{B,p} ty(proj_2(B,p)) \leftrightharpoons B[proj_1(B,p)]
-\end{align*}
-
-The following axioms describe the ``computation rules'':
-\begin{align*}
-& \sststile{}{B,a,b} proj_1(B,pair(B,a,b)) \leftrightharpoons a \\
-& \sststile{}{B,a,b} proj_2(B,pair(B,a,b)) \leftrightharpoons b \\
-& \sststile{}{B,p} pair(B, proj_1(B,p), proj_2(B,p)) \leftrightharpoons p \\
-\end{align*}
-
-\subsection{$\Sigma$ types without eta rules}
-
-\subsection{$\Pi$ types with eta rules}
-
-\subsection{$\Pi$ types without eta rules}
-
-\subsection{Identity types}
-
-The theory of identity types has the following function symbols:
-\begin{align*}
-Id   & : Tm_n \times Tm_n \to Ctx_{n+1} \\
-refl & : Tm_n \to Tm_n \\
-J    & : Ctx_{n+4} \times Tm_{n+1} \times Tm_n \times Tm_n \times Tm_n \to Tm_n
-\end{align*}
-
-The following axioms prescribe how substitution must be defined on the constructions we have:
-\begin{align*}
-& \sststile{}{B, a, a', a_1, \ldots a_k} Subst_{n,k}(B, Id(a,a'), a_1, \ldots a_k) \leftrightharpoons \\
-& \qquad Id(subst_{n,k}(B, a, a_1, \ldots a_k), subst_{n,k}(B, a', a_1, \ldots a_k)) \\
-& \sststile{}{B, a, a_1, \ldots a_k} subst_{n,k}(B, refl(a), a_1, \ldots a_k) \leftrightharpoons refl(subst_{n,k}(B, a, a_1, \ldots a_k)) \\
-& \sststile{}{B, D, d, a, a', t, a_1, \ldots a_k} subst_{n,k}(C, J(D, d, a, a', t), a_1, \ldots a_k) \leftrightharpoons \\
-& \qquad J(Subst^4_{n,k}(B, D, a_1, \ldots a_k), subst^2_{n,k}(B, d, a_1, \ldots a_k), subst_{n,k}(B, a, a_1, \ldots a_k), subst_{n,k}(B, a', a_1, \ldots a_k), subst_{n,k}(B, t, a_1, \ldots a_k)) \\
-\end{align*}
-
-The following axioms describe when functions are defined:
-\begin{align*}
-ty(a) = ty(a') & \ssststile{}{a,a'} Id(a,a') \downarrow \\
-               & \sststile{}{a} refl(a) \downarrow \\
-ft(D) = Id(v_1(A'), v_0(A')), ty(d) = ..., ty(a) = ft^3(D), ty(a') = ty(a), ty(p) = Id(a,a') & \ssststile{}{D,d,a,a',t} J(D,d,a,a',t) \downarrow
-\end{align*}
-
-The following axioms describe the ``typization'' of the constructions we have:
-\begin{align*}
-& \sststile{}{B} ft(\Sigma(B)) = ft^2(B) \\
-& \sststile{}{B,a,b} ty(pair(B,a,b)) \leftrightharpoons \Sigma(B) \\
-& \sststile{}{B,p} ty(proj_1(B,p)) \leftrightharpoons ft(B) \\
-& \sststile{}{B,p} ty(proj_2(B,p)) \leftrightharpoons B[proj_1(B,p)]
-\end{align*}
-
-The following axioms describe the ``computation rules'':
-\begin{align*}
-& \sststile{}{B,a,b} proj_1(B,pair(B,a,b)) \leftrightharpoons a \\
-& \sststile{}{B,a,b} proj_2(B,pair(B,a,b)) \leftrightharpoons b \\
-& \sststile{}{B,p} pair(B, proj_1(B,p), proj_2(B,p)) \leftrightharpoons p \\
-\end{align*}
-
-\subsection{Universe}
-
-First, we describe the basic theory $U$ of universes.
-It has the following function symbols:
-\begin{align*}
-Type & : Ctx_n \to Ctx_{n+1} \\
-El   & : Tm_n \to Ctx_{n+1}
-\end{align*}
-
-The following axioms prescribe how substitution must be defined on the constructions we have:
-\begin{align*}
-& \sststile{}{B, A, a_1, \ldots a_k} Subst_{n,k}(B, Type(A), a_1, \ldots a_k) \leftrightharpoons Type(B) \\
-& \sststile{}{B, a, a_1, \ldots a_k} Subst_{n,k}(B, El(a), a_1, \ldots a_k) \leftrightharpoons subst_{n,k}(B, a, a_1, \ldots a_k)
-\end{align*}
-
-The following axioms describe when functions are defined:
-\begin{align*}
-                        & \sststile{}{A} Type(A) \downarrow \\
-ty(A) = Type(ft(ty(A))) & \ssststile{}{A} El(A) \downarrow
-\end{align*}
-
-The following axioms describe the ``typization'' of the constructions we have:
-\begin{align*}
-& \sststile{}{A} ft(Type(A)) = A \\
-& \sststile{}{A} ft(El(A)) = ft(ty(A))
-\end{align*}
-
-Now, usually universes are assumed to be closed under different type constructions.
 
 \section{Models of algebraic type theories}
 
