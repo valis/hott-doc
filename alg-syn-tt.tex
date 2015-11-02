@@ -478,7 +478,7 @@ An identity morphism assigns to each $f$ the term $f(x_1, \ldots x_k)$.
 
 A context is a sequence $A_1$, \ldots $A_n$ of terms of sorts $(ty,0)$, \ldots $(ty,n-1)$ respectively.
 A judgement is simply a predicate of a certain form.
-We will consider judgements of the forms $\Gamma \vdash$, $\Gamma \vdash A$, $\Gamma \vdash A \deq A'$, $\Gamma \vdash a : A$, and $\Gamma \vdash a \deq a' : A$
+We will consider judgements of the forms $\Gamma \vdash$, $\Gamma \vdash A$, $A \deq A'$, $\Gamma \vdash a : A$, and $a \deq a'$
 where $\Gamma$ is context of length $n$, $A$, $A'$ are terms of sort $(ty,n)$, and $a$, $a'$ are terms of sort $(tm,n)$.
 An inference rule consists of a finite set of judgements $J_1$, \ldots $J_n$ called premises and a judgement $J$ called conclusion.
 All terms in a judgement or in an inference rule have the same set of free variables which is left implicit.
@@ -511,16 +511,16 @@ If $b$ is a term of sort $(p,n)$, then we write $b\!\uparrow$ for
 The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and $unit : (tm,0)$ and the following inference rules:
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash \top$}
+\AxiomC{}
+\UnaryInfC{$\vdash \top$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash unit : \top$}
+\AxiomC{}
+\UnaryInfC{$\vdash unit : \top$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash t : \top$}
-\UnaryInfC{$\Gamma \vdash t \deq unit : \top$}
+\AxiomC{$\vdash t : \top$}
+\UnaryInfC{$t \deq unit$}
 \DisplayProof
 \end{center}
 \end{example}
@@ -530,26 +530,26 @@ The theory of unit types without eta rules has function symbols $\top : (ty,0)$,
 and the following inference rules:
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash \top$}
+\AxiomC{}
+\UnaryInfC{$\vdash \top$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash unit : \top$}
+\AxiomC{}
+\UnaryInfC{$\vdash unit : \top$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma, \top \vdash D$}
-\AxiomC{$\Gamma \vdash d : D[unit]$}
-\AxiomC{$\Gamma \vdash t : \top$}
-\TrinaryInfC{$\Gamma \vdash \top\text{-}elim(D, d, t) : D[t]$}
+\AxiomC{$\top \vdash D$}
+\AxiomC{$\vdash d : D[unit]$}
+\AxiomC{$\vdash t : \top$}
+\TrinaryInfC{$\vdash \top\text{-}elim(D, d, t) : D[t]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, \top \vdash D$}
-\AxiomC{$\Gamma \vdash d : D[unit]$}
-\BinaryInfC{$\Gamma \vdash \top\text{-}elim(D, d, unit) \deq d : D[unit]$}
+\AxiomC{$\top \vdash D$}
+\AxiomC{$\vdash d : D[unit]$}
+\BinaryInfC{$\top\text{-}elim(D, d, unit) \deq d$}
 \DisplayProof
 \end{center}
 \end{example}
@@ -561,50 +561,50 @@ $proj_1 : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0)$ and $proj_2 : (ty,0) \t
 and the following inference rules:
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, A \vdash B$}
-\UnaryInfC{$\Gamma \vdash \Sigma(A, B)$}
+\AxiomC{$A \vdash B$}
+\UnaryInfC{$\vdash \Sigma(A, B)$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma, A \vdash B$}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash b : B[a]$}
-\TrinaryInfC{$\Gamma \vdash pair(A, B, a, b)$}
+\AxiomC{$A \vdash B$}
+\AxiomC{$\vdash a : A$}
+\AxiomC{$\vdash b : B[a]$}
+\TrinaryInfC{$\vdash pair(A, B, a, b)$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\Gamma \vdash proj_1(A, B, p) : A$}
+\AxiomC{$\vdash p : \Sigma(A, B)$}
+\UnaryInfC{$\vdash proj_1(A, B, p) : A$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\Gamma \vdash proj_2(A, B, p) : B[proj_1(A, B, p)]$}
+\AxiomC{$\vdash p : \Sigma(A, B)$}
+\UnaryInfC{$\vdash proj_2(A, B, p) : B[proj_1(A, B, p)]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, A \vdash B$}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash b : B[a]$}
-\TrinaryInfC{$\Gamma \vdash proj_1(A, B, pair(A, B, a, b)) \deq a : A$}
+\AxiomC{$A \vdash B$}
+\AxiomC{$\vdash a : A$}
+\AxiomC{$\vdash b : B[a]$}
+\TrinaryInfC{$proj_1(A, B, pair(A, B, a, b)) \deq a$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, A \vdash B$}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash b : B[a]$}
-\TrinaryInfC{$\Gamma \vdash proj_2(A, B, pair(A, B, a, b)) \deq b : B[a]$}
+\AxiomC{$A \vdash B$}
+\AxiomC{$\vdash a : A$}
+\AxiomC{$\vdash b : B[a]$}
+\TrinaryInfC{$proj_2(A, B, pair(A, B, a, b)) \deq b$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\Gamma \vdash pair(A, B, proj_1(A, B, p), proj_2(A, B, p)) \deq p : \Sigma(A, B)$}
+\AxiomC{$\vdash p : \Sigma(A, B)$}
+\UnaryInfC{$pair(A, B, proj_1(A, B, p), proj_2(A, B, p)) \deq p$}
 \DisplayProof
 \end{center}
 \end{example}
@@ -627,31 +627,31 @@ $refl : (ty,0) \times (tm,0) \to (tm,0)$ and $J : (ty,0) \times (ty,3) \times (t
 and the following inference rules:
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash a' : A$}
-\BinaryInfC{$\Gamma \vdash Id(A, a, a')$}
+\AxiomC{$\vdash a : A$}
+\AxiomC{$\vdash a' : A$}
+\BinaryInfC{$\vdash Id(A, a, a')$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash a : A$}
-\UnaryInfC{$\Gamma \vdash refl(A, a) : Id(A, a, a)$}
+\AxiomC{$\vdash a : A$}
+\UnaryInfC{$\vdash refl(A, a) : Id(A, a, a)$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, A, A\!\uparrow, Id(A\!\uparrow\uparrow, v_1, v_0) \vdash D$}
-\AxiomC{$\Gamma, A \vdash d : D[v_0, v_0, refl(A\!\uparrow, v_0)]$}
-\AxiomC{$\Gamma \vdash p : Id(A, a, a')$}
-\TrinaryInfC{$\Gamma \vdash J(A, D, d, a, a', p) : D[a, a', p]$}
+\AxiomC{$A, A\!\uparrow, Id(A\!\uparrow\uparrow, v_1, v_0) \vdash D$}
+\AxiomC{$A \vdash d : D[v_0, v_0, refl(A\!\uparrow, v_0)]$}
+\AxiomC{$\vdash p : Id(A, a, a')$}
+\TrinaryInfC{$\vdash J(A, D, d, a, a', p) : D[a, a', p]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, A, A\!\uparrow, Id(A\!\uparrow\uparrow, v_1, v_0) \vdash D$}
-\AxiomC{$\Gamma, A \vdash d : D[v_0, v_0, refl(A\!\uparrow, v_0)]$}
-\AxiomC{$\Gamma \vdash a : A$}
-\TrinaryInfC{$\Gamma \vdash J(A, D, d, a, a, refl(A, a)) \deq d[a] : D[a, a, refl(A, a)]$}
+\AxiomC{$A, A\!\uparrow, Id(A\!\uparrow\uparrow, v_1, v_0) \vdash D$}
+\AxiomC{$A \vdash d : D[v_0, v_0, refl(A\!\uparrow, v_0)]$}
+\AxiomC{$\vdash a : A$}
+\TrinaryInfC{$J(A, D, d, a, a, refl(A, a)) \deq d[a]$}
 \DisplayProof
 \end{center}
 \end{example}
@@ -660,12 +660,12 @@ and the following inference rules:
 The theory a universe has function symbols $Type : (ty,0)$ and $El : (tm,0) \to (ty,0)$ and the following inference rules:
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash Type$}
+\AxiomC{}
+\UnaryInfC{$\vdash Type$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A : Type$}
-\UnaryInfC{$\Gamma \vdash El(A)$}
+\AxiomC{$\vdash A : Type$}
+\UnaryInfC{$\vdash El(A)$}
 \DisplayProof
 \end{center}
 \end{example}
@@ -676,38 +676,35 @@ The theory a universe has function symbols $Type : (ty,0)$ and $El : (tm,0) \to 
 
 In this section we will describe an algebraic approach to defining type theories.
 We will define category $\algtt$ of algebraic type theories.
-Finally, we will give a few examples of such theories.
+We will also describe a fully faithful functor $E : \syntt_{reg} \to \algtt$ from a full subcategory of $\syntt$ to $\algtt$.
 
 \begin{defn}
 An \emph{algebraic type theory} is a theory in signature $\Sigma_C$ with a map from $T_1$.
 Category $\algtt$ of algebraic type theory is the under category $T_1 / \Sigma_C \text{-} \cat{Th}$.
 \end{defn}
 
-% Now we describe a functor $I : \syntt \to \algtt$.
+In general, we cannot construct an algebraic type theory from a syntactic one.
+So we consider a full subcategory of syntactic type theories for which we can do that.
+We call such theories \emph{regular}.
 
-We will usually omit subscript $n$ in function symbols $ft_n$, $ty_n$, $v_{n,i}$ and others.
-If $B$, $b$, and $a$ are terms of sorts $Ctx_{n+2}$, $Tm_{n+1}$, and $Tm_n$ respectively, then
-we write $B[a]$ for $Subst_{n,n+1}(ft(ty(a)), B, v_{n-1}(ft(ty(a))), \ldots v_0(ft(ty(a))), a)$
-and $b[a]$ for $subst_{n,n+1}(ft(ty(a)), b, v_{n-1}(ft(ty(a))), \ldots v_0(ft(ty(a))), a)$
+We say that an inference rule defines a symbol $(f : s_1 \times \ldots s_n \to (p,q)) \in \Sigma$ if its conclusion is
+either of the form $\Gamma \vdash f(x_1, \ldots x_n)$ or of the form $\Gamma \vdash f(x_1, \ldots x_n) : A$ where $x_i$ are variables.
+We say that such inference rule is \emph{regular} if the length of $\Gamma$ is $q$ and
+if all variables in the list $x_1$, \ldots $x_n$ are distinct and this list contains all free variables of the rule.
+A syntactic type theory $(\Sigma, \mathcal{I})$ is \emph{regular} if every function symbol in $\Sigma$ is
+defined by a single regular inference rule in $\mathcal{I}$ and every inference rule in $\mathcal{I}$ is either of the form $a \deq b$ or defines some function symbol.
 
-We define auxiliary derived operations $wk^m_n : Ctx_{n+m} \times Tm_n \to Tm_{n+m}$, $Subst^m_{n,k} : Ctx_n \times Ctx_{k+m} \times Tm^k_n \to Ctx_{n+m}$, $subst^m_{n,k} : Ctx_n \times Tm_{k+m-1} \times Tm^k_n \to Tm_{n+m-1}$.
-Terms $wk^m_n(B,a)$ are defined as follows:
-\[ subst_{n+m,n}(B, a, v_{n+m-1}(B), \ldots v_m(B)) \]
-Let $Subst^0_{n,k}(B, A, a_1, \ldots a_k)$ be equal to $B$.
-Then we define $Subst^{m+1}_{n,k}(B, A, a_1, \ldots a_k)$ as
-\[ Subst_{n+m,k+m}(B', A, wk^m_n(B',a_1), \ldots wk^m_n(B', a_k), v_{m-1}(B'), \ldots v_0(B')) \]
-and $subst^{m+1}_{n,k}(B, a, a_1, \ldots a_k)$ as
-\[ subst_{n+m+1,k+m+1}(B', a, wk^m_n(B', a_1), \ldots wk^m_n(B', a_k), v_{m-1}(B'), \ldots v_0(B')) \]
-where $B' = Subst^m_{n,k}(B, ft(A), a_1, \ldots a_k)$.
+Now for each regular syntactic type theory $T = (\Sigma, \mathcal{I})$ we define an algebraic type theory $E(T)$.
+There is a function from the set of sorts of syntactic theories to the set of sorts of algebraic theories.
+Sort $(tm,n)$ is mapped to $Tm_n$ and $(ty,n)$ is mapped to $Ctx_{n+1}$.
+We will usually omit this function and use sorts $(tm,n)$ and $(ty,n)$ directly.
+Function symbols of $E(T)$ are
+\[ f_k : Ctx_k \times (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,q+k) \text{ for each } k \in \mathbb{N} \text{ and } (f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,q)) \in \Sigma \]
+and $v_{n,i}$, $subst_{n,k}$ and $Subst_{n,k}$ with the signatures as in $T_1$.
+Axioms of $E(T)$ are the axioms of $T_1$ and the following axioms:
+\begin{align*}
 
-If $B$ is a term of sort $Ctx_{n+k+1}$ and $a_1$, \ldots $a_k$ are terms of sort $Tm_n$, then we write $B[a_1, \ldots a_k]$ for
-\[ Subst_{n,n+k}(ft^{k+1}(B), B, v_{n-1}(ft^{k+1}(B)), \ldots v_0(ft^{k+1}(B)), a_1, \ldots a_k). \]
-If $b$ is a term of sort $Tm_{n+k}$ and $a_1$, \ldots $a_k$ are terms of sort $Tm_n$, then we write $b[a_1, \ldots a_k]$ for
-\[ subst_{n,n+k}(ft^{k+1}(ty(b)), b, v_{n-1}(ft^{k+1}(ty(b))), \ldots v_0(ft^{k+1}(ty(b))), a_1, \ldots a_k). \]
-
-We will give a few examples of algebraic type theories.
-All of our examples will contain $T_1$ as subtheory.
-Some of the theories have two variations: with or without eta rules.
+\end{align*}
 
 \section{Models of algebraic type theories}
 
