@@ -708,22 +708,27 @@ The signature $E(\Sigma)$ of $E(T)$ consists of symbols $v_{n,i}$, $subst_{n,k}$
 $f_k : Ctx_k \times (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,q+k)$
 for each $k \in \mathbb{N}$ and $(f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,q)) \in \Sigma$.
 
-Now we define functions
-\[ \alpha_{V,p,n,k} : Term_{E(\Sigma)}(V)_{Ctx_{n+k}} \times Term_{\Sigma}(V)_{(p,k)} \times Env_{p,n} \to Term_{E(\Sigma)}(V)_{(p,n+k)} \]
+Let $n \in \mathbb{N}$.
+Then we define functions
+\[ \alpha_{U,V,p,k} : Term_{E(\Sigma)}(V)_{Ctx_{n+k}} \times Term_{\Sigma}(U)_{(p,k)} \times Env_{U,V,p} \to Term_{E(\Sigma)}(V)_{(p,n+k)} \]
 and
-\[ \beta_{V,n,k} : Term_{E(\Sigma)}(V)_{Ctx_n} \times Ctx_\Sigma(V)_k \times Env_{ty,n} \to Term_{E(\Sigma)}(V)_{Ctx_{n+k}} \]
-where $Ctx_\Sigma(V)_k$ is the set of contexts of length $k$ and $Env_{p,n}$ is the set of functions $V_{(p,m)} \to Term_{E(\Sigma)}(V)_{p,n+m}$ for all $m \in \mathbb{N}$.
+\[ \beta_{U,V,k} : Term_{E(\Sigma)}(V)_{Ctx_n} \times Ctx_\Sigma(U)_k \times Env_{U,V,ty} \to Term_{E(\Sigma)}(V)_{Ctx_{n+k}} \]
+where $Ctx_\Sigma(U)_k$ is the set of contexts of length $k$ and $Env_{U,V,p}$ is the set of functions $U_{(p,m)} \to Term_{E(\Sigma)}(V)_{(p,n+m)}$ for all $m \in \mathbb{N}$.
 \begin{itemize}
-\item $\beta_{V,n,0}(\Gamma, (), \rho) = \Gamma$.
-\item $\beta_{V,n,k+1}(\Gamma, (\Delta,A), \rho) = \alpha_{V,ty,n,k}(\beta_{V,n,k}(\Gamma, \Delta, \rho), A, \rho)$.
-\item $\alpha_{V,p,n,k}(\Gamma, v_{k,i}, \rho) = v_{n+k,i}(\Gamma)$.
-\item $\alpha_{V,p,n,k}(\Gamma, x, \rho) = \rho(x)$ where $x$ is a variable.
-\item $\alpha_{V,p,n,k}(\Gamma, subst_{ty,n,k}(x, a_1, \ldots a_k)) = Subst_{n,k}(\Gamma, \rho(x), \alpha_{V,p,n,k}(\Gamma, a_1), \ldots \alpha_{V,p,n,k}(\Gamma, a_k))$ where $x$ is a variable.
-\item $\alpha_{V,p,n,k}(\Gamma, subst_{tm,n,k}(x, a_1, \ldots a_k)) = subst_{n,k}(\Gamma, \rho(x), \alpha_{V,p,n,k}(\Gamma, a_1), \ldots \alpha_{V,p,n,k}(\Gamma, a_k))$ where $x$ is a variable.
-\item $\alpha_{V,p,n,k+q}(\Gamma, f_k(a_1, \ldots a_m)) = f_{n+k}(\Gamma, a_1', \ldots a_m'))$.
-    where $f : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,q)$ and $a_i' = \alpha_{V,p_i,n,k+q_i}(\beta_{V,n,k}(\Gamma, \Delta_i), a_i)$.
+\item $\beta_{U,V,0}(\Gamma, (), \rho) = \Gamma$.
+\item $\beta_{U,V,k+1}(\Gamma, (\Delta,A), \rho) = \alpha_{U,V,ty,k}(\beta_{U,V,k}(\Gamma, \Delta, \rho), A, \rho)$.
+\item $\alpha_{U,V,p,k}(\Gamma, v_{k,i}, \rho) = v_{n+k,i}(\Gamma)$.
+\item $\alpha_{U,V,p,k}(\Gamma, x, \rho) = \rho(x)$ where $x$ is a variable.
+\item $\alpha_{U,V,p,k}(\Gamma, subst_{ty,k,m}(x, a_1, \ldots a_m)) = Subst_{n+k,n+m}(\Gamma, \rho(x), a_1', \ldots a_{n+m}')$
+    where $a_i' = v_{n+k,n+k-i}(\Gamma)$ if $i \leq n$ and $a_i' = \alpha_{U,V,tm,k}(\Gamma, a_{i-n}, \rho)$ if $i > n$.
+\item $\alpha_{U,V,p,k}(\Gamma, subst_{tm,k,m}(x, a_1, \ldots a_m)) = subst_{n+k,n+m}(\Gamma, \rho(x), a_1', \ldots a_{n+m}')$
+    where $a_i' = v_{n+k,n+k-i}(\Gamma)$ if $i \leq n$ and $a_i' = \alpha_{U,V,tm,k}(\Gamma, a_{i-n}, \rho)$ if $i > n$.
+\item $\alpha_{U,V,p,k+q}(\Gamma, f_k(a_1, \ldots a_m)) = f_{n+k}(\Gamma, a_1', \ldots a_m'))$
+    where $f : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,q)$,
+    $f(x_1, \ldots x_m)$ is defined by a rule $R$ in which $x_i$ is defined by a judgement with context $\Delta_i$, and
+    \[ a_i' = \alpha_{U,V,p_i,k+q_i}(\beta_{\{ x_1, \ldots x_{i-1} \},V,k}(\Gamma, \Delta_i, [x_j \mapsto a_j']), a_i, \rho). \]
 \end{itemize}
-These functions are well-defined by the assumption of regularity.
+Conditions in the definition of regularity guarantee that these functions are well-defined.
 
 Axioms of $E(T)$ are the axioms of $T_1$ and the following axioms:
 \begin{align*}
