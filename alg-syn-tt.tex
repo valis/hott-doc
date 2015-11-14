@@ -105,6 +105,8 @@
 \newcommand{\syntt}{\cat{SynTT}}
 \newcommand{\algtt}{\cat{AlgTT}}
 \newcommand{\Mod}{\text{-}\cat{Mod}}
+\newcommand{\Sig}{\cat{Sig}}
+\newcommand{\Th}{\cat{Th}}
 \newcommand{\ttvdash}{\vartriangleright}
 
 \numberwithin{figure}{section}
@@ -134,10 +136,52 @@ An equivalent definition was given by Voevodsky in \cite{c-systems}.
 In this section we will give another equivalent definition which is just a description of models of the initial algebraic type theory as we will see later.
 \end{comment}
 
+\section{Essentially algebraic theories}
+
+There are several equaivalent ways of defining essentially algebraic theories (\cite{LPC}, \cite{GAT}, \cite{PHT}, \cite[D 1.3.4]{elephant}).
+We will use approach introduced in \cite{PHT} under the name of partial horn theories since it seems to be the most general.
+In this section we will review necessary for our development parts of the theory of partial horn theories and define a notion of morphisms between them suitable for our purposes.
+
+A signature $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ consists of a set $\mathcal{S}$ of sorts, a set $\mathcal{F}$ of function symbols, and a set $\mathcal{P}$ of predicate symbols.
+Also $\Sigma$ assigns a signature to each $f \in \mathcal{F}$ which is written as $f : s_1 \times \ldots \times s_n \to s$ where $s_1$, \ldots $s_n$, $s$ are sorts.
+Finally $\Sigma$ assigns a signature to each $R \in \mathcal{P}$ which is written as $R : s_1 \times \ldots \times s_n$ where $s_1$, \ldots $s_n$ are sorts.
+For each $V \in \Set^\mathcal{S}$ we can define a set $Term_\Sigma(V)_s$ of terms of sort $s$ inductively:
+\begin{itemize}
+\item If $x \in V_s$, then $x \in Term_\Sigma(V)_s$.
+\item If $f : s_1 \times \ldots \times s_n \to s$ and $t_i \in Term_\Sigma(V)_{s_i}$, then $f(t_1, \ldots t_n) \in Term_\Sigma(V)_s$.
+\end{itemize}
+Then $Term_\Sigma(V)$ is actually a functor $Term_\Sigma : \Set^\mathcal{S} \to \Set^\mathcal{S}$.
+Moreover, there is a natural monad structure on $Term_\Sigma$.
+
+Let $\Sigma = (\mathcal{S}, \mathcal{F}_\Sigma, \mathcal{P})$ and $\Sigma' = (\mathcal{S}, \mathcal{F}_{\Sigma'}, \mathcal{P})$ be a pair of signatures with the same sets of sorts and predicate symbols.
+Then we define morphisms of these signatures as morphisms between monads $Term_\Sigma$ and $Term_{\Sigma'}$.
+Since $Term_\Sigma$ is a free monad there is a bijection between such morphisms and functions that to each $f \in \mathcal{F}_\Sigma$ assign a term of $\Sigma'$ with the same signature as $f$.
+We will write such functions $F$ as $F(f(x_1, \ldots x_n)) = t$ where $f \in \mathcal{F}_\Sigma$, $f : s_1 \times \ldots \times s_n \to s$ and $t \in Term_{\Sigma'}(\{ x_1 : s_1, \ldots x_n : s_n \})_s$.
+The category of sinatures will be denoted by $\Sig$.
+
+An \emph{atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t_1 = t_2$ where $t_1, t_2 \in Term_\Sigma(V)_s$ for some sort $s$ or of the form $R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in Term_\Sigma(V)_{s_i}$.
+A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are finite sets of atomic formulae over $\Sigma$ with free variables in $V$.
+A \emph{Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
+In \cite{PHT} were described the inference rules of the partial Horn logic.
+If $\mathbb{T}$ is a Horn theory, then a \emph{theorem} of $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
+
+Let $F$ be a morphism of signatures $\Sigma$ and $\Sigma'$.
+Then for each formula $\varphi$ over $\Sigma$ we can define formula $F(\varphi)$ over $\Sigma'$ just by applying $F$ to every term in $\varphi$.
+If $\varphi \sststile{}{V} \psi$ is a sequent over $\Sigma$, then $F(\varphi) \sststile{}{V} F(\psi)$ is a sequent over $\Sigma'$.
+Let $\mathbb{T}$ and $\mathbb{T}'$ be Horn theories in signatures $\Sigma$ and $\Sigma'$ respectively.
+Then we will say that $F$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ if $F(\varphi) \sststile{}{V} F(\psi)$ is a theorem of $\mathbb{T}'$.
+Note that if $F$ respects all axioms of $\mathbb{T}$, then it respects all of its theorems too.
+We will say that morphisms $F$ and $G$ are \emph{equivalent} if for all $f \in \mathcal{F}_\Sigma$, $f : s_1 \times \ldots \times s_n \to s$ sequent $\sststile{}{x_1, \ldots x_n} F(f(x_1, \ldots x_n)) = G(f(x_1, \ldots x_n))$ is a theorem of $\mathbb{T}'$.
+Note that if $F$ and $G$ are equivalent then $\sststile{}{V} F(t) = G(t)$ is a theorem of $\mathbb{T}'$ for each $t \in Term_\Sigma(V)_s$.
+
+Morphisms of theories $\mathbb{T}$ and $\mathbb{T'}$ are equivalence classes of morphisms of signatures $\Sigma$ and $\Sigma$ which respect all axioms of $\mathbb{T}$.
+The composition of morphisms of signatures respects the equivalence relation; hence this defines a category of theories which will be denoted by $\Th$.
+
+\label{sec:T1}
 \section{Theory $T_1$}
 
 In this section we will describe a quasi-equational theory $T_1$ and prove that the category of models of $T_1$ is equivalent to the category of contextual categories.
-We will use this theory to define algebraic type theories.
+Later we will use this theory to define algebraic type theories.
 
 We will consider quasi-equational theories in signature $\Sigma_C$ with the set of sorts $\{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
 Let $T_0$ be the theory with the set of function symbols $\{ * \} \cup \{ ft_n : Ctx_{n+1} \to Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ ty_n : Tm_n \to Ctx_{n+1}\ |\ n \in \mathbb{N} \}$ and the following axioms:
@@ -739,8 +783,8 @@ Then for each judgement $J$ of the form $\Gamma \vdash A$ we define an equation 
 \[ ft(\alpha_{V,V,ty,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), A, \rho)) = \beta_{V,V,n,k}(\Delta, \Gamma, \rho). \]
 For each judgement $J$ of the form $\Gamma \vdash a : A$ we define an equation $A(J)$:
 \[ ty(\alpha_{V,V,tm,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), a, \rho)) = \alpha_{V,V,ty,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), A, \rho). \]
-For each judgement $J$ of the form $\Gamma \vdash a \deq a'$ we define an equation $A(J)$:
-\[ \alpha_{V,V,p,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), a, \rho) = \alpha_{V,V,p,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), a', \rho). \]
+For each judgement $J$ of the form $a \deq a'$ we define an equation $A(J)$:
+\[ \alpha_{V,V,p,n,0}(\Delta, a, \rho) = \alpha_{V,V,p,n,0}(\Delta, a', \rho). \]
 
 For each inference rule $R$ with premises $J_1$, \ldots $J_m$ and conclusion $J$ we define an axiom $A(R)$:
 \[ A(J_1), \ldots A(J_m) \sststile{}{FV(A(J_1)) \cup \ldots \cup FV(A(J_m)) \cup FV(A(J))} A(J) \]
@@ -754,28 +798,14 @@ where
 \[ \Delta_i' = \beta_{\{ x_1, \ldots x_{i-1} \},V,n,q_i}(\Delta, \Delta_i, [x_j \mapsto a_j']) \text{, and} \]
 $x_i$ is defined by a judgement with context $\Delta_i$.
 
-Axioms of $E(\Sigma, \mathcal{I})$ are the axioms of $T_1$, $D(f)$ and $S(f)$for each $f \in \Sigma$, and $A(R)$ for each $R \in \mathcal{I}$.
+Axioms of $E(\Sigma, \mathcal{I})$ are the axioms of $T_1$, $D(f)$ and $S(f)$ for each $f \in \Sigma$, and $A(R)$ for each $R \in \mathcal{I}$.
 
-\section{Models of algebraic type theories}
+\section{Initial models of syntactic type theories}
 
-In this section we show how to construct a model of the theories we described in previous sections from a category $\C$ (with some additional data).
-For our constructions we will use ideas from \cite{local-universes}.
-
-Let $\C$ be a category with finite limits and $F$ a class of maps of $\C$.
-Suppose $\C$ is equipped with chosen terminal object $1$ and pullbacks $g^*(E)$ for each $g : X \to B$ and $f : E \to B \in F$.
-Then we can define a $T_1$ model $M = M(\C,F)$.
-Class $Ctx_n$ consists of sequences $(C_1, \ldots C_n)$ where each $C_i$ is a diagram of the form
-\[ \xymatrix{                  & E_i \ar[d]^{f_i} \\
-              X_i \ar[r]_{g_i} & B_i
-            } \]
-where $f_i \in F$, $X_1 = 1$, and $X_{i+1} = g_i^*(E_i)$.
-Class $Tm_n$ consists of pairs $(C,s)$ where $C = (C_1, \ldots C_{n+1}) \in Ctx_{n+1}$ and $s : X_{n+1} \to E_{n+1}$ is a map such that the following diagram commutes:
-\[ \xymatrix{                                    & E_{n+1} \ar[d]^{f_{n+1}} \\
-              X_{n+1} \ar[r]_{g_{n+1}} \ar[ur]^s & B_{n+1}
-            } \]
-Functions $ft$ and $ty$ are defined in the obvious way.
-This construction gives us a $T_0$ model.
-Note that, in general, we need to work with large models, but if $\C$ is locally small and $F$ is small, then classes $Ctx_n$ and $Tm_n$ are small too.
+Results of section~\ref{sec:T1} show that models of algebraic type theories can be described as contextual categories with additional structure.
+Initial models are of particular interest.
+In this section we show that initial models of those theories that come from (regular) syntactic theories can be constructed from fully annotated lambda terms.
+Then we show that in some cases we can drop annotations on lambda terms.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
