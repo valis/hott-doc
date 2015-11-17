@@ -176,6 +176,7 @@ Note that if $F$ and $G$ are equivalent then $\sststile{}{V} F(t) = G(t)$ is a t
 
 Morphisms of theories $\mathbb{T}$ and $\mathbb{T'}$ are equivalence classes of morphisms of signatures $\Sigma$ and $\Sigma$ which respect all axioms of $\mathbb{T}$.
 The composition of morphisms of signatures respects the equivalence relation; hence this defines a category of theories which will be denoted by $\Th$.
+Note that $\Sig$ is a full subcategory of $\Th$; indeed, every signature can be considered as a theory with an empty set of axioms.
 
 \label{sec:T1}
 \section{Theory $T_1$}
@@ -183,7 +184,7 @@ The composition of morphisms of signatures respects the equivalence relation; he
 In this section we will describe a quasi-equational theory $T_1$ and prove that the category of models of $T_1$ is equivalent to the category of contextual categories.
 Later we will use this theory to define algebraic type theories.
 
-We will consider quasi-equational theories in signature $\Sigma_C$ with the set of sorts $\{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
+We will consider quasi-equational theories in signatures with the set of sorts $\mathcal{C} = \{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
 Let $T_0$ be the theory with the set of function symbols $\{ * \} \cup \{ ft_n : Ctx_{n+1} \to Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ ty_n : Tm_n \to Ctx_{n+1}\ |\ n \in \mathbb{N} \}$ and the following axioms:
 \begin{align*}
 & \top \sststile{}{A} ft_n(A) \downarrow \\
@@ -477,6 +478,108 @@ Thus $\alpha$ is a morphism of contextual categories, and it is easy to see that
 Hence $\alpha$ is isomorphism and $F$ is an equivalence.
 \end{proof}
 
+\section{Algebraic presentations of type theories}
+
+In this section we will describe an algebraic approach to defining type theories.
+We will consider a particular kind of algebraic type theories which we call \emph{regular}.
+Finally, we will define categories $\algtt$ and $\algtt_{reg}$ of algebraic and regular algebraic type theories.
+
+\begin{defn}
+An \emph{algebraic type theory} is a quasi-equational theory in a signature with the set of sorts $\mathcal{C}$ together with a map from $T_1$.
+Category $\algtt$ of algebraic type theory is the under category $T_1 / \cat{Th}_\mathcal{C}$.
+\end{defn}
+
+Usually in type theories all of the function symbols are available in every context.
+We call such theories \emph{regular}.
+Let $\mathcal{F}$ be a set of function symbols such that every $\sigma \in \mathcal{F}$ has a signature of the form $(p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$.
+Then we define $reg(\mathcal{F})$ as the set of symbols of $T_1$ together with $\{ \sigma_k : (ctx, k) \times (p_1, q_1 + k) \times \ldots \times (p_n, q_n + k) \to (p, k) \ |\ \sigma \in \mathcal{F}, \sigma : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0), k \in \mathbb{N} \}$.
+
+Now, for every $t \in Term_{reg(\mathcal{F})}(x_1 : (p_1,q_1), \ldots x_n : (p_n,q_n))_{(p,q)}$ we define a term $L(t) \in Term_{reg(\mathcal{F})}(x_1 : (p_1,q_1+1), \ldots x_n : (p_n,q_n+1))_{(p,q+1)}$ by induction on $t$:
+\begin{align*}
+& L(x_i) = x_i \\
+& L(ft_n(A)) = ft_{n+1}(L(A)) \\
+& L(ty_n(a)) = ty_{n+1}(L(a)) \\
+& L(v_{n,i}(A)) = v_{n+1,i}(L(A)) \\
+& L(subst_{p,n,k}(B, A, a_1, \ldots a_k)) = subst_{p,n+1,k}(L(B), A, L(a_1), \ldots L(a_k)) \\
+& L(\sigma_k(A, a_1, \ldots a_n)) = \sigma_{k+1}(L(A), L(a_1), \ldots L(a_n))
+\end{align*}
+
+% For each $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$ we introduce a set of axioms $A(\sigma)$:
+
+In general, we cannot construct an algebraic type theory from a syntactic one.
+So we consider a full subcategory of syntactic type theories for which we can do that.
+We call such theories \emph{regular}.
+
+We say that a function symbol $f \in \Sigma$ is \emph{closed} if it has signature $s_1 \times \ldots \times s_n \to (p,0)$ for some $s_1$, \ldots $s_n$, and $p$.
+We say that a theory is \emph{closed} if every its function symbol is closed.
+
+We say that a judgement defines variable $x$ if it is either of the form $\Gamma \vdash x$ or of the form $\Gamma \vdash x : A$.
+We say that a judgement defines symbol $(f : s_1 \times \ldots s_n \to (p,q)) \in \Sigma$ if it is either
+of the form $\Gamma \vdash f(x_1, \ldots x_n)$ or of the form $\Gamma \vdash f(x_1, \ldots x_n) : A$ where $x_i$ are variables.
+We say that an inference rule defines symbol $f$ if its conclusion defines it.
+We say that such inference rule is \emph{regular} if the length of $\Gamma$ is $q$ and
+if all variables in the list $x_1$, \ldots $x_n$ are distinct, this list contains all free variables of the rule,
+and every $x_i$ defined by a single premise with free variables in $x_1$, \ldots $x_{i-1}$.
+A syntactic type theory $T = (\Sigma, \mathcal{I})$ is \emph{regular} if the following conditions hold:
+\begin{itemize}
+\item $T$ is closed.
+\item Every function symbol in $\Sigma$ is defined by a single regular inference rule in $\mathcal{I}$,
+\item There is a well-ordering on $\Sigma$ such that the rule that defines $f$ uses in premises only symbols that are less then $f$.
+\item Every inference rule in $\mathcal{I}$ is either defines some function symbol or has conclusion of the form $a \deq b$.
+\end{itemize}
+
+Now for each regular syntactic type theory $T = (\Sigma, \mathcal{I})$ we define an algebraic type theory $E(T)$.
+There is a function from the set of sorts of syntactic theories to the set of sorts of algebraic theories.
+Sort $(tm,n)$ is mapped to $Tm_n$ and $(ty,n)$ is mapped to $Ctx_{n+1}$.
+We will usually omit this function and use sorts $(tm,n)$ and $(ty,n)$ directly.
+The signature $E(\Sigma)$ of $E(T)$ consists of symbols $v_{n,i}$, $subst_{n,k}$, $Subst_{n,k}$ (with the signatures as in $T_1$), and
+$f_k : Ctx_k \times (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,k)$
+for each $k \in \mathbb{N}$ and $(f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)) \in \Sigma$.
+
+Now we define functions
+\[ \alpha_{U,V,p,n,k} : Term_{E(\Sigma)}(V)_{Ctx_{n+k}} \times Term_{\Sigma}(U)_{(p,k)} \times Env_{U,V,p,n} \to Term_{E(\Sigma)}(V)_{(p,n+k)} \]
+and
+\[ \beta_{U,V,n,k} : Term_{E(\Sigma)}(V)_{Ctx_n} \times Ctx_\Sigma(U)_k \times Env_{U,V,ty,n} \to Term_{E(\Sigma)}(V)_{Ctx_{n+k}} \]
+where $Ctx_\Sigma(U)_k$ is the set of contexts of length $k$ and $Env_{U,V,p,n}$ is the set of functions $U_{(p,m)} \to Term_{E(\Sigma)}(V)_{(p,n+m)}$ for all $m \in \mathbb{N}$.
+\begin{itemize}
+\item $\beta_{U,V,n,0}(\Gamma, (), \rho) = \Gamma$.
+\item $\beta_{U,V,n,k+1}(\Gamma, (\Delta,A), \rho) = \alpha_{U,V,ty,n,k}(\beta_{U,V,n,k}(\Gamma, \Delta, \rho), A, \rho)$.
+\item $\alpha_{U,V,p,n,k}(\Gamma, v_{k,i}, \rho) = v_{n+k,i}(\Gamma)$.
+\item $\alpha_{U,V,p,n,k}(\Gamma, x, \rho) = \rho(x)$ where $x$ is a variable.
+\item $\alpha_{U,V,p,n,k}(\Gamma, subst_{ty,k,m}(x, a_1, \ldots a_m)) = Subst_{n+k,n+m}(\Gamma, \rho(x), a_1', \ldots a_{n+m}')$
+    where $a_i' = v_{n+k,n+k-i}(\Gamma)$ if $i \leq n$ and $a_i' = \alpha_{U,V,tm,n,k}(\Gamma, a_{i-n}, \rho)$ if $i > n$.
+\item $\alpha_{U,V,p,n,k}(\Gamma, subst_{tm,k,m}(x, a_1, \ldots a_m)) = subst_{n+k,n+m}(\Gamma, \rho(x), a_1', \ldots a_{n+m}')$
+    where $a_i' = v_{n+k,n+k-i}(\Gamma)$ if $i \leq n$ and $a_i' = \alpha_{U,V,tm,n,k}(\Gamma, a_{i-n}, \rho)$ if $i > n$.
+\item $\alpha_{U,V,p,n,k}(\Gamma, f_k(a_1, \ldots a_m)) = f_{n+k}(\Gamma, a_1', \ldots a_m'))$
+    where $f : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,0)$,
+    $f(x_1, \ldots x_m)$ is defined by a rule $R$ in which $x_i$ is defined by a judgement with context $\Delta_i$, and
+    \[ a_i' = \alpha_{U,V,p_i,n,k+q_i}(\beta_{\{ x_1, \ldots x_{i-1} \},V,n+k,q_i}(\Gamma, \Delta_i, [x_j \mapsto a_j']), a_i, \rho). \]
+\end{itemize}
+Conditions in the definition of regularity guarantee that these functions are well-defined.
+
+Let $n \in \mathbb{N}$ and $\Delta \in V_{Ctx_n}$.
+Let $i : V_{(p,m)} \to V_{(p,n+m)}$ be any injective function and $\rho : V_{(p,m)} \to Term_{E(\Sigma)}(V)_{(p,n+m)}$ be the function such that $\rho(x) = i(x)$ for each $x$.
+Then for each judgement $J$ of the form $\Gamma \vdash A$ we define an equation $A(J)$:
+\[ ft(\alpha_{V,V,ty,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), A, \rho)) = \beta_{V,V,n,k}(\Delta, \Gamma, \rho). \]
+For each judgement $J$ of the form $\Gamma \vdash a : A$ we define an equation $A(J)$:
+\[ ty(\alpha_{V,V,tm,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), a, \rho)) = \alpha_{V,V,ty,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), A, \rho). \]
+For each judgement $J$ of the form $a \deq a'$ we define an equation $A(J)$:
+\[ \alpha_{V,V,p,n,0}(\Delta, a, \rho) = \alpha_{V,V,p,n,0}(\Delta, a', \rho). \]
+
+For each inference rule $R$ with premises $J_1$, \ldots $J_m$ and conclusion $J$ we define an axiom $A(R)$:
+\[ A(J_1), \ldots A(J_m) \sststile{}{FV(A(J_1)) \cup \ldots \cup FV(A(J_m)) \cup FV(A(J))} A(J) \]
+For each function symbol $f(x_1, \ldots x_k)$ which is defined by a rule with premises $J_1$, \ldots $J_m$ we define an axiom $D(f)$:
+\[ A(J_1), \ldots A(J_m) \ssststile{}{i(x_1), \ldots i(x_k)} f(\rho(x_1), \ldots \rho(x_k)) \downarrow \]
+For each function symbol $f : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,0)$ such that $f(x_1, \ldots x_m)$ is defined by a rule with premises $J_1$, \ldots $J_m$ we define an axiom $S(f)$:
+\[ \sststile{}{\Gamma, \Delta, a_1, \ldots a_m, b_1, \ldots b_k} subst_{p,n,k}(\Delta, f_k(\Gamma, a_1, \ldots a_m), b_1, \ldots b_k) \leftrightharpoons f_n(\Delta, a_1', \ldots a_m') \]
+where
+\[ a_i' = subst_{p_i,n+q_i,k+q_i}(\Delta_i', a_i, b_{i,1}', \ldots b_{i,k}', v_{n+q_i,q_i-1}(\Delta_i'), \ldots v_{n+q_i,0}(\Delta_i')), \]
+\[ b_{i,j}' = subst_{tm,n+q_i,n}(\Delta_i', b_j, v_{n+q_i,n+q_i-1}(\Delta_i'), \ldots v_{n+q_i,q_i}(\Delta')), \]
+\[ \Delta_i' = \beta_{\{ x_1, \ldots x_{i-1} \},V,n,q_i}(\Delta, \Delta_i, [x_j \mapsto a_j']) \text{, and} \]
+$x_i$ is defined by a judgement with context $\Delta_i$.
+
+Axioms of $E(\Sigma, \mathcal{I})$ are the axioms of $T_1$, $D(f)$ and $S(f)$ for each $f \in \Sigma$, and $A(R)$ for each $R \in \mathcal{I}$.
+
 \section{Syntactic presentations of type theories}
 
 In this section we will describe a syntactic approach to defining type theories.
@@ -714,91 +817,6 @@ The theory a universe has function symbols $Type : (ty,0)$ and $El : (tm,0) \to 
 \end{example}
 
 % Now, usually universes are assumed to be closed under different type constructions.
-
-\section{Algebraic presentations of type theories}
-
-In this section we will describe an algebraic approach to defining type theories.
-We will define category $\algtt$ of algebraic type theories.
-We will also describe a fully faithful functor $E : \syntt_{reg} \to \algtt$ from a full subcategory of $\syntt$ to $\algtt$.
-
-\begin{defn}
-An \emph{algebraic type theory} is a theory in signature $\Sigma_C$ with a map from $T_1$.
-Category $\algtt$ of algebraic type theory is the under category $T_1 / \Sigma_C \text{-} \cat{Th}$.
-\end{defn}
-
-In general, we cannot construct an algebraic type theory from a syntactic one.
-So we consider a full subcategory of syntactic type theories for which we can do that.
-We call such theories \emph{regular}.
-
-We say that a function symbol $f \in \Sigma$ is \emph{closed} if it has signature $s_1 \times \ldots \times s_n \to (p,0)$ for some $s_1$, \ldots $s_n$, and $p$.
-We say that a theory is \emph{closed} if every its function symbol is closed.
-
-We say that a judgement defines variable $x$ if it is either of the form $\Gamma \vdash x$ or of the form $\Gamma \vdash x : A$.
-We say that a judgement defines symbol $(f : s_1 \times \ldots s_n \to (p,q)) \in \Sigma$ if it is either
-of the form $\Gamma \vdash f(x_1, \ldots x_n)$ or of the form $\Gamma \vdash f(x_1, \ldots x_n) : A$ where $x_i$ are variables.
-We say that an inference rule defines symbol $f$ if its conclusion defines it.
-We say that such inference rule is \emph{regular} if the length of $\Gamma$ is $q$ and
-if all variables in the list $x_1$, \ldots $x_n$ are distinct, this list contains all free variables of the rule,
-and every $x_i$ defined by a single premise with free variables in $x_1$, \ldots $x_{i-1}$.
-A syntactic type theory $T = (\Sigma, \mathcal{I})$ is \emph{regular} if the following conditions hold:
-\begin{itemize}
-\item $T$ is closed.
-\item Every function symbol in $\Sigma$ is defined by a single regular inference rule in $\mathcal{I}$,
-\item There is a well-ordering on $\Sigma$ such that the rule that defines $f$ uses in premises only symbols that are less then $f$.
-\item Every inference rule in $\mathcal{I}$ is either defines some function symbol or has conclusion of the form $a \deq b$.
-\end{itemize}
-
-Now for each regular syntactic type theory $T = (\Sigma, \mathcal{I})$ we define an algebraic type theory $E(T)$.
-There is a function from the set of sorts of syntactic theories to the set of sorts of algebraic theories.
-Sort $(tm,n)$ is mapped to $Tm_n$ and $(ty,n)$ is mapped to $Ctx_{n+1}$.
-We will usually omit this function and use sorts $(tm,n)$ and $(ty,n)$ directly.
-The signature $E(\Sigma)$ of $E(T)$ consists of symbols $v_{n,i}$, $subst_{n,k}$, $Subst_{n,k}$ (with the signatures as in $T_1$), and
-$f_k : Ctx_k \times (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,k)$
-for each $k \in \mathbb{N}$ and $(f : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)) \in \Sigma$.
-
-Now we define functions
-\[ \alpha_{U,V,p,n,k} : Term_{E(\Sigma)}(V)_{Ctx_{n+k}} \times Term_{\Sigma}(U)_{(p,k)} \times Env_{U,V,p,n} \to Term_{E(\Sigma)}(V)_{(p,n+k)} \]
-and
-\[ \beta_{U,V,n,k} : Term_{E(\Sigma)}(V)_{Ctx_n} \times Ctx_\Sigma(U)_k \times Env_{U,V,ty,n} \to Term_{E(\Sigma)}(V)_{Ctx_{n+k}} \]
-where $Ctx_\Sigma(U)_k$ is the set of contexts of length $k$ and $Env_{U,V,p,n}$ is the set of functions $U_{(p,m)} \to Term_{E(\Sigma)}(V)_{(p,n+m)}$ for all $m \in \mathbb{N}$.
-\begin{itemize}
-\item $\beta_{U,V,n,0}(\Gamma, (), \rho) = \Gamma$.
-\item $\beta_{U,V,n,k+1}(\Gamma, (\Delta,A), \rho) = \alpha_{U,V,ty,n,k}(\beta_{U,V,n,k}(\Gamma, \Delta, \rho), A, \rho)$.
-\item $\alpha_{U,V,p,n,k}(\Gamma, v_{k,i}, \rho) = v_{n+k,i}(\Gamma)$.
-\item $\alpha_{U,V,p,n,k}(\Gamma, x, \rho) = \rho(x)$ where $x$ is a variable.
-\item $\alpha_{U,V,p,n,k}(\Gamma, subst_{ty,k,m}(x, a_1, \ldots a_m)) = Subst_{n+k,n+m}(\Gamma, \rho(x), a_1', \ldots a_{n+m}')$
-    where $a_i' = v_{n+k,n+k-i}(\Gamma)$ if $i \leq n$ and $a_i' = \alpha_{U,V,tm,n,k}(\Gamma, a_{i-n}, \rho)$ if $i > n$.
-\item $\alpha_{U,V,p,n,k}(\Gamma, subst_{tm,k,m}(x, a_1, \ldots a_m)) = subst_{n+k,n+m}(\Gamma, \rho(x), a_1', \ldots a_{n+m}')$
-    where $a_i' = v_{n+k,n+k-i}(\Gamma)$ if $i \leq n$ and $a_i' = \alpha_{U,V,tm,n,k}(\Gamma, a_{i-n}, \rho)$ if $i > n$.
-\item $\alpha_{U,V,p,n,k}(\Gamma, f_k(a_1, \ldots a_m)) = f_{n+k}(\Gamma, a_1', \ldots a_m'))$
-    where $f : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,0)$,
-    $f(x_1, \ldots x_m)$ is defined by a rule $R$ in which $x_i$ is defined by a judgement with context $\Delta_i$, and
-    \[ a_i' = \alpha_{U,V,p_i,n,k+q_i}(\beta_{\{ x_1, \ldots x_{i-1} \},V,n+k,q_i}(\Gamma, \Delta_i, [x_j \mapsto a_j']), a_i, \rho). \]
-\end{itemize}
-Conditions in the definition of regularity guarantee that these functions are well-defined.
-
-Let $n \in \mathbb{N}$ and $\Delta \in V_{Ctx_n}$.
-Let $i : V_{(p,m)} \to V_{(p,n+m)}$ be any injective function and $\rho : V_{(p,m)} \to Term_{E(\Sigma)}(V)_{(p,n+m)}$ be the function such that $\rho(x) = i(x)$ for each $x$.
-Then for each judgement $J$ of the form $\Gamma \vdash A$ we define an equation $A(J)$:
-\[ ft(\alpha_{V,V,ty,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), A, \rho)) = \beta_{V,V,n,k}(\Delta, \Gamma, \rho). \]
-For each judgement $J$ of the form $\Gamma \vdash a : A$ we define an equation $A(J)$:
-\[ ty(\alpha_{V,V,tm,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), a, \rho)) = \alpha_{V,V,ty,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), A, \rho). \]
-For each judgement $J$ of the form $a \deq a'$ we define an equation $A(J)$:
-\[ \alpha_{V,V,p,n,0}(\Delta, a, \rho) = \alpha_{V,V,p,n,0}(\Delta, a', \rho). \]
-
-For each inference rule $R$ with premises $J_1$, \ldots $J_m$ and conclusion $J$ we define an axiom $A(R)$:
-\[ A(J_1), \ldots A(J_m) \sststile{}{FV(A(J_1)) \cup \ldots \cup FV(A(J_m)) \cup FV(A(J))} A(J) \]
-For each function symbol $f(x_1, \ldots x_k)$ which is defined by a rule with premises $J_1$, \ldots $J_m$ we define an axiom $D(f)$:
-\[ A(J_1), \ldots A(J_m) \ssststile{}{i(x_1), \ldots i(x_k)} f(\rho(x_1), \ldots \rho(x_k)) \downarrow \]
-For each function symbol $f : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,0)$ such that $f(x_1, \ldots x_m)$ is defined by a rule with premises $J_1$, \ldots $J_m$ we define an axiom $S(f)$:
-\[ \sststile{}{\Gamma, \Delta, a_1, \ldots a_m, b_1, \ldots b_k} subst_{p,n,k}(\Delta, f_k(\Gamma, a_1, \ldots a_m), b_1, \ldots b_k) \leftrightharpoons f_n(\Delta, a_1', \ldots a_m') \]
-where
-\[ a_i' = subst_{p_i,n+q_i,k+q_i}(\Delta_i', a_i, b_{i,1}', \ldots b_{i,k}', v_{n+q_i,q_i-1}(\Delta_i'), \ldots v_{n+q_i,0}(\Delta_i')), \]
-\[ b_{i,j}' = subst_{tm,n+q_i,n}(\Delta_i', b_j, v_{n+q_i,n+q_i-1}(\Delta_i'), \ldots v_{n+q_i,q_i}(\Delta')), \]
-\[ \Delta_i' = \beta_{\{ x_1, \ldots x_{i-1} \},V,n,q_i}(\Delta, \Delta_i, [x_j \mapsto a_j']) \text{, and} \]
-$x_i$ is defined by a judgement with context $\Delta_i$.
-
-Axioms of $E(\Sigma, \mathcal{I})$ are the axioms of $T_1$, $D(f)$ and $S(f)$ for each $f \in \Sigma$, and $A(R)$ for each $R \in \mathcal{I}$.
 
 \section{Initial models of syntactic type theories}
 
