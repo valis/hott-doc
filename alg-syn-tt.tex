@@ -161,6 +161,14 @@ The category of sinatures will be denoted by $\Sig$.
 
 An \emph{atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t_1 = t_2$ where $t_1, t_2 \in Term_\Sigma(V)_s$ for some sort $s$ or of the form $R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in Term_\Sigma(V)_{s_i}$.
 A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are finite sets of atomic formulae over $\Sigma$ with free variables in $V$.
+We will use the following abbreviations:
+\begin{align*}
+t\!\downarrow & \text{ means } t = t \\
+\sststile{}{V} t \leftrightharpoons s & \text{ means } t\!\downarrow, s\!\downarrow\,\sststile{}{V} t = s \\
+\sststile{}{V} t \cong s & \text{ means } t\!\downarrow\,\sststile{}{V} t = s \text{ and } s\!\downarrow\,\sststile{}{V} t = s \\
+\varphi \ssststile{}{V} \psi & \text{ means } \varphi \sststile{}{V} \psi \text{ and } \psi \sststile{}{V} \varphi
+\end{align*}
+
 A \emph{Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
 In \cite{PHT} were described the inference rules of the partial Horn logic.
 If $\mathbb{T}$ is a Horn theory, then a \emph{theorem} of $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
@@ -171,7 +179,7 @@ If $\varphi \sststile{}{V} \psi$ is a sequent over $\Sigma$, then $F(\varphi) \s
 Let $\mathbb{T}$ and $\mathbb{T}'$ be Horn theories in signatures $\Sigma$ and $\Sigma'$ respectively.
 Then we will say that $F$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ if $F(\varphi) \sststile{}{V} F(\psi)$ is a theorem of $\mathbb{T}'$.
 Note that if $F$ respects all axioms of $\mathbb{T}$, then it respects all of its theorems too.
-We will say that morphisms $F$ and $G$ are \emph{equivalent} if for all $f \in \mathcal{F}_\Sigma$, $f : s_1 \times \ldots \times s_n \to s$ sequent $\sststile{}{x_1, \ldots x_n} F(f(x_1, \ldots x_n)) = G(f(x_1, \ldots x_n))$ is a theorem of $\mathbb{T}'$.
+We will say that morphisms $F$ and $G$ are \emph{equivalent} if for all $f \in \mathcal{F}_\Sigma$, $f : s_1 \times \ldots \times s_n \to s$ sequent $\sststile{}{x_1, \ldots x_n} F(f(x_1, \ldots x_n)) \cong G(f(x_1, \ldots x_n))$ is a theorem of $\mathbb{T}'$.
 Note that if $F$ and $G$ are equivalent then $\sststile{}{V} F(t) = G(t)$ is a theorem of $\mathbb{T}'$ for each $t \in Term_\Sigma(V)_s$.
 
 Morphisms of theories $\mathbb{T}$ and $\mathbb{T'}$ are equivalence classes of morphisms of signatures $\Sigma$ and $\Sigma$ which respect all axioms of $\mathbb{T}$.
@@ -495,20 +503,24 @@ Let $\mathcal{F}$ be a set of function symbols such that every $\sigma \in \math
 Then we define $reg(\mathcal{F})$ as the set of symbols of $T_1$ together with $\{ \sigma_k : (ctx, k) \times (p_1, q_1 + k) \times \ldots \times (p_n, q_n + k) \to (p, k) \ |\ \sigma \in \mathcal{F}, \sigma : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0), k \in \mathbb{N} \}$.
 We will use term $\sigma(a_1, \ldots a_n)$ as a synonym for $\sigma_0(*, a_1, \ldots a_n)$.
 
-Now, for every set of variables $V$ we define a set $L(V)$ which contains a variable $x$ of sort $(p,q+1)$ for every variable $x$ of sort $(p,q)$ in $V$.
-For every $t \in Term_{reg(\mathcal{F})}(V)_{(p,q)}$ we define a term $L(t) \in Term_{reg(\mathcal{F})}(L(V \amalg \{ \Gamma : (ctx,1) \}))_{(p,q+1)}$ by induction on $t$:
+Now, for every set of variables $V$ we define a set $L^n(V)$ which contains a variable $x$ of sort $(p,q+n)$ for every variable $x$ of sort $(p,q)$ in $V$.
+For every $t \in Term_{reg(\mathcal{F})}(V)_{(p,q)}$, $m \in \mathbb{N}$, and variable $\Gamma$ we define a term $L^m(\Gamma, t) \in Term_{reg(\mathcal{F})}(L^m(V \amalg \{ \Gamma : (ctx,0) \}))_{(p,q+m)}$ by induction on $t$:
 \begin{align*}
-& L(*) = \Gamma \\
-& L(x_i) = x_i \\
-& L(ft_n(A)) = ft_{n+1}(L(A)) \\
-& L(ty_n(a)) = ty_{n+1}(L(a)) \\
-& L(v_{n,i}(A)) = v_{n+1,i}(L(A)) \\
-& L(subst_{p,n,k}(B, A, a_1, \ldots a_k)) = subst_{p,n+1,k}(L(B), A, L(a_1), \ldots L(a_k)) \\
-& L(\sigma_k(A, a_1, \ldots a_n)) = \sigma_{k+1}(L(A), L(a_1), \ldots L(a_n))
+& L^m(\Gamma, *) = \Gamma \\
+& L^m(\Gamma, x_i) = x_i \\
+& L^m(\Gamma, ft_n(A)) = ft_{n+m}(L^m(\Gamma, A)) \\
+& L^m(\Gamma, ty_n(a)) = ty_{n+m}(L^m(\Gamma, a)) \\
+& L^m(\Gamma, v_{n,i}(A)) = v_{n+m,i}(L^m(\Gamma, A)) \\
+& L^m(\Gamma, subst_{p,n,k}(B, A, a_1, \ldots a_k)) = \\
+& \qquad subst_{p,n+m,k+m}(L^m(\Gamma, B), L^m(\Gamma, A), b_1, \ldots b_m, a_1', \ldots a_k') \\
+& \qquad \text{where $b_i = v_{n+m,n+m-i}(L^m(\Gamma, B))$ and $a_i' = L^m(\Gamma, a_i)$ } \\
+& L^m(\Gamma, \sigma_n(A, a_1, \ldots a_k)) = \sigma_{n+m}(L^m(\Gamma, A), L^m(\Gamma, a_1), \ldots L^m(\Gamma, a_k))
 \end{align*}
 For every formula $\varphi$ we define $L(\varphi)$ as the formula which is obtained from $\varphi$ by applying $L$ to every term in it.
 We will say that theory $\mathbb{T}$ in signature $(\mathcal{C}, reg(\mathcal{F}), \varnothing)$ is \emph{stable}
 if for every axiom (and hence for every theorem) $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$ sequent $L(\varphi) \sststile{}{V \amalg \{ \Gamma : (ctx,1) \}} L(\psi)$ is a theorem of $\mathbb{T}$.
+Given a theory $\mathbb{T}$ there is the smallest stable theory containing $\mathbb{T}$.
+We call this theory the stabilization of $\mathbb{T}$ and denote by $st(\mathbb{T})$.
 
 We define auxiliary derived operations in the signature of $T_1$.
 For every $m \in \mathbb{N}$ we define $wk^m_n : Ctx_{n+m} \times Tm_n \to Tm_{n+m}$ as follows:
@@ -521,14 +533,26 @@ where $B' = subst^m_{ty,n,k}(B, ft(A), a_1, \ldots a_k)$.
 
 \begin{defn}
 A \emph{regular algebraic type theory} is a set $\mathcal{F}$ together with a stable theory over $(\mathcal{C}, reg(\mathcal{F}), \varnothing)$
-such that for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,0)$ the following sequents are derivable.
+such that axioms of $\mathbb{T}_1$ are derivable and for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,0)$ the following sequents are derivable:
 \[ \sststile{}{B, b_1, \ldots b_m} ft_k(\sigma_k(B, b_1, \ldots b_m)) = B \text{ if $p = ty$,} \]
 \[ \sststile{}{B, b_1, \ldots b_m} ft_k(ty_k(\sigma_k(B, b_1, \ldots b_m))) = B \text{ if $p = tm$, and} \]
 \[ \sststile{}{B', B, b_1, \ldots b_m, a_1, \ldots a_k} subst_{p,n,k}(B', \sigma_k(B, b_1, \ldots b_m), a_1, \ldots a_k) = \sigma_n(B', b_1', \ldots b_m') \]
 where $b_i' = subst_{p_i,n,k}^{q_i+1}(B', b_i, a_1, \ldots a_k)$.
 \end{defn}
 
-\section{Old stuff}
+Let $(\mathcal{F},\mathbb{T})$ and $(\mathcal{F}',\mathbb{T}')$ be regular algebraic type theories.
+Then we say that a morphism $F$ of theories $\mathbb{T}$ and $\mathbb{T}'$ is \emph{regular} if for every $\sigma \in \mathcal{F}$ the following sequent is a theorem of $\mathbb{T}'$.
+\[ \sststile{}{\Gamma, a_1, \ldots a_n} F(\sigma_m(\Gamma, a_1, \ldots a_n)) = L^m(\Gamma, F(\sigma_0(*, a_1, \ldots a_n))) \]
+Note that term $L^m(\Gamma, F(\sigma_0(*, a_1, \ldots a_n)))$ does not depend on the choice of a representative of the equivalence class.
+Indeed, if $\sststile{}{V} t \cong s$, then $\sststile{}{\Gamma,V} L^m(\Gamma,t) \cong L^m(\Gamma,s)$ since $\mathbb{T}'$ is stable.
+
+Category $\algtt_{reg}$ of regular algebraic type theories has regular algebraic type theories as objects and regular morphisms of the underlying theories as morphisms.
+To construct a morphism of regular theories $(\mathcal{F},\mathbb{T})$ and $(\mathcal{F}',\mathbb{T}')$ it is enough to give a function $F$ that to each $\sigma \in \mathcal{F}$ assigns a term in $\mathcal{F}'$ of the corresponding signature.
+Then we can extend $F$ as follows:
+\[ F(\sigma_m(\Gamma, a_1, \ldots a_n)) = L^m(\Gamma, F(\sigma(a_1, \ldots a_n))) \]
+If this $F$ respects axioms of $\mathbb{T}$, then it uniquely extends to a regular morphism.
+
+\section{Syntactic type theories}
 
 In general, we cannot construct an algebraic type theory from a syntactic one.
 So we consider a full subcategory of syntactic type theories for which we can do that.
