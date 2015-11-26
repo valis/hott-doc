@@ -160,7 +160,7 @@ We will write such functions $F$ as $F(\sigma(x_1, \ldots x_n)) = t$ where $\sig
 The category of sinatures will be denoted by $\Sig_{\mathcal{S},\mathcal{P}}$.
 
 An \emph{atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t_1 = t_2$ where $t_1, t_2 \in Term_\Sigma(V)_s$ for some sort $s$ or of the form $R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in Term_\Sigma(V)_{s_i}$.
-A \emph{(partial) Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are finite sets of atomic formulae over $\Sigma$ with free variables in $V$.
+A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are finite sets of atomic formulae over $\Sigma$ with free variables in $V$.
 We will use the following abbreviations:
 \begin{align*}
 t\!\downarrow & \text{ means } t = t \\
@@ -172,6 +172,7 @@ t\!\downarrow & \text{ means } t = t \\
 A \emph{Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
 In \cite{PHT} were described the inference rules of the partial Horn logic.
 If $\mathbb{T}$ is a Horn theory, then a \emph{theorem} of $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
+We say that a theory $\mathbb{T}$ is \emph{total} if for every function symbols $\sigma : s_1 \times \ldots \times s_n \to s$ sequent $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n)\!\downarrow$ is a theorem of $\mathbb{T}$.
 
 Let $F$ be a morphism of signatures $\Sigma$ and $\Sigma'$.
 Then for each formula $\varphi$ over $\Sigma$ we can define formula $F(\varphi)$ over $\Sigma'$ just by applying $F$ to every term in $\varphi$.
@@ -201,6 +202,57 @@ It is easy to see that these constructions indeed define colimits of theories.
 
 Now, if a theory consists of a finite number of function symbols and axioms, then it is finitely presentable.
 Indeed, let $\mathbb{T}$ be such theory, let $D : J \to \Th_{\mathcal{S},\mathcal{P}}$ be a directed set, and let $f : \mathbb{T} \to colim\,D$ be a morphism.
+\end{proof}
+
+\label{sec:T0}
+\section{Theory $\mathbb{T}_0$}
+
+Let $\mathcal{C} = \{ ctx, tm \} \times \mathbb{N}$ be a set of sorts.
+Then we define $\mathbb{T}_0 \in \Th_{\mathcal{C},\varnothing}$ as the theory with the set of function symbols $\{ * \} \cup \{ ft_n : Ctx_{n+1} \to Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ ty_n : Tm_n \to Ctx_{n+1}\ |\ n \in \mathbb{N} \}$ and the following axioms:
+\begin{align*}
+& \sststile{}{A} ft_n(A) \downarrow \\
+& \sststile{}{a} ty_n(a) \downarrow \\
+& \sststile{}{} * \downarrow \\
+& \sststile{}{A} A = *
+\end{align*}
+Let $ft^i_n : Ctx_{n+i} \to Ctx_n$ be the following derived operation:
+\begin{align*}
+& ft^0_n(A) = A \\
+& ft^{i+1}_n(A) = ft^i_n(ft_{n+i}(A))
+\end{align*}
+
+Let $\mathcal{D} = \{ ty, tm \} \times \mathbb{N}$ be a set of sorts.
+Let $\mathcal{P}_0 = \{ D^n_p\ |\ n \in \mathbb{N}, p \in \{ ty, tm \} \}$ be a set of predicate symbols with the following signatures:
+\begin{align*}
+D^n_{ty} & : (ty,0) \times \ldots \times (ty,n-1) \times (ty,n) \\
+D^n_{tm} & : (ty,0) \times \ldots \times (ty,n-1) \times (tm,n) \times (ty,n)
+\end{align*}
+We define derived predicates $D^n_{ctx} : (ty,0) \times \ldots \times (ty,n)$ as follows:
+\begin{align*}
+D^0_{ctx} & = \top \\
+D^{n+1}_{ctx}(A_1, \ldots A_{n+1}) & = D^n_{ty}(A_1, \ldots A_{n+1})
+\end{align*}
+We will use the following standard notations:
+\begin{align*}
+A_1, \ldots A_n & \vdash \text{ means } D^n_{ctx}(A_1, \ldots A_n), \\
+A_1, \ldots A_n & \vdash A \text{ means } D^n_{ty}(A_1, \ldots A_n, A), \\
+A_1, \ldots A_n & \vdash a : A \text{ means } D^n_{tm}(A_1, \ldots A_n, a, A).
+\end{align*}
+
+Given a theory $\mathbb{T}$ in $\Th_{\mathcal{D},\mathcal{P}_0}$ we say that it is \emph{functional} if the following conditions hold:
+\begin{itemize}
+\item If $\varphi \sststile{}{V} D^{n+1}_{ty}(A_1, \ldots A_{n+1}, A)$ and $\varphi \sststile{}{V} D^{n+1}_{ty}(A_1', \ldots A_{n+1}', A)$ are theorems of $\mathbb{T}$,
+    then sequents $\varphi \sststile{}{V} D^n_{ty}(A_1, \ldots A_{n+1})$ and $\varphi \sststile{}{V} A_{n+1} = A_{n+1}'$ are also theorems of $\mathbb{T}$.
+\item If $\varphi \sststile{}{V} D^n_{tm}(A_1, \ldots A_n, a, A)$ and $\varphi \sststile{}{V} D^n_{tm}(A_1', \ldots A_n', a, A')$ are theorems of $\mathbb{T}$,
+    then sequents $\varphi \sststile{}{V} D^n_{ty}(A_1, \ldots A_n, A)$ and $\varphi \sststile{}{V} A = A'$ are also theorems of $\mathbb{T}$.
+\end{itemize}
+
+\begin{prop}
+Category $\mathbb{T}_0/\Th_{\mathcal{C},\varnothing}$ is equivalent to the full subcategory of $\Th_{\mathcal{D},\mathcal{P}_0}$ of total functional theories.
+\end{prop}
+\begin{proof}
+Let $\mathbb{T}$ be a theory under $\mathbb{T}_0$.
+Then we define a theory $F(\mathbb{T}) \in \Th_{\mathcal{D},\mathcal{P}_0}$
 \end{proof}
 
 \label{sec:T1}
