@@ -107,6 +107,9 @@
 \newcommand{\Mod}{\text{-}\cat{Mod}}
 \newcommand{\Sig}{\cat{Sig}}
 \newcommand{\Th}{\cat{Th}}
+\newcommand{\ThC}{\Th_{\mathcal{C},\varnothing}}
+\newcommand{\ThT}{\Th_{\mathcal{T},\varnothing}}
+\newcommand{\ThP}{\Th_{\mathcal{T},\mathcal{P}_0}}
 \newcommand{\ttvdash}{\vartriangleright}
 
 \numberwithin{figure}{section}
@@ -207,21 +210,62 @@ Indeed, let $\mathbb{T}$ be such theory, let $D : J \to \Th_{\mathcal{S},\mathca
 \label{sec:T0}
 \section{Theory $\mathbb{T}_0$}
 
-Let $\mathcal{C} = \{ ctx, tm \} \times \mathbb{N}$ be a set of sorts.
-Then we define $\mathbb{T}_0 \in \Th_{\mathcal{C},\varnothing}$ as the theory with the set of function symbols $\{ * \} \cup \{ ft_n : Ctx_{n+1} \to Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ ty_n : Tm_n \to Ctx_{n+1}\ |\ n \in \mathbb{N} \}$ and the following axioms:
+Let $\mathcal{T} = \{ ty, tm \} \times \mathbb{N}$ be a set of sorts.
+We will write $(ctx,n)$ for $(ty,n-1)$ if $n > 0$.
+Sort $(tm,n)$ represents terms in contexts of length $n$, sort $(ty,n)$ represents types in contexts of length $n$, and sort $(ctx,n)$ represents contexts of length $n$.
+Sometimes it is convinient to have a sort for contexts of length 0.
+So we define $\mathcal{C} = \mathcal{T} \cup \{ (ctx,0) \}$.
+Let $\mathbb{T}_{-1} \in \ThC$ be the theory with one function symbol $* : (ctx,0)$ and the following axioms:
 \begin{align*}
-& \sststile{}{A} ft_n(A) \downarrow \\
-& \sststile{}{a} ty_n(a) \downarrow \\
 & \sststile{}{} * \downarrow \\
 & \sststile{}{A} A = *
 \end{align*}
-Let $ft^i_n : Ctx_{n+i} \to Ctx_n$ be the following derived operation:
+
+\begin{prop}
+Categories $\ThT$ and $\mathbb{T}_{-1}/\ThC$ are equivalent.
+\end{prop}
+\begin{proof}
+Every theory in $\ThT$ is a theory in $\ThC$ in the obvious way.
+We define $F : \ThT \to \mathbb{T}_{-1}/\ThC$ as $F(X) = \mathbb{T}_{-1} \amalg X$.
+Every morphism of theories $\mathbb{T}$ and $\mathbb{T}'$ corresponds to exactly one morphism of theories $F(\mathbb{T})$ and $F(\mathbb{T}')$
+since terms in $i(\mathbb{T}')$ cannot have sort $(ctx,0)$.
+Thus $F$ is fully faithful.
+
+We need to prove that $F$ is essentially surjective.
+Given a theory $\mathbb{T} \in \ThC$ and a morphism $c : \mathbb{T}_{-1} \to \mathbb{T}$ we define a theory $\mathbb{T}' \in \ThT$.
+This theory contains one function symbol $\sigma$ for every function symbols $\sigma$ of $\mathbb{T}$ such that $\sigma : s_1 \times \ldots \times s_n \to s$ and $s \in \mathcal{T}$.
+We let $\sigma : s_{i_1} \times \ldots \times s_{i_k} \to s$ where $\{ i_1, \ldots i_k \} \subset \{ 1, \ldots n \}$ consists of those $i$ for which $s_i \in \mathcal{T}$.
+For every $V$ and $s \in \mathcal{T}$ we define function $\alpha : Term_\mathbb{T}(V)_s \to Term_{\mathbb{T}'}(V)_s$ as follows:
+\begin{align*}
+\alpha(x) & = x \text{ if } x \in V \\
+\alpha(\sigma(a_1, \ldots a_n)) & = \sigma(\alpha(a_{i_1}), \ldots \alpha(a_{i_k}))
+\end{align*}
+If $\varphi$ is a formula $t = s$ of $\mathbb{T}$, then we define formula $\alpha(\varphi)$ of $\mathbb{T}'$ as $\alpha(t) = \alpha(s)$
+if terms $t$ and $s$ have a sort in $\mathcal{T}$ and as $\top$ otherwise.
+Axioms of $\mathbb{T}'$ are sequents $\alpha(\varphi_1) \land \ldots \land \alpha(\varphi_n) \sststile{}{V} \alpha(\psi_1) \land \ldots \land \alpha(\psi_k)$
+for every axiom $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi_1 \land \ldots \land \psi_k$ of $\mathbb{T}$.
+
+Now, $F(\mathbb{T}')$ and $\mathbb{T}$ are isomorphic.
+Indeed, we can extend $\alpha$ to a morphism $\alpha : \mathbb{T} \to \mathbb{T}_{-1} \amalg \mathbb{T}'$
+by defining $\alpha(\sigma(a_1, \ldots a_n)) = *$ if $\sigma : s_1 \times \ldots \times s_n \to (ctx,0)$.
+Let $\beta : \mathbb{T}' \to \mathbb{T}$ be the following morphism:
+\[ \beta(\sigma(x_1, \ldots x_n)) = \sigma(b_1, \ldots b_n) \]
+where $b_i = x_i$ if $x_i$ has a sort in $\mathcal{T}$ and $b_i = *$ otherwise.
+Then $[c,\beta] : \mathbb{T}_{-1} \amalg \mathbb{T}' \to \mathbb{T}$ is the inverse of $\alpha$.
+Thus $F$ is essentially surjective.
+\end{proof}
+
+We define $\mathbb{T}_0 \in \ThT$ as the theory with the set of function symbols $\{ ft_n : (ctx,n+1) \to (ctx,n)\ |\ n > 0 \} \cup \{ ty_n : (tm,n) \to (ty,n)\ |\ n \in \mathbb{N} \}$ and the following axioms:
+\begin{align*}
+& \sststile{}{A} ft_n(A) \downarrow \\
+& \sststile{}{a} ty_n(a) \downarrow
+\end{align*}
+Let $ft^i_n : (ctx,n+i) \to (ctx,n)$ be the following derived operation:
 \begin{align*}
 & ft^0_n(A) = A \\
 & ft^{i+1}_n(A) = ft^i_n(ft_{n+i}(A))
 \end{align*}
 
-Let $\mathcal{D} = \{ ty, tm \} \times \mathbb{N}$ be a set of sorts.
 Let $\mathcal{P}_0 = \{ D^n_p\ |\ n \in \mathbb{N}, p \in \{ ty, tm \} \}$ be a set of predicate symbols with the following signatures:
 \begin{align*}
 D^n_{ty} & : (ty,0) \times \ldots \times (ty,n-1) \times (ty,n) \\
@@ -239,21 +283,63 @@ A_1, \ldots A_n & \vdash A \text{ means } D^n_{ty}(A_1, \ldots A_n, A), \\
 A_1, \ldots A_n & \vdash a : A \text{ means } D^n_{tm}(A_1, \ldots A_n, a, A).
 \end{align*}
 
-Given a theory $\mathbb{T}$ in $\Th_{\mathcal{D},\mathcal{P}_0}$ we say that it is \emph{functional} if the following conditions hold:
-\begin{itemize}
-\item If $\varphi \sststile{}{V} D^{n+1}_{ty}(A_1, \ldots A_{n+1}, A)$ and $\varphi \sststile{}{V} D^{n+1}_{ty}(A_1', \ldots A_{n+1}', A)$ are theorems of $\mathbb{T}$,
-    then sequents $\varphi \sststile{}{V} D^n_{ty}(A_1, \ldots A_{n+1})$ and $\varphi \sststile{}{V} A_{n+1} = A_{n+1}'$ are also theorems of $\mathbb{T}$.
-\item If $\varphi \sststile{}{V} D^n_{tm}(A_1, \ldots A_n, a, A)$ and $\varphi \sststile{}{V} D^n_{tm}(A_1', \ldots A_n', a, A')$ are theorems of $\mathbb{T}$,
-    then sequents $\varphi \sststile{}{V} D^n_{ty}(A_1, \ldots A_n, A)$ and $\varphi \sststile{}{V} A = A'$ are also theorems of $\mathbb{T}$.
-\end{itemize}
+Let $\mathbb{T}'_0 \in \Th_{\mathcal{T},\mathcal{P}_0}$ be the theory with no function symbols and with the following axioms:
+\begin{align*}
+D^n_{ty}(A_1, \ldots A_n, A) & \sststile{}{A_1, \ldots A_n, A} D^n_{ctx}(A_1, \ldots A_n) \\
+D^n_{tm}(A_1, \ldots A_n, a, A) & \sststile{}{A_1, \ldots A_n, a, A} D^n_{ty}(A_1, \ldots A_n, A) \\
+D^{n+1}_{ty}(A_1, \ldots A_{n+1}, A) \land D^{n+1}_{ty}(A_1', \ldots A_{n+1}', A) & \sststile{}{A_1, \ldots A_{n+1}, A_1', \ldots A_{n+1}', A} A_{n+1} = A_{n+1}' \\
+D^n_{tm}(A_1, \ldots A_n, a, A) \land D^n_{tm}(A_1', \ldots A_n', a, A') & \sststile{}{A_1, \ldots A_n, A_1', \ldots A_n', a, A, A'} A = A'
+\end{align*}
+Category $\mathbb{T}'_0/\Th_{\mathcal{T},\mathcal{P}_0}$ is the full subcategory of $\Th_{\mathcal{T},\mathcal{P}_0}$ on those theories in which axioms of $\mathbb{T}'_0$ are provable.
 
 \begin{prop}
-Category $\mathbb{T}_0/\Th_{\mathcal{C},\varnothing}$ is equivalent to the full subcategory of $\Th_{\mathcal{D},\mathcal{P}_0}$ of total functional theories.
+Categories $\mathbb{T}_0/\Th_{\mathcal{T},\varnothing}$ and $\mathbb{T}'_0/\Th_{\mathcal{T},\mathcal{P}_0}$ are equivalent.
 \end{prop}
 \begin{proof}
-Let $\mathbb{T}$ be a theory under $\mathbb{T}_0$.
-Then we define a theory $F(\mathbb{T}) \in \Th_{\mathcal{D},\mathcal{P}_0}$
+Every theory in $\ThT$ is a theory in $\ThP$ in the obvious way.
+We define $F : \mathbb{T}_0/\ThT \to \mathbb{T}'_0/\ThP$ as $F(X) = X \cup \mathbb{T}'_0 \cup \mathbb{T}''_0$ where $\mathbb{T}''_0$ consists of the following axioms:
+\[ \{\ \sststile{}{A} D^n_{ty}(ft^n(A), \ldots ft^1(A), A)\ |\ n \in \mathbb{N}\ \} \]
+\[ \{\ \sststile{}{a} D^n_{tm}(ft^n(ty(a)), \ldots ft^1(ty(a)), a, ty(a))\ |\ n \in \mathbb{N}\ \} \]
+% Every morphism of theories $\mathbb{T}$ and $\mathbb{T}'$ corresponds to exactly one morphism of theories $F(\mathbb{T})$ and $F(\mathbb{T}')$
+% since terms in $i(\mathbb{T}')$ cannot have sort $(ctx,0)$.
+% Thus $F$ is fully faithful.
 \end{proof}
+
+\section{Syntactic presentation of type theories}
+
+A signature $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ consists of three sets as before.
+For a syntactic presentation we assume that $\mathcal{S} = \mathcal{T}$ and $\mathcal{P} = \varnothing$.
+A \emph{syntactic atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $E_{ty}(A_0, \ldots A_{n-1}, A, A')$
+or of the form $E_{tm}(A_0, \ldots A_{n-1}, A, a, a')$ where $A_i \in Term_\Sigma(V)_{(ty,i)}$, $A,A' \in Term_\Sigma(V)_{(ty,n)}$ and $a,a' \in Term_\Sigma(V)_{(tm,n)}$.
+A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are finite sets of atomic formulae over $\Sigma$ with free variables in $V$.
+We will use the following notations:
+\begin{align*}
+D_{ty}(A_1, \ldots A_n, A) & \text{ means } E_{ty}(A_1, \ldots A_n, A, A) \\
+D_{tm}(A_1, \ldots A_n, A, a) & \text{ means } E_{tm}(A_1, \ldots A_n, A, a, a) \\
+A_1, \ldots A_n \vdash A & \text{ means } D_{ty}(A_1, \ldots A_n, A) \\
+A_1, \ldots A_n \vdash a : A & \text{ means } D_{tm}(A_1, \ldots A_n, A, a) \\
+A_1, \ldots A_n \vdash A \deq A' & \text{ means } E_{ty}(A_1, \ldots A_n, A, A') \\
+A_1, \ldots A_n \vdash a \deq a' : A & \text{ means } E_{tm}(A_1, \ldots A_n, A, a, a')
+\end{align*}
+
+A \emph{Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
+% TODO: Describe rules of the logic.
+If $\mathbb{T}$ is a Horn theory, then a \emph{theorem} of $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
+
+Let $F$ be a morphism of signatures $\Sigma$ and $\Sigma'$.
+Then for each formula $\varphi$ over $\Sigma$ we can define formula $F(\varphi)$ over $\Sigma'$ just by applying $F$ to every term in $\varphi$.
+If $\varphi \sststile{}{V} \psi$ is a sequent over $\Sigma$, then $F(\varphi) \sststile{}{V} F(\psi)$ is a sequent over $\Sigma'$.
+Let $\mathbb{T}$ and $\mathbb{T}'$ be Horn theories in signatures $\Sigma$ and $\Sigma'$ respectively.
+Then we will say that $F$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ if $F(\varphi) \sststile{}{V} F(\psi)$ is a theorem of $\mathbb{T}'$.
+Note that if $F$ respects all axioms of $\mathbb{T}$, then it respects all of its theorems too.
+We will say that morphisms $F$ and $G$ are \emph{equivalent} if for all $\sigma \in \mathcal{F}_\Sigma$, $\sigma : s_1 \times \ldots \times s_n \to s$ sequent $\sststile{}{x_1, \ldots x_n} F(\sigma(x_1, \ldots x_n)) \cong G(\sigma(x_1, \ldots x_n))$ is a theorem of $\mathbb{T}'$.
+Note that if $F$ and $G$ are equivalent then $\sststile{}{V} F(t) = G(t)$ is a theorem of $\mathbb{T}'$ for each $t \in Term_\Sigma(V)_s$.
+
+Now, we define a category of theories.
+Its objects are pairs $(\mathcal{F},\mathbb{T})$ where $\mathcal{F}$ is a set of function symbols and $\mathbb{T}$ is a theory in $(\mathcal{S},\mathcal{F},\mathcal{P})$.
+Morphisms of theories $(\mathcal{F},\mathbb{T})$ and $(\mathcal{F}',\mathbb{T}')$ are equivalence classes of morphisms of signatures $(\mathcal{S},\mathcal{F},\mathcal{P})$ and $(\mathcal{S},\mathcal{F}',\mathcal{P})$ which respect all axioms of $\mathbb{T}$.
+The composition of morphisms of signatures respects the equivalence relation; hence this defines a category of theories which will be denoted by $\Th_{\mathcal{S},\mathcal{P}}$.
+Note that $\Sig_{\mathcal{S},\mathcal{P}}$ is a full subcategory of $\Th_{\mathcal{S},\mathcal{P}}$; indeed, every signature can be considered as a theory with an empty set of axioms.
 
 \label{sec:T1}
 \section{Theory $\mathbb{T}_1$}
@@ -261,30 +347,14 @@ Then we define a theory $F(\mathbb{T}) \in \Th_{\mathcal{D},\mathcal{P}_0}$
 In this section we will describe a quasi-equational theory $\mathbb{T}_1$ and prove that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
 Later we will use this theory to define algebraic type theories.
 
-We will consider quasi-equational theories in signatures with the set of sorts $\mathcal{C} = \{ Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ Tm_n\ |\ n \in \mathbb{N} \}$.
-Let $\mathbb{T}_0$ be the theory with the set of function symbols $\{ * \} \cup \{ ft_n : Ctx_{n+1} \to Ctx_n\ |\ n \in \mathbb{N} \} \cup \{ ty_n : Tm_n \to Ctx_{n+1}\ |\ n \in \mathbb{N} \}$ and the following axioms:
-\begin{align*}
-& \sststile{}{A} ft_n(A) \downarrow \\
-& \sststile{}{a} ty_n(a) \downarrow \\
-& \sststile{}{} * \downarrow \\
-& \sststile{}{A} A = *
-\end{align*}
-Let $ft^i_n : Ctx_{n+i} \to Ctx_n$ be the following derived operation:
-\begin{align*}
-& ft^0_n(A) = A \\
-& ft^{i+1}_n(A) = ft^i_n(ft_{n+i}(A))
-\end{align*}
-
-Now we describe theory $\mathbb{T}_1$ which contains.
 The set of function symbols of $\mathbb{T}_1$ consists of the symbols of $\mathbb{T}_0$ and the following symbols:
 \begin{align*}
-v_{n,i}     & : Ctx_n \to Tm_n \text{, } 0 \leq i < n \\
-Subst_{n,k} & : Ctx_n \times Ctx_{k+1} \times Tm_n^k \to Ctx_{n+1} \\
-subst_{n,k} & : Ctx_n \times Tm_k \times Tm_n^k \to Tm_n
+v_{n,i}       & : (ctx,n) \to (tm,n) \text{, } 0 \leq i < n \\
+subst_{p,n,k} & : (ctx,n) \times (p,k) \times (tm,n)^k \to (p,n) \text{, } p \in \{ tm, ty \}
 \end{align*}
 
-Auxiliary predicates $Hom_{n,k} : Ctx_n \times Ctx_k \times Tm_n^k$ are defined as follows: $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if
-\[ ty_n(a_i) = Subst_{n,i-1}(B, ft^{k-i}_i(A), a_1, \ldots a_{i-1}) \text{ for each } 1 \leq i \leq k \]
+Auxiliary predicates $Hom_{n,k} : (ctx,n) \times (ctx,k) \times (tm,n)^k$ are defined as follows: $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if
+\[ ty_n(a_i) = subst_{ty,n,i-1}(B, ft^{k-i}_i(A), a_1, \ldots a_{i-1}) \text{ for each } 1 \leq i \leq k \]
 The idea is that a tuple of terms should represent a morphism in a contextual category.
 So $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if $(a_1, \ldots a_k)$ is a morphism with domain $A$ and codomain $B$.
 Note that if $Hom_{n,k}(B, A, a_1, \ldots a_k)$, then $ft_n(ty_n(a_i)) = B$.
@@ -295,9 +365,9 @@ The following axioms describe when functions are defined:
 \label{ax:def-var}
                                              & \sststile{}{A}           v_{n,i}(A) \downarrow \\
 \label{ax:def-Subst}
-Hom_{n,k}(B, ft_k(A), a_1, \ldots a_k)       & \ssststile{}{B, A, a_i}  Subst_{n,k}(B, A, a_1, \ldots a_k) \downarrow \\
+Hom_{n,k}(B, ft_k(A), a_1, \ldots a_k)       & \ssststile{}{B, A, a_i}  subst_{ty,n,k}(B, A, a_1, \ldots a_k) \downarrow \\
 \label{ax:def-subst}
-Hom_{n,k}(B, ft_k(ty_k(a)), a_1, \ldots a_k) & \ssststile{}{B, a, a_i}  subst_{n,k}(B, a, a_1, \ldots a_k) \downarrow
+Hom_{n,k}(B, ft_k(ty_k(a)), a_1, \ldots a_k) & \ssststile{}{B, a, a_i}  subst_{tm,n,k}(B, a, a_1, \ldots a_k) \downarrow
 \end{align}
 
 The following axioms describe the ``typization'' of the constructions we have:
