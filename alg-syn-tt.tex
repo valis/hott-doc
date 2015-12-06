@@ -141,29 +141,25 @@ In this section we will give another equivalent definition which is just a descr
 
 \section{Essentially algebraic theories}
 
-There are several equaivalent ways of defining essentially algebraic theories (\cite{LPC}, \cite{GAT}, \cite{PHT}, \cite[D 1.3.4]{elephant}).
+There are several equivalent ways of defining essentially algebraic theories (\cite{LPC}, \cite{GAT}, \cite{PHT}, \cite[D 1.3.4]{elephant}).
 We will use approach introduced in \cite{PHT} under the name of partial horn theories since it seems to be the most general.
 In this section we will review necessary for our development parts of the theory of partial horn theories and define a notion of morphisms between them suitable for our purposes.
 
 A signature $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ consists of a set $\mathcal{S}$ of sorts, a set $\mathcal{F}$ of function symbols, and a set $\mathcal{P}$ of predicate symbols.
 Also $\Sigma$ assigns a signature to each $\sigma \in \mathcal{F}$ which is written as $\sigma : s_1 \times \ldots \times s_n \to s$ where $s_1$, \ldots $s_n$, $s$ are sorts.
 Finally $\Sigma$ assigns a signature to each $R \in \mathcal{P}$ which is written as $R : s_1 \times \ldots \times s_n$ where $s_1$, \ldots $s_n$ are sorts.
-For each $V \in \Set^\mathcal{S}$ we can define a set $Term_\Sigma(V)_s$ of terms of sort $s$ inductively:
+For each $V \in \Set^\mathcal{S}$ we can define a set $Term_\mathcal{F}(V)_s$ of terms of sort $s$ inductively:
 \begin{itemize}
-\item If $x \in V_s$, then $x \in Term_\Sigma(V)_s$.
-\item If $\sigma : s_1 \times \ldots \times s_n \to s$ and $t_i \in Term_\Sigma(V)_{s_i}$, then $\sigma(t_1, \ldots t_n) \in Term_\Sigma(V)_s$.
+\item If $x \in V_s$, then $x \in Term_\mathcal{F}(V)_s$.
+\item If $\sigma : s_1 \times \ldots \times s_n \to s$ and $t_i \in Term_\mathcal{F}(V)_{s_i}$, then $\sigma(t_1, \ldots t_n) \in Term_\mathcal{F}(V)_s$.
 \end{itemize}
-Then $Term_\Sigma(V)$ is actually a functor $Term_\Sigma : \Set^\mathcal{S} \to \Set^\mathcal{S}$.
-Moreover, there is a natural monad structure on $Term_\Sigma$.
-
-Let $\Sigma = (\mathcal{S}, \mathcal{F}_\Sigma, \mathcal{P})$ and $\Sigma' = (\mathcal{S}, \mathcal{F}_{\Sigma'}, \mathcal{P})$ be a pair of signatures with the same sets of sorts and predicate symbols.
-Then we define morphisms of these signatures as morphisms between monads $Term_\Sigma$ and $Term_{\Sigma'}$.
-Since $Term_\Sigma$ is a free monad there is a bijection between such morphisms and functions that to each $\sigma \in \mathcal{F}_\Sigma$ assign a term of $\Sigma'$ with the same signature as $\sigma$.
-We will write such functions $F$ as $F(\sigma(x_1, \ldots x_n)) = t$ where $\sigma \in \mathcal{F}_\Sigma$, $\sigma : s_1 \times \ldots \times s_n \to s$ and $t \in Term_{\Sigma'}(\{ x_1 : s_1, \ldots x_n : s_n \})_s$.
-The category of sinatures will be denoted by $\Sig_{\mathcal{S},\mathcal{P}}$.
+Then $Term_\mathcal{F}(V)$ is actually a functor $Term_\mathcal{F} : \Set^\mathcal{S} \to \Set^\mathcal{S}$.
 
 An \emph{atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t_1 = t_2$ where $t_1, t_2 \in Term_\Sigma(V)_s$ for some sort $s$ or of the form $R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in Term_\Sigma(V)_{s_i}$.
-A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are finite sets of atomic formulae over $\Sigma$ with free variables in $V$.
+A \emph{Horn formula} over $\Sigma$ with free variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulae.
+If $n = 0$, then we write such a formula as $\top$.
+A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are Horn formulae over $\Sigma$ with free variables in $V$.
+We will often write $\varphi_1, \ldots \varphi_n \sststile{}{V} \psi_1, \ldots \psi_k$ insted of $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi_1 \land \ldots \land \psi_k$.
 We will use the following abbreviations:
 \begin{align*}
 t\!\downarrow & \text{ means } t = t \\
@@ -173,24 +169,90 @@ t\!\downarrow & \text{ means } t = t \\
 \end{align*}
 
 A \emph{Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
-In \cite{PHT} were described the inference rules of the partial Horn logic.
+The rules of \emph{Partial Horn logic} are listed below.
+In these rules for every sequent $\varphi \sststile{}{V} \psi$ the set of variables $V$ is such that $FV(\varphi) \cup FV(\psi) \subseteq V$.
+Note that this set of rules is equivalent to the one described in \cite{PHT}.
+\begin{center}
+$\varphi \sststile{}{V} \varphi$ (b1)
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\AxiomC{$\psi \sststile{}{V} \chi$}
+\RightLabel{(b2)}
+\BinaryInfC{$\varphi \sststile{}{V} \chi$}
+\DisplayProof
+\qquad
+$\varphi \sststile{}{V} \top$ (b3)
+\end{center}
+
+\medskip
+\begin{center}
+$\varphi \land \psi \sststile{}{V} \varphi$ (b4)
+\qquad
+$\varphi \land \psi \sststile{}{V} \psi$ (b5)
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\AxiomC{$\varphi \sststile{}{V} \chi$}
+\RightLabel{(b6)}
+\BinaryInfC{$\varphi \sststile{}{V} \psi \land \chi$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+$\sststile{}{x} x\!\downarrow$ (a1)
+\qquad
+$x = y \land \varphi \sststile{}{V} \varphi[y/x]$ (a2)
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\RightLabel{if $x \in FV(\varphi)$ (a3)}
+\UnaryInfC{$\varphi[t/x] \sststile{}{V'} \psi[t/x]$}
+\DisplayProof
+\end{center}
+\medskip
+
 If $\mathbb{T}$ is a Horn theory, then a \emph{theorem} of $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
 We say that a theory $\mathbb{T}$ is \emph{total} if for every function symbols $\sigma : s_1 \times \ldots \times s_n \to s$ sequent $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n)\!\downarrow$ is a theorem of $\mathbb{T}$.
 
-Let $F$ be a morphism of signatures $\Sigma$ and $\Sigma'$.
-Then for each formula $\varphi$ over $\Sigma$ we can define formula $F(\varphi)$ over $\Sigma'$ just by applying $F$ to every term in $\varphi$.
+Let $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ and $\Sigma' = (\mathcal{S}, \mathcal{F}', \mathcal{P}')$ be a pair of signatures with the same set of sorts.
+Let $F$ be a function that to each $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ assigns a Horn formula $\psi$ over $\Sigma'$ with free variables in $\{ x_1 : s_1, \ldots x_n : s_n \}$
+and to each $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ assigns a term $t$
+in $Term_{\mathcal{F}'}(V)_s$ and a Horn formula $\varphi$ over $\Sigma'$ with free variables in $V$ where $V = \{ x_1 : s_1, \ldots x_n : s_n \}$.
+We will write such functions $F$ as $F(R(x_1, \ldots x_n)) = \psi$ and $F(\sigma(x_1, \ldots x_n)) = t|_\varphi$.
+If $\varphi = \top$, then we will write $F(\sigma(x_1, \ldots x_n)) = t$.
+Given such a function $F$ we can extend it to the whole set of terms $Term_\mathcal{F}(V)_s$:
+\begin{itemize}
+\item $F(x) = x$ if $x \in V_s$.
+\item $F(\sigma(a_1, \ldots a_n)) = t[a_1'/x_1, \ldots a_n'/x_n]|_{\varphi[a_1'/x_1, \ldots a_n'/x_n] \land \varphi_1 \land \ldots \land \varphi_n}$ \\
+    where $F(\sigma(x_1, \ldots x_n)) = t|_\varphi$ and $F(a_i) = a_i'|_{\varphi_i}$.
+\end{itemize}
+For each Horn formula $\varphi$ over $\Sigma$ we can define a formula $F(\varphi)$ over $\Sigma'$ as follows:
+\begin{itemize}
+\item If $\varphi$ is of the form $t_1 = t_2$ and $F(t_i) = t_i'|_{\psi_i}$, then let $F(\varphi)$ be equal to $t_1' = t_2' \land \psi_1 \land \psi_2$.
+\item If $\varphi$ is of the form $R(x_1, \ldots x_n)$, then $F(\varphi)$ is already defined.
+\item $F(\varphi_1 \land \ldots \land \varphi_n) = F(\varphi_1) \land \ldots \land F(\varphi_n)$.
+\end{itemize}
+
 If $\varphi \sststile{}{V} \psi$ is a sequent over $\Sigma$, then $F(\varphi) \sststile{}{V} F(\psi)$ is a sequent over $\Sigma'$.
 Let $\mathbb{T}$ and $\mathbb{T}'$ be Horn theories in signatures $\Sigma$ and $\Sigma'$ respectively.
 Then we will say that $F$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ if $F(\varphi) \sststile{}{V} F(\psi)$ is a theorem of $\mathbb{T}'$.
 Note that if $F$ respects all axioms of $\mathbb{T}$, then it respects all of its theorems too.
-We will say that morphisms $F$ and $G$ are \emph{equivalent} if for all $\sigma \in \mathcal{F}_\Sigma$, $\sigma : s_1 \times \ldots \times s_n \to s$ sequent $\sststile{}{x_1, \ldots x_n} F(\sigma(x_1, \ldots x_n)) \cong G(\sigma(x_1, \ldots x_n))$ is a theorem of $\mathbb{T}'$.
-Note that if $F$ and $G$ are equivalent then $\sststile{}{V} F(t) = G(t)$ is a theorem of $\mathbb{T}'$ for each $t \in Term_\Sigma(V)_s$.
+We will say that morphisms $F$ and $G$ are \emph{equivalent} if the following conditions hold:
+\begin{itemize}
+\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ sequent $F(R(x_1, \ldots x_n)) \ssststile{}{x_1, \ldots x_n} G(R(x_1, \ldots x_n))$ is a theorem of $\mathbb{T}'$.
+\item For every $\sigma \in \mathcal{F}_\Sigma$, $\sigma : s_1 \times \ldots \times s_n \to s$ if $F(\sigma(x_1, \ldots x_n)) = t|_\varphi$ and $G(\sigma(x_1, \ldots x_n)) = s|_\psi$,
+    then sequents $t\!\downarrow \land \varphi \sststile{}{x_1, \ldots x_n} t = s \land \psi$ and \linebreak $s\!\downarrow \land \psi \sststile{}{x_1, \ldots x_n} t = s \land \varphi$ are theorems of $\mathbb{T}'$.
+\end{itemize}
+Note that if $F$ and $G$ are equivalent then $\sststile{}{V} F(t) \cong G(t)$ is a theorem of $\mathbb{T}'$ for each $t \in Term_\Sigma(V)_s$.
 
-Now, we define a category of theories.
-Its objects are pairs $(\mathcal{F},\mathbb{T})$ where $\mathcal{F}$ is a set of function symbols and $\mathbb{T}$ is a theory in $(\mathcal{S},\mathcal{F},\mathcal{P})$.
-Morphisms of theories $(\mathcal{F},\mathbb{T})$ and $(\mathcal{F}',\mathbb{T}')$ are equivalence classes of morphisms of signatures $(\mathcal{S},\mathcal{F},\mathcal{P})$ and $(\mathcal{S},\mathcal{F}',\mathcal{P})$ which respect all axioms of $\mathbb{T}$.
-The composition of morphisms of signatures respects the equivalence relation; hence this defines a category of theories which will be denoted by $\Th_{\mathcal{S},\mathcal{P}}$.
-Note that $\Sig_{\mathcal{S},\mathcal{P}}$ is a full subcategory of $\Th_{\mathcal{S},\mathcal{P}}$; indeed, every signature can be considered as a theory with an empty set of axioms.
+Let $\mathcal{S}$ be a set of sorts.
+Then we define a category $\Th_\mathcal{S}$ of theories.
+Its objects are triples $(\mathcal{F},\mathcal{P},\mathbb{T})$ where $\mathbb{T}$ is a theory in $(\mathcal{S},\mathcal{F},\mathcal{P})$.
+Morphisms of theories $(\mathcal{F},\mathcal{P},\mathbb{T})$ and $(\mathcal{F}',\mathcal{P}',\mathbb{T}')$
+are equivalence classes of functions as described above which respect all axioms of $\mathbb{T}$.
+The composition of morphisms of signatures respects the equivalence relation; hence this defines a category of theories.
 
 \begin{prop}
 Category $\Th_{\mathcal{S},\mathcal{P}}$ is locally finitely presentable.
@@ -249,8 +311,8 @@ Now, $F(\mathbb{T}')$ and $\mathbb{T}$ are isomorphic.
 Indeed, we can extend $\alpha$ to a morphism $\alpha : \mathbb{T} \to \mathbb{T}_{-1} \amalg \mathbb{T}'$
 by defining $\alpha(\sigma(a_1, \ldots a_n)) = *$ if $\sigma : s_1 \times \ldots \times s_n \to (ctx,0)$.
 Let $\beta : \mathbb{T}' \to \mathbb{T}$ be the following morphism:
-\[ \beta(\sigma(x_1, \ldots x_n)) = \sigma(b_1, \ldots b_n) \]
-where $b_i = x_i$ if $x_i$ has a sort in $\mathcal{T}$ and $b_i = *$ otherwise.
+\[ \beta(\sigma(x_{i_1}, \ldots x_{i_k})) = \sigma(b_1, \ldots b_n) \]
+where $b_j = x_{i_t}$ if $j = i_t$ and $b_j = *$ otherwise.
 Then $[c,\beta] : \mathbb{T}_{-1} \amalg \mathbb{T}' \to \mathbb{T}$ is the inverse of $\alpha$.
 Thus $F$ is essentially surjective.
 \end{proof}
@@ -304,6 +366,43 @@ We define $F : \mathbb{T}_0/\ThT \to \mathbb{T}'_0/\ThP$ as $F(X) = X \cup \math
 % since terms in $i(\mathbb{T}')$ cannot have sort $(ctx,0)$.
 % Thus $F$ is fully faithful.
 \end{proof}
+
+\section{Theories under $\mathbb{T}_0$}
+
+In this section we give an alternative description of theories under $\mathbb{T}_0$.
+
+Let $\mathcal{F}$ be a set of function symbols with $\mathcal{T}$ as the set of sorts.
+Then \emph{a syntactic atomic formula} over $\mathcal{F}$ with free variables in $V$ is an expression either of the form $A_1, \ldots A_n \vdash A \deq A'$ or of the form $A_1, \ldots A_n \vdash a \deq a' : A$
+where $A_i$ is a term of sort $(ty,i-1)$, $A$ and $A'$ are terms of sort $(ty,n)$, and $a$ and $a'$ are terms of sort $(tm,n)$.
+Horn sequents are defined as before.
+We will use the following abbreviations:
+\begin{align*}
+\Gamma \vdash A & \text{ means } \Gamma \vdash A \deq A \\
+\Gamma \vdash a : A & \text{ means } \Gamma \vdash a \deq a : A
+\end{align*}
+
+A \emph{syntactic Horn theory} in a signature $\Sigma = (\mathcal{T}, \mathcal{F}, \varnothing)$ is a set of Horn sequents over $\Sigma$.
+Now we need to describe the rules of the logic for these theories.
+It has the rules (b1)-(b6) and (a3) as in partial Horn logic.
+It does not have an analog for the axiom (a1), but it has the following set of axioms analogous to (a2):
+\begin{center}
+\end{center}
+
+In these rules for every sequent $\varphi \sststile{}{V} \psi$ the set of variables $V$ is such that $FV(\varphi) \cup FV(\psi) \subseteq V$.
+Note that this set of rules is equivalent to the one described in \cite{PHT}.
+\begin{center}
+$\varphi \sststile{}{V} \varphi$ (b1)
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\AxiomC{$\psi \sststile{}{V} \chi$}
+\RightLabel{(b2)}
+\BinaryInfC{$\varphi \sststile{}{V} \chi$}
+\DisplayProof
+\qquad
+$\varphi \sststile{}{V} \top$ (b3)
+\end{center}
+
+A \emph{syntactic theory} consists of 
 
 \section{Syntactic presentation of type theories}
 
