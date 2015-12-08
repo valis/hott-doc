@@ -67,7 +67,7 @@
 
 \section{Vccore}
 
-Язык vclang состоит из двух частей: ядра (vccore) и фронтенд (vclang).
+Язык vclang состоит из двух частей: ядра (vccore) и фронтенда (vclang).
 Пользователь пишет код на vclang, и он транслируется в vccore.
 Как это происходит мы обсудим позже, в этом разделе мы опишем ядро.
 
@@ -80,10 +80,11 @@
 \end{itemize}
 Классы в vccore устроенны очень просто, по сути, они являются просто записями.
 Классы не могут наследоваться друг от друга, но можно использовать анонимное наследование.
-Если $A$ -- некоторый класс, содержащий поля $f_1, \ldots f_n$, и $d_1$, \ldots $d_n$ -- некоторые термы, то $A\ \{\ f_1 \red d_1;\ \ldots\ f_n \red d_n\ \}$ -- анонимный наследник класса $A$.
+Если $A$ -- некоторый класс с множеством полей $\{ f_1, \ldots f_n \}$, $D_1$, \ldots $D_n$ -- некоторые типы и $d_1, \ldots d_n \in Term \amalg \{ * \}$, то $A\ \{\ f_1 : D_1 \red d_1;\ \ldots\ f_n : D_n \red d_n\ \}$ -- анонимный наследник класса $A$.
+Если $D_i$ совпадает с типом $f_i$ в классе $A$ и $d_i = *$, то мы будем опускать член $f_i : D_i \red d_i$ в этой нотации.
 
-Если $A\ \{\ f_1 \red d_1;\ \ldots\ f_n \red d_n\ \}$ -- коректный тип и все поля $A$ присутствуют в списке $f_1, \ldots f_n$, то его элементы создаются при помощи конструкции $\mathbf{new}$:
-\[ \mathbf{new}\ A\ \{\ f_1 \red d_1,\ \ldots\ f_n \red d_n\ \} : A\ \{\ f_1 \red d_1,\ \ldots\ f_n \red d_n\ \} \]
+Если $A\ \{\ f_1 : D_1 \red d_1;\ \ldots\ f_n : D_n \red d_n\ \}$ -- коректный тип и все $d_i \in Term$, то его элементы создаются при помощи конструкции $\mathbf{new}$:
+\[ \mathbf{new}\ A\ \{\ f_1 : D_1 \red d_1,\ \ldots\ f_n : D_n \red d_n\ \} : A\ \{\ f_1 : D_1 \red d_1,\ \ldots\ f_n : D_n \red d_n\ \} \]
 
 \subsection{Формальное определение термов vccore}
 
@@ -91,21 +92,21 @@
 Выражения и типы vccore тогда будут определятся как типизируемые термы.
 
 При определении функции или связывания в $\mathbf{let}$ мы можем использовать один из двух способов их описания: либо $f\,x_1\,\ldots\,x_n \Rightarrow e$, либо $f\,x_1\,\ldots\,x_n \Leftarrow e$.
-Множество $\{ \Leftarrow, \Rightarrow \}$ мы будем обозначать $Def$.
-Какой из элементов множества $Def$ используется при определении функции влияет на то, как будет вычисляться эта функция.
+Множество $\{ \Leftarrow, \Rightarrow \}$ мы будем обозначать $Ar$.
+Какой из элементов множества $Ar$ используется при определении функции влияет на то, как будет вычисляться эта функция.
 При выборе варианта $\Leftarrow$, мы можем использовать дополнительные конструкции для задания тела функции.
 Множество термов $Term$ будет определено ниже.
 Используя его, можно определить множество $Term_e$ индуктивным образом:
 \begin{itemize}
 \item Если $a \in Term$, то $a \in Term_e$.
-\item Пусть $k \in \mathbb{N}$, $p_i$ -- шаблоны, $d_i \in Def$, $b_i \in Term_e$ и $b_i \in Term$, если $d_i = \Rightarrow$.
+\item Пусть $k \in \mathbb{N}$, $p_i$ -- шаблоны, $d_i \in Ar$, $b_i \in Term_e$ и $b_i \in Term$, если $d_i = \Rightarrow$.
     Тогда $\mathbf{elim}\,v_k\,\{ p_1\,d_1\,b_1; \ldots p_n\,d_n\,b_n \} \in Term_e$.
 \end{itemize}
 Шаблон -- это либо имя конструктора, либо символ $var$.
 
 Множество термов определяется следующим образом:
 \begin{align*}
-Term :=\ & v_i\ |\ D\ |\ f\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
+Term :=\ & v_i\ |\ D\ |\ f\ |\ g\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
       |\ & \mathbf{new}\,C\,\{ S \}\ |\ C\,\{ S \} \\
       |\ & \mathbf{let}\,\mathbf{it}\,A_1\,\ldots\,A_n : B \Rightarrow b\,\mathbf{in}\,a \\
       |\ & \mathbf{let}\,\mathbf{it}\,A_1\,\ldots\,A_n : B \Leftarrow e\,\mathbf{in}\,a \\
@@ -113,8 +114,8 @@ Term :=\ & v_i\ |\ D\ |\ f\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
       |\ & (a,b)_B\ |\ \mathbf{proj}_1\,p\ |\ \mathbf{proj}_2\,p\ |\ \Sigma A B \\
       |\ & \mathbf{Type}_i\ |\ \mathbf{Set}_i\ |\ \mathbf{Prop}
 \end{align*}
-где $i \in \mathbb{N}$, $a, b, A, B, p, a_1, \ldots a_n, A_1, \ldots A_n \in Term$, $e \in Term_e$, $D$ является именем типа данных, $c$ -- именем конструктора типа данных $D$, $C$ -- именем класса, $f$ -- именем поля некоторого класса и $S$ -- последовательностью пар $(f,d)$, где $f$ -- имя поля класса $C$ и $d$ -- терм.
-Такую пару $(f,d)$ мы будем записывать как $f \red d$.
+где $i \in \mathbb{N}$, $a, b, A, B, p, a_1, \ldots a_n, A_1, \ldots A_n \in Term$, $e \in Term_e$, $D$ является именем типа данных, $c$ -- именем конструктора типа данных $D$, $C$ -- именем класса, $f$ -- именем поля некоторого класса, $g$ -- именем функции и $S$ -- последовательностью троек $(f,D,d)$, где $f$ -- имя поля класса $C$, $D$ -- терм и $d \in Term \amalg \{ * \}$.
+Такую тройку $(f,D,d)$ мы будем записывать как $f : D \red d$.
 Как обычно, мы сокращаем $\Pi A (\uparrow B)$ до $A \to B$.
 
 TODO: Добавить конструкции для вселенных $\mathbf{Prop}$ и $\mathbf{Set}_i$.
@@ -130,7 +131,7 @@ TODO: Добавить конструкции для вселенных $\mathbf
 \item Если $A \deq B$, то $A \leq B$.
 \item Если $A \leq A'$ и $B \leq B'$, то $\Sigma A B \leq \Sigma A' B'$.
 \item Если $A' \leq A$ и $B \leq B'$, то $\Pi A B \leq \Pi A' B'$.
-\item Если любой член последовательности $S$ встречается в $S'$, то $C\,\{ S' \} \leq C\,\{ S \}$.
+\item Если для любого $(f,D,d) \in S$ существует некоторая тройка $(f,D',d') \in S'$, такая что $D \leq D'$ и либо $d = *$, либо $d = d'$, то $C\,\{ S' \} \leq C\,\{ S \}$.
 \end{itemize}
 
 Правила типизации будут определены относительно фиксированного множества определений $\Sigma$.
@@ -285,34 +286,36 @@ max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
 \medskip
 \end{center}
 
-Если $C$ -- класс в сигнатуре $\Sigma$ и $f_1$, \ldots $f_n$ -- поля $C$ с типами $B_1$, \ldots $B_n$ соответственно, то для любого $1 \leq k \leq n$ у нас есть следующие правила вывода:
+Если $C$ -- класс в сигнатуре $\Sigma$ и множество полей $C$ состоит из $f_1$, \ldots $f_n$ с типами $B_1$, \ldots $B_n$ соответственно и $B_i \leq B'_i$, то у нас есть следующие правила вывода:
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\AxiomC{$\Gamma, C\,\{ f_1 \red b_1; \ldots f_{i-1} \red b_{i-1} \} \vdash b_i \Downarrow B_i$, $1 \leq i < k$}
-\BinaryInfC{$\Gamma \vdash C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \}$}
+\AxiomC{$\Gamma, C\,\{ f_1 : B'_1 \red b_1; \ldots f_{i-1} : B'_{i-1} \red b_{i-1} \} \vdash b_i \Downarrow B'_i$, $1 \leq i \leq n$}
+\BinaryInfC{$\Gamma \vdash C\,\{ f_1 : B'_1 \red b_1; \ldots f_n : B'_n \red b_n \}$}
 \DisplayProof
 \medskip
 \end{center}
+Если $b = *$, то $\Gamma \vdash b \Downarrow B$ означает просто $\Gamma \vdash B$.
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
 \def\extraVskip{0.5pt}
-\Axiom$\fCenter \Gamma, C\,\{ f_1 \red b_1; \ldots f_{i-1} \red b_{i-1} \} \vdash b_i \Downarrow B_i \text{, } 1 \leq i < k$
+\Axiom$\fCenter \Gamma, C\,\{ f_1 : B'_1 \red b_1; \ldots f_{i-1} : B'_{i-1} \red b_{i-1} \} \vdash b_i \Downarrow B'_i \text{, } b_i \neq * \text{, } 1 \leq i < k$
 \noLine
-\UnaryInf$\fCenter \Gamma, C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \} \vdash B_i \Uparrow U_i \text{, } k \leq i \leq n$
+\UnaryInf$\fCenter \Gamma, C\,\{ f_1 : B'_1 \red b_1; \ldots f_{k-1} : B'_{k-1} \red b_{k-1} \} \vdash B'_i \Uparrow U_i \text{, } b_i = * \text{, } k \leq i \leq n$
 \def\extraVskip{2pt}
-\BinaryInfC{$\Gamma \vdash C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \} \Uparrow max(U_k, \ldots U_n)$}
+\BinaryInfC{$\Gamma \vdash C\,\{ f_1 : B'_1 \red b_1; \ldots f_n : B'_n \red b_n \} \Uparrow max(U_1, \ldots U_n)$}
 \DisplayProof
 \medskip
 \end{center}
+где $U_i = \mathbf{Prop}$, если $b_i \neq *$.
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\AxiomC{$\Gamma, C\,\{ f_1 \red b_1; \ldots f_{i-1} \red b_{i-1} \} \vdash b_i \Downarrow B_i$, $1 \leq i < k$}
-\BinaryInfC{$\Gamma \vdash \mathbf{new}\,C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \} \Uparrow C\,\{ f_1 \red b_1; \ldots f_{k-1} \red b_{k-1} \}$}
+\AxiomC{$\Gamma, C\,\{ f_1 : B'_1 \red b_1; \ldots f_{i-1} : B'_{i-1} \red b_{i-1} \} \vdash b_i \Downarrow B'_i$, $1 \leq i \leq n$}
+\BinaryInfC{$\Gamma \vdash \mathbf{new}\,C\,\{ f_1 : B'_1 \red b_1; \ldots f_n : B'_n \red b_n \} \Uparrow C\,\{ f_1 : B_1 \red b_1; \ldots f_n : B'_n \red b_n \}$}
 \DisplayProof
 \medskip
 \end{center}
@@ -338,7 +341,7 @@ max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
 Тогда $(f, (B_1, \ldots B_n), A)$ является корректным определением абстрактной функции в сигнатуре $\Sigma$, если
 \[ B_1, \ldots B_n \vdash^n_\Sigma A. \]
 
-Пусть $\Sigma$ -- корректная сигнатура, $f$ -- имя функции, $d \in Def$, $B_1, \ldots B_n, A \in Term$, $a \in Term_e$ и если $d = \Rightarrow$, то $a \in Term$.
+Пусть $\Sigma$ -- корректная сигнатура, $f$ -- имя функции, $d \in Ar$, $B_1, \ldots B_n, A \in Term$, $a \in Term_e$ и если $d = \Rightarrow$, то $a \in Term$.
 Тогда $(f, (B_1, \ldots B_n), A, d, a)$ является корректным определением функции в сигнатуре $\Sigma$, если $(f, (B_1, \ldots B_n), A)$ является корректной абстрактной функцией в $\Sigma$ и
 \[ B_1, \ldots B_n \vdash^n_{\Sigma, (f, (B_1, \ldots B_n), A)} a \Downarrow A. \]
 Кроме того, мы требуем, чтобы определение было завершающимся, что проверяется отдельно.
@@ -367,21 +370,28 @@ max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
 Множество термов $Term^{vc}$ языка vclang определяется следующим образом:
 \begin{align*}
 Term^{vc} :=\ & x\ |\ D\ |\ c\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
-      |\ & \mathbf{new}\,C\,\{ S \}\ |\ C\,\{ S \} \\
+      |\ & \mathbf{new}\,C\,\{ S \}\ |\ C\,\{ S \}\ |\ \mathbf{new}\,C\ |\ C \\
       |\ & b\,.\,D\ |\ b\,.\,f\ |\ b\,.\,c\ |\ b\,.\,D\,a_1\,\ldots\,a_n\,.\,c \\
-      |\ & \mathbf{new}\,b\,.\,C\,\{ S \}\ |\ b\,.\,C\,\{ S \} \\
+      |\ & \mathbf{new}\,b\,.\,C\,\{ S \}\ |\ b\,.\,C\,\{ S \}\ |\ \mathbf{new}\,b\,.\,C\ |\ b\,.\,C \\
       |\ & \mathbf{let}\,x\,[x_1 : A_1]\,\ldots\,[x_n : A_n] : B \Rightarrow b\,\mathbf{in}\,a \\
       |\ & \mathbf{let}\,x\,[x_1 : A_1]\,\ldots\,[x_n : A_n] : B \Leftarrow e\,\mathbf{in}\,a \\
       |\ & b\,a\ |\ \lambda x. b\ |\ \lambda x : A. b\ |\ \Pi (x : A) B \\
       |\ & b\,\{a\}\ |\ \lambda \{x\}. b\ |\ \lambda \{x : A\}. b\ |\ \Pi \{x : A\} B \\
-      |\ & (a,b)\ |\ \Sigma (x : A) B\,.\,(a,b)\ |\ \mathbf{proj}_1\,p\ |\ \mathbf{proj}_2\,p\ |\ \Sigma (x : A) B \\
+      |\ & (a,b)\ |\ \Sigma (x : A) B\,.\,(a,b)\ |\ p\,.\,1\ |\ p\,.\,2\ |\ \Sigma (x : A) B \\
       |\ & \mathbf{Type}_i\ |\ \mathbf{Set}_i\ |\ \mathbf{Prop}
 \end{align*}
-где $x$, $x_1$, \ldots $x_n$ -- имена переменных, $a, b, A, B, p, a_1, \ldots a_n, A_1, \ldots A_n \in Term^{vc}$, $e \in Term^{vc}_e$, $D$ является именем типа данных, $c$ -- именем конструктора типа данных $D$, $C$ -- именем класса, $f$ -- именем поля некоторого класса и $S$ -- последовательностью пар $(f,d)$, где $f$ -- имя поля класса $C$ и $d$ -- терм.
-Такую пару $(f,d)$ мы будем записывать как $f \red d$.
+где $x$, $x_1$, \ldots $x_n$ -- имена переменных, $a, b, A, B, p, a_1, \ldots a_n, A_1, \ldots A_n \in Term^{vc}$, $e \in Term^{vc}_e$, $D$ является именем типа данных, $c$ -- именем конструктора типа данных $D$, $C$ -- именем класса, $f$ -- именем поля некоторого класса и $S$ -- последовательностью троек $(f,D,d)$, где $f$ -- имя поля класса $C$ и $d,D \in Term \amalg \{ * \}$ -- терм.
+Такую тройку $(f,D,d)$ мы будем записывать как $f : D \red d$.
 Запись $[x_i : A_i]$ означает либо $(x_i : A_i)$, либо $\{x_i : A_i\}$.
 Фигурные скобки используются для обозначения неявных аргументов.
 Как обычно, мы сокращаем $\Pi (x : A) B$ до $A \to B$, если $x \notin FV(B)$.
+
+Множество определений $Def^{vc}$ определяется следующим образом:
+\begin{align*}
+Def^{vc} :=\ & \mathbf{function}\,f\,[x_1 : A_1]\,\ldots\,[x_n : A_n] : B \Leftarrow e \\
+    |\ & \mathbf{function}\,f\,[x_1 : A_1]\,\ldots\,[x_n : A_n] : B \Rightarrow b \\
+    |\ & \mathbf{function}\,f\,[x_1 : A_1]\,\ldots\,[x_n : A_n] \Rightarrow b \\
+\end{align*}
 
 Мы определяем функцию $int$ для vclang, которая проверяет корректность типизации, а также транслирует термы из $Term^{vc}$ в термы из $Term$.
 Пусть $Env$ -- множество конечных последовательностей пар $(x,A)$, где $x$ -- имя переменной и $A \in Term$.
@@ -402,8 +412,8 @@ Term^{vc} :=\ & x\ |\ D\ |\ c\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
 \end{itemize}
 Функция $int'$ определяется индукцией по размеру второго аргумента (TODO: закончить определение $int'$):
 \begin{itemize}
-\item $int'(\rho, C\,\{ f_1 \red d_1; \ldots f_n \red d_n \}, inr(*)) = inl(C\,\{ f_1 \red d'_1; \ldots f_n \red d'_n \}, T)$, если
-    $int'((\rho, (\mathbf{this}, C\,\{ f_1 \red d'_1; \ldots f_{i-1} \red d'_{i-1} \})), d_i, [], T_i) = inl(d'_i, T'_i)$
+\item $int'(\rho, C\,\{ f_1 : D_1 \red d_1; \ldots f_n : D_n \red d_n \}, inr(*)) = inl(C\,\{ f'_1 : D'_1 \red d'_1; \ldots f'_k : D'_k \red d'_k \}, T)$, если
+    $int'((\rho, (\mathbf{this}, C\,\{ f'_1 : D'_1 \red d'_1; \ldots f_{i-1} : D'_{i-1} \red d'_{i-1} \})), d_i, [], T_i) = inl(d'_i, T'_i)$
     для всех $1 \leq i \leq n$, где $T_i$ -- это тип поля $f_i$, а $T$ -- это максимум по типам всех полей, которых нет в списке $f_1$, \ldots $f_n$.
 \item $int'(\rho, C\,\{ S \}, inl(A)) = inl(C', A')$, если $int'(\rho, C\,\{ S \}, inr(*)) = inl(C', A')$ и $A' \leq A$, иначе $int'(\rho, C\,\{ S \}, inl(A)) = inr(*)$.
 \end{itemize}
