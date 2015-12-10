@@ -108,9 +108,8 @@
 \newcommand{\Mod}{\text{-}\cat{Mod}}
 \newcommand{\Sig}{\cat{Sig}}
 \newcommand{\Th}{\cat{Th}}
-\newcommand{\ThC}{\Th_{\mathcal{C},\varnothing}}
-\newcommand{\ThT}{\Th_{\mathcal{T},\varnothing}}
-\newcommand{\ThP}{\Th_{\mathcal{T},\mathcal{P}_0}}
+\newcommand{\ThC}{\Th_{\mathcal{C}}}
+\newcommand{\ThT}{\Th_{\mathcal{T}}}
 \newcommand{\ttvdash}{\vartriangleright}
 
 \numberwithin{figure}{section}
@@ -224,7 +223,7 @@ where $\Psi = \{ (\pi_1 \circ \rho)^\circ(\varphi) | \varphi \in \Phi \} \cup \b
 \end{itemize}
 \end{proof}
 
-\subsection{The category of algebraic theories}
+\subsection{The category of signatures}
 
 A signature $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ consists of a set $\mathcal{S}$ of sorts, a set $\mathcal{F}$ of function symbols, and a set $\mathcal{P}$ of predicate symbols.
 Also $\Sigma$ assigns a signature to each $\sigma \in \mathcal{F}$ which is written as $\sigma : s_1 \times \ldots \times s_n \to s$ where $s_1$, \ldots $s_n$, $s$ are sorts.
@@ -237,29 +236,109 @@ For each $V \in \Set^\mathcal{S}$ we can define a set $Term_\mathcal{F}(V)_s$ of
 Then $Term_\mathcal{F}(V)$ is actually a functor $Term_\mathcal{F} : \Set^\mathcal{S} \to \Set^\mathcal{S}$.
 If $t \in Term_\mathcal{F}(V)_s$ and $\rho : V \to Term_\mathcal{F}(V')$, then we will write $t[\rho] \in Term_\mathcal{F}(V')_s$
 for the substitution of $\rho$ into $t$ which is defined as follows:
-\begin{itemize}
-\item $x[\rho] = \rho(x)$.
-\item $\sigma(a_1, \ldots a_k)[\rho] = \sigma(a_1[\rho], \ldots a_k[\rho])$.
-\end{itemize}
+\begin{align*}
+x[\rho] & = \rho(x) \\
+\sigma(a_1, \ldots a_k)[\rho] & = \sigma(a_1[\rho], \ldots a_k[\rho])
+\end{align*}
 
 An \emph{atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t_1 = t_2$ where $t_1, t_2 \in Term_\Sigma(V)_s$ for some sort $s$
 or of the form $R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in Term_\Sigma(V)_{s_i}$.
 A \emph{Horn formula} over $\Sigma$ with free variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulae.
+The set of Horn formulae over $\Sigma$ with free variables in $V$ is denoted by $Form_\Sigma(V)$.
 If $n = 0$, then we write such a formula as $\top$.
-If $\varphi$ is a formula with free variables in $V$ and $\rho : V \to Term_\mathcal{F}(V')$, then we will write $\varphi[\rho]$ for a formula defined as follows:
-\begin{itemize}
-\item $(t = s)[\rho] = (t[\rho] = s[\rho])$.
-\item $R(a_1, \ldots a_k)[\rho] = R(a_1[\rho], \ldots a_k[\rho])$.
-\item $(\varphi_1 \land \ldots \land \varphi_n)[\rho] = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho]$.
-\end{itemize}
+If $\varphi \in Form_\Sigma(V)$ and $\rho : V \to Term_\mathcal{F}(V')$, then we will write $\varphi[\rho]$ for a formula defined as follows:
+\begin{align*}
+(t = s)[\rho] & = (t[\rho] = s[\rho]) \\
+R(a_1, \ldots a_k)[\rho] & = R(a_1[\rho], \ldots a_k[\rho]) \\
+(\varphi_1 \land \ldots \land \varphi_n)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho]
+\end{align*}
 
 Now we introduce a functor $PTerm_\Sigma : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of ``partial terms''.
 If an ordinary term represents a function, then a partial term represents a function with its domain restricted to a subset.
-We define $PTerm_\Sigma(V)_s$ as the set of expressions $t|_\varphi$ where $t \in Term_\mathcal{F}(V)_s$ and $\varphi$ is a Horn formula over $\Sigma$ with free variables in $V$.
+We define $PTerm_\Sigma(V)_s$ as the set of expressions $t|_\varphi$ where $t \in Term_\mathcal{F}(V)_s$ and $\varphi \in Form_\Sigma(V)$.
 If $\varphi = \top$, then we will write $t|_\varphi$ simply as $t$.
-For every $t|_\phi \in PTerm_\Sigma(A)_s$, let $term(t|_\phi) = t$ and $dom(t|_\phi) = \phi$.
-For every $\rho : A \to PTerm_\Sigma(B)$ we define $t_\phi[\rho] \in PTerm_\Sigma(B)_s$ as follows:
-\[ t|_\phi[\rho] = t[term \circ \rho]|_{\varphi[term \circ \rho] \land \bigwedge_{a \in FV(t|_\phi)} dom(\rho(a))} \]
+If $p \in PTerm_\Sigma(V)_s$, $p = t|_\varphi$ and $\psi \in Form_\Sigma(V)$, then we will write $p|_\psi$ for $t|_{\varphi \land \psi}$.
+
+For every term, every formula and every partial term we define a sequence $fv$ of its free variables.
+Note that unlike the sets $FV$ of free variables these lists are ordered and can contain duplicates.
+\begin{align*}
+fv(x) & = x \\
+fv(\sigma(a_1, \ldots a_k)) & = fv(a_1), \ldots fv(a_k) \\
+fv(t = s) & = fv(t), fv(s) \\
+fv(R(a_1, \ldots a_k)) & = fv(a_1), \ldots fv(a_k) \\
+fv(\varphi_1 \land \ldots \land \varphi_n) & = fv(\varphi_1), \ldots fv(\varphi_n) \\
+fv(t|_\varphi) & = fv(t), fv(\varphi)
+\end{align*}
+If $l = (a_1, \ldots a_k)$, then we will write $\bigwedge_{a \in l} \varphi_a$ for $\varphi_{a_1} \land \ldots \land \varphi_{a_k}$.
+
+Now we define substitution functions for partial terms.
+First, for every $t|_\varphi \in PTerm_\Sigma(A)_s$, let $term(t|_\varphi) = t$ and $dom(t|_\varphi) = \varphi$.
+Then, for every $\rho : A \to PTerm_\Sigma(B)$, $t \in Term_\mathcal{F}(A)_s$ and $\varphi \in Form_\Sigma(A)$
+we define $t[\rho] \in PTerm_\Sigma(B)_s$, $\varphi[\rho] \in Form_\Sigma(B)$ and $t_\varphi[\rho] \in PTerm_\Sigma(B)_s$ as follows:
+\begin{align*}
+t[\rho] & = t[term \circ \rho]|_{\bigwedge_{a \in fv(t)} dom(\rho(a))} \\
+\varphi[\rho] & = \varphi[term \circ \rho] \land \bigwedge_{a \in fv(\varphi)} dom(\rho(a)) \text{ if $\varphi$ is atomic} \\
+(\varphi_1 \land \ldots \land \varphi_n)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho] \\
+t|_\varphi[\rho] & = t[\rho]|_{\varphi[\rho]}
+\end{align*}
+
+\begin{defn}
+Let $\Sigma$ and $\Sigma'$ be a pair of signatures with the same set of sorts $\mathcal{S}$.
+A morphism of these signatures is a pair $(\alpha,\beta)$ where $\alpha$ assigns to every $V \in \Set^\mathcal{S}$ a morphism $\alpha_V : PTerm_\Sigma(V) \to PTerm_{\Sigma'}(V)$
+and $\beta$ assigns to every $V \in \Set^\mathcal{S}$ a morphism $Form_\Sigma(V) \to Form_{\Sigma'}(V)$.
+These morphisms must satisfy the following conditions:
+\begin{enumerate}
+\item For every $t \in PTerm_\Sigma(V)_s$, $FV(\alpha_V(t)) = FV(t)$.
+\label{mor-sig-a-fv}
+\item For every $\varphi \in Form_\Sigma(V)$, $FV(\beta_V(\varphi)) = FV(\varphi)$.
+\label{mor-sig-b-fv}
+\item For every $x \in V_s$, $\alpha_V(x|_\top) = x|_\top$.
+\label{mor-sig-a-var}
+\item For every $t \in PTerm_\Sigma(A)_s$ and $\rho : A \to Term_\Sigma(B)$, $\alpha_B(t[\rho]) = \alpha_A(t)[x \mapsto \alpha_B(\rho(x)|_\top)]$.
+\label{mor-sig-a-subst}
+\item For every atomic $\varphi \in Form_\Sigma(A)$ and $\rho : A \to Term_\Sigma(B)$, $\beta_B(\varphi[\rho]) = \beta_A(\varphi)[x \mapsto \alpha_B(\rho(x)|_\top)]$.
+\label{mor-sig-b-subst}
+\item For every $t|_\varphi \in PTerm_\Sigma(V)$, $\alpha_V(t|_\varphi) = \alpha_V(t|_\top)|_{\beta_V(\varphi)}$.
+\label{mor-sig-a-op}
+\item $\beta_V(\top) = \top$, $\beta_V(\varphi \land \psi) = \beta_V(\varphi) \land \beta_V(\psi)$, and $\beta_{\{ x : s, y : s \}}(x = y) = (x = y)$.
+\label{mor-sig-b-op}
+\end{enumerate}
+The identity and the composition of morphisms are defined in the obvious way.
+The category of signatures with $\mathcal{S}$ as the set of sorts is denoted by $\Sig_\mathcal{S}$.
+\end{defn}
+
+\begin{prop}
+To construct a morphism of signatures $\Sigma = (\mathcal{S},\mathcal{F},\mathcal{P})$ and $\Sigma'$ it is enough to specify the following data:
+\begin{itemize}
+\item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$, a partial term $\alpha(\sigma) \in PTerm_{\Sigma'}(\{ x_1 : s_1, \ldots x_n : s_n \})$ such that $FV(\alpha(\sigma)) = \{ x_1, \ldots x_n \}$.
+\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$, a formula $\beta(R) \in Form_{\Sigma'}(\{ x_1 : s_1, \ldots x_n : s_n \})$ such that $FV(\beta(R)) = \{ x_1, \ldots x_n \}$.
+\end{itemize}
+Then there is a unique morphism $(\alpha,\beta)$ of these signatures such that $\alpha(\sigma(x_1, \ldots x_n)) = \alpha(\sigma)$ and $\beta(R(x_1, \ldots x_n)) = \beta(R)$.
+\end{prop}
+\begin{proof}
+First, let us extend $\alpha$ to a morphism $Term_\mathcal{F}(V) \to PTerm_{\Sigma'}(V)$.
+By conditions \eqref{mor-sig-a-var} and \eqref{mor-sig-a-subst} it can be done in a unique way:
+\begin{align*}
+\alpha_V(x) & = x \\
+\alpha_V(\sigma(a_1, \ldots a_n)) & = \alpha(\sigma)[x_i \mapsto \alpha_V(a_i)]
+\end{align*}
+Second, we extend $\beta$ to a morphism $Form_\Sigma(V) \to Form_{\Sigma'}(V)$.
+By conditions \eqref{mor-sig-b-subst} and \eqref{mor-sig-b-op} it can be done in a unique way:
+\begin{align*}
+\beta_V(a = b) & = \alpha_V(a) = \alpha_V(b) \\
+\beta_V(R(a_1, \ldots a_n)) & = \beta(R)[x_i \mapsto \alpha_V(a_i)] \\
+\beta_V(\varphi_1 \land \ldots \land \varphi_n) & = \beta_V(\varphi_1) \land \ldots \land \beta_V(\varphi_n)
+\end{align*}
+Now, we can extend $\alpha_V$ to a morphism $PTerm_\Sigma(V) \to PTerm_{\Sigma'}(V)$.
+By condition \eqref{mor-sig-a-op} it can be done in a unique way:
+\[ \alpha_V(t|_\varphi) = \alpha_V(t)|_{\beta_V(\varphi)} \]
+
+Conditions \eqref{mor-sig-a-fv} and \eqref{mor-sig-b-fv} follows from the conditions on $FV(\alpha(\sigma))$ and $FV(\beta(R))$.
+Conditions \eqref{mor-sig-a-var}, \eqref{mor-sig-a-op} and $\eqref{mor-sig-b-op}$ hold by the definitions of $\alpha_V$ and $\beta_V$.
+Conditions \eqref{mor-sig-a-subst} and $\eqref{mor-sig-b-subst}$ are easy to check by induction on the term and on the formula respectively.
+\end{proof}
+
+\subsection{The category of algebraic theories}
 
 A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are Horn formulae over $\Sigma$ with free variables in $V$.
 We will often write $\varphi_1, \ldots \varphi_n \sststile{}{V} \psi_1, \ldots \psi_k$ insted of $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi_1 \land \ldots \land \psi_k$.
@@ -315,7 +394,7 @@ $x = y \land \varphi \sststile{}{V} \varphi[y/x]$ (a2)
 \medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \psi$}
-\RightLabel{if $x \in FV(\varphi)$ (a3)}
+\RightLabel{, $x \in FV(\varphi)$, $t \in Term_\mathcal{F}(V')$ (a3)}
 \UnaryInfC{$\varphi[t/x] \sststile{}{V'} \psi[t/x]$}
 \DisplayProof
 \end{center}
@@ -326,32 +405,17 @@ We say that a theory $\mathbb{T}$ is \emph{total} if for every function symbols 
 sequent $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n)\!\downarrow$ is a theorem of $\mathbb{T}$.
 
 Let $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ and $\Sigma' = (\mathcal{S}, \mathcal{F}', \mathcal{P}')$ be a pair of signatures with the same set of sorts.
-Let $F$ be a function that to each $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ assigns a Horn formula over $\Sigma'$ with free variables in $\{ x_1 : s_1, \ldots x_n : s_n \}$
-and to each $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ assigns a partial term in $PTerm_{\Sigma'}(\{ x_1 : s_1, \ldots x_n : s_n \})_s$.
-Given such a function $F$ we can extend it to a morphism $Term_\mathcal{F}(V) \to PTerm_\mathcal{F}(V)$:
-\begin{itemize}
-\item $F(x) = x$ if $x \in V$.
-\item $F(\sigma(a_1, \ldots a_n)) = t[a_1'/x_1, \ldots a_n'/x_n]|_{\varphi[a_1'/x_1, \ldots a_n'/x_n] \land \varphi_1 \land \ldots \land \varphi_n}$ \\
-    where $F(\sigma(x_1, \ldots x_n)) = t|_\varphi$ and $F(a_i) = a_i'|_{\varphi_i}$.
-\end{itemize}
-For each Horn formula $\varphi$ over $\Sigma$ we can define a formula $F(\varphi)$ over $\Sigma'$ as follows:
-\begin{itemize}
-\item If $\varphi$ is of the form $t_1 = t_2$, then let $F(\varphi)$ be equal to $F(t_1) = F(t_2)$.
-\item If $\varphi$ is of the form $R(t_1, \ldots t_n)$, then $F(\varphi) = R(F(t_1), \ldots F(t_n))$.
-\item $F(\varphi_1 \land \ldots \land \varphi_n) = F(\varphi_1) \land \ldots \land F(\varphi_n)$.
-\end{itemize}
-
-If $\varphi \sststile{}{V} \psi$ is a sequent over $\Sigma$, then $F(\varphi) \sststile{}{V} F(\psi)$ is a sequent over $\Sigma'$.
+Let $(\alpha,\beta)$ be a morphism of $\Sigma$ and $\Sigma'$.
 Let $\mathbb{T}$ and $\mathbb{T}'$ be Horn theories in signatures $\Sigma$ and $\Sigma'$ respectively.
-Then we will say that $F$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ if $F(\varphi) \sststile{}{V} F(\psi)$ is a theorem of $\mathbb{T}'$.
-Note that if $F$ respects all axioms of $\mathbb{T}$, then it respects all of its theorems too.
-We will say that morphisms $F$ and $G$ are \emph{equivalent} if the following conditions hold:
+Then we will say that $(\alpha,\beta)$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ over $\Sigma$ if $\beta_V(\varphi) \sststile{}{V} \beta_V(\psi)$ is a theorem of $\mathbb{T}'$.
+Note that if $(\alpha,\beta)$ respects all axioms of $\mathbb{T}$, then it respects all of its theorems too.
+We will say that morphisms $(\alpha,\beta)$ and $(\alpha',\beta')$ are \emph{equivalent} if the following conditions hold:
 \begin{itemize}
 \item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ sequent $F(R(x_1, \ldots x_n)) \ssststile{}{x_1, \ldots x_n} G(R(x_1, \ldots x_n))$ is a theorem of $\mathbb{T}'$.
 \item For every $\sigma \in \mathcal{F}_\Sigma$, $\sigma : s_1 \times \ldots \times s_n \to s$ sequents
     $\sststile{}{x_1, \ldots x_n} F(\sigma(x_1, \ldots x_n)) \cong G(\sigma(x_1, \ldots x_n))$ are theorems of $\mathbb{T}'$
 \end{itemize}
-Note that if $F$ and $G$ are equivalent then $\sststile{}{V} F(t) \cong G(t)$ are theorems of $\mathbb{T}'$ for each $t \in Term_\Sigma(V)_s$.
+Note that if $F$ and $G$ are equivalent, then $\sststile{}{V} F(t) \cong G(t)$ are theorems of $\mathbb{T}'$ for each $t \in PTerm_\Sigma(V)_s$.
 
 Let $\mathcal{S}$ be a set of sorts.
 Then we define a category $\Th_\mathcal{S}$ of theories.
@@ -359,6 +423,13 @@ Its objects are triples $(\mathcal{F},\mathcal{P},\mathbb{T})$ where $\mathbb{T}
 Morphisms of theories $(\mathcal{F},\mathcal{P},\mathbb{T})$ and $(\mathcal{F}',\mathcal{P}',\mathbb{T}')$
 are equivalence classes of functions as described above which respect all axioms of $\mathbb{T}$.
 The composition of morphisms of signatures respects the equivalence relation; hence this defines a category of theories.
+
+\begin{prop}
+The data above describe a category.
+\end{prop}
+\begin{proof}
+TODO
+\end{proof}
 
 \begin{prop}
 Category $\Th_{\mathcal{S},\mathcal{P}}$ is locally finitely presentable.
@@ -373,6 +444,8 @@ It is easy to see that these constructions indeed define colimits of theories.
 
 Now, if a theory consists of a finite number of function symbols and axioms, then it is finitely presentable.
 Indeed, let $\mathbb{T}$ be such theory, let $D : J \to \Th_{\mathcal{S},\mathcal{P}}$ be a directed set, and let $f : \mathbb{T} \to colim\,D$ be a morphism.
+
+TODO
 \end{proof}
 
 \label{sec:T0}
@@ -461,11 +534,11 @@ D^n_{tm}(A_1, \ldots A_n, a, A) \land D^n_{tm}(A_1', \ldots A_n', a, A') & \ssts
 Category $\mathbb{T}'_0/\Th_{\mathcal{T},\mathcal{P}_0}$ is the full subcategory of $\Th_{\mathcal{T},\mathcal{P}_0}$ on those theories in which axioms of $\mathbb{T}'_0$ are provable.
 
 \begin{prop}
-Categories $\mathbb{T}_0/\Th_{\mathcal{T},\varnothing}$ and $\mathbb{T}'_0/\Th_{\mathcal{T},\mathcal{P}_0}$ are equivalent.
+Categories $\mathbb{T}_0/\ThT$ and $\mathbb{T}'_0/\Th_{\mathcal{T},\mathcal{P}_0}$ are equivalent.
 \end{prop}
 \begin{proof}
-Every theory in $\ThT$ is a theory in $\ThP$ in the obvious way.
-We define $F : \mathbb{T}_0/\ThT \to \mathbb{T}'_0/\ThP$ as $F(X) = X \cup \mathbb{T}'_0 \cup \mathbb{T}''_0$ where $\mathbb{T}''_0$ consists of the following axioms:
+% Every theory in $\ThT$ is a theory in $\ThP$ in the obvious way.
+% We define $F : \mathbb{T}_0/\ThT \to \mathbb{T}'_0/\ThP$ as $F(X) = X \cup \mathbb{T}'_0 \cup \mathbb{T}''_0$ where $\mathbb{T}''_0$ consists of the following axioms:
 \[ \{\ \sststile{}{A} D^n_{ty}(ft^n(A), \ldots ft^1(A), A)\ |\ n \in \mathbb{N}\ \} \]
 \[ \{\ \sststile{}{a} D^n_{tm}(ft^n(ty(a)), \ldots ft^1(ty(a)), a, ty(a))\ |\ n \in \mathbb{N}\ \} \]
 % Every morphism of theories $\mathbb{T}$ and $\mathbb{T}'$ corresponds to exactly one morphism of theories $F(\mathbb{T})$ and $F(\mathbb{T}')$
