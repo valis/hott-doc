@@ -235,10 +235,32 @@ For each $V \in \Set^\mathcal{S}$ we can define a set $Term_\mathcal{F}(V)_s$ of
 \item If $\sigma : s_1 \times \ldots \times s_n \to s$ and $t_i \in Term_\mathcal{F}(V)_{s_i}$, then $\sigma(t_1, \ldots t_n) \in Term_\mathcal{F}(V)_s$.
 \end{itemize}
 Then $Term_\mathcal{F}(V)$ is actually a functor $Term_\mathcal{F} : \Set^\mathcal{S} \to \Set^\mathcal{S}$.
+If $t \in Term_\mathcal{F}(V)_s$ and $\rho : V \to Term_\mathcal{F}(V')$, then we will write $t[\rho] \in Term_\mathcal{F}(V')_s$
+for the substitution of $\rho$ into $t$ which is defined as follows:
+\begin{itemize}
+\item $x[\rho] = \rho(x)$.
+\item $\sigma(a_1, \ldots a_k)[\rho] = \sigma(a_1[\rho], \ldots a_k[\rho])$.
+\end{itemize}
 
-An \emph{atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t_1 = t_2$ where $t_1, t_2 \in Term_\Sigma(V)_s$ for some sort $s$ or of the form $R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in Term_\Sigma(V)_{s_i}$.
+An \emph{atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t_1 = t_2$ where $t_1, t_2 \in Term_\Sigma(V)_s$ for some sort $s$
+or of the form $R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in Term_\Sigma(V)_{s_i}$.
 A \emph{Horn formula} over $\Sigma$ with free variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulae.
 If $n = 0$, then we write such a formula as $\top$.
+If $\varphi$ is a formula with free variables in $V$ and $\rho : V \to Term_\mathcal{F}(V')$, then we will write $\varphi[\rho]$ for a formula defined as follows:
+\begin{itemize}
+\item $(t = s)[\rho] = (t[\rho] = s[\rho])$.
+\item $R(a_1, \ldots a_k)[\rho] = R(a_1[\rho], \ldots a_k[\rho])$.
+\item $(\varphi_1 \land \ldots \land \varphi_n)[\rho] = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho]$.
+\end{itemize}
+
+Now we introduce a functor $PTerm_\Sigma : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of ``partial terms''.
+If an ordinary term represents a function, then a partial term represents a function with its domain restricted to a subset.
+We define $PTerm_\Sigma(V)_s$ as the set of expressions $t|_\varphi$ where $t \in Term_\mathcal{F}(V)_s$ and $\varphi$ is a Horn formula over $\Sigma$ with free variables in $V$.
+If $\varphi = \top$, then we will write $t|_\varphi$ simply as $t$.
+For every $t|_\phi \in PTerm_\Sigma(A)_s$, let $term(t|_\phi) = t$ and $dom(t|_\phi) = \phi$.
+For every $\rho : A \to PTerm_\Sigma(B)$ we define $t_\phi[\rho] \in PTerm_\Sigma(B)_s$ as follows:
+\[ t|_\phi[\rho] = t[term \circ \rho]|_{\varphi[term \circ \rho] \land \bigwedge_{a \in FV(t|_\phi)} dom(\rho(a))} \]
+
 A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are Horn formulae over $\Sigma$ with free variables in $V$.
 We will often write $\varphi_1, \ldots \varphi_n \sststile{}{V} \psi_1, \ldots \psi_k$ insted of $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi_1 \land \ldots \land \psi_k$.
 We will use the following abbreviations:
@@ -246,7 +268,12 @@ We will use the following abbreviations:
 t\!\downarrow & \text{ means } t = t \\
 \sststile{}{V} t \leftrightharpoons s & \text{ means } t\!\downarrow, s\!\downarrow\,\sststile{}{V} t = s \\
 \sststile{}{V} t \cong s & \text{ means } t\!\downarrow\,\sststile{}{V} t = s \text{ and } s\!\downarrow\,\sststile{}{V} t = s \\
-\varphi \ssststile{}{V} \psi & \text{ means } \varphi \sststile{}{V} \psi \text{ and } \psi \sststile{}{V} \varphi
+\varphi \ssststile{}{V} \psi & \text{ means } \varphi \sststile{}{V} \psi \text{ and } \psi \sststile{}{V} \varphi \\
+R(t_1|_{\varphi_1}, \ldots t_n|_{\varphi_n}) & \text{ means } R(t_1, \ldots t_n) \land \varphi_1 \land \ldots \land \varphi_n \\
+t|_\varphi = s|_\psi & \text{ means } t = s \land \varphi \land \psi \\
+t|_\varphi\!\downarrow & \text{ means } t\!\downarrow\!\land \varphi \\
+\sststile{}{V} t|_\varphi \leftrightharpoons s|_\psi & \text{ means } t|_\varphi\!\downarrow, s|_\psi\!\downarrow\,\sststile{}{V} t = s \\
+\sststile{}{V} t|_\varphi \cong s|_\psi & \text{ means } t|_\varphi\!\downarrow\,\sststile{}{V} t = s \land \psi \text{ and } s|_\psi\!\downarrow\,\sststile{}{V} t = s \land \varphi
 \end{align*}
 
 A \emph{Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
@@ -295,20 +322,8 @@ $x = y \land \varphi \sststile{}{V} \varphi[y/x]$ (a2)
 \medskip
 
 If $\mathbb{T}$ is a Horn theory, then a \emph{theorem} of $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
-We say that a theory $\mathbb{T}$ is \emph{total} if for every function symbols $\sigma : s_1 \times \ldots \times s_n \to s$ sequent $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n)\!\downarrow$ is a theorem of $\mathbb{T}$.
-
-Now we introduce a functor $PTerm_\Sigma : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of ``partial terms''.
-If an ordinary term represents a function, then a partial term represents a function with its domain restricted to a subset.
-We define $PTerm_\Sigma(V)_s$ as the set of expressions $t|_\varphi$ where $t \in Term_\mathcal{F}(V)_s$ and $\varphi$ is a Horn formula over $\Sigma$ with free variables in $V$.
-If $\varphi = \top$, then we will write $t|_\varphi$ simply as $t$.
-We will use the following notations:
-\begin{align*}
-R(t_1|_{\varphi_1}, \ldots t_n|_{\varphi_n}) & \text{ means } R(t_1, \ldots t_n) \land \varphi_1 \land \ldots \land \varphi_n \\
-t|_\varphi = s|_\psi & \text{ means } t = s \land \varphi \land \psi \\
-t|_\varphi\!\downarrow & \text{ means } t\!\downarrow\!\land \varphi \\
-\sststile{}{V} t|_\varphi \leftrightharpoons s|_\psi & \text{ means } t|_\varphi\!\downarrow, s|_\psi\!\downarrow\,\sststile{}{V} t = s \\
-\sststile{}{V} t|_\varphi \cong s|_\psi & \text{ means } t|_\varphi\!\downarrow\,\sststile{}{V} t = s \land \psi \text{ and } s|_\psi\!\downarrow\,\sststile{}{V} t = s \land \varphi
-\end{align*}
+We say that a theory $\mathbb{T}$ is \emph{total} if for every function symbols $\sigma : s_1 \times \ldots \times s_n \to s$
+sequent $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n)\!\downarrow$ is a theorem of $\mathbb{T}$.
 
 Let $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ and $\Sigma' = (\mathcal{S}, \mathcal{F}', \mathcal{P}')$ be a pair of signatures with the same set of sorts.
 Let $F$ be a function that to each $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ assigns a Horn formula over $\Sigma'$ with free variables in $\{ x_1 : s_1, \ldots x_n : s_n \}$
