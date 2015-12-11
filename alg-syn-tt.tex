@@ -432,7 +432,7 @@ TODO
 \end{proof}
 
 \begin{prop}
-Category $\Th_{\mathcal{S},\mathcal{P}}$ is locally finitely presentable.
+Category $\Th_\mathcal{S}$ is locally finitely presentable.
 \end{prop}
 \begin{proof}
 First, let $\{ (\mathcal{F}_i,\mathcal{P}_i,\mathbb{T}_i) \}_{i \in S}$ be a set of theories.
@@ -446,6 +446,47 @@ Now, if a theory consists of a finite number of function symbols and axioms, the
 Indeed, let $\mathbb{T}$ be such theory, let $D : J \to \Th_{\mathcal{S},\mathcal{P}}$ be a directed set, and let $f : \mathbb{T} \to colim\,D$ be a morphism.
 
 TODO
+\end{proof}
+
+Let $T = (\mathcal{F},\mathcal{P},\mathbb{T})$ be a theory in $\Th_\mathcal{S}$ and $T' = (\mathcal{F}',\mathcal{P}',\mathbb{T}')$ a theory in $\Th_{\mathcal{S}'}$.
+Then we say that $T'$ is a \emph{subtheory} of $T$ if $\mathcal{S}' \subseteq \mathcal{S}$, $\mathcal{F}' \subseteq \mathcal{F}$, $\mathcal{P}' \subseteq \mathcal{P}$ and $\mathbb{T}' \subseteq \mathbb{T}$.
+If $T'$ is a subtheory of a theory $T$, then we often need to know when a theorem of $T$ is a theorem of $T'$.
+The lemma below gives us a simple criterion for this.
+First, we need to introduce a bit of notation.
+If $V \in \Set^\mathcal{S}$, then we write $T'(V) \in \Set^{\mathcal{S}'}$ for the subset of $V$ which consists of variables of sorts from $\mathcal{S}'$.
+If $\varphi$ is a Horn formula over $(\mathcal{S},\mathcal{F},\mathcal{P})$, then we define a formula $T'(\varphi)$ over $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
+For atomic formulae $T'$ is defined as follows:
+\begin{align*}
+T'(\varphi) & = \varphi \text{ if $\varphi$ is a formula over $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$,} \\
+T'(\varphi) & = \top \text{ otherwise.}
+\end{align*}
+For other Horn formulae $T'$ is defined as follows:
+\[ T'(\varphi_1 \land \ldots \land \varphi_n) = T'(\varphi_1) \land \ldots \land T'(\varphi_n) \]
+
+\begin{lem}
+Let $T' = (\mathcal{F}',\mathcal{P}',\mathbb{T}') \in \Th_{\mathcal{S}'}$ be a subtheory of $T \in \Th_\mathcal{S}$.
+Suppose that if $\sigma : s_1 \times \ldots \times s_n \to s$ and $s \in \mathcal{S}'$, then $\sigma \in \mathcal{F}'$.
+If for every axiom $\varphi \sststile{}{V} \psi$ of $T$ sequent $T'(\varphi) \sststile{}{T'(V)} T'(\psi)$ is a theorem of $T'$, then this is true for every theorem of $T$.
+\end{lem}
+\begin{proof}
+We need to check that every inference rule preserves this property.
+This is clearly true for rules (b1)-(b6) and (a1).
+Let us consider sequent $x = y \land \varphi \sststile{}{x:s,y:s,V} \varphi[y/x]$.
+We can assume that $\varphi$ is atomic.
+If $x \notin FV(\varphi)$, then this sequent is a special case of (b5).
+Suppose $x \in FV(\varphi)$.
+Note that $\varphi[y/x]$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$ if and only if $\varphi$ is.
+If $s \notin \mathcal{S}'$, then $\varphi$ is not a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$;
+hence sequent $T'(x = y \land \varphi) \sststile{}{x:s,y:s,V} T'(\varphi[y/x])$ equals to $\top \sststile{}{T'(V)} \top$ which is clearly derivable.
+If $s \in \mathcal{S}'$, then this sequent equals either to $x = y \land \varphi \sststile{}{x:s,y:s,T'(V)} \varphi[y/x]$ or to $x = y \sststile{}{x:s,y:s,T'(V)} \top$, both of which are derivable.
+
+Finally, let us consider rule (a3).
+To prove that it preserves the required proerty it is enough to show that $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$ if and only if $\varphi[t/x]$ is.
+If $x \notin FV(\varphi)$, then $\varphi = \varphi[t/x]$.
+Suppose that $x \in FV(\varphi)$ and $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
+If $x$ has sort $s$, then $s \in \mathcal{S}'$.
+We need to show that a term of sort $s$ is a term of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
+But this follows from the assumption on the set of function symbols.
 \end{proof}
 
 \label{sec:T0}
