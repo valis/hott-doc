@@ -74,7 +74,7 @@
 
 \newcommand{\newref}[4][]{
 \ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
-\expandafter\newcommand\csname r#2\endcsname[1]{\ref{#2:##1}}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
 \expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
 \newenvironmentx{#2}[2][1=,2=]{
 \ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
@@ -345,14 +345,14 @@ We will often write $\varphi_1, \ldots \varphi_n \sststile{}{V} \psi_1, \ldots \
 We will use the following abbreviations:
 \begin{align*}
 t\!\downarrow & \text{ means } t = t \\
-\sststile{}{V} t \leftrightharpoons s & \text{ means } t\!\downarrow, s\!\downarrow\,\sststile{}{V} t = s \\
-\sststile{}{V} t \cong s & \text{ means } t\!\downarrow\,\sststile{}{V} t = s \text{ and } s\!\downarrow\,\sststile{}{V} t = s \\
+\varphi \sststile{}{V} t \leftrightharpoons s & \text{ means } \varphi \land t\!\downarrow \land s\!\downarrow\,\sststile{}{V} t = s \\
+\varphi \sststile{}{V} t \cong s & \text{ means } \varphi \land t\!\downarrow\,\sststile{}{V} t = s \text{ and } \varphi \land s\!\downarrow\,\sststile{}{V} t = s \\
 \varphi \ssststile{}{V} \psi & \text{ means } \varphi \sststile{}{V} \psi \text{ and } \psi \sststile{}{V} \varphi \\
 R(t_1|_{\varphi_1}, \ldots t_n|_{\varphi_n}) & \text{ means } R(t_1, \ldots t_n) \land \varphi_1 \land \ldots \land \varphi_n \\
 t|_\varphi = s|_\psi & \text{ means } t = s \land \varphi \land \psi \\
 t|_\varphi\!\downarrow & \text{ means } t\!\downarrow\!\land \varphi \\
-\sststile{}{V} t|_\varphi \leftrightharpoons s|_\psi & \text{ means } t|_\varphi\!\downarrow, s|_\psi\!\downarrow\,\sststile{}{V} t = s \\
-\sststile{}{V} t|_\varphi \cong s|_\psi & \text{ means } t|_\varphi\!\downarrow\,\sststile{}{V} t = s \land \psi \text{ and } s|_\psi\!\downarrow\,\sststile{}{V} t = s \land \varphi
+\chi \sststile{}{V} t|_\varphi \leftrightharpoons s|_\psi & \text{ means } \chi \land t|_\varphi\!\downarrow, s|_\psi\!\downarrow\,\sststile{}{V} t = s \\
+\chi \sststile{}{V} t|_\varphi \cong s|_\psi & \text{ means } \chi \land t|_\varphi\!\downarrow\,\sststile{}{V} t = s \land \psi \text{ and } \chi \land s|_\psi\!\downarrow\,\sststile{}{V} t = s \land \varphi
 \end{align*}
 
 A \emph{Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
@@ -404,18 +404,95 @@ If $\mathbb{T}$ is a Horn theory, then a \emph{theorem} of $\mathbb{T}$ is a seq
 We say that a theory $\mathbb{T}$ is \emph{total} if for every function symbols $\sigma : s_1 \times \ldots \times s_n \to s$
 sequent $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n)\!\downarrow$ is a theorem of $\mathbb{T}$.
 
+We will need the following lemmas from \cite{PHT}:
+\begin{lem}[cong-a]
+For every $u_i,v_i \in Term_\mathcal{F}(V)_{s_i}$, $t \in Term_\mathcal{F}(\{ x_1 : s_1, \ldots x_n : s_n\})_s$
+sequents $u_1 = v_1 \land \ldots \land u_n = v_n \sststile{}{V} t[x_i \mapsto u_i] \cong t[x_i \mapsto v_i]$ are theorems of any theory.
+\end{lem}
+
+\begin{lem}
+Sequent $y = x \land \varphi[y/x] \sststile{}{V} \varphi$ is a theorem of any theory.
+\end{lem}
+
+Using the previous lemma we prove the following fact:
+
+\begin{lem}[cong-b]
+For every $u_i,v_i \in Term_\mathcal{F}(V)_{s_i}$, $\varphi \in Form_\Sigma(\{ x_1 : s_1, \ldots x_n : s_n\})$
+sequent $u_1 = v_1 \land \ldots \land u_n = v_n \land \varphi[x_i \mapsto u_i] \sststile{}{V} \varphi[x_i \mapsto v_i]$ is a theorem of any theory.
+\end{lem}
+\begin{proof}
+By the previous lemma we have $y_n = x_n \land \varphi[y_n/x_n] \sststile{}{x_1 : s_1, \ldots x_n : s_n, y_n : s_n} \varphi$ is provable.
+If we take $\varphi$ to be equal to $y_n = x_n \land \varphi[y_n/x_n]$, then we get sequent
+$y_{n-1} = x_{n-1} \land y_n = x_n \land \varphi[y_n/x_n,y_{n-1}/x_{n-1}] \sststile{}{x_1 : s_1, \ldots x_n : s_n, y_{n-1} : s_{n-1}, y_n : s_n} y_n = x_n \land \varphi[y_n/x_n]$.
+By (b2) we get sequent
+\[ y_{n-1} = x_{n-1} \land y_n = x_n \land \varphi[y_n/x_n,y_{n-1}/x_{n-1}] \sststile{}{x_1 : s_1, \ldots x_n : s_n, y_{n-1} : s_{n-1}, y_n : s_n} \varphi. \]
+Repeating this argument we can conclude that
+\[ y_1 = x_1 \land \ldots \land y_n = x_n \land \varphi[y_1/x_1, \ldots y_n/x_n] \sststile{}{x_1 : s_1, \ldots x_n : s_n, y_1 : s_1, y_n : s_n} \varphi. \]
+By (a3) we conclude that the required sequent is derivable.
+\end{proof}
+
 Let $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ and $\Sigma' = (\mathcal{S}, \mathcal{F}', \mathcal{P}')$ be a pair of signatures with the same set of sorts.
 Let $(\alpha,\beta)$ be a morphism of $\Sigma$ and $\Sigma'$.
 Let $\mathbb{T}$ and $\mathbb{T}'$ be Horn theories in signatures $\Sigma$ and $\Sigma'$ respectively.
 Then we will say that $(\alpha,\beta)$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ over $\Sigma$ if $\beta_V(\varphi) \sststile{}{V} \beta_V(\psi)$ is a theorem of $\mathbb{T}'$.
 Note that if $(\alpha,\beta)$ respects all axioms of $\mathbb{T}$, then it respects all of its theorems too.
-We will say that morphisms $(\alpha,\beta)$ and $(\alpha',\beta')$ are \emph{equivalent} if the following conditions hold:
+
+Let $T$ and $T'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
+Then we will say that morphisms $(\alpha,\beta)$ and $(\alpha',\beta')$ between $T$ and $T'$ are \emph{equivalent} if the following conditions hold:
+\begin{enumerate}
+\item For every $t \in PTerm_\Sigma(V)_s$ sequents $\sststile{}{V} \alpha_V(t) \cong \alpha'_V(t)$ are theorems of $T'$.
+\label{mor-eq-a}
+\item For every $\varphi \in Form_\Sigma(V)$ sequent $\beta_V(\varphi) \ssststile{}{V} \beta'_V(\varphi)$ is a theorem of $T'$.
+\label{mor-eq-b}
+\end{enumerate}
+
+\begin{prop}[mor-eq]
+Let $T = (\mathcal{F},\mathcal{P},\mathbb{T})$ and $T'$ be theories.
+Morphisms $(\alpha,\beta)$ and $(\alpha',\beta')$ between $T$ and $T'$ are equivalent if and only if the following conditions hold:
 \begin{itemize}
-\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ sequent $F(R(x_1, \ldots x_n)) \ssststile{}{x_1, \ldots x_n} G(R(x_1, \ldots x_n))$ is a theorem of $\mathbb{T}'$.
-\item For every $\sigma \in \mathcal{F}_\Sigma$, $\sigma : s_1 \times \ldots \times s_n \to s$ sequents
-    $\sststile{}{x_1, \ldots x_n} F(\sigma(x_1, \ldots x_n)) \cong G(\sigma(x_1, \ldots x_n))$ are theorems of $\mathbb{T}'$
+\item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ sequents
+    \[ \sststile{}{U} \alpha_U(\sigma(x_1, \ldots x_n)) \cong \alpha'_U(\sigma(x_1, \ldots x_n)) \]
+are theorems of $T'$, where $U = \{ x_1 : s_1, \ldots x_n : s_n \}$.
+\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ sequent
+    \[ \beta_U(R(x_1, \ldots x_n)) \ssststile{}{U} \beta'_U(R(x_1, \ldots x_n)) \]
+is a theorem of $T'$, where $U = \{ x_1 : s_1, \ldots x_n : s_n \}$.
 \end{itemize}
-Note that if $F$ and $G$ are equivalent, then $\sststile{}{V} F(t) \cong G(t)$ are theorems of $\mathbb{T}'$ for each $t \in PTerm_\Sigma(V)_s$.
+\end{prop}
+\begin{proof}
+The ``only if'' direction is obvious.
+Let us prove the converse.
+First, we prove \eqref{mor-eq-a} for $t \in Term_\mathcal{F}(V)_s$ by induction on it.
+If $t$ is a variable, then $\alpha_V(t) = \alpha'_V(t) = t$.
+If $t = \sigma(t_1, \ldots t_n)$, then $\sststile{}{V} \alpha_V(t_i) \cong \alpha_V(t'_i)$
+and $\sststile{}{U} \alpha_U(\sigma(x_1, \ldots x_n)) \cong \alpha'_U(\sigma(x_1, \ldots x_n))$ where $U = \{ x_1 : s_1, \ldots x_n : s_n \}$.
+Since $FV(\alpha_U(\sigma(x_1, \ldots x_n))) = \{ x_1, \ldots x_n\}$, by (a3) we have
+$\alpha(t)\!\downarrow\,\sststile{}{V} \alpha(t) = \alpha'_U(\sigma(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)]$.
+We also have $\alpha_V(t)\!\downarrow\,\sststile{}{V} \alpha_V(t_i)\!\downarrow$, hence by \rlem{cong-a}
+$\alpha(t)\!\downarrow\,\sststile{}{V} \alpha'_U(\sigma(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)] = \alpha'_V(t)$.
+By transitivity, we conclude that $\alpha_V(t)\!\downarrow\,\sststile{}{V} \alpha_V(t) = \alpha'_V(t)$.
+The same argument shows that $\alpha'_V(t)\!\downarrow\,\sststile{}{V} \alpha_V(t) = \alpha'_V(t)$.
+
+Let us prove \eqref{mor-eq-b}.
+It is enough to prove it for atomic formulae $\varphi$.
+If $\varphi$ equals to $t = t'$, then $\beta_V(\varphi)$ equals to $\alpha_V(t) = \alpha_V(t')$ and $\beta'_V(\varphi)$ equals to $\alpha'_V(t) = \alpha'_V(t')$.
+We know that $\sststile{}{V} \alpha_V(t) \cong \alpha'_V(t)$ and $\sststile{}{V} \alpha_V(t') \cong \alpha'_V(t')$.
+Thus by transitivity and symmetry we can conclude that $\alpha_V(t) = \alpha_V(t)' \sststile{}{V} \alpha'_V(t) = \alpha'_V(t')$.
+
+If $\varphi = R(t_1, \ldots t_n)$, then $\beta_V(\varphi) = \beta_U(R(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)]$
+and $\beta'_V(\varphi) = \beta'_U(R(x_1, \ldots x_n))[x_i \mapsto \alpha'_V(t_i)]$ where $U = \{ x_1 : s_1, \ldots x_n : s_n \}$.
+We know that $\beta_U(R(x_1, \ldots x_n)) \sststile{}{U} \beta'_U(R(x_1, \ldots x_n))$.
+Since $FV(\beta_U(R(x_1, \ldots x_n))) = \{ x_1, \ldots x_n \}$, by (a3) we can conclude that $\beta_V(\varphi) \sststile{}{V} \beta'_U(R(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)]$.
+Since $\beta'_U(R(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)] \sststile{}{V} \alpha_V(t_i)\!\downarrow$, by \rlem{cong-b} we can conclude that
+$\beta'_U(R(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)] \sststile{}{V} \beta'_V(\varphi)$.
+By (b2) we conclude that $\beta_V(\varphi) \sststile{}{V} \beta'_V(\varphi)$.
+The same argument shows that $\beta'_V(\varphi) \sststile{}{V} \beta_V(\varphi)$.
+
+Now, we can finish the proof of \eqref{mor-eq-a}.
+We need to prove that $\sststile{}{V} \alpha_V(t|_\varphi) \cong \alpha'_V(t|_\varphi)$.
+We already saw that $\alpha_V(t)\!\downarrow\,\sststile{}{V} \alpha_V(t) = \alpha'_V(t)$ and $\beta_V(\varphi) \sststile{}{V} \beta'_V(\varphi)$.
+Hence $\alpha_V(t)\!\downarrow \land \beta_V(\varphi) \sststile{}{V} \alpha_V(t) = \alpha'_V(t) \land \beta'_V(\varphi)$.
+The same argument shows that $\alpha'_V(t)\!\downarrow \land \beta'_V(\varphi) \sststile{}{V} \alpha_V(t) = \alpha'_V(t) \land \beta_V(\varphi)$.
+\end{proof}
 
 Let $\mathcal{S}$ be a set of sorts.
 Then we define a category $\Th_\mathcal{S}$ of theories.
@@ -424,12 +501,10 @@ Morphisms of theories $(\mathcal{F},\mathcal{P},\mathbb{T})$ and $(\mathcal{F}',
 are equivalence classes of functions as described above which respect all axioms of $\mathbb{T}$.
 The composition of morphisms of signatures respects the equivalence relation; hence this defines a category of theories.
 
-\begin{prop}
-The data above describe a category.
-\end{prop}
-\begin{proof}
-TODO
-\end{proof}
+\subsection{Properties of $\Th_\mathcal{S}$}
+
+Now we prove a few properties of the category of theories.
+We begin with a proof of the existence of colimits.
 
 \begin{prop}
 Category $\Th_\mathcal{S}$ is locally finitely presentable.
@@ -446,6 +521,29 @@ Now, if a theory consists of a finite number of function symbols and axioms, the
 Indeed, let $\mathbb{T}$ be such theory, let $D : J \to \Th_{\mathcal{S},\mathcal{P}}$ be a directed set, and let $f : \mathbb{T} \to colim\,D$ be a morphism.
 
 TODO
+\end{proof}
+
+Now we give a characterization of monomorphisms.
+
+\begin{prop}
+A morphism of theories $(\alpha,\beta) : T \to S$ is a monomorphism if and only if for every sequent $\varphi \sststile{}{V} \psi$ of $T$
+if $\beta_V(\varphi) \sststile{}{V} \beta_V(\psi)$ is a theorem of $S$, then $\varphi \sststile{}{V} \psi$ is a theorem of $T$.
+\end{prop}
+\begin{proof}
+First, let us prove the ``if'' part.
+Let $(\alpha_1,\beta_1), (\alpha_2,\beta_2) : P \to T$ be a pair of morphisms such that $(\alpha,\beta) \circ (\alpha_1,\beta_1) = (\alpha,\beta) \circ (\alpha_2,\beta_2)$.
+If $t \in PTerm_\Sigma(V)_s$, then $\sststile{}{V} \alpha(\alpha_1(t)) \cong \alpha(\alpha_2(t))$; hence $\sststile{}{V} \alpha_1(t) \cong \alpha_2(t)$.
+If $\varphi \in Form_\Sigma(V)$, then $\beta(\beta_1(\varphi)) \ssststile{}{V} \beta(\beta_2(\varphi))$; hence $\beta_1(\varphi) \ssststile{}{V} \beta_2(\varphi)$.
+Thus $(\alpha_1,\beta_1) = (\alpha_2,\beta_2)$.
+
+Now, let us prove the ``only if'' part.
+Suppose that $(\alpha,\beta)$ is a monomorphism.
+Let $\varphi \sststile{}{V} \psi$ be a sequent of $T$ such that $\beta_V(\varphi) \sststile{}{V} \beta_V(\psi)$ is a theorem of $S$.
+Let $P$ be a theory which consists of a single predicate symbol $R : s_1 \times \ldots \times s_n \times s'_1 \times \ldots \times s'_k$
+where $s_1, \ldots s_n$ are sorts of variables in $fv(\varphi)$ and $s'_1, \ldots s'_k$ are sorts of variables in $fv(\psi)$.
+Let $f : P \to T$ be a morphism defined by $f(R(x_1, \ldots x_n, y_1, \ldots y_k)) = \varphi \land y_1\!\downarrow \land \ldots \land y_k\!\downarrow$ and
+let $g : P \to T$ be a morphism defined by $g(R(x_1, \ldots x_n, y_1, \ldots y_k)) = \varphi \land \psi$.
+By \rprop{mor-eq} $(\alpha,\beta) \circ f = (\alpha,\beta) \circ g$, hence $f = g$ which implies that $\varphi \sststile{}{V} \psi$.
 \end{proof}
 
 Let $T = (\mathcal{F},\mathcal{P},\mathbb{T})$ be a theory in $\Th_\mathcal{S}$ and $T' = (\mathcal{F}',\mathcal{P}',\mathbb{T}')$ a theory in $\Th_{\mathcal{S}'}$.
