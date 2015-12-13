@@ -105,7 +105,8 @@
 \newcommand{\ccat}{\cat{CCat}}
 \newcommand{\syntt}{\cat{SynTT}}
 \newcommand{\algtt}{\cat{AlgTT}}
-\newcommand{\Mod}{\text{-}\cat{Mod}}
+\newcommand{\PStr}[1]{#1\text{-}\cat{PStr}}
+\newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\Sig}{\cat{Sig}}
 \newcommand{\Th}{\cat{Th}}
 \newcommand{\ThC}{\Th_{\mathcal{C}}}
@@ -141,8 +142,8 @@ In this section we will give another equivalent definition which is just a descr
 
 \section{Essentially algebraic theories}
 
-There are several equivalent ways of defining essentially algebraic theories (\cite{LPC}, \cite{GAT}, \cite{PHT}, \cite[D 1.3.4]{elephant}).
-We will use approach introduced in \cite{PHT} under the name of partial horn theories since it seems to be the most general.
+There are several equivalent ways of defining essentially algebraic theories (\cite{LPC}, \cite{GAT}, \cite{PHL}, \cite[D 1.3.4]{elephant}).
+We will use approach introduced in \cite{PHL} under the name of partial horn theories since it seems to be the most general.
 In this section we will review necessary for our development parts of the theory of partial horn theories and define a notion of morphisms between them suitable for our purposes.
 
 \subsection{The monad of partial terms}
@@ -358,7 +359,7 @@ t|_\varphi\!\downarrow & \text{ means } t\!\downarrow\!\land \varphi \\
 A \emph{Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
 The rules of \emph{Partial Horn logic} are listed below.
 In these rules for every sequent $\varphi \sststile{}{V} \psi$ the set of variables $V$ is such that $FV(\varphi) \cup FV(\psi) \subseteq V$.
-Note that this set of rules is equivalent to the one described in \cite{PHT}.
+Note that this set of rules is equivalent to the one described in \cite{PHL}.
 \begin{center}
 $\varphi \sststile{}{V} \varphi$ (b1)
 \qquad
@@ -404,7 +405,7 @@ If $\mathbb{T}$ is a Horn theory, then a \emph{theorem} of $\mathbb{T}$ is a seq
 We say that a theory $\mathbb{T}$ is \emph{total} if for every function symbols $\sigma : s_1 \times \ldots \times s_n \to s$
 sequent $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n)\!\downarrow$ is a theorem of $\mathbb{T}$.
 
-We will need the following lemmas from \cite{PHT}:
+We will need the following lemmas from \cite{PHL}:
 \begin{lem}[cong-a]
 For every $u_i,v_i \in Term_\mathcal{F}(V)_{s_i}$, $t \in Term_\mathcal{F}(\{ x_1 : s_1, \ldots x_n : s_n\})_s$
 sequents $u_1 = v_1 \land \ldots \land u_n = v_n \sststile{}{V} t[x_i \mapsto u_i] \cong t[x_i \mapsto v_i]$ are theorems of any theory.
@@ -501,6 +502,54 @@ Morphisms of theories $(\mathcal{F},\mathcal{P},\mathbb{T})$ and $(\mathcal{F}',
 are equivalence classes of functions as described above which respect all axioms of $\mathbb{T}$.
 The composition of morphisms of signatures respects the equivalence relation; hence this defines a category of theories.
 
+\subsection{Models of theories}
+
+The notions of a partial $\Sigma$-structure for a signature $\Sigma$ and of a model of a theory were defined in \cite{PHL}.
+Here, we will show that morphisms of theories determine functors between models of these theories and prove the following proposition:
+
+\begin{prop}[iso-mod]
+Isomorphic theories has isomorphic categories of models.
+\end{prop}
+
+Let $\Sigma = (\mathcal{S},\mathcal{F},\mathcal{P})$ and $\Sigma' = (\mathcal{S},\mathcal{F}',\mathcal{P}')$ be a pair of signatures,
+and let $f : \Sigma \to \Sigma'$ be a morphism between them.
+Then we can define a functor $f^* : \PStr{\Sigma'} \to \PStr{\Sigma}$.
+If $A$ is a partial $\Sigma'$-structure, then $f^*(A)$ has the same underlying $\mathcal{S}$-set (that is, object of $\Set^\mathcal{S}$).
+If $R \in \mathcal{P}$, then we define $f^*(A)(R)$ as $A(f(R))$.
+If $\sigma \in \mathcal{F}$, then we define $f^*(A)(\sigma)$ as $A(t)|_{A(\varphi)}$, where $t|_\varphi = f(\sigma)$.
+
+By definition morphisms of partial $\Sigma$-structures are morphisms of the underlying $\mathcal{S}$-sets which commute with the interpretation of symbols from $\Sigma$.
+If $\alpha : A \to B$ is a morphism of partial $\Sigma'$-structures, then we want to define $f^*(\alpha) : f^*(A) \to f^*(B)$ as the same morphism.
+To do this we need to prove that if $\alpha$ commutes with the interpretation of symbols from $\Sigma'$, then it also commutes with the interpretation of symbols from $\Sigma$.
+But the interpretation of symbols from $\Sigma$ is defined as the interpretation of terms and formulae from $\Sigma'$, and it was shown in \cite{PHL} that $\alpha$ commutes with it.
+
+Note that $(-)^*$ is functorial, that is $id^*$ is the identity functor and $(g \circ f)^* = f^* \circ g^*$.
+This is obvious for morphisms since $f^*(\alpha) = \alpha$ for all $f$.
+Given a partial $\Sigma$-structure $A$ we can check that $id^*(A)(R) = A(id(R)) = A(R)$ and $id^*(A)(\sigma) = A(\sigma)$.
+Thus $id^*$ is indeed the identity functor.
+
+If $f : \Sigma \to \Sigma'$ and $g : \Sigma' \to \Sigma''$ and $A$ is a partial $\Sigma$-structure,
+then $(g \circ f)^*(A)(R) = A(g(f(R)))$ and $f^*(g^*(A))(R) = g^*(A)(f(R)) = A(g(f(R)))$.
+If $f(\sigma) = t|_\varphi$ and $g(t) = t'|_\psi$, then $(g \circ f)^*(A)(\sigma) = A(t')|_{A(\psi \land g(\varphi))} = A(t')|_{A(\psi) \cap A(g(\varphi))}$
+and $f^*(g^*(A))(\sigma) = g^*(A)(t)|_{g^*(A)(\varphi)} = A(t')|_{A(\psi) \cap A(g(\varphi))}$.
+Thus $(g \circ f)^* = f^* \circ g^*$.
+
+If $T$ is a theory over signature $\Sigma$, then category $\Mod(T)$ of models of $T$ is a full subcategory of $\PStr{\Sigma}$.
+Let $T_i$ be theories over signatures $\Sigma_i$, $i = 1,2$.
+If a morphism of signatures $f : \Sigma_1 \to \Sigma_2$ preserves axioms of $T_1$, then for every model $A$ of $T_2$, $f^*(A)$ is a model of $T_1$.
+Indeed, if $\varphi \sststile{}{V} \psi$ is a sequent of $T_1$, then it holds in $f^*(A)$ if $f(\varphi) \sststile{}{V} f(\psi)$ holds in $A$.
+If $\varphi \sststile{}{V} \psi$ is an axiom of $T_1$, then $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $T_2$, hence it holds in $A$.
+Thus $f^*(A)$ is a model of $T_1$ and $f^*$ restricts to a functor $\Mod{T_2} \to \Mod{T_1}$.
+
+Now, let $f,g : T_1 \to T_2$ be morphisms of theories.
+We need to prove that if $f$ and $g$ are equivalent, then $f^* = g^*$.
+Again, we only need to check that the interpretations of symbols in $f^*(A)$ and $g^*(A)$ coincide.
+Indeed, we have $f^*(A)(R) = A(f(R))$ and $g^*(A)(R) = A(g(R))$, and $A(f(R)) = A(g(R))$ since $A$ is a model of $T_2$ and $f(R) \ssststile{}{V} g(R)$ is a theorem of $T_2$.
+Analogous argument shows that $f^*(A)(\sigma) = g^*(A)(\sigma)$.
+
+Summarizing, we saw that every morphism of theories $f : T_1 \to T_2$ defines a functor $f^* : \Mod{T_2} \to \Mod{T_1}$.
+Moreover, $(-)^*$ is functorial, which proves \rprop{iso-mod}.
+
 \subsection{Properties of $\Th_\mathcal{S}$}
 
 Now we prove a few properties of the category of theories.
@@ -561,9 +610,11 @@ T'(\varphi) & = \top \text{ otherwise.}
 For other Horn formulae $T'$ is defined as follows:
 \[ T'(\varphi_1 \land \ldots \land \varphi_n) = T'(\varphi_1) \land \ldots \land T'(\varphi_n) \]
 
+We will say that a subtheory $T' = (\mathcal{F}',\mathcal{P}',\mathbb{T}') \in \Th_{\mathcal{S}'}$ of $T$ is \emph{disjoint}
+if for every $\sigma : s_1 \times \ldots \times s_n \to s$ such that $s \in \mathcal{S}'$, $\sigma \in \mathcal{F}'$.
+
 \begin{lem}
-Let $T' = (\mathcal{F}',\mathcal{P}',\mathbb{T}') \in \Th_{\mathcal{S}'}$ be a subtheory of $T \in \Th_\mathcal{S}$.
-Suppose that if $\sigma : s_1 \times \ldots \times s_n \to s$ and $s \in \mathcal{S}'$, then $\sigma \in \mathcal{F}'$.
+Let $T' = (\mathcal{F}',\mathcal{P}',\mathbb{T}') \in \Th_{\mathcal{S}'}$ be a disjoint subtheory of $T \in \Th_\mathcal{S}$.
 If for every axiom $\varphi \sststile{}{V} \psi$ of $T$ sequent $T'(\varphi) \sststile{}{T'(V)} T'(\psi)$ is a theorem of $T'$, then this is true for every theorem of $T$.
 \end{lem}
 \begin{proof}
@@ -601,12 +652,18 @@ Let $\mathbb{T}_{-1} \in \ThC$ be the theory with one function symbol $* : (ctx,
 & \sststile{}{A} A = *
 \end{align*}
 
+Note that there is at most one morphism from $\mathbb{T}_{-1}$ to any other theory.
+Thus category $\mathbb{T}_{-1}/\ThC$ is (isomorphic to) a full subcategory of $\ThC$.
+
 \begin{prop}
 Categories $\ThT$ and $\mathbb{T}_{-1}/\ThC$ are equivalent.
 \end{prop}
 \begin{proof}
 Every theory in $\ThT$ is a theory in $\ThC$ in the obvious way.
 We define $F : \ThT \to \mathbb{T}_{-1}/\ThC$ as $F(X) = \mathbb{T}_{-1} \amalg X$.
+First, note that $F$ is full.
+Indeed, given a morphism $f : \mathbb{T}_{-1} \amalg X \to \mathbb{T}_{-1} \amalg Y$,
+
 Every morphism of theories $\mathbb{T}$ and $\mathbb{T}'$ corresponds to exactly one morphism of theories $F(\mathbb{T})$ and $F(\mathbb{T}')$
 since terms in $i(\mathbb{T}')$ cannot have sort $(ctx,0)$.
 Thus $F$ is fully faithful.
@@ -716,7 +773,7 @@ It does not have an analog for the axiom (a1), but it has the following set of a
 \end{center}
 
 In these rules for every sequent $\varphi \sststile{}{V} \psi$ the set of variables $V$ is such that $FV(\varphi) \cup FV(\psi) \subseteq V$.
-Note that this set of rules is equivalent to the one described in \cite{PHT}.
+Note that this set of rules is equivalent to the one described in \cite{PHL}.
 \begin{center}
 $\varphi \sststile{}{V} \varphi$ (b1)
 \qquad
@@ -829,7 +886,7 @@ The following axioms say that substitution must be ``associative'':
 \end{align}
 
 Now, we want to show that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
-First, we construct a functor $F : \mathbb{T}_1\Mod \to \ccat$.
+First, we construct a functor $F : \Mod{\mathbb{T}_1} \to \ccat$.
 Let $M$ be a model of $\mathbb{T}_1$.
 Then the set of objects of level $n$ of $F(M)$ is $M(Ctx_n)$.
 For each $A \in M(Ctx_n)$, $B \in M(Ctx_k)$ morphisms from $A$ to $B$ are tuples $(a_1, \ldots a_k)$ such that $a_i \in M(Tm_n)$ and $Hom_{n,k}(A, B, a_1, \ldots a_k)$.
@@ -919,7 +976,7 @@ Thus $q(f \circ g, A) = q(f,A) \circ q(g,A[f])$.
 This completes the construction of contextual category $F(M)$.
 
 \begin{prop}
-Mapping $F$ is functorial, and functor $F : \mathbb{T}_1\Mod \to \ccat$ is an equivalence of categories.
+Mapping $F$ is functorial, and functor $F : \Mod{\mathbb{T}_1} \to \ccat$ is an equivalence of categories.
 \end{prop}
 \begin{proof}
 Given a map of $\mathbb{T}_1$ models $\alpha : M \to N$, we define a map of contextual categories $F(\alpha) : F(M) \to F(N)$.
