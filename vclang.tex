@@ -369,7 +369,7 @@ max(\mathbf{Prop}, \mathbf{Set}_i) & = \mathbf{Set}_i
 
 Множество термов $Term^{vc}$ языка vclang определяется следующим образом:
 \begin{align*}
-Term^{vc} :=\ & x\ |\ D\ |\ c\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
+Term^{vc} :=\ & \_\ |\ x\ |\ D\ |\ c\ |\ D\,a_1\,\ldots\,a_n\,.\,c \\
       |\ & \mathbf{new}\,C\,\{ S \}\ |\ C\,\{ S \}\ |\ \mathbf{new}\,C\ |\ C \\
       |\ & b\,.\,D\ |\ b\,.\,f\ |\ b\,.\,c\ |\ b\,.\,D\,a_1\,\ldots\,a_n\,.\,c \\
       |\ & \mathbf{new}\,b\,.\,C\,\{ S \}\ |\ b\,.\,C\,\{ S \}\ |\ \mathbf{new}\,b\,.\,C\ |\ b\,.\,C \\
@@ -393,15 +393,50 @@ Def^{vc} :=\ & \mathbf{function}\,f\,[x_1 : A_1]\,\ldots\,[x_n : A_n] : B \Lefta
     |\ & \mathbf{function}\,f\,[x_1 : A_1]\,\ldots\,[x_n : A_n] \Rightarrow b \\
 \end{align*}
 
-Мы определяем функцию $int$ для vclang, которая проверяет корректность типизации, а также транслирует термы из $Term^{vc}$ в термы из $Term$.
-Пусть $Env$ -- множество конечных последовательностей пар $(x,A)$, где $x$ -- имя переменной и $A \in Term$.
-Функция $ctx$ сопоставляет каждому элементу $Env$ последовательность термов из $Term$, отбрасывая первый элемент пары.
-Тогда $int : Env \times Term^{vc} \times (Term + 1) \to Term \times Term + 1$ обладает следующими свойствами:
+Сейчас мы опишем функцию $int$, интерпретирующую vclang в vccore.
+Для этого нам понадобится понятие окружения.
+Окружение -- это послеовательность элементов вида либо $(x,A)$, либо $(?x,A)$, где $x$ -- имя переменной и $A \in Term$.
+Множество окружений мы будем обозначать $Env$.
+Функция $ctx : Env \to Ctx$ сопоставляет каждому окружению контекст (то есть последовательность термов из $Term$), отбрасывая первый элемент каждой пары.
+
+Кроме того, нам понадобится понятие уравнения.
+Уравнение в окружении $\rho$ -- это просто пара термов $e_1$, $e_2$.
+Уравнения мы будем записывать как $\rho \vdash e_1 \equiv e_2$ или просто как $e_1 \equiv e_2$, если $\rho$ подразумевается.
+Множество уравнений в окружении $\rho$ мы будем обозначать как $Eq(\rho)$ и множество всех уравнений как $Eq$.
+Система уравнений в окружении $\rho$ -- это конечное множество уравнений в окружении $\rho$.
+Множество систем уравнений в $\rho$ мы будем обозначать как $SEq(\rho)$ и множество всех систем уравнений как $SEq$.
+
+Пусть $S \in PEq(\rho)$.
+Пусть $\sigma$ -- функция, которая каждому элементу $\rho$ вида $(?x,A)$ присваивает некоторый терм.
+Тогда для любого $(\rho \vdash e_1 \equiv e_2) \in S$ мы можем определить суждение $\sigma(e_1,e_2)$ как $\Gamma \vdash e_1' \deq e_2'$, где
+$\Gamma$, $e_1'$ и $e_2'$ получаются подстановки $\sigma$ из $\rho$, $e_1$ и $e_2$ соответственно.
+Мы будем говорить, что $\sigma$ является \emph{решением} системы $S$, если все термы $\sigma(x)$ имеют корректные типы,
+чтобы подстановка, заданная выше, была определена, и все суждения $\sigma(e_1,e_2)$ выводимы.
+
+Мы определим функцию $int : Env \times Term^{vc} \times (Term \cup \{ * \}) \to Env \times Term \times Term \times SEq \cup \{ * \}$, удовлетворяющую следующим свойствам:
 \begin{itemize}
-\item Если $int(\rho, t, s) = inl(a, A)$, то $ctx(\rho) \vdash a \Uparrow A$.
-\item Если $int(\rho, t, inl(A')) = inl(a, A)$, то $A \leq A'$.
+\item Если $int(\rho, t, A') = (\rho', a, A, S)$, то $\rho$ -- префикс $\rho'$, $S \in SEq(\rho)$, для любого $(e_1,e_2) \in S$ верно,
+    что $ctx(\rho') \vdash e_1 \equiv e_2$, и для любого решения $\sigma$ системы $S$ выводимо $\sigma(\rho') \vdash \sigma(a) \Uparrow \sigma(A)$.
+\item Если $int(\rho, t, A') = (\rho', a, A, S)$ и $A' \in Term$, то $A \leq A'$.
 \end{itemize}
 
+Функция $int(\rho,t,T)$ определяется следующим образом:
+\begin{itemize}
+\item Пусть $t = f\,a$.
+    Если $int(\rho,f,*) = (\rho',f',T',S)$, $T' \red_{whnf} \Pi A B$, $int(\rho',a,A) = (\rho'',a',\_,S')$ и либо $T = *$, либо $T \deq \Pi A B$, то
+    \[ int(\rho,t,T) = (\rho'', f'\!\uparrow^{|\rho''|-|\rho'|}\,a', B[a'], S\!\uparrow^{|\rho''|-|\rho'|} \cup S'), \]
+    иначе $int(\rho,t,T) = *$.
+\item Пусть $t = \lambda x : A.\ b$.
+    Если $int(\rho,A,Type) = (\rho',A',\_,S)$ и $int((\rho',x:A'), b, B') = (\rho'',b',B'',S')$,
+    то $int(\rho,t,T) = (\rho'' \setminus x, \lambda A'.\ b', \Pi A' B'', S\!\uparrow^{|\rho''|-|\rho'|-1} \cup abs(x,S'))$,
+    где $B' = B\!\uparrow^{|\rho'|-|\rho|}_1$ если $T \red_{whnf} \Pi \_ B$, иначе $B' = *$.
+\item Пусть $t = \lambda x.\ b$. Тогда $int(\rho,t,T) = int(\rho, \lambda x : \_.\ b, T)$.
+\item Пусть $t = \_$. Тогда
+    $int(\rho,t,T) = ((\rho,(?a:T)), v_0, T\!\uparrow, \varnothing)$ если $T \in Term$, и
+    $int(\rho,t,T) = ((\rho,(?A:Type),(?a:?A)), v_0, v_1, \varnothing)$ иначе, где $A$ и $a$ -- свежие переменные.
+\end{itemize}
+
+\begin{comment}
 Мы определяем функцию $int$ через вспомогательную функцию $apps : Env \times Term^{vc} \times (\{ I, E \} \times Term^{vc})^* \times (Term + 1) \to Term \times Term + 1$ как
 \[ int(\rho, t, s) = apps(\rho, t, [], s). \]
 Функция $apps$ определяется через функцию $int' : Env \times Term^{vc} \times (Term + 1) \to Term \times Term + 1$:
@@ -417,6 +452,7 @@ Def^{vc} :=\ & \mathbf{function}\,f\,[x_1 : A_1]\,\ldots\,[x_n : A_n] : B \Lefta
     для всех $1 \leq i \leq n$, где $T_i$ -- это тип поля $f_i$, а $T$ -- это максимум по типам всех полей, которых нет в списке $f_1$, \ldots $f_n$.
 \item $int'(\rho, C\,\{ S \}, inl(A)) = inl(C', A')$, если $int'(\rho, C\,\{ S \}, inr(*)) = inl(C', A')$ и $A' \leq A$, иначе $int'(\rho, C\,\{ S \}, inl(A)) = inr(*)$.
 \end{itemize}
+\end{comment}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
