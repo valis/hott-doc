@@ -125,10 +125,11 @@
 \author{Valery Isaev}
 
 \begin{abstract}
-% В этой статье мы предложим абстрактное определение теорий типов, которое обобщает существующие теории.
-% Сказать что-нибудь про композиционность.
-% Мы определим категорию теорий типов, что позволит композицировать их различным образом и рассматривать различного рода эквивалентности между теориями.
-% Кроме того мы изучим модели таких теорий в общем случае и начальные в частности.
+In this paper, we propose an abstract definition of dependent type theories as esentially algebraic theories.
+One of the main advantages of this definition is its composability: simple theories can be combined into more complex ones,
+and different properties of the resulting theory may be deduced from properties of the basic ones.
+We define a category of algebraic type theories which allows us not only to combine theories but also to consider equivalences between them.
+We also study models of such theories in general and initial models in particular.
 \end{abstract}
 
 \maketitle
@@ -155,7 +156,7 @@ Often only the categorical side of the question is considered,
 but some authors do consider specific theories \cite{streicher,pitts},
 and the problem in this case is that their work cannot be applied to other similar theories (at least formally).
 
-When defining a type theory there are certain question to be answered regarding syntactic traits of the theory.
+When defining a type theory there are certain questions to be addressed regarding syntactic traits of the theory.
 One such question is how many arguments to different construction can be omitted and how to restore them when constructing a model of the theory.
 For example, we want to define application as a function of two arguments $app(f,a)$, but sometimes it is convenient to have additional arguments which allows to infer a type of $f$.
 It is posible to prove that additional information in the application term may be omitted (for example, see \cite{streicher}), but it is a nontrivial task.
@@ -163,35 +164,36 @@ Another question of this sort is whether we should use a typed or an untyped equ
 Typed equality is easier to handle when defining a model of the theory, but untyped is closer to actual implementation of the language.
 Algebraic approach allows us to separate these syntactic details from essential aspects of the theory.
 
-% Другая проблема заключается в том, что различные конструкции можно описывать по разному.
-% Даже такая простая штука как $\Sigma$-типы допускает различные описания (см. примеры X и Y).
-% Соответственно, возникает вопрос когда два различных описания задают эквивалентные теории.
-% Вопрос может осложняться тем, что в одном варианте пара термов равны judgementally, а в другом только пропозиционально.
-% We define a category of theories which opens a posibility of considering different kinds of equivalences between them.
-% We won't discuss this problem in this paper, оставим ее на будущее.
+Yet another problem is that some constructions may be defined in several different ways.
+For example, $\Sigma$ types can be defined using projections (\rexample{sigma-eta}) and using an eliminator (\rexample{sigma-no-eta}).
+The question then is whether these definitions are equivalent in some sense.
+The difficulty of this question stems from the fact that some equivalences may hold in one definition judgementally, but in the other only propositionally;
+so it may be difficult (or impossible) to construct a map from the first version of the definition to the second one.
 
-Yet another problem ...
+In this paper, using the formalism of essentially algebraic theories, we introduce the notion of
+\emph{algebraic type theories} which provide a possible solution the problems described above.
+We define a category of algebraic type theories.
+Coproducts and more generally colimits in this category allow us to combine simple theories into more complex ones.
+For example, the theory with $\Sigma$, $\Pi$ and $Id$ types may be described as coproduct $T_\Sigma \amalg T_\Pi \amalg T_{Id}$
+where $T_\Sigma$, $T_\Pi$ and $T_{Id}$ are theories of $\Sigma$, $\Pi$ and $Id$ types respectively.
+Another example is a theory of a universe which can be defined as a certain pushout (see \rexample{universe}).
 
-% В этой статье, используя формализм существенно алгебраических теорий, мы вводим понятие алгебраических теорий типов, который предоставляют вариант решения этих проблем.
-% Копроизведения, и в более общем случае, копределы позволяют комбинировать отдельные простые теории в более сложные.
-% Например, теория типов с $\Sigma$, $\Pi$ и $Id$ типами может быть описана как $T_\Sigma \amalg T_\Pi \amalg T_{Id}$,
-% где $T_\Sigma$, $T_\Pi$, $T_{Id}$ -- это теории $\Sigma$, $\Pi$ и $Id$ типов соответственно.
-% Теория со вселенными может быть описана при помощи пушаута (см. пример Z).
+There is a natural notion of a model of an essentially algebraic theory.
+Thus the algebraic approach to defining type theories automatically equips every type theory with a (locally presentable) category of its models.
+We will show that models of the initial theory are precisely contextual categories,
+and that models of an arbitrary theory are contextual categories with an additional structure (which depends on the theory).
 
-% Существует естественное понятие модели существенно алгебраической теории.
-% Мы покажем, что модели алгебраических теорий типов дают хорошо известное понятие.
-% Конретно, модель любой алгебраической теории типов $T$ является контекстуальной категорией с некоторой дополнительной структурой, зависящей от $T$.
+Since we have a category of type theories, there is a natural notion of equivalence between them, namely the isomorphism.
+In most cases this equivalence is too strong, so it is necessary to consider weaker notions of equivalence, but in some cases it might be useful.
+For example, if two theories differ only by the amount of arguments to some of the constructions,
+then they are isomorphic (assuming omitted arguments can be inferred from the rest).
 
-% Мы определим категорию алгебраических теорий типов, что дает естественное понятие эквивалентности теорий, конкретно изоморфизм.
-% В большинстве случаев это слишком сильное понятие эквивалентности, которое требуется ослабить.
-% Мы оставим эти вопросы на будущее.
-% В некоторых случаях изоморфизма всё же будет достаточно.
-% Формализм алгебраических теорий типов лишен проблем с синтаксисом, описаных ранее.
-% Judgemental equality в них можно вводить только одним образом,
-% а вопрос с количеством аргументов хоть и допускает вариации, получившиеся теории всё равно будут изоморфны.
+We also define a \emph{parameterized} version of algebraic type theories which generalizes the usual one.
+It has more concise syntax, and hence it is more convenient to work with.
+The drawback of this approach is that it is less straightforward to define a notion of a model of such theories.
+Finally, we introduce a concept of a \emph{regular} theory which formalize the idea that usually in a type theory constructions are available in all contexts.
 
-% Статья организована следующим образом ...
-% Algebraic and parameterized theories
+The paper is organized as follows.
 
 \begin{comment}
 \section{Contextual categories}
@@ -1461,7 +1463,7 @@ and the following inference rules:
 \end{center}
 \end{example}
 
-\begin{example}
+\begin{example}[sigma-eta]
 The theory of $\Sigma$ types with eta rules has function symbols
 $\Sigma : (ty,0) \times (ty,1) \to (ty,0)$, $pair : (ty,0) \times (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$,
 $proj_1 : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0)$ and $proj_2 : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0)$
@@ -1516,19 +1518,19 @@ and the following inference rules:
 \end{center}
 \end{example}
 
-\begin{example}
+\begin{example}[sigma-no-eta]
 The theory of $\Sigma$ types without eta rules.
 \end{example}
 
-\begin{example}
+\begin{example}[pi-eta]
 The theory of $\Pi$ types with eta rules.
 \end{example}
 
-\begin{example}
+\begin{example}[pi-no-eta]
 The theory of $\Pi$ types without eta rules.
 \end{example}
 
-\begin{example}
+\begin{example}[Id]
 The theory of identity types has function symbols $Id : (ty,0) \times (tm,0) \times (tm,0) \to (ty,0)$,
 $refl : (ty,0) \times (tm,0) \to (tm,0)$ and $J : (ty,0) \times (ty,3) \times (tm,1) \times (tm,0) \times (tm,0) \times (tm,0) \to (tm,0)$
 and the following inference rules:
@@ -1563,7 +1565,7 @@ and the following inference rules:
 \end{center}
 \end{example}
 
-\begin{example}
+\begin{example}[universe]
 The theory a universe has function symbols $Type : (ty,0)$ and $El : (tm,0) \to (ty,0)$ and the following inference rules:
 \medskip
 \begin{center}
