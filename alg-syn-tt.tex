@@ -293,7 +293,10 @@ The identity and the composition of morphisms are defined in the obvious way.
 The category of signatures with $\mathcal{S}$ as the set of sorts is denoted by $\Sig_\mathcal{S}$.
 \end{defn}
 
-\begin{prop}
+If $f = (\alpha,\beta)$ is a morphism of signatures $\Sigma$ and $\Sigma'$, $t \in PTerm_\Sigma(V)_s$ and $\varphi \in Form_\Sigma(V)$,
+then we will write $f(t)$ for $\alpha_V(t)$ and $f(\varphi)$ for $\beta_V(\varphi)$.
+
+\begin{prop}[mor-def]
 To construct a morphism of signatures $\Sigma = (\mathcal{S},\mathcal{F},\mathcal{P})$ and $\Sigma'$ it is enough to specify the following data:
 \begin{itemize}
 \item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$, a partial term $\alpha(\sigma) \in PTerm_{\Sigma'}(\{ x_1 : s_1, \ldots x_n : s_n \})$ such that $FV(\alpha(\sigma)) = \{ x_1, \ldots x_n \}$.
@@ -345,6 +348,7 @@ A \emph{Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Si
 The rules of \emph{Partial Horn logic} are listed below.
 In these rules for every sequent $\varphi \sststile{}{V} \psi$ the set of variables $V$ is such that $FV(\varphi) \cup FV(\psi) \subseteq V$.
 Note that this set of rules is equivalent to the one described in \cite{PHL}.
+If $\mathcal{A}$ is a Horn theory, then a \emph{theorem} of $\mathcal{A}$ is a sequent derivable from $\mathcal{A}$ in this logic.
 \begin{center}
 $\varphi \sststile{}{V} \varphi$ (b1)
 \qquad
@@ -386,10 +390,6 @@ $x = y \land \varphi \sststile{}{V} \varphi[y/x]$ (a2)
 \end{center}
 \medskip
 
-If $\mathbb{T}$ is a Horn theory, then a \emph{theorem} of $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
-We say that a theory $\mathbb{T}$ is \emph{total} if for every function symbols $\sigma : s_1 \times \ldots \times s_n \to s$
-sequent $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n)\!\downarrow$ is a theorem of $\mathbb{T}$.
-
 We will need the following lemmas from \cite{PHL}:
 \begin{lem}[cong-a]
 For every $u_i,v_i \in Term_\mathcal{F}(V)_{s_i}$, $t \in Term_\mathcal{F}(\{ x_1 : s_1, \ldots x_n : s_n\})_s$
@@ -418,73 +418,73 @@ By (a3) we conclude that the required sequent is derivable.
 \end{proof}
 
 Let $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ and $\Sigma' = (\mathcal{S}, \mathcal{F}', \mathcal{P}')$ be a pair of signatures with the same set of sorts.
-Let $(\alpha,\beta)$ be a morphism of $\Sigma$ and $\Sigma'$.
-Let $\mathbb{T}$ and $\mathbb{T}'$ be Horn theories in signatures $\Sigma$ and $\Sigma'$ respectively.
-Then we will say that $(\alpha,\beta)$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ over $\Sigma$ if $\beta_V(\varphi) \sststile{}{V} \beta_V(\psi)$ is a theorem of $\mathbb{T}'$.
-Note that if $(\alpha,\beta)$ respects all axioms of $\mathbb{T}$, then it respects all of its theorems too.
+Let $f$ be a morphism of $\Sigma$ and $\Sigma'$.
+Let $\mathcal{A}$ and $\mathcal{A}'$ be Horn theories in signatures $\Sigma$ and $\Sigma'$ respectively.
+Then we will say that $f$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ over $\Sigma$ if $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathcal{A}'$.
+Note that if $f$ respects all axioms of $\mathcal{A}$, then it respects all of its theorems too.
 
-Let $T$ and $T'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
-Then we will say that morphisms $(\alpha,\beta)$ and $(\alpha',\beta')$ between $T$ and $T'$ are \emph{equivalent} if the following conditions hold:
+Let $\mathcal{A}$ and $\mathcal{A}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
+Then we will say that morphisms $f$ and $f'$ between $\Sigma$ and $\Sigma'$ are \emph{equivalent} if the following conditions hold:
 \begin{enumerate}
-\item For every $t \in PTerm_\Sigma(V)_s$ sequents $\sststile{}{V} \alpha_V(t) \cong \alpha'_V(t)$ are theorems of $T'$.
+\item For every $t \in PTerm_\Sigma(V)_s$ sequents $\sststile{}{V} f(t) \cong f'(t)$ are theorems of $\mathcal{A}'$.
 \label{mor-eq-a}
-\item For every $\varphi \in Form_\Sigma(V)$ sequent $\beta_V(\varphi) \ssststile{}{V} \beta'_V(\varphi)$ is a theorem of $T'$.
+\item For every $\varphi \in Form_\Sigma(V)$ sequent $f(\varphi) \ssststile{}{V} f'(\varphi)$ is a theorem of $\mathcal{A}'$.
 \label{mor-eq-b}
 \end{enumerate}
 
 \begin{prop}[mor-eq]
-Let $T = (\mathcal{F},\mathcal{P},\mathbb{T})$ and $T'$ be theories.
-Morphisms $(\alpha,\beta)$ and $(\alpha',\beta')$ between $T$ and $T'$ are equivalent if and only if the following conditions hold:
+Let $\mathcal{A}$ and $\mathcal{A}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
+Morphisms $f$ and $f'$ between $\Sigma$ and $\Sigma'$ are equivalent if and only if the following conditions hold:
 \begin{itemize}
 \item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ sequents
-    \[ \sststile{}{U} \alpha_U(\sigma(x_1, \ldots x_n)) \cong \alpha'_U(\sigma(x_1, \ldots x_n)) \]
-are theorems of $T'$, where $U = \{ x_1 : s_1, \ldots x_n : s_n \}$.
-\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ sequent
-    \[ \beta_U(R(x_1, \ldots x_n)) \ssststile{}{U} \beta'_U(R(x_1, \ldots x_n)) \]
-is a theorem of $T'$, where $U = \{ x_1 : s_1, \ldots x_n : s_n \}$.
+\[ \sststile{}{x_1 : s_1, \ldots x_n : s_n} f(\sigma(x_1, \ldots x_n)) \cong f'(\sigma(x_1, \ldots x_n)) \]
+are theorems of $\mathcal{A}'$.
+\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ sequents
+\[ f(R(x_1, \ldots x_n)) \ssststile{}{x_1 : s_1, \ldots x_n : s_n} f'(R(x_1, \ldots x_n)) \]
+are theorems of $\mathcal{A}'$.
 \end{itemize}
 \end{prop}
 \begin{proof}
 The ``only if'' direction is obvious.
 Let us prove the converse.
 First, we prove \eqref{mor-eq-a} for $t \in Term_\mathcal{F}(V)_s$ by induction on it.
-If $t$ is a variable, then $\alpha_V(t) = \alpha'_V(t) = t$.
-If $t = \sigma(t_1, \ldots t_n)$, then $\sststile{}{V} \alpha_V(t_i) \cong \alpha_V(t'_i)$
-and $\sststile{}{U} \alpha_U(\sigma(x_1, \ldots x_n)) \cong \alpha'_U(\sigma(x_1, \ldots x_n))$ where $U = \{ x_1 : s_1, \ldots x_n : s_n \}$.
-Since $FV(\alpha_U(\sigma(x_1, \ldots x_n))) = \{ x_1, \ldots x_n\}$, by (a3) we have
-$\alpha(t)\!\downarrow\,\sststile{}{V} \alpha(t) = \alpha'_U(\sigma(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)]$.
-We also have $\alpha_V(t)\!\downarrow\,\sststile{}{V} \alpha_V(t_i)\!\downarrow$, hence by \rlem{cong-a}
-$\alpha(t)\!\downarrow\,\sststile{}{V} \alpha'_U(\sigma(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)] = \alpha'_V(t)$.
-By transitivity, we conclude that $\alpha_V(t)\!\downarrow\,\sststile{}{V} \alpha_V(t) = \alpha'_V(t)$.
-The same argument shows that $\alpha'_V(t)\!\downarrow\,\sststile{}{V} \alpha_V(t) = \alpha'_V(t)$.
+If $t$ is a variable, then $f(t) = f'(t) = t$.
+If $t = \sigma(t_1, \ldots t_n)$, then $\sststile{}{V} f(t_i) \cong f(t'_i)$
+and $\sststile{}{x_1 : s_1, \ldots x_n : s_n} f(\sigma(x_1, \ldots x_n)) \cong f'(\sigma(x_1, \ldots x_n))$.
+Since $FV(f(\sigma(x_1, \ldots x_n))) = \{ x_1, \ldots x_n\}$, by (a3) we have
+$f(t)\!\downarrow\,\sststile{}{V} f(t) = f'(\sigma(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)]$.
+We also have $f(t)\!\downarrow\,\sststile{}{V} f(t_i)\!\downarrow$, hence by \rlem{cong-a}
+$f(t)\!\downarrow\,\sststile{}{V} f'(\sigma(x_1, \ldots x_n))[x_i \mapsto f(t_i)] = f'(t)$.
+By transitivity, we conclude that $f(t)\!\downarrow\,\sststile{}{V} f(t) = f'(t)$.
+The same argument shows that $f'(t)\!\downarrow\,\sststile{}{V} f(t) = f'(t)$.
 
 Let us prove \eqref{mor-eq-b}.
 It is enough to prove it for atomic formulae $\varphi$.
-If $\varphi$ equals to $t = t'$, then $\beta_V(\varphi)$ equals to $\alpha_V(t) = \alpha_V(t')$ and $\beta'_V(\varphi)$ equals to $\alpha'_V(t) = \alpha'_V(t')$.
-We know that $\sststile{}{V} \alpha_V(t) \cong \alpha'_V(t)$ and $\sststile{}{V} \alpha_V(t') \cong \alpha'_V(t')$.
-Thus by transitivity and symmetry we can conclude that $\alpha_V(t) = \alpha_V(t)' \sststile{}{V} \alpha'_V(t) = \alpha'_V(t')$.
+If $\varphi$ equals to $t = t'$, then $f(\varphi)$ equals to $f(t) = f(t')$ and $f'(\varphi)$ equals to $f'(t) = f'(t')$.
+We know that $\sststile{}{V} f(t) \cong f'(t)$ and $\sststile{}{V} f(t') \cong f'(t')$.
+Thus by transitivity and symmetry we can conclude that $f(t) = f(t)' \sststile{}{V} f'(t) = f'(t')$.
 
-If $\varphi = R(t_1, \ldots t_n)$, then $\beta_V(\varphi) = \beta_U(R(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)]$
-and $\beta'_V(\varphi) = \beta'_U(R(x_1, \ldots x_n))[x_i \mapsto \alpha'_V(t_i)]$ where $U = \{ x_1 : s_1, \ldots x_n : s_n \}$.
-We know that $\beta_U(R(x_1, \ldots x_n)) \sststile{}{U} \beta'_U(R(x_1, \ldots x_n))$.
-Since $FV(\beta_U(R(x_1, \ldots x_n))) = \{ x_1, \ldots x_n \}$, by (a3) we can conclude that $\beta_V(\varphi) \sststile{}{V} \beta'_U(R(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)]$.
-Since $\beta'_U(R(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)] \sststile{}{V} \alpha_V(t_i)\!\downarrow$, by \rlem{cong-b} we can conclude that
-$\beta'_U(R(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)] \sststile{}{V} \beta'_V(\varphi)$.
-By (b2) we conclude that $\beta_V(\varphi) \sststile{}{V} \beta'_V(\varphi)$.
-The same argument shows that $\beta'_V(\varphi) \sststile{}{V} \beta_V(\varphi)$.
+If $\varphi = R(t_1, \ldots t_n)$, then $f(\varphi) = f(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)]$
+and $f'(\varphi) = f'(R(x_1, \ldots x_n))[x_i \mapsto f'(t_i)]$.
+We know that $f(R(x_1, \ldots x_n)) \sststile{}{x_1 : s_1, \ldots x_n : s_n}$ \linebreak $f'(R(x_1, \ldots x_n))$.
+Since $FV(f(R(x_1, \ldots x_n))) = \{ x_1, \ldots x_n \}$, by (a3) we can conclude that $f(\varphi) \sststile{}{V} f'(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)]$.
+Since $f'(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)] \sststile{}{V} f(t_i)\!\downarrow$, \rlem{cong-b} implies that
+$f'(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)] \sststile{}{V} f'(\varphi)$.
+By (b2) we conclude that $f(\varphi) \sststile{}{V} f'(\varphi)$.
+The same argument shows that $f'(\varphi) \sststile{}{V} f(\varphi)$.
 
 Now, we can finish the proof of \eqref{mor-eq-a}.
-We need to prove that $\sststile{}{V} \alpha_V(t|_\varphi) \cong \alpha'_V(t|_\varphi)$.
-We already saw that $\alpha_V(t)\!\downarrow\,\sststile{}{V} \alpha_V(t) = \alpha'_V(t)$ and $\beta_V(\varphi) \sststile{}{V} \beta'_V(\varphi)$.
-Hence $\alpha_V(t)\!\downarrow \land \beta_V(\varphi) \sststile{}{V} \alpha_V(t) = \alpha'_V(t) \land \beta'_V(\varphi)$.
-The same argument shows that $\alpha'_V(t)\!\downarrow \land \beta'_V(\varphi) \sststile{}{V} \alpha_V(t) = \alpha'_V(t) \land \beta_V(\varphi)$.
+We need to prove that $\sststile{}{V} f(t|_\varphi) \cong f'(t|_\varphi)$.
+We already saw that $f(t)\!\downarrow\,\sststile{}{V} f(t) = f'(t)$ and $f(\varphi) \sststile{}{V} f'(\varphi)$.
+Hence $f(t)\!\downarrow \land f(\varphi) \sststile{}{V} f(t) = f'(t) \land f'(\varphi)$.
+The same argument shows that $f'(t)\!\downarrow \land f'(\varphi) \sststile{}{V} f(t) = f'(t) \land f(\varphi)$.
 \end{proof}
 
 Let $\mathcal{S}$ be a set of sorts.
 Then we define a category $\Th_\mathcal{S}$ of theories.
-Its objects are triples $(\mathcal{F},\mathcal{P},\mathbb{T})$ where $\mathbb{T}$ is a theory in $(\mathcal{S},\mathcal{F},\mathcal{P})$.
-Morphisms of theories $(\mathcal{F},\mathcal{P},\mathbb{T})$ and $(\mathcal{F}',\mathcal{P}',\mathbb{T}')$
-are equivalence classes of functions as described above which respect all axioms of $\mathbb{T}$.
+Its objects are pairs $(\Sigma,\mathcal{A})$ where $\Sigma$ is a signature with $\mathcal{S}$ as the set of sorts and $\mathcal{A}$ is a theory in $\Sigma$.
+Morphisms of theories $(\Sigma,\mathcal{A})$ and $(\Sigma',\mathcal{A}')$
+are equivalence classes of functions as described above which respect all axioms of $\mathcal{A}$.
 The composition of morphisms of signatures respects the equivalence relation; hence this defines a category of theories.
 
 \subsection{Models of theories}
@@ -519,20 +519,20 @@ If $f(\sigma) = t|_\varphi$ and $g(t) = t'|_\psi$, then $(g \circ f)^*(A)(\sigma
 and $f^*(g^*(A))(\sigma) = g^*(A)(t)|_{g^*(A)(\varphi)} = A(t')|_{A(\psi) \cap A(g(\varphi))}$.
 Thus $(g \circ f)^* = f^* \circ g^*$.
 
-If $T$ is a theory over signature $\Sigma$, then category $\Mod(T)$ of models of $T$ is a full subcategory of $\PStr{\Sigma}$.
-Let $T_i$ be theories over signatures $\Sigma_i$, $i = 1,2$.
-If a morphism of signatures $f : \Sigma_1 \to \Sigma_2$ preserves axioms of $T_1$, then for every model $A$ of $T_2$, $f^*(A)$ is a model of $T_1$.
-Indeed, if $\varphi \sststile{}{V} \psi$ is a sequent of $T_1$, then it holds in $f^*(A)$ if $f(\varphi) \sststile{}{V} f(\psi)$ holds in $A$.
-If $\varphi \sststile{}{V} \psi$ is an axiom of $T_1$, then $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $T_2$, hence it holds in $A$.
-Thus $f^*(A)$ is a model of $T_1$ and $f^*$ restricts to a functor $\Mod{T_2} \to \Mod{T_1}$.
+If $\mathbb{T}$ is a theory over signature $\Sigma$, then category $\Mod{\mathbb{T}}$ of models of $\mathbb{T}$ is a full subcategory of $\PStr{\Sigma}$.
+Let $\mathbb{T}_i$ be theories over signatures $\Sigma_i$, $i = 1,2$.
+If a morphism of signatures $f : \Sigma_1 \to \Sigma_2$ preserves axioms of $\mathbb{T}_1$, then for every model $A$ of $\mathbb{T}_2$, $f^*(A)$ is a model of $\mathbb{T}_1$.
+Indeed, if $\varphi \sststile{}{V} \psi$ is a sequent of $\mathbb{T}_1$, then it holds in $f^*(A)$ if $f(\varphi) \sststile{}{V} f(\psi)$ holds in $A$.
+If $\varphi \sststile{}{V} \psi$ is an axiom of $\mathbb{T}_1$, then $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}_2$, hence it holds in $A$.
+Thus $f^*(A)$ is a model of $\mathbb{T}_1$ and $f^*$ restricts to a functor $\Mod{\mathbb{T}_2} \to \Mod{\mathbb{T}_1}$.
 
-Now, let $f,g : T_1 \to T_2$ be morphisms of theories.
+Now, let $f,g : \mathbb{T}_1 \to \mathbb{T}_2$ be morphisms of theories.
 We need to prove that if $f$ and $g$ are equivalent, then $f^* = g^*$.
 Again, we only need to check that the interpretations of symbols in $f^*(A)$ and $g^*(A)$ coincide.
-Indeed, we have $f^*(A)(R) = A(f(R))$ and $g^*(A)(R) = A(g(R))$, and $A(f(R)) = A(g(R))$ since $A$ is a model of $T_2$ and $f(R) \ssststile{}{V} g(R)$ is a theorem of $T_2$.
+Indeed, we have $f^*(A)(R) = A(f(R))$ and $g^*(A)(R) = A(g(R))$, and $A(f(R)) = A(g(R))$ since $A$ is a model of $\mathbb{T}_2$ and $f(R) \ssststile{}{V} g(R)$ is a theorem of $\mathbb{T}_2$.
 Analogous argument shows that $f^*(A)(\sigma) = g^*(A)(\sigma)$.
 
-Summarizing, we saw that every morphism of theories $f : T_1 \to T_2$ defines a functor $f^* : \Mod{T_2} \to \Mod{T_1}$.
+Summarizing, we saw that every morphism of theories $f : \mathbb{T}_1 \to \mathbb{T}_2$ defines a functor $f^* : \Mod{\mathbb{T}_2} \to \Mod{\mathbb{T}_1}$.
 Moreover, $(-)^*$ is functorial, which proves \rprop{iso-mod}.
 
 \subsection{Properties of $\Th_\mathcal{S}$}
@@ -541,66 +541,70 @@ Now we prove a few properties of the category of theories.
 We begin with a proof of the existence of colimits.
 
 \begin{prop}
-Category $\Th_\mathcal{S}$ is locally finitely presentable.
+Category $\Th_\mathcal{S}$ is cocomplete.
 \end{prop}
 \begin{proof}
-First, let $\{ (\mathcal{F}_i,\mathcal{P}_i,\mathbb{T}_i) \}_{i \in S}$ be a set of theories.
-Then we can define its coproduct $\coprod\limits_{i \in S} \mathbb{T}_i$ as the theory with $\coprod\limits_{i \in S} \mathcal{F}_i$ as the set of function symbols and $\coprod\limits_{i \in S} \mathbb{T}_i$ as the set of axioms.
-Let $F,G : T \to S$ be a pair of morphisms of theories.
-Then we can define their coequalizer as the theory with the same set of function symbols as $S$ and the set of axioms which consists of the axioms of $S$
-together with $\sststile{}{x_1, \ldots x_n} F(\sigma(x_1, \ldots x_n)) \cong G(\sigma(x_1, \ldots x_n))$ for each function symbols $\sigma$ of $T$.
-It is easy to see that these constructions indeed define colimits of theories.
+First, let $\{ \mathbb{T}_i \}_{i \in S} = \{ ((\mathcal{S},\mathcal{F}_i,\mathcal{P}_i),\mathcal{A}_i) \}_{i \in S}$ be a set of theories.
+Then we can define its coproduct $\coprod\limits_{i \in S} \mathbb{T}_i$ as the theory with $\coprod\limits_{i \in S} \mathcal{F}_i$ as the set of function symbols and $\coprod\limits_{i \in S} \mathcal{A}_i$ as the set of axioms.
+Morphisms $f_i : \mathbb{T}_i \to \coprod\limits_{i \in S} \mathbb{T}_i$ are defined in the obvious way.
+If $g_i : \mathbb{T}_i \to X$ is a collection of morphisms, then we can extend $f_i$ to a morphism $f : \coprod\limits_{i \in S} \mathbb{T}_i \to X$
+by \rprop{mor-def} as $f(\sigma) = f_i(\sigma)$ if $\sigma \in \mathcal{F}_i$ and $f(R) = f_i(R)$ if $R \in \mathcal{P}_i$.
+If $f,f' : \coprod\limits_{i \in S} \mathbb{T}_i \to X$ are such that $f \circ f_i = f' \circ f_i$, then we know that for all
+$\sigma \in \mathcal{F}_i$, $\sststile{}{x_1, \ldots x_n} f(\sigma(x_1, \ldots x_n)) \cong f'(\sigma(x_1, \ldots x_n))$ and for all $R \in \mathcal{P}_i$, $f(R) \ssststile{}{V} f'(R)$.
+\Rprop{mor-eq} implies that $f$ and $f'$ are equivalent.
 
-Now, if a theory consists of a finite number of function symbols and axioms, then it is finitely presentable.
-Indeed, let $\mathbb{T}$ be such theory, let $D : J \to \Th_{\mathcal{S},\mathcal{P}}$ be a directed set, and let $f : \mathbb{T} \to colim\,D$ be a morphism.
-
-TODO
+Now, let $f,g : \mathbb{T}_1 \to \mathbb{T}_2$ be a pair of morphisms of theories.
+Then we can define their coequalizer $\mathbb{T}$ as the theory with the same set of function and predicate symbols as $\mathbb{T}_2$ and the set of axioms which consists of the axioms of $\mathbb{T}_2$
+together with $\sststile{}{x_1, \ldots x_n} f(\sigma(x_1, \ldots x_n)) \cong g(\sigma(x_1, \ldots x_n))$ for each function symbols $\sigma$ of $\mathbb{T}_1$
+and $f(R(x_1, \ldots x_n)) \ssststile{}{x_1, \ldots x_n} f'(R(x_1, \ldots x_n))$ for each predicate symbols $R$ of $\mathbb{T}_1$.
+Then we can define $e : \mathbb{T}_2 \to \mathbb{T}$ as identity function on terms and formulae.
+By \rprop{mor-eq}, $e \circ f = e \circ g$.
+If $h : \mathbb{T}_2 \to X$ is such that $h \circ f = h \circ g$, then it extends to a morphism $\mathbb{T} \to X$ since additional axioms are preserved by the assumption on $h$.
+This extension is unique since $e$ is an epimorphism.
 \end{proof}
 
 Now we give a characterization of monomorphisms.
 
 \begin{prop}
-A morphism of theories $(\alpha,\beta) : T \to S$ is a monomorphism if and only if for every sequent $\varphi \sststile{}{V} \psi$ of $T$
-if $\beta_V(\varphi) \sststile{}{V} \beta_V(\psi)$ is a theorem of $S$, then $\varphi \sststile{}{V} \psi$ is a theorem of $T$.
+A morphism of theories $f : \mathbb{T}_1 \to \mathbb{T}_2$ is a monomorphism if and only if for every sequent $\varphi \sststile{}{V} \psi$ of $\mathbb{T}_1$
+if $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}_2$, then $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}_1$.
 \end{prop}
 \begin{proof}
 First, let us prove the ``if'' part.
-Let $(\alpha_1,\beta_1), (\alpha_2,\beta_2) : P \to T$ be a pair of morphisms such that $(\alpha,\beta) \circ (\alpha_1,\beta_1) = (\alpha,\beta) \circ (\alpha_2,\beta_2)$.
-If $t \in PTerm_\Sigma(V)_s$, then $\sststile{}{V} \alpha(\alpha_1(t)) \cong \alpha(\alpha_2(t))$; hence $\sststile{}{V} \alpha_1(t) \cong \alpha_2(t)$.
-If $\varphi \in Form_\Sigma(V)$, then $\beta(\beta_1(\varphi)) \ssststile{}{V} \beta(\beta_2(\varphi))$; hence $\beta_1(\varphi) \ssststile{}{V} \beta_2(\varphi)$.
-Thus $(\alpha_1,\beta_1) = (\alpha_2,\beta_2)$.
+Let $g,h : \mathbb{T} \to \mathbb{T}_1$ be a pair of morphisms such that $f \circ g = f \circ h$.
+If $t \in PTerm_\Sigma(V)_s$, then $\sststile{}{V} f(g(t)) \cong f(h(t))$; hence $\sststile{}{V} g(t) \cong h(t)$.
+If $\varphi \in Form_\Sigma(V)$, then $f(g(\varphi)) \ssststile{}{V} f(h(\varphi))$; hence $g(\varphi) \ssststile{}{V} h(\varphi)$.
+Thus $g = h$.
 
 Now, let us prove the ``only if'' part.
-Suppose that $(\alpha,\beta)$ is a monomorphism.
-Let $\varphi \sststile{}{V} \psi$ be a sequent of $T$ such that $\beta_V(\varphi) \sststile{}{V} \beta_V(\psi)$ is a theorem of $S$.
-Let $P$ be a theory which consists of a single predicate symbol $R : s_1 \times \ldots \times s_n \times s'_1 \times \ldots \times s'_k$
+Suppose that $f$ is a monomorphism.
+Let $\varphi \sststile{}{V} \psi$ be a sequent of $\mathbb{T}_1$ such that $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}_2$.
+Let $\mathbb{T}$ be a theory which consists of a single predicate symbol $R : s_1 \times \ldots \times s_n \times s'_1 \times \ldots \times s'_k$
 where $s_1, \ldots s_n$ are sorts of variables in $fv(\varphi)$ and $s'_1, \ldots s'_k$ are sorts of variables in $fv(\psi)$.
-Let $f : P \to T$ be a morphism defined by $f(R(x_1, \ldots x_n, y_1, \ldots y_k)) = \varphi \land y_1\!\downarrow \land \ldots \land y_k\!\downarrow$ and
-let $g : P \to T$ be a morphism defined by $g(R(x_1, \ldots x_n, y_1, \ldots y_k)) = \varphi \land \psi$.
-By \rprop{mor-eq} $(\alpha,\beta) \circ f = (\alpha,\beta) \circ g$, hence $f = g$ which implies that $\varphi \sststile{}{V} \psi$.
+Let $g : \mathbb{T} \to \mathbb{T}_1$ be a morphism defined by $g(R(x_1, \ldots x_n, y_1, \ldots y_k)) = \varphi \land y_1\!\downarrow \land \ldots \land y_k\!\downarrow$ and
+let $h : \mathbb{T} \to \mathbb{T}_1$ be a morphism defined by $h(R(x_1, \ldots x_n, y_1, \ldots y_k)) = \varphi \land \psi$.
+By \rprop{mor-eq} $f \circ g = f \circ h$, hence $g = h$ which implies that $\varphi \sststile{}{V} \psi$.
 \end{proof}
 
-Let $T = (\mathcal{F},\mathcal{P},\mathbb{T})$ be a theory in $\Th_\mathcal{S}$ and $T' = (\mathcal{F}',\mathcal{P}',\mathbb{T}')$ a theory in $\Th_{\mathcal{S}'}$.
-Then we say that $T'$ is a \emph{subtheory} of $T$ if $\mathcal{S}' \subseteq \mathcal{S}$, $\mathcal{F}' \subseteq \mathcal{F}$, $\mathcal{P}' \subseteq \mathcal{P}$ and $\mathbb{T}' \subseteq \mathbb{T}$.
-If $T'$ is a subtheory of a theory $T$, then we often need to know when a theorem of $T$ is a theorem of $T'$.
+Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ and $\mathbb{T}' = ((\mathcal{S}',\mathcal{F}',\mathcal{P}'),\mathcal{A}')$ be a pair of theories.
+Then we say that $\mathbb{T}'$ is a \emph{subtheory} of $\mathbb{T}$ if $\mathcal{S}' \subseteq \mathcal{S}$, $\mathcal{F}' \subseteq \mathcal{F}$, $\mathcal{P}' \subseteq \mathcal{P}$ and $\mathcal{A}' \subseteq \mathcal{A}$.
+If $\mathbb{T}'$ is a subtheory of a theory $\mathbb{T}$, then we often need to know when a theorem of $\mathbb{T}$ is a theorem of $\mathbb{T}'$.
 The lemma below gives us a simple criterion for this.
 First, we need to introduce a bit of notation.
-If $V \in \Set^\mathcal{S}$, then we write $T'(V) \in \Set^{\mathcal{S}'}$ for the subset of $V$ which consists of variables of sorts from $\mathcal{S}'$.
-If $\varphi$ is a Horn formula over $(\mathcal{S},\mathcal{F},\mathcal{P})$, then we define a formula $T'(\varphi)$ over $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
-For atomic formulae $T'$ is defined as follows:
+If $V \in \Set^\mathcal{S}$, then we write $\mathbb{T}'(V) \in \Set^{\mathcal{S}'}$ for the subset of $V$ which consists of variables of sorts from $\mathcal{S}'$.
+If $\varphi$ is a Horn formula over $(\mathcal{S},\mathcal{F},\mathcal{P})$, then we define a formula $\mathbb{T}'(\varphi)$ over $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
+For atomic formulae it is defined as follows:
 \begin{align*}
-T'(\varphi) & = \varphi \text{ if $\varphi$ is a formula over $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$,} \\
-T'(\varphi) & = \top \text{ otherwise.}
+\mathbb{T}'(\varphi) & = \varphi \text{ if $\varphi$ is a formula over $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$,} \\
+\mathbb{T}'(\varphi) & = \top \text{ otherwise.}
 \end{align*}
-For other Horn formulae $T'$ is defined as follows:
-\[ T'(\varphi_1 \land \ldots \land \varphi_n) = T'(\varphi_1) \land \ldots \land T'(\varphi_n) \]
-
-We will say that a subtheory $T' = (\mathcal{F}',\mathcal{P}',\mathbb{T}') \in \Th_{\mathcal{S}'}$ of $T$ is \emph{disjoint}
-if for every $\sigma : s_1 \times \ldots \times s_n \to s$ such that $s \in \mathcal{S}'$, $\sigma \in \mathcal{F}'$.
+For other Horn formulae $\mathbb{T}'$ is defined as follows:
+\[ \mathbb{T}'(\varphi_1 \land \ldots \land \varphi_n) = \mathbb{T}'(\varphi_1) \land \ldots \land \mathbb{T}'(\varphi_n) \]
+We will say that a subtheory $\mathbb{T}'$ of $\mathbb{T}$ is \emph{disjoint} if for every $\sigma : s_1 \times \ldots \times s_n \to s$ such that $s \in \mathcal{S}'$, $\sigma \in \mathcal{F}'$.
 
 \begin{lem}
-Let $T' = (\mathcal{F}',\mathcal{P}',\mathbb{T}') \in \Th_{\mathcal{S}'}$ be a disjoint subtheory of $T \in \Th_\mathcal{S}$.
-If for every axiom $\varphi \sststile{}{V} \psi$ of $T$ sequent $T'(\varphi) \sststile{}{T'(V)} T'(\psi)$ is a theorem of $T'$, then this is true for every theorem of $T$.
+Let $\mathbb{T}' = ((\mathcal{S}',\mathcal{F}',\mathcal{P}'),\mathbb{T}')$ be a disjoint subtheory of $\mathbb{T} \in \Th_\mathcal{S}$.
+If for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$ sequent $\mathbb{T}'(\varphi) \sststile{}{\mathbb{T}'(V)} \mathbb{T}'(\psi)$ is a theorem of $\mathbb{T}'$, then this is true for every theorem of $\mathbb{T}$.
 \end{lem}
 \begin{proof}
 We need to check that every inference rule preserves this property.
@@ -611,8 +615,8 @@ If $x \notin FV(\varphi)$, then this sequent is a special case of (b5).
 Suppose $x \in FV(\varphi)$.
 Note that $\varphi[y/x]$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$ if and only if $\varphi$ is.
 If $s \notin \mathcal{S}'$, then $\varphi$ is not a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$;
-hence sequent $T'(x = y \land \varphi) \sststile{}{x:s,y:s,V} T'(\varphi[y/x])$ equals to $\top \sststile{}{T'(V)} \top$ which is clearly derivable.
-If $s \in \mathcal{S}'$, then this sequent equals either to $x = y \land \varphi \sststile{}{x:s,y:s,T'(V)} \varphi[y/x]$ or to $x = y \sststile{}{x:s,y:s,T'(V)} \top$, both of which are derivable.
+hence sequent $\mathbb{T}'(x = y \land \varphi) \sststile{}{x:s,y:s,V} \mathbb{T}'(\varphi[y/x])$ equals to $\top \sststile{}{\mathbb{T}'(V)} \top$ which is clearly derivable.
+If $s \in \mathcal{S}'$, then this sequent equals either to $x = y \land \varphi \sststile{}{x:s,y:s,\mathbb{T}'(V)} \varphi[y/x]$ or to $x = y \sststile{}{x:s,y:s,\mathbb{T}'(V)} \top$, both of which are derivable.
 
 Finally, let us consider rule (a3).
 To prove that it preserves the required proerty it is enough to show that $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$ if and only if $\varphi[t/x]$ is.
