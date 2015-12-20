@@ -591,19 +591,95 @@ Then we say that $\mathbb{T}'$ is a \emph{subtheory} of $\mathbb{T}$ if $\mathca
 If $\mathbb{T}'$ is a subtheory of a theory $\mathbb{T}$, then we often need to know when a theorem of $\mathbb{T}$ is a theorem of $\mathbb{T}'$.
 The lemma below gives us a simple criterion for this.
 First, we need to introduce a bit of notation.
-If $V \in \Set^\mathcal{S}$, then we write $\mathbb{T}'(V) \in \Set^{\mathcal{S}'}$ for the subset of $V$ which consists of variables of sorts from $\mathcal{S}'$.
-If $\varphi$ is a Horn formula over $(\mathcal{S},\mathcal{F},\mathcal{P})$, then we define a formula $\mathbb{T}'(\varphi)$ over $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
-For atomic formulae it is defined as follows:
+Let $t$ is a term over the signature of $\mathbb{T}$ such that there is no subterm of a sort that does not belong to $\mathcal{S}'$.
+Then we define a term $T(t)$ over the signature of $\mathbb{T}'$ as follows:
 \begin{align*}
-\mathbb{T}'(\varphi) & = \varphi \text{ if $\varphi$ is a formula over $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$,} \\
-\mathbb{T}'(\varphi) & = \top \text{ otherwise.}
+T(x) & = x \\
+T(\sigma(t_1, \ldots t_n)) & = \sigma(T(t_1), \ldots T(t_n)) \text{, if $\sigma \in \mathcal{F}'$} \\
+T(\sigma(t_1, \ldots t_n)) & = x_s \text{, if $\sigma \notin \mathcal{F}'$ and $\sigma : s_1 \times \ldots \times s_n \to s$}
 \end{align*}
-For other Horn formulae $\mathbb{T}'$ is defined as follows:
-\[ \mathbb{T}'(\varphi_1 \land \ldots \land \varphi_n) = \mathbb{T}'(\varphi_1) \land \ldots \land \mathbb{T}'(\varphi_n) \]
-We will say that a subtheory $\mathbb{T}'$ of $\mathbb{T}$ is \emph{disjoint} if for every $\sigma : s_1 \times \ldots \times s_n \to s$ such that $s \in \mathcal{S}'$, $\sigma \in \mathcal{F}'$.
+where $x_s$ is a variable of sort $s$ that is not a free variable of $t$.
+
+If $\varphi$ is an atomic formula over the signature of $\mathbb{T}$, then we define a formula $T(\varphi)$ over the signature of $\mathbb{T}'$ as follows:
+\begin{align*}
+T(t = t') & = (T(t) = T(t')) \text{, if $T(t)$ and $T(t')$ are defined} \\
+T(R(t_1, \ldots t_n)) & = R(T(t_1), \ldots T(t_n)) \text{, if $T(t_i)$ is defined for every $i$} \\
+T(\varphi) & = \top \text{, otherwise}
+\end{align*}
+For an arbitrary Horn formula $\varphi$ we define $T(\varphi)$ as follows:
+\[ T(\varphi_1 \land \ldots \land \varphi_n) = T(\varphi_1) \land \ldots \land T(\varphi_n) \]
+If $S$ is sequent $\varphi \sststile{}{V} \psi$ in the signature of $\mathbb{T}$,
+then we define sequent $T(S)$ in the signature of $\mathbb{T}'$ as $T(\varphi) \sststile{}{V \cup FV(T(\varphi)) \cup FV(T(\psi))} T(\psi)$.
+
+\begin{lem}
+Let $\mathbb{T}'$ be a subtheory of $\mathbb{T}$.
+Suppose that for every axiom $S$ of $\mathbb{T}$, $T(S)$ is a theorem of $\mathbb{T}'$.
+Then if a sequent in the signature of $\mathbb{T}'$ is provable in $\mathbb{T}$, then it is also provable in $\mathbb{T}'$.
+\end{lem}
+\begin{proof}
+If $S$ is a sequent in the signature of $\mathbb{T}'$, then $T(S) = S$.
+Thus we only need to prove that if $S$ is a theorem of $\mathbb{T}$, then $T(S)$ is a theorem of $\mathbb{T}'$.
+For axioms this is true by assumption.
+We need to check that $T(-)$ preserves inference rules.
+This is clearly true for rules (b1)-(b6) and (a1).
+
+Let us consider rule (a2).
+Let $S$ equals $x = y \land \varphi \sststile{}{x:s,y:s,V} \varphi[y/x]$.
+Note that $T(\varphi[y/x])$ is defined if and only if $T(\varphi)$ is defined, and in this case $T(\varphi[y/x]) = T(\varphi)[y/x]$.
+Thus $T(S)$ is either of the form $x = y \land T(\varphi) \sststile{}{x:s,y:s,V,FV(T(\varphi))} T(\varphi)[y/x]$,
+or of the form $x = y \sststile{}{x:s,y:s,V} \top$, or of the form $\top \sststile{}{x:s,y:s,V} \top$.
+In all of these cases $T(S)$ is a theorem of $\mathbb{T}'$.
+
+Finally, let us consider rule (a3).
+To prove that it preserves the required proerty it is enough to show that $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$ if and only if $\varphi[t/x]$ is.
+If $x \notin FV(\varphi)$, then $\varphi = \varphi[t/x]$.
+Suppose that $x \in FV(\varphi)$ and $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
+If $x$ has sort $s$, then $s \in \mathcal{S}'$.
+We need to show that a term of sort $s$ is a term of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
+But this follows from the assumption on the set of function symbols.
+\end{proof}
+
+This proposition is still not easy to use, so we prove another lemma which is useful for proving that a map is a monomorphism.
+If $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ is a theory, then
+let $\mathcal{S}(\mathbb{T})$ be the subset of $\mathcal{S}$ which consists of those sorts which are used in $\mathbb{T}$.
+That is, $\mathcal{S}(\mathbb{T})$ is the smallest subset of $\mathcal{S}$ such that $(\mathcal{S}(\mathbb{T}),\mathcal{F},\mathcal{P})$ is a signature and $\mathcal{A}$ is a theory in it.
+
+\begin{lem}
+Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a theory
+and let $\mathbb{T}' = ((\mathcal{S}, \mathcal{F} \amalg \{ c_s : s\ |\ s \in \mathcal{S} \}, \mathcal{P}), \mathcal{A} \cup \{ \sststile{}{} c_s\!\downarrow |\ s \in \mathcal{S} \} \cup \{ \sststile{}{x : s, y : s} x = y\ |\ s \in \mathcal{S} \setminus \mathcal{S}(\mathbb{T}) \})$ be its extension.
+Then the natural map $\mathbb{T} \to \mathbb{T}'$ is a monomorphism.
+\end{lem}
+\begin{proof}
+If $\varphi$ is a Horn formula in the signature of $\mathbb{T}'$, then we define a Horn formula $T(\varphi)$ in the signature of $\mathbb{T}$.
+If $\varphi$ is atomic, then $T(\varphi) = \varphi[x_s/c_s]$, if $\varphi$ is a formula over
+$(\mathcal{S}(\mathbb{T}), \mathcal{F} \amalg \{ c_s : s\ |\ s \in \mathcal{S}(\mathbb{T}) \}, \mathcal{P})$,
+where $x_s$ is a variable of sort $s$ that is not a free variable of $\varphi$.
+Otherwise $T(\varphi) = \top$.
+For nonatomic formulae $T(-)$ is defined as follows:
+\[ T(\varphi_1 \land \ldots \land \varphi_n) = T(\varphi_1) \land \ldots \land T(\varphi_n) \]
+If $S$ is a sequent $\varphi \sststile{}{V} \psi$, then let $T(S)$ be the sequent $T(\varphi) \sststile{}{V \cup FV(T(\varphi)) \cup FV(T(\psi))} T(\psi)$.
+Note that if $S$ is an axioms of $\mathbb{T}$, then $T(S) = S$.
+Thus we only need to prove that if $S$ is a theorem of $\mathbb{T}'$, then $T(S)$ is a theorem of $\mathbb{T}$.
+
+If $S$ is an axiom of $\mathbb{T}'$, then we need to consider the following cases:
+\begin{itemize}
+\item If $S = \varphi \sststile{}{V} \psi$ belongs to $\mathcal{A}$, then $T(\varphi) = \varphi$ and $T(\psi)$ is a sublist of $\psi$.
+    Hence, $T(S)$ is a theorem of $\mathbb{T}$.
+\item If $S = \sststile{}{} c_s\!\downarrow$, then $T(S) = \sststile{}{} x_s\!\downarrow$ which is an axiom of the logic.
+\item If $S = \sststile{}{x : s, y : s} x = y$, then $T(S) = \sststile{}{x : s, y : s} \top$ which is an axiom of the logic.
+\end{itemize}
+Now, we need to prove that $T(-)$ preserves inference rules of the logic.
+It is clearly preserves rules (b1)-(b6) and (a1).
+\end{proof}
+
+Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ and $\mathbb{T}' = ((\mathcal{S}',\mathcal{F}',\mathcal{P}'),\mathcal{A}')$ be a pair of theories.
+Then we say that $\mathbb{T}'$ is a \emph{subtheory} of $\mathbb{T}$ if $\mathcal{S}' \subseteq \mathcal{S}$, $\mathcal{F}' \subseteq \mathcal{F}$, $\mathcal{P}' \subseteq \mathcal{P}$ and $\mathcal{A}' \subseteq \mathcal{A}$.
+If $\mathbb{T}'$ is a subtheory of a theory $\mathbb{T}$, then we often need to know when a theorem of $\mathbb{T}$ is a theorem of $\mathbb{T}'$.
+The lemma below gives us a simple criterion for this.
 
 \begin{lem}
 Let $\mathbb{T}' = ((\mathcal{S}',\mathcal{F}',\mathcal{P}'),\mathbb{T}')$ be a disjoint subtheory of $\mathbb{T} \in \Th_\mathcal{S}$.
+Let 
 If for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$ sequent $\mathbb{T}'(\varphi) \sststile{}{\mathbb{T}'(V)} \mathbb{T}'(\psi)$ is a theorem of $\mathbb{T}'$, then this is true for every theorem of $\mathbb{T}$.
 \end{lem}
 \begin{proof}
