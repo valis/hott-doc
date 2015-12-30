@@ -108,6 +108,7 @@
 \newcommand{\PStr}[1]{#1\text{-}\cat{PStr}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\Sig}{\cat{Sig}}
+\newcommand{\CSig}{\cat{CSig}}
 \newcommand{\Th}{\cat{Th}}
 \newcommand{\ThC}{\Th_{\mathcal{C}}}
 \newcommand{\ThT}{\Th_{\mathcal{T}}}
@@ -188,7 +189,7 @@ In most cases this equivalence is too strong, so it is necessary to consider wea
 For example, if two theories differ only by the amount of arguments to some of the constructions,
 then they are isomorphic (assuming omitted arguments can be inferred from the rest).
 
-We also define a \emph{parameterized} version of algebraic type theories which generalizes the usual one.
+We also define a \emph{contextual} version of algebraic type theories which generalizes the usual one.
 It has more concise syntax, and hence it is more convenient to work with.
 The drawback of this approach is that it is less straightforward to define a notion of a model of such theories.
 Finally, we introduce a concept of a \emph{regular} theory which formalize the idea that usually in a type theory constructions are available in all contexts.
@@ -270,8 +271,8 @@ t|_\varphi[\rho] & = t[\rho]|_{\varphi[\rho]}
 
 \begin{defn}
 Let $\Sigma$ and $\Sigma'$ be a pair of signatures with the same set of sorts $\mathcal{S}$.
-A morphism of these signatures is a pair $(\alpha,\beta)$ where $\alpha$ assigns to every $V \in \Set^\mathcal{S}$ a morphism $\alpha_V : PTerm_\Sigma(V) \to PTerm_{\Sigma'}(V)$
-and $\beta$ assigns to every $V \in \Set^\mathcal{S}$ a morphism $Form_\Sigma(V) \to Form_{\Sigma'}(V)$.
+A \emph{morphism} of these signatures is a pair $(\alpha,\beta)$ where $\alpha$ assigns to every $V \in \Set^\mathcal{S}$ a morphism $\alpha_V : PTerm_\Sigma(V) \to PTerm_{\Sigma'}(V)$
+and $\beta$ assigns to every $V \in \Set^\mathcal{S}$ a morphism $\beta_V : Form_\Sigma(V) \to Form_{\Sigma'}(V)$.
 These morphisms must satisfy the following conditions:
 \begin{enumerate}
 \item For every $t \in PTerm_\Sigma(V)_s$, $FV(\alpha_V(t)) = FV(t)$.
@@ -302,7 +303,7 @@ To construct a morphism of signatures $\Sigma = (\mathcal{S},\mathcal{F},\mathca
 \item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$, a partial term $\alpha(\sigma) \in PTerm_{\Sigma'}(\{ x_1 : s_1, \ldots x_n : s_n \})$ such that $FV(\alpha(\sigma)) = \{ x_1, \ldots x_n \}$.
 \item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$, a formula $\beta(R) \in Form_{\Sigma'}(\{ x_1 : s_1, \ldots x_n : s_n \})$ such that $FV(\beta(R)) = \{ x_1, \ldots x_n \}$.
 \end{itemize}
-Then there is a unique morphism $(\alpha,\beta)$ of these signatures such that $\alpha(\sigma(x_1, \ldots x_n)) = \alpha(\sigma)$ and $\beta(R(x_1, \ldots x_n)) = \beta(R)$.
+Then there is a unique morphism $f$ of these signatures such that $f(\sigma(x_1, \ldots x_n)) = \alpha(\sigma)$ and $f(R(x_1, \ldots x_n)) = \beta(R)$.
 \end{prop}
 \begin{proof}
 First, let us extend $\alpha$ to a morphism $Term_\mathcal{F}(V) \to PTerm_{\Sigma'}(V)$.
@@ -490,11 +491,17 @@ The composition of morphisms of signatures respects the equivalence relation; he
 \subsection{Models of theories}
 
 The notions of a partial $\Sigma$-structure for a signature $\Sigma$ and of a model of a theory were defined in \cite{PHL}.
-Here, we will show that morphisms of theories determine functors between models of these theories and prove the following proposition:
+Here, we will prove the following proposition:
 
-\begin{prop}[iso-mod]
-Isomorphic theories has isomorphic categories of models.
+\begin{prop}[func-mod]
+For every morphism of theories $f : \mathbb{T}_1 \to \mathbb{T}_2$ there is a faithful functor $f^* : \Mod{\mathbb{T}_2} \to \Mod{\mathbb{T}_1}$ such that
+for every theory $\mathbb{T}$, $id_\mathbb{T}^*$ is the identity functor,
+and for every $f : \mathbb{T}_1 \to \mathbb{T}_2$ and $g : \mathbb{T}_2 \to \mathbb{T}_3$, $(g \circ f)^* = f^* \circ g^*$.
 \end{prop}
+
+\begin{cor}[iso-mod]
+Isomorphic theories has isomorphic categories of models.
+\end{cor}
 
 Let $\Sigma = (\mathcal{S},\mathcal{F},\mathcal{P})$ and $\Sigma' = (\mathcal{S},\mathcal{F}',\mathcal{P}')$ be a pair of signatures,
 and let $f : \Sigma \to \Sigma'$ be a morphism between them.
@@ -533,7 +540,8 @@ Indeed, we have $f^*(A)(R) = A(f(R))$ and $g^*(A)(R) = A(g(R))$, and $A(f(R)) = 
 Analogous argument shows that $f^*(A)(\sigma) = g^*(A)(\sigma)$.
 
 Summarizing, we saw that every morphism of theories $f : \mathbb{T}_1 \to \mathbb{T}_2$ defines a functor $f^* : \Mod{\mathbb{T}_2} \to \Mod{\mathbb{T}_1}$.
-Moreover, $(-)^*$ is functorial, which proves \rprop{iso-mod}.
+On morphisms $f^*$ is just an inclusion of a subset; hence $f^*$ is faithful.
+Moreover, $(-)^*$ is functorial, which proves \rprop{func-mod}.
 
 \subsection{Properties of $\Th_\mathcal{S}$}
 
@@ -611,7 +619,7 @@ For an arbitrary Horn formula $\varphi$ we define $T(\varphi)$ as follows:
 If $S$ is sequent $\varphi \sststile{}{V} \psi$ in the signature of $\mathbb{T}$,
 then we define sequent $T(S)$ in the signature of $\mathbb{T}'$ as $T(\varphi) \sststile{}{V \cup FV(T(\varphi)) \cup FV(T(\psi))} T(\psi)$.
 
-\begin{lem}
+\begin{lem}[mono]
 Let $\mathbb{T}'$ be a subtheory of $\mathbb{T}$.
 Suppose that for every axiom $S$ of $\mathbb{T}$, $T(S)$ is a theorem of $\mathbb{T}'$.
 Then if a sequent in the signature of $\mathbb{T}'$ is provable in $\mathbb{T}$, then it is also provable in $\mathbb{T}'$.
@@ -629,70 +637,6 @@ Note that $T(\varphi[y/x])$ is defined if and only if $T(\varphi)$ is defined, a
 Thus $T(S)$ is either of the form $x = y \land T(\varphi) \sststile{}{x:s,y:s,V,FV(T(\varphi))} T(\varphi)[y/x]$,
 or of the form $x = y \sststile{}{x:s,y:s,V} \top$, or of the form $\top \sststile{}{x:s,y:s,V} \top$.
 In all of these cases $T(S)$ is a theorem of $\mathbb{T}'$.
-
-Finally, let us consider rule (a3).
-To prove that it preserves the required proerty it is enough to show that $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$ if and only if $\varphi[t/x]$ is.
-If $x \notin FV(\varphi)$, then $\varphi = \varphi[t/x]$.
-Suppose that $x \in FV(\varphi)$ and $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
-If $x$ has sort $s$, then $s \in \mathcal{S}'$.
-We need to show that a term of sort $s$ is a term of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
-But this follows from the assumption on the set of function symbols.
-\end{proof}
-
-This proposition is still not easy to use, so we prove another lemma which is useful for proving that a map is a monomorphism.
-If $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ is a theory, then
-let $\mathcal{S}(\mathbb{T})$ be the subset of $\mathcal{S}$ which consists of those sorts which are used in $\mathbb{T}$.
-That is, $\mathcal{S}(\mathbb{T})$ is the smallest subset of $\mathcal{S}$ such that $(\mathcal{S}(\mathbb{T}),\mathcal{F},\mathcal{P})$ is a signature and $\mathcal{A}$ is a theory in it.
-
-\begin{lem}
-Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a theory
-and let $\mathbb{T}' = ((\mathcal{S}, \mathcal{F} \amalg \{ c_s : s\ |\ s \in \mathcal{S} \}, \mathcal{P}), \mathcal{A} \cup \{ \sststile{}{} c_s\!\downarrow |\ s \in \mathcal{S} \} \cup \{ \sststile{}{x : s, y : s} x = y\ |\ s \in \mathcal{S} \setminus \mathcal{S}(\mathbb{T}) \})$ be its extension.
-Then the natural map $\mathbb{T} \to \mathbb{T}'$ is a monomorphism.
-\end{lem}
-\begin{proof}
-If $\varphi$ is a Horn formula in the signature of $\mathbb{T}'$, then we define a Horn formula $T(\varphi)$ in the signature of $\mathbb{T}$.
-If $\varphi$ is atomic, then $T(\varphi) = \varphi[x_s/c_s]$, if $\varphi$ is a formula over
-$(\mathcal{S}(\mathbb{T}), \mathcal{F} \amalg \{ c_s : s\ |\ s \in \mathcal{S}(\mathbb{T}) \}, \mathcal{P})$,
-where $x_s$ is a variable of sort $s$ that is not a free variable of $\varphi$.
-Otherwise $T(\varphi) = \top$.
-For nonatomic formulae $T(-)$ is defined as follows:
-\[ T(\varphi_1 \land \ldots \land \varphi_n) = T(\varphi_1) \land \ldots \land T(\varphi_n) \]
-If $S$ is a sequent $\varphi \sststile{}{V} \psi$, then let $T(S)$ be the sequent $T(\varphi) \sststile{}{V \cup FV(T(\varphi)) \cup FV(T(\psi))} T(\psi)$.
-Note that if $S$ is an axioms of $\mathbb{T}$, then $T(S) = S$.
-Thus we only need to prove that if $S$ is a theorem of $\mathbb{T}'$, then $T(S)$ is a theorem of $\mathbb{T}$.
-
-If $S$ is an axiom of $\mathbb{T}'$, then we need to consider the following cases:
-\begin{itemize}
-\item If $S = \varphi \sststile{}{V} \psi$ belongs to $\mathcal{A}$, then $T(\varphi) = \varphi$ and $T(\psi)$ is a sublist of $\psi$.
-    Hence, $T(S)$ is a theorem of $\mathbb{T}$.
-\item If $S = \sststile{}{} c_s\!\downarrow$, then $T(S) = \sststile{}{} x_s\!\downarrow$ which is an axiom of the logic.
-\item If $S = \sststile{}{x : s, y : s} x = y$, then $T(S) = \sststile{}{x : s, y : s} \top$ which is an axiom of the logic.
-\end{itemize}
-Now, we need to prove that $T(-)$ preserves inference rules of the logic.
-It is clearly preserves rules (b1)-(b6) and (a1).
-\end{proof}
-
-Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ and $\mathbb{T}' = ((\mathcal{S}',\mathcal{F}',\mathcal{P}'),\mathcal{A}')$ be a pair of theories.
-Then we say that $\mathbb{T}'$ is a \emph{subtheory} of $\mathbb{T}$ if $\mathcal{S}' \subseteq \mathcal{S}$, $\mathcal{F}' \subseteq \mathcal{F}$, $\mathcal{P}' \subseteq \mathcal{P}$ and $\mathcal{A}' \subseteq \mathcal{A}$.
-If $\mathbb{T}'$ is a subtheory of a theory $\mathbb{T}$, then we often need to know when a theorem of $\mathbb{T}$ is a theorem of $\mathbb{T}'$.
-The lemma below gives us a simple criterion for this.
-
-\begin{lem}
-Let $\mathbb{T}' = ((\mathcal{S}',\mathcal{F}',\mathcal{P}'),\mathbb{T}')$ be a disjoint subtheory of $\mathbb{T} \in \Th_\mathcal{S}$.
-Let 
-If for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$ sequent $\mathbb{T}'(\varphi) \sststile{}{\mathbb{T}'(V)} \mathbb{T}'(\psi)$ is a theorem of $\mathbb{T}'$, then this is true for every theorem of $\mathbb{T}$.
-\end{lem}
-\begin{proof}
-We need to check that every inference rule preserves this property.
-This is clearly true for rules (b1)-(b6) and (a1).
-Let us consider sequent $x = y \land \varphi \sststile{}{x:s,y:s,V} \varphi[y/x]$.
-We can assume that $\varphi$ is atomic.
-If $x \notin FV(\varphi)$, then this sequent is a special case of (b5).
-Suppose $x \in FV(\varphi)$.
-Note that $\varphi[y/x]$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$ if and only if $\varphi$ is.
-If $s \notin \mathcal{S}'$, then $\varphi$ is not a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$;
-hence sequent $\mathbb{T}'(x = y \land \varphi) \sststile{}{x:s,y:s,V} \mathbb{T}'(\varphi[y/x])$ equals to $\top \sststile{}{\mathbb{T}'(V)} \top$ which is clearly derivable.
-If $s \in \mathcal{S}'$, then this sequent equals either to $x = y \land \varphi \sststile{}{x:s,y:s,\mathbb{T}'(V)} \varphi[y/x]$ or to $x = y \sststile{}{x:s,y:s,\mathbb{T}'(V)} \top$, both of which are derivable.
 
 Finally, let us consider rule (a3).
 To prove that it preserves the required proerty it is enough to show that $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$ if and only if $\varphi[t/x]$ is.
@@ -725,15 +669,22 @@ Categories $\ThT$ and $\mathbb{T}_{-1}/\ThC$ are equivalent.
 \end{prop}
 \begin{proof}
 Every theory in $\ThT$ is a theory in $\ThC$ in the obvious way.
-We define $F : \ThT \to \mathbb{T}_{-1}/\ThC$ as $F(X) = \mathbb{T}_{-1} \amalg X$.
-First, note that $F$ is full.
-Indeed, given a morphism $f : \mathbb{T}_{-1} \amalg X \to \mathbb{T}_{-1} \amalg Y$,
+We define $F : \ThT \to \mathbb{T}_{-1}/\ThC$ as $F(\mathbb{T}) = \mathbb{T}_{-1} \amalg \mathbb{T}$.
+First, note that $F$ is faithful.
+Indeed, let $f,g : \mathbb{T}_1 \to \mathbb{T}_2$ be morphisms such that $f \amalg \mathbb{T}_{-1} = g \amalg \mathbb{T}_{-1}$.
+Let $i_1 : \mathbb{T}_2 \to \mathbb{T}_2 \amalg \mathbb{T}_{-1}$ be the coproduct inclusion.
+Then $i_1 \circ f = i_1 \circ g$.
+By \rprop{mor-eq} we need to prove that
+$\sststile{}{x_1 : s_1, \ldots x_n : s_n} f(\sigma(x_1, \ldots x_n)) \cong g(\sigma(x_1, \ldots x_n))$ and
+$f(R(x_1, \ldots x_n)) \ssststile{}{x_1 : s_1, \ldots x_n : s_n} g(R(x_1, \ldots x_n))$ are provable in $\mathbb{T}_2$.
+We know that they are provable in $\mathbb{T}_2 \amalg \mathbb{T}_{-1}$, and by \rlem{mono} they are provable in $\mathbb{T}_2$.
 
-Every morphism of theories $\mathbb{T}$ and $\mathbb{T}'$ corresponds to exactly one morphism of theories $F(\mathbb{T})$ and $F(\mathbb{T}')$
-since terms in $i(\mathbb{T}')$ cannot have sort $(ctx,0)$.
-Thus $F$ is fully faithful.
+Now, let us prove that $F$ is full.
+Let $f : \mathbb{T}_{-1} \amalg \mathbb{T}_1 \to \mathbb{T}_{-1} \amalg \mathbb{T}_2$ be a morphism.
+Then we define $g : \mathbb{T}_1 \to \mathbb{T}_2$ as $g(t) = T(f(t))$ and $g(\varphi) = T(f(\varphi))$
+where $T$ is defined as in \rlem{mono} for the inclusion $\mathbb{T}_2 \to \mathbb{T}_{-1} \amalg \mathbb{T}_2$.
 
-We need to prove that $F$ is essentially surjective.
+Finally, let us prove that $F$ is essentially surjective.
 Given a theory $\mathbb{T} \in \ThC$ and a morphism $c : \mathbb{T}_{-1} \to \mathbb{T}$ we define a theory $\mathbb{T}' \in \ThT$.
 This theory contains one function symbol $\sigma$ for every function symbols $\sigma$ of $\mathbb{T}$ such that $\sigma : s_1 \times \ldots \times s_n \to s$ and $s \in \mathcal{T}$.
 We let $\sigma : s_{i_1} \times \ldots \times s_{i_k} \to s$ where $\{ i_1, \ldots i_k \} \subset \{ 1, \ldots n \}$ consists of those $i$ for which $s_i \in \mathcal{T}$.
@@ -807,51 +758,231 @@ Categories $\mathbb{T}_0/\ThT$ and $\mathbb{T}'_0/\Th_{\mathcal{T},\mathcal{P}_0
 % Thus $F$ is fully faithful.
 \end{proof}
 
-\section{Theories under $\mathbb{T}_0$}
+\section{Contextual theories}
 
 In this section we give an alternative description of theories under $\mathbb{T}_0$.
+We call this presentation of theories \emph{contextual} since it involes the notion of a context.
+The problem with the algebraic definition is that its terms carry a lot of surplus information.
+So it is inconvenient to work with it in practice.
+Contextual theories allow us to reduce the amount of the information in terms,
+but the drawback of this approach is that it is less straightforward to define a notion of a model of such theories.
+
+\subsection{Contextual signatures}
 
 Let $\mathcal{F}$ be a set of function symbols with $\mathcal{T}$ as the set of sorts.
 A \emph{context} of length $n$ is a sequence of terms of sorts $(ty,0)$, \ldots $(ty,n-1)$.
 Contexts are usually denoted by greek letters $\Gamma$ and $\Delta$.
+The set of contexts of length $n$ with free variables in $V$ will be denoted by $Ctx^n_\mathcal{F}(V)$.
+
 In order to define syntactic theories over $\mathcal{F}$, we need to introduce an additional structure on this set.
-For each $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and each $1 \leq i \leq n$,
-let $D_i(\sigma)$ be a context of length $n_i$ with free variables $\{\ A_j : (ty,j)\ |\ 1 \leq j \leq n\ \} \cup \{\ x_j : (p_j,n_j)\ |\ 1 \leq j \leq k\ \}$.
+First, if $(p,n) \in \mathcal{T}$, then let $d(p,n) = n$ if $p = ty$ and $d(p,n) = n+1$ if $p = tm$.
+Now, for each $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and each $1 \leq i \leq k$,
+let $D_i(\sigma)$ be a context of length $d(p_i,n_i)$ with free variables $\{\ A_j : (ty,j)\ |\ 1 \leq j \leq d(p,n)\ \} \cup \{\ x_j : (p_j,n_j)\ |\ 1 \leq j \leq k\ \}$.
+We will denote such context as $D_i(A_1, \ldots A_{d(p,n)}, \sigma(x_1, \ldots x_k))$.
+The idea is that $D_i(\sigma)$ should be a context in which $x_i$ is typeable if $\sigma(x_1, \ldots x_k)$ is typeable in context $A_1, \ldots A_{d(p,n)}$.
+For each $R \in \mathcal{P}$, $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ and each $1 \leq i \leq k$,
+let $D_i(R)$ be a context of length $d(p_i,n_i)$ with free variables $\{\ x_j : (p_j,n_j)\ |\ 1 \leq j \leq k\ \}$.
+We will denote such context as $D_i(R(x_1, \ldots x_k))$.
 
-We will denote such context as $D_i(A_1, \ldots A_n \vdash \sigma(x_1, \ldots x_k))$.
-The idea is that $D_i(\sigma)$ should be a context in which $x_i$ is typeable if $A_1, \ldots A_n \vdash \sigma(x_1, \ldots x_k)$ holds.
-
-Then \emph{a syntactic atomic formula} over $\mathcal{F}$ with free variables in $V$ is an expression either of the form $A_1, \ldots A_n \vdash A \deq A'$ or of the form $A_1, \ldots A_n \vdash a \deq a' : A$
-where $A_i$ is a term of sort $(ty,i-1)$, $A$ and $A'$ are terms of sort $(ty,n)$, and $a$ and $a'$ are terms of sort $(tm,n)$.
-Horn sequents are defined as before.
-We will use the following abbreviations:
+Let $\sigma$ be a function symbol such that $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$.
+Let $\Gamma = B_1, \ldots B_{d(p,n)}$ be a context with free variables in $V$, and let $t_i$ be terms of sorts $(p_i,n_i)$ with free variables in $V$ for each $1 \leq i \leq k$.
+Then we write $D_i(\Gamma, \sigma(t_1, \ldots t_k))$ for a context of length $d(p_i,n_i)$ with free variables in $V$ defined as follows:
+\[ D_i(\Gamma, \sigma(t_1, \ldots t_k)) = D_i(A_1, \ldots A_{d(p,n)}, \sigma(x_1, \ldots x_k))[A_i \mapsto B_i, x_j \mapsto t_j] \]
+Let $t$ be a term of sort $(p,n)$ with free variables in $V$ such that a variable $x$ of sort $(q,m)$ appears in $t$ exactly once.
+Let $\Gamma$ be a context of length $d(p,n)$ with free variables in $V$.
+Then we define a context $D_x(\Gamma, t)$ of length $d(q,m)$ with free variables in $V$ as follows:
 \begin{align*}
+D_x(\Gamma, x) & = \Gamma \\
+D_x(\Gamma, \sigma(t_1, \ldots t_k)) & = D_x(D_i(\Gamma, \sigma(t_1, \ldots t_k)), t_i) \text{, if $x \in FV(t_i)$}
+\end{align*}
+
+Let $\Sigma = (\mathcal{T}, \mathcal{F}, \mathcal{P})$ be a signature.
+Then a \emph{contextual atomic formula} over $\Sigma$ with free variables in $V$ is an expression of the form 
+$R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$, and $t_i$ is a term of sort $s_i$.
+We will assume that $\mathcal{P}$ contains symbols for the equality $E^n_p$ such that
+\[ E^n_p : (ty,0) \times \ldots \times (ty,d(p,n)-1) \times (p,n) \times (p,n) \]
+Contextual Horn formulae and sequents are defined as before.
+The set of contextual Horn formulae with free varibles in $V$ will be denoted by $CForm_\Sigma(V)$.
+We will use the following notation:
+\begin{align*}
+A_1, \ldots A_n \vdash A \deq A' & \text{ means } E^n_{ty}(A_1, \ldots A_n, A, A') \\
+A_1, \ldots A_n \vdash a \deq a' : A & \text{ means } E^n_{tm}(A_1, \ldots A_n, A, a, a') \\
 \Gamma \vdash A & \text{ means } \Gamma \vdash A \deq A \\
 \Gamma \vdash a : A & \text{ means } \Gamma \vdash a \deq a : A
 \end{align*}
 
-A \emph{syntactic Horn theory} in a signature $\Sigma = (\mathcal{T}, \mathcal{F}, \varnothing)$ is a set of Horn sequents over $\Sigma$.
-Now we need to describe the rules of the logic for these theories.
-It has the rules (b1)-(b6) and (a3) as in partial Horn logic.
-It does not have an analog for the axiom (a1), but it has the following set of axioms analogous to (a2):
-\begin{center}
-\end{center}
+Let $R$ be a predicate symbol such that $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$.
+Let $t_i$ be terms of sorts $(p_i,n_i)$ with free variables in $V$ for each $1 \leq i \leq k$.
+Then we write $D_i(R(t_1, \ldots t_k))$ for a context of length $d(p_i,n_i)$ with free variables in $V$ defined as follows:
+\[ D_i(R(t_1, \ldots t_k)) = D_i(R(x_1, \ldots x_k))[x_j \mapsto t_j] \]
+Let $\varphi$ be a Horn formula such that a variable $x$ of sort $(q,m)$ appears in $\varphi$ exactly once.
+Then we define a context $D_x(\varphi)$ of length $d(q,m)$ as follows:
+\begin{align*}
+D_x(\varphi_1 \land \ldots \land \varphi_n) & = D_x(\varphi_i) \text{, if $x \in FV(\varphi_i)$} \\
+D_x(R(t_1, \ldots t_k)) & = D_x(D_i(R(t_1, \ldots t_k)) \vdash t_i) \text{, if $x \in FV(t_i)$}
+\end{align*}
 
-In these rules for every sequent $\varphi \sststile{}{V} \psi$ the set of variables $V$ is such that $FV(\varphi) \cup FV(\psi) \subseteq V$.
-Note that this set of rules is equivalent to the one described in \cite{PHL}.
-\begin{center}
-$\varphi \sststile{}{V} \varphi$ (b1)
-\qquad
-\AxiomC{$\varphi \sststile{}{V} \psi$}
-\AxiomC{$\psi \sststile{}{V} \chi$}
-\RightLabel{(b2)}
-\BinaryInfC{$\varphi \sststile{}{V} \chi$}
-\DisplayProof
-\qquad
-$\varphi \sststile{}{V} \top$ (b3)
-\end{center}
+A \emph{contextual term} of sort $s$ with free variables in $V$ is a pair $(\Gamma,t)$ where $\Gamma$ is a context of length $d(s)$ and $t$ is a term of sort $s$.
+The set of such terms will be denoted by $CTerm_\mathcal{F}(V)_s$.
+A \emph{partial contextual term} of sort $s$ with free variables in $V$ is an expression of the form $t|_\varphi$,
+where $t \in CTerm_\mathcal{F}(V)_s$ and $\varphi \in CForm_\Sigma(V)$.
+The set of such terms will be denoted by $PCTerm_\Sigma(V)_s$.
+Substitution functions for contextual terms, contextual formulae and partial contextual terms are defined in terms of the substituion for ordinary terms.
+If $\rho : V \to PTerm_\Sigma(V')$, then
+\[ (A_1, \ldots A_{d(s)}, t)[\rho] = (A'_1, \ldots A'_{d(s)}, t')|_{\varphi_1 \land \ldots \land \varphi_{d(s)} \land \psi} \]
+where $A_i[\rho] = A'_i|_{\varphi_i}$ and $t[\rho] = t'|_\psi$.
+\[ R(t_1, \ldots t_n)[\rho] = R(t_1', \ldots t_n')|_{\varphi_1 \land \ldots \land \varphi_n} \]
+where $t_i[\rho] = t_i'|_{\varphi_i}$.
+\begin{align*}
+(\varphi_1 \land \ldots \land \varphi_n)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho] \\
+(\Gamma,t)|_\varphi[\rho] & = (\Gamma,t)[\rho]|_{\varphi[\rho]}
+\end{align*}
 
-A \emph{syntactic theory} consists of 
+Now, we are ready to define the category of contextual signatures.
+
+\begin{defn}
+Let $\Sigma$ and $\Sigma'$ be a pair of signatures with $\mathcal{T}$ as the set of sorts.
+A \emph{contextual morphism} of these signatures is a pair $(\alpha,\beta)$ where $\alpha$ assigns to every $V \in \Set^\mathcal{S}$
+a morphism $\alpha_V : PCTerm_\Sigma(V) \to PCTerm_{\Sigma'}(V)$
+and $\beta$ assigns to every $V \in \Set^\mathcal{S}$ a morphism $\beta_V : CForm_\Sigma(V) \to CForm_{\Sigma'}(V)$.
+These morphisms must satisfy the following conditions:
+\begin{enumerate}
+\item For every $t \in PCTerm_\Sigma(V)_s$, $FV(\alpha_V(t)) = FV(t)$.
+\label{mor-sig-a-fv}
+\item For every $\varphi \in CForm_\Sigma(V)$, $FV(\beta_V(\varphi)) = FV(\varphi)$.
+\label{mor-sig-b-fv}
+\item For every $x \in V_s$, $\alpha_V(x|_\top) = x|_\top$.
+\label{mor-sig-a-var}
+\item For every $t \in PTerm_\Sigma(A)_s$ and $\rho : A \to Term_\Sigma(B)$, $\alpha_B(t[\rho]) = \alpha_A(t)[x \mapsto \alpha_B(\rho(x)|_\top)]$.
+\label{mor-sig-a-subst}
+\item For every atomic $\varphi \in Form_\Sigma(A)$ and $\rho : A \to Term_\Sigma(B)$, $\beta_B(\varphi[\rho]) = \beta_A(\varphi)[x \mapsto \alpha_B(\rho(x)|_\top)]$.
+\label{mor-sig-b-subst}
+\item For every $t|_\varphi \in PTerm_\Sigma(V)$, $\alpha_V(t|_\varphi) = \alpha_V(t|_\top)|_{\beta_V(\varphi)}$.
+\label{mor-sig-a-op}
+\item $\beta_V(\top) = \top$, $\beta_V(\varphi \land \psi) = \beta_V(\varphi) \land \beta_V(\psi)$, and $\beta_{\{ x : s, y : s \}}(x = y) = (x = y)$.
+\label{mor-sig-b-op}
+\end{enumerate}
+The identity and the composition of morphisms are defined in the obvious way.
+The category of signatures and contextual morhisms is denoted by $\CSig$.
+\end{defn}
+
+If $f = (\alpha,\beta)$ is a contextual morphism of signatures $\Sigma$ and $\Sigma'$, $t \in PCTerm_\Sigma(V)_s$ and $\varphi \in CForm_\Sigma(V)$,
+then we will write $f(t)$ for $\alpha_V(t)$ and $f(\varphi)$ for $\beta_V(\varphi)$.
+
+\begin{prop}[con-mor-def]
+To construct a contextual morphism of signatures $\Sigma = (\mathcal{T},\mathcal{F},\mathcal{P})$ and $\Sigma'$ it is enough to specify the following data:
+\begin{itemize}
+\item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$,
+    a partial contextual term $\alpha(\sigma) \in PCTerm_{\Sigma'}(\{ A_1 : (ty,0), \ldots A_{d(s)} : (ty,d(s)-1), x_1 : s_1, \ldots x_k : s_k \})$
+    such that $FV(\alpha(\sigma)) = \{ A_1, \ldots A_{d(s)}, x_1, \ldots x_k \}$.
+\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$,
+    a contextual formula $\beta(R) \in CForm_{\Sigma'}(\{ x_1 : s_1, \ldots x_k : s_k \})$ such that $FV(\beta(R)) = \{ x_1, \ldots x_k \}$.
+\end{itemize}
+Then there is a unique contextual morphism $(\alpha,\beta)$ of these signatures such that
+$\alpha(A_1, \ldots A_{d(s)}, \sigma(x_1, \ldots x_k)) = \alpha(\sigma)$ and $\beta(R(x_1, \ldots x_k)) = \beta(R)$.
+\end{prop}
+\begin{proof}
+First, let us extend $\alpha$ to a morphism $CTerm_\mathcal{F}(V) \to PCTerm_{\Sigma'}(V)$.
+By conditions \eqref{mor-sig-a-var} and \eqref{mor-sig-a-subst} it can be done in a unique way:
+\begin{align*}
+\alpha_V(x) & = x \\
+\alpha_V(\sigma(a_1, \ldots a_n)) & = \alpha(\sigma)[x_i \mapsto \alpha_V(a_i)]
+\end{align*}
+Second, we extend $\beta$ to a morphism $Form_\Sigma(V) \to Form_{\Sigma'}(V)$.
+By conditions \eqref{mor-sig-b-subst} and \eqref{mor-sig-b-op} it can be done in a unique way:
+\begin{align*}
+\beta_V(a = b) & = \alpha_V(a) = \alpha_V(b) \\
+\beta_V(R(a_1, \ldots a_n)) & = \beta(R)[x_i \mapsto \alpha_V(a_i)] \\
+\beta_V(\varphi_1 \land \ldots \land \varphi_n) & = \beta_V(\varphi_1) \land \ldots \land \beta_V(\varphi_n)
+\end{align*}
+Now, we can extend $\alpha_V$ to a morphism $PTerm_\Sigma(V) \to PTerm_{\Sigma'}(V)$.
+By condition \eqref{mor-sig-a-op} it can be done in a unique way:
+\[ \alpha_V(t|_\varphi) = \alpha_V(t)|_{\beta_V(\varphi)} \]
+
+Conditions \eqref{mor-sig-a-fv} and \eqref{mor-sig-b-fv} follows from the conditions on $FV(\alpha(\sigma))$ and $FV(\beta(R))$.
+Conditions \eqref{mor-sig-a-var}, \eqref{mor-sig-a-op} and $\eqref{mor-sig-b-op}$ hold by the definitions of $\alpha_V$ and $\beta_V$.
+Conditions \eqref{mor-sig-a-subst} and $\eqref{mor-sig-b-subst}$ are easy to check by induction on the term and on the formula respectively.
+\end{proof}
+
+\subsection{Contextual Horn theories}
+
+A \emph{contextual Horn theory} in a signature $\Sigma = (\mathcal{T}, \mathcal{F}, \mathcal{P})$ is a set of contextual Horn sequents over $\Sigma$.
+Now we describe the rules of the logic for these theories.
+It has the rules (b1)-(b6) as in partial Horn logic.
+Let $\varphi$ be a formula such that a variable $x$ of sort $(p,n)$ appears in $\varphi$ exactly once.
+Then we have the following analog of axiom (a2):
+\[ E^n_p(D_x(\varphi), x, y) \land \varphi \sststile{}{V} \varphi[y/x] \text{ (s2)} \]
+
+We have an analog of axiom (a1), but it is much weaker since we do not know in which context a variable should be typeable.
+\[ \sststile{}{A} E^0_{ty}(A,A) \text{ (c1)} \]
+Since (c1) is weaker than (a1), we need to add the following axioms:
+\begin{align*}
+R(x_1, \ldots x_k) & \sststile{}{V} E^{n_i}_{p_i}(D_i(R(x_1, \ldots x_k)), x_i, x_i) & \text{ (c4)} \\
+E^n_p(\Gamma, \sigma(x_1, \ldots x_k), \sigma(x_1, \ldots x_k)) & \sststile{}{V} E^{n_i}_{p_i}(D_i(\Gamma, \sigma(x_1, \ldots x_k)), x_i, x_i) & \text{ (c5)}
+\end{align*}
+
+Let $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ and $\Sigma' = (\mathcal{S}, \mathcal{F}', \mathcal{P}')$ be a pair of signatures with the same set of sorts.
+Let $f$ be a morphism of $\Sigma$ and $\Sigma'$.
+Let $\mathcal{A}$ and $\mathcal{A}'$ be contextual Horn theories in signatures $\Sigma$ and $\Sigma'$ respectively.
+Then we will say that $f$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ over $\Sigma$ if $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathcal{A}'$.
+Note that if $f$ respects all axioms of $\mathcal{A}$, then it respects all of its theorems too.
+
+Let $\mathcal{A}$ and $\mathcal{A}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
+Then we will say that morphisms $f$ and $f'$ between $\Sigma$ and $\Sigma'$ are \emph{equivalent} if the following conditions hold:
+\begin{enumerate}
+\item For every $t \in PTerm_\Sigma(V)_s$ sequents $\sststile{}{V} f(t) \cong f'(t)$ are theorems of $\mathcal{A}'$.
+\label{mor-eq-a}
+\item For every $\varphi \in Form_\Sigma(V)$ sequent $f(\varphi) \ssststile{}{V} f'(\varphi)$ is a theorem of $\mathcal{A}'$.
+\label{mor-eq-b}
+\end{enumerate}
+
+\begin{prop}[mor-eq]
+Let $\mathcal{A}$ and $\mathcal{A}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
+Morphisms $f$ and $f'$ between $\Sigma$ and $\Sigma'$ are equivalent if and only if the following conditions hold:
+\begin{itemize}
+\item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ sequents
+\[ \sststile{}{x_1 : s_1, \ldots x_n : s_n} f(\sigma(x_1, \ldots x_n)) \cong f'(\sigma(x_1, \ldots x_n)) \]
+are theorems of $\mathcal{A}'$.
+\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ sequents
+\[ f(R(x_1, \ldots x_n)) \ssststile{}{x_1 : s_1, \ldots x_n : s_n} f'(R(x_1, \ldots x_n)) \]
+are theorems of $\mathcal{A}'$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+The ``only if'' direction is obvious.
+Let us prove the converse.
+First, we prove \eqref{mor-eq-a} for $t \in Term_\mathcal{F}(V)_s$ by induction on it.
+If $t$ is a variable, then $f(t) = f'(t) = t$.
+If $t = \sigma(t_1, \ldots t_n)$, then $\sststile{}{V} f(t_i) \cong f(t'_i)$
+and $\sststile{}{x_1 : s_1, \ldots x_n : s_n} f(\sigma(x_1, \ldots x_n)) \cong f'(\sigma(x_1, \ldots x_n))$.
+Since $FV(f(\sigma(x_1, \ldots x_n))) = \{ x_1, \ldots x_n\}$, by (a3) we have
+$f(t)\!\downarrow\,\sststile{}{V} f(t) = f'(\sigma(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)]$.
+We also have $f(t)\!\downarrow\,\sststile{}{V} f(t_i)\!\downarrow$, hence by \rlem{cong-a}
+$f(t)\!\downarrow\,\sststile{}{V} f'(\sigma(x_1, \ldots x_n))[x_i \mapsto f(t_i)] = f'(t)$.
+By transitivity, we conclude that $f(t)\!\downarrow\,\sststile{}{V} f(t) = f'(t)$.
+The same argument shows that $f'(t)\!\downarrow\,\sststile{}{V} f(t) = f'(t)$.
+
+Let us prove \eqref{mor-eq-b}.
+It is enough to prove it for atomic formulae $\varphi$.
+If $\varphi$ equals to $t = t'$, then $f(\varphi)$ equals to $f(t) = f(t')$ and $f'(\varphi)$ equals to $f'(t) = f'(t')$.
+We know that $\sststile{}{V} f(t) \cong f'(t)$ and $\sststile{}{V} f(t') \cong f'(t')$.
+Thus by transitivity and symmetry we can conclude that $f(t) = f(t)' \sststile{}{V} f'(t) = f'(t')$.
+
+If $\varphi = R(t_1, \ldots t_n)$, then $f(\varphi) = f(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)]$
+and $f'(\varphi) = f'(R(x_1, \ldots x_n))[x_i \mapsto f'(t_i)]$.
+We know that $f(R(x_1, \ldots x_n)) \sststile{}{x_1 : s_1, \ldots x_n : s_n}$ \linebreak $f'(R(x_1, \ldots x_n))$.
+Since $FV(f(R(x_1, \ldots x_n))) = \{ x_1, \ldots x_n \}$, by (a3) we can conclude that $f(\varphi) \sststile{}{V} f'(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)]$.
+Since $f'(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)] \sststile{}{V} f(t_i)\!\downarrow$, \rlem{cong-b} implies that
+$f'(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)] \sststile{}{V} f'(\varphi)$.
+By (b2) we conclude that $f(\varphi) \sststile{}{V} f'(\varphi)$.
+The same argument shows that $f'(\varphi) \sststile{}{V} f(\varphi)$.
+
+Now, we can finish the proof of \eqref{mor-eq-a}.
+We need to prove that $\sststile{}{V} f(t|_\varphi) \cong f'(t|_\varphi)$.
+We already saw that $f(t)\!\downarrow\,\sststile{}{V} f(t) = f'(t)$ and $f(\varphi) \sststile{}{V} f'(\varphi)$.
+Hence $f(t)\!\downarrow \land f(\varphi) \sststile{}{V} f(t) = f'(t) \land f'(\varphi)$.
+The same argument shows that $f'(t)\!\downarrow \land f'(\varphi) \sststile{}{V} f(t) = f'(t) \land f(\varphi)$.
+\end{proof}
 
 \section{Syntactic presentation of type theories}
 
