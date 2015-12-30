@@ -1,12 +1,14 @@
 \documentclass{amsart}
 
 \usepackage{amssymb}
+\usepackage{mathtools}
 \usepackage[all]{xy}
 \usepackage{verbatim}
 \usepackage{ifthen}
 \usepackage{xargs}
 \usepackage{bussproofs}
 \usepackage{turnstile}
+\usepackage{todonotes}
 
 \renewcommand{\turnstile}[6][s]
     {\ifthenelse{\equal{#1}{d}}
@@ -134,6 +136,11 @@ We also study models of such theories in general and initial models in particula
 \end{abstract}
 
 \maketitle
+
+ \makeatletter
+    \providecommand\@dotsep{5}
+  \makeatother
+  \listoftodos\relax
 
 \section{Introduction}
 
@@ -801,6 +808,12 @@ Then a \emph{contextual atomic formula} over $\Sigma$ with free variables in $V$
 $R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$, and $t_i$ is a term of sort $s_i$.
 We will assume that $\mathcal{P}$ contains symbols for the equality $E^n_p$ such that
 \[ E^n_p : (ty,0) \times \ldots \times (ty,d(p,n)-1) \times (p,n) \times (p,n) \]
+\[ D_i(E^n_p(A_1, \ldots A_{d(p,n)}, x, x')) =
+  \begin{cases}
+      A_1, \ldots A_{i-1} & \text{if } 1 \leq i \leq d(p,n) \\
+      A_1, \ldots A_{d(p,n)} & \text{if } d(p,n) < i \leq d(p,n) + 2
+  \end{cases}
+\]
 Contextual Horn formulae and sequents are defined as before.
 The set of contextual Horn formulae with free varibles in $V$ will be denoted by $CForm_\Sigma(V)$.
 We will use the following notation:
@@ -808,19 +821,15 @@ We will use the following notation:
 A_1, \ldots A_n \vdash A \deq A' & \text{ means } E^n_{ty}(A_1, \ldots A_n, A, A') \\
 A_1, \ldots A_n \vdash a \deq a' : A & \text{ means } E^n_{tm}(A_1, \ldots A_n, A, a, a') \\
 \Gamma \vdash A & \text{ means } \Gamma \vdash A \deq A \\
-\Gamma \vdash a : A & \text{ means } \Gamma \vdash a \deq a : A
+\Gamma \vdash a : A & \text{ means } \Gamma \vdash a \deq a : A \\
+(A_1, \ldots A_n) \equiv (B_1, \ldots B_n) & \text{ means } \bigwedge\limits_{1 \leq i \leq n} A_1, \ldots A_{i-1} \vdash A_i \equiv B_i \\
+\Gamma \vdash & \text{ means } \Gamma \equiv \Gamma
 \end{align*}
 
 Let $R$ be a predicate symbol such that $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$.
 Let $t_i$ be terms of sorts $(p_i,n_i)$ with free variables in $V$ for each $1 \leq i \leq k$.
 Then we write $D_i(R(t_1, \ldots t_k))$ for a context of length $d(p_i,n_i)$ with free variables in $V$ defined as follows:
 \[ D_i(R(t_1, \ldots t_k)) = D_i(R(x_1, \ldots x_k))[x_j \mapsto t_j] \]
-Let $\varphi$ be a Horn formula such that a variable $x$ of sort $(q,m)$ appears in $\varphi$ exactly once.
-Then we define a context $D_x(\varphi)$ of length $d(q,m)$ as follows:
-\begin{align*}
-D_x(\varphi_1 \land \ldots \land \varphi_n) & = D_x(\varphi_i) \text{, if $x \in FV(\varphi_i)$} \\
-D_x(R(t_1, \ldots t_k)) & = D_x(D_i(R(t_1, \ldots t_k)) \vdash t_i) \text{, if $x \in FV(t_i)$}
-\end{align*}
 
 A \emph{contextual term} of sort $s$ with free variables in $V$ is a pair $(\Gamma,t)$ where $\Gamma$ is a context of length $d(s)$ and $t$ is a term of sort $s$.
 The set of such terms will be denoted by $CTerm_\mathcal{F}(V)_s$.
@@ -909,17 +918,72 @@ Conditions \eqref{mor-sig-a-subst} and $\eqref{mor-sig-b-subst}$ are easy to che
 A \emph{contextual Horn theory} in a signature $\Sigma = (\mathcal{T}, \mathcal{F}, \mathcal{P})$ is a set of contextual Horn sequents over $\Sigma$.
 Now we describe the rules of the logic for these theories.
 It has the rules (b1)-(b6) as in partial Horn logic.
-Let $\varphi$ be a formula such that a variable $x$ of sort $(p,n)$ appears in $\varphi$ exactly once.
-Then we have the following analog of axiom (a2):
-\[ E^n_p(D_x(\varphi), x, y) \land \varphi \sststile{}{V} \varphi[y/x] \text{ (s2)} \]
-
-We have an analog of axiom (a1), but it is much weaker since we do not know in which context a variable should be typeable.
-\[ \sststile{}{A} E^0_{ty}(A,A) \text{ (c1)} \]
-Since (c1) is weaker than (a1), we need to add the following axioms:
+To define analogs of other axioms we will need an auxiliary construction.
+For every contextual term $t$ and contextual formula $\varphi$ we define their sets of free variables with contexts $CFV(t)$ and $CFV(\varphi)$.
+These sets consist of pairs $(\Gamma,x)$, where $x$ is a variable of a sort $s$ and $\Gamma$ is a context of length $d(s)$.
 \begin{align*}
-R(x_1, \ldots x_k) & \sststile{}{V} E^{n_i}_{p_i}(D_i(R(x_1, \ldots x_k)), x_i, x_i) & \text{ (c4)} \\
-E^n_p(\Gamma, \sigma(x_1, \ldots x_k), \sigma(x_1, \ldots x_k)) & \sststile{}{V} E^{n_i}_{p_i}(D_i(\Gamma, \sigma(x_1, \ldots x_k)), x_i, x_i) & \text{ (c5)}
+CFV(\Gamma,x) & = \{ (\Gamma,x) \} \\
+CFV(\Gamma, \sigma(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} CFV(D_i(\Gamma,\sigma(t_1, \ldots t_k)), t_i) \\
+CFV(\varphi_1 \land \ldots \land \varphi_k) & = \bigcup_{1 \leq i \leq k} CFV(\varphi_i) \\
+CFV(R(t_1, \ldots t_k)) & = CFV(D_i(R(t_1, \ldots t_k)), t_i)
 \end{align*}
+
+Now, we can define analogs of axioms (a1)-(a2).
+Note that since (c1) is much weaker than (a1) we need additional axioms (c4) and (c5).
+\begin{align*}
+& \sststile{}{A} E^0_{ty}(A,A) & \text{(c1)} \\
+R(t_1, \ldots t_k) & \sststile{}{V} E^{n_i}_{p_i}(D_i(R(t_1, \ldots t_k)), t_i, t_i) & \text{(c4)} \\
+E^n_p(\Gamma, \sigma(t_1, \ldots t_k), \sigma(t_1, \ldots t_k)) & \sststile{}{V} E^{n_i}_{p_i}(D_i(\Gamma, \sigma(t_1, \ldots t_k)), t_i, t_i) & \text{(c5)} \\
+\bigwedge\limits_{(\Gamma,x) \in CFV(\varphi)} E^n_p(\Gamma, x, y) \land \varphi & \sststile{}{V} \varphi[y/x] & \text{(c2)}
+\end{align*}
+Finally, an analog of (a3) looks like this:
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\RightLabel{, $x \in FV(\varphi)$ \!\qquad (c3)}
+\UnaryInfC{$\bigwedge\limits_{(\Gamma',x) \in CFV(\varphi)} \Gamma[t/x] \equiv \Gamma'[t/x] \land \varphi[t/x] \sststile{}{V'} \psi[t/x]$}
+\DisplayProof
+\end{center}
+where $(\Gamma,x) \in CFV(\varphi)$.
+
+\begin{comment}
+\begin{align*}
+& \sststile{}{A} E^0_{ty}(A,A) & \text{(c1)} \\
+\bigwedge\limits_{(\Gamma,x) \in CFV(\varphi)} E^n_p(\Gamma, x, y) \land \varphi & \sststile{}{V} \varphi[y/x] & \text{(c2)} \\
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\RightLabel{, $x \in FV(\varphi)$}
+\UnaryInfC{$\bigwedge\limits_{(\Gamma',x) \in CFV(\varphi)} \Gamma \equiv \Gamma' \land \varphi[t/x] \sststile{}{V'} \psi[t/x]$}
+\DisplayProof
+\!\!\kern-16em
+& & \text{(c3)} \\
+R(t_1, \ldots t_k) & \sststile{}{V} E^{n_i}_{p_i}(D_i(R(t_1, \ldots t_k)), t_i, t_i) & \text{(c4)} \\
+E^n_p(\Gamma, \sigma(t_1, \ldots t_k), \sigma(t_1, \ldots t_k)) & \sststile{}{V} E^{n_i}_{p_i}(D_i(\Gamma, \sigma(t_1, \ldots t_k)), t_i, t_i) & \text{(c5)}
+\end{align*}
+where $(\Gamma,x) \in CFV(\varphi)$.
+\end{comment}
+
+Now, let us establish a few derivable rules of this logic.
+If we let $R = E^n_p$, then (c4) implies that for every $\Gamma \in Ctx^n_\mathcal{F}(V)$, $a,a' \in Term_\mathcal{F}(V)_{(tm,n)}$ and $A,A' \in Term_\mathcal{F}(V)_{(ty,n)}$ the following sequents are derivable:
+\begin{align*}
+\Gamma \vdash a \equiv a' : A & \sststile{}{V} (\Gamma \vdash a : A) \land (\Gamma \vdash a' : A) \land (\Gamma \vdash A) \\
+\Gamma \vdash A \equiv A' & \sststile{}{V} (\Gamma \vdash A) \land (\Gamma \vdash A') \land (\Gamma \vdash) \\
+\Gamma \vdash A & \ssststile{}{V} \Gamma, A \vdash
+\end{align*}
+More generally, the following sequent is derivable for every $R$ and $1 \leq i \leq k$:
+\[ R(t_1, \ldots t_k) \sststile{}{V} D_i(R(t_1, \ldots t_k)) \vdash \]
+
+If we let $\varphi = E^n_{tm}(\Gamma, A, a, a')$, then (c2) implies well-known inference rules of type theory:
+\[ (\Gamma \vdash a \equiv a' : A) \land (\Gamma \vdash A \equiv A') \sststile{}{\Gamma, a, a', A, A'} \Gamma \vdash a \equiv a' : A' \]
+More generally, the following sequent is derivable for every $1 \leq i \leq d(p,n)$:
+\begin{align*}
+E^n_p(A_1, \ldots A_{d(p,n)}, a, a') \land E^{i-1}_{ty}(A_1, \ldots A_{i-1}, A_i, A_i') & \sststile{}{A_1, \ldots A_{d(p,n)}, A_i', a, a'} \\
+E^n_p(A_1, \ldots A_{i-1}, A_i', A_{i+1}, \ldots A_{d(p,n)}, a, a') &
+\end{align*}
+
+\begin{lem}
+if $\varphi \in CForm_\Sigma(V \amalg \{ x : (p,n) \})$ and $t \in Term_\mathcal{F}(V)_{(p,n)}$,
+then for every $(\Gamma,x) \in CFV(\varphi)$ the following sequent is derivable:
+\[ \varphi[t/x] \sststile{}{V} E^n_p(\Gamma[t/x],t,t) \]
+\end{lem}
 
 Let $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ and $\Sigma' = (\mathcal{S}, \mathcal{F}', \mathcal{P}')$ be a pair of signatures with the same set of sorts.
 Let $f$ be a morphism of $\Sigma$ and $\Sigma'$.
@@ -1023,6 +1087,8 @@ Note that $\Sig_{\mathcal{S},\mathcal{P}}$ is a full subcategory of $\Th_{\mathc
 \label{sec:T1}
 \section{Theory $\mathbb{T}_1$}
 
+\todo{Add a reference to B-systems}
+
 In this section we will describe a quasi-equational theory $\mathbb{T}_1$ and prove that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
 Later we will use this theory to define algebraic type theories.
 
@@ -1109,6 +1175,8 @@ ft^{m-i}_i(C)[c_1[f], \ldots c_{i-1}[f]] &
 \end{align*}
 
 With these notations we can rewrite axioms \eqref{ax:type-subst}, \eqref{ax:Subst-var}, \eqref{ax:subst-var}, \eqref{ax:Subst-Subst}, \eqref{ax:subst-subst} as follows:
+\todo{Fix align}
+\begin{comment}
 \begin{align}
 \setcounter{equation}{\ref{ax:type-subst}}
 \addtocounter{equation}{-1}
@@ -1123,6 +1191,7 @@ A[g][f] & = A[g \circ f] \\ \notag
 a[g][f] & = a[g \circ f] \\ \notag
 \text{ for each } f : C \to B \text{ and } & g : B \to ft_m(ty_m(a))
 \end{align}
+\end{comment}
 
 Associativity of the composition follows from axiom~\eqref{ax:subst-subst}, and the fact that $id$ is identity for it follows from axioms \eqref{ax:subst-var} and \eqref{ax:var-subst}.
 
