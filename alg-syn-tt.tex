@@ -130,7 +130,7 @@
 
 \begin{document}
 
-\title{Algebraic Presentations of Type Theories}
+\title{Algebraic Presentations of Dependent Type Theories}
 
 \author{Valery Isaev}
 
@@ -262,13 +262,25 @@ We define $PTerm_\Sigma(V)_s$ as the set of expressions $t|_\varphi$ where $t \i
 If $\varphi = \top$, then we will write $t|_\varphi$ simply as $t$.
 If $p \in PTerm_\Sigma(V)_s$, $p = t|_\varphi$ and $\psi \in Form_\Sigma(V)$, then we will write $p|_\psi$ for $t|_{\varphi \land \psi}$.
 
+For every term, every formula and every partial term we define a sequence $fv$ of its free variables.
+Note that unlike the sets $FV$ of free variables these lists are ordered and can contain duplicates.
+\begin{align*}
+fv(x) & = x \\
+fv(\sigma(a_1, \ldots a_k)) & = fv(a_1), \ldots fv(a_k) \\
+fv(t = s) & = fv(t), fv(s) \\
+fv(R(a_1, \ldots a_k)) & = fv(a_1), \ldots fv(a_k) \\
+fv(\varphi_1 \land \ldots \land \varphi_n) & = fv(\varphi_1), \ldots fv(\varphi_n) \\
+fv(t|_\varphi) & = fv(t), fv(\varphi)
+\end{align*}
+If $l = (a_1, \ldots a_k)$, then we will write $\bigwedge_{a \in l} \varphi_a$ for $\varphi_{a_1} \land \ldots \land \varphi_{a_k}$.
+
 Now we define substitution functions for partial terms.
-For every $\rho : A \to PTerm_\Sigma(B)$, $t \in Term_\mathcal{F}(A)_s$ and $\varphi \in Form_\Sigma(A)$
+First, for every $t|_\varphi \in PTerm_\Sigma(A)_s$, let $term(t|_\varphi) = t$ and $dom(t|_\varphi) = \varphi$.
+Then, for every $\rho : A \to PTerm_\Sigma(B)$, $t \in Term_\mathcal{F}(A)_s$ and $\varphi \in Form_\Sigma(A)$
 we define $t[\rho] \in PTerm_\Sigma(B)_s$, $\varphi[\rho] \in Form_\Sigma(B)$ and $t_\varphi[\rho] \in PTerm_\Sigma(B)_s$ as follows:
 \begin{align*}
-x[\rho] & = \rho(x) \\
-\sigma(t_1, \ldots t_k)[\rho] & = \sigma(t_1', \ldots t_k')|_{\varphi_1 \land \ldots \land \varphi_k} \text{, where } t'_i|_{\varphi_i} = t_i[\rho] \\
-R(t_1, \ldots t_k)[\rho] & = R(t_1', \ldots t_k') \land \varphi_1 \land \ldots \land \varphi_k \text{, where } t'_i|_{\varphi_i} = t_i[\rho] \\
+t[\rho] & = t[term \circ \rho]|_{\bigwedge_{a \in fv(t)} dom(\rho(a))} \\
+\varphi[\rho] & = \varphi[term \circ \rho] \land \bigwedge_{a \in fv(\varphi)} dom(\rho(a)) \text{ if $\varphi$ is atomic} \\
 (\varphi_1 \land \ldots \land \varphi_n)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho] \\
 t|_\varphi[\rho] & = t[\rho]|_{\varphi[\rho]}
 \end{align*}
@@ -592,7 +604,7 @@ Now, let us prove the ``only if'' part.
 Suppose that $f$ is a monomorphism.
 Let $\varphi \sststile{}{V} \psi$ be a sequent of $\mathbb{T}_1$ such that $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}_2$.
 Let $\mathbb{T}$ be a theory which consists of a single predicate symbol $R : s_1 \times \ldots \times s_n \times s'_1 \times \ldots \times s'_k$
-where $s_1, \ldots s_n$ are sorts of variables in $FV(\varphi)$ and $s'_1, \ldots s'_k$ are sorts of variables in $FV(\psi)$.
+where $s_1, \ldots s_n$ are sorts of variables in $fv(\varphi)$ and $s'_1, \ldots s'_k$ are sorts of variables in $fv(\psi)$.
 Let $g : \mathbb{T} \to \mathbb{T}_1$ be a morphism defined by $g(R(x_1, \ldots x_n, y_1, \ldots y_k)) = \varphi \land y_1\!\downarrow \land \ldots \land y_k\!\downarrow$ and
 let $h : \mathbb{T} \to \mathbb{T}_1$ be a morphism defined by $h(R(x_1, \ldots x_n, y_1, \ldots y_k)) = \varphi \land \psi$.
 By \rprop{mor-eq} $f \circ g = f \circ h$, hence $g = h$ which implies that $\varphi \sststile{}{V} \psi$.
@@ -746,94 +758,187 @@ A \emph{context} of length $n$ is a sequence of terms of sorts $(ty,0)$, \ldots 
 Contexts are usually denoted by greek letters $\Gamma$ and $\Delta$.
 The set of contexts of length $n$ with free variables in $V$ will be denoted by $Ctx^n_\mathcal{F}(V)$.
 
-If $(p,n) \in \mathcal{T}$, then let $d(p,n) = n$ if $p = ty$ and $d(p,n) = n+1$ if $p = tm$.
-Let $V$ be a model of $\mathbb{T}_0$ and let $U(V)$ be its underlying $\mathcal{T}$-set.
-Then a \emph{contextual term} of sort $s$ with free variables in $V$ is a pair $(\Gamma,t)$, where $\Gamma \in Ctx^{d(s)}_\mathcal{F}(U(V))$ and $t \in Term_\mathcal{F}(U(V))_s$.
-The set of such terms will be denoted by $CTerm_\mathcal{F}(V)_s$.
-Then $CTerm_\mathcal{F}(V)$ is a model of $\mathbb{T}_0$ in the obvious way, and $CTerm_\mathcal{F}$ is a functor $\Mod{\mathbb{T}_0} \to \Mod{\mathbb{T}_0}$.
-Often $V \in \Mod{\mathbb{T}_0}$ will be a free model on some $\mathcal{T}$-set.
-The left adjoint to the forgetful functor will be denoted by $F : \Set^\mathcal{T} \to \Mod{\mathbb{T}_0}$.
-
-A \emph{contextual atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t_1 = t_2$ where $t_1, t_2 \in CTerm_\Sigma(V)_s$ for some sort $s$
-or of the form $R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in CTerm_\Sigma(V)_{s_i}$.
-Contextual Horn formulae are expressions of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are contextual atomic formulae.
+Let $\Sigma = (\mathcal{T}, \mathcal{F}, \mathcal{P})$ be a signature.
+Then a \emph{contextual atomic formula} over $\Sigma$ with free variables in $V$ is an expression of the form 
+$R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$, and $t_i$ is a term of sort $s_i$.
+We will assume that $\mathcal{P}$ contains symbols for the equality $E^n_p$ such that
+\[ E^n_p : (ty,0) \times \ldots \times (ty,d(p,n)-1) \times (p,n) \times (p,n) \]
+Contextual Horn formulae and sequents are defined as before.
 The set of contextual Horn formulae with free varibles in $V$ will be denoted by $CForm_\Sigma(V)$.
-Sometimes we use contexts of length $n+1$ as contextual terms of sort $(ty,n)$ in the obvious way.
-In particular, we can use formulae of the form $\Gamma = \Delta$ if $\Gamma$ and $\Delta$ are contexts of a positive length.
+We will use the following notation:
+\begin{align*}
+A_1, \ldots A_n \vdash A \deq A' & \text{ means } E^n_{ty}(A_1, \ldots A_n, A, A') \\
+A_1, \ldots A_n \vdash a \deq a' : A & \text{ means } E^n_{tm}(A_1, \ldots A_n, A, a, a') \\
+\Gamma \vdash A & \text{ means } \Gamma \vdash A \deq A \\
+\Gamma \vdash a : A & \text{ means } \Gamma \vdash a \deq a : A \\
+(A_1, \ldots A_n) = (B_1, \ldots B_n) & \text{ means } \bigwedge\limits_{1 \leq i \leq n} A_1, \ldots A_{i-1} \vdash A_i \equiv B_i \\
+\Gamma \vdash & \text{ means } \Gamma = \Gamma
+\end{align*}
 
+A \emph{contextual term} of sort $s$ with free variables in $V$ is a pair $(\Gamma,t)$ where $\Gamma$ is a context of length $d(s)$ and $t$ is a term of sort $s$.
+The set of such terms will be denoted by $CTerm_\mathcal{F}(V)_s$.
 A \emph{partial contextual term} of sort $s$ with free variables in $V$ is an expression of the form $t|_\varphi$,
 where $t \in CTerm_\mathcal{F}(V)_s$ and $\varphi \in CForm_\Sigma(V)$.
 The set of such terms will be denoted by $PCTerm_\Sigma(V)_s$.
-We will use the following notation:
+Let $(\Gamma,t)|_\varphi$ and $(\Gamma',t')|_{\varphi'}$ be partial contextual terms of sort $(p,n)$.
+Then we will use the following notation:
 \begin{align*}
-(\Gamma,t)|_\varphi = (\Gamma',t')|_{\varphi'} \text{ means } & (\Gamma,t) = (\Gamma',t') \land \varphi \land \varphi' \\
-(\Gamma,t) \downarrow \text{ means } & (\Gamma,t) = (\Gamma,t) \\
-(\Gamma,t)|_\varphi \downarrow \text{ means } & (\Gamma,t)\!\downarrow \land \varphi \\
+(\Gamma,t) = (\Gamma',t') \text{ means } & \Gamma = \Gamma' \land E^p_n(\Gamma,t,t') \\
+(\Gamma,t)|_\varphi = (\Gamma',t')_{\varphi'} \text{ means } & \Gamma = \Gamma' \land E^p_n(\Gamma,t,t') \land \varphi \land \varphi' \\
+(\Gamma,t) \downarrow \text{ means } & E^p_n(\Gamma,t,t) \\
+(\Gamma,t)|_\varphi \downarrow \text{ means } & E^p_n(\Gamma,t,t) \land \varphi \\
 \psi \sststile{}{V} (\Gamma,t) \cong (\Gamma',t') \text{ means } & \psi \land (\Gamma,t)\!\downarrow\,\sststile{}{V} (\Gamma,t) = (\Gamma',t') \\
     \text{ and } & \psi \land (\Gamma',t')\!\downarrow\,\sststile{}{V} (\Gamma,t) = (\Gamma',t') \\
 \psi \sststile{}{V} (\Gamma,t)|_\varphi \cong (\Gamma',t')|_{\varphi'} \text{ means } & \psi \land (\Gamma,t)|_\varphi\!\downarrow\,\sststile{}{V} (\Gamma,t) = (\Gamma',t') \land \varphi' \\
     \text{ and } & \psi \land (\Gamma',t')|_{\varphi'}\!\downarrow\,\sststile{}{V} (\Gamma,t) = (\Gamma',t') \land \varphi
 \end{align*}
 
-In order to define a substituion operation on contextual terms, we need to introduce an additional structure on the set of function symbols.
+In order to define syntactic theories over $\mathcal{F}$, we need to introduce an additional structure on this set.
 First, if $(p,n) \in \mathcal{T}$, then let $d(p,n) = n$ if $p = ty$ and $d(p,n) = n+1$ if $p = tm$.
-Now, for each $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
-for each $A_i \in CTerm_\mathcal{F}(V)_{(ty,i)}$, $t_i \in CTerm_\mathcal{F}(V)_{(p_i,n_i)}$ and each $1 \leq i \leq k$,
-let $D_i(A_1, \ldots A_{d(p,n)}, \sigma(t_1, \ldots t_k))$ be a context of length $d(p_i,n_i)$ with free variables in $V$.
-The idea is that this context should be a context in which $t_i$ is typeable if $\sigma(t_1, \ldots t_k)$ is typeable in context $A_1, \ldots A_{d(p,n)}$.
+Now, for each $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and each $1 \leq i \leq k$,
+let $D_i(\sigma)$ be a context of length $d(p_i,n_i)$ with free variables $\{\ A_j : (ty,j)\ |\ 1 \leq j \leq d(p,n)\ \} \cup \{\ x_j : (p_j,n_j)\ |\ 1 \leq j \leq k\ \}$.
+We will denote such context as $D_i(A_1, \ldots A_{d(p,n)}, \sigma(x_1, \ldots x_k))$.
+The idea is that $D_i(\sigma)$ should be a context in which $x_i$ is typeable if $\sigma(x_1, \ldots x_k)$ is typeable in context $A_1, \ldots A_{d(p,n)}$.
+For each $R \in \mathcal{P}$, $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ and each $1 \leq i \leq k$,
+let $D_i(R)$ be a context of length $d(p_i,n_i)$ with free variables $\{\ x_j : (p_j,n_j)\ |\ 1 \leq j \leq k\ \}$.
+We will denote such context as $D_i(R(x_1, \ldots x_k))$.
+If $R = E^n_p$, then it should be defined as follows:
+\[ D_i(E^n_p(A_1, \ldots A_{d(p,n)}, x, x')) =
+  \begin{cases}
+      A_1, \ldots A_{i-1} & \text{if } 1 \leq i \leq d(p,n) \\
+      A_1, \ldots A_{d(p,n)} & \text{if } d(p,n) < i \leq d(p,n) + 2
+  \end{cases}
+\]
 
-For every $\rho : V \to PCTerm_\Sigma(V')$, substitution functions for contextual terms, contextual formulae and partial contextual terms are defined as follows:
-\[ (A_1, \ldots A_n, x)[\rho] = (A_1', \ldots A_n', t)|_{\varphi_1 \land \ldots \land \varphi_n \land \psi \land (A_1', \ldots A_n') = \Delta } \]
-where $A_i[\rho] = (\Gamma_i,A'_i)|_{\varphi_i}$ and $\rho(x) = (\Delta,t)|_\psi$.
-\[ (A_1, \ldots A_n, \sigma(t_1, \ldots t_k))[\rho] = (A_1', \ldots A_n', \sigma(t_1', \ldots t_k'))|_{\varphi_1 \land \ldots \land \varphi_n \land \psi_1 \land \ldots \land \psi_k } \]
-where $A_i[\rho] = (\Gamma_i,A'_i)|_{\varphi_i}$ and $t_i[\rho] = (\Delta_i,t_i')|_{\psi_i}$.
-\[ R(t_1, \ldots t_k)[\rho] = R(t_1', \ldots t_k') \land \varphi_1 \land \ldots \land \varphi_k \]
-where $t_i[\rho] = t_i'|_{\varphi_i}$.
+For every contextual term $t$, contextual formula $\varphi$ and every partial contextual term $t|_\varphi$,
+we define their sets of \emph{free contextual variables} $FCV(t)$, $FCV(\varphi)$ and $FCV(t|_\varphi)$.
+These sets consist of pairs $(\Gamma,x)$, where $x$ is a variable of a sort $s$ and $\Gamma$ is a context of length $d(s)$.
 \begin{align*}
-(\varphi_1 \land \ldots \land \varphi_n)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho] \\
-t|_\varphi[\rho] & = t[\rho]|_{\varphi[\rho]}
+FCV(\Gamma,x) & = \{ (\Gamma,x) \} \\
+FCV(\Gamma, \sigma(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} FCV(D_i(\Gamma,\sigma(t_1, \ldots t_k)), t_i) \\
+FCV(\varphi_1 \land \ldots \land \varphi_k) & = \bigcup_{1 \leq i \leq k} FCV(\varphi_i) \\
+FCV(R(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} FCV(D_i(R(t_1, \ldots t_k)), t_i) \\
+FCV(t|_\varphi) & = FCV(t) \cup FCV(\varphi)
 \end{align*}
-If $x \in V_s$, $(A_1, \ldots A_{d(s)}, t) \in CTerm_\mathcal{F}(V)_s$ and $t' \in CTerm_\mathcal{F}(V)_{s'}$, then we write $t'[t/x]$ for contextual term $t'[\rho]$, where 
-\[ \rho(y) = 
-  \begin{cases}
-      (A_1, \ldots A_{d(s)}, t) & \text{if } y = x \\
-      (A_1, \ldots A_{n+1-i}) & \text{if } s = (ty,n) \text{ and } y = ft^i(x) \\
-      (A_1, \ldots A_{n+1-i}) & \text{if } s = (tm,n) \text{ and } y = ft^i(ty(x)) \\
-      y & \text{otherwise}
-  \end{cases}
-\]
+Sometimes we will consider $FCV(a)$ as a finite sequence (rather than a set) of contextual variables.
+In this case the definition is the same as above, where $\cup$ is considered as concatenation of sequences.
+If $x$ is a variable, then let $FCV_x(a)$ be the set of contexts $\Gamma$ such that $(\Gamma,x) \in FCV(a)$,
+where $a$ is either a contextual term, a contextual formula, or a partial contextual term.
 
-Let $V$ be a model of $\mathbb{T}_0$ and $x$ an element of $V_s$ for some $s$.
-The we define context $D(x)$ of length $d(s)$ as follows:
-\[ D(x) = 
-  \begin{cases}
-      ft^n(x), \ldots ft(x) & \text{if } s = (ty,n) \\
-      ft^n(ty(x)), \ldots ft(ty(x)) & \text{if } s = (tm,n)
-  \end{cases}
-\]
+We will need two kinds of substitution: substitution of terms and of contextual terms.
+The latter is defined in terms of the former.
+Let $\rho : V \to PCTerm_\Sigma(V')$ be a partial function, $\rho(x) = (\Gamma_x,t_x)|_{\varphi_x}$.
+Then we let $a[\rho] = a[\rho']|_\psi$ if $a$ is a (partial) term, and $a[\rho] = a[\rho'] \land \psi$ if $a$ is a formula,
+where $\rho'(x) = t_x|_{\varphi_x}$ and $\psi = \bigwedge\limits_{(\Gamma,x) \in FCV(a), \rho(x) \text{ is defined}} \Gamma[\rho'] = \Gamma_x$
+(here $FCV(a)$ is considered as a sequence).
 
-A \emph{contextual Horn sequent} consists of a $\mathcal{T}$-set $V$ and two contextual Horn formulae $\varphi$ and $\psi$ with free variables in $F(V)$.
-Such sequent will be denoted by $\varphi \sststile{}{V} \psi$.
+The former is easily defined in terms of the substituion for ordinary terms.
+If \todo{Replace with PTerm?} $\rho : V \to Term_\Sigma(V')$ is a (partial) function, then
+\begin{align*}
+(A_1, \ldots A_n, t)[\rho] & = (A_1[\rho], \ldots A_n[\rho], t[\rho]) \\
+R(t_1, \ldots t_n)[\rho] & = R(t_1[\rho], \ldots t_n[\rho]) \\
+(\varphi_1 \land \ldots \land \varphi_n)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho] \\
+(\Gamma,t)|_\varphi[\rho] & = (\Gamma,t)[\rho]|_{\varphi[\rho]}
+\end{align*}
+
+Let $\sigma$ be a function symbol such that $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$.
+Let $\Gamma = B_1, \ldots B_{d(p,n)}$ be a context with free variables in $V$, and let $t_i$ be terms of sorts $(p_i,n_i)$ with free variables in $V$ for each $1 \leq i \leq k$.
+Then we write $D_i(\Gamma, \sigma(t_1, \ldots t_k))$ for a context of length $d(p_i,n_i)$ with free variables in $V$ defined as follows:
+\[ D_i(\Gamma, \sigma(t_1, \ldots t_k)) = D_i(A_1, \ldots A_{d(p,n)}, \sigma(x_1, \ldots x_k))[A_i \mapsto B_i, x_j \mapsto t_j] \]
+Let $R$ be a predicate symbol such that $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$.
+Let $t_i$ be terms of sorts $(p_i,n_i)$ with free variables in $V$ for each $1 \leq i \leq k$.
+Then we write $D_i(R(t_1, \ldots t_k))$ for a context of length $d(p_i,n_i)$ with free variables in $V$ defined as follows:
+\[ D_i(R(t_1, \ldots t_k)) = D_i(R(x_1, \ldots x_k))[x_j \mapsto t_j] \]
+
 A \emph{contextual Horn theory} in a signature $\Sigma = (\mathcal{T}, \mathcal{F}, \mathcal{P})$ is a set of contextual Horn sequents over $\Sigma$.
 Now we describe the rules of the logic for these theories.
-It has rules \axref{b1}-\axref{b6} as in partial Horn logic together with the following rules:
-\medskip
-\begin{center}
-$\sststile{}{x} (D(x),x)\!\downarrow$ \axlabel{c1}
-\qquad
-$(D(x),x) = (D(y),y) \land \varphi \sststile{}{V} \varphi[(D(y),y)/x]$ \axlabel{c2}
-\end{center}
-
-\medskip
-\begin{center}
+It has the rules \axref{b1}-\axref{b6} as in partial Horn logic.
+Analogs of axioms \axref{a1}-\axref{a2} are listed below.
+Note that since \axref{c1} is much weaker than \axref{a1} we need additional axioms \axref{c4} and \axref{c5}.
+\begin{align*}
+& \sststile{}{A} E^0_{ty}(A,A) \axtag{c1} \\
+R(t_1, \ldots t_k) & \sststile{}{V} E^{n_i}_{p_i}(D_i(R(t_1, \ldots t_k)), t_i, t_i) \axtag{c4} \\
+E^n_p(\Gamma, \sigma(t_1, \ldots t_k), \sigma(t_1, \ldots t_k)) & \sststile{}{V} E^{n_i}_{p_i}(D_i(\Gamma, \sigma(t_1, \ldots t_k)), t_i, t_i) \axtag{c5} \\
+E^n_p(\Gamma, x, y) \land \varphi & \sststile{}{V} \varphi[y/x] \axtag{c2}
+\end{align*}
+An analog of \axref{a3} looks like this:
+\begin{equation}
 \AxiomC{$\varphi \sststile{}{V} \psi$}
-\RightLabel{, $x \in FV(\varphi)$, $x \in V_s$, $t \in CTerm_\mathcal{F}(V')_s$ \axlabel{c3}}
+\RightLabel{, if $x \in FV(\varphi)$, $t \in CTerm_\mathcal{F}(V')$}
 \UnaryInfC{$\varphi[t/x] \sststile{}{V'} \psi[t/x]$}
 \DisplayProof
-\end{center}
-\medskip
+\axtag{c3}
+\end{equation}
+The final axiom looks like this:
+\begin{equation}
+E^n_p(\Gamma,x,x) \land E^n_p(\Delta,x,x) \sststile{}{V} \Gamma = \Delta \text{, if $x \in V_{(p,n)}$}
+\axtag{c6}
+\end{equation}
 
-\[ (D(x),x) = (D(y),y) \sststile{}{x : (p,n) ,y : (p,n)} D(x) = D(y) \text{, $n > 0$ \axlabel{c4}} \]
+Now, let us establish a few derivable rules of this logic.
+If we let $R = E^n_p$, then \axref{c4} implies that for every $\Gamma \in Ctx^n_\mathcal{F}(V)$, $a,a' \in Term_\mathcal{F}(V)_{(tm,n)}$ and $A,A' \in Term_\mathcal{F}(V)_{(ty,n)}$ the following sequents are derivable:
+\begin{align*}
+\Gamma \vdash a \equiv a' : A & \sststile{}{V} (\Gamma \vdash a : A) \land (\Gamma \vdash a' : A) \land (\Gamma \vdash A) \\
+\Gamma \vdash A \equiv A' & \sststile{}{V} (\Gamma \vdash A) \land (\Gamma \vdash A') \land (\Gamma \vdash) \\
+\Gamma \vdash A & \ssststile{}{V} \Gamma, A \vdash
+\end{align*}
+More generally, the following sequent is derivable for every $R$ and $1 \leq i \leq k$:
+\[ R(t_1, \ldots t_k) \sststile{}{V} D_i(R(t_1, \ldots t_k)) \vdash \]
+
+If we let $\varphi = E^n_{tm}(\Gamma, A, a, a')$, then \axref{c2} implies the following well-known inference rule of type theory:
+\[ (\Gamma \vdash a \equiv a' : A) \land (\Gamma \vdash A \equiv A') \sststile{}{\Gamma, a, a', A, A'} \Gamma \vdash a \equiv a' : A' \]
+More generally, the following sequent is derivable for every $1 \leq i \leq d(p,n)$:
+\begin{align*}
+E^n_p(A_1, \ldots A_{d(p,n)}, a, a') \land E^{i-1}_{ty}(A_1, \ldots A_{i-1}, A_i, A_i') & \sststile{}{A_1, \ldots A_{d(p,n)}, A_i', a, a'} \\
+E^n_p(A_1, \ldots A_{i-1}, A_i', A_{i+1}, \ldots A_{d(p,n)}, a, a') &
+\end{align*}
+
+In practice, it is more convenient to work with substitution of terms rather than contextual terms.
+Now, we prove an analog of \axref{c3} for such substitution.
+
+\begin{lem}
+If $\varphi \in CForm_\Sigma(V \amalg \{ x : (p,n) \})$ and $t \in Term_\mathcal{F}(V)_{(p,n)}$,
+then for every $\Gamma \in FCV_x(\varphi)$ the following sequent is derivable:
+\[ \varphi[t/x] \sststile{}{V} E^n_p(\Gamma[t/x],t,t) \]
+\end{lem}
+\begin{proof}
+The proof is by induction on $\varphi$.
+If $\varphi = \varphi_1 \land \ldots \land \varphi_n$, then $(\Gamma,x) \in FCV(\varphi_i)$ for some $1 \leq i \leq n$.
+Then $\varphi[t/x] \sststile{}{V} \varphi_i[t/x]$ and $\varphi_i[t/x] \sststile{}{V} E^n_p(\Gamma[t/x],t,t)$; hence $\varphi[t/x] \sststile{}{V} E^n_p(\Gamma[t/x],t,t)$.
+If $\varphi = R(t_1, \ldots t_k)$, then $(\Gamma,x) \in FCV(D_i(R(t_1, \ldots t_k)), t_i)$ for some $1 \leq i \leq k$.
+Since $\varphi[t/x] = R(t_1[t/x], \ldots t_k[t/x])$, by \axref{c4} we have $\varphi[t/x] \sststile{}{V} E^{n_i}_{p_i}(D_i(R(t_1[t/x], \ldots t_k[t/x])), t_i[t/x], t_i[t/x])$.
+
+Since $D_i(R(t_1[t/x], \ldots t_k[t/x])) = D_i(R(t_1, \ldots t_k))[t/x]$, it is enough to show that for every $(\Delta,t') \in CTerm_\mathcal{F}(V \amalg \{ x : (p,n) \})_{(p',n')}$
+and for every $\Gamma \in FCV_x(\Delta,t')$, sequent $E^{n'}_{p'}(\Delta[t/x], t'[t/x], t'[t/x]) \sststile{}{V} E^n_p(\Gamma[t/x],t,t)$ is derivable.
+We do this by induction on $t'$.
+If $t'$ is a variable, then $t' = x$, $\Gamma = \Delta$, and the statement holds.
+If $t' = \sigma(t_1, \ldots t_k)$, then $(\Gamma,x) \in FCV(D_i(\Delta,t'), t_i)$ for some $1 \leq i \leq k$.
+Then
+\[ E^{n'}_{p'}(\Delta[t/x], t'[t/x], t'[t/x]) \sststile{}{V} E^{n_i}_{p_i}(D_i(\Delta[t/x], t'[t/x]), t_i[t/x], t_i[t/x]) \]
+by \axref{c5}, and by induction hypothesis we have
+\[ E^{n_i}_{p_i}(D_i(\Delta[t/x], t'[t/x]), t_i[t/x], t_i[t/x]) \sststile{}{V} E^n_p(\Gamma[t/x],t,t), \]
+which gives us the required sequent by \axref{b2}.
+\end{proof}
+
+\begin{prop}
+If $FCV_x(\varphi)$ consists of a single context, then the following rule is derivable for every $t \in Term_\mathcal{F}(V')$.
+\begin{equation}
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\UnaryInfC{$\varphi[t/x] \sststile{}{V'} \psi[t/x]$}
+\DisplayProof
+\axtag{c3'}
+\end{equation}
+\end{prop}
+\begin{proof}
+Suppose that $\varphi \sststile{}{V} \psi$ and $FCV_x(\varphi) = \{ \Gamma \}$.
+Then \[ \varphi[(\Gamma[t/x],t)/x] = \varphi[t/x] \land \bigwedge\limits_{(\Delta,x) \in FCV(\varphi)} \Delta[t/x] = \Gamma[t/x]. \]
+By assumption, each $\Delta$ in the formula above equals to $\Gamma$.
+By the previous lemma and remarks before it, $\varphi[t/x] \sststile{}{V'} \Gamma[t/x] = \Gamma[t/x]$.
+Thus $\varphi[t/x] \sststile{}{V'} \varphi[(\Gamma[t/x],t)/x]$.
+By \axref{c3}, $\varphi[(\Gamma[t/x],t)/x] \sststile{}{V'} \psi[(\Gamma[t/x],t)/x]$.
+By definition of the substitution, $\psi[(\Gamma[t/x],t)/x] \sststile{}{V'} \psi[t/x]$.
+Thus $\varphi[t/x] \sststile{}{V'} \psi[t/x]$.
+\end{proof}
 
 \subsection{The category of contextual Horn theories}
 
@@ -846,62 +951,137 @@ a morphism $\alpha_V : PCTerm_\Sigma(F(V)) \to PCTerm_{\Sigma'}(F(V))$
 and $\beta$ assigns to every $V \in \Set^\mathcal{T}$ a morphism $\beta_V : CForm_\Sigma(F(V)) \to CForm_{\Sigma'}(F(V))$.
 These morphisms must satisfy the following conditions:
 \begin{enumerate}
-\item For every $t \in PCTerm_\Sigma(V)_s$, $FV(t) \cap V \subseteq FV(\alpha_V(t))$.
+\item For every $t \in PCTerm_\Sigma(V)_s$, $FV(\alpha_V(t)) = FV(t)$.
 \label{con-mor-sig-a-fv}
-\item For every $\varphi \in CForm_\Sigma(V)$, $FV(\varphi) \cap V \subseteq FV(\beta_V(\varphi))$.
+\item For every $\varphi \in CForm_\Sigma(V)$, $FV(\beta_V(\varphi)) = FV(\varphi)$.
 \label{con-mor-sig-b-fv}
-\item For every $x \in V_s$, $\alpha_V((D(x),x)|_\top) = (D(x),x)|_\top$.
+\item For every $x \in V_s$, $\alpha_V((\Gamma,x)|_\top) = (\Gamma',x)|_\varphi$,
+    where $\Gamma'$ is the empty context and $\varphi = \top$ if $\Gamma$ is empty, and $\Gamma'|_\varphi = \alpha_V(\Gamma|_\top)$ otherwise.
 \label{con-mor-sig-a-var}
-\item For every $t \in PCTerm_\Sigma(A)_s$ and $\rho : A \to CTerm_\Sigma(B)$, $\alpha_B(t[\rho]) = \alpha_A(t)[x \mapsto \alpha_B(\rho(x)|_\top)]$.
+\item If $\rho : A \to Term_\Sigma(B)$ is a function and $t \in PCTerm_\Sigma(A)_s$ is such that for every $x \in A$ there is a unique context $\Gamma_x$ in $FCV_x(t)$,
+    then $\alpha_B(t[\rho]) = \alpha_A(t)[x \mapsto \alpha_B((\Gamma_x,\rho(x))|_\top)]$.
 \label{con-mor-sig-a-subst}
-\item For every atomic $\varphi \in CForm_\Sigma(A)$ and $\rho : A \to CTerm_\Sigma(B)$, $\beta_B(\varphi[\rho]) = \beta_A(\varphi)[x \mapsto \alpha_B(\rho(x)|_\top)]$.
+\item If $\rho : A \to Term_\Sigma(B)$ is a function and $\varphi \in CForm_\Sigma(A)_s$ is an atomic formula such that for every $x \in A$
+    there is a unique context $\Gamma_x$ in $FCV_x(\varphi)$,
+    then $\beta_B(\varphi[\rho]) = \beta_A(\varphi)[x \mapsto \alpha_B((\Gamma_x,\rho(x))|_\top)]$.
 \label{con-mor-sig-b-subst}
 \item For every $t|_\varphi \in PCTerm_\Sigma(V)$, $\alpha_V(t|_\varphi) = \alpha_V(t|_\top)|_{\beta_V(\varphi)}$.
 \label{con-mor-sig-a-op}
-\item $\beta_V(\top) = \top$, $\beta_V(\varphi \land \psi) = \beta_V(\varphi) \land \beta_V(\psi)$, and $\beta_V(t = t') = (\alpha_V(t) = \alpha_V(t'))$.
+\item $\beta_V(\top) = \top$, $\beta_V(\varphi \land \psi) = \beta_V(\varphi) \land \beta_V(\psi)$,
+    and $\beta_V(E^n_p(A_1, \ldots A_{d(p,n)}, a, a')) = E^n_p(\alpha_V(A_1), \ldots \alpha_V(A_{d(p,n)}), \alpha_V(a), \alpha_V(a'))$.
 \label{con-mor-sig-b-op}
 \end{enumerate}
 The identity and the composition of morphisms are defined in the obvious way.
 The category of signatures and contextual morphisms is denoted by $\CSig$.
 \end{defn}
 
-If $f = (\alpha,\beta)$ is a contextual morphism of signatures $\Sigma$ and $\Sigma'$, $t \in PCTerm_\Sigma(V)_s$ and $\varphi \in CForm_\Sigma(V)$,
-then we will write $f(t)$ for $\alpha_V(t)$ and $f(\varphi)$ for $\beta_V(\varphi)$.
-
 \begin{prop}[con-mor-def]
-To construct a contextual morphism of signatures $\Sigma = (\mathcal{T},\mathcal{F},\mathcal{P})$ and $\Sigma'$ it is enough to specify the following data:
+To construct a contextual premorphism of theories $\mathbb{T}$ and $\mathbb{T}'$ it is enough to specify the following data:
+\todo{Fix the characterization of premorphisms}
 \begin{itemize}
-\item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to (ty,0)$,
-    a partial term $\alpha(\sigma) \in PTerm_{\Sigma'}(UF(\{ x_1 : s_1, \ldots x_k : s_k \}))$ such that $\{ x_1, \ldots x_n \} \subseteq FV(\alpha(\sigma))$.
-\item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$, $s \neq (ty,0)$
-    a partial term $\alpha(\sigma) \in PTerm_{\Sigma'}(UF(\{ A : (ty,d(s)-1), x_1 : s_1, \ldots x_k : s_k \}))$ such that $\{ A, x_1, \ldots x_n \} \subseteq FV(\alpha(\sigma))$.
+\item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$,
+    a partial contextual term $\alpha(\sigma) \in PCTerm_{\Sigma'}(\{ A_1 : (ty,0), \ldots A_{d(s)} : (ty,d(s)-1), x_1 : s_1, \ldots x_k : s_k \})$
+    such that $FV(\alpha(\sigma)) = \{ A_1, \ldots A_{d(s)}, x_1, \ldots x_k \}$.
 \item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$,
-    a formula $\beta(R) \in CForm_{\Sigma'}(F(\{ x_1 : s_1, \ldots x_k : s_k \}))$ such that $\{ x_1, \ldots x_k \} \subseteq FV(\beta(R))$.
+    a contextual formula $\beta(R) \in CForm_{\Sigma'}(\{ x_1 : s_1, \ldots x_k : s_k \})$ such that $FV(\beta(R)) = \{ x_1, \ldots x_k \}$.
 \end{itemize}
-Then there is a unique contextual morphism $f$ of these signatures such that \todo{Fix margins}
-$f(ft^{d(s)-1}(A), \ldots A, \sigma(x_1, \ldots x_k)) = (ft^{d(s)-1}(A), \ldots A, \alpha(\sigma))$ and $f(R((D(x_1),x_1), \ldots (D(x_k),x_k))) = \beta(R)$.
+Then there is a unique contextual morphism $(\alpha,\beta)$ of these signatures such that
+$\alpha(A_1, \ldots A_{d(s)}, \sigma(x_1, \ldots x_k)) = \alpha(\sigma)$ and $\beta(R(x_1, \ldots x_k)) = \beta(R)$.
 \end{prop}
 \begin{proof}
 First, let us extend $\alpha$ to a morphism $CTerm_\mathcal{F}(V) \to PCTerm_{\Sigma'}(V)$.
-By conditions \eqref{con-mor-sig-a-var} and \eqref{con-mor-sig-a-subst} it can be done in a unique way:
+By conditions \eqref{mor-sig-a-var} and \eqref{mor-sig-a-subst} it can be done in a unique way:
 \begin{align*}
 \alpha_V(x) & = x \\
 \alpha_V(\sigma(a_1, \ldots a_n)) & = \alpha(\sigma)[x_i \mapsto \alpha_V(a_i)]
 \end{align*}
 Second, we extend $\beta$ to a morphism $Form_\Sigma(V) \to Form_{\Sigma'}(V)$.
-By conditions \eqref{con-mor-sig-b-subst} and \eqref{con-mor-sig-b-op} it can be done in a unique way:
+By conditions \eqref{mor-sig-b-subst} and \eqref{mor-sig-b-op} it can be done in a unique way:
 \begin{align*}
 \beta_V(a = b) & = \alpha_V(a) = \alpha_V(b) \\
 \beta_V(R(a_1, \ldots a_n)) & = \beta(R)[x_i \mapsto \alpha_V(a_i)] \\
 \beta_V(\varphi_1 \land \ldots \land \varphi_n) & = \beta_V(\varphi_1) \land \ldots \land \beta_V(\varphi_n)
 \end{align*}
 Now, we can extend $\alpha_V$ to a morphism $PTerm_\Sigma(V) \to PTerm_{\Sigma'}(V)$.
-By condition \eqref{con-mor-sig-a-op} it can be done in a unique way:
+By condition \eqref{mor-sig-a-op} it can be done in a unique way:
 \[ \alpha_V(t|_\varphi) = \alpha_V(t)|_{\beta_V(\varphi)} \]
 
-Conditions \eqref{con-mor-sig-a-fv} and \eqref{con-mor-sig-b-fv} follows from the conditions on $FV(\alpha(\sigma))$ and $FV(\beta(R))$.
-Conditions \eqref{con-mor-sig-a-var}, \eqref{con-mor-sig-a-op} and $\eqref{con-mor-sig-b-op}$ hold by the definitions of $\alpha_V$ and $\beta_V$.
-Conditions \eqref{con-mor-sig-a-subst} and $\eqref{con-mor-sig-b-subst}$ are easy to check by induction on the term and on the formula respectively.
+Conditions \eqref{mor-sig-a-fv} and \eqref{mor-sig-b-fv} follows from the conditions on $FV(\alpha(\sigma))$ and $FV(\beta(R))$.
+Conditions \eqref{mor-sig-a-var}, \eqref{mor-sig-a-op} and $\eqref{mor-sig-b-op}$ hold by the definitions of $\alpha_V$ and $\beta_V$.
+Conditions \eqref{mor-sig-a-subst} and $\eqref{mor-sig-b-subst}$ are easy to check by induction on the term and on the formula respectively.
+\end{proof}
+
+Let $f$ be a premorphism of theories $\mathbb{T}$ and $\mathbb{T}'$ over signatures $\Sigma$ and $\Sigma'$ respectively.
+Then we will say that $f$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ over $\Sigma$ if $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}'$.
+
+\begin{prop}
+If a premorphism respects all axioms of a theory, then it respects all of its theorems too.
+\end{prop}
+\begin{proof}
+We need to check that application of a premorphism $f$ to sequents respects inference rules.
+This is clearly so for rules \axref{b1}-\axref{b6} and \axref{c1}.
+To prove this for \axref{c4} we need to show that the following sequent is derivable:
+\[ f(R(t_1, \ldots t_k)) \sststile{}{V} E^{n_i}_{p_i}(f(D_i(R(t_1, \ldots t_k))), f(t_i), f(t_i)) \]
+Consider formula $\varphi = R(t_1, \ldots t_{i-1}, x_i, t_{i+1}, \ldots t_k)$ with free variables in $V \amalg \{ x : (p_i,n_i) \}$.
+Since $(D_i(\varphi),x_i) \in FCV(\varphi)$, by \eqref{con-mor-b-fv-l} we know that
+\[ f(\varphi) \sststile{}{V \amalg \{ x : (p_i,n_i) \}} E^{n_i}_{p_i}(f(D_i(\varphi)), x_i, x_i) \]
+\end{proof}
+
+Let $\mathcal{A}$ and $\mathcal{A}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
+Then we will say that morphisms $f$ and $f'$ between $\Sigma$ and $\Sigma'$ are \emph{equivalent} if the following conditions hold:
+\begin{enumerate}
+\item For every $t \in PCTerm_\Sigma(V)_s$ sequents $\sststile{}{V} f(t) \cong f'(t)$ are theorems of $\mathcal{A}'$.
+\label{mor-eq-a}
+\item For every $\varphi \in CForm_\Sigma(V)$ sequent $f(\varphi) \ssststile{}{V} f'(\varphi)$ is a theorem of $\mathcal{A}'$.
+\label{mor-eq-b}
+\end{enumerate}
+
+\begin{prop}[mor-eq]
+Let $\mathcal{A}$ and $\mathcal{A}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
+Morphisms $f$ and $f'$ between $\Sigma$ and $\Sigma'$ are equivalent if and only if the following conditions hold:
+\begin{itemize}
+\item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ sequents
+\[ \sststile{}{\Gamma, x_1 : s_1, \ldots x_n : s_n} f(\Gamma, \sigma(x_1, \ldots x_n)) \cong f'(\Gamma, \sigma(x_1, \ldots x_n)) \]
+are theorems of $\mathcal{A}'$.
+\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ sequents
+\[ f(R(x_1, \ldots x_n)) \ssststile{}{x_1 : s_1, \ldots x_n : s_n} f'(R(x_1, \ldots x_n)) \]
+are theorems of $\mathcal{A}'$.
+\end{itemize}
+\end{prop}
+\begin{proof}
+The ``only if'' direction is obvious.
+Let us prove the converse.
+First, we prove \eqref{mor-eq-a} for $t \in CTerm_\mathcal{F}(V)_s$ by induction on it.
+If $t$ is a variable, then $f(t) = f'(t) = t$.
+If $t = \sigma(t_1, \ldots t_n)$, then $\sststile{}{V} f(t_i) \cong f(t'_i)$
+and $\sststile{}{x_1 : s_1, \ldots x_n : s_n} f(\sigma(x_1, \ldots x_n)) \cong f'(\sigma(x_1, \ldots x_n))$.
+Since $FV(f(\sigma(x_1, \ldots x_n))) = \{ x_1, \ldots x_n\}$, by \axref{a3} we have
+$f(t)\!\downarrow\,\sststile{}{V} f(t) = f'(\sigma(x_1, \ldots x_n))[x_i \mapsto \alpha_V(t_i)]$.
+We also have $f(t)\!\downarrow\,\sststile{}{V} f(t_i)\!\downarrow$, hence by \rlem{cong-a}
+$f(t)\!\downarrow\,\sststile{}{V} f'(\sigma(x_1, \ldots x_n))[x_i \mapsto f(t_i)] = f'(t)$.
+By transitivity, we conclude that $f(t)\!\downarrow\,\sststile{}{V} f(t) = f'(t)$.
+The same argument shows that $f'(t)\!\downarrow\,\sststile{}{V} f(t) = f'(t)$.
+
+Let us prove \eqref{mor-eq-b}.
+It is enough to prove it for atomic formulae $\varphi$.
+If $\varphi$ equals to $t = t'$, then $f(\varphi)$ equals to $f(t) = f(t')$ and $f'(\varphi)$ equals to $f'(t) = f'(t')$.
+We know that $\sststile{}{V} f(t) \cong f'(t)$ and $\sststile{}{V} f(t') \cong f'(t')$.
+Thus by transitivity and symmetry we can conclude that $f(t) = f(t)' \sststile{}{V} f'(t) = f'(t')$.
+
+If $\varphi = R(t_1, \ldots t_n)$, then $f(\varphi) = f(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)]$
+and $f'(\varphi) = f'(R(x_1, \ldots x_n))[x_i \mapsto f'(t_i)]$.
+We know that $f(R(x_1, \ldots x_n)) \sststile{}{x_1 : s_1, \ldots x_n : s_n}$ \linebreak $f'(R(x_1, \ldots x_n))$.
+Since $FV(f(R(x_1, \ldots x_n))) = \{ x_1, \ldots x_n \}$, by \axref{a3} we can conclude that $f(\varphi) \sststile{}{V} f'(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)]$.
+Since $f'(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)] \sststile{}{V} f(t_i)\!\downarrow$, \rlem{cong-b} implies that
+$f'(R(x_1, \ldots x_n))[x_i \mapsto f(t_i)] \sststile{}{V} f'(\varphi)$.
+By \axref{b2} we conclude that $f(\varphi) \sststile{}{V} f'(\varphi)$.
+The same argument shows that $f'(\varphi) \sststile{}{V} f(\varphi)$.
+
+Now, we can finish the proof of \eqref{mor-eq-a}.
+We need to prove that $\sststile{}{V} f(t|_\varphi) \cong f'(t|_\varphi)$.
+We already saw that $f(t)\!\downarrow\,\sststile{}{V} f(t) = f'(t)$ and $f(\varphi) \sststile{}{V} f'(\varphi)$.
+Hence $f(t)\!\downarrow \land f(\varphi) \sststile{}{V} f(t) = f'(t) \land f'(\varphi)$.
+The same argument shows that $f'(t)\!\downarrow \land f'(\varphi) \sststile{}{V} f(t) = f'(t) \land f(\varphi)$.
 \end{proof}
 
 \section{Functors between algebraic and contextual theories}
