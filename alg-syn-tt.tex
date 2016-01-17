@@ -117,8 +117,8 @@
 \newcommand{\PStr}[1]{#1\text{-}\cat{PStr}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\Sig}{\cat{Sig}}
-\newcommand{\CSig}{\cat{CSig}}
 \newcommand{\Th}{\cat{Th}}
+\newcommand{\CTh}{\cat{CTh}}
 \newcommand{\ThC}{\Th_{\mathcal{C}}}
 \newcommand{\ThT}{\Th_{\mathcal{T}}}
 \newcommand{\ttvdash}{\vartriangleright}
@@ -443,9 +443,9 @@ Note that if $f$ respects all axioms of $\mathcal{A}$, then it respects all of i
 Let $\mathcal{A}$ and $\mathcal{A}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
 Then we will say that morphisms $f$ and $f'$ between $\Sigma$ and $\Sigma'$ are \emph{equivalent} if the following conditions hold:
 \begin{enumerate}
-\item For every $t \in PTerm_\Sigma(V)_s$ sequents $\sststile{}{V} f(t) \cong f'(t)$ are theorems of $\mathcal{A}'$.
+\item For every $t \in PTerm_\Sigma(V)_s$, sequents $\sststile{}{V} f(t) \cong f'(t)$ are theorems of $\mathcal{A}'$.
 \label{mor-eq-a}
-\item For every $\varphi \in Form_\Sigma(V)$ sequent $f(\varphi) \ssststile{}{V} f'(\varphi)$ is a theorem of $\mathcal{A}'$.
+\item For every $\varphi \in Form_\Sigma(V)$, sequents $f(\varphi) \ssststile{}{V} f'(\varphi)$ are theorems of $\mathcal{A}'$.
 \label{mor-eq-b}
 \end{enumerate}
 
@@ -893,10 +893,7 @@ E^n_p(A_1, \ldots A_{d(p,n)}, a, a') \land E^{i-1}_{ty}(A_1, \ldots A_{i-1}, A_i
 E^n_p(A_1, \ldots A_{i-1}, A_i', A_{i+1}, \ldots A_{d(p,n)}, a, a') &
 \end{align*}
 
-In practice, it is more convenient to work with substitution of terms rather than contextual terms.
-Now, we prove an analog of \axref{c3} for such substitution.
-
-\begin{lem}
+\begin{lem}[form-subst]
 If $\varphi \in CForm_\Sigma(V \amalg \{ x : (p,n) \})$ and $t \in Term_\mathcal{F}(V)_{(p,n)}$,
 then for every $\Gamma \in FCV_x(\varphi)$ the following sequent is derivable:
 \[ \varphi[t/x] \sststile{}{V} E^n_p(\Gamma[t/x],t,t) \]
@@ -920,6 +917,9 @@ by \axref{c5}, and by induction hypothesis we have
 which gives us the required sequent by \axref{b2}.
 \end{proof}
 
+In practice, it is more convenient to work with substitution of terms rather than contextual terms.
+Now, we prove an analog of \axref{c3} for such substitution.
+
 \begin{prop}
 If $FCV_x(\varphi)$ consists of a single context, then the following rule is derivable for every $t \in Term_\mathcal{F}(V')$.
 \begin{equation}
@@ -940,44 +940,110 @@ By definition of the substitution, $\psi[(\Gamma[t/x],t)/x] \sststile{}{V'} \psi
 Thus $\varphi[t/x] \sststile{}{V'} \psi[t/x]$.
 \end{proof}
 
+\begin{prop}[sym-trans]
+The following sequents are derivable:
+\begin{align*}
+\Gamma = \Gamma' \land E^n_p(\Gamma, x, y) & \sststile{}{\Gamma, \Gamma', x, y} E^n_p(\Gamma', x, y) \\
+\Gamma = \Gamma' & \sststile{}{\Gamma, \Gamma', x, y} (\Gamma,x) \cong (\Gamma',y) \\
+\Gamma = \Gamma' & \sststile{}{\Gamma, \Gamma'} \Gamma' = \Gamma \\
+(\Gamma,x) = (\Gamma',x') & \sststile{}{\Gamma, \Gamma', x, x'} (\Gamma',x') = (\Gamma,x) \\
+\Gamma = \Gamma' \land \Gamma' = \Gamma'' & \sststile{}{\Gamma, \Gamma', \Gamma''} \Gamma = \Gamma'' \\
+(\Gamma,x) = (\Gamma',x') \land (\Gamma',x') = (\Gamma'',x'') & \sststile{}{\Gamma, \Gamma', \Gamma'', x, x', x''} (\Gamma,x) = (\Gamma'',x'')
+\end{align*}
+\end{prop}
+\begin{proof}
+This easily follows from \axref{c2} and \axref{c3'}.
+\end{proof}
+
 \subsection{The category of contextual Horn theories}
 
-Here we will define categories of signatures (and contextual morphisms) and contextual Horn theories.
+Here we will define morphisms of contextual Horn theories.
+To do this we need to define the notion of premorphisms.
 
 \begin{defn}
-Let $\Sigma$ and $\Sigma'$ be a pair of signatures with $\mathcal{T}$ as the set of sorts.
-A \emph{contextual morphism} of these signatures is a pair $(\alpha,\beta)$ where $\alpha$ assigns to every $V \in \Set^\mathcal{T}$
+Let $\mathbb{T}$ be a contextual Horn theory over a signature $\Sigma$ and let $\mathbb{T}'$ be a contextual Horn theory over a signature $\Sigma'$.
+A \emph{premorphism} of these theories is a pair $(\alpha,\beta)$ where $\alpha$ assigns to every $V \in \Set^\mathcal{T}$
 a morphism $\alpha_V : PCTerm_\Sigma(F(V)) \to PCTerm_{\Sigma'}(F(V))$
 and $\beta$ assigns to every $V \in \Set^\mathcal{T}$ a morphism $\beta_V : CForm_\Sigma(F(V)) \to CForm_{\Sigma'}(F(V))$.
 These morphisms must satisfy the following conditions:
 \begin{enumerate}
-\item For every $t \in PCTerm_\Sigma(V)_s$, $FV(\alpha_V(t)) = FV(t)$.
-\label{con-mor-sig-a-fv}
-\item For every $\varphi \in CForm_\Sigma(V)$, $FV(\beta_V(\varphi)) = FV(\varphi)$.
-\label{con-mor-sig-b-fv}
-\item For every $x \in V_s$, $\alpha_V((\Gamma,x)|_\top) = (\Gamma',x)|_\varphi$,
+\item \label{con-mor-sig-a-fv}
+For every $t \in PCTerm_\Sigma(V)_s$, $FV(\alpha_V(t)) = FV(t)$.
+\item \label{con-mor-sig-b-fv}
+For every $\varphi \in CForm_\Sigma(V)$, $FV(\beta_V(\varphi)) = FV(\varphi)$.
+\item \label{con-mor-sig-a-var}
+For every $x \in V_s$, $\alpha_V((\Gamma,x)|_\top) = (\Gamma',x)|_\varphi$,
     where $\Gamma'$ is the empty context and $\varphi = \top$ if $\Gamma$ is empty, and $\Gamma'|_\varphi = \alpha_V(\Gamma|_\top)$ otherwise.
-\label{con-mor-sig-a-var}
-\item If $\rho : A \to Term_\Sigma(B)$ is a function and $t \in PCTerm_\Sigma(A)_s$ is such that for every $x \in A$ there is a unique context $\Gamma_x$ in $FCV_x(t)$,
-    then $\alpha_B(t[\rho]) = \alpha_A(t)[x \mapsto \alpha_B((\Gamma_x,\rho(x))|_\top)]$.
-\label{con-mor-sig-a-subst}
-\item If $\rho : A \to Term_\Sigma(B)$ is a function and $\varphi \in CForm_\Sigma(A)_s$ is an atomic formula such that for every $x \in A$
-    there is a unique context $\Gamma_x$ in $FCV_x(\varphi)$,
-    then $\beta_B(\varphi[\rho]) = \beta_A(\varphi)[x \mapsto \alpha_B((\Gamma_x,\rho(x))|_\top)]$.
-\label{con-mor-sig-b-subst}
-\item For every $t|_\varphi \in PCTerm_\Sigma(V)$, $\alpha_V(t|_\varphi) = \alpha_V(t|_\top)|_{\beta_V(\varphi)}$.
-\label{con-mor-sig-a-op}
-\item $\beta_V(\top) = \top$, $\beta_V(\varphi \land \psi) = \beta_V(\varphi) \land \beta_V(\psi)$,
-    and $\beta_V(E^n_p(A_1, \ldots A_{d(p,n)}, a, a')) = E^n_p(\alpha_V(A_1), \ldots \alpha_V(A_{d(p,n)}), \alpha_V(a), \alpha_V(a'))$.
-\label{con-mor-sig-b-op}
+\item \label{con-mor-sig-a-subst}
+For every $\rho : A \to CTerm_\Sigma(B)$ and $t \in PCTerm_\Sigma(A)_s$,
+    sequents $\sststile{}{B} \alpha_B(t[\rho]) \cong \alpha_A(t)[x \mapsto \alpha_B(\rho(x)|_\top)]$ are theorems of $\mathbb{T}'$.
+\item \label{con-mor-sig-b-subst}
+For every $\rho : A \to CTerm_\Sigma(B)$ and $\varphi \in CForm_\Sigma(A)_s$,
+    sequents $\beta_B(\varphi[\rho]) \allowbreak \ssststile{}{B} \beta_A(\varphi)[x \mapsto \alpha_B(\rho(x)|_\top)]$ are theorems of $\mathbb{T}'$.
+\item \label{con-mor-sig-a-op}
+For every $(\Gamma,t)|_\varphi \in PCTerm_\Sigma(V)$, if $\alpha_V((\Gamma,t)|_\top) = (\Gamma',t')|_{\varphi'}$ and $\alpha_V(\Gamma|_\top) \allowbreak = \Gamma''|_{\varphi''}$,
+    then $\alpha_V((\Gamma,t)|_\varphi) = (\Gamma',t')|_{\varphi' \land \beta_V(\varphi)}$ and $\Gamma' = \Gamma''$.
+\item \label{con-mor-sig-b-op}
+$\beta_V(\top) = \top$, $\beta_V(\varphi \land \psi) = \beta_V(\varphi) \land \beta_V(\psi)$,
+    and $\beta_V(E^n_p(A_1, \ldots A_n, a_1, a_2)) = E^n_p(A_1', \ldots A_n', a_1', a_2') \land \varphi_1 \land \ldots \land \varphi_n \land \psi_1 \land \psi_2$,
+    where $\alpha_V(A_1, \ldots A_i) = (\Gamma_i, A_i')|_{\varphi_i}$ and $\alpha_V(A_1, \ldots A_n, \allowbreak a_i) = (\Gamma_i', a_i')|_{\psi_i}$.
 \end{enumerate}
-The identity and the composition of morphisms are defined in the obvious way.
-The category of signatures and contextual morphisms is denoted by $\CSig$.
 \end{defn}
 
+If $f = (\alpha,\beta)$ is a premorphism of theories, $t \in PTerm_\Sigma(V)_s$ and $\varphi \in Form_\Sigma(V)$,
+then we will write $f(t)$ for $\alpha_V(t)$ and $f(\varphi)$ for $\beta_V(\varphi)$.
+
+Now we define an equivalence relation on the set of premorphisms of theories $\mathbb{T}$ and $\mathbb{T}'$.
+We will say that premorphisms $f$ and $f'$ are equivalent if the following conditions hold:
+\begin{enumerate}
+\item For every $t \in PCTerm_\Sigma(V)_s$, sequents $\sststile{}{V} f(t) \cong f'(t)$ are theorems of $\mathbb{T}'$.
+\label{con-mor-eq-a}
+\item For every $\varphi \in CForm_\Sigma(V)$, sequents $f(\varphi) \ssststile{}{V} f'(\varphi)$ are theorems of $\mathcal{T}'$.
+\label{con-mor-eq-b}
+\end{enumerate}
+
+We will say that a premorphism $f$ of theories $\mathbb{T}$ and $\mathbb{T}'$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$
+if $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}'$.
+A \emph{morphism} of theories $\mathbb{T}$ and $\mathbb{T}'$ is an equivalence class of premorphisms which respect axioms of $\mathbb{T}$.
+
+\begin{prop}
+If a premorphism respects all axioms of a theory, then it respects all of its theorems too.
+\end{prop}
+\begin{proof}
+We need to check that application of a premorphism $f$ to sequents respects inference rules.
+This is clearly so for rules \axref{b1}-\axref{b6} and \axref{c1}.
+
+Let us prove this for \axref{c2}.
+We need to prove that $E^n_p(\Gamma',x,y) \land \psi \land f(\varphi) \sststile{}{V} f(\varphi[y/x])$, where $f(\Gamma) = \Gamma'|_\psi$.
+First, note that $f(\varphi[(\Gamma,y)|_\top/x]) \sststile{}{V} f(\varphi[y/x])$, $f(\varphi)[f(\Gamma,y)/x] \sststile{}{V} f(\varphi[(\Gamma,y)|_\top/x])$ by \eqref{con-mor-sig-b-subst},
+    and $f(\varphi)[f(\Gamma,y)/x] = f(\varphi)[y/x] \land \psi' \land \bigwedge\limits_{\Gamma'' \in FCV_x(f(\varphi))} \Gamma''[y/x] = \Gamma'$,
+    where $\psi'$ equals to either $\psi$ or $\top$.
+By \axref{c2}, $E^n_p(\Gamma',x,y) \land f(\varphi) \sststile{}{V} f(\varphi)[y/x]$, and obviously $\psi \sststile{}{V} \psi'$.
+Thus we only need to show that $E^n_p(\Gamma',x,y) \land f(\varphi) \sststile{}{V} \Gamma''[y/x] = \Gamma'$ for every $\Gamma'' \in FCV_x(f(\varphi))$.
+This follows from \axref{c6} since $E^n_p(\Gamma',x,y) \sststile{}{V} E^n_p(\Gamma',y,y)$, and \rlem{form-subst} implies that $f(\varphi)[y/x] \sststile{}{V} E^n_p(\Gamma''[y/x],y,y)$.
+
+Now, let us consider \axref{c3}.
+First, note that \axref{c3} holds for every $t|_\chi \in PCTerm_\Sigma(V')$.
+Indeed, $\varphi[t|_\chi/x]$ is equivalent to $\varphi[t/x] \land \chi$, and $\psi[t|_\chi/x]$ is equivalent to either $\psi[t/x]$ or $\psi[t/x] \land \chi$.
+In both cases $\varphi[t|_\chi/x] \sststile{}{V'} \psi[t|_\chi/x]$.
+Now, if $f(\varphi) \sststile{}{V} f(\psi)$, then $f(\varphi[t/x]) \sststile{}{V'} \varphi[f(t|_\top)/x]$ by \eqref{con-mor-sig-b-subst},
+    $\varphi[f(t|_\top)/x] \sststile{}{V'} \psi[f(t|_\top)/x]$ by \axref{c3}, and $\psi[f(t|_\top)/x] \sststile{}{V'} f(\psi[t/x])$ by \eqref{con-mor-sig-b-subst}.
+
+Axioms \axref{c4} and \axref{c5} follows from \rlem{form-subst} if we take $\varphi$ to be equal to either $R(t_1, \ldots x_i, \ldots t_k)$
+    or $E^n_p(\Gamma, \sigma(t_1, \ldots x_i, \ldots t_k), \sigma(t_1, \ldots x_i, \ldots t_k))$ respectively.
+Finally, \axref{c6} easily follows from \rprop{sym-trans}.
+\end{proof}
+
+It is easy to see that premorphisms are closed under composition.
+The previous proposition implies that if $f : \mathbb{T}_1 \to \mathbb{T}_2$ and $g : \mathbb{T}_2 \to \mathbb{T}_3$ preserve axioms of $\mathbb{T}_1$ and $\mathbb{T}_2$ respectively,
+then $g \circ f$ preserves axioms of $\mathbb{T}_1$.
+It is easy to see that composition of premorphisms respects the equivalence relation.
+Hence this defines a category of contextual Horn theories which we denote by $\CTh$.
+
 \begin{prop}[con-mor-def]
-To construct a contextual premorphism of theories $\mathbb{T}$ and $\mathbb{T}'$ it is enough to specify the following data:
-\todo{Fix the characterization of premorphisms}
+Suppose that there is a function $|-|$ that to each $\sigma \in \mathcal{F}$ assigns an ordinal $|\sigma|$ such that if some $\tau$ appears in $D_i(\sigma)$, then $|\tau| < |\sigma|$.
+Moreover, suppose that for every $\sigma \in \mathcal{F}$, $FV(D_i(A_1, \ldots A_n, \sigma(x_1, \ldots x_k))) \subseteq \{ A_1, \ldots A_n, x_1, \ldots x_{i-1} \}$.
+Then to construct a premorphism of theories $\mathbb{T}$ and $\mathbb{T}'$ it is enough to specify the following data:
 \begin{itemize}
 \item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$,
     a partial contextual term $\alpha(\sigma) \in PCTerm_{\Sigma'}(\{ A_1 : (ty,0), \ldots A_{d(s)} : (ty,d(s)-1), x_1 : s_1, \ldots x_k : s_k \})$
@@ -985,10 +1051,19 @@ To construct a contextual premorphism of theories $\mathbb{T}$ and $\mathbb{T}'$
 \item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$,
     a contextual formula $\beta(R) \in CForm_{\Sigma'}(\{ x_1 : s_1, \ldots x_k : s_k \})$ such that $FV(\beta(R)) = \{ x_1, \ldots x_k \}$.
 \end{itemize}
-Then there is a unique contextual morphism $(\alpha,\beta)$ of these signatures such that
-$\alpha(A_1, \ldots A_{d(s)}, \sigma(x_1, \ldots x_k)) = \alpha(\sigma)$ and $\beta(R(x_1, \ldots x_k)) = \beta(R)$.
+Then there is a premorphism $f$ of these theories such that
+$\alpha(\sigma) = f(A_1, \ldots A_{d(s)}, \allowbreak \sigma(x_1, \ldots x_k))$ and $\beta(R) = f(R(x_1, \ldots x_k))$.
 \end{prop}
 \begin{proof}
+Let us define a function $|-|$ on the set of contextual terms.
+We let $|(\Gamma,t)|$ to be equal to supremum of the set of ordinals $|\sigma|$ for each $\sigma$ that appears in $(\Gamma,t)$.
+We construct $f(\Gamma,t)$ by induction on $|(\Gamma,t)|$.
+First, suppose that $|\Gamma| < |t|$.
+Then we construct $f(\Gamma,t)$ by induction on $t$.
+If $t$ is a variable and $f(\Gamma) = \Gamma'|_\varphi$, then let $f(\Gamma,t) = (\Gamma',t)|_\varphi$.
+If $t = \sigma(t_1, \ldots t_k)$, then let \todo{Replace $a_j'$ with $(\Gamma_j,a_j')|_{\varphi_j}$?} $f(\Gamma,t) = \alpha(\sigma)[A_i \mapsto B_i, x_j \mapsto a_j']$,
+    where $\Gamma = B_1, \ldots B_n$ and $f(D_i(\Gamma,\sigma(x_1, \ldots x_n)),a_i)[x_1 \mapsto a_1', \ldots x_{i-1} \mapsto a_{i-1}'] = (\Gamma_i,a_i')|_{\varphi_i}$.
+
 First, let us extend $\alpha$ to a morphism $CTerm_\mathcal{F}(V) \to PCTerm_{\Sigma'}(V)$.
 By conditions \eqref{mor-sig-a-var} and \eqref{mor-sig-a-subst} it can be done in a unique way:
 \begin{align*}
@@ -1010,31 +1085,6 @@ Conditions \eqref{mor-sig-a-fv} and \eqref{mor-sig-b-fv} follows from the condit
 Conditions \eqref{mor-sig-a-var}, \eqref{mor-sig-a-op} and $\eqref{mor-sig-b-op}$ hold by the definitions of $\alpha_V$ and $\beta_V$.
 Conditions \eqref{mor-sig-a-subst} and $\eqref{mor-sig-b-subst}$ are easy to check by induction on the term and on the formula respectively.
 \end{proof}
-
-Let $f$ be a premorphism of theories $\mathbb{T}$ and $\mathbb{T}'$ over signatures $\Sigma$ and $\Sigma'$ respectively.
-Then we will say that $f$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ over $\Sigma$ if $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}'$.
-
-\begin{prop}
-If a premorphism respects all axioms of a theory, then it respects all of its theorems too.
-\end{prop}
-\begin{proof}
-We need to check that application of a premorphism $f$ to sequents respects inference rules.
-This is clearly so for rules \axref{b1}-\axref{b6} and \axref{c1}.
-To prove this for \axref{c4} we need to show that the following sequent is derivable:
-\[ f(R(t_1, \ldots t_k)) \sststile{}{V} E^{n_i}_{p_i}(f(D_i(R(t_1, \ldots t_k))), f(t_i), f(t_i)) \]
-Consider formula $\varphi = R(t_1, \ldots t_{i-1}, x_i, t_{i+1}, \ldots t_k)$ with free variables in $V \amalg \{ x : (p_i,n_i) \}$.
-Since $(D_i(\varphi),x_i) \in FCV(\varphi)$, by \eqref{con-mor-b-fv-l} we know that
-\[ f(\varphi) \sststile{}{V \amalg \{ x : (p_i,n_i) \}} E^{n_i}_{p_i}(f(D_i(\varphi)), x_i, x_i) \]
-\end{proof}
-
-Let $\mathcal{A}$ and $\mathcal{A}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
-Then we will say that morphisms $f$ and $f'$ between $\Sigma$ and $\Sigma'$ are \emph{equivalent} if the following conditions hold:
-\begin{enumerate}
-\item For every $t \in PCTerm_\Sigma(V)_s$ sequents $\sststile{}{V} f(t) \cong f'(t)$ are theorems of $\mathcal{A}'$.
-\label{mor-eq-a}
-\item For every $\varphi \in CForm_\Sigma(V)$ sequent $f(\varphi) \ssststile{}{V} f'(\varphi)$ is a theorem of $\mathcal{A}'$.
-\label{mor-eq-b}
-\end{enumerate}
 
 \begin{prop}[mor-eq]
 Let $\mathcal{A}$ and $\mathcal{A}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
