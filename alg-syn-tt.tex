@@ -842,13 +842,13 @@ R(t_1, \ldots t_n)[\rho] & = R(t_1[\rho], \ldots t_n[\rho]) \\
 (\Gamma,t)|_\varphi[\rho] & = (\Gamma,t)[\rho]|_{\varphi[\rho]}
 \end{align*}
 
-Let $\sigma$ be a function symbol such that $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$.
-Let $\Gamma = B_1, \ldots B_{d(p,n)}$ be a context with free variables in $V$, and let $t_i$ be terms of sorts $(p_i,n_i)$ with free variables in $V$ for each $1 \leq i \leq k$.
-Then we write $D_i(\Gamma, \sigma(t_1, \ldots t_k))$ for a context of length $d(p_i,n_i)$ with free variables in $V$ defined as follows:
-\[ D_i(\Gamma, \sigma(t_1, \ldots t_k)) = D_i(A_1, \ldots A_{d(p,n)}, \sigma(x_1, \ldots x_k))[A_i \mapsto B_i, x_j \mapsto t_j] \]
-Let $R$ be a predicate symbol such that $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$.
-Let $t_i$ be terms of sorts $(p_i,n_i)$ with free variables in $V$ for each $1 \leq i \leq k$.
-Then we write $D_i(R(t_1, \ldots t_k))$ for a context of length $d(p_i,n_i)$ with free variables in $V$ defined as follows:
+Let $\sigma$ be a function symbol such that $\sigma : s_1 \times \ldots \times s_k \to s$.
+Let $\Gamma = B_1, \ldots B_{d(s)}$ be a context with free variables in $V$, and let $t_i$ be terms of sorts $s_i$ with free variables in $V$ for each $1 \leq i \leq k$.
+Then we write $D_i(\Gamma, \sigma(t_1, \ldots t_k))$ for a context of length $d(s_i)$ with free variables in $V$ defined as follows:
+\[ D_i(\Gamma, \sigma(t_1, \ldots t_k)) = D_i(A_1, \ldots A_{d(s)}, \sigma(x_1, \ldots x_k))[A_i \mapsto B_i, x_j \mapsto t_j] \]
+Let $R$ be a predicate symbol such that $R : s_1 \times \ldots \times s_k$.
+Let $t_i$ be terms of sorts $s_i$ with free variables in $V$ for each $1 \leq i \leq k$.
+Then we write $D_i(R(t_1, \ldots t_k))$ for a context of length $d(s_i)$ with free variables in $V$ defined as follows:
 \[ D_i(R(t_1, \ldots t_k)) = D_i(R(x_1, \ldots x_k))[x_j \mapsto t_j] \]
 
 A \emph{contextual Horn theory} in a signature $\Sigma = (\mathcal{T}, \mathcal{F}, \mathcal{P})$ is a set of contextual Horn sequents over $\Sigma$.
@@ -1138,8 +1138,62 @@ The same argument shows that $f'(t)\!\downarrow \land f'(\varphi) \sststile{}{V}
 
 \section{Functors between algebraic and contextual theories}
 
-Let $\mathbb{T}$ be an algebraic type theory.
-Then we define contextual theory $C(\mathbb{T})$.
+In this section we construct functors $C : \mathbb{T}_0/\ThT \to \CTh$ and $A : \CTh \to \mathbb{T}_0/\ThT$ which constitute an equivalence of categories.
+
+\subsection{Functor $C : \mathbb{T}_0/\ThT \to \CTh$}
+
+For every algebraic type theory $\mathbb{T} = ((\mathcal{T},\mathcal{F},\mathcal{P}),\mathcal{A})$ we define contextual theory $C(\mathbb{T})$.
+Theory $C(\mathbb{T})$ has the same function symbols and predicate symbols as $\mathbb{T}$ together with predicate symbols $E^n_p$.
+For every term $t$ of $\mathbb{T}$ we define a contextual term $C(t)$ of $C(\mathbb{T})$ as follows:
+\[ C(t) = 
+  \begin{cases}
+      (ft^n(t), \ldots ft(t), t) & \text{if } t : (ty,n) \\
+      (ft^n(ty(t)), \ldots ft(ty(t)), ty(t), t) & \text{if } t : (tm,n)
+  \end{cases}
+\]
+For every formula $\varphi$ of $\mathbb{T}$ we define a contextual formula $C(\varphi)$ of $C(\mathbb{T})$ as follows:
+\begin{align*}
+C(R(t_1, \ldots t_k)) & = R(t_1, \ldots t_k) \\
+C(t = t') & = (C(t) = C(t'))
+\end{align*}
+
+For every $\sigma \in \mathcal{F}$, context $D_i(A_1, \ldots A_n, \sigma(x_1, \ldots x_k))$ is defined as the context of $C(x)$.
+For every $R \in \mathcal{P}$, context $D_i(R(x_1, \ldots x_k))$ is defined as the context of $C(x)$.
+Axioms of $C(\mathbb{T})$ are sequents of the form $C(\varphi) \sststile{}{V} C(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$
+    together with sequent $\sststile{}{x} C(x) = C(x)$.
+
+\begin{lem}
+If $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $C(\varphi) \sststile{}{V} C(\psi)$ is a theorem of $C(\mathbb{T})$.
+\end{lem}
+\begin{proof}
+To prove tihs we need to show that $C(-)$ preserves inference rules.
+This is clearly true for rules \axref{b1}-\axref{b6}.
+This is true for \axref{a1} since we added corresponding axiom to $C(\mathbb{T})$.
+
+Note that $C(-)$ preserves substitution, that is $C(t[\rho]) = C(t)[\rho]$ and $C(\varphi[\rho]) = C(\varphi)[\rho]$ for every term $t$ and every formula $\varphi$.
+It follows that $C(-)$ preserves \axref{a2} by \axref{c2}.
+Note that for every every formula $\varphi$ of $C(\mathbb{T})$ and every variable $x$ the set $FCV_x(\varphi)$ consists of a single context.
+It follows that $C(-)$ preserves \axref{a3} by \axref{c3'}.
+\end{proof}
+
+\subsection{Functor $A : \CTh \to \mathbb{T}_0/\ThT$}
+
+For every contextual theory $\mathbb{T} = ((\mathcal{T},\mathcal{F},\mathcal{P}),\mathcal{A})$ we define algebraic type theory $A(\mathbb{T})$.
+For every function symbols $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$,
+    theory $A(\mathbb{T})$ has function symbol $\sigma : e(s) \times s_1 \times \ldots \times s_k \to s$,
+    where $e(tm,n) = (ctx,n+1)$ and $e(ty,n) = (ctx,n)$.
+For every term $t$ of $\mathbb{T}$ we define a contextual term $C(t)$ of $C(\mathbb{T})$ as follows:
+\[ C(t) = 
+  \begin{cases}
+      (ft^n(t), \ldots ft(t), t) & \text{if } t : (ty,n) \\
+      (ft^n(ty(t)), \ldots ft(ty(t)), ty(t), t) & \text{if } t : (tm,n)
+  \end{cases}
+\]
+For every formula $\varphi$ of $\mathbb{T}$ we define a contextual formula $C(\varphi)$ of $C(\mathbb{T})$ as follows:
+\begin{align*}
+C(R(t_1, \ldots t_k)) & = R(t_1, \ldots t_k) \\
+C(t = t') & = (C(t) = C(t'))
+\end{align*}
 
 \label{sec:T1}
 \section{Theory $\mathbb{T}_1$}
