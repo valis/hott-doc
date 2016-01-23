@@ -1096,22 +1096,22 @@ Conditions \eqref{mor-sig-a-var}, \eqref{mor-sig-a-op} and $\eqref{mor-sig-b-op}
 Conditions \eqref{mor-sig-a-subst} and $\eqref{mor-sig-b-subst}$ are easy to check by induction on the term and on the formula respectively.
 \end{proof}
 
-\begin{prop}[mor-eq]
-Let $\mathcal{A}$ and $\mathcal{A}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
-Morphisms $f$ and $f'$ between $\Sigma$ and $\Sigma'$ are equivalent if and only if the following conditions hold:
+\begin{prop}[con-mor-eq]
+Let $\mathbb{T}$ and $\mathbb{T}'$ be theories over $\Sigma$ and $\Sigma'$ respectively.
+Morphisms $f$ and $f'$ between $\mathbb{T}$ and $\mathbb{T}'$ are equivalent if and only if the following conditions hold:
 \begin{itemize}
-\item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ sequents
-\[ \sststile{}{\Gamma, x_1 : s_1, \ldots x_n : s_n} f(\Gamma, \sigma(x_1, \ldots x_n)) \cong f'(\Gamma, \sigma(x_1, \ldots x_n)) \]
-are theorems of $\mathcal{A}'$.
-\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ sequents
-\[ f(R(x_1, \ldots x_n)) \ssststile{}{x_1 : s_1, \ldots x_n : s_n} f'(R(x_1, \ldots x_n)) \]
-are theorems of $\mathcal{A}'$.
+\item For every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$ sequents
+\[ \sststile{}{\Gamma, x_1, \ldots x_k} f(\Gamma, \sigma(x_1, \ldots x_k)) \cong f'(\Gamma, \sigma(x_1, \ldots x_k)) \]
+are theorems of $\mathbb{T}'$.
+\item For every $R \in \mathcal{P}$, $R \neq E^n_p$, $R : s_1 \times \ldots \times s_k$ sequents
+\[ f(R(x_1, \ldots x_k)) \ssststile{}{x_1, \ldots x_k} f'(R(x_1, \ldots x_k)) \]
+are theorems of $\mathbb{T}'$.
 \end{itemize}
 \end{prop}
 \begin{proof}
 The ``only if'' direction is obvious.
 Let us prove the converse.
-First, we prove \eqref{mor-eq-a} for $t \in CTerm_\mathcal{F}(V)_s$ by induction on it.
+First, we prove \eqref{con-mor-eq-a} for $(\Gamma,t) \in CTerm_\mathcal{F}(V)_s$ by induction on $t$.
 If $t$ is a variable, then $f(t) = f'(t) = t$.
 If $t = \sigma(t_1, \ldots t_n)$, then $\sststile{}{V} f(t_i) \cong f(t'_i)$
 and $\sststile{}{x_1 : s_1, \ldots x_n : s_n} f(\sigma(x_1, \ldots x_n)) \cong f'(\sigma(x_1, \ldots x_n))$.
@@ -1146,45 +1146,10 @@ The same argument shows that $f'(t)\!\downarrow \land f'(\varphi) \sststile{}{V}
 
 \section{Functors between algebraic and contextual theories}
 
-In this section we construct fully faithful functors $C : \mathbb{T}_0/\ThT \to \CTh$ and $F : \CTh \to \mathbb{T}_0/\ThT$ which constitute an equivalence of categories.
+In this section we construct a fully faithful functor $F : \woCTh \to \mathbb{T}_0/\ThT$
+    from a full subcategory of the category of contextual Horn theories to the category of algebraic type theories.
 
-\subsection{Functor $C : \mathbb{T}_0/\ThT \to \CTh$}
-
-For every algebraic type theory $\mathbb{T} = ((\mathcal{T},\mathcal{F},\mathcal{P}),\mathcal{A})$ we define contextual theory $C(\mathbb{T})$.
-Theory $C(\mathbb{T})$ has the same function symbols and predicate symbols as $\mathbb{T}$ together with predicate symbols $E^n_p$.
-For every term $t$ of $\mathbb{T}$ we define a contextual term $C(t)$ of $C(\mathbb{T})$ as follows:
-\[ C(t) = 
-  \begin{cases}
-      (ft^n(t), \ldots ft(t), t) & \text{if } t : (ty,n) \\
-      (ft^n(ty(t)), \ldots ft(ty(t)), ty(t), t) & \text{if } t : (tm,n)
-  \end{cases}
-\]
-For every formula $\varphi$ of $\mathbb{T}$ we define a contextual formula $C(\varphi)$ of $C(\mathbb{T})$ as follows:
-\begin{align*}
-C(R(t_1, \ldots t_k)) & = R(t_1, \ldots t_k) \\
-C(t = t') & = (C(t) = C(t'))
-\end{align*}
-
-For every $\sigma \in \mathcal{F}$, context $D_i(A_1, \ldots A_n, \sigma(x_1, \ldots x_k))$ is defined as the context of $C(x)$.
-For every $R \in \mathcal{P}$, context $D_i(R(x_1, \ldots x_k))$ is defined as the context of $C(x)$.
-Axioms of $C(\mathbb{T})$ are sequents of the form $C(\varphi) \sststile{}{V} C(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$
-    together with sequent $\sststile{}{x} C(x) = C(x)$.
-
-\begin{lem}
-If $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $C(\varphi) \sststile{}{V} C(\psi)$ is a theorem of $C(\mathbb{T})$.
-\end{lem}
-\begin{proof}
-To prove tihs we need to show that $C(-)$ preserves inference rules.
-This is clearly true for rules \axref{b1}-\axref{b6}.
-This is true for \axref{a1} since we added corresponding axiom to $C(\mathbb{T})$.
-
-Note that $C(-)$ preserves substitution, that is $C(t[\rho]) = C(t)[\rho]$ and $C(\varphi[\rho]) = C(\varphi)[\rho]$ for every term $t$ and every formula $\varphi$.
-It follows that $C(-)$ preserves \axref{a2} by \axref{c2}.
-Note that for every every formula $\varphi$ of $C(\mathbb{T})$ and every variable $x$ the set $FCV_x(\varphi)$ consists of a single context.
-It follows that $C(-)$ preserves \axref{a3} by \axref{c3'}.
-\end{proof}
-
-\subsection{Functor $F : \woCTh \to \mathbb{T}_0/\ThT$}
+\subsection{From contextual to algebraic theories}
 
 We will need an additional assumption on contextual theories.
 We assume that there is a function $|-|$ that to each $\sigma \in \mathcal{F}$ assigns an ordinal $|\sigma|$ such that if some $\tau$ appears in $D_i(\sigma)$, then $|\tau| < |\sigma|$.
@@ -1199,6 +1164,7 @@ For every well-ordered contextual theory $\mathbb{T} = ((\mathcal{T},\mathcal{F}
 For every function symbols $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$,
     theory $F(\mathbb{T})$ has function symbol $\sigma : e(s) \times s_1 \times \ldots \times s_k \to s$,
     where $e(tm,n) = (ctx,n+1)$ and $e(ty,n) = (ctx,n)$.
+Also $F(\mathbb{T})$ has function symbols of $\mathbb{T}_0$.
 The set of predicate symbols of $F(\mathbb{T})$ equals to $\mathcal{P}$ without symbols $E^n_p$.
 
 For every (partial) contextual term $w$ of $\mathbb{T}$ we define a partial term $F(w)$ of $F(\mathbb{T})$ of the same sort as $w$.
@@ -1220,12 +1186,14 @@ F(R(t_1, \ldots t_k)) & = R(t_1', \ldots t_k') \text{, where $t_i' = F(D_i(R(t_1
 \end{align*}
 For every partial contextual term $t|_\varphi$, we let $F(t|_\varphi)$ to be equal to $F(t)|_{F(\varphi)}$.
 
-Axioms of $F(\mathbb{T})$ are sequents of the form $F(\varphi) \sststile{}{V} F(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$ together with the following sequents:
+Axioms of $F(\mathbb{T})$ are axioms of $\mathbb{T}_0$, sequents of the form $F(\varphi) \sststile{}{V} F(\psi)$
+    for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$, and the following sequents:
 \begin{align*}
-\sigma(\Gamma, x_1, \ldots x_k) \downarrow & \sststile{}{\Gamma, x_1, \ldots x_k} e(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma \axtag{f1} \\
-\sigma(\Gamma, x_1, \ldots x_k) \downarrow & \sststile{}{\Gamma, x_1, \ldots x_k} e(x_i) = F(D_i(\Delta, \sigma(x_1, \ldots x_k)))[\rho] \axtag{f2}
+\sigma(\Gamma, x_1, \ldots x_k)\!\downarrow & \sststile{}{\Gamma, x_1, \ldots x_k} e(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma \axtag{f1} \\
+\sigma(\Gamma, x_1, \ldots x_k)\!\downarrow & \sststile{}{\Gamma, x_1, \ldots x_k} e(x_i) = F(D_i(\Delta, \sigma(x_1, \ldots x_k)))[\rho] \axtag{f2} \\
+R(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} e(x_i) = F(D_i(R(x_1, \ldots x_k))) \axtag{f3}
 \end{align*}
-where $\Delta = y_1, \ldots y_n$ for some fresh variables $y_1, \ldots t_n$, and $\rho(y_i) = ft^{n-i}(\Gamma)$.
+where $\Delta = y_1, \ldots y_n$ for some fresh variables $y_1, \ldots y_n$, and $\rho(y_i) = ft^{n-i}(\Gamma)$.
 Here, if $t$ has sort $(tm,n)$, then $e(t) = ty(t)$, and if $t$ has sort $(ctx,n+1)$, then $e(t) = ft(t)$.
 
 To show that $F$ is a functor we need to establish a few technical lemmas.
@@ -1310,7 +1278,7 @@ By \rlem{F-e}, $F(A_1[\rho], \ldots A_n[\rho], \allowbreak t[\rho]) \sststile{}{
 Hence sequent $\sststile{}{V} F(A_1, \ldots A_n, t)[\rho'] \cong F((A_1, \ldots A_n, t)[\rho])$ is derivable.
 \end{proof}
 
-\begin{prop}
+\begin{prop}[F-ax]
 If $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $F(\varphi) \sststile{}{V} F(\psi)$ is a theorem of $F(\mathbb{T})$.
 \end{prop}
 \begin{proof}
@@ -1334,6 +1302,71 @@ In particular, $F(\Gamma,x)\!\downarrow\ \sststile{}{V} e(x) = F(\Gamma)$.
 Axiom \axref{c6} follows by transitivity.
 To prove that \axref{c2} holds, note that $F(\Gamma,x) = F(\Gamma,y) \sststile{}{V} x = y$ and $F(\varphi[y/x]) = F(\varphi)[y/x]$.
 Then \axref{c2} follows from \axref{a2}.
+\end{proof}
+
+Now, we can show how $F$ is defined on morphisms.
+If $f : \mathbb{T} \to \mathbb{T}'$ is a premorphism of contextual theories, then we define a morphism $F(f)$ of theories $F(\mathbb{T})$ and $F(\mathbb{T}')$.
+By \rprop{mor-def}, the following equalities uniquely define a morphism of signatures:
+\begin{align*}
+F(f)(*) & = * \\
+F(f)(ty(x)) & = ty(x) \\
+F(f)(ft(x)) & = ft(x) \\
+F(f)(\sigma(\Gamma, y_1, \ldots y_k)) & = F(f(x_1, \ldots x_n, \sigma(y_1, \ldots y_k)))|_{\Gamma\downarrow}[x_i \mapsto ft^{n-i}(\Gamma)] \\
+F(f)(R(x_1, \ldots x_k)) & = F(f(R(x_1, \ldots x_k)))
+\end{align*}
+Propositions \nprop{mor-eq} and \nprop{F-ax} imply that if $f$ and $f'$ are equivalent, then $F(f)$ and $F(f')$ are also equivalent.
+Thus $F$ is well-defined on morphisms of contextual theories.
+
+\begin{lem}
+For every partial contextual term $t$, every contextual formula $\varphi$, and every premorphism of theories $f$,
+    sequents $\sststile{}{V} F(f)(F(t)) \cong F(f(t))$ and $F(f)(F(\varphi)) \ssststile{}{V} F(f(\varphi))$ are derivable.
+\end{lem}
+\begin{proof}
+First, let us prove that for every contextual term $(\Gamma,t)$, sequents $\sststile{}{V} F(f)(F(\Gamma,t)) \cong F(f(\Gamma,t))$ are derivable.
+We do this by induction on $|(\Gamma,t)|$.
+\end{proof}
+
+\begin{lem}
+$F$ is a functor.
+\end{lem}
+\begin{proof}
+TODO: We need to check that $F(f)$ preserves axioms and that $F$ preserves identity and composition.
+\end{proof}
+
+\subsection{From algebraic to contextual theories}
+
+To prove that $F$ is fully faithful, we need to describe a construction of contextual terms and formulae from algebraic ones.
+For every algebraic type theory $\mathbb{T} = ((\mathcal{T},\mathcal{F},\mathcal{P}),\mathcal{A})$ we define contextual theory $C(\mathbb{T})$.
+Theory $C(\mathbb{T})$ has the same function symbols and predicate symbols as $\mathbb{T}$ together with predicate symbols $E^n_p$.
+For every term $t$ of $\mathbb{T}$ we define a contextual term $C(t)$ of $C(\mathbb{T})$ as follows:
+\[ C(t) =
+  \begin{cases}
+      (ft^n(t), \ldots ft(t), t) & \text{if } t : (ty,n) \\
+      (ft^n(ty(t)), \ldots ft(ty(t)), ty(t), t) & \text{if } t : (tm,n)
+  \end{cases}
+\]
+For every formula $\varphi$ of $\mathbb{T}$ we define a contextual formula $C(\varphi)$ of $C(\mathbb{T})$ as follows:
+\begin{align*}
+C(R(t_1, \ldots t_k)) & = R(t_1, \ldots t_k) \\
+C(t = t') & = (C(t) = C(t'))
+\end{align*}
+
+For every $\sigma \in \mathcal{F}$ and $R \in \mathcal{P}$, contexts $D_i(A_1, \ldots A_n, \sigma(x_1, \ldots x_k))$ and $D_i(R(x_1, \ldots x_k))$ are defined as the context of $C(x_i)$.
+Axioms of $C(\mathbb{T})$ are sequents of the form $C(\varphi) \sststile{}{V} C(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$
+    together with sequent $\sststile{}{x} C(x) = C(x)$.
+
+\begin{lem}
+If $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $C(\varphi) \sststile{}{V} C(\psi)$ is a theorem of $C(\mathbb{T})$.
+\end{lem}
+\begin{proof}
+To prove tihs we need to show that $C(-)$ preserves inference rules.
+This is clearly true for rules \axref{b1}-\axref{b6}.
+This is true for \axref{a1} since we added corresponding axiom to $C(\mathbb{T})$.
+
+Note that $C(-)$ preserves substitution, that is $C(t[\rho]) = C(t)[\rho]$ and $C(\varphi[\rho]) = C(\varphi)[\rho]$ for every term $t$ and every formula $\varphi$.
+It follows that $C(-)$ preserves \axref{a2} by \axref{c2}.
+Note that for every every formula $\varphi$ of $C(\mathbb{T})$ and every variable $x$ the set $FCV_x(\varphi)$ consists of a single context.
+It follows that $C(-)$ preserves \axref{a3} by \axref{c3'}.
 \end{proof}
 
 \label{sec:T1}
