@@ -1243,21 +1243,6 @@ For every $(A_1, \ldots A_n, t) \in CTerm_\Sigma(V)$, $F(A_1, \ldots A_n, t) = F
 This follows immediately from the definition of $F$.
 \end{proof}
 
-\begin{comment}
-The following lemma allows us to prove properties of $F(\Gamma,t)$ by induction on $t$.
-
-\begin{lem}[F-char]
-The following sequents are derivable:
-\begin{itemize}
-\item $\sststile{}{V} F(\Gamma,x) \cong x|_{e(x) = F(\Gamma)}$.
-\item $\sststile{}{V} F(\Gamma,\sigma(t_1, \ldots t_k)) \cong \sigma(F(\Gamma), t_1', \ldots t_k')$,
-    where for each $1 \leq i \leq k$, $t_i' = F(D_i(\Gamma, \sigma(t_1, \ldots t_k)), t_i)$.
-\end{itemize}
-\end{lem}
-\begin{proof}
-\end{proof}
-\end{comment}
-
 \begin{lem}[F-e]
 For every $(\Gamma,t) \in CTerm_\Sigma(V)$, sequent $F(\Gamma,t)\!\downarrow\ \sststile{}{V} e(F(\Gamma,t)) = F(\Gamma)$ is a theorem of $F(\mathbb{T})$.
 \end{lem}
@@ -1275,53 +1260,54 @@ The claim follows by transitivity.
 The following propositions show that $F$ preserves substitution and inference rules.
 
 \begin{prop}[F-subst]
-For every $(\Gamma,t),(\Gamma',t') \in CTerm_\Sigma(V)$ and $x \in V$,
-    sequents $\sststile{}{V} F(\Gamma,t)[F(\Gamma',t')/x] \cong F((\Gamma,t)[(\Gamma',t')/x])$ are theorems of $F(\mathbb{T})$.
+For every $(\Gamma,t) \in CTerm_\Sigma(U)$ and every partial function $\rho : U \to CTerm_\Sigma(V)$,
+    sequents $\sststile{}{V} F(\Gamma,t)[x \mapsto F(\rho(x))] \cong F((\Gamma,t)[\rho])$ are theorems of $F(\mathbb{T})$.
 \end{prop}
 \begin{proof}
 The proof is by induction on $|t|$.
+Let us write $\rho'$ for the following partial function: $\rho'(x) = F(\rho(x))$
 First, let us prove that for every $(\Gamma,t)$ such that $F'(\Gamma,t)$ is defined,
-    sequents $\sststile{}{V} F'(\Gamma,t)[F(\Gamma',t')/x] \cong F((\Gamma,t)[(\Gamma',t')/x])$ are derivable.
-Let us denote $\Gamma[(\Gamma',t')/x]$ by $\Gamma''$.
+    sequents $\sststile{}{V} F'(\Gamma,t)[\rho'] \cong F((\Gamma,t)[\rho])$ are derivable.
 
 If $t$ is a varaible, then $F'(\Gamma,t) = t|_{e(t) = F(\Gamma)}$.
 By \rlem{F-basic}~\eqref{F-F'} and \rlem{F-e}, $\sststile{}{V} F(\Gamma,t) \cong F'(x_1, \ldots x_n, t)[x_i \mapsto ft^{n-i}(F(\Gamma))]$ is derivable for every $t$.
 It follows that $\sststile{}{V} F(\Gamma,t) \cong t|_{e(t) = F(\Gamma)}$ is derivable if $t$ is a variable.
-If $t \neq x$, then $F'(\Gamma,t)[F(\Gamma',t')/x] = t|_{e(t) = F(\Gamma)[F(\Gamma',t')/x]}$ and
-    $\sststile{}{V} F((\Gamma,t)[(\Gamma',t')/x]) \cong t|_{e(t) = F(\Gamma'')}$.
+If $\rho(t)$ is not defined, then $F'(\Gamma,t)[\rho'] = t|_{e(t) = F(\Gamma)[\rho']}$ and $\sststile{}{V} F((\Gamma,t)[\rho]) \cong t|_{e(t) = F(\Gamma[\rho])}$.
 Thus the assertion holds by induction hypothesis.
 
-If $t = x$, then on the one hand
-\[ F((\Gamma,x)[(\Gamma',t')/x]) = F((\Gamma'',t')|_{\Gamma'' = \Gamma'}) = F(\Gamma'',t')|_{F(\Gamma'' = \Gamma')}. \]
+If $\rho(t) = (\Gamma',t')$, then on the one hand
+\[ F((\Gamma,t)[\rho]) = F((\Gamma[\rho],t')|_{\Gamma[\rho] = \Gamma'}) = F(\Gamma[\rho],t')|_{F(\Gamma[\rho] = \Gamma')}. \]
 On the other hand,
-\[ F'(\Gamma,x)[F(\Gamma',t')/x] = F(\Gamma',t')|_{e(F(\Gamma',t')) = F(\Gamma)[F(\Gamma',t')/x]}. \]
-Hence $\sststile{}{V} F'(\Gamma,x)[F(\Gamma',t')/x] \cong F(\Gamma',t')|_{F(\Gamma') = F(\Gamma)[F(\Gamma',t')/x]}$.
-By induction hypothesis $\sststile{}{V} F'(\Gamma,x)[F(\Gamma',t')/x] \cong F(\Gamma',t')|_{F(\Gamma'') = F(\Gamma')}$.
-To prove that partial terms $F(\Gamma'',t')|_{F(\Gamma'' = \Gamma')}$ and $F(\Gamma',t')|_{F(\Gamma'') = F(\Gamma')}$ are equivalent,
-    we need to show that $F(\Gamma'' = \Gamma')$ and $F(\Gamma'') = F(\Gamma')$ are equivalent and
-    that $F(\Gamma'',t')\!\downarrow \land F(\Gamma'') = F(\Gamma') \sststile{}{V} F(\Gamma'',t') = F(\Gamma',t')$.
-First, note that by \rlem{F-e}, $F(A_1, \ldots A_n) = F(A_1', \ldots A_n') \sststile{}{V} F(A_1, \ldots A_i) = F(A_1', \ldots A_i')$ for every $i \leq n$.
+\[ F'(\Gamma,t)[\rho'] = F(\Gamma',t')|_{e(F(\Gamma',t')) = F(\Gamma)[\rho']}. \]
+Hence $\sststile{}{V} F'(\Gamma,t)[\rho'] \cong F(\Gamma',t')|_{F(\Gamma') = F(\Gamma)[\rho']}$.
+By induction hypothesis $\sststile{}{V} F'(\Gamma,t)[\rho'] \cong F(\Gamma',t')|_{F(\Gamma[\rho]) = F(\Gamma')}$.
+To prove that partial terms $F(\Gamma[\rho],t')|_{F(\Gamma[\rho] = \Gamma')}$ and $F(\Gamma',t')|_{F(\Gamma[\rho]) = F(\Gamma')}$ are equivalent,
+    we need to show that $F(\Gamma[\rho] = \Gamma')$ and $F(\Gamma[\rho]) = F(\Gamma')$ are equivalent and that
+    $F(\Gamma[\rho],t')\!\downarrow \land\ F(\Gamma[\rho]) = F(\Gamma') \sststile{}{V} F(\Gamma[\rho],t') = F(\Gamma',t')$.
+First, note that by \rlem{F-e}, $F(A_1, \ldots A_n) = F(A_1', \ldots A_n') \allowbreak \sststile{}{V} F(A_1, \ldots A_i) = F(A_1', \ldots A_i')$ for every $i \leq n$.
 The second assertion now follows from \rlem{F-basic}~\eqref{F-F'}.
 The first assertion follows from the second one.
 
 Now, let us consider the case $t = \sigma(t_1, \ldots t_k)$.
 On the one hand,
-\[ F'(\Gamma,t)[F(\Gamma',t')/x] = \sigma(F(\Gamma)[F(\Gamma',t')/x], t_1', \ldots t_k'), \]
-    where $t_i' = F'(D_i(\Gamma, \sigma(y_1, \ldots y_k)), t_i)[F(\Gamma',t')/x][y_1 \mapsto t_1', \ldots y_{i-1} \mapsto t_{i-1}']$.
-On the other hand,
-\[ F((\Gamma,t)[(\Gamma',t')/x]) = F(\Gamma'',t[(\Gamma',t')/x]), \]
-By \rlem{F-basic}~\eqref{F-F'}, \rlem{F-e} and induction hypothesis,
-\[ \sststile{}{V} F(\Gamma'',t[(\Gamma',t')/x]) \cong \sigma(F(\Gamma''), t_1'', \ldots t_k''), \]
-    where $t_i'' = F'(D_i(\Gamma, \sigma(y_1, \ldots y_k)), t_i[(\Gamma',t')/x])[y_1 \mapsto t_1'', \ldots y_{i-1} \mapsto t_{i-1}'']$.
+\[ F'(\Gamma,t)[\rho'] = \sigma(F(\Gamma)[\rho'], t_1', \ldots t_k'), \]
+    where $t_i' = F'(D_i(\Gamma, \sigma(y_1, \ldots y_k)), t_i)[\rho'][y_1 \mapsto t_1', \ldots y_{i-1} \mapsto t_{i-1}']$.
+On the other hand, by \rlem{F-basic}~\eqref{F-F'}, \rlem{F-e} and induction hypothesis,
+\[ \sststile{}{V} F((\Gamma,t)[\rho]) \cong \sigma(F(\Gamma[\rho]), t_1'', \ldots t_k''), \]
+    where $t_i'' = F'(D_i(\Gamma[\rho], \sigma(y_1, \ldots y_k)), t_i[\rho])[y_1 \mapsto t_1'', \ldots y_{i-1} \mapsto t_{i-1}'']$.
 By induction hypothesis, sequents $\sststile{}{V} t_i' \cong t_i''$ are derivable.
-Thus we proved that sequents $\sststile{}{V} F'(\Gamma,t)[F(\Gamma',t')/x] \cong F((\Gamma,t)[(\Gamma',t')/x])$ are derivable.
+Thus we proved that sequents $\sststile{}{V} F'(\Gamma,t)[\rho'] \cong F((\Gamma,t)[\rho])$ are derivable.
 
 Now, we can finish the proof of the proposition.
 We do this by induction on the length of $\Gamma$.
-By \rlem{F-basic}~\eqref{F-F'}, we have $F(A_1, \ldots A_n, t) = F'(x_1, \ldots x_n, t)[x_1 \mapsto F(A_1)] \ldots [x_n \mapsto F(A_1, \ldots A_n)]$.
-Hence $\sststile{}{V} F(A_1, \ldots A_n, t)[F(\Gamma',t')/x] \cong F(x_1, \ldots x_n, t[(\Gamma',t')/x])[x_1 \mapsto F(A_1[(\Gamma',t')/x])] \ldots [x_n \mapsto F(A_1[(\Gamma',t')/x], \ldots A_n[(\Gamma',t')/x])]$.
-For every $x_1$, \ldots $x_n$ and $t$, we have $\sststile{}{V} F(x_1, \ldots x_n, t) \cong F'(x_1, \ldots x_n, t)|_{ty(x_n) = x_{n-1} \land \ldots \land ty(x_2) = x_1}$.
-Thus $\sststile{}{V} F(A_1, \ldots A_n, t)[F(\Gamma',t')/x] \cong F(x_1, \ldots A_n[(\Gamma',t')/x], t[(\Gamma',t')/x]) \ldots [x_1 \mapsto F'(A_1[(\Gamma',t')/x])]$.
+By \rlem{F-basic}~\eqref{F-F'} and induction hypothesis, we have
+$\sststile{}{V} F(A_1, \ldots A_n, t)[\rho'] \cong F(x_1, \ldots x_n, t[\rho])[x_1 \mapsto F(A_1[\rho]), \ldots x_n \mapsto F(A_1[\rho], \ldots A_n[\rho])]$.
+For every $x_1$, \ldots $x_n$ and $t$, we have
+\[ \sststile{}{V} F(x_1, \ldots x_n, t) \cong F'(x_1, \ldots x_n, t)|_{ty(x_n) = x_{n-1} \land \ldots \land ty(x_2) = x_1}. \]
+Thus $\sststile{}{V} F(A_1, \ldots A_n, t)[\rho'] \cong F(A_1[\rho], \ldots A_n[\rho], t[\rho])|_{\varphi_{n-1} \land \ldots \land \varphi_1}$,
+    where $\varphi_i$ equals to $ty(F(A_1[\rho], \ldots A_{i+1}[\rho])) = F(A_1[\rho], \ldots A_i[\rho])$.
+By \rlem{F-e}, $F(A_1[\rho], \ldots A_n[\rho], \allowbreak t[\rho]) \sststile{}{V} \varphi_i$ for every $1 \leq i \leq n-1$.
+Hence sequent $\sststile{}{V} F(A_1, \ldots A_n, t)[\rho'] \cong F((A_1, \ldots A_n, t)[\rho])$ is derivable.
 \end{proof}
 
 \begin{prop}
