@@ -247,8 +247,8 @@ x[\rho] & = \rho(x) \\
 \sigma(a_1, \ldots a_k)[\rho] & = \sigma(a_1[\rho], \ldots a_k[\rho])
 \end{align*}
 
-An \emph{atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t_1 = t_2$ where $t_1, t_2 \in Term_\Sigma(V)_s$ for some sort $s$
-or of the form $R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in Term_\Sigma(V)_{s_i}$.
+An \emph{atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t_1 = t_2$, where $t_1, t_2 \in Term_\Sigma(V)_s$ for some sort $s$,
+    or of the form $R(t_1, \ldots t_n)$, where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in Term_\Sigma(V)_{s_i}$.
 A \emph{Horn formula} over $\Sigma$ with free variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulae.
 The set of Horn formulae over $\Sigma$ with free variables in $V$ is denoted by $Form_\Sigma(V)$.
 If $n = 0$, then we write such a formula as $\top$.
@@ -349,7 +349,7 @@ Conditions \eqref{mor-sig-a-subst} and $\eqref{mor-sig-b-subst}$ are easy to che
 
 \subsection{The category of algebraic theories}
 
-A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are Horn formulae over $\Sigma$ with free variables in $V$.
+A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$, where $\varphi$ and $\psi$ are Horn formulae over $\Sigma$ with free variables in $V$.
 We will often write $\varphi_1, \ldots \varphi_n \sststile{}{V} \psi_1, \ldots \psi_k$ insted of $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi_1 \land \ldots \land \psi_k$.
 We will use the following abbreviations:
 \begin{align*}
@@ -767,66 +767,71 @@ A \emph{context} of length $n$ is a sequence of terms of sorts $(ty,0)$, \ldots 
 Contexts are usually denoted by greek letters $\Gamma$ and $\Delta$.
 The set of contexts of length $n$ with free variables in $V$ will be denoted by $Ctx^n_\mathcal{F}(V)$.
 
-Let $\Sigma = (\mathcal{T}, \mathcal{F}, \mathcal{P})$ be a signature.
-Then a \emph{contextual atomic formula} over $\Sigma$ with free variables in $V$ is an expression of the form 
-$R(t_1, \ldots t_n)$ where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$, and $t_i$ is a term of sort $s_i$.
-We will assume that $\mathcal{P}$ contains symbols for the equality $E^n_p$ such that
-\[ E^n_p : (ty,0) \times \ldots \times (ty,d(p,n)-1) \times (p,n) \times (p,n) \]
-Contextual Horn formulae and sequents are defined as before.
-The set of contextual Horn formulae with free varibles in $V$ will be denoted by $CForm_\Sigma(V)$.
-We will use the following notation:
-\begin{align*}
-A_1, \ldots A_n \vdash A \deq A' & \text{ means } E^n_{ty}(A_1, \ldots A_n, A, A') \\
-A_1, \ldots A_n \vdash a \deq a' : A & \text{ means } E^n_{tm}(A_1, \ldots A_n, A, a, a') \\
-\Gamma \vdash A & \text{ means } \Gamma \vdash A \deq A \\
-\Gamma \vdash a : A & \text{ means } \Gamma \vdash a \deq a : A \\
-(A_1, \ldots A_n) = (B_1, \ldots B_n) & \text{ means } \bigwedge\limits_{1 \leq i \leq n} A_1, \ldots A_{i-1} \vdash A_i \equiv B_i \\
-\Gamma \vdash & \text{ means } \Gamma = \Gamma
-\end{align*}
-
+Let $\Sigma = (\mathcal{T}, \mathcal{F}, \mathcal{P})$ be a signature, $V \in \Set^\mathcal{T}$, and $s \in \mathcal{T}$.
+First, if $(p,n) \in \mathcal{T}$, then let $d(p,n) = n$ if $p = ty$ and $d(p,n) = n+1$ if $p = tm$.
 A \emph{contextual term} of sort $s$ with free variables in $V$ is a pair $(\Gamma,t)$ where $\Gamma$ is a context of length $d(s)$ and $t$ is a term of sort $s$.
 The set of such terms will be denoted by $CTerm_\mathcal{F}(V)_s$.
+
+A \emph{contextual atomic formula} over $\Sigma$ with free variables in $V$ is an expression either of the form $t = t'$, where $t,t' \in CTerm_\mathcal{F}(V)_s$,
+    or of the form $R(t_1, \ldots t_n)$, where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$, and $t_i \in CTerm_\mathcal{F}(V)_{s_i}$.
+Contextual Horn formulae are defined as before.
+The set of contextual Horn formulae with free varibles in $V$ will be denoted by $CForm_\Sigma(V)$.
+
+A \emph{contextual Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$,
+    where $\varphi$ and $\psi$ are Horn formulae over $\Sigma$ with free variables in $\mathbb{T}_0(V)$.
+Here $\mathbb{T}_0(V)$ is the underlying $\mathcal{T}$-set of the free $\mathbb{T}_0$ model on $V$.
 A \emph{partial contextual term} of sort $s$ with free variables in $V$ is an expression of the form $t|_\varphi$,
 where $t \in CTerm_\mathcal{F}(V)_s$ and $\varphi \in CForm_\Sigma(V)$.
 The set of such terms will be denoted by $PCTerm_\Sigma(V)_s$.
-Let $(\Gamma,t)|_\varphi$ and $(\Gamma',t')|_{\varphi'}$ be partial contextual terms of sort $(p,n)$.
-Then we will use the following notation:
+
+In order to define substituion operations on contextual terms and formulae, we need to introduce an additional structure on the set of function symbols.
+For each $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$ and each $1 \leq i \leq k$,
+    let $D_i(\sigma)$ be a context of length $d(s_i)$ with free variables $\{\ x_j : (ty,j)\ |\ 1 \leq j \leq d(s)\ \} \cup \{\ y_j : s_j\ |\ 1 \leq j \leq k\ \}$.
+We will denote such context as $D_i(x_1, \ldots x_{d(s)}, \sigma(y_1, \ldots y_k))$.
+The idea is that $D_i(\sigma)$ should be a context in which $y_i$ is typeable if $\sigma(y_1, \ldots y_k)$ is typeable in context $x_1, \ldots x_{d(s)}$.
+
+We will need two kinds of substitution, the first of which is a substitution of ordinary terms.
+If \todo{Replace with PTerm?} $\rho : V \to Term_\Sigma(V')$ is a function, then
 \begin{align*}
-(\Gamma,t) = (\Gamma',t') \text{ means } & \Gamma = \Gamma' \land E^p_n(\Gamma,t,t') \\
-(\Gamma,t)|_\varphi = (\Gamma',t')_{\varphi'} \text{ means } & \Gamma = \Gamma' \land E^p_n(\Gamma,t,t') \land \varphi \land \varphi' \\
-(\Gamma,t) \downarrow \text{ means } & E^p_n(\Gamma,t,t) \\
-(\Gamma,t)|_\varphi \downarrow \text{ means } & E^p_n(\Gamma,t,t) \land \varphi \\
-\psi \sststile{}{V} (\Gamma,t) \cong (\Gamma',t') \text{ means } & \psi \land (\Gamma,t)\!\downarrow\,\sststile{}{V} (\Gamma,t) = (\Gamma',t') \\
-    \text{ and } & \psi \land (\Gamma',t')\!\downarrow\,\sststile{}{V} (\Gamma,t) = (\Gamma',t') \\
-\psi \sststile{}{V} (\Gamma,t)|_\varphi \cong (\Gamma',t')|_{\varphi'} \text{ means } & \psi \land (\Gamma,t)|_\varphi\!\downarrow\,\sststile{}{V} (\Gamma,t) = (\Gamma',t') \land \varphi' \\
-    \text{ and } & \psi \land (\Gamma',t')|_{\varphi'}\!\downarrow\,\sststile{}{V} (\Gamma,t) = (\Gamma',t') \land \varphi
+(A_1, \ldots A_n, t)[\rho] & = (A_1[\rho], \ldots A_n[\rho], t[\rho]) \\
+R(t_1, \ldots t_k)[\rho] & = R(t_1[\rho], \ldots t_k[\rho]) \\
+(\varphi_1 \land \ldots \land \varphi_k)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_k[\rho] \\
+(\Gamma,t)|_\varphi[\rho] & = (\Gamma,t)[\rho]|_{\varphi[\rho]}
 \end{align*}
 
-In order to define syntactic theories over $\mathcal{F}$, we need to introduce an additional structure on this set.
-First, if $(p,n) \in \mathcal{T}$, then let $d(p,n) = n$ if $p = ty$ and $d(p,n) = n+1$ if $p = tm$.
-Now, for each $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and each $1 \leq i \leq k$,
-let $D_i(\sigma)$ be a context of length $d(p_i,n_i)$ with free variables $\{\ A_j : (ty,j)\ |\ 1 \leq j \leq d(p,n)\ \} \cup \{\ x_j : (p_j,n_j)\ |\ 1 \leq j \leq k\ \}$.
-We will denote such context as $D_i(A_1, \ldots A_{d(p,n)}, \sigma(x_1, \ldots x_k))$.
-The idea is that $D_i(\sigma)$ should be a context in which $x_i$ is typeable if $\sigma(x_1, \ldots x_k)$ is typeable in context $A_1, \ldots A_{d(p,n)}$.
-For each $R \in \mathcal{P}$, $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ and each $1 \leq i \leq k$,
-let $D_i(R)$ be a context of length $d(p_i,n_i)$ with free variables $\{\ x_j : (p_j,n_j)\ |\ 1 \leq j \leq k\ \}$.
-We will denote such context as $D_i(R(x_1, \ldots x_k))$.
-If $R = E^n_p$, then it should be defined as follows:
-\[ D_i(E^n_p(A_1, \ldots A_{d(p,n)}, x, x')) =
+Let $\sigma$ be a function symbol such that $\sigma : s_1 \times \ldots \times s_k \to s$.
+Let $\Gamma = A_1, \ldots A_{d(s)}$ be a context with free variables in $V$, and let $t_i$ be terms of sorts $s_i$ with free variables in $V$ for each $1 \leq i \leq k$.
+Then we write $D_i(\Gamma, \sigma(t_1, \ldots t_k))$ for a context of length $d(s_i)$ with free variables in $V$ defined as follows:
+\[ D_i(\Gamma, \sigma(t_1, \ldots t_k)) = D_i(x_1, \ldots x_{d(s)}, \sigma(y_1, \ldots y_k))[x_i \mapsto A_i, y_j \mapsto t_j] \]
+
+For each variable $x \in V_s$, we define context $D(x)$ of length $d(s)$ with free variables in $\mathbb{T}_0(V)$:
+\[ D(x) = 
   \begin{cases}
-      A_1, \ldots A_{i-1} & \text{if } 1 \leq i \leq d(p,n) \\
-      A_1, \ldots A_{d(p,n)} & \text{if } d(p,n) < i \leq d(p,n) + 2
+      ft^n(x), \ldots ft(x) & \text{if } s = (ty,n) \\
+      ft^n(ty(x)), \ldots ft(ty(x)), ty(x) & \text{if } s = (tm,n)
   \end{cases}
 \]
 
-For every contextual term $t$, contextual formula $\varphi$ and every partial contextual term $t|_\varphi$,
-we define their sets of \emph{free contextual variables} $FCV(t)$, $FCV(\varphi)$ and $FCV(t|_\varphi)$.
-These sets consist of pairs $(\Gamma,x)$, where $x$ is a variable of a sort $s$ and $\Gamma$ is a context of length $d(s)$.
+Let $V$ be a $\mathcal{T}$-set
+Then for every term $t$ of sort $s$ and context $\Gamma$ of length $d(s)$ with free variables in $\mathbb{T}_0(V)$,
+    we define the set $FCV_1(\Gamma,t)$ of \emph{free contextual variables} of $t$ in context $\Gamma$.
+This set consist of pairs $(\Gamma,x)$, where $x \in V_{s'}$ for some $s'$, and $\Gamma$ is a context of length $d(s')$.
 \begin{align*}
-FCV(\Gamma,x) & = \{ (\Gamma,x) \} \\
-FCV(\Gamma, \sigma(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} FCV(D_i(\Gamma,\sigma(t_1, \ldots t_k)), t_i) \\
+FCV_1(\Gamma,x) & =
+    \begin{cases}
+        \{ (\Gamma,x) \} & \text{if } x \in V \text{ and } \Gamma \neq D(x) \\
+        \varnothing & \text{otherwise}
+    \end{cases} \\
+FCV_1(\Gamma, \sigma(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} FCV_1(D_i(\Gamma,\sigma(t_1, \ldots t_k)), t_i)
+\end{align*}
+
+For every $\mathcal{T}$-set $V$, contextual term $t$, contextual formula $\varphi$ and partial contextual term $t|_\varphi$ with free variables in $\mathbb{T}_0(V)$,
+    we define their sets of free contextual variables $FCV(t)$, $FCV(\varphi)$ and $FCV(t|_\varphi)$:
+\begin{align*}
+FCV(A_1, \ldots A_n, t) & = \bigcup_{1 \leq i \leq n} FCV_1(A_1, \ldots A_i) \cup FCV_1(A_1, \ldots A_n, t) \\
 FCV(\varphi_1 \land \ldots \land \varphi_k) & = \bigcup_{1 \leq i \leq k} FCV(\varphi_i) \\
-FCV(R(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} FCV(D_i(R(t_1, \ldots t_k)), t_i) \\
+FCV(R(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} FCV(t_i) \\
+FCV(t = t') & = FCV(t) \cup FCV(t') \\
 FCV(t|_\varphi) & = FCV(t) \cup FCV(\varphi)
 \end{align*}
 Sometimes we will consider $FCV(a)$ as a finite sequence (rather than a set) of contextual variables.
@@ -834,30 +839,11 @@ In this case the definition is the same as above, where $\cup$ is considered as 
 If $x$ is a variable, then let $FCV_x(a)$ be the set of contexts $\Gamma$ such that $(\Gamma,x) \in FCV(a)$,
 where $a$ is either a contextual term, a contextual formula, or a partial contextual term.
 
-We will need two kinds of substitution: substitution of terms and of contextual terms.
-The latter is defined in terms of the former.
+Now, we can define the second kind of substitution.
 Let $\rho : V \to PCTerm_\Sigma(V')$ be a partial function, $\rho(x) = (\Gamma_x,t_x)|_{\varphi_x}$.
 Then we let $a[\rho] = a[\rho']|_\psi$ if $a$ is a (partial) term, and $a[\rho] = a[\rho'] \land \psi$ if $a$ is a formula,
-where $\rho'(x) = t_x|_{\varphi_x}$ and $\psi = \bigwedge\limits_{(\Gamma,x) \in FCV(a), \rho(x) \text{ is defined}} \Gamma[\rho'] = \Gamma_x$
-(here $FCV(a)$ is considered as a sequence).
-
-The former is easily defined in terms of the substituion for ordinary terms.
-If \todo{Replace with PTerm?} $\rho : V \to Term_\Sigma(V')$ is a (partial) function, then
-\begin{align*}
-(A_1, \ldots A_n, t)[\rho] & = (A_1[\rho], \ldots A_n[\rho], t[\rho]) \\
-R(t_1, \ldots t_n)[\rho] & = R(t_1[\rho], \ldots t_n[\rho]) \\
-(\varphi_1 \land \ldots \land \varphi_n)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho] \\
-(\Gamma,t)|_\varphi[\rho] & = (\Gamma,t)[\rho]|_{\varphi[\rho]}
-\end{align*}
-
-Let $\sigma$ be a function symbol such that $\sigma : s_1 \times \ldots \times s_k \to s$.
-Let $\Gamma = B_1, \ldots B_{d(s)}$ be a context with free variables in $V$, and let $t_i$ be terms of sorts $s_i$ with free variables in $V$ for each $1 \leq i \leq k$.
-Then we write $D_i(\Gamma, \sigma(t_1, \ldots t_k))$ for a context of length $d(s_i)$ with free variables in $V$ defined as follows:
-\[ D_i(\Gamma, \sigma(t_1, \ldots t_k)) = D_i(A_1, \ldots A_{d(s)}, \sigma(x_1, \ldots x_k))[A_i \mapsto B_i, x_j \mapsto t_j] \]
-Let $R$ be a predicate symbol such that $R : s_1 \times \ldots \times s_k$.
-Let $t_i$ be terms of sorts $s_i$ with free variables in $V$ for each $1 \leq i \leq k$.
-Then we write $D_i(R(t_1, \ldots t_k))$ for a context of length $d(s_i)$ with free variables in $V$ defined as follows:
-\[ D_i(R(t_1, \ldots t_k)) = D_i(R(x_1, \ldots x_k))[x_j \mapsto t_j] \]
+    where $\rho'(x) = t_x|_{\varphi_x}$ and $\psi = \bigwedge\limits_{(\Gamma,x) \in FCV(a), \rho(x) \text{ is defined}} \Gamma[\rho'] = \Gamma_x$
+    (here $FCV(a)$ is considered as a sequence).
 
 A \emph{contextual Horn theory} in a signature $\Sigma = (\mathcal{T}, \mathcal{F}, \mathcal{P})$ is a set of contextual Horn sequents over $\Sigma$.
 Now we describe the rules of the logic for these theories.
@@ -1980,6 +1966,16 @@ If $b$ is a term of sort $(p,n+k)$ and $a_1$, \ldots $a_k$ are terms of sort $(t
 \[ subst_{p,n,n+k}(b, v_{n,n-1}, \ldots v_{n,0}, a_1, \ldots a_k). \]
 If $b$ is a term of sort $(p,n)$, then we write $b\!\uparrow$ for
 \[ subst_{p,n+1,n}(b, v_{n+1,n}, \ldots v_{n+1,1}). \]
+
+We will use the following notation:
+\begin{align*}
+A_1, \ldots A_n \vdash A \deq A' & \text{ means } E^n_{ty}(A_1, \ldots A_n, A, A') \\
+A_1, \ldots A_n \vdash a \deq a' : A & \text{ means } E^n_{tm}(A_1, \ldots A_n, A, a, a') \\
+\Gamma \vdash A & \text{ means } \Gamma \vdash A \deq A \\
+\Gamma \vdash a : A & \text{ means } \Gamma \vdash a \deq a : A \\
+(A_1, \ldots A_n) = (B_1, \ldots B_n) & \text{ means } \bigwedge\limits_{1 \leq i \leq n} A_1, \ldots A_{i-1} \vdash A_i \equiv B_i \\
+\Gamma \vdash & \text{ means } \Gamma = \Gamma
+\end{align*}
 
 \begin{example}
 The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and $unit : (tm,0)$ and the following inference rules:
