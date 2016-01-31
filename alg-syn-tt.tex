@@ -113,6 +113,8 @@
 \newcommand{\C}{\cat{C}}
 \newcommand{\D}{\cat{D}}
 \newcommand{\Set}{\cat{Set}}
+\newcommand{\PMnd}{\cat{PMnd}}
+\newcommand{\LMod}{\cat{LMod}}
 \newcommand{\ccat}{\cat{CCat}}
 \newcommand{\syntt}{\cat{SynTT}}
 \newcommand{\algtt}{\cat{AlgTT}}
@@ -222,14 +224,114 @@ An equivalent definition was given by Voevodsky in \cite{c-systems}.
 In this section we will give another equivalent definition which is just a description of models of the initial algebraic type theory as we will see later.
 \end{comment}
 
+\section{Modules over monads}
+
+It is well-known that $\mathcal{S}$-sorted algebraic theories can be presented as finitary monads on $\Set^\mathcal{S}$.
+We will show that essentially algebraic theories can be presented as finitary modules over finitary monads.
+In this section we will review the theory of monads and modules over them.
+One of the aims of this paper is to define a category of essentially algebraic theories (in the form of partial Horn theories).
+We will do this in the next section using the category of modules over monads, which we define here.
+
+\subsection{Monads and left modules over them}
+
+We recall definitions of monads and left modules over a monad.
+For our purposes the following definitions (see \cite{manes-algebraic-theories}) will be more convenient than the ordinary ones.
+\begin{defn}
+A \emph{monad} $(T,\eta,(-)^*)$ on a category $\C$ consists of a function $T : Ob(\C) \to Ob(\C)$,
+a function $\eta$ that to each $A \in Ob(\C)$ assign a morphism $\eta_A : A \to T(A)$,
+and a function that to each $A,B \in Ob(\C)$ assigns a function $(-)^* : Hom_\C(A,T(B)) \to Hom_\C(T(A),T(B))$, satisfying the following conditions:
+\begin{itemize}
+\item $\eta_A^* = id_{T(A)}$.
+\item For every $\rho : A \to T(B)$, $\rho^* \circ \eta_A = \rho$.
+\item For every $\rho : A \to T(B)$, $\sigma : B \to T(C)$, $\sigma^* \circ \rho^* = (\sigma^* \circ \rho)^*$.
+\end{itemize}
+
+A \emph{left module} $(M,(-)^\circ)$ over a monad $(T,\eta,(-)^*)$ with values in a category $\D$ consists of a function $M : Ob(\C) \to Ob(\D)$
+and a function that to each $A,B \in Ob(\C)$ assigns a function $(-)^\circ : Hom_\C(A,T(B)) \to Hom_\D(M(A),M(B))$, satisfying the following conditions:
+\begin{itemize}
+\item $\eta_A^\circ = id_{M(A)}$.
+\item For every $\rho : A \to T(B)$, $\sigma : B \to T(C)$, $\sigma^\circ \circ \rho^\circ = (\sigma^* \circ \rho)^\circ$.
+\end{itemize}
+\end{defn}
+These data and axioms imply that $T$ and $M$ are functorial: if $f : A \to B$, then we can define $T(f)$ as $(\eta_B \circ f)^*$ and $M(f)$ as $(\eta_B \circ f)^\circ$.
+Moreover, $\eta$, $(-)^*$ and $(-)^\circ$ are natural.
+
+\begin{defn}
+A morphism of monads $(T,\eta,(-)^*)$ and $(T',\eta',(-)^{*'})$ on $\C$ is a function $\alpha$ that to each $A \in Ob(\C)$ assigns a morphism $\alpha_A : T(A) \to T'(A)$,
+satisfying the following conditions:
+\begin{itemize}
+\item $\alpha_A \circ \eta_A = \eta'_A$.
+\item For every $\rho : A \to T(B)$, $\alpha_B \circ \rho^* = (\alpha_B \circ \rho)^{*'} \circ \alpha_A$.
+\end{itemize}
+
+Let $(M,(-)^\circ)$ and $(M',(-)^{\circ'})$ be left modules with values in $\D$ over monads $(T,\eta,(-)^*)$ and $(T',\eta',(-)^{*'})$ respectively.
+A morhpism between them is a pair of functions $(\alpha,\beta)$, where $\alpha$ is a morphism of monads $T$ and $T'$,
+and $\beta$ assigns to each $A \in Ob(\C)$ a morphism $\beta_A : M(A) \to M'(A)$,
+such that for every $\rho : A \to T(B)$, $\beta_B \circ \rho^\circ = (\alpha_B \circ \rho)^{\circ'} \circ \beta_A$.
+\end{defn}
+These data and axioms imply that $\alpha$ and $\beta$ are natural.
+
+\subsection{A monadic presentation of essentially algebraic theories}
+
+There are several equivalent ways of defining essentially algebraic theories.
+Here we will introduce yet another one.
+We will show that it is equivalent to other definitions in the next section.
+
+Let $\mathcal{S}$ be a set of sorts, and let $(T,\eta,(-)^*)$ be a monad on the category of $\mathcal{S}$-sets.
+We think of elements of $T(V)_s$ as terms of sort $s$ with free variables in $V$.
+Given $t \in T(V)_s$ and $\rho : V \to T(V')$, we will write $t[\rho] \in T(V')_s$ for $\rho^*(t)$.
+Let $(F,(-)^\circ)$ over $T$ with values in $\Set$.
+We think of elements of $F(V)$ as formulae with free variables in $V$.
+Given $\varphi \in F(V)$ and $\rho : V \to T(V')$, we will write $\varphi[\rho] \in F(V')$ for $\rho^\circ(\varphi)$.
+
+\emph{A module of formulae} over $T$ is a left module $F$ over $T$ together with a function
+    $\land : F(V) \times F(V) \to F(V)$ and a constant $\top \in F(V)$ for every $V \in \Set^\mathcal{S}$, satisfying the following conditions:
+\begin{itemize}
+\item $\land$ is commutative and idempotent.
+\item For every $\rho : V \to T(V')$, $\top[\rho] = \top$.
+\item For every $\rho : V \to T(V')$, $(\varphi \land \psi)[\rho] = \varphi[\rho] \land \psi[\rho]$.
+\end{itemize}
+
+Now, for every monad $T$ on $\Set^\mathcal{S}$ we define a left module $E$ with values in $\Set$.
+For every $V \in \Set^\mathcal{S}$, let $E(V)$ be the set of triples $(s,t,t')$, where $s \in \mathcal{S}$, and $t,t' \in T(V)_s$.
+For every $\rho : V \to T(V')$ and $(s,t,t') \in E(V)$, we let $(s,t,t')[\rho] = (s,t[\rho],t'[\rho])$.
+We think of $(s,t,t')$ as a formula asserting the equality of terms $t$ and $t'$.
+We write $t =_s t'$ (or simply $t = t'$) for $(s,t,t')$.
+\emph{A module of formulae with equality} over $T$ is a module $F$ of formulae over $T$ together with a morphism $E \to F$.
+
+Now, we introduce a concept of ``partial terms''.
+If an ordinary term represents a function, then a partial term represents a function with its domain restricted to a subset defined by a formula.
+\emph{A monad of partial terms} is a triple $(P,F,\mu)$, where $P$ is a monad on $\Set^\mathcal{S}$,
+    $F$ is a module of formulae with equality over $P$, and $\mu_{V,s} : P(V)_s \times F(V) \to P(V)_s$, satisfying the conditions below.
+If $t \in P(V)_s$ and $\varphi \in F(V)$, then we write $t|_\varphi$ for $\mu_{V,s}(t,\varphi)$.
+Triple $(P,F,\mu)$ must satsfy the following conditions:
+\begin{itemize}
+\item $t|_\top = t$.
+\item $t|_{\varphi \land \psi} = t|_\varphi|_\psi$.
+\item For every $\rho : V \to P(V')$, $(t|_\varphi)[\rho] = t[\rho]|_{\varphi[\rho]}$.
+\item If $FV(V) = \{ x_1, \ldots x_n \}$, then for every $\rho : V \to P(V')$ and $\varphi_1$, \ldots $\varphi_n$,
+    $t[x_i \mapsto \rho(x_i)|_{\varphi_i}] = t[\rho]|_{\varphi_1 \land \ldots \land \varphi_n}$.
+\item If $FV(V) = \{ x_1, \ldots x_n \}$, then for every $\rho : V \to P(V')$ and $\varphi_1$, \ldots $\varphi_n$,
+    $\varphi[x_i \mapsto \rho(x_i)|_{\varphi_i}] = \varphi[\rho] \land \varphi_1 \land \ldots \land \varphi_n$.
+\end{itemize}
+A monad of partial terms is \emph{finitary} if both $P$ and $F$ are finitary.
+A morphism of monads of partial terms $(P,F,\mu)$ and $(P',F',\mu')$ is a morphism $(\alpha,\beta)$ of left modules $F$ and $F"$,
+    such that $\alpha(t|_\varphi) = \alpha(t)|_{\beta(\varphi)}$.
+
+Now, we construct a left adjoint to the forgetful functor $U : \PMnd \to \LMod$ from the category of monads of partial terms to the category of left modules.
+
 \section{Partial Horn theories}
 
 There are several equivalent ways of defining essentially algebraic theories (\cite{LPC}, \cite{GAT}, \cite{PHL}, \cite[D 1.3.4]{elephant}).
 We will use approach introduced in \cite{PHL} under the name of partial horn theories since it seems to be the most general.
-In this section we will review necessary for our development parts of the theory of partial horn theories and define a notion of morphisms between them suitable for our purposes.
-We will also define algebraic type theories as certain partial horn theories.
+In this section we will review necessary for our development parts of the theory of partial horn theories.
+We will show that every partial Horn theory defines a monad of partial terms and that every monad of partial terms is obtained in this way from some partial Horn theory.
+We will see that the category of models of a partial Horn theory is equivalent to the category of algebras of the corresponding monad of partial terms.
+This shows that monads of partial terms give us an alternative equivalent way of working with essentially algebraic theories.
+% Also this allows us to define a category of partial Horn theories which is equivalent to the category of monads of partial terms.
+% We will also define algebraic type theories as certain partial horn theories.
 
-\subsection{The category of signatures}
+\subsection{The monad of partial terms of a partial Horn theory}
 
 A signature $\Sigma = (\mathcal{S}, \mathcal{F}, \mathcal{P})$ consists of a set $\mathcal{S}$ of sorts, a set $\mathcal{F}$ of function symbols, and a set $\mathcal{P}$ of predicate symbols.
 Also $\Sigma$ assigns a signature to each $\sigma \in \mathcal{F}$ which is written as $\sigma : s_1 \times \ldots \times s_n \to s$ where $s_1$, \ldots $s_n$, $s$ are sorts.
@@ -259,9 +361,8 @@ R(a_1, \ldots a_k)[\rho] & = R(a_1[\rho], \ldots a_k[\rho]) \\
 (\varphi_1 \land \ldots \land \varphi_n)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho]
 \end{align*}
 
-Now we introduce a functor $PTerm_\Sigma : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of ``partial terms''.
-If an ordinary term represents a function, then a partial term represents a function with its domain restricted to a subset.
-We define $PTerm_\Sigma(V)_s$ as the set of expressions $t|_\varphi$ where $t \in Term_\mathcal{F}(V)_s$ and $\varphi \in Form_\Sigma(V)$.
+Now we define a functor $PTerm_\Sigma : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of partial terms.
+We let $PTerm_\Sigma(V)_s$ to be the set of expressions $t|_\varphi$ where $t \in Term_\mathcal{F}(V)_s$ and $\varphi \in Form_\Sigma(V)$.
 If $\varphi = \top$, then we will write $t|_\varphi$ simply as $t$.
 If $p \in PTerm_\Sigma(V)_s$, $p = t|_\varphi$ and $\psi \in Form_\Sigma(V)$, then we will write $p|_\psi$ for $t|_{\varphi \land \psi}$.
 
@@ -751,6 +852,300 @@ Now, we can define the notion of algebraic type theories.
 An \emph{algebraic type theory} is a theory $\mathbb{T} \in \ThT$ together with a morphism $\mathbb{T}_0 \to \mathbb{T}$.
 The category of algebraic type theories is the under category $\mathbb{T}_0/\ThT$.
 \end{defn}
+
+\label{sec:T1}
+\section{Theory $\mathbb{T}_1$}
+
+\todo{Add a reference to B-systems}
+
+In this section we will describe a quasi-equational theory $\mathbb{T}_1$ and prove that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
+Later we will use this theory to define algebraic type theories.
+
+The set of function symbols of $\mathbb{T}_1$ consists of the symbols of $\mathbb{T}_0$ and the following symbols:
+\begin{align*}
+v_{n,i}       & : (ctx,n) \to (tm,n) \text{, } 0 \leq i < n \\
+subst_{p,n,k} & : (ctx,n) \times (p,k) \times (tm,n)^k \to (p,n) \text{, } p \in \{ tm, ty \}
+\end{align*}
+
+Auxiliary predicates $Hom_{n,k} : (ctx,n) \times (ctx,k) \times (tm,n)^k$ are defined as follows: $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if
+\[ ty_n(a_i) = subst_{ty,n,i-1}(B, ft^{k-i}_i(A), a_1, \ldots a_{i-1}) \text{ for each } 1 \leq i \leq k \]
+The idea is that a tuple of terms should represent a morphism in a contextual category.
+So $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if $(a_1, \ldots a_k)$ is a morphism with domain $A$ and codomain $B$.
+Note that if $Hom_{n,k}(B, A, a_1, \ldots a_k)$, then $ft_n(ty_n(a_i)) = B$.
+
+The set of axioms of $\mathbb{T}_1$ consists of the axioms of $\mathbb{T}_0$ and the axioms we list below.
+The following axioms describe when functions are defined:
+\begin{align}
+\label{ax:def-var}
+                                             & \sststile{}{A}           v_{n,i}(A) \downarrow \\
+\label{ax:def-Subst}
+Hom_{n,k}(B, ft_k(A), a_1, \ldots a_k)       & \ssststile{}{B, A, a_i}  subst_{ty,n,k}(B, A, a_1, \ldots a_k) \downarrow \\
+\label{ax:def-subst}
+Hom_{n,k}(B, ft_k(ty_k(a)), a_1, \ldots a_k) & \ssststile{}{B, a, a_i}  subst_{tm,n,k}(B, a, a_1, \ldots a_k) \downarrow
+\end{align}
+
+The following axioms describe the ``typization'' of the constructions we have:
+\begin{align}
+\label{ax:type-var}
+& \sststile{}{A}         ty_n(v_{n,i}(A)) = Subst_{n,n-i-1}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i+1}(A)) \\
+\label{ax:type-Subst}
+& \sststile{}{B, A, a_i} ft_n(Subst_{n,k}(B, A, a_1, \ldots a_k)) \leftrightharpoons B \\
+\label{ax:type-subst}
+& \sststile{}{B, a, a_i} ty_n(subst_{n,k}(B, a, a_1, \ldots a_k)) \leftrightharpoons Subst_{n,k}(B, ty_k(a), a_1, \ldots a_k)
+\end{align}
+
+The following axioms prescribe how substitution ($Subst_{n,k}$ and $subst_{n,k}$) must be defined on indices ($v_{n,i}$):
+\begin{align}
+\label{ax:Subst-var}
+& \sststile{}{A}         Subst_{n,n}(ft_n(A), A, v_{n,n-1}(ft_n(A)), \ldots v_{n,0}(ft_n(A))) = A \\
+\label{ax:subst-var}
+& \sststile{}{a}         subst_{n,n}(ft_n(ty_n(a)), a, v_{n,n-1}(ft_n(ty_n(a))), \ldots v_{n,0}(ft_n(ty_n(a)))) = a \\
+\label{ax:var-subst}
+& Hom_{n,k}(B, A, a_1, \ldots a_k) \sststile{}{B, a_i, A} subst_{n,k}(B, v_{k,i}(A), a_1, \ldots a_k) = a_{k-i}
+\end{align}
+
+The following axioms say that substitution must be ``associative'':
+\begin{align}
+\label{ax:Subst-Subst}
+& Hom_{n,k}(C, B, b_1, \ldots b_k) \land Hom_{k,m}(B, ft_m(A), a_1, \ldots a_m) \sststile{}{C, b_i, B, a_i, A} \\ \notag
+& Subst_{n,k}(C, Subst_{k,m}(B, A, a_1, \ldots a_m), b_1, \ldots b_k) = \\ \notag
+& Subst_{n,m}(C, A, subst_{n,k}(C, a_1, b_1, \ldots b_k), \ldots subst_{n,k}(C, a_m, b_1, \ldots b_k)) \\
+\label{ax:subst-subst}
+& Hom_{n,k}(C, B, b_1, \ldots b_k) \land Hom_{k,m}(B, ft_m(ty_m(a)), a_1, \ldots a_m) \sststile{}{C, b_i, B, a_i, a} \\ \notag
+& subst_{n,k}(C, subst_{k,m}(B, a, a_1, \ldots a_m), b_1, \ldots b_k) = \\ \notag
+& subst_{n,m}(C, a, subst_{n,k}(C, a_1, b_1, \ldots b_k), \ldots subst_{n,k}(C, a_m, b_1, \ldots b_k))
+\end{align}
+
+Now, we want to show that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
+First, we construct a functor $F : \Mod{\mathbb{T}_1} \to \ccat$.
+Let $M$ be a model of $\mathbb{T}_1$.
+Then the set of objects of level $n$ of $F(M)$ is $M(Ctx_n)$.
+For each $A \in M(Ctx_n)$, $B \in M(Ctx_k)$ morphisms from $A$ to $B$ are tuples $(a_1, \ldots a_k)$ such that $a_i \in M(Tm_n)$ and $Hom_{n,k}(A, B, a_1, \ldots a_k)$.
+
+For each $0 \leq i \leq n$ axiom~\eqref{ax:type-var} implies
+\[ \sststile{}{A} Hom_{n,n-i}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i}(A)). \]
+For each $A \in M(Ctx_n)$ we define $id_A : A \to A$ as tuple
+\[ (v_{n,n-1}(A), \ldots v_{n,0}(A)) \]
+and $p_A : A \to ft(A)$ as tuple
+\[ (v_{n,n-1}(A), \ldots v_{n,1}(A)). \]
+
+Now, we introduce some notation.
+If $B \in M(Ctx_n)$, $A \in M(Ctx_{k+1})$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$ is a morphism, then we define $A[f] \in M(Ctx_{n+1})$ as $Subst_{n,k}(B, A, a_1, \ldots a_k)$.
+If $a \in M(Tm_k)$ and $ty_k(a) = A$, then we define $a[f] \in M(Tm_n)$ as $subst_{n,k}(B, a, a_1, \ldots a_k)$.
+By axioms \eqref{ax:def-Subst} and \eqref{ax:def-subst} these constructions are total.
+
+If $A \in M(Ctx_n)$, $B \in M(Ctx_k)$, $C \in M(Ctx_m)$, $f : A \to B$, and $(c_1, \ldots c_m) : B \to C$, then we define composition $(c_1, \ldots c_m) \circ f$ as $(c_1[f], \ldots c_m[f])$.
+The following sequence of equations shows that $(c_1, \ldots c_m) \circ f : A \to C$.
+\begin{align*}
+ty_n(c_i[f]) & = \text{(by axiom~\eqref{ax:type-subst})} \\
+ty_k(c_i)[f] & = \text{(since $Hom_{k,m}(c_1, \ldots c_m)$)} \\
+ft^{m-i}_i(C)[c_1, \ldots c_{i-1}][f] & = \text{(by axiom~\eqref{ax:Subst-Subst})} \\
+ft^{m-i}_i(C)[c_1[f], \ldots c_{i-1}[f]] &
+\end{align*}
+
+With these notations we can rewrite axioms \eqref{ax:type-subst}, \eqref{ax:Subst-var}, \eqref{ax:subst-var}, \eqref{ax:Subst-Subst}, \eqref{ax:subst-subst} as follows:
+\todo{Fix align}
+\begin{comment}
+\begin{align}
+\setcounter{equation}{\ref{ax:type-subst}}
+\addtocounter{equation}{-1}
+ty_n(a[f]) & = A[f] \\ \notag
+\text{ for each } f : B \to ft_k(A) & \text{ where } A = ty_k(a) \\
+A[id_{ft_n(A)}] & = A \\
+a[id_{ft_n(ty_n(a))}] & = a \\
+\setcounter{equation}{\ref{ax:Subst-Subst}}
+\addtocounter{equation}{-1}
+A[g][f] & = A[g \circ f] \\ \notag
+\text{ for each } f : C \to B \text{ and } & g : B \to ft_m(A) \\
+a[g][f] & = a[g \circ f] \\ \notag
+\text{ for each } f : C \to B \text{ and } & g : B \to ft_m(ty_m(a))
+\end{align}
+\end{comment}
+
+Associativity of the composition follows from axiom~\eqref{ax:subst-subst}, and the fact that $id$ is identity for it follows from axioms \eqref{ax:subst-var} and \eqref{ax:var-subst}.
+
+For every $A \in M(Ctx_{k+1})$ there is a bijection $\varphi$ between the set of $a \in M(Tm_k)$ such that $ty_k(a) = A$ and the set of morphisms $f : ft_k(A) \to A$ such that $p_A \circ f = id_{ft_k(A)}$.
+For every such $a \in M(Tm_k)$ we define $\varphi(a)$ as
+\[ (v_{k,k-1}(ft_k(A)), \ldots v_{k,0}(ft_k(A)), a). \]
+Note that if $(a_1, \ldots a_{k+1}) : B \to A$ is a morphism, then axiom~\eqref{ax:var-subst} implies that $p_A \circ (a_1, \ldots a_{k+1})$ equals to $(a_1, \ldots a_k)$.
+Thus $\varphi(a)$ is a section of $p_A$.
+Clearly, $\varphi$ is injective.
+Let $f : ft_k(A) \to A$ be a section of $p_A$; then first $k$ components of $f$ must be identity on $ft_k(A)$.
+So if $a$ is the last component of $f$, then $\varphi(a)$ equals to $f$.
+Hence $\varphi$ is bijective.
+
+If $A \in M(Ctx_{k+1})$, $B \in M(Ctx_n)$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$, then we define $f^*(A)$ as $A[f] = Subst_{n,k}(B, A, a_1, \ldots a_k)$.
+Map $q(f,B)$ defined as the tuple with $i$-th component equals to
+\[ \left\{
+  \begin{array}{lr}
+    a_i[v_{n+1,n}(A[f]), \ldots v_{n+1,1}(A[f])] & \text{ if } 1 \leq i \leq k \\
+    v_{n+1,0}(A[f])                              & \text{ if } i = k+1
+  \end{array}
+\right. \]
+Now we have the following commutative square:
+\[ \xymatrix{ A[f] \ar[r]^-{q(f,A)} \ar[d]_{p_{A[f]}} & A \ar[d]^{p_A} \\
+              B \ar[r]_-f                             & ft_k(A)
+            } \]
+We need to prove that this square is cartesian.
+By proposition~2.3 of \cite{c-systems} it is enough to construct a section $s_{f'} : B \to A[f]$ of $p_{A[f]}$ for each $f' = (a_1, \ldots a_k, a_{k+1}) : B \to A$ and prove a few properties of $s_{f'}$.
+We define $s_{f'}$ to be equal to $\varphi(a_{k+1})$.
+Axioms \eqref{ax:var-subst} and \eqref{ax:subst-subst} implies that $q(f, B) \circ s_{f'} = f$.
+To complete the proof that the square above is cartesian we need for every $g : ft_k(A) \to ft_m(C)$ and $A = C[g]$ prove that $s_{f'} = s_{q(g,C) \circ f'}$.
+The last component of $q(g,C) \circ f'$ equals to $v_{n+1,0}(C[g])[f'] = a_{k+1}$.
+Thus the last components of $q(g,C) \circ f'$ and $f'$ coincide, hence $s_{f'} = s_{q(g,C) \circ f'}$.
+
+We are left to prove that operations $A[f]$ and $q(f,A)$ are functorial.
+Equations $A[id_{ft_k(A)}] = A$ and $A[f \circ g] = A[f][g]$ are precisely axioms \eqref{ax:Subst-var} and \eqref{ax:Subst-Subst}.
+The fact that $q(id_{ft_k(A)}, A) = id_A$ follows from axiom~\ref{ax:var-subst}.
+Now let $g : C \to B$ and $f : B \to ft_k(A)$ be morphisms; we need to show that $q(f \circ g, A) = q(f,A) \circ q(g,A[f])$.
+The last component of $q(f,A) \circ q(g,A[f])$ equals to $v_{n+1,0}(A[f])[q(g,A[f])] = v_{m+1,0}(A[f][g])$ which equals to the last component of $q(f \circ g, A)$, namely $v_{m+1,0}(A[f \circ g])$.
+If $1 \leq i \leq k$, then $i$-th component of $q(f,A) \circ q(g,A[f])$ equals to
+\[ a_i[v_{n+1,n}(A[f]), \ldots v_{n+1,1}(A[f])][q(g,A[f])] = \]
+\[ a_i[b_1[v_{m+1,m}(A[f][g]), \ldots v_{m+1,1}(A[f][g])], \ldots b_n[v_{m+1,m}(A[f][g]), \ldots v_{m+1,1}(A[f][g])]] \]
+where $a_i$ is $i$-th component of $f$ and $b_i$ is $i$-th component of $g$.
+$i$-th component of $q(f \circ g, A)$ equals to
+\[ a_i[g][v_{m+1,m}(A[f \circ g]), \ldots v_{m+1,1}(A[f \circ g])] = \]
+\[ a_i[b_1[v_{m+1,m}(A[f \circ g]), \ldots v_{m+1,1}(A[f \circ g])], \ldots b_n[v_{m+1,m}(A[f \circ g]), \ldots v_{m+1,1}(A[f \circ g])]]. \]
+Thus $q(f \circ g, A) = q(f,A) \circ q(g,A[f])$.
+This completes the construction of contextual category $F(M)$.
+
+\begin{prop}
+Mapping $F$ is functorial, and functor $F : \Mod{\mathbb{T}_1} \to \ccat$ is an equivalence of categories.
+\end{prop}
+\begin{proof}
+Given a map of $\mathbb{T}_1$ models $\alpha : M \to N$, we define a map of contextual categories $F(\alpha) : F(M) \to F(N)$.
+$F(\alpha)$ is already defined on objects.
+Let $f = (a_1, \ldots a_k) \in Hom_{n,k}(B,A)$.
+We define $F(\alpha)(f)$ as $(\alpha(a_1), \ldots \alpha(a_k)) \in Hom_{n,k}(\alpha(B), \alpha(A))$.
+$F(\alpha)$ preserves identity morphisms, compositions, $f^*(A)$, and $q(f,A)$ since all of these operations are defined in terms of $\mathbb{T}_1$ operations.
+Clearly, $F$ preserves identity maps and compositions of maps of $\mathbb{T}_1$ models.
+Thus $F$ is a functor.
+
+First, note that if $a \in M(Tm_k)$ and $\alpha : M \to N$, then $F(\alpha)(\varphi(a)) = \varphi(\alpha(a))$.
+Indeed, consider the following sequence of equations:
+\begin{align*}
+F(\alpha)(\varphi(a)) & = \\
+F(\alpha)(v_{k,k-1}(ft_k(ty_k(a))), \ldots v_{k,0}(ft_k(ty_k(a))), a) & = \\
+(v_{k,k-1}(ft_k(ty_k(\alpha(a)))), \ldots v_{k,0}(ft_k(ty_k(\alpha(a)))), \alpha(a)) & = \\
+\varphi(\alpha(a)) & .
+\end{align*}
+
+Now, we prove that $F$ is faithful.
+Let $\alpha,\beta : M \to N$ be a pair of maps of $\mathbb{T}_1$ models such that $F(\alpha) = F(\beta)$.
+Then $\alpha$ and $\beta$ coincide on contexts.
+Given $a \in M(Tm_n)$ we have the following equation: $\alpha(a) = \varphi^{-1}(F(\alpha)(\varphi(a))) = \varphi^{-1}(F(\beta)(\varphi(a))) = \beta(a)$.
+
+Now, we prove that $F$ is full.
+Let $\alpha : F(M) \to F(N)$ be a map of contextual categories.
+Then we need to define $\beta : M \to N$ such that $F(\beta) = \alpha$.
+If $A \in M(Ctx_n)$, then we let $\beta(A) = \alpha(A)$.
+Note that if $f : ft_n(A) \to A$ is a section of $p_A$, then $\alpha(f)$ is a section of $\alpha(A)$.
+If $a \in M(Tm_n)$, then we let $\beta(a) = \varphi^{-1}(\alpha(\varphi(a)))$.
+
+Maps $F(\beta)$ and $\alpha$ agree on contexts.
+We prove by induction on $k$ that they coincide on morphisms $f = (a_1, \ldots a_k) \in M(Hom_{n,k})(B,A)$.
+If $k = 0$, then $F(A)$ is terminal objects, hence $F(\beta) = \alpha$.
+Suppose $k > 0$ and consider the following equation: $f = q((a_1, \ldots a_{k-1}), A) \circ \varphi(a_k)$.
+By induction hypothesis we know that $F(\beta)(q((a_1, \ldots a_{k-1}), A)) = \alpha(q((a_1, \ldots a_{k-1}), A))$.
+Thus we only need to prove that $F(\beta)(\varphi(a_k)) = \alpha(\varphi(a_k))$.
+But $F(\beta)(\varphi(a_k)) = \varphi(\beta(a_k)) = \varphi(\varphi^{-1}(\alpha(\varphi(a_k)))) = \alpha(\varphi(a_k))$.
+
+Finally, we prove that $F$ is essentially surjective on objects.
+Given contextual category $C$ we define $\mathbb{T}_1$ model $M$.
+Let $M(Ctx_n)$ be equal to $Ob_n(C)$ and $M(Tm_n)$ be the set of pairs of objects $A \in Ob_{n+1}(C)$ and sections of $p_A : A \to ft_n(A)$.
+Let $ty_n$ be the obvious projection.
+We will usually identify $a \in M(Tm_n)$ with the section $ft_n(ty_n(a)) \to ty_n(a)$.
+
+For each $n,k \in \mathbb{N}$ we define partial function
+\[ Subst_{n,k} : M(Ctx_n) \times M(Ctx_{k+1}) \times M(Tm_n)^k \to M(Ctx_{n+1}) \]
+such that $ft_n(Subst_{n,k}(B, A, a_1, \ldots a_k)) = B$.
+We also define morphism
+\[ q_{n,k} \in Hom_{n+1,k}(Subst_{n,k}(B, A, a_1, \ldots a_k), A) \]
+whenever $Subst_{n,k}(B, A, a_1, \ldots a_k)$ is defined.
+We define $Subst_{n,k}$ and $q_{n,k}$ by induction on $k$.
+Let $Subst_{n,0}(B,A) = !_B^*(A)$ and $q_{n,0} = q(!_B,A)$ where $!_B : B \to Ob_0(C)$ is the unique morphism.
+\[ \xymatrix{ Subst_{n,0}(B,A) \ar[r]^-{q_{n,0}} \ar[d] \pb & A \ar[d]^{p_A} \\
+              B \ar[r]_{!_B} & 1
+            } \]
+Let $Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1})$ be defined whenever $Subst_{n,k}(B, ft_k(A), a_1, \ldots a_k)$ is defined and $ty_n(a_{k+1}) = Subst_{n,k}(B, ft_k(A), a_1, \ldots a_k)$.
+In this case we let $Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1}) = f^*(A)$ and $q_{n,k+1} = q(f,A)$ where $f$ is the composition of $a_{k+1}$ and $q_{n,k}$.
+\[ \xymatrix{ Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1}) \ar[rr]^-{q_{n,k+1}} \ar[d] \pb & & A \ar[d]^{p_A} \\
+              B \ar[r]_-{a_{k+1}} & Subst_{n,k}(B, ft_k(A), a_1, \ldots a_k) \ar[r]_-{q_{n,k}} & ft_k(A)
+            } \]
+It is easy to see by induction on $k$ that axiom~\eqref{ax:def-Subst} holds.
+Axiom~\eqref{ax:type-Subst} holds by definition of $Subst_{n,k}$.
+
+The definition of predicates $Hom_{n,k}$ makes sense in $M$ now.
+Thus we can define as before the set $Hom^M_{n,k}(B,A)$ of morphisms in $M$ as the set of tuples $(a_1, \ldots a_k)$ such that $Hom_{n,k}(B, A, a_1, \ldots a_k)$.
+There is a bijection $\alpha : Hom^M_{n,k}(B,A) \to Hom_{n,k}(B,A)$ such that $Subst_{n,k}(B, A, a_1, \ldots a_k) = \alpha(a_1, \ldots a_k)^*(A)$ and $q_{n,k} = q(\alpha(a_1, \ldots a_k), A)$.
+We define $\alpha$ by induction on $k$.
+Both $Hom^M_{n,0}(B,A)$ and $Hom_{n,0}(B,A)$ are singletons, so there is a unique bijection between them.
+If $(a_1, \ldots a_k) \in Hom^M_{n,k}(B,ft_k(A))$, then there is a bijection between $f \in Hom_{n,k+1}(B,A)$ such that $p_A \circ f = \alpha(a_1, \ldots a_k)$ and sections of $p_{\alpha(a_1, \ldots a_k)^*(A)}$.
+By induction hypothesis these sections are just sections of $p_{Subst_{n,k}(B, A, a_1, \ldots a_k)}$.
+This gives us a bijection between $Hom^M_{n,k+1}(B,A)$ and $Hom_{n,k+1}(B,A)$, namely $\alpha(a_1, \ldots a_{k+1}) = q(\alpha(a_1, \ldots a_k), A) \circ a_{k+1}$.
+Then equations $Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1}) = \alpha(a_1, \ldots a_{k+1})^*(A)$ and $q_{n,k+1} = q(\alpha(a_1, \ldots a_k), A)$ hold by definition.
+
+Now we define total functions $v_{n,i} : M(Ctx_n) \to M(Tm_n)$.
+Let $v_{n,i}(A) = (p^{i+1}(A)^*(ft^i_{n-i}(A)), s_{p^i_A})$.
+\[ \xymatrix{ p^{i+1}(A)^*(ft^i_{n-i}(A)) \ar[r] \ar[d] \pb & ft^i_{n-i}(A) \ar[d]^{p_{ft^i_{n-i}(A)}} \\
+              A \ar[r]_{p^{i+1}(A)} \ar@/^1pc/[u]^{s_{p^i_A}} \ar[ur]_{p^i_A} & ft^{i+1}_{n-i-1}(A)
+            } \]
+Axiom~\eqref{ax:def-var} holds by definition.
+By induction on $n - i$ it is easy to see that $\alpha(v_{n,n-1}(A), \ldots v_{n,i}(A))$ equals to $p_A^i : A \to ft^i_{n-i}(A)$.
+Axiom~\eqref{ax:type-var} follows from the following sequence of equations:
+\begin{align*}
+Subst_{n,n-i-1}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i+1}(A)) & = \\
+\alpha(v_{n,n-1}(A), \ldots v_{n,i+1}(A))^*(ft^i_{n-i}(A)) & = \\
+p^{i+1}(A)^*(ft^i_{n-i}(A)) & = \\
+ty_n(v_{n,i}(A)) & .
+\end{align*}
+Axiom~\eqref{ax:Subst-var} follows from the facts that $\alpha(v_{n,n-1}(ft_n(A)), \ldots v_{n,0}(ft_n(A))) = id_{ft_n(A)}$ and $id_{ft_n(A)}^*(A) = A$.
+
+Now we define partial functions $subst_{n,k} : M(Ctx_n) \times M(Tm_k) \times M(Tm_n)^k \to M(Tm_n)$.
+$subst_{n,k}(B, a, a_1, \ldots a_k)$ is defined whenever \todo{Fix margins} $Hom_{n,k}(B, ft_k(ty_k(a)), a_1, \ldots a_k)$ holds.
+In this case we let $subst_{n,k}(B, a, a_1, \ldots a_k) = a[\alpha(a_1, \ldots a_k)]$ where $a[f] = s_{a \circ f}$.
+Axioms \eqref{ax:def-subst} and \eqref{ax:type-subst} hold by definition.
+Axiom~\eqref{ax:subst-var} follows from the fact that $id_{ft_n(ty_n(a))}^*(a) = a$.
+
+To prove axiom~\eqref{ax:var-subst} note that $p_A \circ \alpha(a_1, \ldots a_{k+1}) = \alpha(a_1, \ldots a_k)$ by definition of $\alpha$.
+Hence $p^i(A) \circ \alpha(a_1, \ldots a_k) = \alpha(a_1, \ldots a_{k-i})$.
+Also note that $s_{\alpha(a_1, \ldots a_k)} = a_k$.
+Now the axiom follows from the following equations:
+\begin{align*}
+subst_{n,k}(B, v_{k,i}(A), a_1, \ldots a_k) & = \\
+s_{v_{k,i}(A) \circ \alpha(a_1, \ldots a_k)} & = \\
+s_{q(p^{i+1}(A), ft^i_{n-i}(A)) \circ v_{k,i}(A) \circ \alpha(a_1, \ldots a_k)} & = \\
+s_{p^i(A) \circ \alpha(a_1, \ldots a_k)} & = \\
+s_{\alpha(a_1, \ldots a_{k-i})} & = \\
+a_{k-i} & .
+\end{align*}
+
+Now we prove that $\alpha$ preserves compositions.
+To do this we need to show that $\alpha(a_1, \ldots a_k) \circ f = \alpha(a_1[f], \ldots a_k[f])$.
+We do this by induction on $k$.
+For $k = 0$ it is trivial and for $k > 0$ we have the following sequence of equations:
+\begin{align*}
+\alpha(a_1, \ldots a_k) \circ f & = \\
+q(\alpha(a_1, \ldots a_{k-1}), A) \circ a_k \circ f & = \\
+q(\alpha(a_1, \ldots a_{k-1}), A) \circ q(f, B[\alpha(a_1, \ldots a_k)]) \circ a_k[f] & = \\
+q(\alpha(a_1, \ldots a_{k-1}) \circ f, A) \circ a_k[f] & = \\
+q(\alpha(a_1[f], \ldots a_{k-1}[f]), A) \circ a_k[f] & = \\
+\alpha(a_1[f], \ldots a_k[f]) & .
+\end{align*}
+
+Now axioms \eqref{ax:Subst-Subst} and \eqref{ax:subst-subst} follow from the facts that $\alpha$ preserves compositions and $(f \circ g)^*(A) = f^*(g^*(A))$.
+This completes the construction of $\mathbb{T}_1$ model $M$ from a contextual category $C$.
+To finish the proof we need to show that $F(M)$ is isomorphic to $C$.
+The isomorphism is given by bijection $\alpha$.
+We already saw that $\alpha$ preserves the structure of contextual categories.
+Thus $\alpha$ is a morphism of contextual categories, and it is easy to see that $\alpha^{-1}$ also preserves the structure.
+Hence $\alpha$ is isomorphism and $F$ is an equivalence.
+\end{proof}
+
+\section{Terms with gaps}
+
+Terms of algebraic theories may contain a lot of redundant information, which makes them inconvenient to work with.
+In this section we introduce terms with gaps which allow to omit some subterms.
 
 \section{Contextual theories}
 
@@ -1353,295 +1748,6 @@ Note that $C(-)$ preserves substitution, that is $C(t[\rho]) = C(t)[\rho]$ and $
 It follows that $C(-)$ preserves \axref{a2} by \axref{c2}.
 Note that for every every formula $\varphi$ of $C(\mathbb{T})$ and every variable $x$ the set $FCV_x(\varphi)$ consists of a single context.
 It follows that $C(-)$ preserves \axref{a3} by \axref{c3'}.
-\end{proof}
-
-\label{sec:T1}
-\section{Theory $\mathbb{T}_1$}
-
-\todo{Add a reference to B-systems}
-
-In this section we will describe a quasi-equational theory $\mathbb{T}_1$ and prove that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
-Later we will use this theory to define algebraic type theories.
-
-The set of function symbols of $\mathbb{T}_1$ consists of the symbols of $\mathbb{T}_0$ and the following symbols:
-\begin{align*}
-v_{n,i}       & : (ctx,n) \to (tm,n) \text{, } 0 \leq i < n \\
-subst_{p,n,k} & : (ctx,n) \times (p,k) \times (tm,n)^k \to (p,n) \text{, } p \in \{ tm, ty \}
-\end{align*}
-
-Auxiliary predicates $Hom_{n,k} : (ctx,n) \times (ctx,k) \times (tm,n)^k$ are defined as follows: $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if
-\[ ty_n(a_i) = subst_{ty,n,i-1}(B, ft^{k-i}_i(A), a_1, \ldots a_{i-1}) \text{ for each } 1 \leq i \leq k \]
-The idea is that a tuple of terms should represent a morphism in a contextual category.
-So $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if $(a_1, \ldots a_k)$ is a morphism with domain $A$ and codomain $B$.
-Note that if $Hom_{n,k}(B, A, a_1, \ldots a_k)$, then $ft_n(ty_n(a_i)) = B$.
-
-The set of axioms of $\mathbb{T}_1$ consists of the axioms of $\mathbb{T}_0$ and the axioms we list below.
-The following axioms describe when functions are defined:
-\begin{align}
-\label{ax:def-var}
-                                             & \sststile{}{A}           v_{n,i}(A) \downarrow \\
-\label{ax:def-Subst}
-Hom_{n,k}(B, ft_k(A), a_1, \ldots a_k)       & \ssststile{}{B, A, a_i}  subst_{ty,n,k}(B, A, a_1, \ldots a_k) \downarrow \\
-\label{ax:def-subst}
-Hom_{n,k}(B, ft_k(ty_k(a)), a_1, \ldots a_k) & \ssststile{}{B, a, a_i}  subst_{tm,n,k}(B, a, a_1, \ldots a_k) \downarrow
-\end{align}
-
-The following axioms describe the ``typization'' of the constructions we have:
-\begin{align}
-\label{ax:type-var}
-& \sststile{}{A}         ty_n(v_{n,i}(A)) = Subst_{n,n-i-1}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i+1}(A)) \\
-\label{ax:type-Subst}
-& \sststile{}{B, A, a_i} ft_n(Subst_{n,k}(B, A, a_1, \ldots a_k)) \leftrightharpoons B \\
-\label{ax:type-subst}
-& \sststile{}{B, a, a_i} ty_n(subst_{n,k}(B, a, a_1, \ldots a_k)) \leftrightharpoons Subst_{n,k}(B, ty_k(a), a_1, \ldots a_k)
-\end{align}
-
-The following axioms prescribe how substitution ($Subst_{n,k}$ and $subst_{n,k}$) must be defined on indices ($v_{n,i}$):
-\begin{align}
-\label{ax:Subst-var}
-& \sststile{}{A}         Subst_{n,n}(ft_n(A), A, v_{n,n-1}(ft_n(A)), \ldots v_{n,0}(ft_n(A))) = A \\
-\label{ax:subst-var}
-& \sststile{}{a}         subst_{n,n}(ft_n(ty_n(a)), a, v_{n,n-1}(ft_n(ty_n(a))), \ldots v_{n,0}(ft_n(ty_n(a)))) = a \\
-\label{ax:var-subst}
-& Hom_{n,k}(B, A, a_1, \ldots a_k) \sststile{}{B, a_i, A} subst_{n,k}(B, v_{k,i}(A), a_1, \ldots a_k) = a_{k-i}
-\end{align}
-
-The following axioms say that substitution must be ``associative'':
-\begin{align}
-\label{ax:Subst-Subst}
-& Hom_{n,k}(C, B, b_1, \ldots b_k) \land Hom_{k,m}(B, ft_m(A), a_1, \ldots a_m) \sststile{}{C, b_i, B, a_i, A} \\ \notag
-& Subst_{n,k}(C, Subst_{k,m}(B, A, a_1, \ldots a_m), b_1, \ldots b_k) = \\ \notag
-& Subst_{n,m}(C, A, subst_{n,k}(C, a_1, b_1, \ldots b_k), \ldots subst_{n,k}(C, a_m, b_1, \ldots b_k)) \\
-\label{ax:subst-subst}
-& Hom_{n,k}(C, B, b_1, \ldots b_k) \land Hom_{k,m}(B, ft_m(ty_m(a)), a_1, \ldots a_m) \sststile{}{C, b_i, B, a_i, a} \\ \notag
-& subst_{n,k}(C, subst_{k,m}(B, a, a_1, \ldots a_m), b_1, \ldots b_k) = \\ \notag
-& subst_{n,m}(C, a, subst_{n,k}(C, a_1, b_1, \ldots b_k), \ldots subst_{n,k}(C, a_m, b_1, \ldots b_k))
-\end{align}
-
-Now, we want to show that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
-First, we construct a functor $F : \Mod{\mathbb{T}_1} \to \ccat$.
-Let $M$ be a model of $\mathbb{T}_1$.
-Then the set of objects of level $n$ of $F(M)$ is $M(Ctx_n)$.
-For each $A \in M(Ctx_n)$, $B \in M(Ctx_k)$ morphisms from $A$ to $B$ are tuples $(a_1, \ldots a_k)$ such that $a_i \in M(Tm_n)$ and $Hom_{n,k}(A, B, a_1, \ldots a_k)$.
-
-For each $0 \leq i \leq n$ axiom~\eqref{ax:type-var} implies
-\[ \sststile{}{A} Hom_{n,n-i}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i}(A)). \]
-For each $A \in M(Ctx_n)$ we define $id_A : A \to A$ as tuple
-\[ (v_{n,n-1}(A), \ldots v_{n,0}(A)) \]
-and $p_A : A \to ft(A)$ as tuple
-\[ (v_{n,n-1}(A), \ldots v_{n,1}(A)). \]
-
-Now, we introduce some notation.
-If $B \in M(Ctx_n)$, $A \in M(Ctx_{k+1})$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$ is a morphism, then we define $A[f] \in M(Ctx_{n+1})$ as $Subst_{n,k}(B, A, a_1, \ldots a_k)$.
-If $a \in M(Tm_k)$ and $ty_k(a) = A$, then we define $a[f] \in M(Tm_n)$ as $subst_{n,k}(B, a, a_1, \ldots a_k)$.
-By axioms \eqref{ax:def-Subst} and \eqref{ax:def-subst} these constructions are total.
-
-If $A \in M(Ctx_n)$, $B \in M(Ctx_k)$, $C \in M(Ctx_m)$, $f : A \to B$, and $(c_1, \ldots c_m) : B \to C$, then we define composition $(c_1, \ldots c_m) \circ f$ as $(c_1[f], \ldots c_m[f])$.
-The following sequence of equations shows that $(c_1, \ldots c_m) \circ f : A \to C$.
-\begin{align*}
-ty_n(c_i[f]) & = \text{(by axiom~\eqref{ax:type-subst})} \\
-ty_k(c_i)[f] & = \text{(since $Hom_{k,m}(c_1, \ldots c_m)$)} \\
-ft^{m-i}_i(C)[c_1, \ldots c_{i-1}][f] & = \text{(by axiom~\eqref{ax:Subst-Subst})} \\
-ft^{m-i}_i(C)[c_1[f], \ldots c_{i-1}[f]] &
-\end{align*}
-
-With these notations we can rewrite axioms \eqref{ax:type-subst}, \eqref{ax:Subst-var}, \eqref{ax:subst-var}, \eqref{ax:Subst-Subst}, \eqref{ax:subst-subst} as follows:
-\todo{Fix align}
-\begin{comment}
-\begin{align}
-\setcounter{equation}{\ref{ax:type-subst}}
-\addtocounter{equation}{-1}
-ty_n(a[f]) & = A[f] \\ \notag
-\text{ for each } f : B \to ft_k(A) & \text{ where } A = ty_k(a) \\
-A[id_{ft_n(A)}] & = A \\
-a[id_{ft_n(ty_n(a))}] & = a \\
-\setcounter{equation}{\ref{ax:Subst-Subst}}
-\addtocounter{equation}{-1}
-A[g][f] & = A[g \circ f] \\ \notag
-\text{ for each } f : C \to B \text{ and } & g : B \to ft_m(A) \\
-a[g][f] & = a[g \circ f] \\ \notag
-\text{ for each } f : C \to B \text{ and } & g : B \to ft_m(ty_m(a))
-\end{align}
-\end{comment}
-
-Associativity of the composition follows from axiom~\eqref{ax:subst-subst}, and the fact that $id$ is identity for it follows from axioms \eqref{ax:subst-var} and \eqref{ax:var-subst}.
-
-For every $A \in M(Ctx_{k+1})$ there is a bijection $\varphi$ between the set of $a \in M(Tm_k)$ such that $ty_k(a) = A$ and the set of morphisms $f : ft_k(A) \to A$ such that $p_A \circ f = id_{ft_k(A)}$.
-For every such $a \in M(Tm_k)$ we define $\varphi(a)$ as
-\[ (v_{k,k-1}(ft_k(A)), \ldots v_{k,0}(ft_k(A)), a). \]
-Note that if $(a_1, \ldots a_{k+1}) : B \to A$ is a morphism, then axiom~\eqref{ax:var-subst} implies that $p_A \circ (a_1, \ldots a_{k+1})$ equals to $(a_1, \ldots a_k)$.
-Thus $\varphi(a)$ is a section of $p_A$.
-Clearly, $\varphi$ is injective.
-Let $f : ft_k(A) \to A$ be a section of $p_A$; then first $k$ components of $f$ must be identity on $ft_k(A)$.
-So if $a$ is the last component of $f$, then $\varphi(a)$ equals to $f$.
-Hence $\varphi$ is bijective.
-
-If $A \in M(Ctx_{k+1})$, $B \in M(Ctx_n)$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$, then we define $f^*(A)$ as $A[f] = Subst_{n,k}(B, A, a_1, \ldots a_k)$.
-Map $q(f,B)$ defined as the tuple with $i$-th component equals to
-\[ \left\{
-  \begin{array}{lr}
-    a_i[v_{n+1,n}(A[f]), \ldots v_{n+1,1}(A[f])] & \text{ if } 1 \leq i \leq k \\
-    v_{n+1,0}(A[f])                              & \text{ if } i = k+1
-  \end{array}
-\right. \]
-Now we have the following commutative square:
-\[ \xymatrix{ A[f] \ar[r]^-{q(f,A)} \ar[d]_{p_{A[f]}} & A \ar[d]^{p_A} \\
-              B \ar[r]_-f                             & ft_k(A)
-            } \]
-We need to prove that this square is cartesian.
-By proposition~2.3 of \cite{c-systems} it is enough to construct a section $s_{f'} : B \to A[f]$ of $p_{A[f]}$ for each $f' = (a_1, \ldots a_k, a_{k+1}) : B \to A$ and prove a few properties of $s_{f'}$.
-We define $s_{f'}$ to be equal to $\varphi(a_{k+1})$.
-Axioms \eqref{ax:var-subst} and \eqref{ax:subst-subst} implies that $q(f, B) \circ s_{f'} = f$.
-To complete the proof that the square above is cartesian we need for every $g : ft_k(A) \to ft_m(C)$ and $A = C[g]$ prove that $s_{f'} = s_{q(g,C) \circ f'}$.
-The last component of $q(g,C) \circ f'$ equals to $v_{n+1,0}(C[g])[f'] = a_{k+1}$.
-Thus the last components of $q(g,C) \circ f'$ and $f'$ coincide, hence $s_{f'} = s_{q(g,C) \circ f'}$.
-
-We are left to prove that operations $A[f]$ and $q(f,A)$ are functorial.
-Equations $A[id_{ft_k(A)}] = A$ and $A[f \circ g] = A[f][g]$ are precisely axioms \eqref{ax:Subst-var} and \eqref{ax:Subst-Subst}.
-The fact that $q(id_{ft_k(A)}, A) = id_A$ follows from axiom~\ref{ax:var-subst}.
-Now let $g : C \to B$ and $f : B \to ft_k(A)$ be morphisms; we need to show that $q(f \circ g, A) = q(f,A) \circ q(g,A[f])$.
-The last component of $q(f,A) \circ q(g,A[f])$ equals to $v_{n+1,0}(A[f])[q(g,A[f])] = v_{m+1,0}(A[f][g])$ which equals to the last component of $q(f \circ g, A)$, namely $v_{m+1,0}(A[f \circ g])$.
-If $1 \leq i \leq k$, then $i$-th component of $q(f,A) \circ q(g,A[f])$ equals to
-\[ a_i[v_{n+1,n}(A[f]), \ldots v_{n+1,1}(A[f])][q(g,A[f])] = \]
-\[ a_i[b_1[v_{m+1,m}(A[f][g]), \ldots v_{m+1,1}(A[f][g])], \ldots b_n[v_{m+1,m}(A[f][g]), \ldots v_{m+1,1}(A[f][g])]] \]
-where $a_i$ is $i$-th component of $f$ and $b_i$ is $i$-th component of $g$.
-$i$-th component of $q(f \circ g, A)$ equals to
-\[ a_i[g][v_{m+1,m}(A[f \circ g]), \ldots v_{m+1,1}(A[f \circ g])] = \]
-\[ a_i[b_1[v_{m+1,m}(A[f \circ g]), \ldots v_{m+1,1}(A[f \circ g])], \ldots b_n[v_{m+1,m}(A[f \circ g]), \ldots v_{m+1,1}(A[f \circ g])]]. \]
-Thus $q(f \circ g, A) = q(f,A) \circ q(g,A[f])$.
-This completes the construction of contextual category $F(M)$.
-
-\begin{prop}
-Mapping $F$ is functorial, and functor $F : \Mod{\mathbb{T}_1} \to \ccat$ is an equivalence of categories.
-\end{prop}
-\begin{proof}
-Given a map of $\mathbb{T}_1$ models $\alpha : M \to N$, we define a map of contextual categories $F(\alpha) : F(M) \to F(N)$.
-$F(\alpha)$ is already defined on objects.
-Let $f = (a_1, \ldots a_k) \in Hom_{n,k}(B,A)$.
-We define $F(\alpha)(f)$ as $(\alpha(a_1), \ldots \alpha(a_k)) \in Hom_{n,k}(\alpha(B), \alpha(A))$.
-$F(\alpha)$ preserves identity morphisms, compositions, $f^*(A)$, and $q(f,A)$ since all of these operations are defined in terms of $\mathbb{T}_1$ operations.
-Clearly, $F$ preserves identity maps and compositions of maps of $\mathbb{T}_1$ models.
-Thus $F$ is a functor.
-
-First, note that if $a \in M(Tm_k)$ and $\alpha : M \to N$, then $F(\alpha)(\varphi(a)) = \varphi(\alpha(a))$.
-Indeed, consider the following sequence of equations:
-\begin{align*}
-F(\alpha)(\varphi(a)) & = \\
-F(\alpha)(v_{k,k-1}(ft_k(ty_k(a))), \ldots v_{k,0}(ft_k(ty_k(a))), a) & = \\
-(v_{k,k-1}(ft_k(ty_k(\alpha(a)))), \ldots v_{k,0}(ft_k(ty_k(\alpha(a)))), \alpha(a)) & = \\
-\varphi(\alpha(a)) & .
-\end{align*}
-
-Now, we prove that $F$ is faithful.
-Let $\alpha,\beta : M \to N$ be a pair of maps of $\mathbb{T}_1$ models such that $F(\alpha) = F(\beta)$.
-Then $\alpha$ and $\beta$ coincide on contexts.
-Given $a \in M(Tm_n)$ we have the following equation: $\alpha(a) = \varphi^{-1}(F(\alpha)(\varphi(a))) = \varphi^{-1}(F(\beta)(\varphi(a))) = \beta(a)$.
-
-Now, we prove that $F$ is full.
-Let $\alpha : F(M) \to F(N)$ be a map of contextual categories.
-Then we need to define $\beta : M \to N$ such that $F(\beta) = \alpha$.
-If $A \in M(Ctx_n)$, then we let $\beta(A) = \alpha(A)$.
-Note that if $f : ft_n(A) \to A$ is a section of $p_A$, then $\alpha(f)$ is a section of $\alpha(A)$.
-If $a \in M(Tm_n)$, then we let $\beta(a) = \varphi^{-1}(\alpha(\varphi(a)))$.
-
-Maps $F(\beta)$ and $\alpha$ agree on contexts.
-We prove by induction on $k$ that they coincide on morphisms $f = (a_1, \ldots a_k) \in M(Hom_{n,k})(B,A)$.
-If $k = 0$, then $F(A)$ is terminal objects, hence $F(\beta) = \alpha$.
-Suppose $k > 0$ and consider the following equation: $f = q((a_1, \ldots a_{k-1}), A) \circ \varphi(a_k)$.
-By induction hypothesis we know that $F(\beta)(q((a_1, \ldots a_{k-1}), A)) = \alpha(q((a_1, \ldots a_{k-1}), A))$.
-Thus we only need to prove that $F(\beta)(\varphi(a_k)) = \alpha(\varphi(a_k))$.
-But $F(\beta)(\varphi(a_k)) = \varphi(\beta(a_k)) = \varphi(\varphi^{-1}(\alpha(\varphi(a_k)))) = \alpha(\varphi(a_k))$.
-
-Finally, we prove that $F$ is essentially surjective on objects.
-Given contextual category $C$ we define $\mathbb{T}_1$ model $M$.
-Let $M(Ctx_n)$ be equal to $Ob_n(C)$ and $M(Tm_n)$ be the set of pairs of objects $A \in Ob_{n+1}(C)$ and sections of $p_A : A \to ft_n(A)$.
-Let $ty_n$ be the obvious projection.
-We will usually identify $a \in M(Tm_n)$ with the section $ft_n(ty_n(a)) \to ty_n(a)$.
-
-For each $n,k \in \mathbb{N}$ we define partial function
-\[ Subst_{n,k} : M(Ctx_n) \times M(Ctx_{k+1}) \times M(Tm_n)^k \to M(Ctx_{n+1}) \]
-such that $ft_n(Subst_{n,k}(B, A, a_1, \ldots a_k)) = B$.
-We also define morphism
-\[ q_{n,k} \in Hom_{n+1,k}(Subst_{n,k}(B, A, a_1, \ldots a_k), A) \]
-whenever $Subst_{n,k}(B, A, a_1, \ldots a_k)$ is defined.
-We define $Subst_{n,k}$ and $q_{n,k}$ by induction on $k$.
-Let $Subst_{n,0}(B,A) = !_B^*(A)$ and $q_{n,0} = q(!_B,A)$ where $!_B : B \to Ob_0(C)$ is the unique morphism.
-\[ \xymatrix{ Subst_{n,0}(B,A) \ar[r]^-{q_{n,0}} \ar[d] \pb & A \ar[d]^{p_A} \\
-              B \ar[r]_{!_B} & 1
-            } \]
-Let $Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1})$ be defined whenever $Subst_{n,k}(B, ft_k(A), a_1, \ldots a_k)$ is defined and $ty_n(a_{k+1}) = Subst_{n,k}(B, ft_k(A), a_1, \ldots a_k)$.
-In this case we let $Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1}) = f^*(A)$ and $q_{n,k+1} = q(f,A)$ where $f$ is the composition of $a_{k+1}$ and $q_{n,k}$.
-\[ \xymatrix{ Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1}) \ar[rr]^-{q_{n,k+1}} \ar[d] \pb & & A \ar[d]^{p_A} \\
-              B \ar[r]_-{a_{k+1}} & Subst_{n,k}(B, ft_k(A), a_1, \ldots a_k) \ar[r]_-{q_{n,k}} & ft_k(A)
-            } \]
-It is easy to see by induction on $k$ that axiom~\eqref{ax:def-Subst} holds.
-Axiom~\eqref{ax:type-Subst} holds by definition of $Subst_{n,k}$.
-
-The definition of predicates $Hom_{n,k}$ makes sense in $M$ now.
-Thus we can define as before the set $Hom^M_{n,k}(B,A)$ of morphisms in $M$ as the set of tuples $(a_1, \ldots a_k)$ such that $Hom_{n,k}(B, A, a_1, \ldots a_k)$.
-There is a bijection $\alpha : Hom^M_{n,k}(B,A) \to Hom_{n,k}(B,A)$ such that $Subst_{n,k}(B, A, a_1, \ldots a_k) = \alpha(a_1, \ldots a_k)^*(A)$ and $q_{n,k} = q(\alpha(a_1, \ldots a_k), A)$.
-We define $\alpha$ by induction on $k$.
-Both $Hom^M_{n,0}(B,A)$ and $Hom_{n,0}(B,A)$ are singletons, so there is a unique bijection between them.
-If $(a_1, \ldots a_k) \in Hom^M_{n,k}(B,ft_k(A))$, then there is a bijection between $f \in Hom_{n,k+1}(B,A)$ such that $p_A \circ f = \alpha(a_1, \ldots a_k)$ and sections of $p_{\alpha(a_1, \ldots a_k)^*(A)}$.
-By induction hypothesis these sections are just sections of $p_{Subst_{n,k}(B, A, a_1, \ldots a_k)}$.
-This gives us a bijection between $Hom^M_{n,k+1}(B,A)$ and $Hom_{n,k+1}(B,A)$, namely $\alpha(a_1, \ldots a_{k+1}) = q(\alpha(a_1, \ldots a_k), A) \circ a_{k+1}$.
-Then equations $Subst_{n,k+1}(B, A, a_1, \ldots a_{k+1}) = \alpha(a_1, \ldots a_{k+1})^*(A)$ and $q_{n,k+1} = q(\alpha(a_1, \ldots a_k), A)$ hold by definition.
-
-Now we define total functions $v_{n,i} : M(Ctx_n) \to M(Tm_n)$.
-Let $v_{n,i}(A) = (p^{i+1}(A)^*(ft^i_{n-i}(A)), s_{p^i_A})$.
-\[ \xymatrix{ p^{i+1}(A)^*(ft^i_{n-i}(A)) \ar[r] \ar[d] \pb & ft^i_{n-i}(A) \ar[d]^{p_{ft^i_{n-i}(A)}} \\
-              A \ar[r]_{p^{i+1}(A)} \ar@/^1pc/[u]^{s_{p^i_A}} \ar[ur]_{p^i_A} & ft^{i+1}_{n-i-1}(A)
-            } \]
-Axiom~\eqref{ax:def-var} holds by definition.
-By induction on $n - i$ it is easy to see that $\alpha(v_{n,n-1}(A), \ldots v_{n,i}(A))$ equals to $p_A^i : A \to ft^i_{n-i}(A)$.
-Axiom~\eqref{ax:type-var} follows from the following sequence of equations:
-\begin{align*}
-Subst_{n,n-i-1}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i+1}(A)) & = \\
-\alpha(v_{n,n-1}(A), \ldots v_{n,i+1}(A))^*(ft^i_{n-i}(A)) & = \\
-p^{i+1}(A)^*(ft^i_{n-i}(A)) & = \\
-ty_n(v_{n,i}(A)) & .
-\end{align*}
-Axiom~\eqref{ax:Subst-var} follows from the facts that $\alpha(v_{n,n-1}(ft_n(A)), \ldots v_{n,0}(ft_n(A))) = id_{ft_n(A)}$ and $id_{ft_n(A)}^*(A) = A$.
-
-Now we define partial functions $subst_{n,k} : M(Ctx_n) \times M(Tm_k) \times M(Tm_n)^k \to M(Tm_n)$.
-$subst_{n,k}(B, a, a_1, \ldots a_k)$ is defined whenever \todo{Fix margins} $Hom_{n,k}(B, ft_k(ty_k(a)), a_1, \ldots a_k)$ holds.
-In this case we let $subst_{n,k}(B, a, a_1, \ldots a_k) = a[\alpha(a_1, \ldots a_k)]$ where $a[f] = s_{a \circ f}$.
-Axioms \eqref{ax:def-subst} and \eqref{ax:type-subst} hold by definition.
-Axiom~\eqref{ax:subst-var} follows from the fact that $id_{ft_n(ty_n(a))}^*(a) = a$.
-
-To prove axiom~\eqref{ax:var-subst} note that $p_A \circ \alpha(a_1, \ldots a_{k+1}) = \alpha(a_1, \ldots a_k)$ by definition of $\alpha$.
-Hence $p^i(A) \circ \alpha(a_1, \ldots a_k) = \alpha(a_1, \ldots a_{k-i})$.
-Also note that $s_{\alpha(a_1, \ldots a_k)} = a_k$.
-Now the axiom follows from the following equations:
-\begin{align*}
-subst_{n,k}(B, v_{k,i}(A), a_1, \ldots a_k) & = \\
-s_{v_{k,i}(A) \circ \alpha(a_1, \ldots a_k)} & = \\
-s_{q(p^{i+1}(A), ft^i_{n-i}(A)) \circ v_{k,i}(A) \circ \alpha(a_1, \ldots a_k)} & = \\
-s_{p^i(A) \circ \alpha(a_1, \ldots a_k)} & = \\
-s_{\alpha(a_1, \ldots a_{k-i})} & = \\
-a_{k-i} & .
-\end{align*}
-
-Now we prove that $\alpha$ preserves compositions.
-To do this we need to show that $\alpha(a_1, \ldots a_k) \circ f = \alpha(a_1[f], \ldots a_k[f])$.
-We do this by induction on $k$.
-For $k = 0$ it is trivial and for $k > 0$ we have the following sequence of equations:
-\begin{align*}
-\alpha(a_1, \ldots a_k) \circ f & = \\
-q(\alpha(a_1, \ldots a_{k-1}), A) \circ a_k \circ f & = \\
-q(\alpha(a_1, \ldots a_{k-1}), A) \circ q(f, B[\alpha(a_1, \ldots a_k)]) \circ a_k[f] & = \\
-q(\alpha(a_1, \ldots a_{k-1}) \circ f, A) \circ a_k[f] & = \\
-q(\alpha(a_1[f], \ldots a_{k-1}[f]), A) \circ a_k[f] & = \\
-\alpha(a_1[f], \ldots a_k[f]) & .
-\end{align*}
-
-Now axioms \eqref{ax:Subst-Subst} and \eqref{ax:subst-subst} follow from the facts that $\alpha$ preserves compositions and $(f \circ g)^*(A) = f^*(g^*(A))$.
-This completes the construction of $\mathbb{T}_1$ model $M$ from a contextual category $C$.
-To finish the proof we need to show that $F(M)$ is isomorphic to $C$.
-The isomorphism is given by bijection $\alpha$.
-We already saw that $\alpha$ preserves the structure of contextual categories.
-Thus $\alpha$ is a morphism of contextual categories, and it is easy to see that $\alpha^{-1}$ also preserves the structure.
-Hence $\alpha$ is isomorphism and $F$ is an equivalence.
 \end{proof}
 
 \section{Algebraic presentations of type theories}
