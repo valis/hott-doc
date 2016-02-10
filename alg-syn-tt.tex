@@ -608,7 +608,7 @@ This extension is unique since $e$ is an epimorphism.
 
 Now we give a characterization of monomorphisms.
 
-\begin{prop}
+\begin{prop}[mono]
 A morphism of theories $f : \mathbb{T}_1 \to \mathbb{T}_2$ is a monomorphism if and only if for every sequent $\varphi \sststile{}{V} \psi$ of $\mathbb{T}_1$
 if $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}_2$, then $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}_1$.
 \end{prop}
@@ -635,43 +635,44 @@ If $\mathbb{T}'$ is a subtheory of a theory $\mathbb{T}$, then we often need to 
 The lemma below gives us a simple criterion for this.
 First, we need to introduce a bit of notation.
 Let $t$ is a term over the signature of $\mathbb{T}$ such that there is no subterm of a sort that does not belong to $\mathcal{S}'$.
-Then we define a term $T(t)$ over the signature of $\mathbb{T}'$ as follows:
+Then we define a term $Ret(t)$ over the signature of $\mathbb{T}'$ as follows:
 \begin{align*}
-T(x) & = x \\
-T(\sigma(t_1, \ldots t_n)) & = \sigma(T(t_1), \ldots T(t_n)) \text{, if $\sigma \in \mathcal{F}'$} \\
-T(\sigma(t_1, \ldots t_n)) & = x_s \text{, if $\sigma \notin \mathcal{F}'$ and $\sigma : s_1 \times \ldots \times s_n \to s$}
+Ret(x) & = x \\
+Ret(\sigma(t_1, \ldots t_n)) & = \sigma(Ret(t_1), \ldots Ret(t_n)) \text{, if $\sigma \in \mathcal{F}'$} \\
+Ret(\sigma(t_1, \ldots t_n)) & = x_s \text{, if $\sigma \notin \mathcal{F}'$ and $\sigma : s_1 \times \ldots \times s_n \to s$}
 \end{align*}
 where $x_s$ is a variable of sort $s$ that is not a free variable of $t$.
 
-If $\varphi$ is an atomic formula over the signature of $\mathbb{T}$, then we define a formula $T(\varphi)$ over the signature of $\mathbb{T}'$ as follows:
+If $\varphi$ is an atomic formula over the signature of $\mathbb{T}$, then we define a formula $Ret(\varphi)$ over the signature of $\mathbb{T}'$ as follows:
 \begin{align*}
-T(t = t') & = (T(t) = T(t')) \text{, if $T(t)$ and $T(t')$ are defined} \\
-T(R(t_1, \ldots t_n)) & = R(T(t_1), \ldots T(t_n)) \text{, if $T(t_i)$ is defined for every $i$} \\
-T(\varphi) & = \top \text{, otherwise}
+Ret(t = t') & = (Ret(t) = Ret(t')) \text{, if $Ret(t)$ and $Ret(t')$ are defined} \\
+Ret(R(t_1, \ldots t_n)) & = R(Ret(t_1), \ldots Ret(t_n)) \text{, if $Ret(t_i)$ is defined for every $i$} \\
+Ret(\varphi) & = \top \text{, otherwise}
 \end{align*}
-For an arbitrary Horn formula $\varphi$ we define $T(\varphi)$ as follows:
-\[ T(\varphi_1 \land \ldots \land \varphi_n) = T(\varphi_1) \land \ldots \land T(\varphi_n) \]
+For an arbitrary Horn formula $\varphi$ we define $Ret(\varphi)$ as follows:
+\[ Ret(\varphi_1 \land \ldots \land \varphi_n) = Ret(\varphi_1) \land \ldots \land Ret(\varphi_n) \]
+For every partial term $t|_\varphi$, let $Ret(t|_\varphi) = Ret(t)|_{Ret(\varphi)}$.
 If $S$ is sequent $\varphi \sststile{}{V} \psi$ in the signature of $\mathbb{T}$,
-then we define sequent $T(S)$ in the signature of $\mathbb{T}'$ as $T(\varphi) \sststile{}{V \cup FV(T(\varphi)) \cup FV(T(\psi))} T(\psi)$.
+    then we define sequent $Ret(S)$ in the signature of $\mathbb{T}'$ as $Ret(\varphi) \sststile{}{V \cup FV(Ret(\varphi)) \cup FV(Ret(\psi))} Ret(\psi)$.
 
-\begin{lem}[mono]
+\begin{lem}[subtheory]
 Let $\mathbb{T}'$ be a subtheory of $\mathbb{T}$.
-Suppose that for every axiom $S$ of $\mathbb{T}$, $T(S)$ is a theorem of $\mathbb{T}'$.
+Suppose that for every axiom $S$ of $\mathbb{T}$, $Ret(S)$ is a theorem of $\mathbb{T}'$.
 Then if a sequent in the signature of $\mathbb{T}'$ is provable in $\mathbb{T}$, then it is also provable in $\mathbb{T}'$.
 \end{lem}
 \begin{proof}
-If $S$ is a sequent in the signature of $\mathbb{T}'$, then $T(S) = S$.
-Thus we only need to prove that if $S$ is a theorem of $\mathbb{T}$, then $T(S)$ is a theorem of $\mathbb{T}'$.
+If $S$ is a sequent in the signature of $\mathbb{T}'$, then $Ret(S) = S$.
+Thus we only need to prove that if $S$ is a theorem of $\mathbb{T}$, then $Ret(S)$ is a theorem of $\mathbb{T}'$.
 For axioms this is true by assumption.
-We need to check that $T(-)$ preserves inference rules.
+We need to check that $Ret(-)$ preserves inference rules.
 This is clearly true for rules \axref{b1}-\axref{b6} and \axref{a1}.
 
 Let us consider rule \axref{a2}.
 Let $S$ equals $x = y \land \varphi \sststile{}{x:s,y:s,V} \varphi[y/x]$.
-Note that $T(\varphi[y/x])$ is defined if and only if $T(\varphi)$ is defined, and in this case $T(\varphi[y/x]) = T(\varphi)[y/x]$.
-Thus $T(S)$ is either of the form $x = y \land T(\varphi) \sststile{}{x:s,y:s,V,FV(T(\varphi))} T(\varphi)[y/x]$,
+Note that $Ret(\varphi[y/x])$ is defined if and only if $Ret(\varphi)$ is defined, and in this case $Ret(\varphi[y/x]) = Ret(\varphi)[y/x]$.
+Thus $Ret(S)$ is either of the form $x = y \land Ret(\varphi) \sststile{}{x:s,y:s,V,FV(Ret(\varphi))} Ret(\varphi)[y/x]$,
 or of the form $x = y \sststile{}{x:s,y:s,V} \top$, or of the form $\top \sststile{}{x:s,y:s,V} \top$.
-In all of these cases $T(S)$ is a theorem of $\mathbb{T}'$.
+In all of these cases $Ret(S)$ is a theorem of $\mathbb{T}'$.
 
 Finally, let us consider rule \axref{a3}.
 To prove that it preserves the required proerty it is enough to show that $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$ if and only if $\varphi[t/x]$ is.
@@ -682,67 +683,63 @@ We need to show that a term of sort $s$ is a term of $(\mathcal{S}',\mathcal{F}'
 But this follows from the assumption on the set of function symbols.
 \end{proof}
 
-\label{sec:T0}
-\subsection{Algebraic type theories}
+Sometimes it is convinient to have a sort which consists of a single element.
+Let $\mathcal{S}$ be a set of sorts and let $s_0$ be a sort in $\mathcal{S}$.
+Then we define a theory $\mathbb{T}_{s_0}$ which consists of a single function symbols $* : s_0$ and two axioms: $\sststile{}{} * \downarrow$ and $\sststile{}{x} x = *$.
+Then for every theory $\mathbb{T} \in \Th_\mathcal{S}$ there is at most one morphism from $\mathbb{T}_{s_0}$ to $\mathbb{T}$.
+If such morphism exists, we will say that $s_0$ is \emph{trivial} in $\mathbb{T}$.
+Thus $\mathbb{T}_{s_0}/\Th_\mathcal{S}$ is (equivalent to) a full subcategory of $\Th_\mathcal{S}$.
+
+As an application of the previous results we will prove that adding a trivial sort does not change the category of theories.
+Every theory $\mathbb{T} \in \Th_\mathcal{S}$ is naturally a theory in $\Th_{\mathcal{S} \amalg \{ s_0 \}}$.
+Thus we have a functor $i : \Th_\mathcal{S} \to \Th_{\mathcal{S} \amalg \{ s_0 \}}$ such that $i(\mathbb{T}) = \mathbb{T} \amalg \mathbb{T}_{s_0}$.
+\begin{prop}
+Functor $i : \Th_\mathcal{S} \to \Th_{\mathcal{S} \amalg \{ s_0 \}}$ is an equivalence of categories.
+\end{prop}
+\begin{proof}
+Let $\mathbb{T}_1,\mathbb{T}_2 \in \Th_\mathcal{S}$ be theories with $P(\mathbb{T}_i) = (T_i,F_i,\mu_i)$, $i = 1,2$.
+Let $\alpha,\beta : \mathbb{T}_1 \to \mathbb{T}_2$ be morphisms such that $i(\alpha) = i(\beta)$.
+Then for every $t \in T_1$, sequent $\sststile{}{V} i(\alpha)(t) \cong i(\beta)(t)$ is a theorem of $i(\mathbb{T}_2)$.
+Since $\mathbb{T}_2$ is (isomorphic to) a subtheory of $i(\mathbb{T}_2)$, by \rlem{subtheory}, sequent $\sststile{}{V} \alpha(t) \cong \beta(t)$ is a theorem of $\mathbb{T}_2$.
+Analogously, we can show that $\alpha(\varphi) \ssststile{}{V} \beta(\varphi)$ is a theorem of $\mathbb{T}_2$ for every $\varphi in F_1$.
+Thus $i$ is faithful.
+
+Let $\alpha : i(\mathbb{T}_1) \to i(\mathbb{T}_2)$ be a morphism.
+For every $t \in T_1(V)_s$, let $\beta(t) = Ret(\alpha(t))$, and for every $\varphi \in F_1(V)$, let $\beta(\varphi) = Ret(\alpha(\varphi))$.
+Since $Ret$ preserves substitution, $\land$ and $\top$, this defines a morphism $\beta : \mathbb{T}_1 \to \mathbb{T}_2$.
+Since $s_0$ is trivial in $i(\mathbb{T}_2)$, $Ret(t) = t$ and $Ret(\varphi) = \varphi$ for every partial term $t$ and every formula $\varphi$.
+Thus $i(\beta) = \alpha$; hence $i$ is full.
+
+Let $\mathbb{T} \in \Th_{\mathcal{S} \amalg \{ s_0 \}}$ be a theory with trivial $s_0$.
+Then we define a theory $\mathbb{T}' \in \Th_\mathcal{S}$.
+It has a predicate symbol $R : s'_1 \times \ldots \times s'_n$ for every predicate symbol $R : s_1 \times \ldots \times s_n$ of $\mathbb{T}$,
+    where $s'_1, \ldots s'_n$ is the subsequence of $s_1, \ldots s_n$ consisting of sorts from $\mathcal{S}$.
+It has a function symbol $\sigma : s'_1 \times \ldots \times s'_n \to s$ for every function symbol
+    $\sigma : s_1 \times \ldots \times s_n \to s$ of $\mathbb{T}$ such that $s \in \mathcal{S}$.
+Also, for every function symbol $\sigma : s_1 \times \ldots \times s_n \to s_0$ of $\mathbb{T}$,
+    there is a predicate symbol $R_\sigma : s_1' \times \ldots \times s'_n$ in $\mathbb{T}'$.
+
+For every term $t$ of $\mathbb{T}$ of a sort from $\mathcal{S}$, we can define a term $r(t)$ of $\mathbb{T}'$.
+Term $r(t)$ is obtained from $t$ by omitting subterms of sort $s_0$.
+For every formula $\varphi$ of $\mathbb{T}$, we can define a formula $r(\varphi)$ of $\mathbb{T}'$:
+\begin{align*}
+r(t =_{s_0} t') & = \top \\
+r(t =_s t') & = (r(t) =_s r(t')) \\
+r(R(t_1, \ldots t_n)) & = R(r(t'_1), \ldots r(t'_n)) \\
+r(\varphi_1 \land \ldots \land \varphi_n) & = r(\varphi_1) \land \ldots \land r(\varphi_n)
+\end{align*}
+where $t'_1, \ldots t'_n$ is the subsequence of $t_1, \ldots t_n$ consisting of the terms of sorts from $\mathcal{S}$.
+Axioms of $\mathbb{T}'$ are sequents of the form $r(\varphi) \sststile{}{FV(r(\varphi)) \cup FV(r(\psi))} r(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$.
+It is easy to see that $i(\mathbb{T}')$ is isomorphic to $\mathbb{T}$.
+Thus $i$ is essentially surjective on objects.
+\end{proof}
+
+\label{sec:T1}
+\section{Algebraic theories}
 
 Let $\mathcal{T} = \{ ty, tm \} \times \mathbb{N}$ be a set of sorts.
 We will write $(ctx,n)$ for $(ty,n-1)$ if $n > 0$.
 Sort $(tm,n)$ represents terms in contexts of length $n$, sort $(ty,n)$ represents types in contexts of length $n$, and sort $(ctx,n)$ represents contexts of length $n$.
-Sometimes it is convinient to have a sort for contexts of length 0.
-So we define $\mathcal{C} = \mathcal{T} \cup \{ (ctx,0) \}$.
-Let $\mathbb{T}_{-1} \in \ThC$ be the theory with one function symbol $* : (ctx,0)$ and the following axioms:
-\begin{align*}
-& \sststile{}{} * \downarrow \\
-& \sststile{}{A} A = *
-\end{align*}
-
-Note that there is at most one morphism from $\mathbb{T}_{-1}$ to any other theory.
-Thus category $\mathbb{T}_{-1}/\ThC$ is (isomorphic to) a full subcategory of $\ThC$.
-
-\begin{prop}
-Categories $\ThT$ and $\mathbb{T}_{-1}/\ThC$ are equivalent.
-\end{prop}
-\begin{proof}
-\todo{Finish the proof}
-Every theory in $\ThT$ is a theory in $\ThC$ in the obvious way.
-We define $F : \ThT \to \mathbb{T}_{-1}/\ThC$ as $F(\mathbb{T}) = \mathbb{T}_{-1} \amalg \mathbb{T}$.
-First, note that $F$ is faithful.
-Indeed, let $f,g : \mathbb{T}_1 \to \mathbb{T}_2$ be morphisms such that $f \amalg \mathbb{T}_{-1} = g \amalg \mathbb{T}_{-1}$.
-Let $i_1 : \mathbb{T}_2 \to \mathbb{T}_2 \amalg \mathbb{T}_{-1}$ be the coproduct inclusion.
-Then $i_1 \circ f = i_1 \circ g$.
-By \rprop{mor-def} we need to prove that
-$\sststile{}{x_1 : s_1, \ldots x_n : s_n} f(\sigma(x_1, \ldots x_n)) \cong g(\sigma(x_1, \ldots x_n))$ and
-$f(R(x_1, \ldots x_n)) \ssststile{}{x_1 : s_1, \ldots x_n : s_n} g(R(x_1, \ldots x_n))$ are provable in $\mathbb{T}_2$.
-We know that they are provable in $\mathbb{T}_2 \amalg \mathbb{T}_{-1}$, and by \rlem{mono} they are provable in $\mathbb{T}_2$.
-
-Now, let us prove that $F$ is full.
-Let $f : \mathbb{T}_{-1} \amalg \mathbb{T}_1 \to \mathbb{T}_{-1} \amalg \mathbb{T}_2$ be a morphism.
-Then we define $g : \mathbb{T}_1 \to \mathbb{T}_2$ as $g(t) = T(f(t))$ and $g(\varphi) = T(f(\varphi))$
-where $T$ is defined as in \rlem{mono} for the inclusion $\mathbb{T}_2 \to \mathbb{T}_{-1} \amalg \mathbb{T}_2$.
-
-Finally, let us prove that $F$ is essentially surjective.
-Given a theory $\mathbb{T} \in \ThC$ and a morphism $c : \mathbb{T}_{-1} \to \mathbb{T}$ we define a theory $\mathbb{T}' \in \ThT$.
-This theory contains one function symbol $\sigma$ for every function symbols $\sigma$ of $\mathbb{T}$ such that $\sigma : s_1 \times \ldots \times s_n \to s$ and $s \in \mathcal{T}$.
-We let $\sigma : s_{i_1} \times \ldots \times s_{i_k} \to s$ where $\{ i_1, \ldots i_k \} \subset \{ 1, \ldots n \}$ consists of those $i$ for which $s_i \in \mathcal{T}$.
-For every $V$ and $s \in \mathcal{T}$ we define function $\alpha : Term_\mathbb{T}(V)_s \to Term_{\mathbb{T}'}(V)_s$ as follows:
-\begin{align*}
-\alpha(x) & = x \text{ if } x \in V \\
-\alpha(\sigma(a_1, \ldots a_n)) & = \sigma(\alpha(a_{i_1}), \ldots \alpha(a_{i_k}))
-\end{align*}
-If $\varphi$ is a formula $t = s$ of $\mathbb{T}$, then we define formula $\alpha(\varphi)$ of $\mathbb{T}'$ as $\alpha(t) = \alpha(s)$
-if terms $t$ and $s$ have a sort in $\mathcal{T}$ and as $\top$ otherwise.
-Axioms of $\mathbb{T}'$ are sequents $\alpha(\varphi_1) \land \ldots \land \alpha(\varphi_n) \sststile{}{V} \alpha(\psi_1) \land \ldots \land \alpha(\psi_k)$
-for every axiom $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi_1 \land \ldots \land \psi_k$ of $\mathbb{T}$.
-
-Now, $F(\mathbb{T}')$ and $\mathbb{T}$ are isomorphic.
-Indeed, we can extend $\alpha$ to a morphism $\alpha : \mathbb{T} \to \mathbb{T}_{-1} \amalg \mathbb{T}'$
-by defining $\alpha(\sigma(a_1, \ldots a_n)) = *$ if $\sigma : s_1 \times \ldots \times s_n \to (ctx,0)$.
-Let $\beta : \mathbb{T}' \to \mathbb{T}$ be the following morphism:
-\[ \beta(\sigma(x_{i_1}, \ldots x_{i_k})) = \sigma(b_1, \ldots b_n) \]
-where $b_j = x_{i_t}$ if $j = i_t$ and $b_j = *$ otherwise.
-Then $[c,\beta] : \mathbb{T}_{-1} \amalg \mathbb{T}' \to \mathbb{T}$ is the inverse of $\alpha$.
-Thus $F$ is essentially surjective.
-\end{proof}
 
 We define $\mathbb{T}_0 \in \ThT$ as the theory with the set of function symbols $\{ ft_n : (ctx,n+1) \to (ctx,n)\ |\ n > 0 \} \cup \{ ty_n : (tm,n) \to (ty,n)\ |\ n \in \mathbb{N} \}$ and the following axioms:
 \begin{align*}
@@ -761,9 +758,6 @@ Now, we can define the notion of algebraic type theories.
 An \emph{algebraic type theory} is a theory $\mathbb{T} \in \ThT$ together with a morphism $\mathbb{T}_0 \to \mathbb{T}$.
 The category of algebraic type theories is the under category $\mathbb{T}_0/\ThT$.
 \end{defn}
-
-\label{sec:T1}
-\section{Theory $\mathbb{T}_1$}
 
 \todo{Add a reference to B-systems}
 
