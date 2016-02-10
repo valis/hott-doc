@@ -692,9 +692,9 @@ Thus $\mathbb{T}_{s_0}/\Th_\mathcal{S}$ is (equivalent to) a full subcategory of
 
 As an application of the previous results we will prove that adding a trivial sort does not change the category of theories.
 Every theory $\mathbb{T} \in \Th_\mathcal{S}$ is naturally a theory in $\Th_{\mathcal{S} \amalg \{ s_0 \}}$.
-Thus we have a functor $i : \Th_\mathcal{S} \to \Th_{\mathcal{S} \amalg \{ s_0 \}}$ such that $i(\mathbb{T}) = \mathbb{T} \amalg \mathbb{T}_{s_0}$.
+Thus we have a functor $i : \Th_\mathcal{S} \to \mathbb{T}_{s_0}/\Th_{\mathcal{S} \amalg \{ s_0 \}}$ such that $i(\mathbb{T}) = \mathbb{T} \amalg \mathbb{T}_{s_0}$.
 \begin{prop}
-Functor $i : \Th_\mathcal{S} \to \Th_{\mathcal{S} \amalg \{ s_0 \}}$ is an equivalence of categories.
+Functor $i : \Th_\mathcal{S} \to \mathbb{T}_{s_0}/\Th_{\mathcal{S} \amalg \{ s_0 \}}$ is an equivalence of categories.
 \end{prop}
 \begin{proof}
 Let $\mathbb{T}_1,\mathbb{T}_2 \in \Th_\mathcal{S}$ be theories with $P(\mathbb{T}_i) = (T_i,F_i,\mu_i)$, $i = 1,2$.
@@ -735,21 +735,20 @@ Thus $i$ is essentially surjective on objects.
 \end{proof}
 
 \label{sec:T1}
-\section{Algebraic theories}
+\section{Algebraic type theories}
 
-Let $\mathcal{T} = \{ ty, tm \} \times \mathbb{N}$ be a set of sorts.
-We will write $(ctx,n)$ for $(ty,n-1)$ if $n > 0$.
-Sort $(tm,n)$ represents terms in contexts of length $n$, sort $(ty,n)$ represents types in contexts of length $n$, and sort $(ctx,n)$ represents contexts of length $n$.
+In this section we will define algebraic type theories and theories with substitution, describe two partial Horn theories $\mathbb{T}_0$, $\mathbb{T}_1$
+    in terms of which algebraic type theories are defined, and prove that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
 
-We define $\mathbb{T}_0 \in \ThT$ as the theory with the set of function symbols $\{ ft_n : (ctx,n+1) \to (ctx,n)\ |\ n > 0 \} \cup \{ ty_n : (tm,n) \to (ty,n)\ |\ n \in \mathbb{N} \}$ and the following axioms:
-\begin{align*}
-& \sststile{}{A} ft_n(A) \downarrow \\
-& \sststile{}{a} ty_n(a) \downarrow
-\end{align*}
+Let $\mathcal{C} = \{ ctx, tm \} \times \mathbb{N}$ be a set of sorts.
+We will write $(ty,n)$ for $(ctx,n+1)$.
+Sort $(tm,n)$ represents terms in contexts of length $n$, sort $(ctx,n)$ represents contexts of length $n$, and sort $(ty,n)$ represents types in contexts of length $n$.
+
+We define $\mathbb{T}_0 \in \ThT$ as the theory with the set of function symbols $ft_n : (ty,n) \to (ctx,n)$, $ty_n : (tm,n) \to (ty,n)$ and axioms asserting that $(ctx,0)$ is trivial.
 Let $ft^i_n : (ctx,n+i) \to (ctx,n)$ be the following derived operation:
 \begin{align*}
-& ft^0_n(A) = A \\
-& ft^{i+1}_n(A) = ft^i_n(ft_{n+i}(A))
+ft^0_n(A) & = A \\
+ft^{i+1}_n(A) & = ft^i_n(ft_{n+i}(A))
 \end{align*}
 
 Now, we can define the notion of algebraic type theories.
@@ -759,10 +758,28 @@ An \emph{algebraic type theory} is a theory $\mathbb{T} \in \ThT$ together with 
 The category of algebraic type theories is the under category $\mathbb{T}_0/\ThT$.
 \end{defn}
 
-\todo{Add a reference to B-systems}
-
-In this section we will describe a quasi-equational theory $\mathbb{T}_1$ and prove that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
-Later we will use this theory to define algebraic type theories.
+Often (algebraic) type theories involve substitution operations.
+So we describe a theory of substituion, which we call $\mathbb{T}_1$.
+There are two ways to define substitution: either to substitute the whole context (full substitution) or only a part of it (partial substitution).
+Using ordinary type theoretic syntax the full substituion can be described by the following inference rule:
+\begin{center}
+\AxiomC{$A_1, \ldots A_n \vdash A$}
+\AxiomC{$\Gamma \vdash a_1 : A_1[]$ \quad \ldots \quad $\Gamma \vdash a_n : A_n[a_1, \ldots a_{n-1}]$}
+\BinaryInfC{$\Gamma \vdash A[a_1, \ldots a_n]$}
+\DisplayProof
+\end{center}
+\medskip
+The partial substituion is described by the following inference rule:
+\begin{center}
+\AxiomC{$\Gamma, A_1, \ldots A_n \vdash A$}
+\AxiomC{$\Gamma \vdash a_1 : A_1$ \quad \ldots \quad $\Gamma \vdash a_n : A_n[a_1, \ldots a_{n-1}]$}
+\BinaryInfC{$\Gamma \vdash A[a_1, \ldots a_n]$}
+\DisplayProof
+\end{center}
+\medskip
+The partial substitution was used in \cite{b-systems}, but we will use the full version since it is stronger.
+To make these operations equivalent, we need to add another operation to the partial substitution, and even more axioms.
+Thus our approach seems to be slightly simpler.
 
 The set of function symbols of $\mathbb{T}_1$ consists of the symbols of $\mathbb{T}_0$ and the following symbols:
 \begin{align*}
@@ -847,23 +864,20 @@ ft^{m-i}_i(C)[c_1[f], \ldots c_{i-1}[f]] &
 \end{align*}
 
 With these notations we can rewrite axioms \eqref{ax:type-subst}, \eqref{ax:Subst-var}, \eqref{ax:subst-var}, \eqref{ax:Subst-Subst}, \eqref{ax:subst-subst} as follows:
-\todo{Fix align}
-\begin{comment}
 \begin{align}
-\setcounter{equation}{\ref{ax:type-subst}}
+\setcounterref{equation}{ax:type-subst}
 \addtocounter{equation}{-1}
 ty_n(a[f]) & = A[f] \\ \notag
 \text{ for each } f : B \to ft_k(A) & \text{ where } A = ty_k(a) \\
 A[id_{ft_n(A)}] & = A \\
 a[id_{ft_n(ty_n(a))}] & = a \\
-\setcounter{equation}{\ref{ax:Subst-Subst}}
+\setcounterref{equation}{ax:Subst-Subst}
 \addtocounter{equation}{-1}
 A[g][f] & = A[g \circ f] \\ \notag
 \text{ for each } f : C \to B \text{ and } & g : B \to ft_m(A) \\
 a[g][f] & = a[g \circ f] \\ \notag
 \text{ for each } f : C \to B \text{ and } & g : B \to ft_m(ty_m(a))
 \end{align}
-\end{comment}
 
 Associativity of the composition follows from axiom~\eqref{ax:subst-subst}, and the fact that $id$ is identity for it follows from axioms \eqref{ax:subst-var} and \eqref{ax:var-subst}.
 
@@ -1005,7 +1019,7 @@ ty_n(v_{n,i}(A)) & .
 Axiom~\eqref{ax:Subst-var} follows from the facts that $\alpha(v_{n,n-1}(ft_n(A)), \ldots v_{n,0}(ft_n(A))) = id_{ft_n(A)}$ and $id_{ft_n(A)}^*(A) = A$.
 
 Now we define partial functions $subst_{n,k} : M(Ctx_n) \times M(Tm_k) \times M(Tm_n)^k \to M(Tm_n)$.
-$subst_{n,k}(B, a, a_1, \ldots a_k)$ is defined whenever \todo{Fix margins} $Hom_{n,k}(B, ft_k(ty_k(a)), a_1, \ldots a_k)$ holds.
+Function $subst_{n,k}(B, a, a_1, \ldots a_k)$ is defined whenever \[ Hom_{n,k}(B, ft_k(ty_k(a)), a_1, \ldots a_k) \] holds.
 In this case we let $subst_{n,k}(B, a, a_1, \ldots a_k) = a[\alpha(a_1, \ldots a_k)]$ where $a[f] = s_{a \circ f}$.
 Axioms \eqref{ax:def-subst} and \eqref{ax:type-subst} hold by definition.
 Axiom~\eqref{ax:subst-var} follows from the fact that $id_{ft_n(ty_n(a))}^*(a) = a$.
