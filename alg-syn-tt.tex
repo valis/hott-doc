@@ -222,6 +222,7 @@ An equivalent definition was given by Voevodsky in \cite{c-systems}.
 In this section we will give another equivalent definition which is just a description of models of the initial algebraic type theory as we will see later.
 \end{comment}
 
+\label{sec:PHT}
 \section{Partial Horn theories}
 
 There are several equivalent ways of defining essentially algebraic theories (\cite{LPC}, \cite{GAT}, \cite{PHL}, \cite[D 1.3.4]{elephant}).
@@ -337,7 +338,7 @@ R(a_1, \ldots a_k)[\rho] & = R(a_1[\rho], \ldots a_k[\rho]) \\
 
 A \emph{Horn sequent} over $\Sigma$ is an expression of the form $\varphi \sststile{}{V} \psi$, where $\varphi$ and $\psi$ are Horn formulae over $\Sigma$ with free variables in $V$.
 We will often write $\varphi_1, \ldots \varphi_n \sststile{}{V} \psi_1, \ldots \psi_k$ insted of $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi_1 \land \ldots \land \psi_k$.
-A \emph{Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
+A \emph{partial Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
 The rules of \emph{Partial Horn logic} are listed below.
 In these rules for every sequent $\varphi \sststile{}{V} \psi$ the set of variables $V$ is such that $FV(\varphi) \cup FV(\psi) \subseteq V$.
 If $\mathcal{A}$ is a Horn theory, then a \emph{theorem} of $\mathcal{A}$ is a sequent derivable from $\mathcal{A}$ in this logic.
@@ -1058,10 +1059,36 @@ Thus $\alpha$ is a morphism of contextual categories, and it is easy to see that
 Hence $\alpha$ is isomorphism and $F$ is an equivalence.
 \end{proof}
 
-\section{Terms with gaps}
+\section{Terms with holes}
 
 Terms of algebraic theories may contain a lot of redundant information, which makes them inconvenient to work with.
 In this section we show how to construct monadic presentations of a partial Horn theory which are isomorphic to the one defined in \rdefn{mon-pres} (which we call the standard presentation), but has less redundant information.
+
+Let $\Sigma = (\mathcal{S},\mathcal{F},\mathcal{P})$ be a signature.
+Then we define a monad $HTerm : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of terms with holes.
+It is defined inductively as the usual monad of terms with one additional clause:
+\begin{itemize}
+\item $\circ \in HTerm(V)_s$.
+\item If $x \in V_s$, then $x \in HTerm(V)_s$.
+\item If $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ and $t_i \in HTerm(V)_{s_i}$, then $\sigma(t_1, \ldots t_n) \in HTerm(V)_s$.
+\end{itemize}
+
+If $WTerm$ be a submonad of $HTerm$, then we can define Horn formulae, partial terms, inference rules, partial Horn theories, and the category of partial Horn theories
+    in the same way as we did in \ref{sec:PHT}, but with $WTerm$ in place of $Term$.
+We want to prove that if $WTerm$ satisfies some conditions, then the category of partial Horn theories over $Term$ and over $WTerm$ are equivalent.
+Since they are both defined in terms of monadic presentations, we only need to prove that their essential images in the category of monadic presentations coincide.
+
+Now we define a relation $H \subseteq HTerm(V)_s \times Term(V)_s$ for every $V \in \Set^\mathcal{S}$ and $s \in \mathcal{S}$:
+\begin{itemize}
+\item $H(\circ,t)$ for every $t \in Term(V)$.
+\item $H(x,x)$ for every $x \in V_s$.
+\item If $H(h_i,t_i)$ for every $1 \leq i \leq n$, then $H(\sigma(h_1, \ldots h_n), \sigma(t_1, \ldots t_n))$.
+\end{itemize}
+The idea is that $H(h,t)$ if and only if $t$ can be obtained from $h$ by filling holes with some terms.
+
+Let $\mathbb{T}$ be a theory over $WTerm$.
+If $h \in WTerm(V)_s$ and $t \in Term(V)_s$, then we will say that $t$ \emph{represents} $h$
+    if $FV(t) \subseteq FV(h)$, $H(h,t)$, and for every $t' \in Term(V)_s$, if $H(h,t')$, then $t'\!\downarrow\ \sststile{}{V} t = t'$.
 
 \section{Algebraic presentations of type theories}
 
