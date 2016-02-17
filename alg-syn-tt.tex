@@ -572,7 +572,7 @@ Summarizing, we saw that every morphism of theories $f : \mathbb{T}_1 \to \mathb
 On morphisms $f^*$ is just an inclusion of a subset; hence $f^*$ is faithful.
 Moreover, $(-)^*$ is functorial, which proves \rprop{func-mod}.
 
-\subsection{Properties of $\Th_\mathcal{S}$}
+\subsection{Properties of the category of theories}
 
 Now we prove a few properties of the category of theories.
 We begin with a proof of the existence of colimits.
@@ -1064,7 +1064,10 @@ Then it follows from \rprop{func-mod} and \rprop{T1-CCat} that models of $\mathb
 \section{Terms with holes}
 
 Terms of algebraic theories may contain a lot of redundant information, which makes them inconvenient to work with.
-In this section we show how to construct monadic presentations of a partial Horn theory which are isomorphic to the one defined in \rdefn{mon-pres} (which we call the standard presentation), but has less redundant information.
+In this section we show how to construct monadic presentations of a partial Horn theory which are isomorphic to the one
+    defined in \rdefn{mon-pres} (which we call the standard presentation), but has less redundant information.
+
+\subsection{Monads of terms with holes}
 
 Let $\Sigma = (\mathcal{S},\mathcal{F},\mathcal{P})$ be a signature.
 Then we define a monad $HTerm : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of terms with holes.
@@ -1123,6 +1126,76 @@ By \eqref{it:b-rep}, for every $t \in Term(V)_s$, $\beta(\alpha(t)) = t$.
 By \eqref{it:b-eq-w}, for every $h \in WTerm(V)_s$, $\widetilde{\beta}(\widetilde{\alpha}(t)) = t$.
 It follows that $\widetilde{\alpha}$ and $\widetilde{\beta}$ determine an isomorphism of monadic presentations $P(\beta(\mathbb{T}))$ and $P(\mathbb{T})$.
 \end{proof}
+
+\subsection{Terms with holes in algebraic dependent type theories}
+
+When working with algebraic dependent type theories we will use use the following conventions:
+\begin{itemize}
+\item An algebraic dependent theory $\mathbb{T}$ must have the function symbols and axioms of $\mathbb{T}_0$ and the morphism $\mathbb{T}_0 \to \mathbb{T}$ must be the inclusion.
+\item For every other function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
+    $k$ should be nonzero, $p$ should be equal to either $ty$ or $tm$, $p_1$ should be equal to $ctx$, and $n_1$ should be equal to $n$.
+\item For every $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, sequent
+\begin{equation}
+\sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p,n}(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma \axtag{$ctx_c$}
+\end{equation}
+should be a theorem of $\mathbb{T}$.
+\end{itemize}
+Note that $\mathbb{T}_1$ satisfies these conditions.
+
+If a theory satisfies these conditions, then we can define its monadic presentations with holes.
+To define submonad $WTerm$, first we need to define a submonad $BTerm$.
+Sets $BTerm(V)_s$ are defined inductively:
+\begin{itemize}
+\item If $x \in V_s$, then $x \in BTerm(V)_s$.
+\item If $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $\Gamma \in BTerm(V)_{(ctx,n)}$, $t_i \in BTerm(V)_{(p_i,n_i)}$,
+    then $\sigma(\Gamma, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
+\item If $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $t_i \in BTerm(V)_{(p_i,n_i)}$, then $\sigma(*, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
+\end{itemize}
+Now, sets $WTerm(V)_s$ can be defined inductively as follows:
+\begin{itemize}
+\item If $x \in V_s$, then $x \in WTerm(V)_s$.
+\item If $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $\Gamma \in WTerm(V)_{(ctx,n)}$, $t_i \in BTerm(V)_{(p_i,n_i)}$,
+    then $\sigma(\Gamma, t_1, \ldots t_k) \in WTerm(V)_{(p,n)}$.
+\end{itemize}
+We will write a term $\sigma(*, t_1, \ldots t_k)$ simply as $\sigma(t_1, \ldots t_k)$, and if $k = 0$, then we will write it as $\sigma$.
+
+To define a function $\beta : WTerm(V)_s \to WTerm(V)_s$, we need additional assumptions on the theory.
+Suppose that for every function symbol $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$
+    and for every $1 \leq i \leq k$ such that $p_i$ equals to either $ty$ or $tm$,
+    there exists a term $D_i(\sigma(\Gamma, x_1, \ldots x_k)) \in WTerm(\{ \Gamma, x_1, \ldots x_k \})_{(ctx_i,n_i)}$ such that sequent
+\begin{equation}
+\sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p_i,n_i}(x_i) = D_i(\sigma(\Gamma, x_1, \ldots x_k)) \axtag{$ctx_p$}
+\end{equation}
+is derivable.
+If $\Delta, t_1, \ldots t_k$ is a sequence of terms such that $\Delta \in BTerm(V)_{(ctx,n)}$ and $t_j \in BTerm(V)_{(p_j,n_j)}$ for every $1 \leq j \leq k$,
+    then we will write $D_i(\sigma(\Delta, t_1, \ldots t_k))$ for $D_i(\sigma(\Gamma, x_1, \ldots x_k))[\Gamma \mapsto \Delta, x_1 \mapsto t_1, \ldots x_k \mapsto t_k]$.
+
+We will need an additional assumption on contextual theories.
+We assume that there is a function $|-|$ that to each $\sigma \in \mathcal{F}$ assigns an ordinal $|\sigma|$ such that if some $\tau$ appears in $D_i(\sigma)$, then $|\tau| < |\sigma|$.
+Moreover, we suppose that for every $\sigma \in \mathcal{F}$, $FV(D_i(A_1, \ldots A_n, \sigma(x_1, \ldots x_k))) \subseteq \{ A_1, \ldots A_n, x_1, \ldots x_{i-1} \}$.
+A \emph{well-ordered contextual theory} is a contextual Horn theory with such function satisfying these assumptions.
+For every well-ordered contextual theory we can define a function $|-|$ on the set of contextual terms of this theory.
+We let $|(\Gamma,t)|$ to be equal to the supremum of the set of ordinals $|\sigma|$ for each $\sigma$ that appears in $(\Gamma,t)$.
+A contextual theory is \emph{well-orderable} if there exists such function.
+The full subcategory of $\CTh$ on well-orderable theories is denoted by $\woCTh$.
+
+For every well-ordered contextual theory $\mathbb{T} = ((\mathcal{T},\mathcal{F},\mathcal{P}),\mathcal{A})$ we define algebraic type theory $F(\mathbb{T})$.
+For every function symbols $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$,
+    theory $F(\mathbb{T})$ has function symbol $\sigma : e(s) \times s_1 \times \ldots \times s_k \to s$,
+    where $e(tm,n) = (ctx,n+1)$ and $e(ty,n) = (ctx,n)$.
+Also $F(\mathbb{T})$ has function symbols of $\mathbb{T}_0$.
+The set of predicate symbols of $F(\mathbb{T})$ equals to $\mathcal{P}$ without symbols $E^n_p$.
+
+For every (partial) contextual term $w$ of $\mathbb{T}$ we define a partial term $F(w)$ of $F(\mathbb{T})$ of the same sort as $w$.
+We construct $F(w)$ by induction on $|w|$.
+First, we define a function $F'(\Gamma,t)$ for $(\Gamma,t)$ such that either $|\Gamma| < |w|$ and $|t| \leq |w|$ or $|(\Gamma,t)| = 0$.
+If $|(\Gamma,t)| = 0$, then $(\Gamma,t)$ consists only of variables, and we let $F'(x_1, \ldots x_n) = x_n|_{e(x_1) = * \land \ldots \land e(x_n) = x_{n-1}}$.
+If $|(\Gamma,t)| > 0$, then we construct $F'(\Gamma,t)$ by induction on $t$.
+If $t$ is a variable and $F(\Gamma) = \Gamma'|_\varphi$, then let $F'(\Gamma,t) = t|_{\varphi \land e(t) = \Gamma'}$.
+If $t = \sigma(t_1, \ldots t_k)$, then let $F'(\Gamma,t) = \sigma(\Gamma', t_1', \ldots t_k')|_{\varphi \land \varphi_1 \land \ldots \land \varphi_k}$,
+    where $F(\Gamma) = \Gamma'|_\varphi$ and $F'(D_i(\Gamma,\sigma(x_1, \ldots x_k)), t_i)[x_1 \mapsto t_1', \ldots x_{i-1} \mapsto t_{i-1}'] = t_i'|_{\varphi_i}$.
+Now, we can define $F(\Gamma,t)$ as follows: $F(A_1, \ldots A_n, t) = F'(x_1, \ldots x_n, t)[x_n \mapsto F'(x_1, \ldots x_{n-1}, A_n)] \ldots \allowbreak [x_1 \mapsto F'(A_1)]$.
+If $\Gamma = \Gamma',t$, then let $F(\Gamma) = F(\Gamma',t)$, and if $\Gamma$ is the empty context, then let $F(\Gamma) = *$.
 
 \section{Algebraic presentations of type theories}
 
