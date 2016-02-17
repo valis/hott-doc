@@ -1086,17 +1086,9 @@ The idea is that $H(h,t)$ if and only if $t$ can be obtained from $h$ by filling
 Let $WTerm$ be a submonad of $HTerm$ that contains $Term$ as a submonad.
 Then we can define Horn formulae, partial terms, inference rules, partial Horn theories, and the category of partial Horn theories
     in the same way as we did in section~\ref{sec:PHT}, but with $WTerm$ in place of $Term$.
-We also add the following axiom:
-\begin{center}
-$t\!\downarrow\ \sststile{}{V} h = t$ \axlabel{h1}
-\end{center}
-for every $h \in WTerm(V)_s$ and $t \in Term(V)_s$ such that $H(h,t)$.
 
 We want to prove that every theory over $WTerm$ satisfying some conditions is isomorphic (in the category of monadic presentations) to some theory over $Term$.
-Let $\mathbb{T}$ be a theory over $WTerm$.
-If $h \in WTerm(V)_s$ and $t \in Term(V)_s$, then we will say that $t$ \emph{represents} $h$ if $FV(t) \subseteq FV(h)$,
-    $H(h,t)$, and $h\!\downarrow\ \sststile{}{V} h = t$ is a theorem of $\mathbb{T}$.
-Let $\beta : WTerm(V)_s \to Term(V)_s$ be a function such that $\beta(h)$ represents $h$.
+Let $\mathbb{T}$ be a theory over $WTerm$, and let $\beta$ be a function $WTerm(V)_s \to Term(V)_s$.
 Then for every formula $\varphi$ over $WTerm$, we define a formula $\beta(\varphi)$ over $Term$ as follows:
 \begin{align*}
 \beta(t = t') & = (\beta(t) = \beta(t')) \\
@@ -1107,25 +1099,29 @@ Finally, we define a theory $\beta(\mathbb{T})$ over $Term$.
 It consists of axioms $\beta(\varphi) \sststile{}{V} \beta(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$.
 
 \begin{prop}
-Let $\mathbb{T}$ be a theory over $WTerm$.
-Then for every $\beta : WTerm(V)_s \to Term(V)_s$, theories $\beta(\mathbb{T})$ and $\mathbb{T}$ are isomorphic.
-Thus if every term with holes in $WTerm(V)_s$ is represented by some term in $Term(V)_s$, then $\mathbb{T}$ is isomorphic to some theory over $Term$.
+Let $\mathbb{T}$ be a theory over $WTerm$, and let $\beta : WTerm(V)_s \to Term(V)_s$ be a function.
+Suppose that the following conditions hold for every $h \in WTerm(V)_s$:
+\begin{enumerate}
+\item \label{it:b-rep} $H(h,\beta(h))$.
+\item \label{it:b-FV} $FV(\beta(h)) \subseteq FV(h)$.
+\item \label{it:b-eq-w} Sequent $\sststile{}{V} h \cong \beta(h)$ is a theorem of $\mathbb{T}$.
+\item \label{it:b-subst} For every $\rho : V \to WTerm(V')$, sequent $\sststile{}{V'} \beta(t[\rho]) \cong \beta(t)[\beta \circ \rho]$ is a theorem of $\beta(\mathbb{T})$.
+\end{enumerate}
+Then theories $\beta(\mathbb{T})$ and $\mathbb{T}$ are isomorphic.
 \end{prop}
 \begin{proof}
 Let $\alpha : Term(V)_s \to WTerm(V)_s$ be the inclusion.
-Note that by \axref{h1}, for every term $h \in WTerm(V)_s$, $\sststile{}{V} h \cong \beta(h)$ is a theorem of $\mathbb{T}$.
-It follows that for every formula $\varphi$ over $WTerm$, $\varphi \ssststile{}{V} \beta(\varphi)$ is a theorem of $\mathbb{T}$.
-Hence $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}$ if and only if $\beta(\varphi) \sststile{}{V} \beta(\psi)$ is a theorem of $\mathbb{T}$.
+It follows from \eqref{it:b-eq-w} that for every formula $\varphi$ over $WTerm$, sequent $\varphi \ssststile{}{V} \beta(\varphi)$ is a theorem of $\mathbb{T}$.
+Hence if $\beta(\varphi) \sststile{}{V} \beta(\psi)$ is a theorem of $\beta(\mathbb{T})$, then $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}$.
 Thus $\alpha$ determines a morphism $\widetilde{\alpha} : P(\beta(\mathbb{T})) \to P(\mathbb{T})$ of monadic presentations.
 
-By \axref{h1} and \rlem{cong-b}, we have theorems $\sststile{}{V} \beta(t[\rho]) \cong t[\rho]$,
-    $\sststile{}{V} t[\rho] t[\beta \circ \rho]$ and $\sststile{}{V} t[\beta \circ \rho] \cong \beta(t)[\beta \circ \rho]$.
-Thus $\beta$ preserves substitution (up to equivalence).
-The same holds for formulae.
-It follows that if $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $\beta(\varphi) \sststile{}{V} \beta(\psi)$ is a theorem of $\mathbb{T}$.
+It follows from \eqref{it:b-FV} and \eqref{it:b-subst} that $\beta$ preserves inference rules.
+Hence if $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $\beta(\varphi) \sststile{}{V} \beta(\psi)$ is a theorem of $\beta(\mathbb{T})$.
 Thus $\beta$ determines a morphism $\widetilde{\beta} : P(\mathbb{T}) \to P(\beta(\mathbb{T}))$ of monadic presentations.
 
-Note that if $t_1$ and $t_2$ represent some term with holes $h$, then $\sststile{}{V} t_1 \cong t_2$ is a theorem of $\mathbb{T}$.
+By \eqref{it:b-rep}, for every $t \in Term(V)_s$, $\beta(\alpha(t)) = t$.
+By \eqref{it:b-eq-w}, for every $h \in WTerm(V)_s$, $\widetilde{\beta}(\widetilde{\alpha}(t)) = t$.
+It follows that $\widetilde{\alpha}$ and $\widetilde{\beta}$ determine an isomorphism of monadic presentations $P(\beta(\mathbb{T}))$ and $P(\mathbb{T})$.
 \end{proof}
 
 \section{Algebraic presentations of type theories}
