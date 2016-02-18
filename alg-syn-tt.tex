@@ -122,7 +122,7 @@
 \newcommand{\Sig}{\cat{Sig}}
 \newcommand{\Th}{\cat{Th}}
 \newcommand{\CTh}{\cat{CTh}}
-\newcommand{\woCTh}{\cat{CTh_{wo}}}
+\newcommand{\emptyCtx}{\mathbf{1}}
 \newcommand{\ThC}{\Th_{\mathcal{C}}}
 \newcommand{\ttvdash}{\vartriangleright}
 
@@ -677,7 +677,8 @@ But this follows from the assumption on the set of function symbols.
 
 Sometimes it is convinient to have a sort which consists of a single element.
 Let $\mathcal{S}$ be a set of sorts and let $s_0$ be a sort in $\mathcal{S}$.
-Then we define a theory $\mathbb{T}_{s_0}$ which consists of a single function symbols $* : s_0$ and two axioms: $\sststile{}{} * \downarrow$ and $\sststile{}{x} x = *$.
+Then we define a theory $\mathbb{T}_{s_0}$ which consists of a single function symbol $\emptyCtx : s_0$
+    and two axioms: $\sststile{}{} \emptyCtx \downarrow$ and $\sststile{}{x} x = \emptyCtx$.
 Then for every theory $\mathbb{T} \in \Th_\mathcal{S}$ there is at most one morphism from $\mathbb{T}_{s_0}$ to $\mathbb{T}$.
 If such morphism exists, we will say that $s_0$ is \emph{trivial} in $\mathbb{T}$.
 Thus $\mathbb{T}_{s_0}/\Th_\mathcal{S}$ is (equivalent to) a full subcategory of $\Th_\mathcal{S}$.
@@ -1101,7 +1102,7 @@ Then for every formula $\varphi$ over $WTerm$, we define a formula $\beta(\varph
 Finally, we define a theory $\beta(\mathbb{T})$ over $Term$.
 It consists of axioms $\beta(\varphi) \sststile{}{V} \beta(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$.
 
-\begin{prop}
+\begin{lem}
 Let $\mathbb{T}$ be a theory over $WTerm$, and let $\beta : WTerm(V)_s \to Term(V)_s$ be a function.
 Suppose that the following conditions hold for every $h \in WTerm(V)_s$:
 \begin{enumerate}
@@ -1111,7 +1112,7 @@ Suppose that the following conditions hold for every $h \in WTerm(V)_s$:
 \item \label{it:b-subst} For every $\rho : V \to WTerm(V')$, sequent $\sststile{}{V'} \beta(t[\rho]) \cong \beta(t)[\beta \circ \rho]$ is a theorem of $\beta(\mathbb{T})$.
 \end{enumerate}
 Then theories $\beta(\mathbb{T})$ and $\mathbb{T}$ are isomorphic.
-\end{prop}
+\end{lem}
 \begin{proof}
 Let $\alpha : Term(V)_s \to WTerm(V)_s$ be the inclusion.
 It follows from \eqref{it:b-eq-w} that for every formula $\varphi$ over $WTerm$, sequent $\varphi \ssststile{}{V} \beta(\varphi)$ is a theorem of $\mathbb{T}$.
@@ -1144,58 +1145,40 @@ Note that $\mathbb{T}_1$ satisfies these conditions.
 
 If a theory satisfies these conditions, then we can define its monadic presentations with holes.
 To define submonad $WTerm$, first we need to define a submonad $BTerm$.
+We will say that a term $t \in BTerm(V)_s$ has \emph{a well-defined context} if $t$ is either a variable, or $\emptyCtx$,
+    or of the form $\sigma(\Gamma, t_1, \ldots t_k)$, $\sigma$ is not a function symbol of $\mathbb{T}_0$ and $\Gamma$ has a well-defined context.
 Sets $BTerm(V)_s$ are defined inductively:
 \begin{itemize}
 \item If $x \in V_s$, then $x \in BTerm(V)_s$.
-\item If $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $\Gamma \in BTerm(V)_{(ctx,n)}$, $t_i \in BTerm(V)_{(p_i,n_i)}$,
-    then $\sigma(\Gamma, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
+\item If $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $\Gamma \in BTerm(V)_{(ctx,n)}$,
+    $\Gamma$ has a well-defined context, and $t_i \in BTerm(V)_{(p_i,n_i)}$, then $\sigma(\Gamma, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
 \item If $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $t_i \in BTerm(V)_{(p_i,n_i)}$, then $\sigma(*, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
+\item $BTerm$ is closed under function symbols of $\mathbb{T}_0$.
 \end{itemize}
-Now, sets $WTerm(V)_s$ can be defined inductively as follows:
-\begin{itemize}
-\item If $x \in V_s$, then $x \in WTerm(V)_s$.
-\item If $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $\Gamma \in WTerm(V)_{(ctx,n)}$, $t_i \in BTerm(V)_{(p_i,n_i)}$,
-    then $\sigma(\Gamma, t_1, \ldots t_k) \in WTerm(V)_{(p,n)}$.
-\end{itemize}
+
+Sets $WTerm(V)_s$ are subsets of $BTerm(V)_s$.
+A term $t \in BTerm(V)_s$ belongs to $WTerm(V)_s$ if and only if it has a well-defined context.
 We will write a term $\sigma(*, t_1, \ldots t_k)$ simply as $\sigma(t_1, \ldots t_k)$, and if $k = 0$, then we will write it as $\sigma$.
 
 To define a function $\beta : WTerm(V)_s \to WTerm(V)_s$, we need additional assumptions on the theory.
 Suppose that for every function symbol $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$
     and for every $1 \leq i \leq k$ such that $p_i$ equals to either $ty$ or $tm$,
-    there exists a term $D_i(\sigma(\Gamma, x_1, \ldots x_k)) \in WTerm(\{ \Gamma, x_1, \ldots x_k \})_{(ctx_i,n_i)}$ such that sequent
+    there exists a term $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})) \in WTerm(\{ \Gamma, x_1, \ldots x_{i-1} \})_{(ctx_i,n_i)}$ such that sequent
 \begin{equation}
 \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p_i,n_i}(x_i) = D_i(\sigma(\Gamma, x_1, \ldots x_k)) \axtag{$ctx_p$}
 \end{equation}
 is derivable.
-If $\Delta, t_1, \ldots t_k$ is a sequence of terms such that $\Delta \in BTerm(V)_{(ctx,n)}$ and $t_j \in BTerm(V)_{(p_j,n_j)}$ for every $1 \leq j \leq k$,
-    then we will write $D_i(\sigma(\Delta, t_1, \ldots t_k))$ for $D_i(\sigma(\Gamma, x_1, \ldots x_k))[\Gamma \mapsto \Delta, x_1 \mapsto t_1, \ldots x_k \mapsto t_k]$.
+If $\Delta, t_1, \ldots t_{i-1}$ is a sequence of terms such that $\Delta \in Term(V)_{(ctx,n)}$ and $t_j \in Term(V)_{(p_j,n_j)}$ for every $1 \leq j < i$,
+    then we will write $D_i(\sigma(\Delta, t_1, \ldots t_{i-1}))$ for $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1}))[\Gamma \mapsto \Delta, x_1 \mapsto t_1, \ldots x_{i-1} \mapsto t_{i-1}]$.
 
-We will need an additional assumption on contextual theories.
-We assume that there is a function $|-|$ that to each $\sigma \in \mathcal{F}$ assigns an ordinal $|\sigma|$ such that if some $\tau$ appears in $D_i(\sigma)$, then $|\tau| < |\sigma|$.
-Moreover, we suppose that for every $\sigma \in \mathcal{F}$, $FV(D_i(A_1, \ldots A_n, \sigma(x_1, \ldots x_k))) \subseteq \{ A_1, \ldots A_n, x_1, \ldots x_{i-1} \}$.
-A \emph{well-ordered contextual theory} is a contextual Horn theory with such function satisfying these assumptions.
-For every well-ordered contextual theory we can define a function $|-|$ on the set of contextual terms of this theory.
-We let $|(\Gamma,t)|$ to be equal to the supremum of the set of ordinals $|\sigma|$ for each $\sigma$ that appears in $(\Gamma,t)$.
-A contextual theory is \emph{well-orderable} if there exists such function.
-The full subcategory of $\CTh$ on well-orderable theories is denoted by $\woCTh$.
-
-For every well-ordered contextual theory $\mathbb{T} = ((\mathcal{T},\mathcal{F},\mathcal{P}),\mathcal{A})$ we define algebraic type theory $F(\mathbb{T})$.
-For every function symbols $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$,
-    theory $F(\mathbb{T})$ has function symbol $\sigma : e(s) \times s_1 \times \ldots \times s_k \to s$,
-    where $e(tm,n) = (ctx,n+1)$ and $e(ty,n) = (ctx,n)$.
-Also $F(\mathbb{T})$ has function symbols of $\mathbb{T}_0$.
-The set of predicate symbols of $F(\mathbb{T})$ equals to $\mathcal{P}$ without symbols $E^n_p$.
-
-For every (partial) contextual term $w$ of $\mathbb{T}$ we define a partial term $F(w)$ of $F(\mathbb{T})$ of the same sort as $w$.
-We construct $F(w)$ by induction on $|w|$.
-First, we define a function $F'(\Gamma,t)$ for $(\Gamma,t)$ such that either $|\Gamma| < |w|$ and $|t| \leq |w|$ or $|(\Gamma,t)| = 0$.
-If $|(\Gamma,t)| = 0$, then $(\Gamma,t)$ consists only of variables, and we let $F'(x_1, \ldots x_n) = x_n|_{e(x_1) = * \land \ldots \land e(x_n) = x_{n-1}}$.
-If $|(\Gamma,t)| > 0$, then we construct $F'(\Gamma,t)$ by induction on $t$.
-If $t$ is a variable and $F(\Gamma) = \Gamma'|_\varphi$, then let $F'(\Gamma,t) = t|_{\varphi \land e(t) = \Gamma'}$.
-If $t = \sigma(t_1, \ldots t_k)$, then let $F'(\Gamma,t) = \sigma(\Gamma', t_1', \ldots t_k')|_{\varphi \land \varphi_1 \land \ldots \land \varphi_k}$,
-    where $F(\Gamma) = \Gamma'|_\varphi$ and $F'(D_i(\Gamma,\sigma(x_1, \ldots x_k)), t_i)[x_1 \mapsto t_1', \ldots x_{i-1} \mapsto t_{i-1}'] = t_i'|_{\varphi_i}$.
-Now, we can define $F(\Gamma,t)$ as follows: $F(A_1, \ldots A_n, t) = F'(x_1, \ldots x_n, t)[x_n \mapsto F'(x_1, \ldots x_{n-1}, A_n)] \ldots \allowbreak [x_1 \mapsto F'(A_1)]$.
-If $\Gamma = \Gamma',t$, then let $F(\Gamma) = F(\Gamma',t)$, and if $\Gamma$ is the empty context, then let $F(\Gamma) = *$.
+Now, we define $\beta : WTerm(V)_s \to WTerm(V)_s$ together with a function $\beta' : Term(V)_{(ctx,n)} \times BTerm(V)_{(p,n)} \to Term(V)_{(p,n)}$, where $p \in \{ tm,ty \}$.
+\begin{align*}
+\beta(x) & = x \\
+\beta(\sigma(\Gamma, t_1, \ldots t_k)) & = \beta'(\beta(\Gamma), \sigma(*, t_1, \ldots t_k)) \\
+\beta'(\Delta, \sigma(*, t_1, \ldots t_k)) & = \sigma(\Delta, t_1', \ldots t_k') \\
+\beta'(\Delta, t) & = \beta(t)
+\end{align*}
+where $t_i' = \beta'(D_i(\sigma(\Delta, t_1', \ldots t_{i-1}')), t_i)$, and $t$ is not of the form $\sigma(*, t_1, \ldots t_k)$.
 
 \section{Algebraic presentations of type theories}
 
@@ -1212,12 +1195,12 @@ Usually in type theories all of the function symbols are available in every cont
 We call such theories \emph{regular}.
 Let $\mathcal{F}$ be a set of function symbols such that every $\sigma \in \mathcal{F}$ has a signature of the form $(p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$.
 Then we define $reg(\mathcal{F})$ as the set of symbols of $\mathbb{T}_1$ together with $\{ \sigma_k : (ctx, k) \times (p_1, q_1 + k) \times \ldots \times (p_n, q_n + k) \to (p, k) \ |\ \sigma \in \mathcal{F}, \sigma : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0), k \in \mathbb{N} \}$.
-We will use term $\sigma(a_1, \ldots a_n)$ as a synonym for $\sigma_0(*, a_1, \ldots a_n)$.
+We will use term $\sigma(a_1, \ldots a_n)$ as a synonym for $\sigma_0(\emptyCtx, a_1, \ldots a_n)$.
 
 Now, for every set of variables $V$ we define a set $L^n(V)$ which contains a variable $x$ of sort $(p,q+n)$ for every variable $x$ of sort $(p,q)$ in $V$.
 For every $t \in Term_{reg(\mathcal{F})}(V)_{(p,q)}$, $m \in \mathbb{N}$, and variable $\Gamma$ we define a term $L^m(\Gamma, t) \in Term_{reg(\mathcal{F})}(L^m(V \amalg \{ \Gamma : (ctx,0) \}))_{(p,q+m)}$ by induction on $t$:
 \begin{align*}
-& L^m(\Gamma, *) = \Gamma \\
+& L^m(\Gamma, \emptyCtx) = \Gamma \\
 & L^m(\Gamma, x_i) = x_i \\
 & L^m(\Gamma, ft_n(A)) = ft_{n+m}(L^m(\Gamma, A)) \\
 & L^m(\Gamma, ty_n(a)) = ty_{n+m}(L^m(\Gamma, a)) \\
@@ -1253,8 +1236,8 @@ where $b_i' = subst_{p_i,n,k}^{q_i+1}(B', b_i, a_1, \ldots a_k)$.
 
 Let $(\mathcal{F},\mathbb{T})$ and $(\mathcal{F}',\mathbb{T}')$ be regular algebraic dependent type theories.
 Then we say that a morphism $F$ of theories $\mathbb{T}$ and $\mathbb{T}'$ is \emph{regular} if for every $\sigma \in \mathcal{F}$ the following sequent is a theorem of $\mathbb{T}'$.
-\[ \sststile{}{\Gamma, a_1, \ldots a_n} F(\sigma_m(\Gamma, a_1, \ldots a_n)) = L^m(\Gamma, F(\sigma_0(*, a_1, \ldots a_n))) \]
-Note that term $L^m(\Gamma, F(\sigma_0(*, a_1, \ldots a_n)))$ does not depend on the choice of a representative of the equivalence class.
+\[ \sststile{}{\Gamma, a_1, \ldots a_n} F(\sigma_m(\Gamma, a_1, \ldots a_n)) = L^m(\Gamma, F(\sigma_0(\emptyCtx, a_1, \ldots a_n))) \]
+Note that term $L^m(\Gamma, F(\sigma_0(\emptyCtx, a_1, \ldots a_n)))$ does not depend on the choice of a representative of the equivalence class.
 Indeed, if $\sststile{}{V} t \cong s$, then $\sststile{}{\Gamma,V} L^m(\Gamma,t) \cong L^m(\Gamma,s)$ since $\mathbb{T}'$ is stable.
 
 Category $\algtt_{reg}$ of regular algebraic dependent type theories has regular algebraic dependent type theories as objects and regular morphisms of the underlying theories as morphisms.
