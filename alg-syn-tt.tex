@@ -120,6 +120,7 @@
 \newcommand{\algtt}{\cat{AlgTT}}
 \newcommand{\PStr}[1]{#1\text{-}\cat{PStr}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
+\newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
 \newcommand{\Sig}{\cat{Sig}}
 \newcommand{\Th}{\cat{Th}}
 \newcommand{\CTh}{\cat{CTh}}
@@ -314,7 +315,8 @@ The category of monadic presentations of partial Horn theories with $\mathcal{S}
 \subsection{The category of partial Horn theories}
 
 Let $\mathcal{S}$ be a set of sorts, $T : \Set^\mathcal{S} \to \Set^\mathcal{S}$ a monad with a free variables structure,
-    and $\mathcal{P}$ a set of predicate symbols together with a function that to each $R \in \mathcal{P}$ assigns its signature $R : s_1 \times \ldots \times s_n$, where $s_1, \ldots s_n \in \mathcal{S}$.
+    and $\mathcal{P}$ a set of predicate symbols together with a function that to each $R \in \mathcal{P}$
+    assigns its signature $R : s_1 \times \ldots \times s_n$, where $s_1, \ldots s_n \in \mathcal{S}$.
 
 Let $\mathcal{F}$ be a set of function symbols together with a function that to each $\sigma \in \mathcal{F}$ assigns its signature $\sigma : s_1 \times \ldots \times s_n \to s$, where $s_1, \ldots s_n, s \in \mathcal{S}$.
 Then we can define an example of a monad over $\Set^\mathcal{S}$.
@@ -332,7 +334,7 @@ Thus $Term : \Set^\mathcal{S} \to \Set^\mathcal{S}$ is a monad, which we call th
 
 An \emph{atomic formula} with free variables in $V$ is an expression either of the form $t_1 =_s t_2$ (we will usually omit $s$ in the notation),
     where $s \in \mathcal{S}$ and $t_1, t_2 \in T(V)_s$, or of the form $R(t_1, \ldots t_n)$, where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in T(V)_{s_i}$.
-A \emph{Horn formula} with free variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulae.
+A \emph{Horn formula} (over $\mathcal{P}$) with free variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulae.
 If $n = 0$, then we write such a formula as $\top$.
 The set of Horn formulae with free variables in $V$ is denoted by $Form(V)$.
 If $\varphi \in Form(V)$ and $\rho : V \to T(V')$, then we will write $\varphi[\rho]$ for a formula defined as follows:
@@ -541,61 +543,76 @@ Then there is a unique morphism of monads $f : T \to T'$ such that $f(\sigma(x_1
 \subsection{Models of partial Horn theories}
 
 Given a monad $T : \Set^\mathcal{S} \to \Set^\mathcal{S}$, we define a category of its partial algebras.
-A partial algebra over $T$ is a pair $(A,\alpha)$, where $A$ is an $\mathcal{S}$-set and $\alpha_V : Hom_{\PSet^\mathcal{S}}(V,A) \to Hom_{\PSet^\mathcal{S}}(T(V),A)$,
+A \emph{partial algebra} over $T$ is a pair $(A,\alpha)$, where $A$ is an $\mathcal{S}$-set and $\alpha_V : Hom_{\PSet^\mathcal{S}}(V,A) \to Hom_{\PSet^\mathcal{S}}(T(V),A)$,
     where $\PSet$ is the category of sets and partial functions between them.
 This pair must satisfy the following conditions:
 \begin{itemize}
 \item For every partial function $f : V \to A$, $\alpha_V(f) \circ \eta_V = f$.
 \item For every total function $\rho : V \to T(V')$ and every partial function $f : V' \to A$, $\alpha_V(\alpha_{V'}(f) \circ \rho) = \alpha_{V'}(f) \circ \rho^*$.
 \end{itemize}
-A morphism of partial algebras $(A,\alpha)$ and $(B,\beta)$ is a total morphism $h : A \to B$ of $\mathcal{S}$-sets such that for every partial function $f : V \to A$, $h \circ \alpha_V(f) = \beta_V(h \circ f)$.
+A morphism of partial algebras $(A,\alpha)$ and $(A',\alpha')$ is a total morphism $h : A \to A'$ of $\mathcal{S}$-sets
+    such that for every partial function $f : V \to A$ and every $t \in T(V)_s$, if $\alpha_V(f)(t)$ is defined,
+    then $\alpha'_V(h \circ f)(t)$ is also defined and $h(\alpha_V(f)(t)) = \alpha'_V(h \circ f)(t)$.
 
-The notions of a partial $\Sigma$-structure for a signature $\Sigma$ and of a model of a theory were defined in \cite{PHL}.
-Here, we will prove the following proposition:
+\begin{lem}
+If $Term$ is the standard monad over $\mathcal{F}$, then categories of partial algebras over $Term$
+    and partial structures for signature $(\mathcal{S},\mathcal{F},\varnothing)$ as defined in \cite{PHL} are isomorphic.
+\end{lem}
+\begin{proof}
+\todo{Write the proof}
+\end{proof}
+
+If $F : \Set^\mathcal{S} \to \Set$ is a left module of formulae over $T$, then we define a category of its partial algebras.
+A \emph{partial algebra} over $(T,F)$ is a parial algebra $(A,\alpha)$ over $T$ together with a function $\beta_V : Hom_{\PSet^\mathcal{S}}(V,A) \to Hom_\Set(F(V),\Omega)$,
+    where $\Omega = \{ \top, \bot \}$ is the set of truth-values.
+This function must satisfy the following conditions:
+\begin{itemize}
+\item For every total function $\rho : V \to T(V')$ and every partial function $f : V' \to A$, $\beta_V(\alpha_{V'}(f) \circ \rho) = \beta_{V'}(f) \circ \rho^\circ$.
+\item For every partial function $f : V \to A$, $\beta_V(f)(\top) = \top$.
+\item For every partial function $f : V \to A$, $\beta_V(f)(\varphi \land \psi) = \top$ if and only if both $\beta_V(f)(\varphi)$ and $\beta_V(f)(\psi)$ equal to $\top$.
+\end{itemize}
+A morphism of partial algebras $(A,\alpha,\beta)$ and $(A',\alpha',\beta')$ is a morphism $h$ of partial algebras $(A,\alpha)$ and $(A',\alpha')$
+    such that for every partial function $f : V \to A$ and every $\varphi \in F(V)$, if $\beta_V(f)(\varphi) = \top$, then $\beta'_V(h \circ f)(\varphi) = \top$.
+
+We define a function $\epsilon_V : Hom_{\PSet^\mathcal{S}}(V,A) \to Hom_\Set(E(V),\Omega)$ for the left module $E$ of equality.
+Let $\epsilon_V(e(s,t,t')) = \top$ if and only if $\alpha_V(f)(t)$ and $\alpha_V(f)(t')$ are defined and equal.
+If $F$ is a left module of formulae with equality over $T$, then we say that a partial algebra $(A,\alpha,\beta)$ is standard
+    if for every partial function $f : V \to A$, $e_V \circ \beta_V(f) = \epsilon_V(f)$, where $e_V : E(V) \to F(V)$.
+
+\begin{lem}
+If $Term$ is the standard monad over $\mathcal{F}$ and $Form$ is the left module of Horn formulae over $\mathcal{P}$,
+    then categories of partial algebras over $(Term,Form)$ and partial structures for signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ are isomorphic.
+\end{lem}
+\begin{proof}
+\todo{Write the proof}
+\end{proof}
+
+If $(T,F,\mu)$ is a monadic presentation, then we define a category of its partial algebras as a full subcategory of partial algebras over $(T,F)$.
+A partial algebra $(A,\alpha,\beta)$ over $(T,F)$ is a partial algebra over $(T,F,\mu)$ if for every partial function $f : V \to A$,
+    every $t \in T(V)_s$ and every $\varphi \in F(V)$, $\alpha_V(f)(\mu_V(t,\varphi))$ is defined if and only if $\alpha_V(f)(t)$ is defined and $\beta_V(f)(\varphi) = \top$,
+    and $\alpha_V(f)(\mu_V(t,\varphi))$ equals to $\alpha_V(f)(t)$ when it is defined.
+The category of partial algebras over $(T,F,\mu)$ will be denoted by $\PAlg{(T,F,\mu)}$.
+
+\begin{lem}
+If $Term$ is the standard monad over $\mathcal{F}$ and $\mathbb{T} = (Term,\mathcal{P},\mathcal{A})$ is a partial Horn theory,
+    then categories of partial algebras over $P(\mathbb{T})$ and models of $\mathbb{T}$ as defined in \cite{PHL} are isomorphic.
+\end{lem}
+\begin{proof}
+\todo{Write the proof}
+\end{proof}
+
+Finally, we prove a proposition which shows that if $\mathbb{T}'$ is a partial Horn theory under $\mathbb{T}$,
+    then we can think of models of $\mathbb{T}'$ as models of $\mathbb{T}$ with additional structure.
 
 \begin{prop}[func-mod]
-For every morphism of theories $f : \mathbb{T}_1 \to \mathbb{T}_2$ there is a faithful functor $f^* : \Mod{\mathbb{T}_2} \to \Mod{\mathbb{T}_1}$ such that
-for every theory $\mathbb{T}$, $id_\mathbb{T}^*$ is the identity functor,
-and for every $f : \mathbb{T}_1 \to \mathbb{T}_2$ and $g : \mathbb{T}_2 \to \mathbb{T}_3$, $(g \circ f)^* = f^* \circ g^*$.
+For every morphism of monadic presentations $f : (P,F,\mu) \to (P',F',\mu')$, there is a faithful functor $f^* : \PAlg{(P',F',\mu')} \to \PAlg{(P,F,\mu)}$
+    such that $id_{(P,F,\mu)}^*$ is the identity functor and $(g \circ f)^* = f^* \circ g^*$.
 \end{prop}
-
-\begin{cor}[iso-mod]
-Isomorphic theories has isomorphic categories of models.
-\end{cor}
-
-Let $\mathbb{T}$ be a theory and let $P(\mathbb{T}) = (T,F,\mu)$ be its monadic presentation.
-Then for every model $A$ of $\mathbb{T}$, every $V = \{ x_1 : s_1, \ldots x_n : s_n \}$, every $t \in T(V)_s$, and every $\varphi \in F(V)$,
-    we can define a partial function $A(t) : A_{s_1} \times \ldots \times A_{s_n} \to A_s$ and a relation $A(\varphi) \subseteq A_{s_1} \times \ldots \times A_{s_n}$.
-For every $t \in Term_\mathcal{F}(V)_s$ and $\varphi \in Form_\Sigma(V)$, this is done as described in \cite{PHL}.
-For every $t|_\varphi \in PTerm_\Sigma(V)_s$, let $A(t|_\varphi) = A(t)|_{A(\varphi)}$.
-Since $A$ is a model of $\mathbb{T}$, these definitions respect equivalence relations.
-Thus this defines required partial functions and relations.
-
-Let $\mathbb{T}_i$ be theories over signatures $\Sigma_i = (\mathcal{S},\mathcal{F}_i,\mathcal{P}_i)$, $i = 1,2$,
-    and let $f : \mathbb{T}_1 \to \mathbb{T}_2$ be a morphism between them.
-Then we can define a functor $f^* : \Mod{\mathbb{T}_2} \to \Mod{\mathbb{T}_1}$.
-If $A$ is a model of $\mathbb{T}_2$, then $f^*(A)$ has the same underlying $\mathcal{S}$-set.
-If $R \in \mathcal{P}$, then we define $f^*(A)(R(x_1, \ldots x_n))$ as $A(f(R(x_1, \ldots x_n)))$.
-If $\sigma \in \mathcal{F}$, then we define $f^*(A)(\sigma(x_1, \ldots x_n))$ as $A(f(\sigma(x_1, \ldots x_n)))$.
-
-By definition morphisms of models of a theory are morphisms of the underlying $\mathcal{S}$-sets which commute with the interpretation of symbols from the signature.
-If $\alpha : A \to B$ is a morphism of models of $\mathbb{T}_2$, then we want to define $f^*(\alpha) : f^*(A) \to f^*(B)$ as the same morphism.
-To do this we need to prove that if $\alpha$ commutes with the interpretation of symbols from $\Sigma_2$, then it also commutes with the interpretation of symbols from $\Sigma_1$.
-But the interpretation of symbols from $\Sigma_1$ is defined as the interpretation of terms and formulae from $\Sigma_2$, and it was shown in \cite{PHL} that $\alpha$ commutes with them.
-
-Note that $(-)^*$ is functorial, that is $id^*$ is the identity functor and $(g \circ f)^* = f^* \circ g^*$.
-This is obvious for morphisms since $f^*(\alpha) = \alpha$ for all $f$.
-Given a partial $\Sigma$-structure $A$ we can check that $id^*(A)(R(x_1, \ldots x_n)) = A(id(R(x_1, \ldots x_n))) = A(R(x_1, \ldots x_n))$
-    and $id^*(A)(\sigma(x_1, \ldots x_n)) = A(\sigma(x_1, \ldots x_n))$.
-Thus $id^*$ is indeed the identity functor.
-If $f : \mathbb{T}_1 \to \mathbb{T}_2$ and $g : \mathbb{T}_2 \to \mathbb{T}_3$ and $A$ is a model of $\mathbb{T}_1$,
-    then $(g \circ f)^*(A)(R(x_1, \ldots x_n)) = A(g(f(R(x_1, \ldots x_n))))$ and $f^*(g^*(A))(R(x_1, \ldots x_n)) = g^*(A)(f(R(x_1, \ldots x_n))) = A(g(f(R(x_1, \ldots x_n))))$.
-Analogously, we have $(g \circ f)^*(A) \allowbreak (\sigma(x_1, \ldots x_n)) = f^*(g^*(A))(\sigma(x_1, \ldots x_n))$.
-Thus $(g \circ f)^* = f^* \circ g^*$.
-
-Summarizing, we saw that every morphism of theories $f : \mathbb{T}_1 \to \mathbb{T}_2$ defines a functor $f^* : \Mod{\mathbb{T}_2} \to \Mod{\mathbb{T}_1}$.
-On morphisms $f^*$ is just an inclusion of a subset; hence $f^*$ is faithful.
-Moreover, $(-)^*$ is functorial, which proves \rprop{func-mod}.
+\begin{proof}
+If $(A,\alpha,\beta)$ is a partial algebra over $(P',F',\mu')$, then let $f^*(A,\alpha,\beta) = (A, e \mapsto \alpha_V(e) \circ f_V, e \mapsto \beta_V(e) \circ f_V)$.
+If $h : (A,\alpha,\beta) \to (A',\alpha',\beta')$ is a morphism of partial algebras, then let $f^*(h) = h$.
+It is easy to see that these definitions satisfy all required conditions.
+\end{proof}
 
 \subsection{Properties of the category of theories}
 
