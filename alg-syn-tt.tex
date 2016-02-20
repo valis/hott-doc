@@ -546,25 +546,6 @@ Its objects are tuples $((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$, wh
 Morphisms of standard partial Horn theories are morphisms of corresponding partial Horn theories.
 Thus $\Th_\mathcal{S}$ is (equivalent to) a full subcategory of $\Th^T_\mathcal{S}$.
 
-\begin{prop}
-The inclusion $\Th_\mathcal{S} \to \Th^T_\mathcal{S}$ is an equivalence of categories.
-\end{prop}
-\begin{proof}
-We only need to prove that this inclusion is essentially surjective on objects.
-Let $(T,\mathcal{P},\mathcal{A})$ be a partial Horn theory.
-Then we define the set of function symbols with signature $s_1 \times \to \times s_n \to s$ as $T(\{ x_1 : s_1, \ldots x_n : s_n \})_s$.
-The set of all function symbols will be denoted by $\mathcal{F}$.
-The set of relation symbols is the same, and the set of axioms $\mathcal{A}'$ consists of two kinds of axioms.
-First, since $T$ is finitary, for every axiom from $\mathcal{A}$ there exists a finite set $V'$
-    such that every term $t \in T(V)_s$ that appears in this axiom belongs to $T(V')_s$.
-Thus we can replace every term in an axiom with a function symbol from $\mathcal{F}$.
-This defines an axiom over $(Term_\mathcal{F},Form_\mathcal{P})$.
-Second, for every $t \in T(\{ x_1 : s_1, \ldots x_n : s_n \})_s$ and every $t_1, \ldots t_n$ such that $t_i \in T(V)_{s_i}$,
-    we have an axiom $\sststile{}{V} t(t_1, \ldots t_n) \cong t[x_i \mapsto t_i]$.
-
-Now, we need to prove that monadic presentations $P(T,\mathcal{P},\mathcal{A})$ and $P(Term_\mathcal{F},\mathcal{P},\mathcal{A}')$ are isomorphic.
-\end{proof}
-
 \subsection{Models of partial Horn theories}
 
 Given a monad $T : \Set^\mathcal{S} \to \Set^\mathcal{S}$, we define a category of its partial algebras.
@@ -651,7 +632,24 @@ If $Term_\mathcal{F}$ is the standard monad and $\mathbb{T} = (Term_\mathcal{F},
     then categories of partial algebras over $P(\mathbb{T})$ and models of $\mathbb{T}$ as defined in \cite{PHL} are isomorphic.
 \end{lem}
 \begin{proof}
-\todo{Write the proof}
+Let $(A,\alpha,\beta)$ be a partial algebra over $P(\mathbb{T})$.
+Then we define a partial algebra $F(A,\alpha,\beta)$ over $(Term_\mathcal{F},Form_\mathcal{P})$.
+Let $F(A,\alpha,\beta) = (A,\alpha',\beta')$, where $\alpha'_V(f)(t) = \alpha_V(f)([t|_\top]_\sim)$ and $\beta'_V(f)(\varphi) = \alpha_V(f)([\varphi]_\sim)$,
+    where $[t|_\top]_\sim$ and $[\varphi]_\sim$ are equivalence classes of $t_\top$ and $\varphi$ in $P(V)$ and $F(V)$ respectively.
+Then $F(A,\alpha,\beta)$ is a model of $\mathbb{T}$.
+Indeed, if $\varphi \ssststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $[\varphi]_\sim = [\psi]_\sim$; hence $\beta'_V(f)(\varphi) = \beta'_V(f)(\varphi)$.
+If $h$ is a morphism of partial algebras over $P(\mathbb{T})$, then let $F(h) = h$.
+
+Let $(A,\alpha',\beta')$ be a model of $\mathbb{T}$.
+Then we define a partial algebra $G(A,\alpha',\beta')$ over $P(\mathbb{T})$.
+Let $G(A,\alpha',\beta') = (A,\alpha,\beta)$, where $\beta_V(f)([\varphi]_\sim) = \beta'_V(f)(\varphi)$, and $\alpha_V(f)([t|_\varphi]_\sim)$ is defined
+    if and only if $\alpha'_V(f)(t)$ is defined and $\beta'_V(f)(\varphi) = \top$, and in this case $\alpha_V(f)([t|_\varphi]_\sim) = \alpha'_V(f)(t)$.
+These definitions do not depend on the choice of a representative of the equivalence classes.
+Indeed, $\varphi \sim \psi$ if and only if $\varphi \ssststile{}{V} \psi$ is a theorem of $\mathbb{T}$,
+    and in this case $\beta'_V(f)(\varphi) = \beta'_V(f)(\psi)$ since $A$ is a model of $\mathbb{T}$.
+The same argument shows that the definition of $\alpha$ does not depend on the choice of a representative of $[t|_\varphi]_\sim$.
+If $h$ is a morphism of models, then let $G(h) = h$.
+It is easy to see that functors $F$ and $G$ determine isomorphisms of categories.
 \end{proof}
 
 Finally, we prove a proposition which shows that if $\mathbb{T}'$ is a partial Horn theory under $\mathbb{T}$,
