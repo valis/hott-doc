@@ -1285,10 +1285,11 @@ Then is isomorphic to $\beta(\mathbb{T})$, which is an algebraic dependent type 
 
 Terms from $BTerm$ may or may not contain redundant information about contexts.
 Now, we will show that under additional assumptions on $\mathbb{T}$ every term is equivalent to a one with no redundant information.
-First, let $STerm$ be a submonad of $BTerm$ which consists of terms in which every subterm is either a variable, or of the form $ty(t)$, or of the form $\sigma(*, t_1, \ldots t_k)$.
+First, let $STerm$ be a subfunctor of $BTerm$ which consists of terms in which every subterm is
+    either of the form $ctx^i(x)$, where $x$ is a variable, or of the form $ty(t)$, or of the form $\sigma(*, t_1, \ldots t_k)$.
 Let $LTerm$ be a subfunctor of $BTerm$ such that $t \in LTerm(V)_s$ if and only if $t$ satisfies one of the following conditions:
 \begin{itemize}
-\item $t$ is a variable.
+\item $t = ctx^i(x)$, where $x$ is a variable.
 \item $t = \emptyCtx$.
 \item $t = ty(t')$, where $t' \in LTerm(V)_{(tm,n)}$.
 \item $t = \sigma(\Gamma, t_1, \ldots t_k)$, where $\Gamma \in LTerm(V)_{(ctx,n)}$ and $t_1, \ldots t_k$ belong to $STerm$.
@@ -1302,10 +1303,36 @@ Suppose that the following sequents are theorems of $\mathbb{T}$:
 \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p,n}(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma \axtag{c2} \\
 \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p_i,n_i}(x_i) = D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})) \axtag{c3}
 \end{align*}
-Then for every $t \in WTerm(V)_s$, there is a partial term $\gamma(t) \in PLTerm(V)_s$ such that $\sststile{}{V} t \cong \gamma(t)$ is a theorem of $\mathbb{T}$.
+Then for every $t \in WTerm(V)_s$, there is a partial term $r(t) \in PLTerm(V)_s$ such that $\sststile{}{V} t \cong r(t)$ is a theorem of $\mathbb{T}$.
 \end{prop}
 \begin{proof}
-\todo{Write the proof}
+By \axref{c1}, we only need to show that such $r(t)$ exists for every $t \in Term(V)_s$.
+We do this by induction on $t$.
+If $t$ is of the form $ctx^i(x)$ or $t = \emptyCtx$, then we can take $r(t) = t$.
+So suppose that $t$ is of the form $ctx^i(\sigma(\Gamma, t_1, \ldots t_k))$.
+If $i > 0$, then by \axref{c2}, $t$ is equivalent to $ctx^{i-1}(\Gamma)$, so we can take $r(t) = r(ctx^{i-1}(\Gamma))$.
+So suppose that $i = 0$.
+If $t = ty(\sigma(\Gamma, t_1, \ldots t_k))$, then we can take $r(t) = ty(r(\sigma(\Gamma, t_1, \ldots t_k)))$.
+
+Finally, suppose that $t = \sigma(\Gamma, t_1, \ldots t_k)$.
+Then $r(\Gamma) = \Gamma'|_\varphi$ and $r(t_i) = t_i'|_{\varphi_i}$.
+Let $t_i'' = t_i'$ and $\varphi_i' = \top$ if $t_i'$ is a term in $STerm$.
+If $t_i' = \tau(\Delta_i, q_1, \ldots q_n)$ or $t_i' = ty(\tau(\Delta_i, q_1, \ldots q_n))$,
+    then let $t_i'' = \tau(*, q_1, \ldots q_n)$ or $t_i''' = ty(\tau(*, q_1, \ldots q_n))$ respectively.
+Also, let $\varphi_i' = (\Delta_i = \Delta_i')$, where $\Delta_i' = D_i(A, x_1, \ldots x_{i-1})[A \mapsto \Gamma', x_1 \mapsto t_1', \ldots x_{i-1} \mapsto t_{i-1}']$.
+Let $r(t) = \sigma(\Gamma', t_1'', \ldots t_k'')|_{\varphi \land \varphi_1 \land \varphi_1' \land \ldots \land \varphi_k \land \varphi_k'}$.
+
+Note that $\sigma(\Gamma', t_1'', \ldots t_k'')$ is equivalent to $\sigma(\Gamma', t_1''', \ldots t_k''')$,
+    where $t_i''' = t_i'$ if $t_i'$ is a term in $STerm$, $t_i''' = \tau(\Delta_i''', q_1, \ldots q_n)$ if $t_i' = \tau(\Delta_i, q_1, \ldots q_n)$,
+    and $t_i''' = ty(\tau(\Delta_i''', q_1, \ldots q_n))$ if $t_i' = ty(\tau(\Delta_i, q_1, \ldots q_n))$,
+    where $\Delta_i''' = D_i(A, x_1, \ldots x_{i-1})[A \mapsto \Gamma', x_1 \mapsto t_1''', \ldots x_{i-1} \mapsto t_{i-1}''']$.
+
+By induction hypothesis, $t$ is equivalent to $\sigma(\Gamma', t_1', \ldots t_k')|_{\varphi \land \varphi_1 \land \ldots \land \varphi_k}$.
+Thus it is enough to prove that $\sigma(\Gamma', t_1', \ldots t_k')$ and $\sigma(\Gamma', t_1''', \ldots t_k''')|_{\varphi_1' \land \ldots \land \varphi_k'}$ are equivalent.
+First, note that by \axref{c3}, $\sigma(\Gamma', t_1', \ldots t_k')\!\downarrow\ \sststile{}{V} t_i' = t_i''' \land \varphi_i'$ is derivable.
+It follows that $\sigma(\Gamma', t_1', \ldots t_k')\!\downarrow\ \sststile{}{V} \sigma(\Gamma', t_1', \ldots t_k') = \sigma(\Gamma', t_1''', \ldots t_k''')|_{\varphi_1' \land \ldots \land \varphi_k'}$ is also derivable.
+Finally, note that $t_1'''|_{\varphi_1'}\!\downarrow \land \ldots \land t_i'''|_{\varphi_i'}\!\downarrow\ \sststile{}{V} t_i' = t_i'''$ is derivable.
+Hence $\sigma(\Gamma', t_1''', \ldots t_k''')|_{\varphi_1' \land \ldots \land \varphi_k'}\!\downarrow\ \sststile{}{V} \sigma(\Gamma', t_1', \ldots t_k') = \sigma(\Gamma', t_1''', \ldots t_k''')|_{\varphi_1' \land \ldots \land \varphi_k'}$ is also derivable.
 \end{proof}
 
 Thus we can always work with terms in $LTerm$ instead of terms from $WTerm$.
@@ -1341,9 +1368,6 @@ Finally, we will write a sequent $\varphi_1 \land \ldots \land \varphi_n \sststi
 \TrinaryInfC{$\varphi$}
 \DisplayProof
 \end{center}
-
-We already saw that we can work exclusively with $STerm$, but when applying axiom~\axref{a3} term $t$ which we sabstitute in formulae should be from $WTerm$.
-Now, we will show that if the premise satisfies some conditions, then we can apply \axref{a3} to a term from $STerm$.
 
 \section{Regular theories}
 
