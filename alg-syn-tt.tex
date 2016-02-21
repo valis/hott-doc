@@ -487,7 +487,7 @@ Let $\mathbb{T} = (T,\mathcal{P},\mathcal{A})$ and $\mathbb{T}' = (T',\mathcal{P
     and let $P(\mathbb{T}) = (P,F,\mu)$ and $P(\mathbb{T}') = (P',F',\mu')$ be their monadic presentations.
 To construct a morphism of these theories, it is enough to specify the following data:
 \begin{itemize}
-\item A morphism of monads $\alpha : T \to T'$ that preserves free variables.
+\item A morphism of monads $\alpha : T \to P'$ that preserves free variables.
 \item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$,
     a formula $\beta(R) \in F'(\{ x_1 : s_1, \ldots x_k : s_k \})$ such that $FV(\beta(R)) = \{ x_1, \ldots x_k \}$.
 \end{itemize}
@@ -540,7 +540,7 @@ Note that if $T$ is the standard monad $Term_\mathcal{F}$, then to define a morp
     a partial term $\alpha(\sigma) \in T'(\{ x_1 : s_1, \ldots x_k : s_k \})$ such that $FV(\alpha(\sigma)) = \{ x_1, \ldots x_k \}$.
 Then there is a unique morphism of monads $f : T \to T'$ such that $f(\sigma(x_1, \ldots x_k)) = \alpha(\sigma)$.
 
-Now, we define a category $\Th_\mathcal{S}$ of standard partial Horn theories.
+Now, let us define a category $\Th_\mathcal{S}$ of standard partial Horn theories.
 Its objects are tuples $((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$, where $\mathcal{F}$ is a set of function symbols,
     $\mathcal{P}$ is a set of relation symbols, and $\mathcal{A}$ is a set of axioms over $(Term_\mathcal{F},Form_\mathcal{P})$.
 Morphisms of standard partial Horn theories are morphisms of corresponding partial Horn theories.
@@ -598,7 +598,7 @@ Let $\epsilon_V(e(s,t,t')) = \top$ if and only if $\alpha_V(f)(t)$ and $\alpha_V
 If $F$ is a left module of formulae with equality over $T$, then we say that a partial algebra $(A,\alpha,\beta)$ is standard
     if for every partial function $f : V \to A$, $e_V \circ \beta_V(f) = \epsilon_V(f)$, where $e_V : E(V) \to F(V)$.
 
-\begin{lem}
+\begin{lem}[par-alg-pred]
 If $Term_\mathcal{F}$ is the standard monad and $Form_\mathcal{P}$ is the left module of Horn formulae,
     then categories of partial algebras over $(Term_\mathcal{F},Form_\mathcal{P})$ and partial structures for signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ are isomorphic.
 \end{lem}
@@ -632,12 +632,19 @@ If $Term_\mathcal{F}$ is the standard monad and $\mathbb{T} = (Term_\mathcal{F},
     then categories of partial algebras over $P(\mathbb{T})$ and models of $\mathbb{T}$ as defined in \cite{PHL} are isomorphic.
 \end{lem}
 \begin{proof}
+Using \rlem{par-alg-pred}, models of $\mathbb{T}$ can be described as partial algebras $(A,\alpha',\beta')$ over $(Term_\mathcal{F},Form_\mathcal{P})$
+    such that for every derivable sequent $\varphi \ssststile{}{V} \psi$ of $\mathbb{T}$ and every partial function $f : V \to A$, $\beta'_V(f)(\varphi) = \beta'_V(f)(\psi)$.
+
 Let $(A,\alpha,\beta)$ be a partial algebra over $P(\mathbb{T})$.
 Then we define a partial algebra $F(A,\alpha,\beta)$ over $(Term_\mathcal{F},Form_\mathcal{P})$.
 Let $F(A,\alpha,\beta) = (A,\alpha',\beta')$, where $\alpha'_V(f)(t) = \alpha_V(f)([t|_\top]_\sim)$ and $\beta'_V(f)(\varphi) = \alpha_V(f)([\varphi]_\sim)$,
     where $[t|_\top]_\sim$ and $[\varphi]_\sim$ are equivalence classes of $t_\top$ and $\varphi$ in $P(V)$ and $F(V)$ respectively.
 Then $F(A,\alpha,\beta)$ is a model of $\mathbb{T}$.
-Indeed, if $\varphi \ssststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $[\varphi]_\sim = [\psi]_\sim$; hence $\beta'_V(f)(\varphi) = \beta'_V(f)(\varphi)$.
+Indeed, if $\varphi \ssststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $\varphi' \ssststile{}{V} \psi'$
+    is also a theorem of $\mathbb{T}$, where $\varphi' = \varphi \land x_1 \land \ldots \land x_n$, $\psi' = \psi \land y_1 \land \ldots \land y_k$,
+    $x_1, \ldots x_n$ is the set of free variables of $\psi$, and $y_1, \ldots y_k$ is the set of free variables of $\varphi$.
+It follows that $[\varphi']_\sim = [\psi']_\sim$; hence $\beta'_V(f)(\varphi') = \beta'_V(f)(\varphi')$.
+But $\beta'_V(f)(\varphi) = \beta'_V(f)(\varphi')$ and $\beta'_V(f)(\psi) = \beta'_V(f)(\psi')$; hence $F(A,\alpha,\beta)$ is a model of $\mathbb{T}$.
 If $h$ is a morphism of partial algebras over $P(\mathbb{T})$, then let $F(h) = h$.
 
 Let $(A,\alpha',\beta')$ be a model of $\mathbb{T}$.
@@ -645,7 +652,7 @@ Then we define a partial algebra $G(A,\alpha',\beta')$ over $P(\mathbb{T})$.
 Let $G(A,\alpha',\beta') = (A,\alpha,\beta)$, where $\beta_V(f)([\varphi]_\sim) = \beta'_V(f)(\varphi)$, and $\alpha_V(f)([t|_\varphi]_\sim)$ is defined
     if and only if $\alpha'_V(f)(t)$ is defined and $\beta'_V(f)(\varphi) = \top$, and in this case $\alpha_V(f)([t|_\varphi]_\sim) = \alpha'_V(f)(t)$.
 These definitions do not depend on the choice of a representative of the equivalence classes.
-Indeed, $\varphi \sim \psi$ if and only if $\varphi \ssststile{}{V} \psi$ is a theorem of $\mathbb{T}$,
+Indeed, if $\varphi \sim \psi$, then $\varphi \ssststile{}{V} \psi$ is a theorem of $\mathbb{T}$,
     and in this case $\beta'_V(f)(\varphi) = \beta'_V(f)(\psi)$ since $A$ is a model of $\mathbb{T}$.
 The same argument shows that the definition of $\alpha$ does not depend on the choice of a representative of $[t|_\varphi]_\sim$.
 If $h$ is a morphism of models, then let $G(h) = h$.
@@ -1161,18 +1168,16 @@ Terms of algebraic theories may contain a lot of redundant information, which ma
 In this section we show how to construct monadic presentations of a partial Horn theory which are isomorphic to the one
     defined in \rdefn{mon-pres} (which we call the standard presentation), but has less redundant information.
 
-\subsection{Monads of terms with holes}
-
-Let $\Sigma = (\mathcal{S},\mathcal{F},\mathcal{P})$ be a signature.
-Then we define a monad $HTerm : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of terms with holes.
+Let $\mathcal{F}$ be a set of function symbols.
+Then we define a monad $HTerm_\mathcal{F} : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of terms with holes.
 It is defined inductively as the usual monad of terms with one additional clause:
 \begin{itemize}
-\item $* \in HTerm(V)_s$.
-\item If $x \in V_s$, then $x \in HTerm(V)_s$.
-\item If $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ and $t_i \in HTerm(V)_{s_i}$, then $\sigma(t_1, \ldots t_n) \in HTerm(V)_s$.
+\item $* \in HTerm_\mathcal{F}(V)_s$.
+\item If $x \in V_s$, then $x \in HTerm_\mathcal{F}(V)_s$.
+\item If $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ and $t_i \in HTerm_\mathcal{F}(V)_{s_i}$, then $\sigma(t_1, \ldots t_n) \in HTerm_\mathcal{F}(V)_s$.
 \end{itemize}
 
-Now we define a relation $H \subseteq HTerm(V)_s \times Term(V)_s$ for every $V \in \Set^\mathcal{S}$ and $s \in \mathcal{S}$:
+Now we define a relation $H \subseteq HTerm_\mathcal{F}(V)_s \times Term(V)_s$ for every $V \in \Set^\mathcal{S}$ and $s \in \mathcal{S}$:
 \begin{itemize}
 \item $H(*,t)$ for every $t \in Term(V)$.
 \item $H(x,x)$ for every $x \in V_s$.
@@ -1180,22 +1185,17 @@ Now we define a relation $H \subseteq HTerm(V)_s \times Term(V)_s$ for every $V 
 \end{itemize}
 The idea is that $H(h,t)$ if and only if $t$ can be obtained from $h$ by filling holes with some terms.
 
-Let $WTerm$ be a submonad of $HTerm$ that contains $Term$ as a submonad.
+Let $WTerm$ be a submonad of $HTerm_\mathcal{F}$ that contains $Term$ as a submonad.
 Then we can define Horn formulae, partial terms, inference rules, partial Horn theories, and the category of partial Horn theories
     in the same way as we did in section~\ref{sec:PHT}, but with $WTerm$ in place of $Term$.
 
-We want to prove that every theory over $WTerm$ satisfying some conditions is isomorphic (in the category of monadic presentations) to some theory over $Term$.
+We want to prove that every theory over $WTerm$ satisfying some conditions is isomorphic to some standard theory.
 Let $\mathbb{T}$ be a theory over $WTerm$, and let $\beta$ be a function $WTerm(V)_s \to Term(V)_s$.
-Then for every formula $\varphi$ over $WTerm$, we define a formula $\beta(\varphi)$ over $Term$ as follows:
-\begin{align*}
-\beta(t = t') & = (\beta(t) = \beta(t')) \\
-\beta(R(t_1, \ldots t_n)) & = R(\beta(t_1), \ldots \beta(t_n)) \\
-\beta(\varphi_1 \land \ldots \land \varphi_n) & = \beta(\varphi_1) \land \ldots \land \beta(\varphi_n)
-\end{align*}
-Finally, we define a theory $\beta(\mathbb{T})$ over $Term$.
-It consists of axioms $\beta(\varphi) \sststile{}{V} \beta(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$.
+Then $\beta$ extends to a function on formulae as in \rprop{mor-def}.
+Now, we can define a theory $\beta(\mathbb{T})$ over $Term$, which consists of axioms
+    $\beta(\varphi) \sststile{}{V} \beta(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$.
 
-\begin{lem}
+\begin{lem}[w-standard]
 Let $\mathbb{T}$ be a theory over $WTerm$, and let $\beta : WTerm(V)_s \to Term(V)_s$ be a function.
 Suppose that the following conditions hold for every $h \in WTerm(V)_s$:
 \begin{enumerate}
@@ -1221,63 +1221,135 @@ By \eqref{it:b-eq-w}, for every $h \in WTerm(V)_s$, $\widetilde{\beta}(\widetild
 It follows that $\widetilde{\alpha}$ and $\widetilde{\beta}$ determine an isomorphism of monadic presentations $P(\beta(\mathbb{T}))$ and $P(\mathbb{T})$.
 \end{proof}
 
-\subsection{Terms with holes in algebraic dependent type theories}
+Now, we define a specific presentation of algebraic dependent type theories, using terms with holes.
+Let $\mathcal{F}_0$ be a set of function symbols of $\mathbb{T}_0$, and let $\mathcal{F}$ be a set of fucntion symbols such that
+    for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
+    $k$ is nonzero, $p$ equals to either $ty$ or $tm$, $p_1$ equals to $ctx$, and $n_1$ equals to $n$.
+The idea is that the first argument of $\sigma$ should represent the context in which $\sigma(\Gamma, x_1, \ldots x_k)$ is defined.
 
-When working with algebraic dependent type theories we will use use the following conventions:
+Now, we define a submonad $WTerm$ of $HTerm_{\mathcal{F} \amalg \mathcal{F}_0}$.
+The idea is that we can often omit the first argument in subterms of the form $\sigma(\Gamma, t_1, \ldots t_k)$.
+To do this, it should be possible to reconstruct it from the whole term.
+First, we define when it is possible; we will say that a term has \emph{a well-defined context} in this case.
+Second, we define a submonad $BTerm$ of $HTerm_{\mathcal{F} \amalg \mathcal{F}_0}$, which consists of terms, where the first argument can be omitted.
+Then we define a submonad $WTerm$ of $BTerm$ which consists of terms from $BTerm$ with a well-defined context.
+
+We will say that a term $t \in HTerm_{\mathcal{F} \amalg \mathcal{F}_0}(V)_s$ has \emph{a well-defined context} if one of the following conditions hold:
 \begin{itemize}
-\item An algebraic dependent theory $\mathbb{T}$ must have the function symbols and axioms of $\mathbb{T}_0$ and the morphism $\mathbb{T}_0 \to \mathbb{T}$ must be the inclusion.
-\item For every other function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
-    $k$ should be nonzero, $p$ should be equal to either $ty$ or $tm$, $p_1$ should be equal to $ctx$, and $n_1$ should be equal to $n$.
-\item For every $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, sequent
-\begin{equation}
-\sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p,n}(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma \axtag{$ctx_c$}
-\end{equation}
-should be a theorem of $\mathbb{T}$.
+\item $t \in Term(V)_s$.
+\item $t = ft(t')$ and $t'$ has a well-defined context.
+\item $t = ty(t')$ and $t'$ has a well-defined context.
+\item $t = \sigma(\Gamma, t_1, \ldots t_k)$, $\sigma \in \mathcal{F}$, and $\Gamma$ has a well-defined context.
 \end{itemize}
-Note that $\mathbb{T}_1$ satisfies these conditions.
 
-If a theory satisfies these conditions, then we can define its monadic presentations with holes.
-To define submonad $WTerm$, first we need to define a submonad $BTerm$.
-We will say that a term $t \in BTerm(V)_s$ has \emph{a well-defined context} if $t$ is either a variable, or $\emptyCtx$,
-    or of the form $\sigma(\Gamma, t_1, \ldots t_k)$, $\sigma$ is not a function symbol of $\mathbb{T}_0$ and $\Gamma$ has a well-defined context.
 Sets $BTerm(V)_s$ are defined inductively:
 \begin{itemize}
-\item If $x \in V_s$, then $x \in BTerm(V)_s$.
-\item If $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $\Gamma \in BTerm(V)_{(ctx,n)}$,
+\item If $t \in Term(V)_s$, then $t \in BTerm(V)_s$.
+\item If $t \in BTerm(V)_{(ty,n)}$ and $t$ has a well-defined context, then $ft(t) \in BTerm(V)_{(ctx,n)}$.
+\item If $t \in BTerm(V)_{(tm,n)}$, then $ty(t) \in BTerm(V)_{(ty,n)}$.
+\item If $\sigma \in \mathcal{F}$, $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $\Gamma \in BTerm(V)_{(ctx,n)}$,
     $\Gamma$ has a well-defined context, and $t_i \in BTerm(V)_{(p_i,n_i)}$, then $\sigma(\Gamma, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
-\item If $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $t_i \in BTerm(V)_{(p_i,n_i)}$, then $\sigma(*, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
-\item $BTerm$ is closed under function symbols of $\mathbb{T}_0$.
+\item If $\sigma \in \mathcal{F}$, $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $t_i \in BTerm(V)_{(p_i,n_i)}$,
+    then $\sigma(*, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
 \end{itemize}
 
-Sets $WTerm(V)_s$ are subsets of $BTerm(V)_s$.
-A term $t \in BTerm(V)_s$ belongs to $WTerm(V)_s$ if and only if it has a well-defined context.
+Finally, $WTerm(V)_s$ consists of those terms from $BTerm(V)_s$ which have a well-defined context.
+Note that if $t \in BTerm(V)_s$, then either $t \in WTerm(V)_s$, or $t$ is of the form $\sigma(*, t_1, \ldots t_k)$, or it is of the form $ty(\sigma(*, t_1, \ldots t_k))$.
 We will write a term $\sigma(*, t_1, \ldots t_k)$ simply as $\sigma(t_1, \ldots t_k)$, and if $k = 0$, then we will write it as $\sigma$.
 
-To define a function $\beta : WTerm(V)_s \to WTerm(V)_s$, we need additional assumptions on the theory.
+To define a function $\beta : WTerm(V)_s \to Term(V)_s$, we need an additional structure.
 Suppose that for every function symbol $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$
     and for every $1 \leq i \leq k$ such that $p_i$ equals to either $ty$ or $tm$,
-    there exists a term $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})) \in WTerm(\{ \Gamma, x_1, \ldots x_{i-1} \})_{(ctx_i,n_i)}$ such that sequent
-\begin{equation}
-\sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p_i,n_i}(x_i) = D_i(\sigma(\Gamma, x_1, \ldots x_k)) \axtag{$ctx_p$}
-\end{equation}
-is derivable.
-If $\Delta, t_1, \ldots t_{i-1}$ is a sequence of terms such that $\Delta \in Term(V)_{(ctx,n)}$ and $t_j \in Term(V)_{(p_j,n_j)}$ for every $1 \leq j < i$,
-    then we will write $D_i(\sigma(\Delta, t_1, \ldots t_{i-1}))$ for $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1}))[\Gamma \mapsto \Delta, x_1 \mapsto t_1, \ldots x_{i-1} \mapsto t_{i-1}]$.
+    there is a term $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})) \in WTerm(\{ \Gamma, x_1, \ldots x_{i-1} \})_{(ctx_i,n_i)}$.
 
-Now, we define $\beta : WTerm(V)_s \to WTerm(V)_s$ together with a function $\beta' : Term(V)_{(ctx,n)} \times BTerm(V)_{(p,n)} \to Term(V)_{(p,n)}$, where $p \in \{ tm,ty \}$.
+Now, we define $\beta : WTerm(V)_s \to Term(V)_s$ together with a function $\beta' : Term(V)_{(ctx,n)} \times BTerm(V)_{(p,n)} \to Term(V)_{(p,n)}$, where $p \in \{ tm,ty \}$.
 \begin{align*}
-\beta(x) & = x \\
+\beta(t) & = t \text{, if } t \in Term(V)_s \\
+\beta(ft(t)) & = ft(\beta(t)) \\
+\beta(ty(t)) & = ty(\beta(t)) \\
 \beta(\sigma(\Gamma, t_1, \ldots t_k)) & = \beta'(\beta(\Gamma), \sigma(*, t_1, \ldots t_k)) \\
-\beta'(\Delta, \sigma(*, t_1, \ldots t_k)) & = \sigma(\Delta, t_1', \ldots t_k') \\
-\beta'(\Delta, t) & = \beta(t)
+\beta'(\Delta, t) & = \beta(t) \text{, if } t \in WTerm(V)_s \\
+\beta'(\Delta, ty(t)) & = ty(\beta'(\Delta, t)) \\
+\beta'(\Delta, \sigma(*, t_1, \ldots t_k)) & = \sigma(\Delta, t_1', \ldots t_k')
 \end{align*}
-where $t_i' = \beta'(D_i(\sigma(\Delta, t_1', \ldots t_{i-1}')), t_i)$, and $t$ is not of the form $\sigma(*, t_1, \ldots t_k)$.
+where $t_i' = \beta'(\beta(D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})))[\Gamma \mapsto \Delta, x_1 \mapsto t_1', \ldots x_{i-1} \mapsto t_{i-1}'], t_i)$.
+In order for this to be a correct definition, we need some additional assumptions on $D_i$.
+The simplest assumption is that there is a well-ordering on the set of function symbols, and for every $\sigma \in \mathcal{F}$,
+    every symbol that appears in $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1}))$ is less than $\sigma$.
 
-\section{Algebraic presentations of type theories}
+Let $\mathbb{T}$ be a partial horn theory over $WTerm$.
+Then conditions \eqref{it:b-rep}, \eqref{it:b-FV} and \eqref{it:b-subst} of \rlem{w-standard} hold.
+Indeed, the first two hold by definition, and the last follows from the fact that $\beta(t[\rho]) = \beta(t)[\beta \circ \rho]$, which is easy to prove by induction.
+Assume that that condition~\eqref{it:b-eq-w} holds, and also that axioms of $\mathbb{T}_0$ are derivable in $\mathbb{T}$.
+Then is isomorphic to $\beta(\mathbb{T})$, which is an algebraic dependent type theory in a natural way.
 
-In this section we will describe an algebraic approach to defining type theories.
-We will consider a particular kind of algebraic dependent type theories which we call \emph{regular}.
-Finally, we will define categories $\algtt$ and $\algtt_{reg}$ of algebraic and regular algebraic dependent type theories.
+Terms from $BTerm$ may or may not contain redundant information about contexts.
+Now, we will show that under additional assumptions on $\mathbb{T}$ every term is equivalent to a one with no redundant information.
+First, let $STerm$ be a submonad of $BTerm$ which consists of terms in which every subterm is either a variable, or of the form $ty(t)$, or of the form $\sigma(*, t_1, \ldots t_k)$.
+Let $LTerm$ be a subfunctor of $BTerm$ such that $t \in LTerm(V)_s$ if and only if $t$ satisfies one of the following conditions:
+\begin{itemize}
+\item $t$ is a variable.
+\item $t = \emptyCtx$.
+\item $t = ty(t')$, where $t' \in LTerm(V)_{(tm,n)}$.
+\item $t = \sigma(\Gamma, t_1, \ldots t_k)$, where $\Gamma \in LTerm(V)_{(ctx,n)}$ and $t_1, \ldots t_k$ belong to $STerm$.
+\end{itemize}
+Note that $LTerm$ is a subfunctor of $WTerm$, while $STerm$ is not.
+
+\begin{prop}
+Suppose that the following sequents are theorems of $\mathbb{T}$:
+\begin{align*}
+& \sststile{}{V} t \cong \beta(t) \axtag{c1} \\
+\sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p,n}(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma \axtag{c2} \\
+\sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p_i,n_i}(x_i) = D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})) \axtag{c3}
+\end{align*}
+Then for every $t \in WTerm(V)_s$, there is a partial term $\gamma(t) \in PLTerm(V)_s$ such that $\sststile{}{V} t \cong \gamma(t)$ is a theorem of $\mathbb{T}$.
+\end{prop}
+\begin{proof}
+\todo{Write the proof}
+\end{proof}
+
+Thus we can always work with terms in $LTerm$ instead of terms from $WTerm$.
+Actually, we can even forget about $LTerm$ and work with $STerm$ only.
+To do this, we define introduce some standard notation.
+If $\Gamma \in WTerm(V)_{(ctx,n)}$ and $t \in BTerm(V)_{(p,n)}$, $p \in \{ ty, tm \}$, then $\Gamma \vdash t$ is a partial term in $PWTerm(V)_{(p,n)}$, which is defined as follows:
+\begin{align*}
+(\Gamma \vdash \sigma(*, t_1, \ldots t_k)) & = \sigma(\Gamma, t_1, \ldots t_k) \\
+(\Gamma \vdash ty(\sigma(*, t_1, \ldots t_k))) & = ty(\sigma(\Gamma, t_1, \ldots t_k)) \\
+(\Gamma \vdash t) & = t|_{ctx_{p,n}(t) = \Gamma} \text{, if } t \in WTerm(V)_{(p,n)}
+\end{align*}
+Note that if $\Gamma \in LTerm(V)_{(ctx,n)}$ and $t \in STerm(V)_{(p,n)}$, then $\Gamma \vdash t$ belongs to $PLTerm(V)_{(p,n)}$.
+
+Let $A_1, \ldots A_n$ be a sequence of terms such that $A_i \in STerm(V)_{(ctx,i)}$.
+Then we define a term $A_1, \ldots A_n \vdash$ in $PLTerm(V)_{(ctx,n)}$ by induction on $n$.
+If $n = 0$, then it equals to $\emptyCtx$.
+If $n > 0$, then let $A_1, \ldots A_n \vdash$ be equal to $\Gamma \vdash A_n$, where $\Gamma$ equals to $A_1, \ldots A_{n-1} \vdash$.
+Note that every term in $LTerm$ is equivalent to a term of the form $A_1, \ldots A_n \vdash t$, where all terms belong to $STerm$.
+
+We also introduce a notation for formulae:
+\begin{align*}
+\Gamma \vdash ctx & \text{ means } (\Gamma \vdash)\downarrow \\
+\Gamma \vdash A\ type & \text{ means } (\Gamma \vdash A)\downarrow \\
+\Gamma \vdash A \equiv A' & \text{ means } (\Gamma \vdash A) = (\Gamma \vdash A') \\
+\Gamma \vdash a : A & \text{ means } \Gamma \vdash ty(a) \equiv A \\
+\Gamma \vdash a \equiv a' : A & \text{ means } (\Gamma \vdash a : A) \land (\Gamma \vdash a \equiv a')
+\end{align*}
+Finally, we will write a sequent $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \varphi$ as
+\begin{center}
+\AxiomC{$\varphi_1$}
+\AxiomC{$\ldots$}
+\AxiomC{$\varphi_n$}
+\TrinaryInfC{$\varphi$}
+\DisplayProof
+\end{center}
+
+We already saw that we can work exclusively with $STerm$, but when applying axiom~\axref{a3} term $t$ which we sabstitute in formulae should be from $WTerm$.
+Now, we will show that if the premise satisfies some conditions, then we can apply \axref{a3} to a term from $STerm$.
+
+\section{Regular theories}
+
+In this section we will consider a particular kind of algebraic dependent type theories which we call \emph{regular}.
+Also we will define the category $\algtt_{reg}$ of regular algebraic dependent type theories.
+Finally, we will give a few examples of such theories.
 
 \begin{defn}
 An \emph{algebraic dependent type theory} is a quasi-equational theory in a signature with the set of sorts $\mathcal{C}$ together with a map from $\mathbb{T}_1$.
@@ -1338,103 +1410,6 @@ To construct a morphism of regular theories $(\mathcal{F},\mathbb{T})$ and $(\ma
 Then we can extend $F$ as follows:
 \[ F(\sigma_m(\Gamma, a_1, \ldots a_n)) = L^m(\Gamma, F(\sigma(a_1, \ldots a_n))) \]
 If this $F$ respects axioms of $\mathbb{T}$, then it uniquely extends to a regular morphism.
-
-\section{Syntactic presentations of type theories}
-
-In this section we will describe a syntactic approach to defining type theories.
-We will define category $\syntt$ of syntactically presented type theories.
-Finally, we will give a few examples of such theories.
-
-We will consider theories with total function symbols and without equality.
-Terms, atomic formulas and Horn sequents are defined in the same way as before.
-If $FV(J_1) \cup \ldots \cup FV(J_n) \subseteq FV(J)$, then a sequent $J_1, \ldots J_n \sststile{}{FV(J)} J$ will be written as
-\begin{center}
-\AxiomC{$J_1 \quad \ldots \quad J_n$}
-\UnaryInfC{$J$}
-\DisplayProof
-\end{center}
-A \emph{(total) Horn theory} in a signature $\Sigma$ is a set of Horn sequents over $\Sigma$.
-We will use a standard set of inference rules of Horn logic as presented in \cite[D 1.3]{elephant}.
-If $\mathbb{T}$ is a Horn theory, then a \emph{theorem} of $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
-
-Let $\mathcal{K} = \{ tm, ty \}$ and let $\mathcal{D} = \mathcal{K} \times \mathbb{N}$ be a set of sorts.
-Let $\mathcal{P} = \{ D^n_p, E^n_p\ |\ n \in \mathbb{N}, p \in \mathcal{K} \}$ be a set of predicate symbols with the following signatures:
-\begin{align*}
-D^n_{ty} & : (ty,0) \times \ldots \times (ty,n-1) \times (ty,n) \\
-D^n_{tm} & : (ty,0) \times \ldots \times (ty,n-1) \times (tm,n) \times (ty,n) \\
-E^n_{ty} & : (ty,0) \times \ldots \times (ty,n-1) \times (ty,n) \times (ty,n) \\
-E^n_{tm} & : (ty,0) \times \ldots \times (ty,n-1) \times (tm,n) \times (tm,n)
-\end{align*}
-We define derived predicates $D^n_{ctx} : (ty,0) \times \ldots \times (ty,n)$ as follows:
-\begin{align*}
-D^0_{ctx} & = \top \\
-D^{n+1}_{ctx}(A_1, \ldots A_{n+1}) & = D^n_{ty}(A_1, \ldots A_{n+1})
-\end{align*}
-We will use the following standard notations:
-\begin{align*}
-A_1, \ldots A_n & \vdash \text{ means } D^n_{ctx}(A_1, \ldots A_n), \\
-A_1, \ldots A_n & \vdash A \text{ means } D^n_{ty}(A_1, \ldots A_n, A), \\
-A_1, \ldots A_n & \vdash a : A \text{ means } D^n_{tm}(A_1, \ldots A_n, a, A), \\
-A_1, \ldots A_n & \vdash A \deq B \text{ means } E^n_{ty}(A_1, \ldots A_n, A, B), \\
-A_1, \ldots A_n & \vdash a \deq b \text{ means } E^n_{tm}(A_1, \ldots A_n, a, b).
-\end{align*}
-
-We do not have equality, instead of it we have equality in context $E^n_{ty}$ and $E^n_{tm}$.
-So we need a few axioms for it which are analogous to the usual axioms for equality.
-% We will assume that all theories contain the following axioms:
-% \begin{center}
-% \AxiomC{$\Gamma \vdash A \deq B$}
-% \UnaryInfC{$\Gamma \vdash A$}
-% \end{center}
-
-Let $F$ be a morphism of signatures $\Sigma = (\mathcal{D}, \mathcal{F}, \mathcal{P})$ and $\Sigma' = (\mathcal{D}, \mathcal{F}', \mathcal{P})$.
-Let $\mathbb{T}$ and $\mathbb{T}'$ be total Horn theories in signatures $\Sigma$ and $\Sigma'$ respectively.
-Then we will say that $F$ \emph{respects} a sequent $\varphi \sststile{}{V} \psi$ if $F(\varphi) \sststile{}{V} F(\psi)$ is a theorem of $\mathbb{T}'$.
-Note that if $F$ respects all axioms of $\mathbb{T}$, then it respects all of its theorems too.
-We will say that morphisms $F$ and $G$ are \emph{equivalent} if for all $\sigma \in \mathcal{F}_\Sigma$, $\sigma : s_1 \times \ldots \times s_n \to s$ the following sequents are theorems of $\mathbb{T}'$:
-\begin{center}
-\AxiomC{$\Gamma \vdash F(\sigma(x_1, \ldots x_n))$}
-\UnaryInfC{$\Gamma \vdash G(\sigma(x_1, \ldots x_n))$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash G(\sigma(x_1, \ldots x_n))$}
-\UnaryInfC{$\Gamma \vdash F(\sigma(x_1, \ldots x_n))$}
-\DisplayProof
-\end{center}
-\begin{center}
-\AxiomC{$\Gamma \vdash F(\sigma(x_1, \ldots x_n))$}
-\UnaryInfC{$\Gamma \vdash F(\sigma(x_1, \ldots x_n)) \deq G(\sigma(x_1, \ldots x_n))$}
-\DisplayProof
-\end{center}
-if $s = (ty,k)$, and
-\begin{center}
-\AxiomC{$\Gamma \vdash F(\sigma(x_1, \ldots x_n)) : A$}
-\UnaryInfC{$\Gamma \vdash G(\sigma(x_1, \ldots x_n)) : A$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash G(\sigma(x_1, \ldots x_n)) : A$}
-\UnaryInfC{$\Gamma \vdash F(\sigma(x_1, \ldots x_n)) : A$}
-\DisplayProof
-\end{center}
-\begin{center}
-\AxiomC{$\Gamma \vdash F(\sigma(x_1, \ldots x_n)) : A$}
-\UnaryInfC{$\Gamma \vdash F(\sigma(x_1, \ldots x_n)) \deq G(\sigma(x_1, \ldots x_n))$}
-\DisplayProof
-\end{center}
-if $s = (tm,k)$.
-
-Now, we define a category of theories.
-Its objects are pairs $(\mathcal{F},\mathbb{T})$ where $\mathcal{F}$ is a set of function symbols and $\mathbb{T}$ is a theory in $(\mathcal{S},\mathcal{F},\mathcal{P})$.
-Morphisms of theories $(\mathcal{F},\mathbb{T})$ and $(\mathcal{F}',\mathbb{T}')$ are equivalence classes of morphisms of signatures $(\mathcal{S},\mathcal{F},\mathcal{P})$ and $(\mathcal{S},\mathcal{F}',\mathcal{P})$ which respect all axioms of $\mathbb{T}$.
-The composition of morphisms of signatures respects the equivalence relation; hence this defines a category of theories which will be denoted by $\Th_{\mathcal{S},\mathcal{P}}$.
-Note that $\Sig_{\mathcal{S},\mathcal{P}}$ is a full subcategory of $\Th_{\mathcal{S},\mathcal{P}}$; indeed, every signature can be considered as a theory with an empty set of axioms.
-
-First, let us define a syntactic analog of algebraic theory $\mathbb{T}_1$ which we also call $\mathbb{T}_1$.
-Its function symbols are the following:
-\begin{align*}
-v_{n,i} & : (tm,n) \text{, } 0 \leq i < n \\
-subst_{p,n,k} & : (p,k) \times (tm,n)^k \to (p,n)
-\end{align*}
 
 Theory $\mathbb{T}_1$ has the following axioms:
 \medskip
@@ -1526,85 +1501,6 @@ where $a_i' = subst_{tm,n,k}(a_i, b_1, \ldots b_k)$
 \DisplayProof
 \end{center}
 where $a_i' = subst_{tm,n,k}(a_i, b_1, \ldots b_k)$
-
-\begin{defn}
-A \emph{syntactic type theory} is a theory in a signature with the set of sorts $\mathcal{D}$ together with a map from $\mathbb{T}_1$.
-Category $\syntt$ of syntactic type theories is the under category $\mathbb{T}_1 / \cat{Th}_\mathcal{D}$.
-\end{defn}
-
-Let $\mathcal{F}$ be a set of function symbols together with a signature, that is expressions of the form
-\[ \sigma : s_1 \times \ldots \times s_n \to s \]
-where $s_1, \ldots s_n, s \in \mathcal{S}$.
-Then let $\overline{\Sigma}$ be the following set of function symbols:
-\[ \{ \sigma_k\ |\ \sigma \in \Sigma, k \in \mathbb{N} \} \cup \{ v_{n,i}\ |\ n,i \in \mathbb{N}, 0 \leq i < n \} \cup \{ subst_{p,n,k}\ |\ p \in \mathcal{K}, n,k \in \mathbb{N} \}. \]
-Signatures of these symbols are defined as follows:
-\begin{align*}
-v_{n,i} & : (tm,n) \\
-subst_{p,n,k} & : (p,k) \times (tm,n)^k \to (p,n) \\
-\sigma_k\ & : (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,q+k)
-\end{align*}
-where $\sigma : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,q)$.
-We will omit subscripts $k$ in $\sigma_k$ and $n$ in $v_{n,i}$ if it is clear from the context.
-If $V$ is a set, then let $Term_\Sigma(V)$ be the set of terms in signature $\overline{\Sigma}$.
-
-Let $\mathbb{T}_\Sigma$ be the algebraic theory in signature $\overline{\Sigma}$ with the following set of axioms:
-\begin{align*}
-subst_{p,n,n}(a, v_{n,n-1}, \ldots v_{n,0}) & = a \\
-subst_{tm,n,k}(v_{k,i}, a_1, \ldots a_k) & = a_{k-i} \\
-subst_{p,m,n}(subst_{p,n,k}(a, b_1, \ldots b_k), c_1, \ldots c_n) & = subst_{p,m,k}(a, b_1', \ldots b_k')
-\end{align*}
-where $b_i' = subst_{tm,m,n}(b_i, c_1, \ldots c_n)$, and
-\[ subst_{p,n,k}(\sigma_k(a_1, \ldots a_m), b_1, \ldots b_k) = \sigma_n(a_1', \ldots a_m') \]
-for each $\sigma : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$ and $b_j : (tm,n)$ where
-\[ a_i' = subst_{p_i,n+q_i,k+q_i}(a_i, b_{i,1}', \ldots b_{i,k}', v_{n+q_i,q_i-1}, \ldots v_{n+q_i,0}) \text{, and} \]
-\[ b_{i,j}' = subst_{tm,n+q_i,n}(b_j, v_{n+q_i,n+q_i-1}, \ldots v_{n+q_i,q_i}). \]
-Let $\mathbb{T}_\Sigma : \Set^\mathcal{S} \to \Set^\mathcal{S}$ be a monad corresponding to the theory $\mathbb{T}_\Sigma$.
-Explicitly, $\mathbb{T}_{\Sigma}(V)_s = Term_{\Sigma}(V)_s/\sim$ where $\sim$ is the congruence generated by the axioms above.
-Elements of $\mathbb{T}_{\Sigma}(V)_s$ we will call terms of sort $s$ with free variables in $V$.
-A morphism of signatures $\Sigma$ and $\Sigma'$ is a function that to each $(\sigma : s_1 \times \ldots s_k \to s) \in \Sigma$ assigns
-a term of sort $s$ in signature $\Sigma'$ with free variables $x_1$, \ldots $x_k$ of sorts $s_1$, \ldots $s_k$ respectively.
-Such a function $F$ extends to functions $\overline{F} : \mathbb{T}_\Sigma(V)_s \to \mathbb{T}_{\Sigma'}(V)_s$ in the obvious way.
-Compositions of morphisms $F : \Sigma \to \Sigma'$ and $G : \Sigma' \to \Sigma''$ is defined as follows: $(G \circ F)(\sigma) = \overline{G}(F(\sigma))$.
-An identity morphism assigns to each $\sigma$ the term $\sigma(x_1, \ldots x_k)$.
-
-If $V \in \Set^{\mathcal{S}}$, then a \emph{context} of length $n$ with free varibles in $V$ is a sequence $A_0$, \ldots $A_{n-1}$ where $A_i \in Term_\Sigma(V)_(ty,i)$.
-A \emph{judgement} with free variables in $V$ is simply a predicate of a certain form.
-We will consider judgements of the forms $\Gamma \vdash$, $\Gamma \vdash A$, $A \deq A'$, $\Gamma \vdash a : A$, and $a \deq a'$
-where $\Gamma$ is context of length $n$ (for some $n \in \mathbb{N}$), $A, A' \in Term_\Sigma(V)_{(ty,n)}$, and $a, a' \in Term_\Sigma(V)_{(tm,n)}$.
-An inference rule with free variables in $V$ consists of a finite set of judgements $J_1$, \ldots $J_n$ (with free variables in $V$) called premises and a judgement $J$ (with free variables in $V$) called conclusion.
-An inference rule is usually written as
-\begin{center}
-\AxiomC{$J_1 \quad \ldots \quad J_n$}
-\UnaryInfC{$J$}
-\DisplayProof
-\end{center}
-If $\mathcal{I}$ is a set of inference rules, then the set $D(\mathcal{I})$ of derived rules is defined in the usual way.
-
-\begin{defn}
-A \emph{syntactic type theory} consists of a set $\Sigma$ of function symbols and a set $\mathcal{I}$ of inference rules.
-\end{defn}
-Let $F$ be a morphisms of signatures $\Sigma$ and $\Sigma'$.
-If $J$ is a judgement of $\Sigma$, then we can define a judgement $\overline{F}(J)$ of $\Sigma'$ by applying $\overline{F}$ to every term in $J$.
-If $R$ is an inference rule of $\Sigma$, then we can define an inference rule $\overline{F}(R)$ of $\Sigma'$ by applying $\overline{F}$ to every judgement in $R$.
-A morphism of theories $\mathbb{T} = (\Sigma_\mathbb{T}, \mathcal{I}_\mathbb{T})$ and $S = (\Sigma_S, \mathcal{I}_S)$ is a morphism $F$ of signatures $\Sigma$ and $\Sigma'$
-such that $\overline{F}(R)$ is a derived inference rules of $S$ for every $R \in \mathcal{I}_\mathbb{T}$.
-This defines a cateogry $\syntt$ of syntactic type theories.
-
-Now we introduce a few auxiliary constructions.
-If $b$ is a term of sort $(p,n+k)$ and $a_1$, \ldots $a_k$ are terms of sort $(tm,n)$, then we write $b[a_1, \ldots a_k]$ for
-\[ subst_{p,n,n+k}(b, v_{n,n-1}, \ldots v_{n,0}, a_1, \ldots a_k). \]
-If $b$ is a term of sort $(p,n)$, then we write $b\!\uparrow$ for
-\[ subst_{p,n+1,n}(b, v_{n+1,n}, \ldots v_{n+1,1}). \]
-
-We will use the following notation:
-\begin{align*}
-A_1, \ldots A_n \vdash A \deq A' & \text{ means } E^n_{ty}(A_1, \ldots A_n, A, A') \\
-A_1, \ldots A_n \vdash a \deq a' : A & \text{ means } E^n_{tm}(A_1, \ldots A_n, A, a, a') \\
-\Gamma \vdash A & \text{ means } \Gamma \vdash A \deq A \\
-\Gamma \vdash a : A & \text{ means } \Gamma \vdash a \deq a : A \\
-(A_1, \ldots A_n) = (B_1, \ldots B_n) & \text{ means } \bigwedge\limits_{1 \leq i \leq n} A_1, \ldots A_{i-1} \vdash A_i \equiv B_i \\
-\Gamma \vdash & \text{ means } \Gamma = \Gamma
-\end{align*}
 
 \begin{example}
 The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and $unit : (tm,0)$ and the following inference rules:
@@ -1770,89 +1666,6 @@ The theory a universe has function symbols $Type : (ty,0)$ and $El : (tm,0) \to 
 \end{example}
 
 % Now, usually universes are assumed to be closed under different type constructions.
-
-\section{Syntactic type theories}
-
-In general, we cannot construct an algebraic dependent type theory from a syntactic one.
-So we consider a full subcategory of syntactic type theories for which we can do that.
-We call such theories \emph{regular}.
-
-We say that a function symbol $\sigma \in \Sigma$ is \emph{closed} if it has signature $s_1 \times \ldots \times s_n \to (p,0)$ for some $s_1$, \ldots $s_n$, and $p$.
-We say that a theory is \emph{closed} if every its function symbol is closed.
-
-We say that a judgement defines variable $x$ if it is either of the form $\Gamma \vdash x$ or of the form $\Gamma \vdash x : A$.
-We say that a judgement defines symbol $(\sigma : s_1 \times \ldots s_n \to (p,q)) \in \Sigma$ if it is either
-of the form $\Gamma \vdash \sigma(x_1, \ldots x_n)$ or of the form $\Gamma \vdash \sigma(x_1, \ldots x_n) : A$ where $x_i$ are variables.
-We say that an inference rule defines symbol $\sigma$ if its conclusion defines it.
-We say that such inference rule is \emph{regular} if the length of $\Gamma$ is $q$ and
-if all variables in the list $x_1$, \ldots $x_n$ are distinct, this list contains all free variables of the rule,
-and every $x_i$ defined by a single premise with free variables in $x_1$, \ldots $x_{i-1}$.
-A syntactic type theory $\mathbb{T} = (\Sigma, \mathcal{I})$ is \emph{regular} if the following conditions hold:
-\begin{itemize}
-\item $\mathbb{T}$ is closed.
-\item Every function symbol in $\Sigma$ is defined by a single regular inference rule in $\mathcal{I}$,
-\item There is a well-ordering on $\Sigma$ such that the rule that defines $\sigma$ uses in premises only symbols that are less then $\sigma$.
-\item Every inference rule in $\mathcal{I}$ is either defines some function symbol or has conclusion of the form $a \deq b$.
-\end{itemize}
-
-Now for each regular syntactic type theory $\mathbb{T} = (\Sigma, \mathcal{I})$ we define an algebraic dependent type theory $E(\mathbb{T})$.
-There is a function from the set of sorts of syntactic theories to the set of sorts of algebraic theories.
-Sort $(tm,n)$ is mapped to $Tm_n$ and $(ty,n)$ is mapped to $Ctx_{n+1}$.
-We will usually omit this function and use sorts $(tm,n)$ and $(ty,n)$ directly.
-The signature $E(\Sigma)$ of $E(\mathbb{T})$ consists of symbols $v_{n,i}$, $subst_{n,k}$, $Subst_{n,k}$ (with the signatures as in $\mathbb{T}_1$), and
-$\sigma_k : Ctx_k \times (p_1,q_1+k) \times \ldots \times (p_n,q_n+k) \to (p,k)$
-for each $k \in \mathbb{N}$ and $(\sigma : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)) \in \Sigma$.
-
-Now we define functions
-\[ \alpha_{U,V,p,n,k} : Term_{E(\Sigma)}(V)_{Ctx_{n+k}} \times Term_{\Sigma}(U)_{(p,k)} \times Env_{U,V,p,n} \to Term_{E(\Sigma)}(V)_{(p,n+k)} \]
-and
-\[ \beta_{U,V,n,k} : Term_{E(\Sigma)}(V)_{Ctx_n} \times Ctx_\Sigma(U)_k \times Env_{U,V,ty,n} \to Term_{E(\Sigma)}(V)_{Ctx_{n+k}} \]
-where $Ctx_\Sigma(U)_k$ is the set of contexts of length $k$ and $Env_{U,V,p,n}$ is the set of functions $U_{(p,m)} \to Term_{E(\Sigma)}(V)_{(p,n+m)}$ for all $m \in \mathbb{N}$.
-\begin{itemize}
-\item $\beta_{U,V,n,0}(\Gamma, (), \rho) = \Gamma$.
-\item $\beta_{U,V,n,k+1}(\Gamma, (\Delta,A), \rho) = \alpha_{U,V,ty,n,k}(\beta_{U,V,n,k}(\Gamma, \Delta, \rho), A, \rho)$.
-\item $\alpha_{U,V,p,n,k}(\Gamma, v_{k,i}, \rho) = v_{n+k,i}(\Gamma)$.
-\item $\alpha_{U,V,p,n,k}(\Gamma, x, \rho) = \rho(x)$ where $x$ is a variable.
-\item $\alpha_{U,V,p,n,k}(\Gamma, subst_{ty,k,m}(x, a_1, \ldots a_m)) = Subst_{n+k,n+m}(\Gamma, \rho(x), a_1', \ldots a_{n+m}')$
-    where $a_i' = v_{n+k,n+k-i}(\Gamma)$ if $i \leq n$ and $a_i' = \alpha_{U,V,tm,n,k}(\Gamma, a_{i-n}, \rho)$ if $i > n$.
-\item $\alpha_{U,V,p,n,k}(\Gamma, subst_{tm,k,m}(x, a_1, \ldots a_m)) = subst_{n+k,n+m}(\Gamma, \rho(x), a_1', \ldots a_{n+m}')$
-    where $a_i' = v_{n+k,n+k-i}(\Gamma)$ if $i \leq n$ and $a_i' = \alpha_{U,V,tm,n,k}(\Gamma, a_{i-n}, \rho)$ if $i > n$.
-\item $\alpha_{U,V,p,n,k}(\Gamma, \sigma_k(a_1, \ldots a_m)) = \sigma_{n+k}(\Gamma, a_1', \ldots a_m'))$
-    where $\sigma : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,0)$,
-    $\sigma(x_1, \ldots x_m)$ is defined by a rule $R$ in which $x_i$ is defined by a judgement with context $\Delta_i$, and
-    \[ a_i' = \alpha_{U,V,p_i,n,k+q_i}(\beta_{\{ x_1, \ldots x_{i-1} \},V,n+k,q_i}(\Gamma, \Delta_i, [x_j \mapsto a_j']), a_i, \rho). \]
-\end{itemize}
-Conditions in the definition of regularity guarantee that these functions are well-defined.
-
-Let $n \in \mathbb{N}$ and $\Delta \in V_{Ctx_n}$.
-Let $i : V_{(p,m)} \to V_{(p,n+m)}$ be any injective function and $\rho : V_{(p,m)} \to Term_{E(\Sigma)}(V)_{(p,n+m)}$ be the function such that $\rho(x) = i(x)$ for each $x$.
-Then for each judgement $J$ of the form $\Gamma \vdash A$ we define an equation $A(J)$:
-\[ ft(\alpha_{V,V,ty,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), A, \rho)) = \beta_{V,V,n,k}(\Delta, \Gamma, \rho). \]
-For each judgement $J$ of the form $\Gamma \vdash a : A$ we define an equation $A(J)$:
-\[ ty(\alpha_{V,V,tm,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), a, \rho)) = \alpha_{V,V,ty,n,k}(\beta_{V,V,n,k}(\Delta, \Gamma, \rho), A, \rho). \]
-For each judgement $J$ of the form $a \deq a'$ we define an equation $A(J)$:
-\[ \alpha_{V,V,p,n,0}(\Delta, a, \rho) = \alpha_{V,V,p,n,0}(\Delta, a', \rho). \]
-
-For each inference rule $R$ with premises $J_1$, \ldots $J_m$ and conclusion $J$ we define an axiom $A(R)$:
-\[ A(J_1), \ldots A(J_m) \sststile{}{FV(A(J_1)) \cup \ldots \cup FV(A(J_m)) \cup FV(A(J))} A(J) \]
-For each function symbol $\sigma(x_1, \ldots x_k)$ which is defined by a rule with premises $J_1$, \ldots $J_m$ we define an axiom $D(\sigma)$:
-\[ A(J_1), \ldots A(J_m) \ssststile{}{i(x_1), \ldots i(x_k)} \sigma(\rho(x_1), \ldots \rho(x_k)) \downarrow \]
-For each function symbol $\sigma : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,0)$ such that $\sigma(x_1, \ldots x_m)$ is defined by a rule with premises $J_1$, \ldots $J_m$ we define an axiom $S(\sigma)$:
-\[ \sststile{}{\Gamma, \Delta, a_1, \ldots a_m, b_1, \ldots b_k} subst_{p,n,k}(\Delta, \sigma_k(\Gamma, a_1, \ldots a_m), b_1, \ldots b_k) \leftrightharpoons \sigma_n(\Delta, a_1', \ldots a_m') \]
-where
-\[ a_i' = subst_{p_i,n+q_i,k+q_i}(\Delta_i', a_i, b_{i,1}', \ldots b_{i,k}', v_{n+q_i,q_i-1}(\Delta_i'), \ldots v_{n+q_i,0}(\Delta_i')), \]
-\[ b_{i,j}' = subst_{tm,n+q_i,n}(\Delta_i', b_j, v_{n+q_i,n+q_i-1}(\Delta_i'), \ldots v_{n+q_i,q_i}(\Delta')), \]
-\[ \Delta_i' = \beta_{\{ x_1, \ldots x_{i-1} \},V,n,q_i}(\Delta, \Delta_i, [x_j \mapsto a_j']) \text{, and} \]
-$x_i$ is defined by a judgement with context $\Delta_i$.
-
-Axioms of $E(\Sigma, \mathcal{I})$ are the axioms of $\mathbb{T}_1$, $D(\sigma)$ and $S(\sigma)$ for each $\sigma \in \Sigma$, and $A(R)$ for each $R \in \mathcal{I}$.
-
-\section{Initial models of syntactic type theories}
-
-Results of section~\ref{sec:T1} show that models of algebraic dependent type theories can be described as contextual categories with additional structure.
-Initial models are of particular interest.
-In this section we show that initial models of those theories that come from (regular) syntactic theories can be constructed from fully annotated lambda terms.
-Then we show that in some cases we can drop annotations on lambda terms.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
