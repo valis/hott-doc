@@ -97,6 +97,7 @@
 \newref{lem}{lemma}{Lemma}
 \newref{prop}{proposition}{Proposition}
 \newref{cor}{corollary}{Corollary}
+\newref{cond}{condition}{Condition}
 
 \theoremstyle{definition}
 \newref{defn}{definition}{Definition}
@@ -1222,9 +1223,11 @@ It follows that $\widetilde{\alpha}$ and $\widetilde{\beta}$ determine an isomor
 \end{proof}
 
 Now, we define a specific presentation of algebraic dependent type theories, using terms with holes.
-Let $\mathcal{F}_0$ be a set of function symbols of $\mathbb{T}_0$, and let $\mathcal{F}$ be a set of fucntion symbols such that
-    for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
+Let $\mathcal{F}_0$ be a set of function symbols of $\mathbb{T}_0$, and let $\mathcal{F}$ be a set of fucntion symbols that satisfies the following condition:
+\begin{cond}[ctx]
+For every $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
     $k$ is nonzero, $p$ equals to either $ty$ or $tm$, $p_1$ equals to $ctx$, and $n_1$ equals to $n$.
+\end{cond}
 The idea is that the first argument of $\sigma$ should represent the context in which $\sigma(\Gamma, x_1, \ldots x_k)$ is defined.
 
 Now, we define a submonad $WTerm$ of $HTerm_{\mathcal{F} \amalg \mathcal{F}_0}$.
@@ -1363,12 +1366,109 @@ We also introduce a notation for formulae:
 \Gamma \vdash a : A & \text{ means } \Gamma \vdash ty(a) \equiv A \\
 \Gamma \vdash a \equiv a' : A & \text{ means } (\Gamma \vdash a : A) \land (\Gamma \vdash a \equiv a')
 \end{align*}
-Finally, we will write a sequent $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \varphi$ as
+Finally, we will write sequents $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \varphi$ and $\varphi_1 \land \ldots \land \varphi_n \ssststile{}{V} \varphi$ as
 \begin{center}
 \AxiomC{$\varphi_1$}
 \AxiomC{$\ldots$}
 \AxiomC{$\varphi_n$}
 \TrinaryInfC{$\varphi$}
+\DisplayProof
+\quad
+and
+\quad
+\AxiomC{$\varphi_1$}
+\AxiomC{$\ldots$}
+\AxiomC{$\varphi_n$}
+\doubleLine
+\TrinaryInfC{$\varphi$}
+\DisplayProof
+\end{center}
+respectively.
+Usually, we will not specify $D_i$ explicitly, instead we will give a sequent of the form (or a similar sequent)
+\begin{center}
+\AxiomC{$(\Gamma_1 \vdash x_1)\!\downarrow$}
+\AxiomC{$\ldots$}
+\AxiomC{$(\Gamma_k \vdash x_k)\!\downarrow$}
+\doubleLine
+\TrinaryInfC{$(\Gamma \vdash \sigma(x_1, \ldots x_k))\!\downarrow$}
+\DisplayProof
+\end{center}
+Then we let $D_i(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma_i$.
+Then axiom~\axref{c3} follows from this sequent.
+We will usually assume axioms \axref{c1} and \axref{c2} implicitly.
+
+As an example of constructions from this section, we show how $\mathbb{T}_1$ can be presented in this style.
+The set $\mathcal{F}$ of function symbols defined as before:
+\begin{align*}
+v_{n,i}       & : (ctx,n) \to (tm,n) \text{, } 0 \leq i < n \\
+subst_{p,n,k} & : (ctx,n) \times (p,k) \times (tm,n)^k \to (p,n) \text{, } p \in \{ tm, ty \}
+\end{align*}
+Note that it satisfies \rcond{ctx}.
+For every $m,n \in \mathbb{N}$ and $p \in \{ ty, tm \}$, we define $wk^m_{p,n} : (ctx,n+m) \times (p,n) \to (p,n+m)$ as follows:
+\[ wk^m_{p,n}(\Gamma,a) = subst_{p,n+m,n}(\Gamma, a, v_{n+m-1}, \ldots v_m) \]
+We will write $a\uparrow^m$ for $wk^m_{p,n}(*,a)$.
+
+Now we describe axioms of the theory.
+First axiom is equivalent to axioms \eqref{ax:def-var} and \eqref{ax:type-var}.
+\begin{center}
+\AxiomC{$A_1, \ldots A_n \vdash ctx$}
+\UnaryInfC{$A_1, \ldots A_n \vdash v_i : A_{n-i}\!\uparrow^{i+1}$}
+\DisplayProof
+\end{center}
+\medskip
+
+The following axioms (together with \axref{c1} and \axref{c2}) are equivalent to axioms \eqref{ax:def-subst}, \eqref{ax:type-subst-ty} and \eqref{ax:type-subst-tm}.
+\begin{center}
+\AxiomC{$\Gamma \vdash ctx$}
+\AxiomC{$\Gamma \vdash a_i : subst_{ty,n,i-1}(ft^{k+1-i}(B), a_1, \ldots a_{i-1})$}
+\doubleLine
+\BinaryInfC{$\Gamma \vdash subst_{ty,n,k}(B, a_1, \ldots a_k)\ type$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \vdash ctx$}
+\AxiomC{$\Gamma \vdash a_i : subst_{ty,n,i-1}(ft^{k+1-i}(ty(b)), a_1, \ldots a_{i-1})$}
+\doubleLine
+\BinaryInfC{$\Gamma \vdash subst_{tm,n,k}(b, a_1, \ldots a_k) : subst_{ty,n,k}(ty(b), a_1, \ldots a_k)$}
+\DisplayProof
+\end{center}
+\medskip
+
+Note that the context of arguments $a_i$ can be inferred from the context of $subst_{p,n,k}(B, a_1, \ldots a_k)$, but not the context of $B$.
+So the context of $B$ cannot be omitted, but the context of $a_i$ can be, and $D_i(subst_{p,n,k}(\Gamma, B, a_1, \ldots a_{i-2})) = \Gamma$.
+Finally, axioms \eqref{ax:subst-var}, \eqref{ax:var-subst} and \eqref{ax:subst-subst} are stated as before.
+
+Derivied operation $wk^m_{p,n}$ satisfies the following rules:
+\begin{center}
+\AxiomC{$\Gamma, B_1, \ldots B_m \vdash ctx$}
+\AxiomC{$\Gamma \vdash A\ type$}
+\BinaryInfC{$\Gamma, B_1, \ldots B_m \vdash A\!\uparrow^m type$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma, B_1, \ldots B_m \vdash ctx$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma, B_1, \ldots B_m \vdash a\!\uparrow^m : A\!\uparrow^m$}
+\DisplayProof
+\end{center}
+
+Thus $v_i$ are just usual De Bruijn indices and $wk^m_{p,n}$ are usual weakening operations.
+We also define the usual substitution operation as follows:
+\[ B[a_1, \ldots a_k] = subst_{p,n,n+k}(B, v_{n-1}, \ldots v_0, a_1, \ldots a_k) \]
+It satisfies the following rules:
+\begin{center}
+\AxiomC{$\Gamma, A_1, \ldots A_k \vdash B\ type$}
+\AxiomC{$\Gamma \vdash a_i : A_i[a_1, \ldots a_{i-1}]$}
+\BinaryInfC{$\Gamma \vdash B[a_1, \ldots a_k]\ type$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma, A_1, \ldots A_k \vdash b : B$}
+\AxiomC{$\Gamma \vdash a_i : A_i[a_1, \ldots a_{i-1}]$}
+\BinaryInfC{$\Gamma \vdash b[a_1, \ldots a_k] : B[a_1, \ldots a_k]$}
 \DisplayProof
 \end{center}
 
@@ -1424,15 +1524,12 @@ Given a theory $\mathbb{T}$ there is the smallest stable theory containing $\mat
 We call this theory the stabilization of $\mathbb{T}$ and denote by $st(\mathbb{T})$.
 \end{defn}
 
-We define auxiliary derived operations in a theory under $\mathbb{T}_1$.
-For every $m,n \in \mathbb{N}$ and $p \in \{ ty, tm \}$, we define $wk^m_{p,n} : (ctx,n+m) \times (p,n) \to (p,n+m)$ as follows:
-\[ wk^m_{p,n}(B,a) = subst_{p,n+m,n}(B, a, v_{n+m-1}, \ldots v_m) \]
-
 For every $m,n,k \in \mathbb{N}$ and $p \in \{ ctx, ty, tm \}$, we define $subst^m_{p,n,k} : (ctx,n) \times (p,k+m) \times (tm,n)^k \to (p,n+m)$.
 First, let $subst^0_{ctx,n,k}(B, A, a_1, \ldots a_k) = B$ and $subst^{m+1}_{ctx,n,k} = subst^m_{ty,n,k}$.
 If $p \in \{ ty, tm \}$, then let $subst^m_{p,n,k}(B, a, a_1, \ldots a_k)$ be equal to
 \[ subst_{p,n+m,k+m}(B', a, wk^m_{tm,n}(a_1), \ldots wk^m_{tm,n}(a_k), v_{m-1}, \ldots v_0) \]
 where $B' = subst^m_{ctx,n,k}(B, ctx_{k+m}(a), a_1, \ldots a_k)$.
+We will write $B[a_1, \ldots a_k]$ for $subst_{p,n,k}(*, B, a_1, \ldots a_k)$.
 
 \begin{defn}
 A \emph{regular algebraic dependent type theory} is a tuple $(\mathcal{F},\mathcal{P},\mathcal{A})$, where $\mathcal{A}$
