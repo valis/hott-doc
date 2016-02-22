@@ -1242,25 +1242,26 @@ We will say that a term $t \in HTerm_{\mathcal{F} \amalg \mathcal{F}_0}(V)_s$ ha
 \item $t = \sigma(\Gamma, t_1, \ldots t_k)$, $\sigma \in \mathcal{F}$, and $\Gamma$ has a well-defined context.
 \end{itemize}
 
+To define monad $BTerm$, we need an additional structure.
+Suppose that for every function symbol $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$
+    and for every $1 \leq i \leq k$ such that $p_i$ equals to either $ty$ or $tm$, it is specified whether context may be omitted in $(i+1)$-argument to $\sigma$,
+    and if it can be omitted, then there is a term $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})) \in WTerm(\{ \Gamma, x_1, \ldots x_{i-1} \})_{(ctx_i,n_i)}$.
+This term allows us to recover the omitted context.
+
 Sets $BTerm(V)_s$ are defined inductively:
 \begin{itemize}
 \item If $t \in Term(V)_s$, then $t \in BTerm(V)_s$.
 \item If $t \in BTerm(V)_{(ty,n)}$ and $t$ has a well-defined context, then $ft(t) \in BTerm(V)_{(ctx,n)}$.
 \item If $t \in BTerm(V)_{(tm,n)}$, then $ty(t) \in BTerm(V)_{(ty,n)}$.
-\item If $\sigma \in \mathcal{F}$, $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $\Gamma \in BTerm(V)_{(ctx,n)}$,
-    $\Gamma$ has a well-defined context, and $t_i \in BTerm(V)_{(p_i,n_i)}$, then $\sigma(\Gamma, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
-\item If $\sigma \in \mathcal{F}$, $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, $t_i \in BTerm(V)_{(p_i,n_i)}$,
-    then $\sigma(*, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
+\item Let $\sigma \in \mathcal{F}$, $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, and $t_i \in BTerm(V)_{(p_i,n_i)}$.
+    Suppose that for every $i$ such that the context in $(i+1)$-th argument of $\sigma$ can be omitted, $t_i$ has a well-defined context.
+    Then $\sigma(*, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$ and for every $\Gamma \in BTerm(V)_{(ctx,n)}$
+        with a well-defined context, $\sigma(\Gamma, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
 \end{itemize}
 
 Finally, $WTerm(V)_s$ consists of those terms from $BTerm(V)_s$ which have a well-defined context.
 Note that if $t \in BTerm(V)_s$, then either $t \in WTerm(V)_s$, or $t$ is of the form $\sigma(*, t_1, \ldots t_k)$, or it is of the form $ty(\sigma(*, t_1, \ldots t_k))$.
 We will write a term $\sigma(*, t_1, \ldots t_k)$ simply as $\sigma(t_1, \ldots t_k)$, and if $k = 0$, then we will write it as $\sigma$.
-
-To define a function $\beta : WTerm(V)_s \to Term(V)_s$, we need an additional structure.
-Suppose that for every function symbol $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$
-    and for every $1 \leq i \leq k$ such that $p_i$ equals to either $ty$ or $tm$,
-    there is a term $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})) \in WTerm(\{ \Gamma, x_1, \ldots x_{i-1} \})_{(ctx_i,n_i)}$.
 
 Now, we define $\beta : WTerm(V)_s \to Term(V)_s$ together with a function $\beta' : Term(V)_{(ctx,n)} \times BTerm(V)_{(p,n)} \to Term(V)_{(p,n)}$, where $p \in \{ tm,ty \}$.
 \begin{align*}
@@ -1272,7 +1273,8 @@ Now, we define $\beta : WTerm(V)_s \to Term(V)_s$ together with a function $\bet
 \beta'(\Delta, ty(t)) & = ty(\beta'(\Delta, t)) \\
 \beta'(\Delta, \sigma(*, t_1, \ldots t_k)) & = \sigma(\Delta, t_1', \ldots t_k')
 \end{align*}
-where $t_i' = \beta'(\beta(D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})))[\Gamma \mapsto \Delta, x_1 \mapsto t_1', \ldots x_{i-1} \mapsto t_{i-1}'], t_i)$.
+where $t_i' = \beta'(\beta(D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})))[\Gamma \mapsto \Delta, x_1 \mapsto t_1', \ldots x_{i-1} \mapsto t_{i-1}'], t_i)$
+    if the context in $(i+1)$-th argument of $\sigma$ can be omitted, and $t_i' = \beta(t_i)$ otherwise.
 In order for this to be a correct definition, we need some additional assumptions on $D_i$.
 The simplest assumption is that there is a well-ordering on the set of function symbols, and for every $\sigma \in \mathcal{F}$,
     every symbol that appears in $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1}))$ is less than $\sigma$.
@@ -1285,8 +1287,7 @@ Then is isomorphic to $\beta(\mathbb{T})$, which is an algebraic dependent type 
 
 Terms from $BTerm$ may or may not contain redundant information about contexts.
 Now, we will show that under additional assumptions on $\mathbb{T}$ every term is equivalent to a one with no redundant information.
-First, let $STerm$ be a subfunctor of $BTerm$ which consists of terms in which every subterm is
-    either of the form $ctx^i(x)$, where $x$ is a variable, or of the form $ty(t)$, or of the form $\sigma(*, t_1, \ldots t_k)$.
+First, let $STerm$ be a subfunctor of $BTerm$ which consists of terms in which the first argument to every function is omitted whenever possible.
 Let $LTerm$ be a subfunctor of $BTerm$ such that $t \in LTerm(V)_s$ if and only if $t$ satisfies one of the following conditions:
 \begin{itemize}
 \item $t = ctx^i(x)$, where $x$ is a variable.
@@ -1294,10 +1295,11 @@ Let $LTerm$ be a subfunctor of $BTerm$ such that $t \in LTerm(V)_s$ if and only 
 \item $t = ty(t')$, where $t' \in LTerm(V)_{(tm,n)}$.
 \item $t = \sigma(\Gamma, t_1, \ldots t_k)$, where $\Gamma \in LTerm(V)_{(ctx,n)}$ and $t_1, \ldots t_k$ belong to $STerm$.
 \end{itemize}
-Note that $LTerm$ is a subfunctor of $WTerm$, while $STerm$ is not.
+Note that $LTerm$ is a subfunctor of $WTerm$, while $STerm$ is not, so we can use terms from $LTerm$ in formulae, but not terms from $STerm$.
 
 \begin{prop}
-Suppose that the following sequents are theorems of $\mathbb{T}$:
+Suppose that for every $t \in WTerm(V)_s$, $\sigma \in \mathcal{F}$, and $i$ such that the context in $(i+1)$-th argument of $\sigma$ can be omitted,
+    the following sequents are theorems of $\mathbb{T}$:
 \begin{align*}
 & \sststile{}{V} t \cong \beta(t) \axtag{c1} \\
 \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p,n}(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma \axtag{c2} \\
@@ -1316,15 +1318,16 @@ If $t = ty(\sigma(\Gamma, t_1, \ldots t_k))$, then we can take $r(t) = ty(r(\sig
 
 Finally, suppose that $t = \sigma(\Gamma, t_1, \ldots t_k)$.
 Then $r(\Gamma) = \Gamma'|_\varphi$ and $r(t_i) = t_i'|_{\varphi_i}$.
-Let $t_i'' = t_i'$ and $\varphi_i' = \top$ if $t_i'$ is a term in $STerm$.
+Let $t_i'' = t_i'$ and $\varphi_i' = \top$ if $t_i'$ is a term in $STerm$ or if the context in $t_i'$ cannot be omitted.
 If $t_i' = \tau(\Delta_i, q_1, \ldots q_n)$ or $t_i' = ty(\tau(\Delta_i, q_1, \ldots q_n))$,
-    then let $t_i'' = \tau(*, q_1, \ldots q_n)$ or $t_i''' = ty(\tau(*, q_1, \ldots q_n))$ respectively.
+    then let $t_i'' = \tau(*, q_1, \ldots q_n)$ or $t_i'' = ty(\tau(*, q_1, \ldots q_n))$ respectively.
 Also, let $\varphi_i' = (\Delta_i = \Delta_i')$, where $\Delta_i' = D_i(A, x_1, \ldots x_{i-1})[A \mapsto \Gamma', x_1 \mapsto t_1', \ldots x_{i-1} \mapsto t_{i-1}']$.
 Let $r(t) = \sigma(\Gamma', t_1'', \ldots t_k'')|_{\varphi \land \varphi_1 \land \varphi_1' \land \ldots \land \varphi_k \land \varphi_k'}$.
 
 Note that $\sigma(\Gamma', t_1'', \ldots t_k'')$ is equivalent to $\sigma(\Gamma', t_1''', \ldots t_k''')$,
-    where $t_i''' = t_i'$ if $t_i'$ is a term in $STerm$, $t_i''' = \tau(\Delta_i''', q_1, \ldots q_n)$ if $t_i' = \tau(\Delta_i, q_1, \ldots q_n)$,
-    and $t_i''' = ty(\tau(\Delta_i''', q_1, \ldots q_n))$ if $t_i' = ty(\tau(\Delta_i, q_1, \ldots q_n))$,
+    where $t_i''' = t_i'$ if $t_i'$ is a term in $STerm$ or if the context in $t_i'$ cannot be omitted,
+    $t_i''' = \tau(\Delta_i''', q_1, \ldots q_n)$ if $t_i' = \tau(\Delta_i, q_1, \ldots q_n)$, and
+    $t_i''' = ty(\tau(\Delta_i''', q_1, \ldots q_n))$ if $t_i' = ty(\tau(\Delta_i, q_1, \ldots q_n))$,
     where $\Delta_i''' = D_i(A, x_1, \ldots x_{i-1})[A \mapsto \Gamma', x_1 \mapsto t_1''', \ldots x_{i-1} \mapsto t_{i-1}''']$.
 
 By induction hypothesis, $t$ is equivalent to $\sigma(\Gamma', t_1', \ldots t_k')|_{\varphi \land \varphi_1 \land \ldots \land \varphi_k}$.
