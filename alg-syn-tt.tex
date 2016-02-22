@@ -223,7 +223,7 @@ There are several equivalent ways of defining essentially algebraic theories (\c
 We will use approach introduced in \cite{PHL} under the name of partial Horn theories since it seems to be the most general.
 We will define morphisms of partial Horn theories in terms of morphisms of monads and left modules over them.
 In this section we will review necessary for our development parts of the theory of monads, left modules over them and partial Horn theories.
-% We will also define algebraic dependent type theories as certain partial Horn theories.
+We will also define algebraic dependent type theories as certain partial Horn theories.
 
 \subsection{Monads and left modules over them}
 
@@ -852,7 +852,7 @@ Now, we can define the notion of algebraic dependent type theories.
 
 \begin{defn}
 An \emph{algebraic dependent type theory} is a theory $\mathbb{T} \in \ThC$ together with a morphism $\mathbb{T}_0 \to \mathbb{T}$.
-The category of algebraic dependent type theories is the under category $\mathbb{T}_0/\ThC$.
+The category $\algtt_0$ of algebraic dependent type theories is the under category $\mathbb{T}_0/\ThC$.
 \end{defn}
 
 Often (algebraic) type theories involve substitution operations.
@@ -927,7 +927,7 @@ The last axiom say that substitution must be ``associative'':
 
 \begin{defn}
 An \emph{algebraic dependent type theory with substitution} is a theory $\mathbb{T} \in \ThC$ together with a morphism $\mathbb{T}_1 \to \mathbb{T}$.
-The category of algebraic dependent type theories with substitution is the under category $\mathbb{T}_1/\ThC$.
+The category $\algtt_1$ of algebraic dependent type theories with substitution is the under category $\mathbb{T}_1/\ThC$.
 \end{defn}
 
 \subsection{Models of $\mathbb{T}_1$}
@@ -1375,22 +1375,20 @@ In this section we will consider a particular kind of algebraic dependent type t
 Also we will define the category $\algtt_{reg}$ of regular algebraic dependent type theories.
 Finally, we will give a few examples of such theories.
 
-\begin{defn}
-An \emph{algebraic dependent type theory} is a quasi-equational theory in a signature with the set of sorts $\mathcal{C}$ together with a map from $\mathbb{T}_1$.
-Category $\algtt$ of algebraic dependent type theories is the under category $\mathbb{T}_1 / \cat{Th}_\mathcal{C}$.
-\end{defn}
-
 Usually in type theories all of the function symbols are available in every context.
 We call such theories \emph{regular}.
-Let $\mathcal{F}$ be a set of function symbols such that every $\sigma \in \mathcal{F}$ has a signature of the form $(p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0)$.
-Then we define $reg(\mathcal{F})$ as the set of symbols of $\mathbb{T}_1$ together with $\{ \sigma_k : (ctx, k) \times (p_1, q_1 + k) \times \ldots \times (p_n, q_n + k) \to (p, k) \ |\ \sigma \in \mathcal{F}, \sigma : (p_1,q_1) \times \ldots \times (p_n,q_n) \to (p,0), k \in \mathbb{N} \}$.
-We will use term $\sigma(a_1, \ldots a_n)$ as a synonym for $\sigma_0(\emptyCtx, a_1, \ldots a_n)$.
+Let $\mathcal{F}$ be a set of function symbols.
+Then we define another set of function symbols $reg(\mathcal{F})$ which consists of symbols of $\mathbb{T}_1$ together with symbols
+    $\sigma_n : (ctx, n) \times (p_1, q_1 + n) \times \ldots \times (p_k, q_k + n) \to (p, q + n)$ for every
+    $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_k,q_k) \to (p,q)$, and every $n \in \mathbb{N}$.
 
 Now, for every set of variables $V$ we define a set $L^n(V)$ which contains a variable $x$ of sort $(p,q+n)$ for every variable $x$ of sort $(p,q)$ in $V$.
-For every $t \in Term_{reg(\mathcal{F})}(V)_{(p,q)}$, $m \in \mathbb{N}$, and variable $\Gamma$ we define a term $L^m(\Gamma, t) \in Term_{reg(\mathcal{F})}(L^m(V \amalg \{ \Gamma : (ctx,0) \}))_{(p,q+m)}$ by induction on $t$:
+For every $t \in HTerm_{reg(\mathcal{F})}(V)_{(p,q)}$, $m \in \mathbb{N}$, and variable $\Gamma$ we define a term
+    $L^m(\Gamma, t) \in HTerm_{reg(\mathcal{F})}(L^m(V \amalg \{ \Gamma : (ctx,0) \}))_{(p,q+m)}$ by induction on $t$:
 \begin{align*}
+& L^m(\Gamma, *) = * \\
 & L^m(\Gamma, \emptyCtx) = \Gamma \\
-& L^m(\Gamma, x_i) = x_i \\
+& L^m(\Gamma, x) = x \\
 & L^m(\Gamma, ft_n(A)) = ft_{n+m}(L^m(\Gamma, A)) \\
 & L^m(\Gamma, ty_n(a)) = ty_{n+m}(L^m(\Gamma, a)) \\
 & L^m(\Gamma, v_{n,i}(A)) = v_{n+m,i}(L^m(\Gamma, A)) \\
@@ -1399,28 +1397,48 @@ For every $t \in Term_{reg(\mathcal{F})}(V)_{(p,q)}$, $m \in \mathbb{N}$, and va
 & \qquad \text{where $b_i = v_{n+m,n+m-i}(L^m(\Gamma, B))$ and $a_i' = L^m(\Gamma, a_i)$ } \\
 & L^m(\Gamma, \sigma_n(A, a_1, \ldots a_k)) = \sigma_{n+m}(L^m(\Gamma, A), L^m(\Gamma, a_1), \ldots L^m(\Gamma, a_k))
 \end{align*}
-For every formula $\varphi$ we define $L(\varphi)$ as the formula which is obtained from $\varphi$ by applying $L$ to every term in it.
-We will say that theory $\mathbb{T}$ in signature $(\mathcal{C}, reg(\mathcal{F}), \varnothing)$ is \emph{stable}
-if for every axiom (and hence for every theorem) $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$ sequent $L(\varphi) \sststile{}{V \amalg \{ \Gamma : (ctx,1) \}} L(\psi)$ is a theorem of $\mathbb{T}$.
-Given a theory $\mathbb{T}$ there is the smallest stable theory containing $\mathbb{T}$.
-We call this theory the stabilization of $\mathbb{T}$ and denote by $st(\mathbb{T})$.
+Note that sets $Term$, $WTerm$, $BTerm$, $LTerm$ and $STerm$ are closed under $L^m(\Gamma,-)$.
 
-We define auxiliary derived operations in the signature of $\mathbb{T}_1$.
-For every $m \in \mathbb{N}$ we define $wk^m_n : Ctx_{n+m} \times Tm_n \to Tm_{n+m}$ as follows:
-\[ wk^m_n(B,a) = subst_{n+m,n}(B, a, v_{n+m-1}(B), \ldots v_m(B)) \]
-For every $m \in \mathbb{N}$ we define $subst^{m+1}_{p,n,k} : Ctx_n \times (p,k+m) \times Tm^k_n \to (p,k+m)$.
-First, let $subst^0_{ty,n,k}(B, A, a_1, \ldots a_k) = B$.
-Then let $subst^{m+1}_{p,n,k}(B, a, a_1, \ldots a_k)$ be equal to
-\[ subst_{p,n+m+1,k+m+1}(B', a, wk^{m+1}_n(B', a_1), \ldots wk^{m+1}_n(B', a_k), v_m(B'), \ldots v_0(B')) \]
-where $B' = subst^m_{ty,n,k}(B, ft(A), a_1, \ldots a_k)$.
+Let $\mathcal{P}$ be a set of relation symbols.
+Then we define another set of relation symbols $reg(\mathcal{P})$ which consists of symbols
+    $R_n : (p_1, q_1 + n) \times \ldots \times (p_k, q_k + n)$ for every
+    $R \in \mathcal{P}$, $R : (p_1,q_1) \times \ldots \times (p_k,q_k)$, and every $n \in \mathbb{N}$.
+Given a theory over $(WTerm_{reg(\mathcal{F})}, reg(\mathcal{P}))$, we will often omit subscripts $n$ in symbols $v_{n,i}$, $subst_{p,n,k}$, $\sigma_n$ and $R_n$.
+
+For every formula $\varphi \in Form_{reg(\mathcal{P})}(V)$ we define a formula
+    $L^m(\Gamma,\varphi) \in Form_{reg(\mathcal{P})} \allowbreak (L^m(V \amalg \{ \Gamma : (ctx,0) \}))$ as follows:
+\begin{align*}
+L^m(\Gamma, t = t') & = (L^m(\Gamma,t) = L^m(\Gamma,t')) \\
+L^m(\Gamma, R_n(t_1, \ldots t_k)) & = R_{n+m}(L^m(\Gamma,t_1), \ldots L^m(\Gamma,t_k)) \\
+L^m(\Gamma, \varphi_1 \land \ldots \land \varphi_n) & = L^m(\Gamma,\varphi_1) \land \ldots \land L^m(\Gamma,\varphi_n)
+\end{align*}
 
 \begin{defn}
-A \emph{regular algebraic dependent type theory} is a set $\mathcal{F}$ together with a stable theory over $(\mathcal{C}, reg(\mathcal{F}), \varnothing)$
-such that axioms of $\mathbb{T}_1$ are derivable and for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,0)$ the following sequents are derivable:
-\[ \sststile{}{B, b_1, \ldots b_m} ft_k(\sigma_k(B, b_1, \ldots b_m)) = B \text{ if $p = ty$,} \]
-\[ \sststile{}{B, b_1, \ldots b_m} ft_k(ty_k(\sigma_k(B, b_1, \ldots b_m))) = B \text{ if $p = tm$, and} \]
-\[ \sststile{}{B', B, b_1, \ldots b_m, a_1, \ldots a_k} subst_{p,n,k}(B', \sigma_k(B, b_1, \ldots b_m), a_1, \ldots a_k) = \sigma_n(B', b_1', \ldots b_m') \]
-where $b_i' = subst_{p_i,n,k}^{q_i+1}(B', b_i, a_1, \ldots a_k)$.
+We will say that a theory $\mathbb{T}$ over $(WTerm_{reg(\mathcal{F})}, reg(\mathcal{P}))$ is \emph{stable}
+    if for every axiom (and hence for every theorem) $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$ and every $m \in \mathbb{N}$,
+    sequent $L^m(\Gamma,\varphi) \sststile{}{L^m(V \amalg \{ \Gamma : (ctx,0) \})} L^m(\Gamma,\psi)$ is a theorem of $\mathbb{T}$.
+Given a theory $\mathbb{T}$ there is the smallest stable theory containing $\mathbb{T}$.
+We call this theory the stabilization of $\mathbb{T}$ and denote by $st(\mathbb{T})$.
+\end{defn}
+
+We define auxiliary derived operations in a theory under $\mathbb{T}_1$.
+For every $m,n \in \mathbb{N}$ and $p \in \{ ty, tm \}$, we define $wk^m_{p,n} : (ctx,n+m) \times (p,n) \to (p,n+m)$ as follows:
+\[ wk^m_{p,n}(B,a) = subst_{p,n+m,n}(B, a, v_{n+m-1}, \ldots v_m) \]
+
+For every $m,n,k \in \mathbb{N}$ and $p \in \{ ctx, ty, tm \}$, we define $subst^m_{p,n,k} : (ctx,n) \times (p,k+m) \times (tm,n)^k \to (p,n+m)$.
+First, let $subst^0_{ctx,n,k}(B, A, a_1, \ldots a_k) = B$ and $subst^{m+1}_{ctx,n,k} = subst^m_{ty,n,k}$.
+If $p \in \{ ty, tm \}$, then let $subst^m_{p,n,k}(B, a, a_1, \ldots a_k)$ be equal to
+\[ subst_{p,n+m,k+m}(B', a, wk^m_{tm,n}(a_1), \ldots wk^m_{tm,n}(a_k), v_{m-1}, \ldots v_0) \]
+where $B' = subst^m_{ctx,n,k}(B, ctx_{k+m}(a), a_1, \ldots a_k)$.
+
+\begin{defn}
+A \emph{regular algebraic dependent type theory} is a tuple $(\mathcal{F},\mathcal{P},\mathcal{A})$, where $\mathcal{A}$
+    is a stable set of axioms over $(WTerm_{reg(\mathcal{F})}, reg(\mathcal{P}))$ such that axioms of $\mathbb{T}_1$ are derivable,
+    and for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,q)$, the following sequent is derivable:
+\begin{equation}
+\sststile{}{B', B, b_i, a_j} subst_{p,n,k}(B', \sigma_k(B, b_1, \ldots b_m), a_1, \ldots a_k) = \sigma_n(B', b_1', \ldots b_m') \axtag{r1}
+\end{equation}
+where $b_i' = subst_{p_i,n,k}^{q_i}(B', b_i, a_1, \ldots a_k)$.
 \end{defn}
 
 Let $(\mathcal{F},\mathbb{T})$ and $(\mathcal{F}',\mathbb{T}')$ be regular algebraic dependent type theories.
