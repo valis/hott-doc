@@ -195,7 +195,6 @@ We define a category of algebraic dependent type theories.
 Coproducts and more generally colimits in this category allow us to combine simple theories into more complex ones.
 For example, the theory with $\Sigma$, $\Pi$ and $Id$ types may be described as coproduct $T_\Sigma \amalg T_\Pi \amalg T_{Id}$
 where $T_\Sigma$, $T_\Pi$ and $T_{Id}$ are theories of $\Sigma$, $\Pi$ and $Id$ types respectively.
-Another example is a theory of a universe which can be defined as a certain pushout (see \rexample{universe}).
 
 There is a natural notion of a model of an essentially algebraic theory.
 Thus the algebraic approach to defining type theories automatically equips every type theory with a (locally presentable) category of its models.
@@ -1545,6 +1544,7 @@ L(f)(L(R)(x_1, \ldots x_k)) & = L(f(R(x_1, \ldots x_k)))
 \begin{defn}
 A \emph{stable algebraic dependent type theory} is an algebra for functor $L$,
     that is a tuple $(\mathbb{T},\alpha)$, where $\mathbb{T} \in \algtt^0_{con}$ and $\alpha : L(\mathbb{T}) \to \mathbb{T}$.
+We will call $\alpha$ \emph{the stabilization map} of $(\mathbb{T},\alpha)$.
 The category $\algtt^0_{st}$ of stable theories is the category of algebras for $L$.
 \end{defn}
 
@@ -1634,8 +1634,9 @@ Thus we can define regularization functor $reg : \algtt^1_{st} \to \algtt^1_{reg
     where $\mathcal{R}$ is the set of regularity axioms.
 It is easy to see that $reg$ is a left adjoint to the inclusion $\algtt^1_{reg} \hookrightarrow \algtt^1_{st}$.
 
-Finally, let us give a few examples of algebraic dependent type theories.
-If we take their regularization and coproduct, then we get a theory corresponding to a usual variation of a type theory.
+Finally, let us give a few examples of algebraic dependent type theories with substitution.
+We implicitly assume that all of these theories contain function symbols and axioms of $\mathbb{T}_1$.
+If we take their stabilization, regularization and coproduct, then we get a theory corresponding to a usual variation of a type theory.
 
 \begin{example}
 The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and $unit : (tm,0)$ and the following axioms:
@@ -1876,26 +1877,63 @@ where $A$ is $ty(a)$.
 \end{example}
 
 Now, let us discuss the final example.
-For every theory $\mathbb{T} \in \algtt^0_{con}$, we can define a theory $Univ(\mathbb{T}) \in \algtt^0_{con}$, which adds a universe to the original theory and moves every type to this universe.
-If $\mathbb{T} = ((\mathcal{C}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}), \mathcal{A})$, then let $Univ(\mathbb{T}) = ((\mathcal{C}, \mathcal{F}_0 \amalg \mathcal{F}', \mathcal{P}'), \mathcal{A}')$.
-The set of function symbols $\mathcal{F}'$ consists of symbols $Type_n : (ty,n)$ and $El_n : (tm,n) \to (ty,n)$ for every $n \in \mathbb{N}$, and symbols
-    $\sigma : (ctx,n) \times u(s_1) \times \ldots \times u(s_k) \to u(p,n)$ for every $\sigma \in \mathcal{F}$, $\sigma : (ctx,n) \times s_1 \times \ldots \times s_k \to (p,n)$,
+Let $\mathbb{T}$ be a theory in $\algtt^1_{con}$, and let $\mathcal{F}'$ be a subset of the set $\mathcal{F}$ of function symbols of $\mathbb{T}$.
+We will define a theory that contains a universe that is closed under functions in $\mathcal{F}'$.
+Theory $U(\mathbb{T})$ has the same function symbols, predicate symbols and aixoms as $\mathbb{T}$, and also the following symbols:
+\begin{align*}
+Type_n & : (ty,n) \\
+El_n & : (tm,n) \to (ty,n)
+\end{align*}
+Moreover, for every $\sigma \in \mathcal{F}'$, $\sigma : (ctx,n) \times s_1 \times \ldots \times s_k \to (p,n)$,
+    we add symbol $\sigma_U : (ctx,n) \times u(s_1) \times \ldots \times u(s_k) \to u(p,n)$ to $U(\mathbb{T})$,
     where $u(tm,n) = (tm,n)$ and $u(ty,n) = (tm,n)$.
-The set of predicate symbols $\mathcal{P}'$ consists of $R : u(s_1) \times \ldots \times u(s_k)$ for every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$.
-
-\begin{example}[universe]
-The theory a universe has function symbols $Type : (ty,0)$ and $El : (tm,0) \to (ty,0)$ and the following inference rules:
+We also add the following axioms:
 \medskip
 \begin{center}
-\AxiomC{}
-\UnaryInfC{$\vdash Type$}
+\AxiomC{$\Gamma \vdash ctx$}
+\UnaryInfC{$\Gamma \vdash Type_n$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A : Type$}
+\UnaryInfC{$\Gamma \vdash El_n(A)\ type$}
+\DisplayProof
+\end{center}
+Also, we add the following axiom for every $\sigma \in \mathcal{F}'$, $\sigma : s_1 \times \ldots \times s_k \to (ty,n)$:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash \sigma_U(x_1, \ldots x_k)\!\downarrow$}
+\UnaryInfC{$\Gamma \vdash El_n(\sigma_U(x_1, \ldots x_k)) \deq \sigma(e(x_1), \ldots e(x_k))$}
+\DisplayProof
+\end{center}
+where $e(x_i) = El_{n+n_i}(x_i)$ if $s_i = (ty,n_i)$, and $e(x_i) = x_i$ otherwise.
+Finally, we should add axioms which tell when functions $\sigma_U$ are defined.
+We cannot do this in general, so let us assume (for the sake of example) that $\mathbb{T}$ is the coproduct of theories of $\Sigma$, $\Pi$ and $Id$ types.
+Then the rest of axioms look like this:
+\medskip
+\begin{center}
+\AxiomC{$\vdash A : Type$}
+\AxiomC{$El_0(A) \vdash B : Type$}
+\BinaryInfC{$\vdash \Sigma_U(A, B) : Type$}
 \DisplayProof
 \quad
 \AxiomC{$\vdash A : Type$}
-\UnaryInfC{$\vdash El(A)\ type$}
+\AxiomC{$El_0(A) \vdash B : Type$}
+\BinaryInfC{$\vdash \Pi_U(A, B) : Type$}
 \DisplayProof
 \end{center}
-\end{example}
+
+\medskip
+\begin{center}
+\AxiomC{$\vdash A : Type$}
+\AxiomC{$\vdash a : El_0(A)$}
+\AxiomC{$\vdash a' : El_0(A)$}
+\TrinaryInfC{$\vdash Id_U(A, a, a') : Type$}
+\DisplayProof
+\end{center}
+
+Note that this construction of a theory with a universe does not work well in general.
+For instance, we should use $Id$ types of \rexample{Id} instead of $Id$ types from \rexample{Id-simpl}.
+Finally, note that if $\mathbb{T}$ is stable, then usually $U(\mathbb{T})$ is also stable.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
