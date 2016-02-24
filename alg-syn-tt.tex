@@ -9,7 +9,6 @@
 \usepackage{xargs}
 \usepackage{bussproofs}
 \usepackage{turnstile}
-\usepackage{todonotes}
 \usepackage{etex}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
@@ -153,7 +152,6 @@ We also study models of such theories in general and initial models in particula
  \makeatletter
     \providecommand\@dotsep{5}
   \makeatother
-  \listoftodos\relax
 
 \section{Introduction}
 
@@ -215,7 +213,12 @@ The drawback of this approach is that it is less straightforward to define a not
 Finally, we introduce a concept of a \emph{stable} theory which formalize the idea that usually in a type theory constructions are available in all contexts.
 
 The paper is organized as follows.
-\todo{Finish the introduction}
+In section 2, we define the category of partial Horn theories and discuss its properties.
+In section 3, we define algebraic dependent type theories in terms of partial Horn theories and prove that the category of models of the initial theory with substitution is equivalent to the category of contextual categories.
+In section 4, we describe a way of simplifying theories, so that their terms contain less redundant information,
+    which allows us to present theories in the usual syntax (using De Bruijn indices).
+In section 5, we define the concept of stable theories, which formalizes the idea that every construction in a type theory can be lifted in a larger context.
+Finally, we give a few standard examples of algebraic dependent type theories.
 
 \section{Partial Horn theories}
 \label{sec:PHT}
@@ -1223,18 +1226,22 @@ It follows that $\widetilde{\alpha}$ and $\widetilde{\beta}$ determine an isomor
 \end{proof}
 
 Now, we define a specific presentation of algebraic dependent type theories, using terms with holes.
-Let $\mathcal{F}_0$ be a set of function symbols of $\mathbb{T}_0$, and let $\mathcal{F}$ be a set of fucntion symbols that satisfies the following condition:
+Let $\mathcal{F}_0$ be a set of function symbols of $\mathbb{T}_0$, and let $\mathcal{F}$ and $\mathcal{P}$ be sets of fucntion and predicate symbols that satisfy the following condition:
 \begin{cond}[ctx]
 For every $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
-    $k$ is nonzero, $p$ equals to either $ty$ or $tm$, $p_1$ equals to $ctx$, and $n_1$ equals to $n$.
+    $k$ is nonzero, $p$ equals to either $ty$ or $tm$, $p_1$ equals to $ctx$, $n_1$ equals to $n$, and for every $1 < i \leq k$, $(p_i,n_i)$ does not equal to $(ctx,0)$.
+
+For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$, $1 \leq i \leq k$, $s_i$ does not equal to $(ctx,0)$.
 \end{cond}
 The idea is that the first argument of $\sigma$ should represent the context in which $\sigma(\Gamma, x_1, \ldots x_k)$ is defined.
 Let $\algtt^0_{con}$ be the full subcategory of $\algtt^0$ which consists of theories of the form $((\mathcal{C}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}), \mathcal{A})$
-    such that $\mathcal{F}$ satisfies \rcond{ctx}, axioms of $\mathbb{T}_0$ and the following sequent are derivable:
+    such that $\mathcal{F}$ and $\mathcal{P}$ satisfy \rcond{ctx}, axioms of $\mathbb{T}_0$ and the following sequent are derivable:
 \begin{equation}
 \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p,n}(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma \axtag{c1}
 \end{equation}
 We call such theories \emph{contextual}.
+We will sometimes write $\sigma : s_1 \times \ldots \times s_k \to (p,n)$ instead of $\sigma : (ctx,n) \times s_1 \times \ldots \times s_k \to (p,n)$
+    when it is clear that we are working with a contextual theory.
 The construction of colimits in \rprop{th-cocomplete} implies that $\algtt^0_{con}$ closed under colimits in $\algtt^0$.
 Note that $\mathbb{T}_1$ is contextual.
 The undercategory $\mathbb{T}_1/\algtt^0_{con}$ will be denoted by $\algtt^1_{con}$.
@@ -1371,9 +1378,9 @@ We also introduce a notation for formulae:
 \begin{align*}
 \Gamma \vdash ctx & \text{ means } (\Gamma \vdash)\downarrow \\
 \Gamma \vdash A\ type & \text{ means } (\Gamma \vdash A)\downarrow \\
-\Gamma \vdash A \equiv A' & \text{ means } (\Gamma \vdash A) = (\Gamma \vdash A') \\
-\Gamma \vdash a : A & \text{ means } \Gamma \vdash ty(a) \equiv A \\
-\Gamma \vdash a \equiv a' : A & \text{ means } (\Gamma \vdash a : A) \land (\Gamma \vdash a \equiv a')
+\Gamma \vdash A \deq A' & \text{ means } (\Gamma \vdash A) = (\Gamma \vdash A') \\
+\Gamma \vdash a : A & \text{ means } \Gamma \vdash ty(a) \deq A \\
+\Gamma \vdash a \deq a' : A & \text{ means } (\Gamma \vdash a : A) \land (\Gamma \vdash a \deq a')
 \end{align*}
 Finally, we will write sequents $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \varphi$ and $\varphi_1 \land \ldots \land \varphi_n \ssststile{}{V} \varphi$ as
 \begin{center}
@@ -1398,13 +1405,11 @@ Usually, we will not specify $D_i$ explicitly, instead we will give a sequent of
 \AxiomC{$(\Gamma_1 \vdash x_1)\!\downarrow$}
 \AxiomC{$\ldots$}
 \AxiomC{$(\Gamma_k \vdash x_k)\!\downarrow$}
-\doubleLine
 \TrinaryInfC{$(\Gamma \vdash \sigma(x_1, \ldots x_k))\!\downarrow$}
 \DisplayProof
 \end{center}
 Then we let $D_i(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma_i$.
-Then axiom~\axref{c2} follows from this sequent.
-We will usually assume axioms \axref{h1} and \axref{c1} implicitly.
+We will usually assume axioms \axref{h1}, \axref{c1} and \axref{c2} implicitly.
 
 As an example of constructions from this section, we show how $\mathbb{T}_1$ can be presented in this style.
 The set $\mathcal{F}$ of function symbols defined as before:
@@ -1499,17 +1504,16 @@ For every such set $\mathcal{F}$, we define another set $L(\mathcal{F})$ which c
 If $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$, then $L(\sigma) \in L(\mathcal{F})$, $L(\sigma) : L(s_1) \times \ldots \times L(s_k) \to L(s)$.
 
 For every set of variables $V$ we define a set $L(V)$ which contains a variable $x$ of sort $L(s)$ for every variable $x$ of sort $s$ in $V$.
-Now, let us define function $L : PHTerm_{L(\mathcal{F})}(V)_{(ctx,1)} \times HTerm_{\mathcal{F}}(V)_s \to PHTerm_{L(\mathcal{F})}(L(V))_{L(s)}$.
+Now, let us define function $L : HTerm_{L(\mathcal{F})}(V)_{(ctx,1)} \times HTerm_{\mathcal{F}}(V)_s \to HTerm_{L(\mathcal{F})}(L(V))_{L(s)}$.
 \begin{align*}
 & L(\Gamma, *) = * \\
+& L(\Gamma, t) = \Gamma \text{, if $t$ has sort $(ctx,0)$} \\
 & L(\Gamma, x) = x \\
-& L(\Gamma, \sigma(t_1, \ldots t_k)) = \Gamma|_{L(\Gamma,t_1)\!\downarrow \land \ldots \land L(\Gamma,t_k)\!\downarrow}
-    \text{, if } \sigma(t_1, \ldots t_k) \text{ has sort } (ctx,0) \\
-& L(\Gamma, \sigma(t_1, \ldots t_k)) = L(\sigma)(L(\Gamma, A), L(\Gamma, t_1), \ldots L(\Gamma, t_k)) \text{, otherwise}
+& L(\Gamma, \sigma(t_1, \ldots t_k)) = L(\sigma)(L(\Gamma, A), L(\Gamma, t_1), \ldots L(\Gamma, t_k))
 \end{align*}
 Note that sets $Term$, $WTerm$, $BTerm$, $LTerm$ and $STerm$ are closed under $L$.
 If $\mathcal{F}$ satisfies \rcond{ctx}, then we define function
-    $L : WTerm_{\mathcal{F}_0 \amalg \mathcal{F}}(V)_s \to PWTerm_{\mathcal{F}_0 \amalg L(\mathcal{F})}(L(V))_{L(s)}$ for every $s \neq (ctx,0)$ as follows:
+    $L : WTerm_{\mathcal{F}_0 \amalg \mathcal{F}}(V)_s \to WTerm_{\mathcal{F}_0 \amalg L(\mathcal{F})}(L(V))_{L(s)}$ for every $s \neq (ctx,0)$ as follows:
 \begin{align*}
 L(x) & = x \\
 L(ft(t)) & = ft(L(t)) \\
@@ -1523,8 +1527,7 @@ For every set $\mathcal{P}$ of relation symbols, we define another set $L(\mathc
     where in the sequence $L(s_1)$, \ldots $L(s_k)$ are skipped sorts $L(s_i)$ such that $s_i = (ctx,0)$.
 For every formula $\varphi \in Form_\mathcal{P}(V)$ we define a formula $L(\varphi) \in Form_{L(\mathcal{P})}(L(V))$ as follows:
 \begin{align*}
-L(t =_{(ctx,0)} t') & = \top \\
-L(t =_s t') & = (L(t) = L(t')) \text{, if } s \neq (ctx,0) \\
+L(t = t') & = (L(t) = L(t')) \\
 L(R(t_1, \ldots t_k)) & = L(R)(L(t_1), \ldots L(t_k)) \\
 L(\varphi_1 \land \ldots \land \varphi_n) & = L(\varphi_1) \land \ldots \land L(\varphi_n)
 \end{align*}
@@ -1587,10 +1590,11 @@ We will say that a stable algebraic dependent type theory with substitution is \
 \AxiomC{$(A_1, \ldots A_{k+q} \vdash \sigma_k(b_1, \ldots b_m))\!\downarrow$}
 \AxiomC{$\Gamma \vdash ctx$}
 \AxiomC{$\Gamma \vdash a_i : subst(A_i, a_1, \ldots a_{i-1})$}
-\TrinaryInfC{$\Gamma \vdash subst(\sigma_k(b_1, \ldots b_m), a_1, \ldots a_{k+q}) \equiv \sigma_n(b_1', \ldots b_m')$}
+\TrinaryInfC{$\Gamma \vdash subst(\sigma_k(b_1, \ldots b_m), a_1, \ldots a_{k+q}) \deq \sigma_n(b_1', \ldots b_m')$}
 \DisplayProof
 \end{center}
 where $b_i' = subst^{q_i}(b_i, a_1, \ldots a_{k+q})$.
+We call these sequents \emph{the regularity axioms}.
 The full subcategory of $\algtt^1_{st}$ on regular theories will be denoted by $\algtt^1_{reg}$.
 \end{defn}
 
@@ -1598,25 +1602,47 @@ The construction of colimits in \rprop{th-cocomplete} implies that $\algtt^1_{re
 
 Now, let us define stabilization and regularization functors $st^0 : \algtt^0_{con} \to \algtt^0_{st}$,
     $st^1 : \algtt^1_{con} \to \algtt^1_{st}$ and $reg : \algtt^1_{st} \to \algtt^1_{reg}$.
-Let $st^0(\mathbb{T}) = (\coprod\limits_{n \in \mathbb{N}} L^n(\mathbb{T}), \alpha)$, where $\alpha$ is the following composition:
-    $L(\coprod\limits_{n \in \mathbb{N}} L^n(\mathbb{T})) = \coprod\limits_{n \in \mathbb{N}} L(L^n(\mathbb{T})) \hookrightarrow \coprod\limits_{n \in \mathbb{N}} L^n(\mathbb{T})$.
+Let $st^0(\mathbb{T}) = (L^\infty(\mathbb{T}), \alpha)$, where $L^\infty(\mathbb{T}) = \coprod\limits_{n \in \mathbb{N}} L^n(\mathbb{T})$, $\alpha = i^1$, and $i^k$ is the following composition:
+    $L^k(L^\infty(\mathbb{T})) = \coprod\limits_{n \in \mathbb{N}} L^k(L^n(\mathbb{T})) \hookrightarrow L^\infty(\mathbb{T})$.
 It is easy to see that $st^0$ is a left adjoint to the forgetful functor $U^0 : \algtt^0_{st} \to \algtt^0_{con}$, $U^0(\mathbb{T},\alpha) = \mathbb{T}$.
 
-For every $(\mathbb{T}_a,\alpha) \in \algtt^0_{st}$, we define a left adjoint $st^0_{(\mathbb{T}_a,\alpha)} : \mathbb{T}_a/\algtt^0_{con} \to (\mathbb{T}_a,\alpha)/\algtt^0_{st}$
+To define $st^1$, first, for every $(\mathbb{T}_a,\alpha) \in \algtt^0_{st}$, we define a left adjoint $st^0_{(\mathbb{T}_a,\alpha)} : \mathbb{T}_a/\algtt^0_{con} \to (\mathbb{T}_a,\alpha)/\algtt^0_{st}$
     to the forgetful functor $U^0_{(\mathbb{T}_a,\alpha)} : (\mathbb{T}_a,\alpha)/\algtt^0_{st} \to \mathbb{T}_a/\algtt^0_{con}$,
     $U^0_{(\mathbb{T}_a,\alpha)}(\mathbb{T},\beta) = \mathbb{T}$.
+Let $e : \mathbb{T}_a \to \mathbb{T}$ be an object of $\mathbb{T}_a/\algtt^0_{con}$.
+Let $E$ be the coequalizer of the following maps:
+\[ \xymatrix{ \coprod\limits_{n \in \mathbb{N}} L^{n+1}(T_a) \ar@<+1ex>[rr]^{\coprod\limits_{n \in \mathbb{N}} L^n(f)} \ar@<-1ex>[rr]_{\coprod\limits_{n \in \mathbb{N}} L^n(g)}
+    & & \coprod\limits_{n \in \mathbb{N}} L^n(L^\infty(\mathbb{T})) \ar@{^{(}->}[r]^-{i^n} & L^\infty(\mathbb{T}) } \]
+    where $f,g : L(\mathbb{T}_a) \to L^\infty(\mathbb{T})$ are defined as follows: $f$ is the composite $L(\mathbb{T}_a) \xrightarrow{\alpha} \mathbb{T}_a \xrightarrow{e} \mathbb{T} \hookrightarrow L^\infty(\mathbb{T})$,
+    and $g$ is the composite $L(\mathbb{T}_a) \xrightarrow{L(e)} L(\mathbb{T}) \hookrightarrow L^\infty(\mathbb{T})$.
+Since $L$ preserves colimits, $L(E)$ is a coequalizer of $i^{n+1} \circ \coprod_{n \in \mathbb{N}} L^{n+1}(f)$ and $i^{n+1} \circ \coprod_{n \in \mathbb{N}} L^{n+1}(g)$.
+By the universal proprety of coequalizers we have a map $\beta : L(E) \ to E$.
+We define $st^0_{(\mathbb{T}_a,\alpha)}(e)$ as $(E,\beta)$, and morphism $(\mathbb{T}_a,\alpha) \to (E,\beta)$ as the composite $\mathbb{T}_a \xrightarrow{e} \mathbb{T} \hookrightarrow L^\infty(\mathbb{T}) \to E$.
+This map is a morphism of algebras for $L$ since $L^\infty(\mathbb{T}) \to E$ coequalizes $f$ and $g$.
+Moreover, if $(D,\delta)$ is an object of $\algtt^0_{st}$, then a map $L^\infty(\mathbb{T}) \to D$ it is a morphism of algebras if and only if it factors through $E$.
+It follows that $st^0_{(\mathbb{T}_a,\alpha)}(e)$ is a left adjoint to $U^0_{(\mathbb{T}_a,\alpha)}(\mathbb{T},\beta) = \mathbb{T}$.
+Now, we can define $st^1$ as $st^0_{(\mathbb{T}_1,\alpha_1)}$.
 
-\todo{Stabilization, regularization, examples}
+Let $(\mathbb{T},\alpha) \in \algtt^0_{st}$ be a stable theory, and let $\mathcal{A}$ be a set of sequents.
+Then we will say that $\mathcal{A}$ is stable in $\mathbb{T}$ if $\alpha(L(\mathcal{A}))$ is derivable in $\mathbb{T} \amalg \mathcal{A}$.
+For every set $\mathcal{A}$, there is the minimal stable set $st(\mathcal{A})$ which contains $\mathcal{A}$.
+We call this set the \emph{stabilization} of $\mathcal{A}$, and it is defined as $L^\infty(\mathcal{A}) = \coprod_{n \in \mathbb{N}} \alpha^n(\mathcal{A})$,
+    where $\alpha^0(\mathcal{A}) = \mathcal{A}$, and $\alpha^{n+1}(\mathcal{A}) = \alpha^n(\alpha(L(\mathcal{A})))$.
+If $\mathcal{A}$ is a stable set, then $\mathbb{T} \amalg \mathcal{A}$ is a stable theory.
+Note that the regularity axioms are stable in any theory.
+Thus we can define regularization functor $reg : \algtt^1_{st} \to \algtt^1_{reg}$ as follows: $reg(\mathbb{T}) = \mathbb{T} \amalg \mathcal{R}$,
+    where $\mathcal{R}$ is the set of regularity axioms.
+It is easy to see that $reg$ is a left adjoint to the inclusion $\algtt^1_{reg} \hookrightarrow \algtt^1_{st}$.
 
 Finally, let us give a few examples of algebraic dependent type theories.
 If we take their regularization and coproduct, then we get a theory corresponding to a usual variation of a type theory.
 
 \begin{example}
-The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and $unit : (tm,0)$ and the following inference rules:
+The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and $unit : (tm,0)$ and the following axioms:
 \medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$\vdash \top$}
+\UnaryInfC{$\vdash \top\ type$}
 \DisplayProof
 \quad
 \AxiomC{}
@@ -1624,55 +1650,48 @@ The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and
 \DisplayProof
 \quad
 \AxiomC{$\vdash t : \top$}
-\UnaryInfC{$t \deq unit$}
+\UnaryInfC{$\vdash t \deq unit$}
 \DisplayProof
 \end{center}
 \end{example}
 
 \begin{example}
-The theory of unit types without eta rules has function symbols $\top : (ty,0)$, $unit : (tm,0)$ and $\top\text{-}elim : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$
-and the following inference rules:
+The theory of unit types without eta rules has function symbols $\top : (ty,0)$, $unit : (tm,0)$ and $\top\text{-}elim : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$.
+The axioms for $\top$ and $unit$ are the same, and the axioms for $\top\text{-}elim$ are
 \medskip
 \begin{center}
-\AxiomC{}
-\UnaryInfC{$\vdash \top$}
-\DisplayProof
-\quad
-\AxiomC{}
-\UnaryInfC{$\vdash unit : \top$}
-\DisplayProof
-\quad
-\AxiomC{$\top \vdash D$}
+\AxiomC{$\top \vdash D\ type$}
 \AxiomC{$\vdash d : D[unit]$}
 \AxiomC{$\vdash t : \top$}
 \TrinaryInfC{$\vdash \top\text{-}elim(D, d, t) : D[t]$}
 \DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\top \vdash D$}
+\quad
+\AxiomC{$\top \vdash D\ type$}
 \AxiomC{$\vdash d : D[unit]$}
-\BinaryInfC{$\top\text{-}elim(D, d, unit) \deq d$}
+\BinaryInfC{$\vdash \top\text{-}elim(D, d, unit) \deq d$}
 \DisplayProof
 \end{center}
 \end{example}
 
 \begin{example}[sigma-eta]
 The theory of $\Sigma$ types with eta rules has function symbols
-$\Sigma : (ty,0) \times (ty,1) \to (ty,0)$, $pair : (ty,0) \times (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$,
-$proj_1 : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0)$ and $proj_2 : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0)$
-and the following inference rules:
+\begin{align*}
+\Sigma & : (ty,0) \times (ty,1) \to (ty,0) \\
+pair & : (ty,0) \times (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \\
+proj_1 & : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0) \\
+proj_2 & : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0)
+\end{align*}
+and the following axioms:
 \medskip
 \begin{center}
-\AxiomC{$A \vdash B$}
-\UnaryInfC{$\vdash \Sigma(A, B)$}
+\AxiomC{$A \vdash B\ type$}
+\UnaryInfC{$\vdash \Sigma(A, B)\ type$}
 \DisplayProof
 \quad
-\AxiomC{$A \vdash B$}
+\AxiomC{$A \vdash B\ type$}
 \AxiomC{$\vdash a : A$}
 \AxiomC{$\vdash b : B[a]$}
-\TrinaryInfC{$\vdash pair(A, B, a, b)$}
+\TrinaryInfC{$\vdash pair(A, B, a, b) : \Sigma(A, B)$}
 \DisplayProof
 \end{center}
 
@@ -1689,51 +1708,108 @@ and the following inference rules:
 
 \medskip
 \begin{center}
-\AxiomC{$A \vdash B$}
+\AxiomC{$A \vdash B\ type$}
 \AxiomC{$\vdash a : A$}
 \AxiomC{$\vdash b : B[a]$}
-\TrinaryInfC{$proj_1(A, B, pair(A, B, a, b)) \deq a$}
+\TrinaryInfC{$\vdash proj_1(A, B, pair(A, B, a, b)) \deq a$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$A \vdash B$}
+\AxiomC{$A \vdash B\ type$}
 \AxiomC{$\vdash a : A$}
 \AxiomC{$\vdash b : B[a]$}
-\TrinaryInfC{$proj_2(A, B, pair(A, B, a, b)) \deq b$}
+\TrinaryInfC{$\vdash proj_2(A, B, pair(A, B, a, b)) \deq b$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \AxiomC{$\vdash p : \Sigma(A, B)$}
-\UnaryInfC{$pair(A, B, proj_1(A, B, p), proj_2(A, B, p)) \deq p$}
+\UnaryInfC{$\vdash pair(A, B, proj_1(A, B, p), proj_2(A, B, p)) \deq p$}
 \DisplayProof
 \end{center}
 \end{example}
 
 \begin{example}[sigma-no-eta]
-The theory of $\Sigma$ types without eta rules.
+The theory of $\Sigma$ types without eta rules has the following function symbols:
+\begin{align*}
+\Sigma & : (ty,0) \times (ty,1) \to (ty,0) \\
+pair & : (ty,0) \times (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \\
+\Sigma\text{-}elim & : (ty,0) \times (ty,1) \times (ty,1) \times (tm,2) \times (tm,0) \to (tm,0)
+\end{align*}
+The axioms for $\Sigma$ and $pair$ are the same, and the axioms for $\Sigma\text{-}elim$ are
+\medskip
+\begin{center}
+\AxiomC{$\Sigma(A, B) \vdash D\ type$}
+\AxiomC{$A, B \vdash d : D[pair(A, B, v_1, v_0)]$}
+\AxiomC{$\vdash p : \Sigma(A, B)$}
+\TrinaryInfC{$\vdash \Sigma\text{-}elim(A, B, D, d, p) : D[p]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Sigma(A, B) \vdash D\ type$}
+\AxiomC{$A, B \vdash d : D[pair(A, B, v_1, v_0)]$}
+\AxiomC{$\vdash a : A$}
+\AxiomC{$\vdash b : B[a]$}
+\QuaternaryInfC{$\vdash \Sigma\text{-}elim(A, B, D, d, pair(A, B, a, b)) \deq d[a, b]$}
+\DisplayProof
+\end{center}
 \end{example}
 
 \begin{example}[pi-eta]
-The theory of $\Pi$ types with eta rules.
-\end{example}
+The theory of $\Pi$ types with eta rules has function symbols
+\begin{align*}
+\Pi & : (ty,0) \times (ty,1) \to (ty,0) \\
+\lambda & : (ty,0) \times (tm,1) \to (tm,0) \\
+app & : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)
+\end{align*}
+and the following axioms:
+\medskip
+\begin{center}
+\AxiomC{$A \vdash B\ type$}
+\UnaryInfC{$\vdash \Pi(A, B)\ type$}
+\DisplayProof
+\quad
+\AxiomC{$A \vdash b : B$}
+\UnaryInfC{$\vdash \lambda(A, b) : \Pi(A, B)$}
+\DisplayProof
+\quad
+\AxiomC{$\vdash f : \Pi(A, B)$}
+\AxiomC{$\vdash a : A$}
+\BinaryInfC{$\vdash app(B, f, a) : B[a]$}
+\DisplayProof
+\end{center}
 
-\begin{example}[pi-no-eta]
-The theory of $\Pi$ types without eta rules.
+\medskip
+\begin{center}
+\AxiomC{$\vdash a : A$}
+\AxiomC{$A \vdash b : B$}
+\BinaryInfC{$\vdash app(B, \lambda(A, b), a) \deq b[a]$}
+\DisplayProof
+\quad
+\AxiomC{$\vdash b : \Pi(A, B)$}
+\UnaryInfC{$\vdash \lambda(A, app(B, b\!\uparrow, v_0)) \deq b$}
+\DisplayProof
+\end{center}
 \end{example}
 
 \begin{example}[Id]
-The theory of identity types has function symbols $Id : (ty,0) \times (tm,0) \times (tm,0) \to (ty,0)$,
-$refl : (ty,0) \times (tm,0) \to (tm,0)$ and $J : (ty,0) \times (ty,3) \times (tm,1) \times (tm,0) \times (tm,0) \times (tm,0) \to (tm,0)$
+The theory of identity types has function symbols
+\begin{align*}
+Id & : (ty,0) \times (tm,0) \times (tm,0) \to (ty,0) \\
+refl & : (ty,0) \times (tm,0) \to (tm,0) \\
+J & : (ty,0) \times (ty,3) \times (tm,1) \times (tm,0) \times (tm,0) \times (tm,0) \to (tm,0)
+\end{align*}
 and the following inference rules:
 \medskip
 \begin{center}
 \AxiomC{$\vdash a : A$}
 \AxiomC{$\vdash a' : A$}
-\BinaryInfC{$\vdash Id(A, a, a')$}
+\BinaryInfC{$\vdash Id(A, a, a')\ type$}
 \DisplayProof
 \quad
 \AxiomC{$\vdash a : A$}
@@ -1743,8 +1819,8 @@ and the following inference rules:
 
 \medskip
 \begin{center}
-\AxiomC{$A, A\!\uparrow, Id(A\!\uparrow\uparrow, v_1, v_0) \vdash D$}
-\AxiomC{$A \vdash d : D[v_0, v_0, refl(A\!\uparrow, v_0)]$}
+\AxiomC{$A, A\!\uparrow, Id(A\!\uparrow^2, v_1, v_0) \vdash D\ type$}
+\AxiomC{$A \vdash d : D'$}
 \AxiomC{$\vdash p : Id(A, a, a')$}
 \TrinaryInfC{$\vdash J(A, D, d, a, a', p) : D[a, a', p]$}
 \DisplayProof
@@ -1752,13 +1828,60 @@ and the following inference rules:
 
 \medskip
 \begin{center}
-\AxiomC{$A, A\!\uparrow, Id(A\!\uparrow\uparrow, v_1, v_0) \vdash D$}
-\AxiomC{$A \vdash d : D[v_0, v_0, refl(A\!\uparrow, v_0)]$}
+\AxiomC{$A, A\!\uparrow, Id(A\!\uparrow^2, v_1, v_0) \vdash D\ type$}
+\AxiomC{$A \vdash d : D'$}
 \AxiomC{$\vdash a : A$}
-\TrinaryInfC{$J(A, D, d, a, a, refl(A, a)) \deq d[a]$}
+\TrinaryInfC{$\vdash J(A, D, d, a, a, refl(A, a)) \deq d[a]$}
 \DisplayProof
 \end{center}
+where $D'$ is $D[v_0, v_0, refl(A\!\uparrow, v_0)]$.
 \end{example}
+
+\begin{example}[Id-simpl]
+We can define a theory which is isomorphic to the previous one, but terms of this theory contain less redundant informations.
+\begin{align*}
+Id & : (tm,0) \times (tm,0) \to (ty,0) \\
+refl & : (tm,0) \to (tm,0) \\
+J & : (ty,3) \times (tm,1) \times (tm,0) \times (tm,0) \times (tm,0) \to (tm,0)
+\end{align*}
+Then the axioms should look like this:
+\medskip
+\begin{center}
+\AxiomC{$\vdash ty(a) \deq ty(a')$}
+\UnaryInfC{$\vdash Id(a, a')\ type$}
+\DisplayProof
+\quad
+\AxiomC{}
+\UnaryInfC{$\vdash refl(a) : Id(ty(a), a, a)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$A, A\!\uparrow, Id(v_1, v_0) \vdash D\ type$}
+\AxiomC{$A \vdash d : D[v_0, v_0, refl(v_0)]$}
+\AxiomC{$\vdash p : Id(a, a')$}
+\TrinaryInfC{$\vdash J(D, d, a, a', p) : D[a, a', p]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$A, A\!\uparrow, Id(v_1, v_0) \vdash D\ type$}
+\AxiomC{$A \vdash d : D[v_0, v_0, refl(v_0)]$}
+\BinaryInfC{$\vdash J(D, d, a, a, refl(a)) \deq d[a]$}
+\DisplayProof
+\end{center}
+where $A$ is $ty(a)$.
+\end{example}
+
+Now, let us discuss the final example.
+For every theory $\mathbb{T} \in \algtt^0_{con}$, we can define a theory $Univ(\mathbb{T}) \in \algtt^0_{con}$, which adds a universe to the original theory and moves every type to this universe.
+If $\mathbb{T} = ((\mathcal{C}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}), \mathcal{A})$, then let $Univ(\mathbb{T}) = ((\mathcal{C}, \mathcal{F}_0 \amalg \mathcal{F}', \mathcal{P}'), \mathcal{A}')$.
+The set of function symbols $\mathcal{F}'$ consists of symbols $Type_n : (ty,n)$ and $El_n : (tm,n) \to (ty,n)$ for every $n \in \mathbb{N}$, and symbols
+    $\sigma : (ctx,n) \times u(s_1) \times \ldots \times u(s_k) \to u(p,n)$ for every $\sigma \in \mathcal{F}$, $\sigma : (ctx,n) \times s_1 \times \ldots \times s_k \to (p,n)$,
+    where $u(tm,n) = (tm,n)$ and $u(ty,n) = (tm,n)$.
+The set of predicate symbols $\mathcal{P}'$ consists of $R : u(s_1) \times \ldots \times u(s_k)$ for every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$.
 
 \begin{example}[universe]
 The theory a universe has function symbols $Type : (ty,0)$ and $El : (tm,0) \to (ty,0)$ and the following inference rules:
@@ -1769,12 +1892,10 @@ The theory a universe has function symbols $Type : (ty,0)$ and $El : (tm,0) \to 
 \DisplayProof
 \quad
 \AxiomC{$\vdash A : Type$}
-\UnaryInfC{$\vdash El(A)$}
+\UnaryInfC{$\vdash El(A)\ type$}
 \DisplayProof
 \end{center}
 \end{example}
-
-% Now, usually universes are assumed to be closed under different type constructions.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
