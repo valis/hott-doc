@@ -1,10 +1,10 @@
-all: rus.pdf tau-rus.pdf doc.pdf tau.pdf homotopy-model.pdf bidirectional.pdf abstract-tt.pdf composable-tt.pdf alg-tt-ams.pdf alg-tt-els.pdf vclang.pdf
-all-bib: rus.bbl tau-rus.bbl doc.bbl tau.bbl homotopy-model.bbl bidirectional.bbl abstract-tt.bbl composable-tt.bbl alg-tt-ams.bbl alg-tt-els.bbl vclang.bbl
+all: out/alg-equiv.pdf out/alg-models.pdf out/alg-higher.pdf out/rus.pdf out/tau-rus.pdf out/doc.pdf out/tau.pdf out/homotopy-model.pdf out/bidirectional.pdf out/abstract-tt.pdf out/composable-tt.pdf out/alg-tt-ams.pdf out/alg-tt-els.pdf out/vclang.pdf
+all-bib: out/alg-equiv.bbl out/alg-models.bbl out/alg-higher.bbl out/rus.bbl out/tau-rus.bbl out/doc.bbl out/tau.bbl out/homotopy-model.bbl out/bidirectional.bbl out/abstract-tt.bbl out/composable-tt.bbl out/alg-tt-ams.bbl out/alg-tt-els.bbl out/vclang.bbl
 
-%.pdf: %.tex
-	pdflatex -halt-on-error $<
-	pdflatex -halt-on-error '\providecommand{\WarningsAreErrors}{true}\input{$<}'
+out/%.pdf: %.tex
+	pdflatex -output-directory out -halt-on-error $<
+	pdflatex -output-directory out -halt-on-error '\providecommand{\WarningsAreErrors}{true}\input{$<}'
 
-%.bbl: %.tex
-	pdflatex -halt-on-error $<
-	bibtex $*.aux
+out/%.bbl: %.tex
+	pdflatex -output-directory out -halt-on-error $<
+	bibtex out/$*.aux
