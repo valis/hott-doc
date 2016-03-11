@@ -103,6 +103,9 @@
 \newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\Th}{\cat{Th}}
+\newcommand{\algtt}{\cat{AlgTT}}
+\newcommand{\ThC}{\Th_{\mathcal{C}}}
+\newcommand{\emptyCtx}{\mathbf{1}}
 
 \numberwithin{figure}{section}
 
@@ -130,58 +133,148 @@
 \section{Functors between categories of models and theories}
 
 Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a standard partial Horn theory and let $M = (A,\alpha,\beta)$ be its model.
-Then we define a theory $Lang(M)$ under $\mathbb{T}$.
-It has function and predicate symbols of $\mathbb{T}$ together with function symbol $O(a) : s$ for every $a \in A_s$.
+If $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$, then we will write $M(\sigma) : A_{s_1} \times \ldots A_{s_k} \to A_s$
+    for the partial function defined as $M(\sigma)(a_1, \ldots a_k) = \alpha(x_i \mapsto a_i)(\sigma(x_1, \ldots x_k))$.
+If $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$ then we will write $M(R)$ for the subset of $A_{s_1} \times \ldots A_{s_k}$,
+    which consists of tuples $(a_1, \ldots a_k)$ such that $\beta(x_i \mapsto a_i)(R(x_1, \ldots x_k)) = \top$.
+
+For every model $M$ of $\mathbb{T}$, we define a theory $Lang(M)$.
+It has function and predicate symbols of $\mathbb{T}$ together with function symbol $O_a : s$ for every $a \in A_s$.
 Axioms of $Lang(M)$ are axioms of $\mathbb{T}$ together with the following sequents:
 \begin{align*}
-& \sststile{}{} O(a) \downarrow \\
-& \sststile{}{} \sigma(O(a_1), \ldots O(a_k)) = O(\alpha(x_i \mapsto a_i)(\sigma(x_1, \ldots x_k))) \\
-& \sststile{}{} R(O(a_1), \ldots O(a_k))
+& \sststile{}{} O_a \downarrow \\
+& \sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M(\sigma)(a_1, \ldots a_k)} \\
+& \sststile{}{} R(O_{a_1}, \ldots O_{a_k})
 \end{align*}
 for every $a \in A_s$, every $a_i \in A_{s_i}$,
-every $\sigma \in \mathcal{F}$ such that $\alpha(x_i \mapsto a_i)(\sigma(x_1, \ldots x_k))$ is defined,
-and every $R \in \mathcal{P}$ such that $\beta(x_i \mapsto a_i)(R(x_1, \ldots x_k)) = \top$.
+every $\sigma \in \mathcal{F}$ such that $M(\sigma)(a_1, \ldots a_k)$ is defined,
+and every $R \in \mathcal{P}$ such that $(a_1, \ldots a_k) \in M(R)$.
 
 Models of $Lang(M)$ are just models of $\mathbb{T}$ together with a morphism from $M$.
 That is, categories $M/\Mod{\mathbb{T}}$ and $\Mod{Lang(M)}$ are isomorphic.
 In particular, $A$ has a natural structure of a model of $Lang(M)$ defined as follows:
 \begin{align*}
-\alpha'(f)(O(a)) & = a \\
+\alpha'(f)(O_a) & = a \\
 \alpha'(f)(\sigma(x_1, \ldots x_k)) & = \alpha(f)(\sigma(x_1, \ldots x_k)) \\
 \beta'(f)(R(x_1, \ldots x_k)) & = \beta(f)(R(x_1, \ldots x_k))
 \end{align*}
 
 \begin{lem}[cl-term]
 If $t \in Term_\mathcal{F}(\varnothing)_s$ is such that $\sststile{}{} t \downarrow$ is a theorem of $Lang(M)$,
-    then there is a unique $a \in A_s$ such that $\sststile{}{} t = O(a)$ is a theorem of $Lang(M)$.
+    then there is a unique $a \in A_s$ such that $\sststile{}{} t = O_a$ is a theorem of $Lang(M)$.
 \end{lem}
 \begin{proof}
 Since $(A,\alpha',\beta')$ is a model of $Lang(M)$, for every theorem $\varphi \sststile{}{V} \psi$ of $Lang(M)$
     and every total function $f : V \to A$, if $\beta'(f)(\varphi) = \top$, then $\beta'(f)(\psi) = \top$.
-In particular, if $\sststile{}{} O(a) = O(a')$, then $a = a'$.
-Hence if $\sststile{}{} t = O(a)$ and $\sststile{}{} t = O(a')$, then $a = a'$, so such $a$ is unique.
+In particular, if $\sststile{}{} O_a = O_{a'}$, then $a = a'$.
+Hence if $\sststile{}{} t = O_a$ and $\sststile{}{} t = O_{a'}$, then $a = a'$, so such $a$ is unique.
 
 Let us prove its existence.
 We do this by induction on $t$.
-If $t = O(a)$, then we are done.
-If $t = \sigma(t_1, \ldots t_k)$, then by induction hypothesis, $\sststile{}{} t = \sigma(O(a_1), \ldots O(a_k))$ for some $a_1$, \ldots $a_k$.
-Note that if $\sststile{}{} \sigma(O(a_1), \ldots O(a_k))\!\downarrow$ is derivable, then $\alpha(x_i \mapsto a_i)(\sigma(x_1, \ldots x_k))$ is defined.
-Thus we have $\sststile{}{} \sigma(O(a_1), \ldots O(a_k)) = O(\alpha(x_i \mapsto a_i)(\sigma(x_1, \ldots x_k)))$.
+If $t = O_a$, then we are done.
+If $t = \sigma(t_1, \ldots t_k)$, then by induction hypothesis, $\sststile{}{} t = \sigma(O_{a_1}, \ldots O_{a_k})$ for some $a_1$, \ldots $a_k$.
+Note that if $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k})\!\!\downarrow$ is derivable, then $M(\sigma)(a_1, \ldots a_k)$ is defined.
+Thus $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M(\sigma)(a_1, \ldots a_k)}$ is also derivable.
 \end{proof}
 
-For every morphism $h : M \to N$ of models of $\mathbb{T}$, we can define a morphism $Lang(h) : Lang(M) \to Lang(N)$ of theories under $\mathbb{T}$ as $Lang(h)(O(a)) = O(h(a))$.
+For every morphism $h : M \to N$ of models of $\mathbb{T}$, we can define a morphism $Lang(h) : Lang(M) \to Lang(N)$ of theories under $\mathbb{T}$ as $Lang(h)(O_a) = O_{h(a)}$.
 Thus $Lang$ is a functor $\Mod{\mathbb{T}} \to \mathbb{T}/\Th_\mathcal{S}$.
 
 \begin{prop}
 $Lang$ is fully faithful.
 \end{prop}
 \begin{proof}
-\todo{Write the proof}
+Let $h_1$, $h_2$ be morphisms of models such that $Lang(h_1) = Lang(h_2)$.
+Then $O_{h_1(a)} = Lang(h_1)(O_a) = Lang(h_2)(O_a) = O_{h_2(a)}$, and by \rlem{cl-term}, $h_1(a) = h_2(a)$.
+Thus $Lang$ is faithful.
+
+Let $M_1 = (A_1,\alpha_1,\beta_1)$ and $M_2 = (A_2,\alpha_2,\beta_2)$ be models of $\mathbb{T}$,
+    and let $h : Lang(M_1) \to Lang(M_2)$ be a morphism of theories under $\mathbb{T}$.
+Then by \rlem{cl-term}, for every $a \in A_1$, there is a unique $h'(a) \in A_2$ such that $\sststile{}{} h(O_a) = O_{h'(a)}$ is a theorem of $Lang(M_2)$.
+Let us show that $h' : A_1 \to A_2$ is a morphism of models $M_1$ and $M_2$.
+Indeed, if $M_1(\sigma)(a_1, \ldots a_k)$ is defined, then $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M_1(\sigma)(a_1, \ldots a_k)}$ is a theorem of $Lang(M_1)$.
+Hence \[ \sststile{}{} \sigma(O_{h'(a_1)}, \ldots O_{h'(a_k)}) = O_{h'(M_1(\sigma)(a_1, \ldots a_k))} \] is a theorem of $Lang(M_2)$.
+But \[ \sststile{}{} \sigma(O_{h'(a_1)}, \ldots O_{h'(a_k)}) = O_{M_2(\sigma)(h'(a_1), \ldots h'(a_k))} \] is also a theorem of $Lang(M_2)$.
+Hence by \rlem{cl-term}, $h'(M_1(\sigma)(a_1, \ldots a_k)) = M_2(\sigma)(h'(a_1), \ldots h'(a_k))$.
+
+If $(a_1, \ldots a_k) \in M_1(R)$, then $\sststile{}{} R(O_{a_1}, \ldots O_{a_k})$ is a theorem of $Lang(M_1)$.
+Hence $\sststile{}{} R(O_{h'(a_1)}, \ldots O_{h'(a_k)})$ is a theorem of $Lang(M_2)$.
+Since $M_2$ is a model of $Lang(M_2)$, it follows that $(h'(a_1), \ldots h'(a_k)) \in M_2(R)$.
+
+Thus $h'$ is a morphism of models.
+Note that by definition of $h'$, $Lang(h') = h$.
+Hence $Lang$ is full.
 \end{proof}
 
-\todo{Define $Syn : \mathbb{T}/\Th_\mathcal{S} \to \Mod{\mathbb{T}}$}
+Now, let us describe a functor $Syn : \mathbb{T}/\Th_\mathcal{S} \to \Mod{\mathbb{T}}$.
+For every $i : \mathbb{T} \to \mathbb{T}'$, let $Syn(i) = i^*(0_{\mathbb{T}'})$, where $0_{\mathbb{T}'}$ is the initial object of $\Mod{\mathbb{T}'}$,
+    and $i^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ is the functor that was defined in \cite{alg-tt}.
+If $f : \mathbb{T}_1 \to \mathbb{T}_2$ is a morphism of theories under $\mathbb{T}$, then let $Syn(f) = i_1^*(!_{f^*(0_{\mathbb{T}_2})})$,
+    where $!_{f^*(0_{\mathbb{T}_2})}$ is the unique morphism $0_{\mathbb{T}_1} \to f^*(0_{\mathbb{T}_2})$.
 
-\todo{Describe analogous functors for contextual theories}
+The construction of initial models of partial Horn theories was given in \cite{PHL}.
+Let us repeat it here.
+Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a standard partial Horn theory.
+First, we define a partial equivalence relations on sets $Term_\mathcal{F}(\varnothing)$ as $t_1 \sim t_2$ if and only if $\sststile{}{} t_1 = t_2$ is a theorem of $\mathbb{T}$.
+Then $\mathcal{S}$-set $Term_\mathcal{F}(\varnothing)/\!\sim$ has a natural structure of a model of $((\mathcal{S},\mathcal{F},\varnothing),\mathcal{A})$.
+If $\mathcal{P} \neq \varnothing$, then the interpretation of $R \in \mathcal{P}$ consists of tuples $(t_1, \ldots t_k)$ such that $\sststile{}{} R(t_1, \ldots t_k)$ is derivable in $\mathbb{T}$.
+Then this model of $\mathbb{T}$ is initial.
+
+\begin{prop}
+$Syn$ is right adjoint to $Lang$.
+\end{prop}
+\begin{proof}
+Let $\epsilon_{\mathbb{T}'} : Lang(Syn(\mathbb{T}')) \to \mathbb{T}'$ be defined as $\epsilon_{\mathbb{T}'}(O_t) = t$.
+It is easy to see that $\epsilon_{\mathbb{T}'}$ preserves axioms of $Lang(Syn(\mathbb{T}'))$.
+Moreover, $\epsilon$ is natural in $\mathbb{T}'$.
+Let us prove that $\epsilon$ is the counit of the adjunction.
+Let $f : Lang(M) \to \mathbb{T}'$ be a morphism.
+Then we need to show that there is a unique morphism $g : Lang(M) \to Lang(Syn(\mathbb{T}'))$ such that $\epsilon_{\mathbb{T}'} \circ g = f$.
+By \rlem{cl-term}, there is a unique $t$ such that $g(O_a) = O_t$.
+Since $t = \epsilon_{\mathbb{T}'}(g(O_a)) = f(O_a)$, $g$ must satisfy equation $g(O_a) = O_{f(O_a)}$.
+Thus $g$ is unique.
+It is easy to see that this $g$ preserves axioms of $Lang(M)$; hence it defines a morphism $g : Lang(M) \to Lang(Syn(\mathbb{T}'))$.
+\end{proof}
+
+Let $\mathbb{T}$ be an algebraic dependent type theory.
+Then categories $\mathbb{T}/\algtt^0$ and $\mathbb{T}/\ThC$ are isomorphic.
+Thus we still have adjoint functors $Lang^0 \dashv Syn^0 : \mathbb{T}/\algtt^0 \to \Mod{\mathbb{T}}$.
+If $\mathbb{T}$ is a contextual theory, then category $\mathbb{T}/\algtt^0_{con}$ is a full subcategory of $\mathbb{T}/\algtt^0$.
+We have functor $Syn^0_{con} : \mathbb{T}/\algtt^0_{con} \to \Mod{\mathbb{T}}$ which is defined as the composition of the inclusion $\mathbb{T}/\algtt^0_{con} \to \mathbb{T}/\algtt^0$ and $Syn$.
+Let us construct its left adjoint $Lang^0_{con} : \Mod{\mathbb{T}} \to \mathbb{T}/\algtt^0_{con}$.
+
+Theory $Lang^0_{con}(M)$ has has function and predicate symbols of $\mathbb{T}$ together with function symbol $O_a : (ctx,n) \to (p,n)$ for every $a \in A_{(p,n)}$, $p \in \{ ty, tm \}$.
+For every $a \in A_{(p,n)}$, we define term $C_a$ of sort $(p,n)$ by induction on $n$.
+If $n = 0$, then let $C_a = O_a(\emptyCtx)$.
+If $n > 0$, then let $C_a = O_a(C_{M(ctx_{p,n})(a)})$.
+
+Axioms of $Lang^0_{con}(M)$ are axioms of $\mathbb{T}$ together with the following sequents:
+\begin{align*}
+O_a(\Gamma) \downarrow & \sststile{}{\Gamma} \Gamma = C_{M(ctx_{p,n})(a)}\\
+& \sststile{}{} \sigma(C_{a_1}, \ldots C_{a_k}) = C_{M(\sigma)(a_1, \ldots a_k)} \\
+& \sststile{}{} R(C_{a_1}, \ldots C_{a_k})
+\end{align*}
+for every $a \in A_s$, every $a_i \in A_{s_i}$,
+every $\sigma \in \mathcal{F}$ such that $M(\sigma)(a_1, \ldots a_k)$ is defined,
+and every $R \in \mathcal{P}$ such that $(a_1, \ldots a_k) \in M(R)$.
+
+For every morphism $h : M \to N$ of models of $\mathbb{T}$, we can define a morphism $Lang^0_{con}(h) : Lang^0_{con}(M) \to Lang^0_{con}(N)$ of theories under $\mathbb{T}$ as $Lang(h)(O_a(\Gamma)) = O_{h(a)}(\Gamma)$.
+Thus $Lang^0_{con}$ is a functor $\Mod{\mathbb{T}} \to \mathbb{T}/\algtt^0_{con}$.
+
+\begin{prop}
+$Lang^0_{con}$ is left adjoint to $Syn^0_{con}$.
+\end{prop}
+\begin{proof}
+To prove this, it is enough to show that the composition of $Lang^0_{con}$ and the inclusion $\mathbb{T}/\algtt^0_{con} \to \mathbb{T}/\algtt^0$ is isomorphic to $Lang^0$.
+Let $\alpha_M : Lang^0(M) \to Lang^0_{con}(M)$ be defined as $\alpha_M(O_a) = C_a$.
+Let $\beta_M : Lang^0_{con}(M) \to Lang^0(M)$ be defined as $\beta_M(O_a(\Gamma)) = O_a|_{\Gamma = C_{M(ctx_{p,n})(a)}}$.
+To prove that $\alpha$ and $\beta$ are inverses of each other, we need to show that $\sststile{}{\Gamma} O_a(\Gamma) \cong C_a|_{\Gamma = C_{M(ctx_{p,n})(a)}}$ is a theorem of $Lang^0_{con}(M)$.
+But this follows from the first axiom of $Lang^0_{con}(M)$.
+\end{proof}
+
+For every algebraic dependent type theory with substitutions $\mathbb{T}$, there are adjoint functors $Lang^1 \dashv Syn^1 : \mathbb{T}/\algtt^1 \to \Mod{\mathbb{T}}$.
+For every contextual algebraic dependent type theory with substitutions $\mathbb{T}$, there are adjoint functors $Lang^1_{con} \dashv Syn^1_{con} : \mathbb{T}/\algtt^1_{con} \to \Mod{\mathbb{T}}$.
+These functors are defined in the same way as $Lang^0 \dashv Syn^0$ and $Lang^0_{con} \dashv Syn^0_{con}$.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
