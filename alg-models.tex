@@ -100,6 +100,7 @@
 \newref{remark}{remark}{Remark}
 
 \newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\C}{\cat{C}}
 \newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\Th}{\cat{Th}}
@@ -108,6 +109,19 @@
 \newcommand{\emptyCtx}{\mathbf{1}}
 \newcommand{\tta}{\mathbb{T}_0}
 \newcommand{\tts}{\mathbb{T}_1}
+
+\newcommand{\we}{\mathcal{W}}
+\newcommand{\fib}{\mathcal{Fib}}
+\newcommand{\cof}{\mathcal{Cof}}
+\newcommand{\I}{\mathrm{I}}
+\newcommand{\J}{\mathrm{J}}
+\newcommand{\class}[2]{#1\text{-}\mathrm{#2}}
+\newcommand{\Iinj}[1][\I]{\class{#1}{inj}}
+\newcommand{\Icell}[1][\I]{\class{#1}{cell}}
+\newcommand{\Icof}[1][\I]{\class{#1}{cof}}
+\newcommand{\Jinj}[1][]{\Iinj[\J#1]}
+\newcommand{\Jcell}[1][]{\Icell[\J#1]}
+\newcommand{\Jcof}[1][]{\Icof[\J#1]}
 
 \numberwithin{figure}{section}
 
@@ -283,6 +297,48 @@ For every morphism of theories $f : \mathbb{T} \to \mathbb{T}'$ there is a funct
 We also can define functor $f_* : \Mod{\mathbb{T}} \to \Mod{\mathbb{T}'}$ as $f_*(M) = Syn(Lang(M) \amalg_{\mathbb{T}} \mathbb{T}')$.
 It was shown in \cite{PHL} that $f_*$ is left adjoint to $f^*$.
 This theorem was proved there only for a weaker notion of morphisms of theories, but the proof also works for general morphisms as defined in \cite{alg-tt}.
+
+Functor $f_*$ can be used to present a model of a theory by generators and relations.
+Let $\mathbb{T}$ be a fixed $\mathcal{S}$-theory.
+Note that models of the empty theory are just $\mathcal{S}$-sets.
+If $f : 0 \to \mathbb{T}$ is the unique morphism from the empty theory, then $f^*(M)$ is just the underlying $\mathcal{S}$-set of $M$,
+    and $f_*(X)$ is the free model of $\mathbb{T}$ on $\mathcal{S}$-set $X$.
+We will denote this free model by $F(X)$.
+If $R$ is a set of axioms in the language of theory $Lang(X) \amalg \mathbb{T}$,
+    then let $F(X,R)$ be a model of $\mathbb{T}$ defined as $Syn(Lang(X) \amalg \mathbb{T} \cup R)$.
+By definition of $Syn$, to construct a morphism $F(X,R) \to M$ it is necessary and sufficient
+    to construct a morphism from $X$ to the underlying $\mathcal{S}$-set of $M$ such that relations from $R$ are true in $M$.
+
+Sometimes we will omit the set of generators if it can be inferred from the set of relations.
+For examples, we will write $F(\{\,\vdash p : Id(A,a,a')\,\})$ for the model $F(\{\,a : (tm,0), a' : (tm,0), A : (ty,0), p : (tm,0)\,\}, \{\,ty(p) = Id(A,a,a')\,\})$.
+Another examples is $F(\{\,A_1, \ldots A_n \vdash a : A\,\})$ which equals to $F(\{\,A_i : (ty,i), A : (ty,n), a : (tm,n)\,\}, \{\,ty(a) = A, ft^{i+1}(A) = A_{n-i}\,\})$.
+Thus this model is isomorphic to the free model $F(\{\,a : (tm,n)\,\})$.
+
+\section{A model structure on models of theories with $\Pi$-types}
+
+Let $Id$ and $\Pi$ be theories of identity types and pi types as defined in \cite{alg-tt}.
+Let $\mathbb{T}$ be a theory under $Id \amalg \Pi$.
+In this section we construct a model structure on the category of models of $\mathbb{T}$.
+
+For an introduction to the theory of model categories see \cite{hovey}.
+We will need the following proposition to construct different model structures:
+
+\begin{prop}[model-cat]
+Suppose that $\C$ is a complete and cocomplete category, $\we$ is a class of morphisms of $\C$, and $\I$, $\J$ are sets of morphisms of $\C$.
+Then $\C$ is a cofibrantly generated model category with $\I$ as the set of generating cofibrations,
+$\J$ as the set of generating trivial cofibrations, and $\we$ as the class of weak equivalences if and only if the following conditions are satisfied:
+\begin{description}
+\item[(A1)] The domains of maps in $\I$ and $\J$ are small relative to $\Icell$ and $\Jcell$ respectively.
+\item[(A2)] $\we$ has 2-out-of-3 property and is closed under retracts.
+\item[(A3)] $\Iinj \subseteq \we$.
+\item[(A4)] $\Jcell \subseteq \we \cap \Icof$.
+\item[(A5)] Either $\Jinj \cap \we \subseteq \Iinj$ or $\Icof \cap \we \subseteq \Jcof$.
+\end{description}
+\end{prop}
+
+Let $\I_{ty}$ be the set of arrows of the form $F(\{\,\Gamma \vdash ctx\,\}) \to F(\{\,\Gamma \vdash A\ type\,\})$, where $\Gamma$ is mapped to $\Gamma$.
+Let $\I^0_{tm}$ be the set of arrows of the form $F(\{\,\vdash A\ type\,\}) \to F(\{\,\vdash a : A\,\})$, where $A$ is mapped to $A$.
+We define the set $\I$ of generating cofibrations to be the union $I_{ty} \cup I^0_{tm}$.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
