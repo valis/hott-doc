@@ -99,6 +99,7 @@
 \theoremstyle{remark}
 \newref{remark}{remark}{Remark}
 
+\newcommand{\deq}{\equiv}
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\C}{\cat{C}}
 \newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
@@ -316,10 +317,63 @@ Thus this model is isomorphic to the free model $F(\{\,a : (tm,n)\,\})$.
 
 \section{A model structure on models of theories with $\Pi$-types}
 
-Let $Id$ and $\Pi$ be theories of identity types and pi types as defined in \cite{alg-tt}.
-Let $\mathbb{T}$ be a theory under $Id \amalg \Pi$.
-In this section we construct a model structure on the category of models of $\mathbb{T}$.
+In this section we construct a model structure on the category of models of an algebraic type theory with enough additional structure.
 
+Let $I_0$ be a theory with function symbols $I : (ty,0)$, $left : (tm,0)$, $right : (tm,0)$, and $coe : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$, and the following axioms:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\vdash I\ type$}
+\DisplayProof
+\quad
+\AxiomC{}
+\UnaryInfC{$\vdash left : I$}
+\DisplayProof
+\quad
+\AxiomC{}
+\UnaryInfC{$\vdash right : I$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$I \vdash D\ type$}
+\AxiomC{$\vdash d : D[left]$}
+\AxiomC{$\vdash i : I$}
+\TrinaryInfC{$\vdash coe(D, d, i) : D[i]$}
+\DisplayProof
+\qquad
+\AxiomC{$I \vdash D\ type$}
+\AxiomC{$\vdash d : D[left]$}
+\BinaryInfC{$\vdash coe(D, d, left) \deq d$}
+\DisplayProof
+\end{center}
+Let $I$ be the stabilization of $I_0$.
+
+We will also consider stable theory $UA$ under $I$, which has additional symbols
+\[ iso : (ty,n)^2 \times (tm,n+1)^2 \times (tm,n+2)^2 \times (tm,n) \to (ty,n) \]
+and the following axioms:
+\medskip
+\begin{center}
+\def\extraVskip{0.5pt}
+\AxiomC{$\Gamma \vdash A\ type$}
+\noLine
+\UnaryInfC{$\Gamma \vdash B\ type$}
+\AxiomC{$\Gamma, A \vdash f : B$}
+\noLine
+\UnaryInfC{$\Gamma, B \vdash g : A$}
+\AxiomC{$\Gamma, A, I \vdash p : A$}
+\noLine
+\UnaryInfC{$\Gamma, B, I \vdash q : B$}
+\AxiomC{$\Gamma \vdash i : I$}
+\def\extraVskip{2pt}
+\QuaternaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, i)\ type$}
+\DisplayProof
+\end{center}
+This theory is an analog of the univalence axiom, but it is defined for all types.
+The univalence axiom is equivalent to the statement that a universe is closed under $iso$.
+
+Let $\mathbb{T}$ be a theory under $I \cup UA$.
+Then we define a model structure on the category of models of $\mathbb{T}$.
 For an introduction to the theory of model categories see \cite{hovey}.
 We will need the following proposition to construct different model structures:
 
@@ -337,8 +391,18 @@ $\J$ as the set of generating trivial cofibrations, and $\we$ as the class of we
 \end{prop}
 
 Let $\I_{ty}$ be the set of arrows of the form $F(\{\,\Gamma \vdash ctx\,\}) \to F(\{\,\Gamma \vdash A\ type\,\})$, where $\Gamma$ is mapped to $\Gamma$.
-Let $\I^0_{tm}$ be the set of arrows of the form $F(\{\,\vdash A\ type\,\}) \to F(\{\,\vdash a : A\,\})$, where $A$ is mapped to $A$.
-We define the set $\I$ of generating cofibrations to be the union $I_{ty} \cup I^0_{tm}$.
+Let $\I_{tm}$ be the set of arrows of the form $F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash a : A\,\})$, where $A$ is mapped to $A$.
+We define the set $\I$ of generating cofibrations to be the union $\I_{ty} \cup \I_{tm}$.
+
+Let $\J_{tm}$ be the set of arrows of the form $F(\{\,\Gamma \vdash a : A\,\}) \to F(\{\,\Gamma, I \vdash a : A\!\uparrow\,\})$, where $a$ is mapped to $a[left]$.
+Let $\J_{ty}$ be the set of arrows of the form $F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash A\ type,\ \Gamma \vdash B\ type,\ \Gamma, A \vdash f : B,\ \Gamma, B \vdash g : A, \ldots \,\})$, where $A$ is mapped to $A$.
+We define the set $\J$ of generating trivial cofibrations to be the union $\J_{ty} \cup \J_{tm}$.
+
+Let $a,b \in M_{(tm,n)}$ be elements such that $ty(a) = ty(b)$.
+% Then a \emph{homotopy} between $a$ and $b$ is a morphism $h : F(\{\,\Gamma, I \vdash a : A\,\}) \to M$ such that $ctx(h) = I(ctx(a))$, $ty(h) = ty(a)$
+Then a \emph{homotopy} between $a$ and $b$ is a morphism $h \in M_{(tm,n+1)}$ such that $ctx(h) = I(ctx(a))$, $ty(h) = ty(a)$
+
+Let $\we$ be the set of 
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
