@@ -349,6 +349,8 @@ Let $I_0$ be a theory with function symbols $I : (ty,0)$, $left : (tm,0)$, $righ
 \end{center}
 Let $I$ be the stabilization of $I_0$.
 
+Let $Path_0$ be a theory with function symbols $HPath : (ty,0) \times (tm,0) \times (tm,0) \to (ty,0)$, $path : (tm,1) \to (tm,0)$, and $at : (tm,0) \times (tm,0) \to (tm,0)$, and the following axioms:
+
 We will also consider stable theory $UA$ under $I$, which has additional symbols
 \[ iso : (ty,n)^2 \times (tm,n+1)^2 \times (tm,n+2)^2 \times (tm,n) \to (ty,n) \]
 and the following axioms:
@@ -369,10 +371,44 @@ and the following axioms:
 \QuaternaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, i)\ type$}
 \DisplayProof
 \end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{0.5pt}
+\AxiomC{$\Gamma \vdash A\ type$}
+\noLine
+\UnaryInfC{$\Gamma \vdash B\ type$}
+\AxiomC{$\Gamma, A \vdash f : B$}
+\noLine
+\UnaryInfC{$\Gamma, B \vdash g : A$}
+\AxiomC{$\Gamma, A, I \vdash p : A$}
+\noLine
+\UnaryInfC{$\Gamma, B, I \vdash q : B$}
+\def\extraVskip{2pt}
+\TrinaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, left) \deq A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{0.5pt}
+\AxiomC{$\Gamma \vdash A\ type$}
+\noLine
+\UnaryInfC{$\Gamma \vdash B\ type$}
+\AxiomC{$\Gamma, A \vdash f : B$}
+\noLine
+\UnaryInfC{$\Gamma, B \vdash g : A$}
+\AxiomC{$\Gamma, A, I \vdash p : A$}
+\noLine
+\UnaryInfC{$\Gamma, B, I \vdash q : B$}
+\def\extraVskip{2pt}
+\TrinaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, right) \deq B$}
+\DisplayProof
+\end{center}
 This theory is an analog of the univalence axiom, but it is defined for all types.
 The univalence axiom is equivalent to the statement that a universe is closed under $iso$.
 
-Let $\mathbb{T}$ be a theory under $I \cup UA$.
+Let $\mathbb{T}$ be a theory under $I$.
 Then we define a model structure on the category of models of $\mathbb{T}$.
 For an introduction to the theory of model categories see \cite{hovey}.
 We will need the following proposition to construct different model structures:
@@ -390,17 +426,27 @@ $\J$ as the set of generating trivial cofibrations, and $\we$ as the class of we
 \end{description}
 \end{prop}
 
-Let $\I_{ty}$ be the set of arrows of the form $F(\{\,\Gamma \vdash ctx\,\}) \to F(\{\,\Gamma \vdash A\ type\,\})$, where $\Gamma$ is mapped to $\Gamma$.
-Let $\I_{tm}$ be the set of arrows of the form $F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash a : A\,\})$, where $A$ is mapped to $A$.
+Let $\I_{ty}$ be the set of arrows of the form $F(\{\,\Gamma : (ctx,n)\,\}) \to F(\{\,A : (ty,n)\,\})$, where $\Gamma$ is mapped to $ft(A)$.
+Let $\I_{tm}$ be the set of arrows of the form $F(\{\,A : (ty,n)\,\}) \to F(\{\,a : (tm,n)\,\})$, where $A$ is mapped to $ty(a)$.
 We define the set $\I$ of generating cofibrations to be the union $\I_{ty} \cup \I_{tm}$.
+
+If $p \in \{ ty, tm\}$, then a \emph{cylinder object} of sort $(p,n)$ is $F(\{\,h : (p,n+1)\,\}, \{\,ctx(h) = I(ctx^2(h))\,\})$.
+We will denote this object by $Cyl_{(p,n)}(h)$.
+We have two inclusions $i_0, i_1 : F(\{\,a : (p,n)\,\}) \to Cyl_{(p,n)}(h)$, where $i_0(a) = h[left]$ and $i_1(a) = h[right]$.
 
 Let $\J_{tm}$ be the set of arrows of the form $F(\{\,\Gamma \vdash a : A\,\}) \to F(\{\,\Gamma, I \vdash a : A\!\uparrow\,\})$, where $a$ is mapped to $a[left]$.
 Let $\J_{ty}$ be the set of arrows of the form $F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash A\ type,\ \Gamma \vdash B\ type,\ \Gamma, A \vdash f : B,\ \Gamma, B \vdash g : A, \ldots \,\})$, where $A$ is mapped to $A$.
 We define the set $\J$ of generating trivial cofibrations to be the union $\J_{ty} \cup \J_{tm}$.
 
-Let $a,b \in M_{(tm,n)}$ be elements such that $ty(a) = ty(b)$.
-% Then a \emph{homotopy} between $a$ and $b$ is a morphism $h : F(\{\,\Gamma, I \vdash a : A\,\}) \to M$ such that $ctx(h) = I(ctx(a))$, $ty(h) = ty(a)$
-Then a \emph{homotopy} between $a$ and $b$ is a morphism $h \in M_{(tm,n+1)}$ such that $ctx(h) = I(ctx(a))$, $ty(h) = ty(a)$
+There is a bijection between morphisms $F(\{\,\Gamma \vdash a : A\,\}) \to M$ and $M_{(tm,n)}$, where $n$ is the length of $\Gamma$.
+Thus we will identify these morphisms with elements of $M_{(tm,n)}$ and call them simply \emph{terms} of $M$.
+There is a bijection between morphisms $F(\{\,\Gamma \vdash A\ type\,\}) \to M$ and $M_{(ty,n)}$, where $n$ is the length of $\Gamma$.
+Thus we will identify these morphisms with elements of $M_{(ty,n)}$ and call them simply \emph{types} of $M$.
+
+A \emph{homotopy between terms} $f,g : F(\{\,\Gamma \vdash a : A\,\}) \to M$ is a map $h : F(\{\,\Gamma, I \vdash a : A\,\}) \to M$ such that $h \circ i_0 = f$ and $h \circ i_1 = g$.
+Terms $f$ and $g$ are \emph{homotopic} if there is a homotopy between them.
+A \emph{homotopy between types} $f,g : F(\{\,\Gamma \vdash A\ type\,\}) \to M$ is a map $h : F(\{\,\Gamma, I \vdash A\ type\,\}) \to M$ such that $h \circ i_0 = f$ and $h \circ i_1 = g$.
+Types $f$ and $g$ are \emph{homotopic} if there is a homotopy between them.
 
 Let $\we$ be the set of 
 
