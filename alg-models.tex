@@ -347,43 +347,86 @@ Let $I_0$ be a theory with function symbols $I : (ty,0)$, $left : (tm,0)$, $righ
 \BinaryInfC{$\vdash coe(D, d, left) \deq d$}
 \DisplayProof
 \end{center}
-Let $I$ be the stabilization of $I_0$.
+Let $I$ be the regularization of $I_0$.
+We will work with theories under $I$, which we call theories with \emph{an interval type}.
 
-Let $Path_0$ be a theory with function symbols $HPath : (ty,0) \times (tm,0) \times (tm,0) \to (ty,0)$, $path : (tm,1) \to (tm,0)$, and $at : (tm,0) \times (tm,0) \to (tm,0)$, and the following axioms:
+Let $HPath$ be a regular theory with function symbols $Path : (ty,n) \times (tm,n) \times (tm,n) \to (ty,n)$,
+    $path : (tm,n+1) \to (tm,n)$, and $at : (tm,n) \times (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)$, and the following axioms:
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash a' : A$}
+\BinaryInfC{$\Gamma \vdash Path(A, a, a')\ type$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash A\ type$}
+\AxiomC{$\Gamma, I \vdash a : A\!\uparrow$}
+\BinaryInfC{$\Gamma \vdash path(a) : Path(A, a[left], a[right])$}
+\DisplayProof
+\end{center}
 
-We will also consider stable theory $UA$ under $I$, which has additional symbols
-\[ iso : (ty,n)^2 \times (tm,n+1)^2 \times (tm,n+2)^2 \times (tm,n) \to (ty,n) \]
+\smallskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : Path(A, a, a')$}
+\AxiomC{$\Gamma \vdash i : I$}
+\BinaryInfC{$\Gamma \vdash at(a, a', p, i) : A$}
+\DisplayProof
+\end{center}
+
+\smallskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A\ type$}
+\AxiomC{$\Gamma, I \vdash a : A\!\uparrow$}
+\AxiomC{$\Gamma \vdash i : I$}
+\TrinaryInfC{$\Gamma \vdash at(a[left], a[right], path(a), i) \deq a[i]$}
+\DisplayProof
+\end{center}
+
+\smallskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : Path(A, a, a')$}
+\UnaryInfC{$\Gamma \vdash at(a, a', p, left) \deq a$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash p : Path(A, a, a')$}
+\UnaryInfC{$\Gamma \vdash at(a, a', p, right) \deq a'$}
+\DisplayProof
+\end{center}
+We will work with theories under $HPath$, which we call theories with \emph{homogeneous path types}.
+
+We will also consider regular theory $UA$ under $HPath$, which has additional symbols
+\[ iso : (ty,n)^2 \times (tm,n+1)^4 \times (tm,n) \to (ty,n) \]
 and the following axioms:
 \medskip
 \begin{center}
 \def\extraVskip{0.5pt}
-\AxiomC{$\Gamma \vdash A\ type$}
+\Axiom$\fCenter \Gamma \vdash i : I$
 \noLine
-\UnaryInfC{$\Gamma \vdash B\ type$}
-\AxiomC{$\Gamma, A \vdash f : B$}
+\UnaryInf$\fCenter \Gamma \vdash A\ type$
 \noLine
-\UnaryInfC{$\Gamma, B \vdash g : A$}
-\AxiomC{$\Gamma, A, I \vdash p : A$}
+\UnaryInf$\fCenter \Gamma \vdash B\ type$
+\Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
 \noLine
-\UnaryInfC{$\Gamma, B, I \vdash q : B$}
-\AxiomC{$\Gamma \vdash i : I$}
+\UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
+\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, subst(g, v_n, \ldots v_1, f), v_0)$
+\noLine
+\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, subst(f, v_n, \ldots v_1, g), v_0)$
 \def\extraVskip{2pt}
-\QuaternaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, i)\ type$}
+\TrinaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, i)\ type$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \def\extraVskip{0.5pt}
-\AxiomC{$\Gamma \vdash A\ type$}
+\Axiom$\fCenter \Gamma \vdash A\ type$
 \noLine
-\UnaryInfC{$\Gamma \vdash B\ type$}
-\AxiomC{$\Gamma, A \vdash f : B$}
+\UnaryInf$\fCenter \Gamma \vdash B\ type$
+\Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
 \noLine
-\UnaryInfC{$\Gamma, B \vdash g : A$}
-\AxiomC{$\Gamma, A, I \vdash p : A$}
+\UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
+\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, subst(g, v_n, \ldots v_1, f), v_0)$
 \noLine
-\UnaryInfC{$\Gamma, B, I \vdash q : B$}
+\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, subst(f, v_n, \ldots v_1, g), v_0)$
 \def\extraVskip{2pt}
 \TrinaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, left) \deq A$}
 \DisplayProof
@@ -392,26 +435,44 @@ and the following axioms:
 \medskip
 \begin{center}
 \def\extraVskip{0.5pt}
-\AxiomC{$\Gamma \vdash A\ type$}
+\Axiom$\fCenter \Gamma \vdash A\ type$
 \noLine
-\UnaryInfC{$\Gamma \vdash B\ type$}
-\AxiomC{$\Gamma, A \vdash f : B$}
+\UnaryInf$\fCenter \Gamma \vdash B\ type$
+\Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
 \noLine
-\UnaryInfC{$\Gamma, B \vdash g : A$}
-\AxiomC{$\Gamma, A, I \vdash p : A$}
+\UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
+\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, subst(g, v_n, \ldots v_1, f), v_0)$
 \noLine
-\UnaryInfC{$\Gamma, B, I \vdash q : B$}
+\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, subst(f, v_n, \ldots v_1, g), v_0)$
 \def\extraVskip{2pt}
 \TrinaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, right) \deq B$}
 \DisplayProof
 \end{center}
-This theory is an analog of the univalence axiom, but it is defined for all types.
-The univalence axiom is equivalent to the statement that a universe is closed under $iso$.
 
-Let $\mathbb{T}$ be a theory under $I$.
+\medskip
+\begin{center}
+\def\extraVskip{0.5pt}
+\Axiom$\fCenter \Gamma \vdash A\ type$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash B\ type$
+\Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
+\noLine
+\UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
+\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, subst(g, v_n, \ldots v_1, f), v_0)$
+\noLine
+\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, subst(f, v_n, \ldots v_1, g), v_0)$
+\def\extraVskip{2pt}
+\TrinaryInfC{$\Gamma \vdash coe(iso(A\!\uparrow, B\!\uparrow, f\!\uparrow_1, g\!\uparrow_1, p\!\uparrow_1, q\!\uparrow_1, v_0), a, right) \deq f[a]$}
+\DisplayProof
+\end{center}
+
+This theory is an analog of the univalence axiom, but it is defined for all types.
+The univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
+
+Let $\mathbb{T}$ be a theory under $UA$.
 Then we define a model structure on the category of models of $\mathbb{T}$.
 For an introduction to the theory of model categories see \cite{hovey}.
-We will need the following proposition to construct different model structures:
+We will need the following proposition to construct our model structure:
 
 \begin{prop}[model-cat]
 Suppose that $\C$ is a complete and cocomplete category, $\we$ is a class of morphisms of $\C$, and $\I$, $\J$ are sets of morphisms of $\C$.
@@ -432,10 +493,8 @@ We define the set $\I$ of generating cofibrations to be the union $\I_{ty} \cup 
 
 If $p \in \{ ty, tm\}$, then a \emph{cylinder object} of sort $(p,n)$ is $F(\{\,h : (p,n+1)\,\}, \{\,ctx(h) = I(ctx^2(h))\,\})$.
 We will denote this object by $Cyl_{(p,n)}(h)$.
-We have two inclusions $i_0, i_1 : F(\{\,a : (p,n)\,\}) \to Cyl_{(p,n)}(h)$, where $i_0(a) = h[left]$ and $i_1(a) = h[right]$.
-
-Let $\J_{tm}$ be the set of arrows of the form $F(\{\,\Gamma \vdash a : A\,\}) \to F(\{\,\Gamma, I \vdash a : A\!\uparrow\,\})$, where $a$ is mapped to $a[left]$.
-Let $\J_{ty}$ be the set of arrows of the form $F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash A\ type,\ \Gamma \vdash B\ type,\ \Gamma, A \vdash f : B,\ \Gamma, B \vdash g : A, \ldots \,\})$, where $A$ is mapped to $A$.
+We have two inclusions $i^0_{(p,n)}, i^1_{(p,n)} : F(\{\,a : (p,n)\,\}) \to Cyl_{(p,n)}(h)$, where $i^0_{(p,n)}(a) = h[left]$ and $i^1_{(p,n)}(a) = h[right]$.
+Let $\J_p$ be the set of arrows of the form $i^0_{(p,n)}$.
 We define the set $\J$ of generating trivial cofibrations to be the union $\J_{ty} \cup \J_{tm}$.
 
 There is a bijection between morphisms $F(\{\,\Gamma \vdash a : A\,\}) \to M$ and $M_{(tm,n)}$, where $n$ is the length of $\Gamma$.
