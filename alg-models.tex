@@ -465,8 +465,9 @@ and the following axioms:
 \TrinaryInfC{$\Gamma \vdash coe(iso(A\!\uparrow, B\!\uparrow, f\!\uparrow_1, g\!\uparrow_1, p\!\uparrow_1, q\!\uparrow_1, v_0), a, right) \deq f[a]$}
 \DisplayProof
 \end{center}
+\medskip
 
-This theory is an analog of the univalence axiom, but it is defined for all types.
+This theory is similar to the univalence axiom, but it is defined for all types.
 The univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
 
 Let $\mathbb{T}$ be a theory under $UA$.
@@ -487,27 +488,39 @@ $\J$ as the set of generating trivial cofibrations, and $\we$ as the class of we
 \end{description}
 \end{prop}
 
-Let $\I_{ty}$ be the set of arrows of the form $F(\{\,\Gamma : (ctx,n)\,\}) \to F(\{\,A : (ty,n)\,\})$, where $\Gamma$ is mapped to $ft(A)$.
-Let $\I_{tm}$ be the set of arrows of the form $F(\{\,A : (ty,n)\,\}) \to F(\{\,a : (tm,n)\,\})$, where $A$ is mapped to $ty(a)$.
-We define the set $\I$ of generating cofibrations to be the union $\I_{ty} \cup \I_{tm}$.
+A \emph{cylinder object} of sort $(ctx,n)$ is $F(\{\,H : (ctx,n+1)\,\}, \{\,ft^n(H) = I(\emptyCtx)\,\})$.
+We will denote this object by $Cyl_{(ctx,n)}(H)$.
+We have two inclusions $i^0_{(ctx,n)}, i^1_{(ctx,n)} : F(\{\,\Gamma : (ctx,n)\,\}) \to Cyl_{(ctx,n)}(H)$.
+If $k \in \{0,1\}$, then $i^k_{(ctx,n)}(\Gamma)$ is defined as
+\[ subst(ft^{n-1}(H), c_k), \ldots subst(ft(H), c_k, v_{n-3}, \ldots v_0) \vdash subst(H, c_k, v_{n-2}, \ldots v_0), \]
+where $c_0 = left$ and $c_1 = right$.
 
-If $p \in \{ ty, tm\}$, then a \emph{cylinder object} of sort $(p,n)$ is $F(\{\,h : (p,n+1)\,\}, \{\,ctx(h) = I(ctx^2(h))\,\})$.
-We will denote this object by $Cyl_{(p,n)}(h)$.
-We have two inclusions $i^0_{(p,n)}, i^1_{(p,n)} : F(\{\,a : (p,n)\,\}) \to Cyl_{(p,n)}(h)$, where $i^0_{(p,n)}(a) = h[left]$ and $i^1_{(p,n)}(a) = h[right]$.
+If $p \in \{ ty, tm\}$, then a \emph{relative cylinder object} of sort $(p,n)$ is $F(\{\,h : (p,n+1)\,\}, \{\,ctx(h) = I(ctx^2(h))\,\})$.
+We will denote this object by $RCyl_{(p,n)}(h)$.
+We have two inclusions $i^0_{(p,n)}, i^1_{(p,n)} : F(\{\,a : (p,n)\,\}) \to RCyl_{(p,n)}(h)$, where $i^0_{(p,n)}(a) = h[left]$ and $i^1_{(p,n)}(a) = h[right]$.
+
+A \emph{homotopy between} maps $f,g : F(\{\,a : (ctx,n)\,\}) \to M$ is a map $h : Cyl_{(ctx,n)}(h) \allowbreak \to M$ such that $h \circ i^0_{(p,n)} = f$ and $h \circ i^1_{(p,n)} = g$.
+Maps $f$ and $g$ are \emph{homotopic} if there is a homotopy between them.
+In this case we will write $f \sim g$.
+If $p \in \{ ty, tm \}$, then a \emph{relative homotopy between} maps $f,g : F(\{\,a : (p,n)\,\}) \to M$ is a map $h : RCyl_{(p,n)}(h) \to M$
+    such that $h \circ i^0_{(p,n)} = f$ and $h \circ i^1_{(p,n)} = g$.
+Maps $f$ and $g$ are \emph{homotopic relative to $(ctx,n)$} if there is a relative homotopy between them.
+In this case we will write $f \sim_r g$.
+    
+Let $e : \{ ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ty) = ctx$, $e(tm) = ty$.
+Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ty} = ft$, $d_{tm} = ty$.
+If $p \in \{ ty, tm \}$, then let $\I_p$ be the set of arrows of the form $F(\{\,A : (e(p),n)\,\}) \to F(\{\,a : (p,n)\,\})$, where $A$ is mapped to $d_p(a)$.
+We define the set $\I$ of generating cofibrations to be the union $\I_{ty} \cup \I_{tm}$.
 Let $\J_p$ be the set of arrows of the form $i^0_{(p,n)}$.
 We define the set $\J$ of generating trivial cofibrations to be the union $\J_{ty} \cup \J_{tm}$.
 
-There is a bijection between morphisms $F(\{\,\Gamma \vdash a : A\,\}) \to M$ and $M_{(tm,n)}$, where $n$ is the length of $\Gamma$.
-Thus we will identify these morphisms with elements of $M_{(tm,n)}$ and call them simply \emph{terms} of $M$.
-There is a bijection between morphisms $F(\{\,\Gamma \vdash A\ type\,\}) \to M$ and $M_{(ty,n)}$, where $n$ is the length of $\Gamma$.
-Thus we will identify these morphisms with elements of $M_{(ty,n)}$ and call them simply \emph{types} of $M$.
-
-A \emph{homotopy between terms} $f,g : F(\{\,\Gamma \vdash a : A\,\}) \to M$ is a map $h : F(\{\,\Gamma, I \vdash a : A\,\}) \to M$ such that $h \circ i_0 = f$ and $h \circ i_1 = g$.
-Terms $f$ and $g$ are \emph{homotopic} if there is a homotopy between them.
-A \emph{homotopy between types} $f,g : F(\{\,\Gamma \vdash A\ type\,\}) \to M$ is a map $h : F(\{\,\Gamma, I \vdash A\ type\,\}) \to M$ such that $h \circ i_0 = f$ and $h \circ i_1 = g$.
-Types $f$ and $g$ are \emph{homotopic} if there is a homotopy between them.
-
-Let $\we$ be the set of 
+Given two morphisms $f \in \I$ and $g : X \to Y$, we say that $f$ \emph{has the left lifting property (LLP) up to $\sim_r$} with respect to $g$,
+and $g$ \emph{has the right lifting property (RLP) up to $\sim_r$} with respect to $f$ if for every commutative square of the form
+\[ \xymatrix{ F(\{\,A : (e(p),n)\,\}) \ar[r]^-u \ar@{}[dr]|(.7){\sim_r} \ar[d]_f & X \ar[d]^g \\
+              F(\{\,a : (p,n)\,\}) \ar[r]_-v \ar@{-->}[ur]^h                   & Y,
+            } \]
+there is a dotted arrow $h : F(\{\,a : (p,n)\,\}) \to X$ such that $h \circ f = u$ and $(g \circ h) \sim_r v$.
+We define the set $\we$ of weak equivalences as the set of maps that have RLP up to $\sim_r$ with respect to every map in $\I$.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
