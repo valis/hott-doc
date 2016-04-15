@@ -315,9 +315,11 @@ For examples, we will write $F(\{\,\vdash p : Id(A,a,a')\,\})$ for the model $F(
 Another examples is $F(\{\,A_1, \ldots A_n \vdash a : A\,\})$ which equals to $F(\{\,A_i : (ty,i), A : (ty,n), a : (tm,n)\,\}, \{\,ty(a) = A, ft^{i+1}(A) = A_{n-i}\,\})$.
 Thus this model is isomorphic to the free model $F(\{\,a : (tm,n)\,\})$.
 
-\section{A model structure on models of theories with $\Pi$-types}
+\section{Theories with an interval type}
 
-In this section we construct a model structure on the category of models of an algebraic type theory with enough additional structure.
+In this section we describe the theory of an interval type.
+We describe several constructions in this theory which we will need later.
+In partical, we will show that theories with an interval type and path types also have $Id$ types.
 
 Let $I_0$ be a theory with function symbols $I : (ty,0)$, $left : (tm,0)$, $right : (tm,0)$, and $coe : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$, and the following axioms:
 \begin{center}
@@ -349,6 +351,8 @@ Let $I_0$ be a theory with function symbols $I : (ty,0)$, $left : (tm,0)$, $righ
 \end{center}
 Let $I$ be the regularization of $I_0$.
 We will work with theories under $I$, which we call theories with \emph{an interval type}.
+
+\subsection{Path types}
 
 Let $HPath$ be a regular theory with function symbols $Path : (ty,n) \times (tm,n) \times (tm,n) \to (ty,n)$,
     $path : (tm,n+1) \to (tm,n)$, and $at : (tm,n) \times (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)$, and the following axioms:
@@ -393,7 +397,11 @@ Let $HPath$ be a regular theory with function symbols $Path : (ty,n) \times (tm,
 \end{center}
 We will work with theories under $HPath$, which we call theories with \emph{homogeneous path types}.
 
-We will also consider regular theory $UA$ under $HPath$, which has additional symbols
+\todo{Add some constructions}
+
+\subsection{Univalence}
+
+We will consider regular theory $UA$ under $HPath$, which has additional symbols
 \[ iso : (ty,n)^2 \times (tm,n+1)^4 \times (tm,n) \to (ty,n) \]
 and the following axioms:
 \medskip
@@ -470,6 +478,12 @@ and the following axioms:
 This theory is similar to the univalence axiom, but it is defined for all types.
 The univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
 
+\todo{Add some constructions}
+
+\section{A model structure on models of theories with an interval type}
+
+In this section we construct a model structure on the category of models of an algebraic type theory with enough additional structure.
+
 Let $\mathbb{T}$ be a theory under $UA$.
 Then we define a model structure on the category of models of $\mathbb{T}$.
 For an introduction to the theory of model categories see \cite{hovey}.
@@ -495,24 +509,32 @@ If $k \in \{0,1\}$, then $i^k_{(ctx,n)}(\Gamma)$ is defined as
 \[ subst(ft^{n-1}(H), c_k), \ldots subst(ft(H), c_k, v_{n-3}, \ldots v_0) \vdash subst(H, c_k, v_{n-2}, \ldots v_0), \]
 where $c_0 = left$ and $c_1 = right$.
 
-If $p \in \{ ty, tm\}$, then a \emph{relative cylinder object} of sort $(p,n)$ is $F(\{\,h : (p,n+1)\,\}, \{\,ctx(h) = I(ctx^2(h))\,\})$.
-We will denote this object by $RCyl_{(p,n)}(h)$.
-We have two inclusions $i^0_{(p,n)}, i^1_{(p,n)} : F(\{\,a : (p,n)\,\}) \to RCyl_{(p,n)}(h)$, where $i^0_{(p,n)}(a) = h[left]$ and $i^1_{(p,n)}(a) = h[right]$.
+A \emph{relative cylinder object} of sort $(ty,n)$ is $F(\{\,H : (ty,n+1)\,\}, \{\,ft(H) = I(ft^2(H))\,\})$.
+We will denote this object by $RCyl_{(ty,n)}(H)$ (or simply $RCyl_{(ty,n)}$).
+We have two inclusions $i^0_{(ty,n)}, i^1_{(ty,n)} : F(\{\,A : (ty,n)\,\}) \to RCyl_{(ty,n)}(H)$, where $i^0_{(ty,n)}(A) = H[left]$ and $i^1_{(ty,n)}(A) = H[right]$.
 
-A \emph{homotopy between} maps $f,g : F(\{\,a : (ctx,n)\,\}) \to M$ is a map $h : Cyl_{(ctx,n)}(h) \allowbreak \to M$ such that $h \circ i^0_{(p,n)} = f$ and $h \circ i^1_{(p,n)} = g$.
-Maps $f$ and $g$ are \emph{homotopic} if there is a homotopy between them.
-In this case we will write $f \sim g$.
-If $p \in \{ ty, tm \}$, then a \emph{relative homotopy between} maps $f,g : F(\{\,a : (p,n)\,\}) \to M$ is a map $h : RCyl_{(p,n)}(h) \to M$
-    such that $h \circ i^0_{(p,n)} = f$ and $h \circ i^1_{(p,n)} = g$.
-Maps $f$ and $g$ are \emph{homotopic relative to $(ctx,n)$} if there is a relative homotopy between them.
-In this case we will write $f \sim_r g$.
-    
+A \emph{relative cylinder object} of sort $(tm,n)$ is $F(\{\,h : (tm,n+1), A : (ty,n)\,\}, \{\,ty(h) \allowbreak = (I(ft(A)) \vdash A\!\!\uparrow)\,\})$.
+We will denote this object by $RCyl_{(tm,n)}(h)$ (or simply $RCyl_{(tm,n)}$).
+We have two inclusions $i^0_{(tm,n)}, i^1_{(tm,n)} : F(\{\,a : (tm,n)\,\}) \to RCyl_{(tm,n)}(h)$, where $i^0_{(tm,n)}(a) = h[left]$ and $i^1_{(tm,n)}(a) = h[right]$.
+
 Let $e : \{ ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ty) = ctx$, $e(tm) = ty$.
 Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ty} = ft$, $d_{tm} = ty$.
-If $p \in \{ ty, tm \}$, then let $\I_p$ be the set of arrows of the form $F(\{\,A : (e(p),n)\,\}) \to F(\{\,a : (p,n)\,\})$, where $A$ is mapped to $d_p(a)$.
+If $p \in \{ ty, tm \}$, then let $\I_p$ be the set of arrows of the form $\delta_{(p,n)} : F(\{\,A : (e(p),n)\,\}) \to F(\{\,a : (p,n)\,\})$, $\delta_{(p,n)}(A) = d_p(a)$.
 We define the set $\I$ of generating cofibrations to be the union $\I_{ty} \cup \I_{tm}$.
 Let $\J_p$ be the set of arrows of the form $i^0_{(p,n)}$.
 We define the set $\J$ of generating trivial cofibrations to be the union $\J_{ty} \cup \J_{tm}$.
+
+A \emph{homotopy between} maps $f,g : F(\{\,a : (ctx,n)\,\}) \to X$ is a map $h : Cyl_{(ctx,n)}(H) \allowbreak \to X$ such that $h \circ i^0_{(p,n)} = f$ and $h \circ i^1_{(p,n)} = g$.
+Maps $f$ and $g$ are \emph{homotopic} if there is a homotopy between them.
+In this case we will write $f \sim g$.
+If $p \in \{ ty, tm \}$, then a \emph{relative homotopy between} maps $f,g : F(\{\,a : (p,n)\,\}) \to X$ is a map $h : RCyl_{(p,n)} \to X$
+    such that $h \circ i^0_{(p,n)} = f$ and $h \circ i^1_{(p,n)} = g$.
+Thus a relative homotopy between $f$ and $g$ exists only if $f \circ \delta_{(p,n)} = g \circ \delta_{(p,n)}$, and in this case a homotopy $h$ is a map such that the following triangle commutes:
+\[ \xymatrix{ F(\{\,a : (p,n)\,\}) \amalg_{F(\{\,A : (e(p),n)\,\})} F(\{\,a : (p,n)\,\}) \ar[d]_{[i^0,i^1]} \ar[r]^-{[f,g]} & X \\
+              RCyl_{(p,n)} \ar@{-->}[ur]_h
+            } \]
+Maps $f$ and $g$ are \emph{homotopic relative to $(e(p),n)$} if there is a relative homotopy between them.
+In this case we will write $f \sim_r g$.
 
 Given two morphisms $f \in \I$ and $g : X \to Y$, we say that $f$ \emph{has the left lifting property (LLP) up to $\sim_r$} with respect to $g$,
 and $g$ \emph{has the right lifting property (RLP) up to $\sim_r$} with respect to $f$ if for every commutative square of the form
@@ -521,6 +543,33 @@ and $g$ \emph{has the right lifting property (RLP) up to $\sim_r$} with respect 
             } \]
 there is a dotted arrow $h : F(\{\,a : (p,n)\,\}) \to X$ such that $h \circ f = u$ and $(g \circ h) \sim_r v$.
 We define the set $\we$ of weak equivalences as the set of maps that have RLP up to $\sim_r$ with respect to every map in $\I$.
+
+\begin{lem}
+Relation $\sim_r$ is reflexive, symmetric, transitive and closed under composition.
+\end{lem}
+\begin{proof}
+If $h$ is a homotopy between $f$ and $g$, then $k \circ h$ is a homotopy between $k \circ f$ and $k \circ g$.
+
+Reflexivity follows from the fact that there is a map $r : RCyl_{(p,n)}(h) \to F(\{ a : (p,n) \})$ such that $r \circ i^0_{(p,n)} = r \circ i^1_{(p,n)} = id$.
+This map is defined as $r(h) = (I(ctx(a)) \vdash a\!\!\uparrow)$.
+Then $f \circ r$ is a homotopy between $f$ and $f$.
+
+Let $h_1, h_2 : RCyl_{(tm,n)}(h) \to X$ be relative homotopies such that $h_1 \circ i^1 = h_2 \circ i^0$.
+Then we define a relative homotopy $h_3$ between $h_1 \circ i^0$ and $h_2 \circ i^1$.
+Let $h_3(h) = (ctx(h_1(h)) \vdash at(h_1[left]\!\uparrow, h_2[right]\!\uparrow, coe(Path(ty(h_1), h_1[left]\!\uparrow, h_2), path(h_1), right)\!\uparrow, v_0))$.
+
+Let $H_1, H_2 : RCyl_{(ty,n)}(H) \to X$ be relative homotopies such that $H_1 \circ i^1 = H_2 \circ i^0$.
+Then we define a relative homotopy $H_3$ between $H_1 \circ i^0$ and $H_2 \circ i^1$.
+Let $H_3(H) = $.
+\todo{Finish the proof}
+\end{proof}
+
+\begin{lem}
+Let $k : X \to Y$ be a weak equivalence.
+If $f,g : F(\{\,a : (p,n)\,\}) \to X$ are maps such that $k \circ f \sim_r k \circ g$, then $f \sim_r g$.
+\end{lem}
+\begin{proof}
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
