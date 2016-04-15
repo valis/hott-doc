@@ -401,25 +401,27 @@ We will work with theories under $HPath$, which we call theories with \emph{homo
 
 \subsection{Univalence}
 
+If $\Gamma \vdash A\ type$, $\Gamma \vdash B\ type$, $\Gamma \vdash C\ type$, $\Gamma, A \vdash f : B\!\uparrow$ and $\Gamma, B \vdash g : C\!\uparrow$,
+    then we will write $g \circ f$ for term $\Gamma, A \vdash subst(g, v_n, \ldots v_1, f) : C\!\uparrow$.
+
 We will consider regular theory $UA$ under $HPath$, which has additional symbols
 \[ iso : (ty,n)^2 \times (tm,n+1)^4 \times (tm,n) \to (ty,n) \]
 and the following axioms:
 \medskip
 \begin{center}
 \def\extraVskip{0.5pt}
-\Axiom$\fCenter \Gamma \vdash i : I$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash A\ type$
+\Axiom$\fCenter \Gamma \vdash A\ type$
 \noLine
 \UnaryInf$\fCenter \Gamma \vdash B\ type$
 \Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
 \noLine
 \UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
-\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, subst(g, v_n, \ldots v_1, f), v_0)$
+\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, g \circ f, v_0)$
 \noLine
-\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, subst(f, v_n, \ldots v_1, g), v_0)$
+\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, f \circ g, v_0)$
+\Axiom$\fCenter \Gamma \vdash i : I$
 \def\extraVskip{2pt}
-\TrinaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, i)\ type$}
+\QuaternaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, i)\ type$}
 \DisplayProof
 \end{center}
 
@@ -432,9 +434,9 @@ and the following axioms:
 \Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
 \noLine
 \UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
-\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, subst(g, v_n, \ldots v_1, f), v_0)$
+\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, g \circ f, v_0)$
 \noLine
-\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, subst(f, v_n, \ldots v_1, g), v_0)$
+\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, f \circ g, v_0)$
 \def\extraVskip{2pt}
 \TrinaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, left) \deq A$}
 \DisplayProof
@@ -449,9 +451,9 @@ and the following axioms:
 \Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
 \noLine
 \UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
-\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, subst(g, v_n, \ldots v_1, f), v_0)$
+\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, g \circ f, v_0)$
 \noLine
-\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, subst(f, v_n, \ldots v_1, g), v_0)$
+\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, f \circ g, v_0)$
 \def\extraVskip{2pt}
 \TrinaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, right) \deq B$}
 \DisplayProof
@@ -466,9 +468,9 @@ and the following axioms:
 \Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
 \noLine
 \UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
-\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, subst(g, v_n, \ldots v_1, f), v_0)$
+\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, g \circ f, v_0)$
 \noLine
-\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, subst(f, v_n, \ldots v_1, g), v_0)$
+\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, f \circ g, v_0)$
 \def\extraVskip{2pt}
 \TrinaryInfC{$\Gamma \vdash coe(iso(A\!\uparrow, B\!\uparrow, f\!\uparrow_1, g\!\uparrow_1, p\!\uparrow_1, q\!\uparrow_1, v_0), a, right) \deq f[a]$}
 \DisplayProof
@@ -502,47 +504,74 @@ $\J$ as the set of generating trivial cofibrations, and $\we$ as the class of we
 \end{description}
 \end{prop}
 
+If $H = (I, A_1, \ldots A_n \vdash) \in X_{(ctx,n+1)}$, then for every $c \in \{ left, right \}$, let $c^*(H) = (A_1[c], \ldots A_n[c] \vdash) \in X_{(ctx,n)}$.
+A \emph{homotopy between} contexts $\Gamma,\Delta \in X_{(ctx,n)}$ is a context $H \in X_{(ctx,n+1)}$ such that $\vdash ft^n(H) \equiv I$, $left^*(H) = \Gamma$ and $right^*(H) = \Delta$.
+Contexts $\Gamma$ and $\Delta$ are \emph{homotopic} if there is a homotopy between them.
+In this case we will write $\Gamma \sim \Delta$.
+
+A \emph{relative homotopy between} types $(\Gamma \vdash A), (\Gamma \vdash B) \in X_{(ty,n)}$ is a type $(\Gamma, I \vdash H) \in X_{(ty,n+1)}$ such that $H[left] = A$ and $H[right] = B$.
+Types $A$ and $B$ are \emph{homotopic relative to $(ctx,n)$} if there is a relative homotopy between them.
+In this case we will write $A \sim_r B$.
+
+A \emph{relative homotopy between} terms $(\Gamma \vdash a : A), (\Gamma \vdash b : A) \in X_{(tm,n)}$ is a term $(\Gamma, I \vdash h : A\!\uparrow) \in X_{(tm,n+1)}$ such that $h[left] = a$ and $h[right] = b$.
+Terms $a$ and $b$ are \emph{homotopic relative to $(ty,n)$} if there is a relative homotopy between them.
+In this case we will write $a \sim_r b$.
+
+\begin{remark}[types-hom-ua]
+To define a relative homotopy between types $(\Gamma \vdash A), (\Gamma \vdash B) \in X_{(ty,n)}$,
+    it is enought to specify terms $(\Gamma, A \vdash f : B\!\uparrow), (\Gamma, B \vdash g : A\!\uparrow) \in X_{(tm,n+1)}$
+    such that $g \circ f \sim_r v_0(A)$ and $f \circ g \sim_r v_0(B)$.
+Then we can define a relative homotopy $\Gamma, I \vdash iso(A\!\uparrow, B\!\uparrow, f\!\uparrow_1, g\!\uparrow_1, path(h_1\!\!\uparrow_2), path(h_2\!\!\uparrow_2), v_0)$ between $A$ and $B$,
+    where $h_1$ is a relative homotopy between $g \circ f$ and $v_0(A)$, and $h_2$ is a relative homotopy between $f \circ g$ and $v_0(B)$.
+\end{remark}
+
+There is a bijection between morphisms $F(\{\,A : (p,n)\,\}) \to X$ and elements $X_{(p,n)}$.
+We can directly describe homotopies between morphisms $f,g : F(\{\,A : (p,n)\,\}) \to X$.
+For this, we define (relative) cylinder objects $C$ together with maps $i^0,i^1 : F(\{\,A : (p,n)\,\}) \to C$.
+Then a homotopy between $f$ and $g$ can be described as a map $h : C \to X$ such that $h \circ i^0 = f$ and $h \circ i^1 = g$.
+
 A \emph{cylinder object} of sort $(ctx,n)$ is $F(\{\,H : (ctx,n+1)\,\}, \{\,ft^n(H) = I(\emptyCtx)\,\})$.
-We will denote this object by $Cyl_{(ctx,n)}(H)$.
-We have two inclusions $i^0_{(ctx,n)}, i^1_{(ctx,n)} : F(\{\,\Gamma : (ctx,n)\,\}) \to Cyl_{(ctx,n)}(H)$.
-If $k \in \{0,1\}$, then $i^k_{(ctx,n)}(\Gamma)$ is defined as
-\[ subst(ft^{n-1}(H), c_k), \ldots subst(ft(H), c_k, v_{n-3}, \ldots v_0) \vdash subst(H, c_k, v_{n-2}, \ldots v_0), \]
-where $c_0 = left$ and $c_1 = right$.
+We will denote this object by $Cyl_{(ctx,n)}$.
+Inclusions $i^0_{(ctx,n)}, i^1_{(ctx,n)} : F(\{\,\Gamma : (ctx,n)\,\}) \to Cyl_{(ctx,n)}$ are defined as $i^k_{(ctx,n)}(\Gamma) = c_k^*(H)$, where $c_0 = left$ and $c_1 = right$.
 
 A \emph{relative cylinder object} of sort $(ty,n)$ is $F(\{\,H : (ty,n+1)\,\}, \{\,ft(H) = I(ft^2(H))\,\})$.
-We will denote this object by $RCyl_{(ty,n)}(H)$ (or simply $RCyl_{(ty,n)}$).
-We have two inclusions $i^0_{(ty,n)}, i^1_{(ty,n)} : F(\{\,A : (ty,n)\,\}) \to RCyl_{(ty,n)}(H)$, where $i^0_{(ty,n)}(A) = H[left]$ and $i^1_{(ty,n)}(A) = H[right]$.
+We will denote this object by $RCyl_{(ty,n)}$.
+Inclusions $i^0_{(ty,n)}, i^1_{(ty,n)} : F(\{\,A : (ty,n)\,\}) \to RCyl_{(ty,n)}$ are defined as $i^k_{(ty,n)}(A) = H[c_k]$.
 
 A \emph{relative cylinder object} of sort $(tm,n)$ is $F(\{\,h : (tm,n+1), A : (ty,n)\,\}, \{\,ty(h) \allowbreak = (I(ft(A)) \vdash A\!\!\uparrow)\,\})$.
-We will denote this object by $RCyl_{(tm,n)}(h)$ (or simply $RCyl_{(tm,n)}$).
-We have two inclusions $i^0_{(tm,n)}, i^1_{(tm,n)} : F(\{\,a : (tm,n)\,\}) \to RCyl_{(tm,n)}(h)$, where $i^0_{(tm,n)}(a) = h[left]$ and $i^1_{(tm,n)}(a) = h[right]$.
+We will denote this object by $RCyl_{(tm,n)}$.
+Inclusions $i^0_{(tm,n)}, i^1_{(tm,n)} : F(\{\,a : (tm,n)\,\}) \to RCyl_{(tm,n)}$ are defined as $i^k_{(tm,n)}(a) = h[c_k]$.
 
 Let $e : \{ ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ty) = ctx$, $e(tm) = ty$.
 Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ty} = ft$, $d_{tm} = ty$.
-If $p \in \{ ty, tm \}$, then let $\I_p$ be the set of arrows of the form $\delta_{(p,n)} : F(\{\,A : (e(p),n)\,\}) \to F(\{\,a : (p,n)\,\})$, $\delta_{(p,n)}(A) = d_p(a)$.
+If $p \in \{ ty, tm \}$, then let $\I_p$ be the set of maps of the form $\delta_{(p,n)} : F(\{\,A : (e(p),n)\,\}) \to F(\{\,a : (p,n)\,\})$, $\delta_{(p,n)}(A) = d_p(a)$.
 We define the set $\I$ of generating cofibrations to be the union $\I_{ty} \cup \I_{tm}$.
 Let $\J_p$ be the set of arrows of the form $i^0_{(p,n)}$.
 We define the set $\J$ of generating trivial cofibrations to be the union $\J_{ty} \cup \J_{tm}$.
 
-A \emph{homotopy between} maps $f,g : F(\{\,a : (ctx,n)\,\}) \to X$ is a map $h : Cyl_{(ctx,n)}(H) \allowbreak \to X$ such that $h \circ i^0_{(p,n)} = f$ and $h \circ i^1_{(p,n)} = g$.
-Maps $f$ and $g$ are \emph{homotopic} if there is a homotopy between them.
-In this case we will write $f \sim g$.
-If $p \in \{ ty, tm \}$, then a \emph{relative homotopy between} maps $f,g : F(\{\,a : (p,n)\,\}) \to X$ is a map $h : RCyl_{(p,n)} \to X$
-    such that $h \circ i^0_{(p,n)} = f$ and $h \circ i^1_{(p,n)} = g$.
-Thus a relative homotopy between $f$ and $g$ exists only if $f \circ \delta_{(p,n)} = g \circ \delta_{(p,n)}$, and in this case a homotopy $h$ is a map such that the following triangle commutes:
+\begin{remark}
+A relative homotopy between $f,g : F(\{\,A : (p,n)\,\}) \to X$ exists only if $f \circ \delta_{(p,n)} = g \circ \delta_{(p,n)}$, and in this case a homotopy $h$ is a map such that the following triangle commutes:
 \[ \xymatrix{ F(\{\,a : (p,n)\,\}) \amalg_{F(\{\,A : (e(p),n)\,\})} F(\{\,a : (p,n)\,\}) \ar[d]_{[i^0,i^1]} \ar[r]^-{[f,g]} & X \\
               RCyl_{(p,n)} \ar@{-->}[ur]_h
             } \]
-Maps $f$ and $g$ are \emph{homotopic relative to $(e(p),n)$} if there is a relative homotopy between them.
-In this case we will write $f \sim_r g$.
+\end{remark}
 
 Given two morphisms $f \in \I$ and $g : X \to Y$, we say that $f$ \emph{has the left lifting property (LLP) up to $\sim_r$} with respect to $g$,
 and $g$ \emph{has the right lifting property (RLP) up to $\sim_r$} with respect to $f$ if for every commutative square of the form
 \[ \xymatrix{ F(\{\,A : (e(p),n)\,\}) \ar[r]^-u \ar@{}[dr]|(.7){\sim_r} \ar[d]_f & X \ar[d]^g \\
-              F(\{\,a : (p,n)\,\}) \ar[r]_-v \ar@{-->}[ur]^h                   & Y,
+              F(\{\,a : (p,n)\,\}) \ar[r]_-v \ar@{-->}[ur]^h                     & Y,
             } \]
 there is a dotted arrow $h : F(\{\,a : (p,n)\,\}) \to X$ such that $h \circ f = u$ and $(g \circ h) \sim_r v$.
 We define the set $\we$ of weak equivalences as the set of maps that have RLP up to $\sim_r$ with respect to every map in $\I$.
+Thus a map $g : X \to Y$ is a weak equivalence if and only if the following conditions are satisfied:
+\begin{enumerate}
+\item For every context $\Gamma \in X_{(ctx,n)}$ and every type $A \in Y_{(ty,n)}$ in context $g(\Gamma)$, there exists a type $A' \in X_{(ty,n)}$ in context $\Gamma$ such that $g(A')$ and $A$ are homotopic relative to $(ctx,n)$.
+    This is true if and only if $g$ has RLP up to $\sim_r$ with respect to every map in $\I_{ty}$.
+    In this case we say that $g$ is \emph{essentially surjective on types}.
+\item For every type $A \in X_{(ty,n)}$ and every term $a \in Y_{(tm,n)}$ of type $g(A)$, there exists a term $a' \in X_{(tm,n)}$ of type $A$ such that $g(a')$ and $a$ are homotopic relative to $(ty,n)$.
+    This is true if and only if $g$ has RLP up to $\sim_r$ with respect to every map in $\I_{tm}$.
+    In this case we say that $g$ is \emph{essentially surjective on terms}.
+\end{enumerate}
 
 \begin{lem}
 Relation $\sim_r$ is reflexive, symmetric, transitive and closed under composition.
