@@ -388,6 +388,13 @@ Let $HPath$ be a regular theory with function symbols $Path : (ty,n) \times (tm,
 \smallskip
 \begin{center}
 \AxiomC{$\Gamma \vdash p : Path(A, a, a')$}
+\UnaryInfC{$\Gamma \vdash path(at(a\!\uparrow, a'\!\uparrow, p\!\uparrow, v_0)) \deq p$}
+\DisplayProof
+\end{center}
+
+\smallskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : Path(A, a, a')$}
 \UnaryInfC{$\Gamma \vdash at(a, a', p, left) \deq a$}
 \DisplayProof
 \quad
@@ -397,7 +404,34 @@ Let $HPath$ be a regular theory with function symbols $Path : (ty,n) \times (tm,
 \end{center}
 We will work with theories under $HPath$, which we call theories with \emph{homogeneous path types}.
 
-\todo{Add some constructions}
+Let $refl(a) = path(a\!\uparrow)$.
+If $\Gamma \vdash a : A$, then $\Gamma \vdash refl(a) : Path(A, a, a)$.
+
+Let $squeeze(i,j) = at(left, j, coe(Path(I, left, v_0), refl(left), j), i)$.
+If $\Gamma \vdash i : I$ and $\Gamma \vdash j : I$,
+    then $\Gamma \vdash squeeze(i,j) : I$, $\Gamma \vdash squeeze(left,j) \deq left$, $\Gamma \vdash squeeze(right,j) \deq j$, and $\Gamma \vdash squeeze(i,left) \deq left$.
+
+Now, we can define $J(A, D, d, a, a', p)$ as $coe(D', d[a], right)$, where
+    $D' = D\!\uparrow_3[a\!\uparrow, at(a\!\uparrow, a'\!\uparrow, p\!\uparrow, squeeze(v_0,right)), path(at(a\!\uparrow^2, a'\!\uparrow^2, p\!\uparrow^2, squeeze(v_1,v_0)))]$.
+If $\Gamma, A, A\!\uparrow, Id(A\!\uparrow^2, v_1, v_0) \vdash D\ type$, $\Gamma, A \vdash d : D'$, and $\Gamma \vdash p : Id(A, a, a')$,
+    then $\Gamma \vdash J(A, D, d, a, a', p) : D[a, a', p]$.
+
+Thus $Path$, $refl$, and $J$ almost define a morphism from the theory of $Id$ types.
+The only problem is that axiom $\Gamma \vdash J(A, D, d, a, a, refl(a)) \deq d[a]$ is not satisfied.
+This axiom will be satisfied if we assume an additional axiom:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash coe(A\!\uparrow, a, right) \deq a$}
+\DisplayProof
+\end{center}
+\medskip
+But we do not need this axiom, since it holds propositionally.
+That is, \todo{Finish this}
+
+Finally, let us describe the last construction we will need.
+Let \[ inv(i) = at(right, left, coe(Path(I, v_0, left), refl(left), right), i). \]
+If $\Gamma \vdash i : I$, then $\Gamma \vdash inv(i) : I$, $\Gamma \vdash inv(left) \deq right$, and $\Gamma \vdash inv(right) \deq left$.
 
 \subsection{Univalence}
 
@@ -567,13 +601,13 @@ Thus a map $g : X \to Y$ is a weak equivalence if and only if the following cond
 \begin{enumerate}
 \item For every context $\Gamma \in X_{(ctx,n)}$ and every type $A \in Y_{(ty,n)}$ in context $g(\Gamma)$, there exists a type $A' \in X_{(ty,n)}$ in context $\Gamma$ such that $g(A')$ and $A$ are homotopic relative to $(ctx,n)$.
     This is true if and only if $g$ has RLP up to $\sim_r$ with respect to every map in $\I_{ty}$.
-    In this case we say that $g$ is \emph{essentially surjective on types}.
+    In this case we will say that $g$ is \emph{essentially surjective on types}.
 \item For every type $A \in X_{(ty,n)}$ and every term $a \in Y_{(tm,n)}$ of type $g(A)$, there exists a term $a' \in X_{(tm,n)}$ of type $A$ such that $g(a')$ and $a$ are homotopic relative to $(ty,n)$.
     This is true if and only if $g$ has RLP up to $\sim_r$ with respect to every map in $\I_{tm}$.
-    In this case we say that $g$ is \emph{essentially surjective on terms}.
+    In this case we will say that $g$ is \emph{essentially surjective on terms}.
 \end{enumerate}
 
-\begin{prop}
+\begin{prop}[hom-eq]
 Relation $\sim_r$ is reflexive, symmetric, transitive and preserved by morphisms.
 \end{prop}
 \begin{proof}
@@ -593,10 +627,26 @@ Let $H_3(H) = $.
 
 \begin{lem}
 Let $k : X \to Y$ be a weak equivalence.
-If $a,b : X_{(p,n)}$ are such that $k(f) \sim_r k(g)$, then $a \sim_r b$.
+If $a,b \in X_{(p,n)}$ are such that $k(f) \sim_r k(g)$, then $a \sim_r b$.
 \end{lem}
 \begin{proof}
 \todo{Write the proof}
+\end{proof}
+
+\begin{lem}[hom-ext][Homotopy extension property]
+Let $f : F(\{\,\Gamma : (e(p),n)\,\}) \to F(\{\,A : (p,n)\,\}) \in \I$, $u : U \to X$, and $v : V \to X$ be maps such that $u \sim^r v \circ i$.
+Then there exists a map $v' : V \to X$ such that $u = v' \circ i$ and $v' \sim v$.
+\end{lem}
+
+\begin{lem}
+If $f : X \to Y$ is essentially surjective on types, then it is essentially surjective on context.
+That is, for every $\Gamma \in Y_{(ctx,n)}$, there is a context $\Gamma' \in X_{(ctx,n)}$ such that $f(\Gamma') \sim \Gamma$.
+\end{lem}
+\begin{proof}
+If $n = 0$, then $\Gamma = \emptyCtx$, and we can take $\Gamma' = \emptyCtx$.
+If $n > 0$, then let $\Delta = ft(\Gamma)$.
+There exists a context $\Delta' \in X_{(ctx,n-1)}$ such that $f(\Delta') \sim \Delta$.
+By \rlem{hom-ext}, there exists
 \end{proof}
 
 \bibliographystyle{amsplain}
