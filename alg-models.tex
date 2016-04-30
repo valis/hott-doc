@@ -575,12 +575,9 @@ The univalence axiom for a universe follows from the assumption that this univer
 
 \todo{Add some constructions}
 
-\section{A model structure on models of theories with an interval type}
+\section{A model structure on the category of theories}
 
-In this section we construct a model structure on the category of models of an algebraic type theory with enough additional structure.
-
-Let $\mathbb{T}$ be a theory under $UA$.
-Then we define a model structure on the category of models of $\mathbb{T}$.
+In this section we construct a model structure on the category $UA/\Th_\mathcal{C}$ of theories with an interval type, homogeneous path types and the univalence axiom.
 For an introduction to the theory of model categories see \cite{hovey}.
 We will need the following proposition to construct our model structure:
 
@@ -596,6 +593,83 @@ $\J$ as the set of generating trivial cofibrations, and $\we$ as the class of we
 \item[(A5)] Either $\Jinj \cap \we \subseteq \Iinj$ or $\Icof \cap \we \subseteq \Jcof$.
 \end{description}
 \end{prop}
+
+We will often define theories just by specifying its set of axioms.
+The sets of function and predicate symbols then can be defined as the sets of those symbols that appear in the axioms.
+
+Let $e : \{ ctx, ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ctx) = ctx$, $e(ty) = ctx$, $e(tm) = ty$.
+Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ctx}(\Gamma) = \Gamma$ $d_{ty}(A) = ft(A)$, $d_{tm}(a) = ty(a)$.
+Let $s_1$, \ldots $s_n$, $s$ be a sequence of sorts such that $s = (p,n)$ for some $p \in \{ ty, tm \}$ and $n \in \mathbb{N}$.
+Then we define algebraic dependent type theories $\mathbb{U}^1_{s_1, \ldots s_k, s}$,
+$\mathbb{V}^1_{s_1, \ldots s_k, s}$, $\mathbb{U}^2_{s_1, \ldots s_k, s}$ and $\mathbb{V}^2_{s_1, \ldots s_k, s}$.
+Apart from symbols and axioms of $\mathbb{T}_0$ theories $\mathbb{U}^1_{s_1, \ldots s_k, s}$
+and $\mathbb{V}^1_{s_1, \ldots s_k, s}$ have two predicate symbols $P,Q : s_1 \times \ldots \times s_k$.
+$\mathbb{U}^1_{s_1, \ldots s_k, s}$ has one function symbol $A : s_1 \times \ldots \times s_k \to (e(p),n)$ and one axiom:
+\[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} A(x_1, \ldots x_k)\!\downarrow \land Q(x_1, \ldots x_k) \]
+$\mathbb{V}^1_{s_1, \ldots s_k, s}$ has two function symbols $A : s_1 \times \ldots s_k \to (e(p),n)$ and $a : s_1 \times \ldots \times s_k \to (p,n)$ and two axioms:
+\begin{align*}
+P(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \\
+a(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} d_p(a(x_1, \ldots x_k)) = A(x_1, \ldots x_k) \land Q(x_1, \ldots x_k)
+\end{align*}
+Theories $\mathbb{U}^2_{s_1, \ldots s_k, s}$ and $\mathbb{V}^2_{s_1, \ldots s_k, s}$ have one predicate symbol $P : s_1 \times \ldots \times s_k$.
+$\mathbb{U}^2_{s_1, \ldots s_k, s}$ has one function symbol $A : s_1 \times \ldots \times s_k \to (e(p),n)$ and one axiom:
+\[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} A(x_1, \ldots x_k)\!\downarrow \]
+$\mathbb{V}^2_{s_1, \ldots s_k, s}$ has two function symbols $A : s_1 \times \ldots s_k \to (e(p),n)$ and $a : s_1 \times \ldots \times s_k \to (p,n)$ and two axioms:
+\begin{align*}
+P(x_1, \ldots x_k) & \ssststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \\
+a(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} d_p(a(x_1, \ldots x_k)) = A(x_1, \ldots x_k)
+\end{align*}
+
+There are obvious morphisms $\mathbb{U}^1_{s_1, \ldots s_k, s} \to \mathbb{V}^1_{s_1, \ldots s_k, s}$ and $\mathbb{U}^2_{s_1, \ldots s_k, s} \to \mathbb{V}^2_{s_1, \ldots s_k, s}$.
+Let $\I^1$ and $\I^2$ be sets of these morphisms for every sequence $s_1$, \ldots $s_k$, $s$.
+Note that every map in $\I^2$ is a pushout of a map in $\I^1$:
+\[ \xymatrix{ \mathbb{U}^1_{s_1, \ldots s_k, s} \ar[r]^f \ar[d] & \mathbb{U}^2_{s_1, \ldots s_k, s} \ar[d] \\
+              \mathbb{V}^1_{s_1, \ldots s_k, s} \ar[r]_g & \po \mathbb{V}^2_{s_1, \ldots s_k, s}
+            } \]
+where $f(P) = f(Q) = P$, $f(A) = A$, $g(P) = g(Q) = P$, $g(A) = A$ and $g(a) = a$.
+It follows that $\Icof[\I^2] \subseteq \Icof[\I^1]$.
+
+A cylinder object for a theory $\mathbb{T}$ is a theory $C$ together with three maps $i_0,i_1 : \mathbb{T} \to C$ and $w : C \to \mathbb{T}$
+such that $w \circ i_0 = w \circ i_1 = id_{\mathbb{T}}$.
+If $\mathbb{T}$ is an algebraic dependent type theory, then let $F(\mathbb{T})$ be a free theory under $UA$, that is $\mathbb{T} \amalg_{\mathbb{T}_0} UA$.
+For every theory of the form $F(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ we define a cylinder object $C(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$.
+Apart from symbols and axioms of $UA$, it has two predicate symbols $P,Q : s_1 \times \ldots \times s_k$,
+one function symbol $H : s_1 \times \ldots \times s_k \to (e(p),n+1)$ and one axiom:
+\[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} ft^n(d_{e(p)}(H(x_1, \ldots x_k))) = I(\emptyCtx) \land Q(x_1, \ldots x_k) \]
+
+If $A_1, \ldots A_n \vdash a$, then let $I \times a = (I, A_1[], \ldots A_n[v_{n-2}, \ldots v_0] \vdash a[v_{n-1}, \ldots v_0])$.
+Morphism $w : C(\mathbb{U}_{s_1, \ldots s_k, (p,n)}) \to F(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ is defined as follows:
+$w(P) = P$, $w(Q) = Q$, $w(H(x_1, \ldots x_k)) = I \times A(x_1, \ldots x_k)$.
+If $I, A_1, \ldots A_n \vdash h$, then for every $c \in \{ left, right \}$, let $c^*(h) = (A_1[c], \ldots A_n[c, v_{n-2}, \ldots v_0] \vdash h[c, v_{n-1}, \ldots v_0])$.
+Morphisms $i_0,i_1 : F(\mathbb{U}_{s_1, \ldots s_k, (p,n)}) \to C(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ are defined as follows:
+$i_j(P) = P$, $i_j(Q) = Q$ and $i_j(A(x_1, \ldots x_k)) = c_j^*(H(x_1, \ldots x_k))$ for every $j \in \{ 0, 1 \}$, where $c_0 = left$ and $c_1 = right$.
+Note that $c_j^*(I \times A) = A$; hence $w \circ i_0 = w \circ i_1 = id_{F(\mathbb{U}_{s_1, \ldots s_k, (p,n)})}$.
+
+For every theory $F(\mathbb{V}_{s_1, \ldots s_k, (p,n)})$ we define a cylinder object $C(\mathbb{V}_{s_1, \ldots s_k, (p,n)})$.
+Apart from symbols and axioms of $UA$, it has two predicate symbols $P,Q : s_1 \times \ldots \times s_k$,
+two function symbols $H : s_1 \times \ldots \times s_k \to (e(p),n+1)$, $h : s_1 \times \ldots \times s_k \to (p,n+1)$, and the following axioms:
+\begin{align*}
+P(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} h(x_1, \ldots x_k)\!\downarrow \\
+h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ft^n(d_{e(p)}(H(x_1, \ldots x_k))) = I(\emptyCtx) \\
+h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} d_p(h(x_1, \ldots x_k)) = H(x_1, \ldots x_k) \land Q(x_1, \ldots x_k)
+\end{align*}
+Morphism $w : C(\mathbb{V}_{s_1, \ldots s_k, (p,n)}) \to F(\mathbb{V}_{s_1, \ldots s_k, (p,n)})$ is defined as follows:
+$w(P) = P$, $w(Q) = Q$, $w(H(x_1, \ldots x_k)) = I \times A(x_1, \ldots x_k)$, $w(h(x_1, \ldots x_k)) = I \times a(x_1, \ldots x_k)$.
+Morphisms $i_0,i_1 : F(\mathbb{U}_{s_1, \ldots s_k, (p,n)}) \to C(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ are defined as follows:
+$i_j(P) = P$, $i_j(Q) = Q$, $i_j(A(x_1, \ldots x_k)) = c_j^*(H(x_1, \ldots x_k))$ and $i_j(a(x_1, \ldots x_k)) = c_j^*(h(x_1, \ldots x_k))$.
+
+% If $p \in \{ ty, tm \}$, then let $\I^1_p$ be the set of morphisms of theories of the form
+% $\{ P(x_1, \ldots x_n) \sststile{}{x_1, \ldots x_n} A(x_1, \ldots x_n)\!\downarrow \land Q(x_1, \ldots x_n) \} \to \{ P(x_1, \ldots x_n) \sststile{}{x_1, \ldots x_n} a(x_1, \ldots x_n)\!\downarrow, a(x_1, \ldots x_n)\!\downarrow\ \sststile{}{x_1 : s_1, \ldots x_n : s_n} d_p(a(x_1, \ldots x_n)) = A(x_1, \ldots x_n) \land Q(x_1, \ldots x_n) \}$
+% for every sequence of sorts $s_1$, \ldots $s_n$, $s$, where $s = (p,n)$ for some $n$, and $a : s_1 \times \ldots \times s_n \to s$.
+% We define the set $\I$ of generating cofibrations to be the union $\I_{ty} \cup \I_{tm}$.
+% Let $\J_p$ be the set of arrows of the form $i^0_{(p,n)}$.
+% We define the set $\J$ of generating trivial cofibrations to be the union $\J_{ty} \cup \J_{tm}$.
+
+\section{A model structure on models of theories with an interval type}
+
+In this section we construct a model structure on the category of models of an algebraic type theory with enough additional structure.
+Let $\mathbb{T}$ be a theory under $UA$.
+Then we define a model structure on the category of models of $\mathbb{T}$.
 
 If $H = (I, A_1, \ldots A_n \vdash) \in X_{(ctx,n+1)}$, then for every $c \in \{ left, right \}$, let $c^*(H) = (A_1[c], \ldots A_n[c] \vdash) \in X_{(ctx,n)}$.
 A \emph{homotopy between} contexts $\Gamma,\Delta \in X_{(ctx,n)}$ is a context $H \in X_{(ctx,n+1)}$ such that $\vdash ft^n(H) \equiv I$, $left^*(H) = \Gamma$ and $right^*(H) = \Delta$.
