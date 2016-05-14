@@ -1,0 +1,764 @@
+\documentclass{amsart}
+
+\usepackage{etex}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{todonotes}
+
+\hypersetup{colorlinks=true,linkcolor=blue}
+
+\author{Valery Isaev}
+
+\title{Model categories in which all objects are fibrant}
+
+\providecommand\WarningsAreErrors{false}
+\ifthenelse{\equal{\WarningsAreErrors}{true}}{\renewcommand{\GenericWarning}[2]{\GenericError{#1}{#2}{}{This warning has been turned into a fatal error.}}}{}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#4~\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{theorem}{Theorem}
+\newref{lem}{lemma}{Lemma}
+\newref{prop}{proposition}{Proposition}
+\newref{cor}{corollary}{Corollary}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+
+\newcommand{\we}{\mathcal{W}}
+\newcommand{\fib}{\mathcal{F}}
+\newcommand{\cof}{\mathcal{C}}
+\newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\C}{\cat{C}}
+
+\newcommand{\I}{\mathrm{I}}
+\newcommand{\J}{\mathrm{J}}
+\newcommand{\class}[2]{#1\text{-}\mathrm{#2}}
+\newcommand{\Iinj}[1][\I]{\class{#1}{inj}}
+\newcommand{\Icell}[1][\I]{\class{#1}{cell}}
+\newcommand{\Icof}[1][\I]{\class{#1}{cof}}
+\newcommand{\Jinj}[1][]{\Iinj[\J#1]}
+\newcommand{\Jcell}[1][]{\Icell[\J#1]}
+\newcommand{\Jcof}[1][]{\Icof[\J#1]}
+\newcommand{\cyli}{i}
+
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\begin{abstract}
+In this paper, we study properties of model structures in which all objects are fibrant.
+We give a few general ways of constructing such model structures on a complete and cocomplete category.
+As an application we define a model structure on the category of algebras for contractible globular operads.
+\end{abstract}
+
+\maketitle
+
+ \makeatletter
+    \providecommand\@dotsep{5}
+  \makeatother
+  \listoftodos\relax
+
+\section{Introduction}
+
+Model categories, introduced in \cite{quillen}, are an important tool in homotopy theory.
+In this paper, we study model categories in which all objects are fibrant.
+We call such model categories \emph{f-model categories}.
+If we fix the class of cofibrations, then the class of weak equivalences which defines an f-model structure is unique if it exists.
+These class of weak equivalences is the minimum possible among model structures with this class of cofibrations.
+Thus every other model structures with this class of cofibrations is a left Bousfield localization of an f-model structure (if it exists).
+The main result is \rthm{main}, which gives a necessary and sufficient condition for the existence of an f-model structure.
+
+F-model structures can be compared to left-determinant model structures introduced in \cite{left-det}.
+Every f-model structure is left-determinant, but the converse is not necessary true.
+For example, the category of simplicial sets (as well as every Grothendieck topos \cite{cisinski})
+carries a left-determinant model structure with monomorphisms as cofibrations,
+but an f-model structure on this category with this class of cofibrations does not exist.
+To see this, consider a cylinder $C$ for the terminal object.
+Then $C \amalg_{\Delta[0]} C$ does not have a map from $\Delta[1]$ which
+maps faces of this simplex to points of $C$ which were not amalgamated.
+Thus $C \amalg_{\Delta[0]} C$ cannot be fibrant.
+
+Thus the class of f-model structures is much narrower than the class of left-determinant model structures.
+On the other hand f-model structures have properties not shared by left-determinant ones.
+For example, giving a set of generating cofibrations we can often give
+a simple description of a set of generating trivial cofibrations (see \rcor{min-cof-gen}).
+Using this observation we can give a simple description of the class of weak equivalences.
+
+In section 2, we recall definitions and basic properties of weak factorization systems and model categories.
+In section 3, we study properties of f-model categories.
+In section 4, we demonstrate a method of constructing f-model structures.
+In section 5, we define an f-model structure on the category of algebras for contractible globular operads.
+
+\section{Preliminaries}
+
+In this section, we will introduce a few definitions that we will need later.
+We will also recall the definition and basic properties of model categories.
+
+\subsection{Cylinders and homotopy relations}
+
+Let $\C$ be a category and let $V$ be an object of $\C$.
+Then we a \emph{cylinder object} for $V$ is an object $C(V)$ together with maps $\cyli_0,\cyli_1 : V \to C(V)$.
+If $i : U \to V$ is a morphism of $\C$, then a \emph{relative cylinder object} for $\C$
+is a cylinder object $(C_U(V),\cyli_0,\cyli_1)$ for $V$ such that $\cyli_0 \circ i = \cyli_1 \circ i$.
+If $\C$ has the initial object $0$, then a relative cylinder object for $0 \to V$ is just a cylinder object for $V$.
+A morphism of cylinder objects $C(V_1)$ and $C(V_2)$ is a pair of maps $f : V_1 \to V_2$ and $C(f) : C(V_1) \to C(V_2)$ which commute with $\cyli_0$ and $\cyli_1$.
+
+A \emph{homotopy} (with respect to $C(V)$) between maps $f,g : V \to X$ is a map $h : C(V) \to X$ such that $h \circ \cyli_0 = f$ and $h \circ \cyli_1 = g$.
+Maps are \emph{homotopic} if there is a homotopy between them.
+Maps are \emph{homotopic relative to $i : U \to V$} (with respect to $C_U(V)$) if there is a homotopy with respect to $C_U(V)$ between them.
+Note that maps are homotopic relative to $i$ only if $i \circ f = i \circ g$.
+If maps $f$ and $g$ are homotopic, then we write $f \sim g$, and if they are homotopic relative to $i$, then we write $f \sim_i g$.
+
+Let $V,Y$ be objects of a category $\C$ and $R$ some relation on the set $\C(V,Y)$.
+Given two morphisms $f : U \to V$ and $g : X \to Y$, we say that $f$ \emph{has the left lifting property (LLP) up to $R$} with respect to $g$,
+and $g$ \emph{has the right lifting property (RLP) up to $R$} with respect to $f$ if for every commutative square of the form
+\[ \xymatrix{ U \ar[r]^u \ar@{}[dr]|(.7){R} \ar[d]_f & X \ar[d]^g \\
+              V \ar[r]_v \ar@{-->}[ur]^h             & Y,
+            } \]
+there is a dotted arrow $h : V \to X$ such that $h \circ f = u$ and $(g \circ h) R v$.
+We say a map $f$ has the right lifting property up to $R$ with respect to
+an object $V$ if it has this property with respect to the map $0 \to V$.
+Given a morphism $f$ and a set of morphisms $\I$, $f$ has the left (right) lifting property up to $R$
+with respect to $\I$ if it has this property with respect to all morphisms in $\I$.
+A map has the right (left) lifting property if it has this property up to the equality relation.
+
+Let $R$ be the maximal relation on the set $\C(V,Y)$, that is for every $f_1,f_2 : V \to Y$, we have $f_1\,R\,f_2$.
+We will say that $g : X \to Y$ is \emph{pure} with respect to $f : U \to V$ if $g$ has RLP up to $R$ with respect to $f$.
+The notion of pure morphism is (formally) similar to the concept of
+$\lambda$-pure morphism, used in the theory of accessible categories.
+
+We list a few elementary properties of pure morphisms in the following proposition:
+
+\begin{prop} The following holds in every category $\C$:
+\begin{enumerate}
+\item If $g$ has RLP up to some relation with respect to $f$, then $g$ is pure with respect to $f$.
+\item Pure maps are closed under composition.
+\item If $f : X \to Y$ and $g : Y \to Z$ are maps such that $g \circ f$ is pure, then $f$ is also pure.
+\item Every split monomorphism is pure with respect to all maps.
+\item If a map is pure with respect to itself, then it is a split monomorphism.
+\end{enumerate}
+\end{prop}
+
+We will say that a relative cylinder object $C(V)$ for $i : U \to V$ is \emph{proper} if the corresponding homotopy relation on every set $\C(V,X)$ is an equivalence relation.
+Note that $\sim$ is reflexive if and only if there exists a map $s : C_U(V) \to V$ such that $s \circ \cyli_0 = s \circ \cyli_1 = id_V$.
+Moreover, if pushout $V \amalg_U V$ exists and $s$ is pure with respect to $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, then the homotopy relation is also symmetric.
+
+\subsection{Model categories}
+
+Model categories were introduced in \cite{quillen}.
+For an introduction to the theory of model categories see \cite{hirschhorn,hovey}.
+
+\begin{defn} A weak factorization system on a category $\C$ is a pair $(\mathcal{L},\mathcal{R})$
+of full subcategories of the category $\C^\to$ of arrows of $\C$ such that
+\begin{itemize}
+\item Every morphism factors into a map in $\mathcal{L}$ followed by a map in $\mathcal{R}$.
+\item $\mathcal{L}$ is the class of maps that have LLP with respect to $\mathcal{R}$.
+\item $\mathcal{R}$ is the class of maps that have RLP with respect to $\mathcal{L}$.
+\end{itemize}
+\end{defn}
+
+\begin{defn}
+A \emph{model structure} on a category $\C$ is a choice of three classes of morphisms $\fib$, $\cof$, and $\we$,
+called \emph{fibrations}, \emph{cofibrations}, and \emph{weak equivalences} respectively, satisfying the following axioms:
+\begin{itemize}
+\item $\we$ has 2-out-of-3 property, that is given composable morphisms $f,g$,
+    if two out of three morphisms $f$, $g$, $g \circ f$ are in $\we$, so is the third.
+\item $(\cof, \fib \cap \we)$ and $(\cof \cap \we, \fib)$ are weak factorization systems.
+\end{itemize}
+A \emph{model category} is a complete and cocomplete category equipped with a model structure.
+\end{defn}
+
+A map is called a \emph{trivial fibration} if it belongs to $\fib \cap \we$,
+and it is called a \emph{trivial cofibration} if it belongs to $\cof \cap \we$.
+An object $X$ is called \emph{fibrant} if the morphism $X \to 1$ to the terminal object is a fibration,
+and it is called \emph{cofibrant} if the morphism $0 \to X$ from the initial object is a cofibration.
+
+Let $\C$ be a model category.
+Then we can define a relative cylinder object $C_U(V)$ for every $i : U \to V$.
+Let $[\cyli_0,\cyli_1] : V \amalg_U V \to C(V)$, $s : C(V) \to V$ be a factorization of $[id_V,id_V] : V \amalg_U V \to V$ into a cofibration and a trivial fibration.
+The homotopy relation corresponding to this cylinder object is always reflexive and symmetric.
+Later, we will see that if $i$ is a cofibration and every object of $\C$ is fibrant, then it is also transitive.
+
+A map $f : X \to Y$ is \emph{an inclusion of a deformation retract} if there is
+a map $g : Y \to X$ such that $g \circ f = id_X$ and $f \circ g \sim id_Y$.
+A map $f : X \to Y$ is \emph{an inclusion of a strong deformation retract} if the homotopy is relative to $f$.
+
+A \emph{path object} for an object $Z$ is an object $P(Z)$ together with maps $t : Z \to P(Z) \in \we$
+and $\langle p_0,p_1 \rangle : P(Z) \to Z \times Z \in \fib$ such that $p_0 \circ t = p_1 \circ t = id_Z$.
+A \emph{right homotopy} between morphisms $f_0,f_1 : Y \to Z$ is a map
+$h : Y \to P(Z)$ such that $p_0 \circ h = f_0$ and $p_1 \circ h = f_1$.
+We say that $f_0$ and $f_1$ are right homotopic and write $f_0 \sim^r f_1$
+if there exists a right homotopy $h : Y \to P(Z)$ between them.
+We say that a right homotopy $h : Y \to P(Z)$ between $f_0,f_1 : Y \to Z$
+is constant on $i : X \to Y$ if $h \circ i = t \circ f_0 \circ i$.
+In this case, we write $f_0 \sim^r_i f_1$.
+
+\begin{prop}[left-right-hom]
+Let $i : X \to Y$ be a cofibration, $Z$ a fibrant object, and $f_0,f_1 : Y \to Z$ a pair of maps.
+Then $f_0 \sim_i f_1$ if and only if $f_0 \sim^r_i f_1$.
+\end{prop}
+
+\begin{prop}[hom-ext][Homotopy extension property]
+Let $X$ be a fibrant object and let $i : U \to V \in \cof$, $u : U \to X$, and $v : V \to X$ be maps such that $u \sim^r v \circ i$.
+Then there exists a map $v' : V \to X$ such that $u = v' \circ i$ and $v' \sim^r v$.
+\end{prop}
+
+Let $\C$ be a category and let $\I$ be a class of morphisms of $\C$.
+Then we define $\Iinj$ to be the class of morphisms of $\C$ that has RLP with respect to $\I$,
+$\Icof$ to be the class of morphisms of $\C$ that has LLP with respect to $\Iinj$, and
+$\Icell$ to be the class of transfinite compositions of pushouts of elements of $\I$.
+Elements of $\Icell$ are called \emph{relative $\I$-cell complexes}.
+Every relative $\I$-cell complex belongs to $\Icof$.
+
+We say that a set $\I$ of maps of a cocomplete category $\C$ \emph{permits the small object argument}
+if the domains of maps in $\I$ are small relative to $\Icell$.
+
+\begin{prop}[][The small object argument]
+Let $\C$ be a cocomplete category and $\I$ a set of maps of $\C$ that permits the small object argument.
+Then $(\Icell,\Iinj)$ is a weak factorization system.
+\end{prop}
+
+\begin{defn}
+Let $\C$ be a category with a model structure. Then this model category is
+\emph{cofibrantly generated} if there are sets $\I$ and $\J$ of maps of $\C$ such
+that they permit the small object argument, $\fib = \Jinj$, and $\fib \cap \we = \Iinj$.
+
+Elements of $\I$ are called \emph{generating cofibrations},
+and elements of $\J$ are called \emph{generating trivial cofibrations}.
+\end{defn}
+
+\begin{prop}[model-cat]
+Suppose that $\C$ is a complete and cocomplete category, $\we$ is a class of morphisms of $\C$, and $\I$, $\J$ are sets of morphisms of $\C$.
+Then $\C$ is a cofibrantly generated model category with $\I$ as the set of generating cofibrations,
+$\J$ as the set of generating trivial cofibrations, and $\we$ as the class of weak equivalences if and only if the following conditions are satisfied:
+\begin{description}
+\item[(A1)] $\I$ and $\J$ permit the small object argument.
+\item[(A2)] $\we$ has 2-out-of-3 property and is closed under retracts.
+\item[(A3)] $\Iinj \subseteq \we$.
+\item[(A4)] $\Jcell \subseteq \we \cap \Icof$.
+\item[(A5)] Either $\Jinj \cap \we \subseteq \Iinj$ or $\Icof \cap \we \subseteq \Jcof$.
+\end{description}
+\end{prop}
+
+\section{Properties of f-model categories}
+
+An \emph{f-model structure} on a category is a model structure in which every object is fibrant.
+In this section, we will prove various properties of f-model categories.
+In particular, we will give a characterization of weak equivalences in such categories.
+
+The following propositions give useful characterizations of trivial
+cofibrations and weak equivalences in f-model categories.
+
+\begin{prop}[min-triv-cof]
+Let $\C$ be a category with an f-model structure.
+Then a cofibration $f : X \to Y$ is trivial if and only if it is an inclusion of a strong deformation retract.
+\end{prop}
+
+This characterization of trivial cofibrations is probably well-known.
+The proof of the ``only if'' direction can be found, for example, in \cite{hirschhorn}.
+We include a proof of the ``if'' direction for the sake of convenience.
+
+\begin{proof}
+Let $f : X \to Y$ be an inclusion of a strong deformation retract.
+Factor $f$ into a map $i : X \to Z \in \cof \cap \we$ followed by a map $p : Z \to Y \in \fib$.
+Let $g : Y \to X$ be a retraction of $f$ and $h : Cyl_X Y \to Y$ a homotopy between $f \circ g$ and $id_Y$.
+Consider the following diagram:
+\[ \xymatrix{ Y \ar[r]^{i \circ g} \ar[d]_{\imath_0} & Z \ar[d]^p \\
+              Cyl_X Y \ar[r]_-h \ar@{-->}[ur]^{h'}   & Y.
+            } \]
+Since $\imath_0 : Y \to Cyl_X Y$ is a trivial cofibration, we have a lift $h' : Cyl_X Y \to Z$.
+Then $h' \circ \imath_1 \circ f = i$ and $p \circ h' \circ \imath_1 = id_Y$, thus $f$ is a retract of $i$, hence a weak equivalence.
+\end{proof}
+
+We say that a map in a model category is \emph{pure} if it is pure with respect to cofibrations between cofibrant objects.
+
+Now, we give a characterization of weak equivalences in an f-model category.
+Later we will add another equivalent condition to this list.
+
+\begin{prop}[min-we]
+Let $\C$ be a category with an f-model structure and let $f : X \to Y$ be a map of $\C$.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item $f$ is a weak equivalence.
+\item $f$ has RLP up to $\sim_i$ with respect to every cofibration $i$.
+\item $f$ is pure and has RLP up to $\sim$ with respect to cofibrant objects.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+$(1 \Rightarrow 2)$
+Let $f : X \to Y$ be a weak equivalence.
+Factor it into a trivial cofibration $i : X \to Z$ followed by a trivial fibration $p : Z \to Y$.
+Let $c : U \to V$ be a cofibration and let $u : U \to X$, $v : V \to Y$ be maps such that $f \circ u = v \circ c$.
+Since $c$ is a cofibration and $p$ is a trivial fibration, we have a lift $q : V \to Z$.
+Since $i$ is a trivial cofibration, it has a retraction $r : Z \to X$ such that $i \circ r \sim_i id_Z$.
+Then $r \circ q$ is a required lift.
+
+$(2 \Rightarrow 3)$ Obvious.
+
+$(3 \Rightarrow 1)$
+Let $f : X \to Y$ be a pure map that has RLP with respect to cofibrant objects.
+Let $q_x : X' \to X \in \fib \cap \we$ be a cofibrant replacement for $X$.
+Factor $f \circ q_x$ into a map $f' : X' \to Y' \in \cof$ followed by a map $q_y : Y' \to Y \in \fib \cap \we$.
+\[ \xymatrix{ X' \ar[r]^{q_x} \ar[d]_{f'} & X \ar[d]^f \\
+              Y' \ar[r]_{q_y}             & Y
+            } \]
+Since $f \circ q_x$ is pure, $f'$ has a retraction $g' : Y' \to X'$.
+
+First, let us show that $f'$ has RLP up to $\sim$ with respect to cofibrant objects.
+Indeed, let $U$ be a cofibrant object and $u : U \to Y'$ a map.
+Then we have a map $u' : U \to X'$ such that $q_y \circ f' \circ u' = f \circ q_x \circ u' \sim q_y \circ u$.
+Since $q_y$ is a trivial fibration, we have a lift in the diagram below, which gives us a homotopy between $f' \circ u'$ and $u$.
+\[ \xymatrix{ U \amalg U \ar[rr]^-{[f' \circ u', u]} \ar[d] & & Y' \ar[d]^{q_y} \\
+              Cyl\,U     \ar[rr] \ar@{-->}[urr]             & & Y
+            } \]
+Second, let us show that $g'$ is pure.
+Indeed, let $i : U \to V$ be a cofibration between cofibrant objects, and suppose that we have a commutative square of the form
+\[ \xymatrix{ U \ar[r]^u \ar[d]_i & Y' \ar[d]^{g'} \\
+              V \ar[r]_v          & X'.
+            } \]
+Then there exists a map $u' : U \to X'$ such that $f' \circ u' \sim u$; hence $v \circ i = g' \circ u \sim u'$.
+By \rprop{left-right-hom} and \rprop{hom-ext}, there exists a map $v' : V \to X'$ such that $v' \circ i = u'$ and $v' \sim v$.
+Then $f' \circ v' \circ i = f' \circ u' \sim u$, and by the same propositions, there exists a map $v'' : V \to Y'$ such that $v'' \circ i = u$, which shows that $g'$ is pure.
+
+Finally, consider the following diagram:
+\[ \xymatrix{ Y' \amalg_{X'} Y' \ar[rr]^-{[f' \circ g', id_{Y'}]} \ar[d] &                & Y' \ar[d]^{g'} \\
+              Cyl_{X'} Y'       \ar[r]                                   & Y' \ar[r]_{g'} & X'.
+            } \]
+Since $g'$ is pure, we have a homotopy $Cyl_{X'} Y' \to Y'$ between $f' \circ g'$ and $id_{Y'}$.
+By \rprop{min-triv-cof}, $f'$ is a weak equivalence.
+Hence $f$ is a weak equivalence by the 2-out-of-3 property.
+\end{proof}
+
+Now, given a set of generating cofibrations we show how to construct a set of generating trivial cofibrations.
+Let $\C$ be a cocomplete category and $\I$ a set of maps of $\C$, that permits the small object argument.
+Let us denote by $\J_\I$ the set of maps $\imath_0 : V \to Cyl_U V$ for each $U \to V \in \I$.
+
+\begin{prop}[triv-fib-iinj]
+Let $\C$ be a cocomplete category and $\I$ a set of maps of $\C$ such that
+the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
+If $f : X \to Y \in \Jinj[_\I]$ has RLP up to $\sim_i$ with respect to every $i \in \I$, then $f \in \Iinj$.
+\end{prop}
+\begin{proof}
+Suppose we have a commutative square as below.
+We need to find a lift $V \to X$ such that both triangles commute.
+\[ \xymatrix{ U \ar[d]_{i \in \I} \ar[r] \ar@{}[dr]|(.7){\sim} & X \ar[d]^f \\
+              V \ar[r]_v \ar@{-->}[ur]^g              & Y
+            } \]
+By assumption, we have a lift $g : V \to X$ together with
+a homotopy $h : Cyl_U V \to Y$ between $f \circ g$ and $v$.
+Since $f \in \Jinj[_\I]$, we have a lift $h' : Cyl_U V \to X$ in the following diagram:
+\[ \xymatrix{ V \ar[r]^g \ar[d]_{\imath_0}         & X \ar[d]^f \\
+              Cyl_U V \ar[r]^-h \ar@{-->}[ur]^{h'} & Y.
+            } \]
+Then $h' \circ \imath_1$ is a required lift in the original square.
+\end{proof}
+
+\begin{cor}[min-cof-gen]
+Let $\C$ be an f-model category.
+Suppose that the class of cofibrations is generated by a set $\I$ such that
+the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
+Then the model structure is cofibrantly generated with $\J_\I$ as a set of generating trivial cofibrations.
+\end{cor}
+\begin{proof}
+This follows from the previous proposition and \rprop{model-cat}.
+\end{proof}
+
+\section{The existence of an f-model structure}
+
+In this section, we will give a necessary and sufficient
+condition for the existence of an f-model structure.
+Throughout this section let $\C$ be a fixed cocomplete category and $\I$ a set of maps of $\C$
+such that the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
+We call a map $f$ a cofibration if $f \in \Icof$, and a trivial fibration if $f \in \Iinj$.
+We say that a map is a \emph{weak equivalence} if it has has RLP up to $\sim_i$ with respect to every $i \in \I$.
+The class of weak equivalences is denoted by $\we_\I$.
+Note that every trivial fibration is a weak equivalence.
+
+\begin{lem}[transitive]
+If $\I$ is appropriate, then for every cofibration $f : X \to Y$, relation $\sim_f$ is transitive.
+\end{lem}
+\begin{proof}
+Let $h_1 : Cyl_X Y \to Z$ be a homotopy between $g_1,g_2 : Y \to Z$ and
+let $h_2 : Cyl_X Y \to Z$ be a homotopy between $g_2,g_3 : Y \to Z$.
+We want to show that $g_1 \sim g_3$.
+Let $W$ be the pushout of $\imath_0 : Y \to Cyl_X Y$ and $\imath_1 : Y \to Cyl_X Y$.
+Let $q_1 : Cyl_X Y \to W$ be the pushout of $\imath_1$ and $q_0 : Cyl_X Y \to W$ the pushout of $\imath_0$.
+Let $t : W \to Cyl_X Y$ be the pushout of $s : Cyl_X Y \to Y$ along $q_1$.
+Since $\I$ is appropriate, $t$ is pure.
+Consider the following diagram:
+\[ \xymatrix{ Y \amalg_X Y \ar[rr]^-{[q_0 \circ \imath_0, q_1 \circ \imath_1]} \ar[d] & & W \ar[d]^t \\
+              Cyl_X Y      \ar@{=}[rr]                                                & & Cyl_X Y.
+            } \]
+Since $t$ is pure, we have a map $h : Cyl_X Y \to W$ such that the top triangle commutes.
+Then $[h_1,h_2] \circ h$ is a required homotopy between $g_1$ and $g_3$.
+\end{proof}
+
+\begin{lem}[top-2-out-of-3]
+Let $f : X \to Y$ and $g : Y \to Z$ be maps such that $g \circ f$ is a weak equivalence and $g$ is pure.
+Then $f$ is a weak equivalence.
+\end{lem}
+\begin{proof}
+Suppose that we have a commutative square:
+\[ \xymatrix{ U \ar[r]^u \ar[d]^i & X \ar[d]^f \\
+              V \ar[r]_v          & Y.
+            } \]
+Since $g \circ f \in \we_\I$, we have a map $k : V \to X$ such that $k \circ i = u$ and $g \circ v \sim_i g \circ f \circ k$.
+Consider the following diagram:
+\[ \xymatrix{ V \amalg_U V \ar[rr]^-{[v, f \circ k]} \ar[d] & & Y \ar[d]^g \\
+              Cyl_U V      \ar[rr]                          & & Z.
+            } \]
+Since $g$ is pure, we have a homotopy $h : Cyl_U V \to Y$ between $v$ and $f \circ k$.
+\end{proof}
+
+Let $X$ be a cofibrant object.
+We say that an object $C_X$ is a cylinder object for $X$ if it is equipped with maps $\imath_0,\imath_1 : X \to C_X$
+and $s : C_X \to X$ such that $s$ is pure and $s \circ \imath_0 = s \circ \imath_1 = id_X$.
+A pair of maps $f_0,f_1 : X \to Y$ are $C_X$-homotopic if there exists a map
+$h : C_X \to Y$ such that $h \circ \imath_0 = f_0$ and $h \circ \imath_1 = f_1$.
+Note that if a pair of maps are $C_X$-homotopic, then they are homotopic.
+A map of cylinder objects $C_X$ and $C_Y$ is a pair of maps $X \to Y$
+and $C_X \to C_Y$ which commute with $\imath_0$, $\imath_1$, and $s$.
+
+We now prove a variant of the homotopy extension property.
+
+\begin{prop}[proper-hom-ext]
+Suppose that $\I$ is appropriate.
+Let $i : U \to V$ be a cofibration between cofibrant objects and $v : V \to X$ a map.
+Let $h : Cyl\,U \to X$ be a homotopy such that $h \circ \imath_1 = v \circ i$.
+Then there exists a cylinder object $C$ for $V$ together with a map of cylinder objects
+$k : Cyl\,U \to C \in \Icell$ and a homotopy $h' : C \to X$ such that $h' \circ \imath_1 = v$ and $h' \circ k = h$.
+\end{prop}
+Note, that the same proposition holds, if we replace $\imath_1$ with $\imath_0$.
+\begin{proof}
+Let $M$ be the pushout of $i$ and $\imath_1 : U \to Cyl\,U$.
+Let $M \amalg_U V$ be the pushout of $U \overset{\imath_0}\to Cyl\,U \to M$ and $i$.
+Let $t : M \to V$ be the pushout of $s : Cyl\,U \to U$ along $Cyl\,U \to M$.
+The maps $t$ and $id_V$ induce a map $M \amalg_U V \to V$.
+Factor it into a map $M \amalg_U V \to C \in \Icell$ followed by a map $C \to V \in \Iinj$.
+The map $t$ is pure since $\I$ is appropriate; hence $M \to M \amalg_U V \to C$ is pure as well.
+It is also a cofibration between cofibrant objects, hence it has a retraction $C \to M$.
+The maps $v : V \to X$ and $h : Cyl\,U \to X$ induce a map $M \to X$.
+\[ \xymatrix{                               & U \ar[r]^i \ar[d]_{\imath_1} & V \ar[d] \ar[drr]^v     &          &        & \\
+              U \ar[r]^-{\imath_0} \ar[d]_i & Cyl\,U \ar[r]                & \po M \ar[d] \ar@{=}[r] & M \ar[r] & X      & \\
+              V \ar[rr]                     &      & \po M \amalg_U V \ar[r]^-{\in \Icell} & C \ar[r]^{\in \Iinj} \ar[u] & V
+            } \]
+Then $C$ is a required cylinder object for $V$, and $C \to M \to X$ is a required homotopy.
+\end{proof}
+
+\begin{cor}[proper-hom-ext]
+Suppose that $\I$ is appropriate.
+Let $i : U \to V$ be a cofibration between cofibrant objects.
+Let $u : U \to X$ and $v : V \to X$ be maps such that $u \sim v \circ i$.
+Then there exists a map $v' : V \to X$ such that $u = v' \circ i$ and $v' \sim v$.
+\end{cor}
+
+Using the previous proposition, we can prove the following lemma, which will be useful later.
+
+\begin{lem}[bot-pure]
+Suppose that $\I$ is appropriate.
+Let $i : U \to V \in \Icof$, $f : X \to Y$, and $g : Y \to Z$ be maps such that $U$ is cofibrant, $g \circ f$
+is pure with respect to $i : U \to V$, and $f$ has RLP up to $\sim$ with respect to $U$.
+Then $g$ is pure with respect to $i$.
+\end{lem}
+\begin{proof}
+Suppose that we have a commutative square as below.
+Then there exists a map $u' : U \to X$ such that $f \circ u' \sim u$.
+\[ \xymatrix{   \ar@{}[dr]|(.7){\sim}                & X \ar[d]^f \\
+              U \ar@{-->}[ur]^{u'} \ar[d]_i \ar[r]_u & Y \ar[d]^g \\
+              V \ar[r]_v                             & Z
+            } \]
+Since $g \circ f \circ u' \sim v \circ i$, by \rcor{proper-hom-ext}, there
+exists a map $v_1 : V \to Z$ such that $g \circ f \circ u' = v_1 \circ i$.
+Since $g \circ f$ is pure with respect to $i$, there exists a map $v_2 : V \to X$ such that $u' = v_2 \circ i$.
+Since $f \circ v_2 \circ i = f \circ u' \sim u$, by \rcor{proper-hom-ext},
+there exists a map $v_3 : V \to Y$ such that $v_3 \circ i = u$.
+Thus $g$ is pure with respect to $i$.
+\end{proof}
+
+The following proposition is a crucial step in the proof of the 2-out-of-3 property for $\we_\I$.
+
+\begin{prop}[hom-pushouts]
+Suppose that $\I$ is appropriate.
+Let $Z \leftarrow X \to Y$ and $Z' \leftarrow X' \to Y'$ be diagrams in which
+all objects are cofibrant, and $X \to Y$ and $X' \to Z'$ are cofibrations.
+Suppose that we have a morphism between these diagrams such that $X \to X'$, $Y \to Y'$, and $Z \to Z'$ are trivial fibrations.
+Then the induced map $Y \amalg_X Z \to Y' \amalg_{X'} Z'$ is pure.
+\end{prop}
+\begin{proof}
+First, note that if $A,B,C,E$ are cofibrant objects, $A \to B$ is a cofibration, $A \to C$ is an arbitrary map, and
+$C \to E$ is a pure map, then the induced map $B \amalg_A C \to B \amalg_A E$ is pure.
+Indeed, factor $C \to E$ into a map $C \to D \in \Icell$ followed by a map $D \to E \in \Iinj$.
+\[ \xymatrix{ A \ar[r] \ar[d] &     C \ar[d]     \ar[r] &     D \ar[d]     \ar[r] &     E \ar[d] \\
+              B \ar[r]        & \po B \amalg_A C \ar[r] & \po B \amalg_A D \ar[r] & \po B \amalg_A E
+            } \]
+Since $C \to D$ is a split monomorphism, $B \amalg_A C \to B \amalg_A D$ is a split monomorphism as well, hence it is pure.
+The map $B \amalg_A D \to B \amalg_A E$ is pure since $\I$ is appropriate.
+Thus $B \amalg_A C \to B \amalg_A E$ is pure.
+
+Now, note that the map $Y \amalg_X Z \to Y' \amalg_{X'} Z'$ factors into the following maps
+$Y \amalg_X Z \to Y \amalg_X Z' \simeq (X' \amalg_X Y) \amalg_{X'} Z' \to Y' \amalg_{X'} Z'$.
+Since $\I$ is appropriate, $Y \to X' \amalg_X Y$ has RLP up to $\sim$ with respect to cofibrant objects.
+Since $Y \to Y'$ is pure, by \rlem{bot-pure}, $X' \amalg_X Y \to Y'$ is pure.
+Then $(X' \amalg_X Y) \amalg_{X'} Z' \to Y' \amalg_{X'} Z'$ and $Y \amalg_X Z \to Y \amalg_X Z'$ are pure, as we noted before.
+Thus $Y \amalg_X Z \to Y' \amalg_{X'} Z'$ is pure as well.
+\end{proof}
+
+\begin{cor}[cyl-pushouts]
+Suppose that $\I$ is appropriate.
+Let $X,Y,Z$ be cofibrant objects and let $C_X,C_Y,C_Z$ be cylinder objects
+such that $C_X \to X$, $C_Y \to Y$, and $C_Z \to Z$ are trivial fibrations.
+Let $C_X \to C_Y \in \Icof$ and $C_X \to C_Z$ be maps of cylinder objects such that $X \to Z \in \Icof$.
+Then $C_Y \amalg_{C_X} C_Z$ is a cylinder object for $Y \amalg_X Z$.
+\end{cor}
+
+Using the previous proposition, we can prove the last part of the 2-out-of-3 property.
+
+\begin{lem}[bot-2-out-of-3]
+Suppose that $\I$ is appropriate.
+Let $f : X \to Y$ and $g : Y \to Z$ be maps such that $g \circ f$ is a weak equivalence
+and $f$ has RLP up to $\sim$ with respect to the domains of maps in $\I$.
+Then $g$ is a weak equivalence.
+\end{lem}
+\begin{proof}
+Suppose that we have a commutative square as below.
+Then there exists a map $u_x : U \to X$ and a homotopy $h : Cyl\,U \to Y$ between $f \circ u_x$ and $u$.
+\[ \xymatrix{   \ar@{}[dr]|(.7){\sim}                & X \ar[d]^f \\
+              U \ar@{-->}[ur]^{u_x} \ar[d]_i \ar[r]_u & Y \ar[d]^g \\
+              V \ar[r]_v                             & Z
+            } \]
+The map $g \circ h$ is a homotopy between $g \circ f \circ u_x$ and $v \circ i$.
+Let $C_V$ be a cylinder object for $V$ and $h_z : C_V \to Z$ a homotopy constructed in \rprop{proper-hom-ext}.
+Let $v_z : V \to Z$ be equal to $h_z \circ \imath_0$.
+Consider the following diagram:
+\[ \xymatrix{ U \ar[r]^{u_x} \ar[d]_i \ar@{}[dr]|(.7){\sim_i} & X \ar[d]^{g \circ f} \\
+              V \ar[r]_{v_z} \ar@{-->}[ur]^{v_x}              & Z.
+            } \]
+Since $g \circ f$ is a weak equivalence, we have a lift $v_x : V \to X$ together
+with a homotopy $h_1 : Cyl_U V \to Z$ between $v_z$ and $g \circ f \circ v_x$.
+
+Note that $h \circ \imath_0 = f \circ v_x \circ i$.
+Let $C'_V$ be a cylinder object for $V$ and $h_y : C'_V \to Y$ a homotopy constructed in \rprop{proper-hom-ext}.
+Let $v_y : V \to Y$ be equal to $h_y \circ \imath_1$.
+By \rcor{cyl-pushouts}, $C_V \amalg_{Cyl\,U} C'_V$ is a cylinder object for $V \amalg_U V$.
+Let $h_2 : C_V \amalg_{Cyl\,U} C'_V \to Z$ be equal to $[h_z, g \circ h_y]$.
+Then $h_2$ is a homotopy between $V \amalg_U V \to Cyl_U V \overset{h_1}\to Z$ and $[v, g \circ v_y]$.
+By \rcor{proper-hom-ext}, there exists a homotopy $h_3 : Cyl_U V \to Z$ between $v$ and $g \circ v_y$.
+Thus $v_y$ is a required lift; hence $g$ is a weak equivalence.
+\end{proof}
+
+Now, we are ready to prove one of the main results of this paper.
+
+\begin{thm}[main]
+Let $\C$ be a complete and cocomplete category and $\I$ a set of maps of $\C$ such that
+the domains and the codomains of maps in $\I$ are cofibrant and small relative to $\Icell$.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item There is an f-model structure on $\C$ with $\Icof$ as the class of cofibrations.
+\item \label{item:main:snd} $\I$ is appropriate, and $\Jcell[_\I]$ has RLP up to $\sim$ with respect to the domains of maps in $\I$.
+\end{enumerate}
+In this case, a map is a weak equivalence if and only if it has RLP up to $\sim_i$ with respect to every $i \in \I$.
+\end{thm}
+\begin{proof}
+Suppose that the model structure on $\C$ exists.
+% Then the required conditions hold by \rprop{cof-proper} and \rprop{min-we}.
+Now, suppose that $(\ref{item:main:snd})$ holds.
+Let us verify the conditions of \rprop{model-cat}.
+\begin{description}
+\item[(A1)] The domains of maps in $\J_\I$ are the codomains of maps in $\I$, and $\Jcell[_\I] \subseteq \Icell$.
+Hence the domains of maps in $\J_\I$ are small relative to $\Jcell[_\I]$.
+\item[(A2)] The closure of $\we_\I$ under retracts is obvious.
+Let us prove the 2-out-of-3 property.
+Let $f : X \to Z$ be a weak equivalence.
+Factor $f$ into a map $g : X \to Y \in \Jcell[_\I]$ followed by $h : Y \to Z \in \Jinj[_\I]$.
+By \rlem{bot-2-out-of-3}, $h$ is a weak equivalence, and by \rprop{triv-fib-iinj}, $h$ is a trivial fibration.
+Thus every weak equivalence is pure and has RLP up to $\sim$ with respect to the domains of maps in $\I$.
+Now, the 2-out-of-3 property follows from \rlem{transitive}, \rlem{top-2-out-of-3}, and \rlem{bot-2-out-of-3}.
+\item[(A3)] This is obvious.
+\item[(A4)] Since maps in $\J_\I$ are split monomorphisms, every map
+$f \in \Jcell[_\I]$ has a retraction, which is a weak equivalence by
+\rlem{bot-2-out-of-3}; hence $f$ is a weak equivalence by 2-out-of-3 property.
+\item[(A5)] This holds by \rprop{triv-fib-iinj}.
+\end{description}
+\end{proof}
+
+\section{Properness}
+
+The conditions of \rthm{main} may still be difficult to verify.
+In this section, we show that in a certain case, given a set of generating cofibrations,
+left properness implies the existence of an f-model structure.
+
+\begin{lem}[j-transfinite]
+Suppose that $U$ is finite (that is $\omega$-small) relative to $\Icell$.
+If $\sim$ is transitive and pushouts of maps in $\J_\I$ has RLP up to $\sim$ with respect to $U$, then every map in $\Jcell[_\I]$ has this property.
+\end{lem}
+\begin{proof}
+Let $P$ be the class of maps that has RLP up to $\sim$ with respect to $U$.
+We will show that $P$ is closed under transfinite compositions.
+Let $\lambda$ be an ordinal and $X : \lambda \to \C$ a $\lambda$-sequence such that
+for every $\alpha < \lambda$, the map $X_\alpha \to X_{\alpha + 1}$ belongs to $P$.
+For each $\alpha < \beta \leq \lambda$, let us denote by $x^\alpha_\beta$ the map $X_\alpha \to X_\beta$.
+We show by transfinite induction on $\lambda$ that $x_\lambda \in P$.
+
+The case $\lambda = 0$ is trivial.
+
+Suppose that $\lambda = \alpha + 1$.
+Let $u : U \to X_{\alpha + 1}$ be a map.
+Then there exists a map $u' : U \to X_\alpha$ such that $x^\alpha_{\alpha + 1} \circ u' \sim u$.
+By induction hypothesis, there exists a map $u'' : U \to X_0$ such that $x^0_\alpha \circ u'' \sim u'$.
+Hence $x^0_{\alpha + 1} \circ u'' \sim u$.
+
+Suppose that $\lambda$ is a limit ordinal. 
+Suppose that we have a map $u : U \to X_\lambda$.
+Since $U$ is finite, there exists a map $u' : U \to X_\alpha$ for
+some $\alpha < \lambda$ such that $u = x^\alpha_\lambda \circ u'$.
+By induction hypothesis, there exists a map $u'' : U \to X_0$ such that $x^0_\alpha \circ u'' \sim u'$.
+Hence $x^0_\lambda \circ u'' \sim u$.
+\end{proof}
+
+First, let us give a characterization of weak equivalences.
+
+\begin{prop}[pure-we]
+Suppose that $\I$ is appropriate.
+Let $f : X \to Y$ be a pure map that has RLP up to $\sim$ with respect to $V \amalg_U V$ for every $i : U \to V \in \I$.
+Then $f$ is a weak equivalence.
+\end{prop}
+\begin{proof}
+Let $u : X' \to X \in \Iinj$ be a cofibrant replacement for $X$.
+Factor $f \circ u$ into a map $f' : X' \to Y' \in \Icell$ followed by a map $Y' \to Y \in \Iinj$.
+Since every map from $i \in \I$ to $f$ factors through $f'$, it is enough to show that $f'$ is a weak equivalence.
+Suppose that we have a commutative square
+\[ \xymatrix{ U \ar[r]^u \ar[d]_i & X' \ar[d]^{f'} \\
+              V \ar[r]_v          & Y'.
+            } \]
+Since $f$ is pure, $f'$ is pure as well.
+Let $g' : Y' \to X'$ be a retraction of $f'$.
+Consider the following diagram:
+\[ \xymatrix{ V \amalg_U V \ar[rr]^-{[f' \circ g' \circ v, v]} \ar[d] & & Y' \ar[d]^{g'} \\
+              Cyl_U V      \ar[rr]_-{g' \circ v \circ s}              & & X'.
+            } \]
+Since $f$ has RLP up to $\sim$ with respect to $V \amalg_U V$, $f'$ has this property as well.
+Hence by \rlem{bot-pure}, $g'$ is pure with respect to $V \amalg_U V \to Cyl_U V$.
+Hence we have a homotopy $h' : Cyl_U V \to Y'$ between $f' \circ g' \circ v$ and $v$.
+Thus $f'$ is a weak equivalence.
+\end{proof}
+
+\begin{prop}[we-pure]
+Suppose that $\I$ is appropriate, trivial fibrations between cofibrant objects are closed under coproducts,
+and the domains of maps in $\I$ are finite relative to $\Icell$.
+Then weak equivalences are pure and have RLP up to $\sim$ with respect to finite cofibrant objects.
+\end{prop}
+\begin{proof}
+Let $f : X \to Y$ be a weak equivalence.
+First, let us show that $f$ has RLP up to $\sim$ with respect to
+cofibrations between cofibrant objects, which are pushouts of coproducts of maps in $\I$.
+Consider the following diagram:
+\[ \xymatrix{ \coprod U_a \ar[r]^u \ar[d] &     U' \ar[r]^{u'} \ar[d] & X \ar[d]^f \\
+              \coprod V_a \ar[r]_v        & \po V' \ar[r]_{v'}        & Y.
+            } \]
+Since $f$ is a weak equivalence, we have a lift $v_1 : \coprod V_a \to X$ together
+with a homotopy $h : \coprod Cyl_{U_a} V_a \to Y$ between $f \circ v_1$ and $v' \circ v$.
+Since trivial fibrations are closed under coproducts, $\coprod Cyl_{U_a} V_a$ is a cylinder object for $\coprod V_a$.
+The maps $v_1$ and $u'$ induce a map $v_2 : V' \to X$.
+Let $C_{U'}$ be a cylinder object for $V'$ such that there exists a map of cylinder objects $Cyl\,U \to C_{U'} \in \Icell$.
+Let $C_{V'}$ be the pushout of $\coprod Cyl\,U_a \overset{s}\to \coprod U_a \to \coprod Cyl_{U_a} V_a$ and $\coprod Cyl\,U_a \to C_{U'}$.
+By \rcor{cyl-pushouts}, $C_{V'}$ is a cylinder object for $V'$.
+The maps $h : \coprod Cyl_{U_a} V_a \to Y$ and $C_{U'} \to U' \overset{u'}\to X \overset{f}\to Y$
+induce a homotopy $C_{V'} \to Y$ between $f \circ v_2$ and $v'$.
+Thus $v_2 : V' \to X$ is a required lift.
+
+Now, let us show that $f$ is pure.
+Since every cofibration is a retract of relative $\I$-cell complex, we only need to prove the following fact.
+Let $U_0 \xrightarrow{u^0} U_1 \xrightarrow{u^1} \ldots U_\omega$ be a
+sequence of pushouts of coproducts of maps in $\I$ such that $U_0$ is cofibrant.
+Let us denote by $u^i_\omega : U_i \to U_\omega$ the map $U_i \to U_\omega$.
+We need to show that $f$ is pure with respect to $u^0_\omega$.
+Suppose that we have a commutative square
+\[ \xymatrix{ U_0      \ar[r]^{v_0} \ar[d]_{u^0_\omega} & X \ar[d]^f \\
+              U_\omega \ar[r]_v                         & Y.
+            } \]
+Then we construct maps $v_n : U_n \to X$ by induction on $n$ in such a
+way that $v_{n+1} \circ u^n = v_n$ and $f \circ v_n \sim v \circ u^n_\omega$.
+Map $v_0$ is already defined.
+Suppose that $n > 0$.
+By induction hypothesis, there is a map $v_{n-1} : U_{n-1} \to X$
+such that $f \circ v_{n-1} \sim v \circ u^n_\omega$.
+By \rcor{proper-hom-ext}, there exists a map $v' : U_\omega \to Y$
+such that $f \circ v_{n-1} = v' \circ u^n_\omega$ and $v' \sim v$.
+Then there exists a map $v_n : U_n \to X$ such that $v_n \circ u^{n-1} = v_{n-1}$
+and $f \circ v_n \sim v' \circ u^n_\omega \sim v \circ u^n_\omega$.
+The maps $v_n : U_n \to X$ induce a map $v_\omega : U_\omega \to X$ such that $v_\omega \circ u^0_\omega = v_0$.
+Thus $f$ is pure with respect to $u^0_\omega$.
+
+We already saw that $f$ has RLP up to $\sim$ with respect to every cofibration between
+cofibrant objects, which is a finite composition of pushouts of coproducts of maps in $\I$.
+Since for every finite cofibrant object $X$, map $0 \to X$ is a retract of
+such cofibration, it follows that $f$ has RLP up to $\sim$ with respect to $X$.
+\end{proof}
+
+Now we are ready to prove that left properness implies the existence of an f-model structure.
+
+\begin{thm}[properness]
+Let $\C$ be a complete and cocomplete category and $\I$ a set of maps of $\C$ such that
+trivial fibrations between cofibrant objects are closed under coproducts, and the domains
+and the codomains of maps in $\I$ are cofibrant and finite relative to $\Icell$.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item There is a left proper f-model structure on $\C$ with $\Icof$ as the class of cofibrations.
+\item $\I$ is appropriate, and for every $i : U \to V \in \I$, $u : U \to X$, and
+$X \to Y \in \Iinj$, the map $X \amalg_U V \to Y \amalg_U V$ is a weak equivalence.
+\end{enumerate}
+\end{thm}
+\begin{proof}
+If a left proper f-model structure exists, then the required conditions hold by \rthm{main}.
+To prove the converse, we need to show that $\Jcell[_\I]$ has
+RLP up to $\sim$ with respect to the domains of maps in $\I$.
+By \rlem{j-transfinite}, it is enough to show that pushouts of maps in
+$\J_\I$ has RLP up to $\sim$ with respect to the domains of maps in $\I$.
+Let $g : X \to Y$ be the pushout of a map $j : V \to Cyl_U V \in \J_\I$ along a map $f : V \to X$.
+Factor $f$ into a map $V \to X' \in \Icell$ followed by a map $X' \to X \in \Iinj$.
+\[ \xymatrix{ V       \ar[r] \ar[d]_j &     X' \ar[r] \ar[d] &     X \ar[d]^g \\
+              Cyl_U V \ar[r] \ar[d]_s & \po Y' \ar[r] \ar[d] & \po Y \\
+              V       \ar[r] & \po X'
+            } \]
+The map $Y' \to X'$ is pure since $\I$ is appropriate, hence $X' \to Y'$ is a weak equivalence by \rlem{top-2-out-of-3}.
+Thus we only need to show that weak equivalences with cofibrant domains are closed
+under pushouts along relative $\I$-cell complexes between cofibrant objects.
+Then $Y' \to Y$ is a weak equivalence, and by \rprop{we-pure},
+$g$ has RLP up to $\sim$ with respect to the domains of maps in $\I$.
+
+Let $f : X \to Z$ be a weak equivalence with cofibrant domain, $i : U \to V \in \I$, and $u : U \to X$.
+Let us show that $X \amalg_U V \to Z \amalg_U V$ is a weak equivalence.
+Factor $f$ into a map $g : X \to Y \in \Icell$ followed by a map $Y \to Z \in \Iinj$.
+Then $Y \amalg_U V \to Z \amalg_U V$ is a weak equivalence by \rprop{pure-we}.
+The map $g$ is a weak equivalence, hence by \rprop{we-pure}, it is pure.
+Let $h : Y \to X$ be a retraction of $g$.
+By \rlem{bot-2-out-of-3}, $h$ is a weak equivalence.
+Factor $h$ into a map $h' : Y \to Y' \in \Icell$ followed by a map $k : Y' \to X \in \Iinj$.
+\[ \xymatrix{ U \ar[d]_i \ar[r]^u &     X \ar[d]     \ar[r]^g &     Y \ar[d]     \ar[r]^{h'} &     Y' \ar[d]     \ar[r]^k &     X \ar[d] \\
+              V          \ar[r]   & \po X \amalg_U V \ar[r]   & \po Y \amalg_U V \ar[r]      & \po Y' \amalg_U V \ar[r]   & \po X \amalg_U V
+            } \]
+By \rprop{pure-we}, $h'$ is pure, hence it is a split monomorphism.
+Hence $Y \amalg_U V \to Y' \amalg_U V$ is a split monomorphism.
+Since $\I$ is appropriate, $Y' \amalg_U V \to X \amalg_U V$ is pure.
+Hence $Y \amalg_U V \to X \amalg_U V$ is pure as well.
+By \rlem{top-2-out-of-3}, $X \amalg_U V \to Y \amalg_U V$ is a weak equivalence.
+Hence $X \amalg_U V \to Z \amalg_U V$ is a weak equivalence.
+
+Now, it is easy to show by transfinite induction that weak equivalences with cofibrant domains are closed
+under pushouts along relative $\I$-cell complexes between cofibrant objects.
+\end{proof}
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
