@@ -256,6 +256,8 @@ An \emph{f-model structure} on a category is a model structure in which every ob
 In this section, we will prove various properties of f-model categories.
 In particular, we will give a characterization of weak equivalences in such categories.
 
+For every $i : U \to V$, let $C_U(V)$ be any cylinder object such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V) \in \cof$ and $s : C_U(V) \to V \in \fib \cap \we$.
+In this section, $\sim_i$ will always stand for the homotopy relation with respect to $C_U(V)$.
 The following propositions give useful characterizations of trivial
 cofibrations and weak equivalences in f-model categories.
 
@@ -271,13 +273,13 @@ We include a proof of the ``if'' direction for the sake of convenience.
 \begin{proof}
 Let $f : X \to Y$ be an inclusion of a strong deformation retract.
 Factor $f$ into a map $i : X \to Z \in \cof \cap \we$ followed by a map $p : Z \to Y \in \fib$.
-Let $g : Y \to X$ be a retraction of $f$ and $h : Cyl_X Y \to Y$ a homotopy between $f \circ g$ and $id_Y$.
+Let $g : Y \to X$ be a retraction of $f$ and let $h : C_X(Y) \to Y$ be a homotopy between $f \circ g$ and $id_Y$.
 Consider the following diagram:
-\[ \xymatrix{ Y \ar[r]^{i \circ g} \ar[d]_{\imath_0} & Z \ar[d]^p \\
-              Cyl_X Y \ar[r]_-h \ar@{-->}[ur]^{h'}   & Y.
+\[ \xymatrix{ Y \ar[r]^{i \circ g} \ar[d]_{\cyli_0} & Z \ar[d]^p \\
+              C_X(Y) \ar[r]_-h \ar@{-->}[ur]^{h'}   & Y.
             } \]
-Since $\imath_0 : Y \to Cyl_X Y$ is a trivial cofibration, we have a lift $h' : Cyl_X Y \to Z$.
-Then $h' \circ \imath_1 \circ f = i$ and $p \circ h' \circ \imath_1 = id_Y$, thus $f$ is a retract of $i$, hence a weak equivalence.
+Since $\cyli_0 : Y \to C_X(Y)$ is a trivial cofibration, we have a lift $h' : C_X(Y) \to Z$.
+Then $h' \circ \cyli_1 \circ f = i$ and $p \circ h' \circ \cyli_1 = id_Y$, thus $f$ is a retract of $i$, hence a weak equivalence.
 \end{proof}
 
 We say that a map in a model category is \emph{pure} if it is pure with respect to cofibrations between cofibrant objects.
@@ -319,8 +321,9 @@ Indeed, let $U$ be a cofibrant object and $u : U \to Y'$ a map.
 Then we have a map $u' : U \to X'$ such that $q_y \circ f' \circ u' = f \circ q_x \circ u' \sim q_y \circ u$.
 Since $q_y$ is a trivial fibration, we have a lift in the diagram below, which gives us a homotopy between $f' \circ u'$ and $u$.
 \[ \xymatrix{ U \amalg U \ar[rr]^-{[f' \circ u', u]} \ar[d] & & Y' \ar[d]^{q_y} \\
-              Cyl\,U     \ar[rr] \ar@{-->}[urr]             & & Y
+              C(U)       \ar[rr] \ar@{-->}[urr]             & & Y
             } \]
+
 Second, let us show that $g'$ is pure.
 Indeed, let $i : U \to V$ be a cofibration between cofibrant objects, and suppose that we have a commutative square of the form
 \[ \xymatrix{ U \ar[r]^u \ar[d]_i & Y' \ar[d]^{g'} \\
@@ -332,16 +335,40 @@ Then $f' \circ v' \circ i = f' \circ u' \sim u$, and by the same propositions, t
 
 Finally, consider the following diagram:
 \[ \xymatrix{ Y' \amalg_{X'} Y' \ar[rr]^-{[f' \circ g', id_{Y'}]} \ar[d] &                & Y' \ar[d]^{g'} \\
-              Cyl_{X'} Y'       \ar[r]                                   & Y' \ar[r]_{g'} & X'.
+              C_{X'}(Y')        \ar[r]                                   & Y' \ar[r]_{g'} & X'.
             } \]
-Since $g'$ is pure, we have a homotopy $Cyl_{X'} Y' \to Y'$ between $f' \circ g'$ and $id_{Y'}$.
+Since $g'$ is pure, we have a homotopy $C_{X'}(Y') \to Y'$ between $f' \circ g'$ and $id_{Y'}$.
 By \rprop{min-triv-cof}, $f'$ is a weak equivalence.
 Hence $f$ is a weak equivalence by the 2-out-of-3 property.
 \end{proof}
 
+\begin{cor}
+Let $\C$ be an f-model category.
+Then for every $i : U \to V$, the homotopy relation $\sim_i$ is an equivalence.
+\end{cor}
+\begin{proof}
+This relation is reflexive and symmetric in every model category.
+To prove that it is transitive, consider the following diagram:
+\[ \xymatrix{ V \ar[r]^{i_0} \ar[d]_{i_1} &     C_U(V) \ar[d]^q \\
+              C_U(V) \ar[r]  \ar[d]_s     & \po C_U(V) \amalg_V C_U(V) \ar[d]^p \\
+              V \ar[r]                    & \po C_U(V)
+            } \]
+Since $i_0$ is a trivial cofibration, $q$ is also a trivial cofibration.
+Hence, $p$ is a weak equivalence by the 2-out-of-3 property.
+By the previous proposition, it is pure.
+
+Let $h_1 : C_U(V) \to X$ and $h_2 : C_U(V) \to X$ be homotopies between $f_1,f_2 : V \to X$ and $f_2,f_3 : V \to X$ respectively,
+Consider the following diagram:
+\[ \xymatrix{ V \amalg_U V \ar[r]^-{i_0 \amalg_i i_1} \ar[d]_{[i_0,i_1]} & C_U(V) \amalg_V C_U(V) \ar[d]^p \\
+              C_U(V)       \ar[r]_{id} \ar@{-->}[ur]_h                  & C_U(V)
+            } \]
+Since $p$ is pure, we have a lift $h$.
+Then $[h_1,h_2] \circ h$ is a homotopy between $f_1$ and $f_3$.
+\end{proof}
+
 Now, given a set of generating cofibrations we show how to construct a set of generating trivial cofibrations.
 Let $\C$ be a cocomplete category and $\I$ a set of maps of $\C$, that permits the small object argument.
-Let us denote by $\J_\I$ the set of maps $\imath_0 : V \to Cyl_U V$ for each $U \to V \in \I$.
+Let us denote by $\J_\I$ the set of maps $\cyli_0 : V \to C_U(V)$ for each $U \to V \in \I$.
 
 \begin{prop}[triv-fib-iinj]
 Let $\C$ be a cocomplete category and $\I$ a set of maps of $\C$ such that
@@ -355,12 +382,12 @@ We need to find a lift $V \to X$ such that both triangles commute.
               V \ar[r]_v \ar@{-->}[ur]^g              & Y
             } \]
 By assumption, we have a lift $g : V \to X$ together with
-a homotopy $h : Cyl_U V \to Y$ between $f \circ g$ and $v$.
-Since $f \in \Jinj[_\I]$, we have a lift $h' : Cyl_U V \to X$ in the following diagram:
-\[ \xymatrix{ V \ar[r]^g \ar[d]_{\imath_0}         & X \ar[d]^f \\
-              Cyl_U V \ar[r]^-h \ar@{-->}[ur]^{h'} & Y.
+a homotopy $h : C_U(V) \to Y$ between $f \circ g$ and $v$.
+Since $f \in \Jinj[_\I]$, we have a lift $h' : C_U(V) \to X$ in the following diagram:
+\[ \xymatrix{ V \ar[r]^g \ar[d]_{\cyli_0}         & X \ar[d]^f \\
+              C_U(V) \ar[r]^-h \ar@{-->}[ur]^{h'} & Y.
             } \]
-Then $h' \circ \imath_1$ is a required lift in the original square.
+Then $h' \circ \cyli_1$ is a required lift in the original square.
 \end{proof}
 
 \begin{cor}[min-cof-gen]
