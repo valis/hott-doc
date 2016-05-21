@@ -35,12 +35,13 @@
 
 \newcommand{\cat}[1]{\mathbf{#1}}
 % \newcommand{\C}{\cat{C}}
+\newcommand{\red}{\Rightarrow}
 \newcommand{\bs}{\beta\sigma}
 \newcommand{\ebs}{=_{\bs}}
-\newcommand{\rbs}{\to_{\bs}}
+\newcommand{\rbs}{\red_{\bs}}
 \newcommand{\bst}{\bs\tau}
 \newcommand{\ebst}{=_{\bst}}
-\newcommand{\rbst}{\to_{\bst}}
+\newcommand{\rbst}{\red_{\bst}}
 \newcommand{\sSet}{\cat{sSet}}
 
 \numberwithin{figure}{section}
@@ -52,105 +53,24 @@
 \author{Valery Isaev}
 
 \begin{abstract}
-In this paper, we prove canonicity for a version of homotopy type theory, which we call \emph{homotopy type theory with an interval type}.
-We show that this theory essentially equivalent to Martin-L\"{o}f type theory with the univalence axiom.
-In particular, this implies that every closed term of Martin-L\"{o}f type theory with one univalent universe is propositionally equivalent to a term in canonical form.
+We prove that a version of homotopy type theory, which we call \emph{homotopy type theory with an interval type}, has the canonicity property.
 \end{abstract}
 
 \maketitle
 
-\section{Introduction}
-
 \section{Syntax}
 
-% In this section, we will give inference rules for MLTT-U and HoTT-I.
-In table~\ref{table:inf-rules}, we give inference and reduction rules for a basic system, which is a common part of MLTT-U and HoTT-I.
-It has $\Pi$-types, $\Sigma$-types, natural numbers, and a universe, and it can be extended with other (higher) inductive types.
-In tables \ref{table:MLTT-U-rules} and \ref{table:HoTT-I-rules}, we give inference and reduction rules for MLTT-U and HoTT-I respectively.
+We will work in a version of Martin-L\"{o}f's type theory (MLTT), which we call \emph{homotopy type theory with an interval type} (HoTT-I).
+It has all of the usual constructions of MLTT except for the identity types.
 
-Apart from the usual types, HoTT-I also has an interval type $I$, which has two constructors ($left$ and $right$) and one eliminator ($fill^1$).
-Since we have product types, the system also contains all $n$-dimensional cube types ($I^n = I \times \ldots \times I$).
-For each $n \geq 1$, we also define functions $fill^n$, which construct fillers for cubical horns.
+\subsection{Basic theory}
 
-We also need operators $coe^n$ which satisfy the following inference and reduction rules:
-
-\begin{center}
-\AxiomC{$\Gamma, x_1 : I, \ldots x_n : I \vdash A$}
-\AxiomC{$\Gamma \vdash i_k : I$}
-\AxiomC{$\Gamma \vdash a : A[x_k := i_k]$}
-\AxiomC{$\Gamma \vdash j_k : I$}
-\QuaternaryInfC{$\Gamma \vdash coe^n_{\lambda x_1 \ldots x_n. A}\ i_1\ \ldots\ i_n\ a\ j_1\ \ldots\ j_n : A[x_k := j_k]$}
-\DisplayProof
-\end{center}
-
-\[ coe^n_{\lambda x_1 \ldots x_n. A}\ i_1\ \ldots i_n\ a\ i_1\ \ldots i_n \to_\beta a \]
-
-Before we define $coe^n$ let us introduce a notation.
-We will write $\overline{x}$ for a sequence of variables or terms $x_1\ \ldots\ x_n$,
-    and we will write $\overline{x}_{\hat{i}}$ for the sequence $x_1\ \ldots\ x_{i - 1}\ x_{i + 1}\ \ldots\ x_n$.
-We use the same notation in other cases.
-For example, $\overline{x : I}$ denotes $x_1 : I, \ldots x_n : I$, and $A \overline{[x := j]}$ denotes $A[x_1 := j_1] \ldots [x_n := j_n]$.
-Now we can define $coe^n$ in terms $fill^1$ as follows:
-
-\begin{align*}
-& coe^0_A a = a \\
-& coe^{n+1}_{\lambda \overline{x} x_{n+1}. A}\ \overline{i}\ i_{n+1}\ a\ \overline{j}\ j_{n+1} = fill^1_{\lambda x_{n+1}. A \overline{[x := j]}}\ i_{n+1}\ (coe^n_{\lambda \overline{x}. A[x_{n+1} := i_{n+1}]}\ \overline{i}\ a\ \overline{j})\ j_{n+1}
-\end{align*}
-
-\begin{align*}
-& fill^1_{\lambda x_1. A}\ i\ a_1\ j_1 = coe_{\lambda x_1. A}\ i\ a_1\ j_1 \\
-& fill^{n+1}_{\lambda \overline{x}_{n+1}. A}\ (\lambda \overline{x}_n. a_{n+1})\ (\lambda \overline{x}_n. a'_{n+1}) \ldots (\lambda \overline{x}_n. a_2)\ (\lambda \overline{x}_n. a'_2)\ i\ (\lambda \overline{x}_n. a_1)\ j_1 \ldots j_{n+1} = \\
-& \indent fill^n_{\lambda \overline{x}_n. Path\ (\lambda x_{n+1}. A)\ a_{n+1}\ a'_{n+1}} \\
-& \indent (\lambda \overline{x}_{n-1}. path (\lambda x_n. a_n))\ (\lambda \overline{x}_{n-1}. path (\lambda x_n. a'_n)) \ldots \\
-& \indent (\lambda \overline{x}_{n-1}. path (\lambda x_n. a_2))\ (\lambda \overline{x}_{n-1}. path (\lambda x_n. a'_2)) \\
-& \indent i\ (\lambda \overline{x}_{n-1}. path (\lambda x_n. a_1))\ j_1 \ldots j_n\ @\ j_{n+1}
-\end{align*}
-
-\[ coe_{\lambda k. \Sigma (y : A) B}\ i\ (a, b)\ j \to_\tau (coe_{\lambda k. A}\ i\ a\ j, coe_{\lambda k. B[y := coe_{\lambda k. A}\ i\ a\ k]}\ i\ b\ j) \]
-\[ coe_{\lambda k. \Pi (y : A) B}\ i\ (\lambda y. b)\ j \to_\tau \lambda y'. coe_{\lambda k. B[y := coe_{\lambda k. A}\,j\,y'\,k]}\ i\ (b[y := coe_{\lambda k. A}\ j\ y'\ i])\ j \]
-\[ coe_{\lambda k. Path\ (\lambda x. A)\ a\ a'}\ i\ (path\ (\lambda x. t))\ j \to_\tau path\ (\lambda j'. fill^2_{\lambda k x. A}\ (\lambda k. a)\ (\lambda k. a')\ i\ (\lambda x. t)\ j\ j') \]
-
-\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ i\ j_2\ \ldots j_n \to_\beta \]
-\[ a_1[x_2 := j_2] \ldots [x_n := j_n] \]
-\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots j_{i-1}\ left\ j_{i+1}\ \ldots\ j_n \to_\beta \]
-\[ a_i[x_1 := j_1] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
-\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots j_{i-1}\ right\ j_{i+1}\ \ldots\ j_n \to_\beta \]
-\[ a'_i[x_1 := j_1] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
-
-\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots\ j_n \to_\sigma \]
-\[ a_1[x_2 := j_2] \ldots [x_n := j_n] \text{ if } x_1 \notin FV(A) \cup FV(a_n) \cup FV(a'_n) \cup \ldots \cup FV(a_2) \cup FV(a'_2) \]
-
-\[ fill^n_{\lambda \overline{x}. \Sigma (y : A) B}\ (\lambda \overline{x}_{\hat{n}}. (a_n, b_n))\ (\lambda \overline{x}_{\hat{n}}. (a'_n, b'_n))\ \ldots\ (\lambda \overline{x}_{\hat{2}}. (a_2, b_2))\ (\lambda \overline{x}_{\hat{2}}. (a'_2, b'_2))\ i\ (\lambda \overline{x}_{\hat{1}}. (a_1, b_1))\ j_1\ \ldots\ j_n \to_\tau \]
-\[ (fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots\ j_n, \]
-\[ fill^n_{\lambda \overline{x}. B[y := fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ x_1\ \ldots\ x_n]} \]
-\[ (\lambda \overline{x}_{\hat{n}}. b_n)\ (\lambda \overline{x}_{\hat{n}}. b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. b_2)\ (\lambda \overline{x}_{\hat{2}}. b'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. b_1)\ j_1\ \ldots\ j_n) \]
-
-\[ fill^n_{\lambda \overline{x}. \Pi (y : A) B}\ (\lambda \overline{x}_{\hat{n}}. \lambda y. b_n)\ (\lambda \overline{x}_{\hat{n}}. \lambda y. b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. \lambda y. b_2)\ (\lambda \overline{x}_{\hat{2}}. \lambda y. b'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. \lambda y. b_1)\ j_1\ \ldots\ j_n \to_\tau \]
-\[ \lambda y'. fill^n_{\lambda \overline{x}. B[y := coe^n_{\lambda \overline{x}. A}\,j_1\,\ldots\,j_n\,y'\,x_1\,\ldots\,x_n]} \]
-\[ (\lambda \overline{x}_{\hat{n}}. b_n[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ \ldots\ x_{n-1}\ left]) \]
-\[ (\lambda \overline{x}_{\hat{n}}. b'_n[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ \ldots\ x_{n-1}\ right])\ \ldots \]
-\[ (\lambda \overline{x}_{\hat{2}}. b_2[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ left\ x_3\ \ldots\ x_n]) \]
-\[ (\lambda \overline{x}_{\hat{2}}. b'_2[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ right\ x_3\ \ldots\ x_n]) \]
-\[ i\ (\lambda \overline{x}_{\hat{1}}. b_1[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ i\ x_2\ \ldots\ x_n])\ j_1\ \ldots\ j_n \]
-
-\[ fill^n_{\lambda \overline{x}. Path\ (\lambda x_{n+1}. A)\ a_{n+1}\ a'_{n+1}}\ (\lambda \overline{x}_{\hat{n}}. path\ (\lambda x_{n+1}. a_n))\ (\lambda \overline{x}_{\hat{n}}. path\ (\lambda x_{n+1}. a'_n))\ \ldots \]
-\[ (\lambda \overline{x}_{\hat{2}}. path\ (\lambda x_{n+1}. a_2))\ (\lambda \overline{x}_{\hat{2}}. path\ (\lambda x_{n+1}. a'_2))\ i\ (\lambda \overline{x}_{\hat{1}}. path\ (\lambda x_{n+1}. a_1))\ j_1\ \ldots\ j_n \to_\tau \]
-\[ path\ (\lambda j_{n+1}. fill^{n+1}_{\lambda \overline{x}. \lambda x_{n+1}. A}\ (\lambda \overline{x}. a_{n+1})\ (\lambda \overline{x}. a'_{n+1})\ \ldots \]
-\[ (\lambda \overline{x}_{\hat{2}}. \lambda x_{n+1}. a_2)\ (\lambda \overline{x}_{\hat{2}}. \lambda x_{n+1}. a'_2)\ \ldots\ i\ (\lambda \overline{x}_{\hat{1}}. \lambda x_{n+1}. a_1)\ j_1\ \ldots\ j_{n+1}) \]
-
-\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau fill^1_{\lambda x. A}\ i'\ a\ j' \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst left \]
-\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau f[x := j'] (fill^1_{\lambda x. A}\ i'\ a\ j') \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst right \]
-\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau g[x := j'] (fill^1_{\lambda x. B}\ i'\ a\ j') \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst left \]
-\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \to_\tau fill^1_{\lambda x. B}\ i'\ a\ j' \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst right \]
-
-\centerAlignProof
-
-\begin{table}
+The inference and reduction rules for (some of) these construction are listed below.
 
 \medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$\varnothing \vdash$}
+\UnaryInfC{$\vdash$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash A$}
@@ -168,7 +88,7 @@ Now we can define $coe^n$ in terms $fill^1$ as follows:
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
 \AxiomC{$\Gamma \vdash B$}
-\RightLabel{, $A =_{\beta \sigma \tau} B$}
+\RightLabel{, $A \equiv B$}
 \BinaryInfC{$\Gamma \vdash a : B$}
 \DisplayProof
 \end{center}
@@ -189,7 +109,7 @@ Now we can define $coe^n$ in terms $fill^1$ as follows:
 \medskip
 \begin{center}
 \AxiomC{$\Gamma, x : A \vdash b : B$}
-\UnaryInfC{$\Gamma \vdash \lambda x. b : \Pi (x : A) B$}
+\UnaryInfC{$\Gamma \vdash \lambda x.\ b : \Pi (x : A) B$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash f : \Pi (x : A) B$}
@@ -239,98 +159,59 @@ Now we can define $coe^n$ in terms $fill^1$ as follows:
 \AxiomC{$\Gamma \vdash b : A[x := 0]$}
 \AxiomC{$\Gamma, x : \mathbb{N}, r : A \vdash s : A[x := S\ x]$}
 \AxiomC{$\Gamma \vdash n : \mathbb{N}$}
-\QuaternaryInfC{$\Gamma \vdash R_{\lambda x. A}\ b\ (\lambda x r. s)\ n : A[x := n]$}
+\QuaternaryInfC{$\Gamma \vdash R_{\lambda x.\ A}\ b\ (\lambda x r.\ s)\ n : A[x := n]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash Type$}
+\UnaryInfC{$\Gamma \vdash U_i$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A : Type$}
+\AxiomC{$\Gamma \vdash A : U_i$}
 \UnaryInfC{$\Gamma \vdash A$}
 \DisplayProof
 \quad
+\AxiomC{$\Gamma \vdash A : U_i$}
+\UnaryInfC{$\Gamma \vdash A : U_{i+1}$}
+\DisplayProof
+\quad
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash \mathbb{N} : Type$}
+\UnaryInfC{$\Gamma \vdash \mathbb{N} : U_i$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A : Type$}
-\AxiomC{$\Gamma, x : A \vdash B : Type$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : Type$}
+\AxiomC{$\Gamma \vdash A : U_i$}
+\AxiomC{$\Gamma, x : A \vdash B : U_i$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U_i$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A : Type$}
-\AxiomC{$\Gamma, x : A \vdash B : Type$}
-\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B : Type$}
+\AxiomC{$\Gamma \vdash A : U_i$}
+\AxiomC{$\Gamma, x : A \vdash B : U_i$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B : U_i$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{align*}
-& (\lambda x.b)\ a \to_\beta b[x := a] \\
-& proj_1\ (a, b) \to_\beta a \\
-& proj_2\ (a, b) \to_\beta b \\
-& R_{\lambda x. A}\ b\ (\lambda x r. s)\ 0 \to_\beta b \\
-& R_{\lambda x. A}\ b\ (\lambda x r. s)\ (S\ n) \to_\beta s[x := n, r := R_{\lambda x. A}\ b\ (\lambda x r. s)\ n]
+& (\lambda x.\ b)\ a \red_\beta b[x := a] \\
+& proj_1\ (a, b) \red_\beta a \\
+& proj_2\ (a, b) \red_\beta b \\
+& R_{\lambda x.\ A}\ b\ (\lambda x r.\ s)\ 0 \red_\beta b \\
+& R_{\lambda x.\ A}\ b\ (\lambda x r.\ s)\ (S\ n) \red_\beta s[x := n, r := R_{\lambda x.\ A}\ b\ (\lambda x r.\ s)\ n]
 \end{align*}
 
-\bigskip
-\caption{Inference and reduction rules.}
-\label{table:inf-rules}
-\end{table}
+We will write $(x_1 \ldots x_n : A) \to B$ for $\Pi (x_1 : A) \ldots \Pi (x_n : A) B$.
 
-\begin{table}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A$}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash a' : A$}
-\TrinaryInfC{$\Gamma \vdash Id\ A\ a\ a'$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash a : A$}
-\UnaryInfC{$\Gamma \vdash refl\ a : Id\ A\ a\ a$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : A, x' : A, q : Id\ A\ x\ x' \vdash C$}
-\AxiomC{$\Gamma, x : A \vdash d : C[x' := x, q := refl\ x]$}
-\AxiomC{$\Gamma \vdash p : Id\ A\ a\ a'$}
-\TrinaryInfC{$\Gamma \vdash J_{\lambda x x' q. C}\ (\lambda x. d)\ p : C[x := a, x' := a', q := p]$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash A : Type$}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash a' : A$}
-\TrinaryInfC{$\Gamma \vdash Id\ A\ a\ a' : Type$}
-\DisplayProof
-\end{center}
-
-\[ J_{\lambda x x' q. C}\ (\lambda x. d)\ (refl\ a) \to_\beta d[x := a] \]
-
-\bigskip
-\caption{Inference and reduction rules for MLTT-U.}
-\label{table:MLTT-U-rules}
-\end{table}
-
-\begin{table}
-
+Apart from the usual types, HoTT-I also has an interval type $I$, which has two constructors $left$ and $right$ and one eliminator $coe$.
+The inference rules for $I$, $left$ and $right$ are given below, and the inference rule for $coe$ will be described later.
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash I$}
+\UnaryInfC{$\Gamma \vdash I : U_i$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash$}
@@ -342,56 +223,28 @@ Now we can define $coe^n$ in terms $fill^1$ as follows:
 \DisplayProof
 \end{center}
 
-\medskip
-\begin{center}
-\Axiom$\fCenter \Gamma \vdash i : I$
-\def\extraVskip{1pt}
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash j_k : I \text{, } 1 \leq k \leq n$
-\noLine
-\UnaryInf$\fCenter \Gamma, \overline{x : I} \vdash A$
-\noLine
-\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{1}} \vdash a_1 : A[x_1 := i]$
-\noLine
-\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{k}} \vdash a_k : A[x_k := left] \text{, } 2 \leq k \leq n$
-\noLine
-\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{k}} \vdash a'_k : A[x_k := right] \text{, } 2 \leq k \leq n$
-\noLine
-\UnaryInf$\fCenter a_{i_1}[x_{i_2} := left] \ebst a_{i_2}[x_{i_1} := left] \text{, } 2 \leq i_1 < i_2 \leq n$
-\noLine
-\UnaryInf$\fCenter a'_{i_1}[x_{i_2} := left] \ebst a_{i_2}[x_{i_1} := right] \text{, } 2 \leq i_1 < i_2 \leq n$
-\noLine
-\UnaryInf$\fCenter a_{i_1}[x_{i_2} := right] \ebst a'_{i_2}[x_{i_1} := left] \text{, } 2 \leq i_1 < i_2 \leq n$
-\noLine
-\UnaryInf$\fCenter a'_{i_1}[x_{i_2} := right] \ebst a'_{i_2}[x_{i_1} := right] \text{, } 2 \leq i_1 < i_2 \leq n$
-\noLine
-\UnaryInf$\fCenter a_{i_1}[x_1 := i] \ebst a_1[x_{i_1} := left] \text{, } 2 \leq i_1 \leq n$
-\noLine
-\UnaryInf$\fCenter a'_{i_1}[x_1 := i] \ebst a_1[x_{i_1} := right] \text{, } 2 \leq i_1 \leq n$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \Gamma \vdash fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ \overline{j} : A \overline{[x := j]}$
-\DisplayProof
-\end{center}
+Using the interval type, we can define path types as functions from the interval type.
+Path types have one constructor $path$ and one eliminator $@$.
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma, x : I \vdash A$}
 \AxiomC{$\Gamma \vdash a  : A[x := left]$}
 \AxiomC{$\Gamma \vdash a' : A[x := right]$}
-\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x. A)\ a\ a'$}
+\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x.\ A)\ a\ a'$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma, x : I \vdash a : A$}
-\UnaryInfC{$\Gamma \vdash path\ (\lambda x. a) : Path\ (\lambda x. A)\ a[x := left]\ a[x := right]$}
+\UnaryInfC{$\Gamma \vdash path\ (\lambda x.\ a) : Path\ (\lambda x.\ A)\ a[x := left]\ a[x := right]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash p : Path\ (\lambda x. A)\ a\ a'$}
+\AxiomC{$\Gamma \vdash p : Path\ (\lambda x.\ A)\ a\ a'$}
 \AxiomC{$\Gamma \vdash i : I$}
 \BinaryInfC{$\Gamma \vdash p\ @_{a,a'}\ i : A[x := i]$}
 \DisplayProof
@@ -399,30 +252,215 @@ Now we can define $coe^n$ in terms $fill^1$ as follows:
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, x : I \vdash A : Type$}
+\AxiomC{$\Gamma, x : I \vdash A : U_i$}
 \AxiomC{$\Gamma \vdash a  : A[x := left]$}
 \AxiomC{$\Gamma \vdash a' : A[x := right]$}
-\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x. A)\ a\ a' : Type$}
+\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x.\ A)\ a\ a' : U_i$}
 \DisplayProof
 \end{center}
 
 \begin{align*}
-& \pi_k(j_1, \ldots j_n) \to_\beta j_k \\
-& (\Lambda_{n+1} i) \text{-} elim_{\lambda x. A}\ (\lambda y j. a)\ (\lambda y_1 \ldots y_n. a_1)\ (\lambda y_1 \ldots y_n. a_2)\ (j_1, \ldots j_n, left) \to_\beta \\
-& \qquad a_1[y_1 := j_1] \ldots [y_n := j_n] \\
-& (\Lambda_{n+1} i) \text{-} elim_{\lambda x. A}\ (\lambda y j. a)\ (\lambda y_1 \ldots y_n. a_1)\ (\lambda y_1 \ldots y_n. a_2)\ (j_1, \ldots j_n, right) \to_\beta \\
-& \qquad a_2[y_1 := j_1] \ldots [y_n := j_n] \\
-& (\Lambda_{n+1} i) \text{-} elim_{\lambda x. A}\ (\lambda y j. a)\ (\lambda y_1 \ldots y_n. a_1)\ (\lambda y_1 \ldots y_n. a_2)\ (j_1, \ldots j_n, j_{n+1}) \to_\beta \\
-& \qquad a[y := (j_1, \ldots j_n)][j := j_{n+1}] \text { if } (j_1, \ldots j_n) \in \Lambda_n i \\
-& path\ (\lambda x. t)\ @_{a,a'}\ i \to_\beta t[x := i] \\
-& p\ @_{a,a'}\ left \to_\beta a \\
-& p\ @_{a,a'}\ right \to_\beta a' \\
+& path\ (\lambda x.\ t)\ @_{a,a'}\ i \red_\beta t[x := i] \\
+& p\ @_{a,a'}\ left \red_\beta a \\
+& p\ @_{a,a'}\ right \red_\beta a' \\
+& path\ (\lambda x.\ p @_{a,a'} x) \equiv_\eta p
 \end{align*}
 
-\bigskip
-\caption{Inference rules for HoTT-I.}
-\label{table:HoTT-I-rules}
-\end{table}
+We write $a =_A a'$ (or simply $a = a'$) for $Path\ (\lambda x.\ A)\ a\ a'$ if $x \notin FV(A)$.
+
+There are several equivalent to define an elimination rule for the interval type, but the idea is the same:
+we have a dependent type $A$ over $I$ and a point in some fibre of $A$, then we can extend this point to the whole interval.
+First, we describe the basic version of $coe$:
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash a : A[x := left]$}
+\AxiomC{$\Gamma \vdash j : I$}
+\TrinaryInfC{$\Gamma \vdash coe_1\ (\lambda x.\ A)\ a\ j : A[x := j]$}
+\DisplayProof
+\end{center}
+
+\[ coe_1\ (\lambda x.\ A)\ a\ left \red_\beta a \]
+
+Using $coe_1$, we can show that path types satisfy the usual $J$ rule.
+Reflexivity is defined simply as the constant path:
+\begin{align*}
+& refl : (x : A) \to x = x \\
+& refl = \lambda x.\ path\ (\lambda i.\ x)
+\end{align*}
+To construct $J$, first we need to define function $squeeze$, which satisfies the following rules:
+\begin{align*}
+& squeeze : I \to I \to I \\
+& squeeze\ left\ j \equiv left \\
+& squeeze\ right\ j \equiv j \\
+& squeeze\ i\ left \equiv left \\
+& squeeze\ i\ right \equiv i
+\end{align*}
+
+To define $squeeze$, first we define function $squeeze'$ which satisfies all of the equations above except for the last one:
+\[ squeeze' = \lambda i j.\ coe_1\ (\lambda x.\ left = x)\ (path\ (\lambda x.\ left))\ j\ @\ i \]
+Now we can define $squeeze$ as follows:
+\begin{align*}
+& squeeze = \lambda i j.\ coe_1\ (\lambda i.\ Path\ (\lambda j.\ left = squeeze'\ i\ j)\ (path\ (\lambda x.\ left)) \\
+& \qquad (path\ (\lambda j.\ squeeze'\ i\ j)))\ (path\ (\lambda x.\ path\ (\lambda x.\ left)))\ right\ @\ i\ @\ j
+\end{align*}
+The idea is that the right hand sides of the definitions of $squeeze'$ and $squeeze$ describe fillers of certain cubical horns of dimension two and three respectively.
+
+Using $squeeze$ we can defined function $psqueeze$:
+\begin{align*}
+& psqueeze : (x\ y : A) \to (p : x = y) \to (i : I) \to x = p\ @\ i \\
+& psqueeze = \lambda x\ y\ p\ i.\ path\ (\lambda j.\ p\ @\ squeeze\ i\ j)
+\end{align*}
+Using $psqueeze$ we can define $J$ which satisfies the following inference rule:
+\begin{center}
+\AxiomC{$\Gamma, x : A, x' : A, z : x = x' \vdash D$}
+\AxiomC{$\Gamma, x : A \vdash d : D[x' := x, z := refl\ x]$}
+\AxiomC{$\Gamma \vdash p : a = a'$}
+\TrinaryInfC{$\Gamma \vdash J\ (\lambda x x' z.\ D)\ (\lambda x.\ d)\ a\ a'\ p : D[x := a, x' := a', z := p]$}
+\DisplayProof
+\end{center}
+\medskip
+$J\ (\lambda x x' z.\ D)\ (\lambda x.\ d)\ a\ a'\ p$ is defined as follows:
+\[ coe_1\ (\lambda i.\ D[x := a, x' := p\ @\ i, z := psqueeze\ a\ a'\ p\ i])\ (d[x := a])\ right \]
+
+The usual computation rule does not hold for this version of $J$.
+We can fix this by adding the following additional reduction rule for $coe_1$:
+\[ coe_1\ (\lambda x.\ A)\ a\ i \red_\sigma a \text{, if } x \notin FV(A) \]
+But it is not necessary, since this rule holds propositionally.
+
+\subsection{Other versions of $coe$}
+
+We can define $coe$ in a different way:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash a : A[x := i]$}
+\AxiomC{$\Gamma \vdash j : I$}
+\QuaternaryInfC{$\Gamma \vdash coe_2\ (\lambda x.\ A)\ i\ a\ j : A[x := j]$}
+\DisplayProof
+\end{center}
+
+Obiously, $coe_1$ is a special case of $coe_2$, but $coe_2$ can be constructed from $coe_1$.
+Indeed, first let us prove that $I$ is contractible:
+\[ (left, \lambda x.\ path\ (\lambda i.\ squeeze\ x\ i) ) \]
+It follows that for every $i, j : I$ we have term $pp\ i\ j$ of type $i = j$.
+Now we can define $coe_2$ as follows:
+\[ coe_2\ (\lambda x.\ A)\ i\ a\ j = coe_1\ (\lambda y.\ A[x := pp\ i\ j\ @\ y])\ a\ right \]
+
+Yet another version of $coe$ is the following one:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash a : A[x := left]$}
+\BinaryInfC{$\Gamma \vdash coe_0\ (\lambda x.\ A)\ a : A[x := right]$}
+\DisplayProof
+\end{center}
+This version seems to be weaker then $coe_1$, but if we have $squeeze$, then we can define $coe_1$ as follows:
+\[ coe_1\ (\lambda x.\ A)\ a\ i = coe_0\ (\lambda y.\ A[x := squeeze\ y\ i])\ a \]
+In the rest of this document we will use this version of $coe$.
+We will assume that $squeeze$ is defined as a primitive operation which satisfies four rules that we described.
+
+We will also need function $inv : I \to I$ which satisfies the following rules:
+\begin{align*}
+& inv\ left \equiv right \\
+& inv\ right \equiv left
+\end{align*}
+To define it, first note that we have function $sym : a = a' \to a' = a$.
+Now we can define $inv$ as follows:
+\[ \lambda x.\ sym\ (path\ (\lambda y.\ y))\ @\ x \]
+
+\section{Canonicity}
+
+In this section we will add more construction and reduction rules to the theory so that it will have the canonicity property.
+The problem with the current version of the theory is that terms of the form $coe\ (\lambda x.\ A)\ a$ are never reduce.
+To fix this we define new reduction rules by recursion on $A$.
+
+We already saw that we can define fillers using $coe$.
+It is convenient to add fillers as separate constructions.
+But before we do this let us introduce a bit of notation.
+We will write $\overline{x}$ for a sequence of variables or terms $x_1\ \ldots\ x_n$,
+    and we will write $\overline{x}_{\hat{i}}$ for the sequence $x_1\ \ldots\ x_{i - 1}\ x_{i + 1}\ \ldots\ x_n$.
+We use the same notation in other cases.
+For example, $\overline{x : I}$ denotes $x_1 : I, \ldots x_n : I$, and $A \overline{[x := j]}$ denotes $A[x_1 := j_1] \ldots [x_n := j_n]$.
+Now we can define the inference rules for fillers:
+\begin{center}
+\Axiom$\fCenter \Gamma, \overline{x : I} \vdash A$
+\def\extraVskip{1pt}
+\noLine
+\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{k}} \vdash a_k : A[x_k := left] \text{, } 1 \leq k \leq n$
+\noLine
+\UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{k}} \vdash a'_k : A[x_k := right] \text{, } 2 \leq k \leq n$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash j_k : I \text{, } 1 \leq k \leq n$
+\noLine
+\UnaryInf$\fCenter a_{i_1}[x_{i_2} := left] \equiv a_{i_2}[x_{i_1} := left] \text{, } 1 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a'_{i_1}[x_{i_2} := left] \equiv a_{i_2}[x_{i_1} := right] \text{, } 2 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a_{i_1}[x_{i_2} := right] \equiv a'_{i_2}[x_{i_1} := left] \text{, } 1 \leq i_1 < i_2 \leq n$
+\noLine
+\UnaryInf$\fCenter a'_{i_1}[x_{i_2} := right] \equiv a'_{i_2}[x_{i_1} := right] \text{, } 2 \leq i_1 < i_2 \leq n$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \Gamma \vdash Fill^n\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j} : A \overline{[x := j]}$
+\DisplayProof
+\end{center}
+\medskip
+This term is defined for every $n \geq 2$.
+Note that the rule for $Fill^1$ is the same as for $coe_0$.
+Hence we will write $Fill^1$ for $coe_0$.
+
+\begin{align*}
+& coe^0_A a = a \\
+& coe^{n+1}_{\lambda \overline{x} x_{n+1}.\ A}\ \overline{i}\ i_{n+1}\ a\ \overline{j}\ j_{n+1} = fill^1_{\lambda x_{n+1}.\ A \overline{[x := j]}}\ i_{n+1}\ (coe^n_{\lambda \overline{x}.\ A[x_{n+1} := i_{n+1}]}\ \overline{i}\ a\ \overline{j})\ j_{n+1}
+\end{align*}
+
+\begin{align*}
+& fill^1_{\lambda x_1.\ A}\ i\ a_1\ j_1 = coe_{\lambda x_1.\ A}\ i\ a_1\ j_1 \\
+& fill^{n+1}_{\lambda \overline{x}_{n+1}.\ A}\ (\lambda \overline{x}_n.\ a_{n+1})\ (\lambda \overline{x}_n.\ a'_{n+1}) \ldots (\lambda \overline{x}_n.\ a_2)\ (\lambda \overline{x}_n.\ a'_2)\ i\ (\lambda \overline{x}_n.\ a_1)\ j_1 \ldots j_{n+1} = \\
+& \indent fill^n_{\lambda \overline{x}_n.\ Path\ (\lambda x_{n+1}.\ A)\ a_{n+1}\ a'_{n+1}} \\
+& \indent (\lambda \overline{x}_{n-1}.\ path\ (\lambda x_n.\ a_n))\ (\lambda \overline{x}_{n-1}.\ path\ (\lambda x_n.\ a'_n)) \ldots \\
+& \indent (\lambda \overline{x}_{n-1}.\ path\ (\lambda x_n.\ a_2))\ (\lambda \overline{x}_{n-1}.\ path\ (\lambda x_n.\ a'_2)) \\
+& \indent i\ (\lambda \overline{x}_{n-1}.\ path\ (\lambda x_n.\ a_1))\ j_1 \ldots j_n\ @\ j_{n+1}
+\end{align*}
+
+\[ coe_{\lambda k. \Sigma (y : A) B}\ i\ (a, b)\ j \red_\tau (coe_{\lambda k. A}\ i\ a\ j, coe_{\lambda k. B[y := coe_{\lambda k. A}\ i\ a\ k]}\ i\ b\ j) \]
+\[ coe_{\lambda k. \Pi (y : A) B}\ i\ (\lambda y. b)\ j \red_\tau \lambda y'. coe_{\lambda k. B[y := coe_{\lambda k. A}\,j\,y'\,k]}\ i\ (b[y := coe_{\lambda k. A}\ j\ y'\ i])\ j \]
+\[ coe_{\lambda k. Path\ (\lambda x. A)\ a\ a'}\ i\ (path\ (\lambda x. t))\ j \red_\tau path\ (\lambda j'. fill^2_{\lambda k x. A}\ (\lambda k. a)\ (\lambda k. a')\ i\ (\lambda x. t)\ j\ j') \]
+
+\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ i\ j_2\ \ldots j_n \red_\beta \]
+\[ a_1[x_2 := j_2] \ldots [x_n := j_n] \]
+\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots j_{i-1}\ left\ j_{i+1}\ \ldots\ j_n \red_\beta \]
+\[ a_i[x_1 := j_1] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
+\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots j_{i-1}\ right\ j_{i+1}\ \ldots\ j_n \red_\beta \]
+\[ a'_i[x_1 := j_1] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
+
+\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots\ j_n \red_\sigma \]
+\[ a_1[x_2 := j_2] \ldots [x_n := j_n] \text{ if } x_1 \notin FV(A) \cup FV(a_n) \cup FV(a'_n) \cup \ldots \cup FV(a_2) \cup FV(a'_2) \]
+
+\[ fill^n_{\lambda \overline{x}. \Sigma (y : A) B}\ (\lambda \overline{x}_{\hat{n}}. (a_n, b_n))\ (\lambda \overline{x}_{\hat{n}}. (a'_n, b'_n))\ \ldots\ (\lambda \overline{x}_{\hat{2}}. (a_2, b_2))\ (\lambda \overline{x}_{\hat{2}}. (a'_2, b'_2))\ i\ (\lambda \overline{x}_{\hat{1}}. (a_1, b_1))\ j_1\ \ldots\ j_n \red_\tau \]
+\[ (fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots\ j_n, \]
+\[ fill^n_{\lambda \overline{x}. B[y := fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ x_1\ \ldots\ x_n]} \]
+\[ (\lambda \overline{x}_{\hat{n}}. b_n)\ (\lambda \overline{x}_{\hat{n}}. b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. b_2)\ (\lambda \overline{x}_{\hat{2}}. b'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. b_1)\ j_1\ \ldots\ j_n) \]
+
+\[ fill^n_{\lambda \overline{x}. \Pi (y : A) B}\ (\lambda \overline{x}_{\hat{n}}. \lambda y. b_n)\ (\lambda \overline{x}_{\hat{n}}. \lambda y. b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. \lambda y. b_2)\ (\lambda \overline{x}_{\hat{2}}. \lambda y. b'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. \lambda y. b_1)\ j_1\ \ldots\ j_n \red_\tau \]
+\[ \lambda y'. fill^n_{\lambda \overline{x}. B[y := coe^n_{\lambda \overline{x}. A}\,j_1\,\ldots\,j_n\,y'\,x_1\,\ldots\,x_n]} \]
+\[ (\lambda \overline{x}_{\hat{n}}. b_n[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ \ldots\ x_{n-1}\ left]) \]
+\[ (\lambda \overline{x}_{\hat{n}}. b'_n[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ \ldots\ x_{n-1}\ right])\ \ldots \]
+\[ (\lambda \overline{x}_{\hat{2}}. b_2[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ left\ x_3\ \ldots\ x_n]) \]
+\[ (\lambda \overline{x}_{\hat{2}}. b'_2[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ right\ x_3\ \ldots\ x_n]) \]
+\[ i\ (\lambda \overline{x}_{\hat{1}}. b_1[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ i\ x_2\ \ldots\ x_n])\ j_1\ \ldots\ j_n \]
+
+\[ fill^n_{\lambda \overline{x}. Path\ (\lambda x_{n+1}. A)\ a_{n+1}\ a'_{n+1}}\ (\lambda \overline{x}_{\hat{n}}. path\ (\lambda x_{n+1}. a_n))\ (\lambda \overline{x}_{\hat{n}}. path\ (\lambda x_{n+1}. a'_n))\ \ldots \]
+\[ (\lambda \overline{x}_{\hat{2}}. path\ (\lambda x_{n+1}. a_2))\ (\lambda \overline{x}_{\hat{2}}. path\ (\lambda x_{n+1}. a'_2))\ i\ (\lambda \overline{x}_{\hat{1}}. path\ (\lambda x_{n+1}. a_1))\ j_1\ \ldots\ j_n \red_\tau \]
+\[ path\ (\lambda j_{n+1}. fill^{n+1}_{\lambda \overline{x}. \lambda x_{n+1}. A}\ (\lambda \overline{x}. a_{n+1})\ (\lambda \overline{x}. a'_{n+1})\ \ldots \]
+\[ (\lambda \overline{x}_{\hat{2}}. \lambda x_{n+1}. a_2)\ (\lambda \overline{x}_{\hat{2}}. \lambda x_{n+1}. a'_2)\ \ldots\ i\ (\lambda \overline{x}_{\hat{1}}. \lambda x_{n+1}. a_1)\ j_1\ \ldots\ j_{n+1}) \]
+
+\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau fill^1_{\lambda x. A}\ i'\ a\ j' \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst left \]
+\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau f[x := j'] (fill^1_{\lambda x. A}\ i'\ a\ j') \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst right \]
+\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau g[x := j'] (fill^1_{\lambda x. B}\ i'\ a\ j') \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst left \]
+\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau fill^1_{\lambda x. B}\ i'\ a\ j' \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst right \]
 
 \begin{table}
 
@@ -445,10 +483,10 @@ Now we can define $coe^n$ in terms $fill^1$ as follows:
 \medskip
 
 \begin{align*}
-& iso\ A\ B\ f\ g\ p\ q\ left \to_\beta A \\
-& iso\ A\ B\ f\ g\ p\ q\ right \to_\beta B \\
-& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \to_\beta f\ a \text{ if } k \notin FV(A\ B\ f\ g\ p\ q) \\
-& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \to_\beta g\ b \text{ if } k \notin FV(A\ B\ f\ g\ p\ q)
+& iso\ A\ B\ f\ g\ p\ q\ left \red_\beta A \\
+& iso\ A\ B\ f\ g\ p\ q\ right \red_\beta B \\
+& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \red_\beta f\ a \text{ if } k \notin FV(A\ B\ f\ g\ p\ q) \\
+& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \red_\beta g\ b \text{ if } k \notin FV(A\ B\ f\ g\ p\ q)
 \end{align*}
 
 \bigskip
