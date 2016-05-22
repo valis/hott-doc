@@ -377,6 +377,8 @@ In this section we will add more construction and reduction rules to the theory 
 The problem with the current version of the theory is that terms of the form $coe\ (\lambda x.\ A)\ a$ are never reduce.
 To fix this we define new reduction rules by recursion on $A$.
 
+\subsection{Basic theory}
+
 We already saw that we can define fillers using $coe$.
 It is convenient to add fillers as separate constructions.
 But before we do this let us introduce a bit of notation.
@@ -393,7 +395,7 @@ Now we can define the inference rules for fillers:
 \noLine
 \UnaryInf$\fCenter \Gamma, \overline{x : I}_{\hat{k}} \vdash a'_k : A[x_k := right] \text{, } 2 \leq k \leq n$
 \noLine
-\UnaryInf$\fCenter \Gamma \vdash j_k : I \text{, } 1 \leq k \leq n$
+\UnaryInf$\fCenter \Gamma \vdash j_k : I \text{, } 2 \leq k \leq n$
 \noLine
 \UnaryInf$\fCenter a_{i_1}[x_{i_2} := left] \equiv a_{i_2}[x_{i_1} := left] \text{, } 1 \leq i_1 < i_2 \leq n$
 \noLine
@@ -403,64 +405,73 @@ Now we can define the inference rules for fillers:
 \noLine
 \UnaryInf$\fCenter a'_{i_1}[x_{i_2} := right] \equiv a'_{i_2}[x_{i_1} := right] \text{, } 2 \leq i_1 < i_2 \leq n$
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter \Gamma \vdash Fill^n\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j} : A \overline{[x := j]}$
+\UnaryInf$\fCenter \Gamma \vdash Fill^n\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j}_{\hat{1}} : A [x_1 := right] \overline{[x := j]}_{\hat{1}}$
 \DisplayProof
 \end{center}
 \medskip
-This term is defined for every $n \geq 2$.
+These terms are defined for every $n \geq 2$.
+It is actually possible to define these terms using $coe$, but it is convenient to introduce them as primitive constructions.
 Note that the rule for $Fill^1$ is the same as for $coe_0$.
-Hence we will write $Fill^1$ for $coe_0$.
+So we will write $Fill^1$ for $coe_0$.
 
-\begin{align*}
-& coe^0_A a = a \\
-& coe^{n+1}_{\lambda \overline{x} x_{n+1}.\ A}\ \overline{i}\ i_{n+1}\ a\ \overline{j}\ j_{n+1} = fill^1_{\lambda x_{n+1}.\ A \overline{[x := j]}}\ i_{n+1}\ (coe^n_{\lambda \overline{x}.\ A[x_{n+1} := i_{n+1}]}\ \overline{i}\ a\ \overline{j})\ j_{n+1}
-\end{align*}
+As in the case of $coe_0$, there are versions of $Fill^n$ that define filler for the whole box and not only for the lid.
+We can define them as follows:
+\[ Fill^n_1\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n) \ldots (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j} = \]
+\[ Fill^n\ (\lambda \overline{x}.\ A[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{n}}.\ a_n[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{n}}.\ a'_n[x_1 := squeeze\ x_1\ j_1]) \ldots \]
+\[ (\lambda \overline{x}_{\hat{2}}.\ a_2[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{2}}.\ a'_2[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j}_{\hat{1}} \]
 
-\begin{align*}
-& fill^1_{\lambda x_1.\ A}\ i\ a_1\ j_1 = coe_{\lambda x_1.\ A}\ i\ a_1\ j_1 \\
-& fill^{n+1}_{\lambda \overline{x}_{n+1}.\ A}\ (\lambda \overline{x}_n.\ a_{n+1})\ (\lambda \overline{x}_n.\ a'_{n+1}) \ldots (\lambda \overline{x}_n.\ a_2)\ (\lambda \overline{x}_n.\ a'_2)\ i\ (\lambda \overline{x}_n.\ a_1)\ j_1 \ldots j_{n+1} = \\
-& \indent fill^n_{\lambda \overline{x}_n.\ Path\ (\lambda x_{n+1}.\ A)\ a_{n+1}\ a'_{n+1}} \\
-& \indent (\lambda \overline{x}_{n-1}.\ path\ (\lambda x_n.\ a_n))\ (\lambda \overline{x}_{n-1}.\ path\ (\lambda x_n.\ a'_n)) \ldots \\
-& \indent (\lambda \overline{x}_{n-1}.\ path\ (\lambda x_n.\ a_2))\ (\lambda \overline{x}_{n-1}.\ path\ (\lambda x_n.\ a'_2)) \\
-& \indent i\ (\lambda \overline{x}_{n-1}.\ path\ (\lambda x_n.\ a_1))\ j_1 \ldots j_n\ @\ j_{n+1}
-\end{align*}
+There are a few $\beta$ rules for $Fill^n$:
+\[ Fill^n\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ j_2\ \ldots j_{i-1}\ left\ j_{i+1}\ \ldots\ j_n \red_\beta \]
+\[ a_i[x_1 := right][x_2 := j_2] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
+\[ Fill^n\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ j_2\ \ldots j_{i-1}\ right\ j_{i+1}\ \ldots\ j_n \red_\beta \]
+\[ a'_i[x_1 := right][x_2 := j_2] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
 
-\[ coe_{\lambda k. \Sigma (y : A) B}\ i\ (a, b)\ j \red_\tau (coe_{\lambda k. A}\ i\ a\ j, coe_{\lambda k. B[y := coe_{\lambda k. A}\ i\ a\ k]}\ i\ b\ j) \]
-\[ coe_{\lambda k. \Pi (y : A) B}\ i\ (\lambda y. b)\ j \red_\tau \lambda y'. coe_{\lambda k. B[y := coe_{\lambda k. A}\,j\,y'\,k]}\ i\ (b[y := coe_{\lambda k. A}\ j\ y'\ i])\ j \]
-\[ coe_{\lambda k. Path\ (\lambda x. A)\ a\ a'}\ i\ (path\ (\lambda x. t))\ j \red_\tau path\ (\lambda j'. fill^2_{\lambda k x. A}\ (\lambda k. a)\ (\lambda k. a')\ i\ (\lambda x. t)\ j\ j') \]
-
-\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ i\ j_2\ \ldots j_n \red_\beta \]
-\[ a_1[x_2 := j_2] \ldots [x_n := j_n] \]
-\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots j_{i-1}\ left\ j_{i+1}\ \ldots\ j_n \red_\beta \]
-\[ a_i[x_1 := j_1] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
-\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots j_{i-1}\ right\ j_{i+1}\ \ldots\ j_n \red_\beta \]
-\[ a'_i[x_1 := j_1] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
-
-\[ fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots\ j_n \red_\sigma \]
+We can also define the sigma rule for every $Fill^n$:
+\[ Fill^n\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ j_2\ \ldots\ j_n \red_\sigma \]
 \[ a_1[x_2 := j_2] \ldots [x_n := j_n] \text{ if } x_1 \notin FV(A) \cup FV(a_n) \cup FV(a'_n) \cup \ldots \cup FV(a_2) \cup FV(a'_2) \]
 
-\[ fill^n_{\lambda \overline{x}. \Sigma (y : A) B}\ (\lambda \overline{x}_{\hat{n}}. (a_n, b_n))\ (\lambda \overline{x}_{\hat{n}}. (a'_n, b'_n))\ \ldots\ (\lambda \overline{x}_{\hat{2}}. (a_2, b_2))\ (\lambda \overline{x}_{\hat{2}}. (a'_2, b'_2))\ i\ (\lambda \overline{x}_{\hat{1}}. (a_1, b_1))\ j_1\ \ldots\ j_n \red_\tau \]
-\[ (fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ j_1\ \ldots\ j_n, \]
-\[ fill^n_{\lambda \overline{x}. B[y := fill^n_{\lambda \overline{x}. A}\ (\lambda \overline{x}_{\hat{n}}. a_n)\ (\lambda \overline{x}_{\hat{n}}. a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. a_2)\ (\lambda \overline{x}_{\hat{2}}. a'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. a_1)\ x_1\ \ldots\ x_n]} \]
-\[ (\lambda \overline{x}_{\hat{n}}. b_n)\ (\lambda \overline{x}_{\hat{n}}. b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. b_2)\ (\lambda \overline{x}_{\hat{2}}. b'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. b_1)\ j_1\ \ldots\ j_n) \]
+But as in the case of $coe_0$ this rule is not necessary.
+To make the theory computational, we need to add new rules, which we call $\tau$, for every type construction that we have: $Path$, $\Sigma$, $\Pi$, $\mathbb{N}$ and $U_i$.
+It is easy to define $\tau$ rules for $\mathbb{N}$, path and sigma types.
+For every $n \geq 1$, we add the following rules:
+\[ Fill^n\ (\lambda \overline{x}.\ \mathbb{N})\ (\lambda \overline{x}_{\hat{n}}.\ 0)\ (\lambda \overline{x}_{\hat{n}}.\ 0)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ 0)\ (\lambda \overline{x}_{\hat{2}}.\ 0)\ (\lambda \overline{x}_{\hat{1}}.\ 0)\ \overline{j}_{\hat{1}}\ \red_\tau 0 \]
+\[ Fill^n\ (\lambda \overline{x}.\ \mathbb{N})\ (\lambda \overline{x}_{\hat{n}}.\ S\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ S\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ S\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ S\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ S\ a_1)\ \overline{j}_{\hat{1}}\ \red_\tau \]
+\[ S\ (Fill^n\ (\lambda \overline{x}.\ \mathbb{N})\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j}_{\hat{1}}) \]
 
-\[ fill^n_{\lambda \overline{x}. \Pi (y : A) B}\ (\lambda \overline{x}_{\hat{n}}. \lambda y. b_n)\ (\lambda \overline{x}_{\hat{n}}. \lambda y. b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}. \lambda y. b_2)\ (\lambda \overline{x}_{\hat{2}}. \lambda y. b'_2)\ i\ (\lambda \overline{x}_{\hat{1}}. \lambda y. b_1)\ j_1\ \ldots\ j_n \red_\tau \]
-\[ \lambda y'. fill^n_{\lambda \overline{x}. B[y := coe^n_{\lambda \overline{x}. A}\,j_1\,\ldots\,j_n\,y'\,x_1\,\ldots\,x_n]} \]
-\[ (\lambda \overline{x}_{\hat{n}}. b_n[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ \ldots\ x_{n-1}\ left]) \]
-\[ (\lambda \overline{x}_{\hat{n}}. b'_n[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ \ldots\ x_{n-1}\ right])\ \ldots \]
-\[ (\lambda \overline{x}_{\hat{2}}. b_2[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ left\ x_3\ \ldots\ x_n]) \]
-\[ (\lambda \overline{x}_{\hat{2}}. b'_2[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ x_1\ right\ x_3\ \ldots\ x_n]) \]
-\[ i\ (\lambda \overline{x}_{\hat{1}}. b_1[y := coe^n_{\lambda \overline{x}. A}\ j_1\ \ldots\ j_n\ y'\ i\ x_2\ \ldots\ x_n])\ j_1\ \ldots\ j_n \]
+\[ Fill^n\ (\lambda \overline{x}.\ Path\ (\lambda x_{n+1}. A)\ a_{n+1}\ a'_{n+1})\ (\lambda \overline{x}_{\hat{n}}.\ path\ (\lambda x_{n+1}.\ a_n))\ (\lambda \overline{x}_{\hat{n}}.\ path\ (\lambda x_{n+1}.\ a'_n))\ \ldots \]
+\[ (\lambda \overline{x}_{\hat{2}}.\ path\ (\lambda x_{n+1}.\ a_2))\ (\lambda \overline{x}_{\hat{2}}.\ path\ (\lambda x_{n+1}.\ a'_2))\ (\lambda \overline{x}_{\hat{1}}.\ path\ (\lambda x_{n+1}.\ a_1))\ j_2\ \ldots\ j_n \red_\tau \]
+\[ path\ (\lambda j_{n+1}.\ Fill^{n+1}\ (\lambda \overline{x}.\ \lambda x_{n+1}.\ A)\ (\lambda \overline{x}.\ a_{n+1})\ (\lambda \overline{x}.\ a'_{n+1})\ \ldots \]
+\[ (\lambda \overline{x}_{\hat{2}}.\ \lambda x_{n+1}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ \lambda x_{n+1}.\ a'_2)\ \ldots\ (\lambda \overline{x}_{\hat{1}}.\ \lambda x_{n+1}.\ a_1)\ j_2\ \ldots\ j_{n+1}) \]
 
-\[ fill^n_{\lambda \overline{x}. Path\ (\lambda x_{n+1}. A)\ a_{n+1}\ a'_{n+1}}\ (\lambda \overline{x}_{\hat{n}}. path\ (\lambda x_{n+1}. a_n))\ (\lambda \overline{x}_{\hat{n}}. path\ (\lambda x_{n+1}. a'_n))\ \ldots \]
-\[ (\lambda \overline{x}_{\hat{2}}. path\ (\lambda x_{n+1}. a_2))\ (\lambda \overline{x}_{\hat{2}}. path\ (\lambda x_{n+1}. a'_2))\ i\ (\lambda \overline{x}_{\hat{1}}. path\ (\lambda x_{n+1}. a_1))\ j_1\ \ldots\ j_n \red_\tau \]
-\[ path\ (\lambda j_{n+1}. fill^{n+1}_{\lambda \overline{x}. \lambda x_{n+1}. A}\ (\lambda \overline{x}. a_{n+1})\ (\lambda \overline{x}. a'_{n+1})\ \ldots \]
-\[ (\lambda \overline{x}_{\hat{2}}. \lambda x_{n+1}. a_2)\ (\lambda \overline{x}_{\hat{2}}. \lambda x_{n+1}. a'_2)\ \ldots\ i\ (\lambda \overline{x}_{\hat{1}}. \lambda x_{n+1}. a_1)\ j_1\ \ldots\ j_{n+1}) \]
+\[ Fill^n\ (\lambda \overline{x}.\ \Sigma (y : A) B)\ (\lambda \overline{x}_{\hat{n}}.\ (a_n, b_n))\ (\lambda \overline{x}_{\hat{n}}.\ (a'_n, b'_n))\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ (a_2, b_2))\ (\lambda \overline{x}_{\hat{2}}.\ (a'_2, b'_2))\ (\lambda \overline{x}_{\hat{1}}.\ (a_1, b_1))\ \overline{j}_{\hat{1}}\ \red_\tau \]
+\[ (Fill^n\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j}_{\hat{1}}, \]
+\[ Fill^n\ (\lambda \overline{x}.\ B[y := Fill^n_1\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{x}]) \]
+\[ (\lambda \overline{x}_{\hat{n}}.\ b_n)\ (\lambda \overline{x}_{\hat{n}}.\ b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ b_2)\ (\lambda \overline{x}_{\hat{2}}.\ b'_2)\ (\lambda \overline{x}_{\hat{1}}.\ b_1)\ \overline{j}_{\hat{1}}) \]
 
-\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau fill^1_{\lambda x. A}\ i'\ a\ j' \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst left \]
-\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau f[x := j'] (fill^1_{\lambda x. A}\ i'\ a\ j') \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst right \]
-\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau g[x := j'] (fill^1_{\lambda x. B}\ i'\ a\ j') \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst left \]
-\[ fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau fill^1_{\lambda x. B}\ i'\ a\ j' \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst right \]
+To define $\tau$ rules for $\Pi$, we need an operation that transports a point in a fibre of a type over a cube to any other fibre.
+We already have such operation for the interval, namely $coe_2$.
+We can define the general one in terms of $coe_2$:
+\begin{align*}
+& coe^0\ A\ a = a \\
+& coe^{n+1}\ (\lambda \overline{x} x_{n+1}.\ A)\ \overline{i}\ i_{n+1}\ a\ \overline{j}\ j_{n+1} = \\
+& \qquad coe_2\ (\lambda x_{n+1}.\ A \overline{[x := j]})\ i_{n+1}\ (coe^n\ (\lambda \overline{x}.\ A[x_{n+1} := i_{n+1}])\ \overline{i}\ a\ \overline{j})\ j_{n+1}
+\end{align*}
+
+Now, for every $n \geq 1$, we can define $\tau$ rules for $\Pi$:
+\[ Fill^n\ (\lambda \overline{x}.\ \Pi (y : A) B)\ (\lambda \overline{x}_{\hat{n}}.\ \lambda y.\ b_n)\ (\lambda \overline{x}_{\hat{n}}.\ \lambda y.\ b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ \lambda y.\ b_2)\ (\lambda \overline{x}_{\hat{2}}.\ \lambda y.\ b'_2)\ (\lambda \overline{x}_{\hat{1}}.\ \lambda y.\ b_1)\ \overline{j}_{\hat{1}} \red_\tau \]
+\[ \lambda y'.\ Fill^n\ (\lambda \overline{x}.\ B[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ x_1\ \ldots\ x_n]) \]
+\[ (\lambda \overline{x}_{\hat{n}}.\ b_n[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ x_1\ \ldots\ x_{n-1}\ left]) \]
+\[ (\lambda \overline{x}_{\hat{n}}.\ b'_n[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ x_1\ \ldots\ x_{n-1}\ right])\ \ldots \]
+\[ (\lambda \overline{x}_{\hat{2}}.\ b_2[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ x_1\ left\ x_3\ \ldots\ x_n]) \]
+\[ (\lambda \overline{x}_{\hat{2}}.\ b'_2[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ x_1\ right\ x_3\ \ldots\ x_n]) \]
+\[ (\lambda \overline{x}_{\hat{1}}.\ b_1[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ left\ x_2\ \ldots\ x_n])\ j_1\ \ldots\ j_n \]
+
+\subsection{Universes}
+
+\[ Fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau Fill^1_{\lambda x. A}\ i'\ a\ j' \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst left \]
+\[ Fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau f[x := j'] (Fill^1_{\lambda x. A}\ i'\ a\ j') \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst right \]
+\[ Fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau g[x := j'] (Fill^1_{\lambda x. B}\ i'\ a\ j') \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst left \]
+\[ Fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau Fill^1_{\lambda x. B}\ i'\ a\ j' \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst right \]
 
 \begin{table}
 
