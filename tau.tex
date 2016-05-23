@@ -33,27 +33,18 @@
 \theoremstyle{remark}
 \newref{remark}{remark}{Remark}
 
-\newcommand{\cat}[1]{\mathbf{#1}}
-% \newcommand{\C}{\cat{C}}
 \newcommand{\red}{\Rightarrow}
-\newcommand{\bs}{\beta\sigma}
-\newcommand{\ebs}{=_{\bs}}
-\newcommand{\rbs}{\red_{\bs}}
-\newcommand{\bst}{\bs\tau}
-\newcommand{\ebst}{=_{\bst}}
-\newcommand{\rbst}{\red_{\bst}}
-\newcommand{\sSet}{\cat{sSet}}
 
 \numberwithin{figure}{section}
 
 \begin{document}
 
-\title{Canonicity for homotopy type theory with one univalent universe}
+\title{Canonicity for homotopy type theory with an interval type}
 
 \author{Valery Isaev}
 
 \begin{abstract}
-We prove that a version of homotopy type theory, which we call \emph{homotopy type theory with an interval type}, has the canonicity property.
+We define a version of homotopy type theory, which we call \emph{homotopy type theory with an interval type}, and give a partial proof of the canonicity property for it.
 \end{abstract}
 
 \maketitle
@@ -159,39 +150,39 @@ The inference and reduction rules for (some of) these construction are listed be
 \AxiomC{$\Gamma \vdash b : A[x := 0]$}
 \AxiomC{$\Gamma, x : \mathbb{N}, r : A \vdash s : A[x := S\ x]$}
 \AxiomC{$\Gamma \vdash n : \mathbb{N}$}
-\QuaternaryInfC{$\Gamma \vdash R_{\lambda x.\ A}\ b\ (\lambda x r.\ s)\ n : A[x := n]$}
+\QuaternaryInfC{$\Gamma \vdash R_{\lambda x.\,A}\ b\ (\lambda x r.\ s)\ n : A[x := n]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash U_i$}
+\UnaryInfC{$\Gamma \vdash U_\alpha$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A : U_i$}
+\AxiomC{$\Gamma \vdash A : U_\alpha$}
 \UnaryInfC{$\Gamma \vdash A$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A : U_i$}
-\UnaryInfC{$\Gamma \vdash A : U_{i+1}$}
+\AxiomC{$\Gamma \vdash A : U_\alpha$}
+\UnaryInfC{$\Gamma \vdash A : U_{\alpha+1}$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash \mathbb{N} : U_i$}
+\UnaryInfC{$\Gamma \vdash \mathbb{N} : U_\alpha$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A : U_i$}
-\AxiomC{$\Gamma, x : A \vdash B : U_i$}
-\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U_i$}
+\AxiomC{$\Gamma \vdash A : U_\alpha$}
+\AxiomC{$\Gamma, x : A \vdash B : U_\alpha$}
+\BinaryInfC{$\Gamma \vdash \Pi (x : A) B : U_\alpha$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A : U_i$}
-\AxiomC{$\Gamma, x : A \vdash B : U_i$}
-\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B : U_i$}
+\AxiomC{$\Gamma \vdash A : U_\alpha$}
+\AxiomC{$\Gamma, x : A \vdash B : U_\alpha$}
+\BinaryInfC{$\Gamma \vdash \Sigma (x : A) B : U_\alpha$}
 \DisplayProof
 \end{center}
 
@@ -200,8 +191,8 @@ The inference and reduction rules for (some of) these construction are listed be
 & (\lambda x.\ b)\ a \red_\beta b[x := a] \\
 & proj_1\ (a, b) \red_\beta a \\
 & proj_2\ (a, b) \red_\beta b \\
-& R_{\lambda x.\ A}\ b\ (\lambda x r.\ s)\ 0 \red_\beta b \\
-& R_{\lambda x.\ A}\ b\ (\lambda x r.\ s)\ (S\ n) \red_\beta s[x := n, r := R_{\lambda x.\ A}\ b\ (\lambda x r.\ s)\ n]
+& R_{\lambda x.\,A}\ b\ (\lambda x r.\ s)\ 0 \red_\beta b \\
+& R_{\lambda x.\,A}\ b\ (\lambda x r.\ s)\ (S\ n) \red_\beta s[x := n, r := R_{\lambda x.\,A}\ b\ (\lambda x r.\ s)\ n]
 \end{align*}
 
 We will write $(x_1 \ldots x_n : A) \to B$ for $\Pi (x_1 : A) \ldots \Pi (x_n : A) B$.
@@ -211,7 +202,7 @@ The inference rules for $I$, $left$ and $right$ are given below, and the inferen
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
-\UnaryInfC{$\Gamma \vdash I : U_i$}
+\UnaryInfC{$\Gamma \vdash I : U_\alpha$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash$}
@@ -252,10 +243,10 @@ Path types have one constructor $path$ and one eliminator $@$.
 
 \medskip
 \begin{center}
-\AxiomC{$\Gamma, x : I \vdash A : U_i$}
+\AxiomC{$\Gamma, x : I \vdash A : U_\alpha$}
 \AxiomC{$\Gamma \vdash a  : A[x := left]$}
 \AxiomC{$\Gamma \vdash a' : A[x := right]$}
-\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x.\ A)\ a\ a' : U_i$}
+\TrinaryInfC{$\Gamma \vdash Path\ (\lambda x.\ A)\ a\ a' : U_\alpha$}
 \DisplayProof
 \end{center}
 
@@ -362,14 +353,54 @@ This version seems to be weaker then $coe_1$, but if we have $squeeze$, then we 
 In the rest of this document we will use this version of $coe$.
 We will assume that $squeeze$ is defined as a primitive operation which satisfies four rules that we described.
 
-We will also need function $inv : I \to I$ which satisfies the following rules:
+\subsection{Univalence}
+
+The theory that we described does not have the univalence axiom.
+We can extend the theory in such a way that UA becomes true.
+We add the following construction:
+\begin{center}
+\Axiom$\fCenter \Gamma \vdash A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash B$
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash f : A \to B$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash g : B \to A$
+\Axiom$\fCenter \Gamma \vdash p : (a : A) \to g\ (f\ a) =_A a$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash q : (b : B) \to f\ (g\ b) =_B b$
+\def\extraVskip{2pt}
+\AxiomC{$\Gamma \vdash i : I$}
+\QuaternaryInfC{$\Gamma \vdash Iso\ A\ B\ f\ g\ p\ q\ i$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\Axiom$\fCenter \Gamma \vdash A : U_\alpha$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash B : U_\alpha$
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash f : A \to B$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash g : B \to A$
+\Axiom$\fCenter \Gamma \vdash p : (a : A) \to g\ (f\ a) =_A a$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash q : (b : B) \to f\ (g\ b) =_B b$
+\def\extraVskip{2pt}
+\AxiomC{$\Gamma \vdash i : I$}
+\QuaternaryInfC{$\Gamma \vdash Iso\ A\ B\ f\ g\ p\ q\ i : U_\alpha$}
+\DisplayProof
+\end{center}
+
 \begin{align*}
-& inv\ left \equiv right \\
-& inv\ right \equiv left
+& Iso\ A\ B\ f\ g\ p\ q\ left \red_\beta A \\
+& Iso\ A\ B\ f\ g\ p\ q\ right \red_\beta B \\
+& coe_0\ (\lambda x.\ Iso\ A\ B\ f\ g\ p\ q\ x)\ a \red_\beta f\ a \text{, if } x \notin FV(A\ B\ f\ g\ p\ q)
 \end{align*}
-To define it, first note that we have function $sym : a = a' \to a' = a$.
-Now we can define $inv$ as follows:
-\[ \lambda x.\ sym\ (path\ (\lambda y.\ y))\ @\ x \]
+
+Note that we use quasi-inverses instead of some correct version of inverse functions since $Iso$ does not assert that $\Sigma (f : A \to B)\ (qinv\ f)$ is equivalent to $A = B$,
+it only implies that there exists a map $\Sigma (f : A \to B)\ (qinv\ f) \to A = B$ which satisfies some properties which imply the univalence axiom.
 
 \section{Canonicity}
 
@@ -414,12 +445,6 @@ It is actually possible to define these terms using $coe$, but it is convenient 
 Note that the rule for $Fill^1$ is the same as for $coe_0$.
 So we will write $Fill^1$ for $coe_0$.
 
-As in the case of $coe_0$, there are versions of $Fill^n$ that define filler for the whole box and not only for the lid.
-We can define them as follows:
-\[ Fill^n_1\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n) \ldots (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j} = \]
-\[ Fill^n\ (\lambda \overline{x}.\ A[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{n}}.\ a_n[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{n}}.\ a'_n[x_1 := squeeze\ x_1\ j_1]) \ldots \]
-\[ (\lambda \overline{x}_{\hat{2}}.\ a_2[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{2}}.\ a'_2[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j}_{\hat{1}} \]
-
 There are a few $\beta$ rules for $Fill^n$:
 \[ Fill^n\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ j_2\ \ldots j_{i-1}\ left\ j_{i+1}\ \ldots\ j_n \red_\beta \]
 \[ a_i[x_1 := right][x_2 := j_2] \ldots [x_{i-1} := j_{i-1}] [x_{i+1} := j_{i+1}] \ldots [x_n := j_n] \]
@@ -431,8 +456,8 @@ We can also define the sigma rule for every $Fill^n$:
 \[ a_1[x_2 := j_2] \ldots [x_n := j_n] \text{ if } x_1 \notin FV(A) \cup FV(a_n) \cup FV(a'_n) \cup \ldots \cup FV(a_2) \cup FV(a'_2) \]
 
 But as in the case of $coe_0$ this rule is not necessary.
-To make the theory computational, we need to add new rules, which we call $\tau$, for every type construction that we have: $Path$, $\Sigma$, $\Pi$, $\mathbb{N}$ and $U_i$.
-It is easy to define $\tau$ rules for $\mathbb{N}$, path and sigma types.
+To make the theory computational, we need to add new rules, which we call $\tau$, for every type construction that we have: $Path$, $\Sigma$, $\Pi$, $\mathbb{N}$ and $U_\alpha$.
+It is easy to define $\tau$ rules for $\mathbb{N}$ and path types.
 For every $n \geq 1$, we add the following rules:
 \[ Fill^n\ (\lambda \overline{x}.\ \mathbb{N})\ (\lambda \overline{x}_{\hat{n}}.\ 0)\ (\lambda \overline{x}_{\hat{n}}.\ 0)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ 0)\ (\lambda \overline{x}_{\hat{2}}.\ 0)\ (\lambda \overline{x}_{\hat{1}}.\ 0)\ \overline{j}_{\hat{1}}\ \red_\tau 0 \]
 \[ Fill^n\ (\lambda \overline{x}.\ \mathbb{N})\ (\lambda \overline{x}_{\hat{n}}.\ S\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ S\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ S\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ S\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ S\ a_1)\ \overline{j}_{\hat{1}}\ \red_\tau \]
@@ -443,12 +468,19 @@ For every $n \geq 1$, we add the following rules:
 \[ path\ (\lambda j_{n+1}.\ Fill^{n+1}\ (\lambda \overline{x}.\ \lambda x_{n+1}.\ A)\ (\lambda \overline{x}.\ a_{n+1})\ (\lambda \overline{x}.\ a'_{n+1})\ \ldots \]
 \[ (\lambda \overline{x}_{\hat{2}}.\ \lambda x_{n+1}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ \lambda x_{n+1}.\ a'_2)\ \ldots\ (\lambda \overline{x}_{\hat{1}}.\ \lambda x_{n+1}.\ a_1)\ j_2\ \ldots\ j_{n+1}) \]
 
+As in the case of $coe_0$, there are versions of $Fill^n$ that define filler for the whole box and not only for the lid.
+We can define them as follows:
+\[ Fill^n_1\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n) \ldots (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j} = \]
+\[ Fill^n\ (\lambda \overline{x}.\ A[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{n}}.\ a_n[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{n}}.\ a'_n[x_1 := squeeze\ x_1\ j_1]) \ldots \]
+\[ (\lambda \overline{x}_{\hat{2}}.\ a_2[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{2}}.\ a'_2[x_1 := squeeze\ x_1\ j_1])\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j}_{\hat{1}} \]
+
+Now, we can define $\tau$ rules for $\Sigma$ types:
 \[ Fill^n\ (\lambda \overline{x}.\ \Sigma (y : A) B)\ (\lambda \overline{x}_{\hat{n}}.\ (a_n, b_n))\ (\lambda \overline{x}_{\hat{n}}.\ (a'_n, b'_n))\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ (a_2, b_2))\ (\lambda \overline{x}_{\hat{2}}.\ (a'_2, b'_2))\ (\lambda \overline{x}_{\hat{1}}.\ (a_1, b_1))\ \overline{j}_{\hat{1}}\ \red_\tau \]
 \[ (Fill^n\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{j}_{\hat{1}}, \]
 \[ Fill^n\ (\lambda \overline{x}.\ B[y := Fill^n_1\ (\lambda \overline{x}.\ A)\ (\lambda \overline{x}_{\hat{n}}.\ a_n)\ (\lambda \overline{x}_{\hat{n}}.\ a'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ a_2)\ (\lambda \overline{x}_{\hat{2}}.\ a'_2)\ (\lambda \overline{x}_{\hat{1}}.\ a_1)\ \overline{x}]) \]
 \[ (\lambda \overline{x}_{\hat{n}}.\ b_n)\ (\lambda \overline{x}_{\hat{n}}.\ b'_n)\ \ldots\ (\lambda \overline{x}_{\hat{2}}.\ b_2)\ (\lambda \overline{x}_{\hat{2}}.\ b'_2)\ (\lambda \overline{x}_{\hat{1}}.\ b_1)\ \overline{j}_{\hat{1}}) \]
 
-To define $\tau$ rules for $\Pi$, we need an operation that transports a point in a fibre of a type over a cube to any other fibre.
+To define $\tau$ rules for $\Pi$ types, we need an operation that transports a point in a fibre of a type over a cube to any other fibre.
 We already have such operation for the interval, namely $coe_2$.
 We can define the general one in terms of $coe_2$:
 \begin{align*}
@@ -464,46 +496,66 @@ Now, for every $n \geq 1$, we can define $\tau$ rules for $\Pi$:
 \[ (\lambda \overline{x}_{\hat{n}}.\ b'_n[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ x_1\ \ldots\ x_{n-1}\ right])\ \ldots \]
 \[ (\lambda \overline{x}_{\hat{2}}.\ b_2[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ x_1\ left\ x_3\ \ldots\ x_n]) \]
 \[ (\lambda \overline{x}_{\hat{2}}.\ b'_2[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ x_1\ right\ x_3\ \ldots\ x_n]) \]
-\[ (\lambda \overline{x}_{\hat{1}}.\ b_1[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ left\ x_2\ \ldots\ x_n])\ j_1\ \ldots\ j_n \]
+\[ (\lambda \overline{x}_{\hat{1}}.\ b_1[y := coe^n\ (\lambda \overline{x}.\ A)\ right\ j_2\ \ldots\ j_n\ y'\ left\ x_2\ \ldots\ x_n])\ j_2\ \ldots\ j_n \]
 
 \subsection{Universes}
 
-\[ Fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau Fill^1_{\lambda x. A}\ i'\ a\ j' \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst left \]
-\[ Fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau f[x := j'] (Fill^1_{\lambda x. A}\ i'\ a\ j') \text{ if } i[x := i'] \ebst left, i[x := j'] \ebst right \]
-\[ Fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau g[x := j'] (Fill^1_{\lambda x. B}\ i'\ a\ j') \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst left \]
-\[ Fill^1_{\lambda x. iso\,A\,B\,f\,g\,p\,q\,i}\ i'\ a\ j' \red_\tau Fill^1_{\lambda x. B}\ i'\ a\ j' \text{ if } i[x := i'] \ebst right, i[x := j'] \ebst right \]
+It is easy to define $\tau$ rule for universes for $coe$:
+\[ coe_0\ (\lambda x.\ U_\alpha)\ A \red_\tau A \]
+Terms of the form $Fill^n\ (\lambda x.\ U_\alpha)\ \ldots$ for $n \geq 2$ can be handled in two ways.
+First option is that we can try to reduce this terms using univalence (which is defined below).
+It is easy to do for $n = 2$, and it may be possible to do for $n > 2$.
+Second option is that we can say that terms of this form are canonical.
+It is not a problem, since there are no normalized terms of this form in the empty context.
+But then we get terms of the following forms:
+\begin{align*}
+& coe_0\ (\lambda y.\ Fill^{n_1}\ (\lambda \overline{x}.\ U_\alpha)\ \ldots)\ a \\
+& coe_0\ (\lambda y.\ Fill^{n_1}\ (\lambda \overline{x}.\ Fill^{n_2}\ (\lambda \overline{x'}.\ U_\alpha)\ \ldots)\ \ldots)\ a \\
+& \ldots
+\end{align*}
+We can define $\tau$ rules at least for terms of the first form.
+We do not know how to define $\tau$ rules for other cases.
 
-\begin{table}
+\subsection{Univalence}
 
+To define $\tau$ rules for terms of the form $coe_0\ (\lambda x.\ Iso\ A\ B\ f\ g\ p\ q\ k)\ a$, we need to add the following construction:
 \begin{center}
-\Axiom$\fCenter \Gamma \vdash A : Type$
+\Axiom$\fCenter \Gamma, x : I \vdash A$
 \noLine
-\UnaryInf$\fCenter \Gamma \vdash B : Type$
+\UnaryInf$\fCenter \Gamma, x : I \vdash B$
 \def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \vdash f : A \to B$
+\Axiom$\fCenter \Gamma, x : I \vdash f : A \to B$
 \noLine
-\UnaryInf$\fCenter \Gamma \vdash g : B \to A$
-\Axiom$\fCenter \Gamma \vdash p : (a : A) \to g\ (f\ a) =_A a$
+\UnaryInf$\fCenter \Gamma, x : I \vdash g : B \to A$
+\Axiom$\fCenter \Gamma, x : I \vdash p : (a : A) \to g\ (f\ a) =_A a$
 \noLine
-\UnaryInf$\fCenter \Gamma \vdash q : (b : B) \to f\ (g\ b) =_B b$
+\UnaryInf$\fCenter \Gamma, x : I \vdash q : (b : B) \to f\ (g\ b) =_B b$
+\Axiom$\fCenter \Gamma \vdash i_1 : I$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash i_2 : I$
+\noLine
+\QuaternaryInf$\fCenter \Gamma \vdash a : Iso\ (A[x := left])\ (B[x := left])\ (f[x := left])\ (g[x := left])\ (p[x := left])\ (q[x := left])\ i_1$
 \def\extraVskip{2pt}
-\AxiomC{$\Gamma \vdash i : I$}
-\QuaternaryInfC{$\Gamma \vdash iso\ A\ B\ f\ g\ p\ q\ i : Type$}
+\UnaryInf$\fCenter \Gamma \vdash iso^1\ (\lambda x.\ A)\ (\lambda x.\ B)\ (\lambda x.\ f)\ (\lambda x.\ g)\ (\lambda x.\ p)\ (\lambda x.\ q)\ i_1\ a\ i_2 :$
+\def\extraVskip{1pt}
+\noLine
+\UnaryInf$\fCenter Iso\ (A[x := right])\ (B[x := right])\ (f[x := right])\ (g[x := right])\ (p[x := right])\ (q[x := right])\ i_2$
 \DisplayProof
 \end{center}
 \medskip
-
 \begin{align*}
-& iso\ A\ B\ f\ g\ p\ q\ left \red_\beta A \\
-& iso\ A\ B\ f\ g\ p\ q\ right \red_\beta B \\
-& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ left\ a\ right \red_\beta f\ a \text{ if } k \notin FV(A\ B\ f\ g\ p\ q) \\
-& coe_{\lambda k. iso\,A\,B\,f\,g\,p\,q\,k}\ right\ b\ left \red_\beta g\ b \text{ if } k \notin FV(A\ B\ f\ g\ p\ q)
+& iso^1\ (\lambda x.\ A)\ (\lambda x.\ B)\ (\lambda x.\ f)\ (\lambda x.\ g)\ (\lambda x.\ p)\ (\lambda x.\ q)\ left\ a\ left \red_\beta coe_0\ (\lambda x.\ A)\ a \\
+& iso^1\ (\lambda x.\ A)\ (\lambda x.\ B)\ (\lambda x.\ f)\ (\lambda x.\ g)\ (\lambda x.\ p)\ (\lambda x.\ q)\ left\ a\ right \red_\beta coe_0\ (\lambda x.\ B)\ (f[x := left]\ a) \\
+& iso^1\ (\lambda x.\ A)\ (\lambda x.\ B)\ (\lambda x.\ f)\ (\lambda x.\ g)\ (\lambda x.\ p)\ (\lambda x.\ q)\ right\ a\ left \red_\beta coe_0\ (\lambda x.\ A)\ (g[x := left]\ a) \\
+& iso^1\ (\lambda x.\ A)\ (\lambda x.\ B)\ (\lambda x.\ f)\ (\lambda x.\ g)\ (\lambda x.\ p)\ (\lambda x.\ q)\ right\ a\ right \red_\beta coe_0\ (\lambda x.\ B)\ a
 \end{align*}
 
-\bigskip
-\caption{Inference rules for univalence.}
-\label{table:Univalence-rules}
-\end{table}
+Now we can define the following $\tau$ rule:
+\[ coe_0\ (\lambda x.\ Iso\ A\ B\ f\ g\ p\ q\ k)\ a \red_\tau \]
+\[ iso^1\ (\lambda x.\ A)\ (\lambda x.\ B)\ (\lambda x.\ f)\ (\lambda x.\ g)\ (\lambda x.\ p)\ (\lambda x.\ q)\ (k[x := left])\ a\ (k[x := right]) \]
+
+We also need to define $\tau$ rules for terms of the form $Fill^n\ (\lambda x.\ Iso\ A\ B\ f\ g\ p\ q\ k)\ \ldots$, $n \geq 2$.
+We could try to do this in the same way as for $coe_0$.
 
 % \bibliographystyle{amsplain}
 % \bibliography{ref}
