@@ -22,6 +22,7 @@
 \ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
 \expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
 \expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname n#2\endcsname[1]{\ref{#2:##1}}
 \newenvironmentx{#2}[2][1=,2=]{
 \ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
 \ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
@@ -152,20 +153,20 @@ We list a few elementary properties of pure morphisms in the following propositi
 \end{enumerate}
 \end{prop}
 
-Note that $\sim$ is reflexive if and only if there exists a map $s : C_U(V) \to V$ such that $s \circ \cyli_0 = s \circ \cyli_1 = id_V$.
-In this case we will say that $C_U(V)$ is \emph{reflexive}.
-If pushout $V \amalg_U V$ exists and $s$ is pure with respect to $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, then the homotopy relation is also symmetric.
-We will say that a (relative) cylinder object $C(V)$ is \emph{proper} if the corresponding homotopy relation on every set $\C(V,X)$ is an equivalence relation.
-
 Let $\C$ be a category and let $X$ be an object of $\C$.
-A \emph{path object} for $X$ is an object $P(X)$ together with maps $t : X \to P(X)$
-and $p_0,p_1 : P(X) \to X$ such that $p_0 \circ t = p_1 \circ t = id_X$.
+A \emph{path object} for $X$ is an object $P(X)$ together with maps $p_0,p_1 : P(X) \to X$.
 A \emph{(right) homotopy} between morphisms $f,g : V \to X$ is a map
 $h : V \to P(X)$ such that $p_0 \circ h = f$ and $p_1 \circ h = g$.
 We say that $f$ and $g$ are right homotopic and write $f \sim^r g$
 if there exists a right homotopy $h : V \to P(X)$ between them.
-We say that a right homotopy $h : V \to P(X)$ between $f,g : V \to X$
-is constant on $i : U \to V$ if $h \circ i = t \circ f \circ i$.
+A morphism of path objects $P(X)$ and $P(Y)$ is a pair of maps $f : X \to Y$ and $P(f) : P(X) \to P(Y)$ which commute with $p_0$ and $p_1$.
+
+Note that $\sim$ is reflexive if and only if there exists a map $s : C_U(V) \to V$ such that $s \circ \cyli_0 = s \circ \cyli_1 = id_V$.
+In this case we will say that $C_U(V)$ is \emph{reflexive}.
+Relation $\sim^r$ is reflexive if and only if there exists a map $t : X \to P(X)$ such that $p_0 \circ t = p_1 \circ t = id_X$.
+In this case we will say that $P(X)$ is \emph{reflexive}.
+If $P(X)$ is reflexive, then we say that a right homotopy $h : V \to P(X)$ between $f,g : V \to X$
+is \emph{constant on $i : U \to V$} if $h \circ i = t \circ f \circ i$.
 In this case, we write $f \sim^r_i g$ and say that $f$ and $g$ are \emph{homotopic relative to $i$}.
 
 We will prove a general lemma about the relationship between left and right homotopies.
@@ -173,7 +174,7 @@ The proof is standard, but we repeat it here since we state the lemma in a more 
 \begin{lem}[path-cyl]
 Let $\C$ be a finitely complete and finitely cocomplete category, and let $i : U \to V$ be a morphism of $\C$.
 Suppose that there exists a reflexive relative cylinder object $\cyli_0,\cyli_1 : V \to C_U(V)$, $s : C_U(V) \to V$
-and a path object $t : X \to P(X)$, $p_0,p_1 : P(X) \to X$ for every $X$, such that $p_0$ is pure with respect to $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$,
+and a reflexive path object $t : X \to P(X)$, $p_0,p_1 : P(X) \to X$ for every $X$, such that $p_0$ is pure with respect to $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$,
 and $\langle p_0, p_1 \rangle : P(X) \to X \times X$ has RLP with respect to $\cyli_0$.
 
 Then two maps $f,g : V \to X$ are left homotopic relative to $i$ if and only if they are right homotopic relative to $i$, and $\sim_i$ is transitive.
@@ -242,7 +243,7 @@ Let $[\cyli_0,\cyli_1] : V \amalg_U V \to C(V)$, $s : C(V) \to V$ be a factoriza
 The homotopy relation corresponding to this cylinder object is always reflexive and symmetric.
 
 \begin{rem}[path-cyl-mod]
-Every object $X$ in a model category $\C$ has a path object which is defined as a factorization of the diagonal $\langle id_X, id_X \rangle : X \to X \times X$.
+Every object $X$ in a model category $\C$ has a reflexive path object which is defined as a factorization of the diagonal $\langle id_X, id_X \rangle : X \to X \times X$.
 If every object of $\C$ is fibrant and $i : U \to V$ is a cofibration, then $\C$ satisfies conditions of \rlem{path-cyl}.
 Thus in this case right and left homotopies relative to a cofibration coincide and define an equivalence relations.
 \end{rem}
@@ -254,16 +255,16 @@ A map $f : X \to Y$ is \emph{an inclusion of a strong deformation retract} if th
 The following lemmas generalize standard properties of model categories.
 
 \begin{lem}[hom-ext][Homotopy extension property]
-Let $\C$ be a finitely complete and finitely cocomplete category, and let $i : U \to V$ be a morphism of $\C$.
-Suppose that for an object $X$ of $\C$, there exists a path object $t : X \to P(X)$, $p_0,p_1 : P(X) \to X$ such that $p_1$ has RLP with respect to $i$.
+Let $\C$ be a category, and let $i : U \to V$ be a morphism of $\C$.
+Suppose that for an object $X$ of $\C$, there exists a path object $p_0,p_1 : P(X) \to X$ such that $p_0$ has RLP with respect to $i$.
 
-Let $i : U \to V \in \cof$, $u : U \to X$, and $v : V \to X$ be maps, and let $h : U \to P(X)$ be a homotopy between $u$ and $v \circ i$.
-Then there exists a map $v' : V \to X$ and a homotopy $h' : V \to P(X)$ between $v' : V \to X$ and $v$ such that $h = h' \circ i$.
+Let $i : U \to V \in \cof$, $u : U \to X$, and $v : V \to X$ be maps, and let $h : U \to P(X)$ be a homotopy between $v \circ i$ and $u$.
+Then there exists a map $v' : V \to X$ and a homotopy $h' : V \to P(X)$ between $v$ and $v' : V \to X$ such that $h = h' \circ i$.
 \end{lem}
 \begin{proof}
-Let $h : U \to P(X)$ be a homotopy between $u$ and $v \circ i$.
+Let $h : U \to P(X)$ be a homotopy between $v \circ i$ and $u$.
 Consider the following diagram:
-\[ \xymatrix{ U \ar[r]^-h \ar[d]_i & P(X) \ar[d]^{p_1} \\
+\[ \xymatrix{ U \ar[r]^-h \ar[d]_i & P(X) \ar[d]^{p_0} \\
               V \ar[r]_v & X
             } \]
 By assumption, we have a lift $h' : V \to P(X)$ which is a required homotopy.
@@ -372,7 +373,11 @@ Then $h' \circ \cyli_1 \circ f = i$ and $p \circ h' \circ \cyli_1 = id_Y$, thus 
 Now, we need to prove a simple lemma, which we formulate in a general form since we will need it later.
 
 \begin{lem}[we-bot]
-Let $\C$ be a finitely complete and finitely cocomplete category, and let $i : U \to V$ be a map of $\C$ which satisfies conditions of \rlem{path-cyl}.
+Let $\C$ be a finitely complete and finitely cocomplete category, and let $i : U \to V$ be a map of $\C$.
+Suppose that for every object $X$ of $\C$ there exists a path object $P(X)$ which satisfies conditions of lemmas \nlem{path-cyl} and \nlem{hom-ext}.
+Moreover, assume that for every map $f : X \to Y$, there exists a morphism of path objects $P(f) : P(X) \to P(Y)$,
+and that there exists a map $s : P(X) \to P(X)$ such that $p_0 \circ s = p_1$ and $p_1 \circ s = p_0$.
+
 Let $f : X \to Y$ and $g : Y \to Z$ be morphisms of $\C$ such that $f$ has RLP up to $\sim^r$ with respect to $U$ and $g \circ f$ has RLP with respect to $i$ up to $\sim_i$.
 Then $g$ also has RLP with respect to $i$ up to $\sim_i$.
 \end{lem}
@@ -383,7 +388,18 @@ Then there exists a map $u_x : U \to X$ and a homotopy $h : U \to P(Y)$ between 
               U \ar@{-->}[ur]^{u_x} \ar[d]_i \ar[r]_u & Y \ar[d]^g \\
               V \ar[r]_v                              & Z
             } \]
-\todo{Finish the proof}
+Then we have a homotopy $h_U = P(g) \circ s \circ h$ between $v \circ i$ and $g \circ f \circ u_x$.
+By \rlem{hom-ext}, there exists a map $v_Z : V \to Z$ and a homotopy $h_3 : V \to P(Z)$ between $v$ and $v_Z$ such that $h_3 \circ i = h_U$.
+By assumption on $g \circ f$, there exists a map $v_X : V \to X$ and a homotopy $h_2 : C_U(V) \to Z$ between $g \circ f \circ v_X$ and $v_Z$.
+Note that $h$ is a homotopy between $f \circ u_x = f \circ v_x \circ i$ and $u$.
+Thus by \rlem{hom-ext}, we have a map $v_Y : V \to Y$ and a homotopy $h_Y : V \to P(Y)$ between $f \circ v_X$ and $v_Y$ such that $h_Y \circ i = h$.
+Now, consider the following diagram:
+\[ \xymatrix{ V \amalg_U V \ar[rrr]^{[s \circ P(g) \circ s \circ h_Y, s \circ h_3]} \ar[d]_{[\cyli_0,\cyli_1]} & & & P(Z) \ar[d]^{p_0} \\
+              C_U(V) \ar[rrr]_{h_2} & & & Z
+            } \]
+Since $p_0$ is pure with respect to $[\cyli_0,\cyli_1]$, we have a lift $q : C_U(V) \to P(Z)$.
+Then $p_1 \circ q$ is a homotopy between $g \circ v_Y$ and $v$.
+\todo{Check the proof}
 \end{proof}
 
 We say that a map in a model category is \emph{pure} if it is pure with respect to cofibrations between cofibrant objects.
