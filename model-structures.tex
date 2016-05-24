@@ -7,6 +7,7 @@
 \usepackage{ifthen}
 \usepackage{xargs}
 \usepackage{todonotes}
+\usepackage{verbatim}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
 
@@ -19,7 +20,8 @@
 
 \newcommand{\newref}[4][]{
 \ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
-\expandafter\newcommand\csname r#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
 \newenvironmentx{#2}[2][1=,2=]{
 \ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
 \ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
@@ -30,6 +32,7 @@
 \newref{lem}{lemma}{Lemma}
 \newref{prop}{proposition}{Proposition}
 \newref{cor}{corollary}{Corollary}
+\newref{rem}{remark}{Remark}
 
 \theoremstyle{definition}
 \newref{defn}{definition}{Definition}
@@ -102,9 +105,9 @@ In section 5, we define an f-model structure on the category of algebras for con
 \section{Preliminaries}
 
 In this section, we will introduce a few definitions that we will need later.
-We will also recall the definition and basic properties of model categories.
+We will also recall the definition and basic properties of model categories and prove a slightly generalized versions of some standard lemmas.
 
-\subsection{Cylinders and homotopy relations}
+\subsection{Homotopy relation}
 
 Let $\C$ be a category and let $V$ be an object of $\C$.
 Then we a \emph{cylinder object} for $V$ is an object $C(V)$ together with maps $\cyli_0,\cyli_1 : V \to C(V)$.
@@ -113,7 +116,7 @@ is a cylinder object $(C_U(V),\cyli_0,\cyli_1)$ for $V$ such that $\cyli_0 \circ
 If $\C$ has the initial object $0$, then a relative cylinder object for $0 \to V$ is just a cylinder object for $V$.
 A morphism of cylinder objects $C(V_1)$ and $C(V_2)$ is a pair of maps $f : V_1 \to V_2$ and $C(f) : C(V_1) \to C(V_2)$ which commute with $\cyli_0$ and $\cyli_1$.
 
-A \emph{homotopy} (with respect to $C(V)$) between maps $f,g : V \to X$ is a map $h : C(V) \to X$ such that $h \circ \cyli_0 = f$ and $h \circ \cyli_1 = g$.
+A \emph{(left) homotopy} (with respect to $C(V)$) between maps $f,g : V \to X$ is a map $h : C(V) \to X$ such that $h \circ \cyli_0 = f$ and $h \circ \cyli_1 = g$.
 Maps are \emph{homotopic} if there is a homotopy between them.
 Maps are \emph{homotopic relative to $i : U \to V$} (with respect to $C_U(V)$) if there is a homotopy with respect to $C_U(V)$ between them.
 Note that maps are homotopic relative to $i$ only if $i \circ f = i \circ g$.
@@ -149,9 +152,59 @@ We list a few elementary properties of pure morphisms in the following propositi
 \end{enumerate}
 \end{prop}
 
-We will say that a relative cylinder object $C(V)$ for $i : U \to V$ is \emph{proper} if the corresponding homotopy relation on every set $\C(V,X)$ is an equivalence relation.
 Note that $\sim$ is reflexive if and only if there exists a map $s : C_U(V) \to V$ such that $s \circ \cyli_0 = s \circ \cyli_1 = id_V$.
-Moreover, if pushout $V \amalg_U V$ exists and $s$ is pure with respect to $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, then the homotopy relation is also symmetric.
+In this case we will say that $C_U(V)$ is \emph{reflexive}.
+If pushout $V \amalg_U V$ exists and $s$ is pure with respect to $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, then the homotopy relation is also symmetric.
+We will say that a (relative) cylinder object $C(V)$ is \emph{proper} if the corresponding homotopy relation on every set $\C(V,X)$ is an equivalence relation.
+
+Let $\C$ be a category and let $X$ be an object of $\C$.
+A \emph{path object} for $X$ is an object $P(X)$ together with maps $t : X \to P(X)$
+and $p_0,p_1 : P(X) \to X$ such that $p_0 \circ t = p_1 \circ t = id_X$.
+A \emph{(right) homotopy} between morphisms $f,g : V \to X$ is a map
+$h : V \to P(X)$ such that $p_0 \circ h = f$ and $p_1 \circ h = g$.
+We say that $f$ and $g$ are right homotopic and write $f \sim^r g$
+if there exists a right homotopy $h : V \to P(X)$ between them.
+We say that a right homotopy $h : V \to P(X)$ between $f,g : V \to X$
+is constant on $i : U \to V$ if $h \circ i = t \circ f \circ i$.
+In this case, we write $f \sim^r_i g$ and say that $f$ and $g$ are \emph{homotopic relative to $i$}.
+
+We will prove a general lemma about the relationship between left and right homotopies.
+The proof is standard, but we repeat it here since we state the lemma in a more general form than usual.
+\begin{lem}[path-cyl]
+Let $\C$ be a finitely complete and finitely cocomplete category, and let $i : U \to V$ be a morphism of $\C$.
+Suppose that there exists a reflexive relative cylinder object $\cyli_0,\cyli_1 : V \to C_U(V)$, $s : C_U(V) \to V$
+and a path object $t : X \to P(X)$, $p_0,p_1 : P(X) \to X$ for every $X$, such that $p_0$ is pure with respect to $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$,
+and $\langle p_0, p_1 \rangle : P(X) \to X \times X$ has RLP with respect to $\cyli_0$.
+
+Then two maps $f,g : V \to X$ are left homotopic relative to $i$ if and only if they are right homotopic relative to $i$, and $\sim_i$ is transitive.
+\end{lem}
+\begin{proof}
+Let $h : C_U(V) \to X$ be a left homotopy between $f$ and $g$.
+Consider the following diagram:
+\[ \xymatrix{ V \ar[r]^f \ar[d]_{\cyli_0} & X \ar[r]^t & P(X) \ar[d]^{\langle p_0, p_1 \rangle} \\
+              C_U(V) \ar[rr]_{\langle f \circ s, h \rangle} & & X \times X
+            } \]
+By assumption, we have a lift $h'$ in this diagram.
+Then $h' \circ \cyli_1$ is a right homotopy between $f$ and $g$.
+Moreover, $h' \circ \cyli_1 \circ i = h' \circ \cyli_0 \circ i = t \circ f \circ i$.
+Thus $h' \circ \cyli_1$ is constant on $i$.
+
+Let $h : V \to P(X)$ be a right homotopy between $f$ and $g$ that is constant on $i$.
+Consider the following diagram:
+\[ \xymatrix{ V \amalg_U V \ar[rr]^{[t \circ f, h]} \ar[d]_{[\cyli_0,\cyli_1]} & & P(X) \ar[d]^{p_0} \\
+              C_U(V) \ar[r]_s & V \ar[r]_f & X
+            } \]
+By assumption, we have a lift $h'$ in this diagram.
+Then $p_1 \circ h'$ is a left homotopy between $f$ and $g$.
+
+Let $h_1 : C_U(V) \to X$ be a homotopy between $f_0$ and $f_1$, and let $h_2 : V \to P(X)$ be a homotopy between $f_1$ and $f_2$ that is constant on $i$.
+Then consider the following diagram:
+\[ \xymatrix{ V \amalg_U V \ar[rr]^-{[t \circ f, h_2]} \ar[d]_{[\cyli_0,\cyli_1]} & & P(X) \ar[d]^{p_0} \\
+              C_U(V) \ar[rr]_{h_1} & & X
+            } \]
+By assumption, we have a lift $h_3$ in this diagram.
+Then $p_1 \circ h_3$ is a homotopy between $f_0$ and $f_1$.
+\end{proof}
 
 \subsection{Model categories}
 
@@ -187,31 +240,34 @@ Let $\C$ be a model category.
 Then we can define a relative cylinder object $C_U(V)$ for every $i : U \to V$.
 Let $[\cyli_0,\cyli_1] : V \amalg_U V \to C(V)$, $s : C(V) \to V$ be a factorization of $[id_V,id_V] : V \amalg_U V \to V$ into a cofibration and a trivial fibration.
 The homotopy relation corresponding to this cylinder object is always reflexive and symmetric.
-Later, we will see that if $i$ is a cofibration and every object of $\C$ is fibrant, then it is also transitive.
+
+\begin{rem}[path-cyl-mod]
+Every object $X$ in a model category $\C$ has a path object which is defined as a factorization of the diagonal $\langle id_X, id_X \rangle : X \to X \times X$.
+If every object of $\C$ is fibrant and $i : U \to V$ is a cofibration, then $\C$ satisfies conditions of \rlem{path-cyl}.
+Thus in this case right and left homotopies relative to a cofibration coincide and define an equivalence relations.
+\end{rem}
 
 A map $f : X \to Y$ is \emph{an inclusion of a deformation retract} if there is
 a map $g : Y \to X$ such that $g \circ f = id_X$ and $f \circ g \sim id_Y$.
 A map $f : X \to Y$ is \emph{an inclusion of a strong deformation retract} if the homotopy is relative to $f$.
 
-A \emph{path object} for an object $Z$ is an object $P(Z)$ together with maps $t : Z \to P(Z) \in \we$
-and $\langle p_0,p_1 \rangle : P(Z) \to Z \times Z \in \fib$ such that $p_0 \circ t = p_1 \circ t = id_Z$.
-A \emph{right homotopy} between morphisms $f_0,f_1 : Y \to Z$ is a map
-$h : Y \to P(Z)$ such that $p_0 \circ h = f_0$ and $p_1 \circ h = f_1$.
-We say that $f_0$ and $f_1$ are right homotopic and write $f_0 \sim^r f_1$
-if there exists a right homotopy $h : Y \to P(Z)$ between them.
-We say that a right homotopy $h : Y \to P(Z)$ between $f_0,f_1 : Y \to Z$
-is constant on $i : X \to Y$ if $h \circ i = t \circ f_0 \circ i$.
-In this case, we write $f_0 \sim^r_i f_1$.
+The following lemmas generalize standard properties of model categories.
 
-\begin{prop}[left-right-hom]
-Let $i : X \to Y$ be a cofibration, $Z$ a fibrant object, and $f_0,f_1 : Y \to Z$ a pair of maps.
-Then $f_0 \sim_i f_1$ if and only if $f_0 \sim^r_i f_1$.
-\end{prop}
+\begin{lem}[hom-ext][Homotopy extension property]
+Let $\C$ be a finitely complete and finitely cocomplete category, and let $i : U \to V$ be a morphism of $\C$.
+Suppose that for an object $X$ of $\C$, there exists a path object $t : X \to P(X)$, $p_0,p_1 : P(X) \to X$ such that $p_1$ has RLP with respect to $i$.
 
-\begin{prop}[hom-ext][Homotopy extension property]
-Let $X$ be a fibrant object and let $i : U \to V \in \cof$, $u : U \to X$, and $v : V \to X$ be maps such that $u \sim^r v \circ i$.
-Then there exists a map $v' : V \to X$ such that $u = v' \circ i$ and $v' \sim^r v$.
-\end{prop}
+Let $i : U \to V \in \cof$, $u : U \to X$, and $v : V \to X$ be maps, and let $h : U \to P(X)$ be a homotopy between $u$ and $v \circ i$.
+Then there exists a map $v' : V \to X$ and a homotopy $h' : V \to P(X)$ between $v' : V \to X$ and $v$ such that $h = h' \circ i$.
+\end{lem}
+\begin{proof}
+Let $h : U \to P(X)$ be a homotopy between $u$ and $v \circ i$.
+Consider the following diagram:
+\[ \xymatrix{ U \ar[r]^-h \ar[d]_i & P(X) \ar[d]^{p_1} \\
+              V \ar[r]_v & X
+            } \]
+By assumption, we have a lift $h' : V \to P(X)$ which is a required homotopy.
+\end{proof}
 
 Let $\C$ be a category and let $\I$ be a class of morphisms of $\C$.
 Then we define $\Iinj$ to be the class of morphisms of $\C$ that has RLP with respect to $\I$,
@@ -256,8 +312,39 @@ An \emph{f-model structure} on a category is a model structure in which every ob
 In this section, we will prove various properties of f-model categories.
 In particular, we will give a characterization of weak equivalences in such categories.
 
-For every $i : U \to V$, let $C_U(V)$ be any cylinder object such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V) \in \cof$ and $s : C_U(V) \to V \in \fib \cap \we$.
-In this section, $\sim_i$ will always stand for the homotopy relation with respect to $C_U(V)$.
+First, let us show how to construct a set of generating trivial cofibrations from a set of generating cofibrations satisfying some mild hypotheses.
+Let $\C$ be a category and $\I$ a class of maps of $\C$ together with a relative cylinder object $C_U(V)$ for every $i : U \to V$ in $\I$.
+Let us denote by $\J_\I$ the class of maps $\cyli_0 : V \to C_U(V)$ for each $U \to V \in \I$.
+
+\begin{prop}[triv-fib-iinj]
+Let $\C$ be a category, and let $\I$ be a class of maps of $\C$.
+If $f : X \to Y \in \Jinj[_\I]$ has RLP up to $\sim_i$ with respect to every $i \in \I$, then $f \in \Iinj$.
+\end{prop}
+\begin{proof}
+Suppose we have a commutative square as below.
+We need to find a lift $V \to X$ such that both triangles commute.
+\[ \xymatrix{ U \ar[d]_{i \in \I} \ar[r] \ar@{}[dr]|(.7){\sim} & X \ar[d]^f \\
+              V \ar[r]_v \ar@{-->}[ur]^g                       & Y
+            } \]
+By assumption, we have a lift $g : V \to X$ together with
+a homotopy $h : C_U(V) \to Y$ between $f \circ g$ and $v$.
+Since $f$ has RLP with respect to $\cyli_0$, we have a lift $h' : C_U(V) \to X$ in the following diagram:
+\[ \xymatrix{ V \ar[r]^g \ar[d]_{\cyli_0}         & X \ar[d]^f \\
+              C_U(V) \ar[r]^-h \ar@{-->}[ur]^{h'} & Y.
+            } \]
+Then $h' \circ \cyli_1$ is a required lift in the original square.
+\end{proof}
+
+\begin{cor}[min-cof-gen]
+Let $\C$ be an f-model category.
+Suppose that the class of cofibrations is generated by a set $\I$ such that
+the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
+Then the model structure is cofibrantly generated with $\J_\I$ as a set of generating trivial cofibrations.
+\end{cor}
+\begin{proof}
+This follows from the previous proposition and \rprop{model-cat}.
+\end{proof}
+
 The following propositions give useful characterizations of trivial
 cofibrations and weak equivalences in f-model categories.
 
@@ -282,18 +369,36 @@ Since $\cyli_0 : Y \to C_X(Y)$ is a trivial cofibration, we have a lift $h' : C_
 Then $h' \circ \cyli_1 \circ f = i$ and $p \circ h' \circ \cyli_1 = id_Y$, thus $f$ is a retract of $i$, hence a weak equivalence.
 \end{proof}
 
-We say that a map in a model category is \emph{pure} if it is pure with respect to cofibrations between cofibrant objects.
+Now, we need to prove a simple lemma, which we formulate in a general form since we will need it later.
 
-Now, we give a characterization of weak equivalences in an f-model category.
-Later we will add another equivalent condition to this list.
+\begin{lem}[we-bot]
+Let $\C$ be a finitely complete and finitely cocomplete category, and let $i : U \to V$ be a map of $\C$ which satisfies conditions of \rlem{path-cyl}.
+Let $f : X \to Y$ and $g : Y \to Z$ be morphisms of $\C$ such that $f$ has RLP up to $\sim^r$ with respect to $U$ and $g \circ f$ has RLP with respect to $i$ up to $\sim_i$.
+Then $g$ also has RLP with respect to $i$ up to $\sim_i$.
+\end{lem}
+\begin{proof}
+Suppose that we have a commutative square as below.
+Then there exists a map $u_x : U \to X$ and a homotopy $h : U \to P(Y)$ between $f \circ u_x$ and $u$.
+\[ \xymatrix{   \ar@{}[dr]|(.7){\sim^r}               & X \ar[d]^f \\
+              U \ar@{-->}[ur]^{u_x} \ar[d]_i \ar[r]_u & Y \ar[d]^g \\
+              V \ar[r]_v                              & Z
+            } \]
+\todo{Finish the proof}
+\end{proof}
+
+We say that a map in a model category is \emph{pure} if it is pure with respect to cofibrations between cofibrant objects.
+Now we can give a characterization of weak equivalences in an f-model category.
+
+\todo{Prove this for any model category}
 
 \begin{prop}[min-we]
-Let $\C$ be a category with an f-model structure and let $f : X \to Y$ be a map of $\C$.
-Then the following conditions are equivalent:
+Let $\C$ be a category with an f-model structure, and let $\I$ be a class of maps of $\C$ such that $\Icof = \cof$.
+Then the following conditions on a map $f : X \to Y$ of $\C$ are equivalent:
 \begin{enumerate}
 \item $f$ is a weak equivalence.
 \item $f$ has RLP up to $\sim_i$ with respect to every cofibration $i$.
 \item $f$ is pure and has RLP up to $\sim$ with respect to cofibrant objects.
+\item $f$ has RLP up to $\sim_i$ with respect to every $i \in \I$.
 \end{enumerate}
 \end{prop}
 \begin{proof}
@@ -306,6 +411,15 @@ Since $i$ is a trivial cofibration, it has a retraction $r : Z \to X$ such that 
 Then $r \circ q$ is a required lift.
 
 $(2 \Rightarrow 3)$ Obvious.
+
+$(2 \Rightarrow 4)$ Obvious.
+
+$(4 \Rightarrow 1)$
+Factor $f$ into a trivial cofibration $g : X \to Y$ followed by a fibration $h : Y \to Z$.
+By \rprop{min-triv-cof}, $g$ has RLP up to $\sim$ with respect to every object.
+Note that $\J_\I$ consists of trivial cofibrations.
+Hence by \rlem{we-bot} and \rprop{triv-fib-iinj}, $h$ is a trivial fibration.
+Thus $f$ is a weak equivalence by 2-out-of-3 property.
 
 $(3 \Rightarrow 1)$
 Let $f : X \to Y$ be a pure map that has RLP with respect to cofibrant objects.
@@ -330,7 +444,7 @@ Indeed, let $i : U \to V$ be a cofibration between cofibrant objects, and suppos
               V \ar[r]_v          & X'.
             } \]
 Then there exists a map $u' : U \to X'$ such that $f' \circ u' \sim u$; hence $v \circ i = g' \circ u \sim u'$.
-By \rprop{left-right-hom} and \rprop{hom-ext}, there exists a map $v' : V \to X'$ such that $v' \circ i = u'$ and $v' \sim v$.
+By \rrem{path-cyl-mod} and \rlem{hom-ext}, there exists a map $v' : V \to X'$ such that $v' \circ i = u'$ and $v' \sim v$.
 Then $f' \circ v' \circ i = f' \circ u' \sim u$, and by the same propositions, there exists a map $v'' : V \to Y'$ such that $v'' \circ i = u$, which shows that $g'$ is pure.
 
 Finally, consider the following diagram:
@@ -342,69 +456,10 @@ By \rprop{min-triv-cof}, $f'$ is a weak equivalence.
 Hence $f$ is a weak equivalence by the 2-out-of-3 property.
 \end{proof}
 
-\begin{cor}
-Let $\C$ be an f-model category.
-Then for every $i : U \to V$, the homotopy relation $\sim_i$ is an equivalence.
-\end{cor}
-\begin{proof}
-This relation is reflexive and symmetric in every model category.
-To prove that it is transitive, consider the following diagram:
-\[ \xymatrix{ V \ar[r]^{i_0} \ar[d]_{i_1} &     C_U(V) \ar[d]^q \\
-              C_U(V) \ar[r]  \ar[d]_s     & \po C_U(V) \amalg_V C_U(V) \ar[d]^p \\
-              V \ar[r]                    & \po C_U(V)
-            } \]
-Since $i_0$ is a trivial cofibration, $q$ is also a trivial cofibration.
-Hence, $p$ is a weak equivalence by the 2-out-of-3 property.
-By the previous proposition, it is pure.
+Often the class of cofibrations is generated by much smaller class $\I$.
+Thus the last condition in the previous proposition gives us a useful characterization of weak equivalences which is easy to verify in practice.
 
-Let $h_1 : C_U(V) \to X$ and $h_2 : C_U(V) \to X$ be homotopies between $f_1,f_2 : V \to X$ and $f_2,f_3 : V \to X$ respectively,
-Consider the following diagram:
-\[ \xymatrix{ V \amalg_U V \ar[r]^-{i_0 \amalg_i i_1} \ar[d]_{[i_0,i_1]} & C_U(V) \amalg_V C_U(V) \ar[d]^p \\
-              C_U(V)       \ar[r]_{id} \ar@{-->}[ur]_h                   & C_U(V)
-            } \]
-Since $p$ is pure, we have a lift $h$.
-Then $[h_1,h_2] \circ h$ is a homotopy between $f_1$ and $f_3$.
-\end{proof}
-
-Now, let us show how to construct a set of generating trivial cofibrations from a set of generating cofibrations satisfying some mild hypotheses.
-Let $\C$ be a cocomplete category and $\I$ a class of maps of $\C$ together with a relative cylinder object $C_U(V)$ for every $i : U \to V$ in $\I$.
-Let us denote by $\J_\I$ the class of maps $\cyli_0 : V \to C_U(V)$ for each $U \to V \in \I$.
-
-\begin{prop}[triv-fib-iinj]
-Let $\C$ be a category and $\I$ a class of maps of $\C$ such that
-the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
-If $f : X \to Y \in \Jinj[_\I]$ has RLP up to $\sim_i$ with respect to every $i \in \I$, then $f \in \Iinj$.
-\end{prop}
-\begin{proof}
-Suppose we have a commutative square as below.
-We need to find a lift $V \to X$ such that both triangles commute.
-\[ \xymatrix{ U \ar[d]_{i \in \I} \ar[r] \ar@{}[dr]|(.7){\sim} & X \ar[d]^f \\
-              V \ar[r]_v \ar@{-->}[ur]^g                       & Y
-            } \]
-By assumption, we have a lift $g : V \to X$ together with
-a homotopy $h : C_U(V) \to Y$ between $f \circ g$ and $v$.
-Since $f \in \Jinj[_\I]$, we have a lift $h' : C_U(V) \to X$ in the following diagram:
-\[ \xymatrix{ V \ar[r]^g \ar[d]_{\cyli_0}         & X \ar[d]^f \\
-              C_U(V) \ar[r]^-h \ar@{-->}[ur]^{h'} & Y.
-            } \]
-Then $h' \circ \cyli_1$ is a required lift in the original square.
-\end{proof}
-
-\begin{cor}[min-cof-gen]
-Let $\C$ be an f-model category.
-Suppose that the class of cofibrations is generated by a set $\I$ such that
-the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
-Then the model structure is cofibrantly generated with $\J_\I$ as a set of generating trivial cofibrations.
-\end{cor}
-\begin{proof}
-This follows from the previous proposition and \rprop{model-cat}.
-\end{proof}
-
-Often the class of cofibrations is generated by some smaller class $\I$.
-We want to prove that to check that a map is a weak equivalences, it is enough to show that it has RLP up to $\sim_i$ with respect to every $i \in \I$.
-Since $\I$ is usually much smaller than the whole class of cofibrations, this condition is easier to verify.
-To do this, we introduce some notation and prove a technical lemma.
-
+\begin{comment}
 Let $\C$ be a category and let $i : U \to V$ be a morphism of $\C$.
 A \emph{system of cylinders} for $i$ consists of the following data:
 a relative cylinder object $C_U(V)$, cylinder objects $C(U)$ and $C(V)$, and a morphism of cylinder objects $C(i) : C(U) \to C(V)$
@@ -453,10 +508,7 @@ Now, we have map $[h_z, g \circ h_y, h_1] : C(V) \amalg_{C(U)} C(V) \amalg_{V \a
 By condition~\eqref{it:comp}, we have a map $h_2 : C_U(V) \to Z$ which gives us a homotopy between $g \circ v_y$ and $v$.
 Thus $v_y$ is a required lift.
 \end{proof}
-
-% \todo{Construct a system of cylinders on a model category}
-
-% \todo{Prove that this implies the characterization of weak equivalences}
+\end{comment}
 
 \section{The existence of an f-model structure}
 
