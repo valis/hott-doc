@@ -338,15 +338,17 @@ Consider the following diagram:
 Since $g$ is pure, we have a lift, which gives us a homotopy between $f \circ g$ and $id_Y$.
 \end{proof}
 
-Now, we need to prove a simple lemma, which we formulate in a general form since we will need it later.
+Now, we need to prove a technical lemma, which we formulate in a general form since we will need it later.
 
 \begin{lem}[we-bot]
 Let $\C$ be a finitely cocomplete category, and let $i : U \to V$ and $g : Y \to Z$ be maps of $\C$.
 Let $C_U(V)$ be a relative cylinder object for $i$.
-Suppose that for every $A \in \{ Y, Z \}$, there exists a path object $p_0,p_1 : P(A) \to A$ such that
-$p_0$ has RLP with respect to $i$ and it is pure with respect to $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$.
-Moreover, assume that there exists a morphism of path objects $(g,P(g)) : P(Y) \to P(Z)$,
-and that for every $A \in \{ Y, Z \}$, there exists a map $s : P(A) \to P(A)$ such that $p_0 \circ s = p_1$ and $p_1 \circ s = p_0$.
+Suppose that for every $A \in \{ Y, Z \}$, there exists a path object $p_0,p_1 : P(A) \to A$, which satisfy the following conditions:
+\begin{enumerate}
+\item For every $A \in \{ Y, Z \}$, $p_0 : P(A) \to A$ has RLP with respect to $i$ and it is pure with respect to $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$.
+\item There exists a morphism of path objects $(g,P(g)) : P(Y) \to P(Z)$.
+\item Either $p_1 : P(Z) \to Z$ has RLP with respect to $i$ or there exists a map $s : P(Z) \to P(Z)$ such that $p_0 \circ s = p_1$ and $p_1 \circ s = p_0$.
+\end{enumerate}
 
 Let $f : X \to Y$ be a map of $\C$ such that $f$ has RLP up to $\sim^r$ with respect to $U$, and $g \circ f$ has RLP with respect to $i$ up to $\sim_i$.
 Then $g$ also has RLP with respect to $i$ up to $\sim_i$.
@@ -358,16 +360,25 @@ Then there exists a map $u_x : U \to X$ and a homotopy $h : U \to P(Y)$ between 
               U \ar@{-->}[ur]^{u_x} \ar[d]_i \ar[r]_u & Y \ar[d]^g \\
               V \ar[r]_v                              & Z
             } \]
-Then we have a homotopy $h_u = P(g) \circ s \circ h$ between $v \circ i$ and $g \circ f \circ u_x$.
-By \rlem{hom-ext}, there exists a map $v_z : V \to Z$ and a homotopy $h_3 : V \to P(Z)$ between $v$ and $v_z$ such that $h_3 \circ i = h_u$.
+Then we have a homotopy $h_u$ between $g \circ f \circ u_x$ and $v \circ i$.
+If $p_1$ has RLP with respect to $i$, then let $h_u = P(g) \circ h$; otherwise let $h_u = s \circ s \circ P(g) \circ h$.
+By \rlem{hom-ext}, there exists a map $v_z : V \to Z$ and a homotopy $h_3 : V \to P(Z)$ between $v_z$ and $v$ such that $h_3 \circ i = h_u$.
+Indeed, if $p_1$ has RLP with respect to $i$, then we can apply \rlem{hom-ext} to $p_1,p_0 : P(Z) \to Z$.
+If we defined $h_u$ as $s \circ s \circ P(g) \circ h$, then we can apply \rlem{hom-ext} to $s \circ P(g) \circ h$ to get a homotopy $h'_3$ between $v$ and $v_z$.
+Then we can define $h_3$ as $s \circ h'_3$.
+
 By assumption on $g \circ f$, there exists a map $v_x : V \to X$ and a homotopy $h_2 : C_U(V) \to Z$ between $g \circ f \circ v_x$ and $v_z$.
 Note that $h$ is a homotopy between $f \circ u_x = f \circ v_x \circ i$ and $u$.
 Thus by \rlem{hom-ext}, we have a map $v_y : V \to Y$ and a homotopy $h_y : V \to P(Y)$ between $f \circ v_x$ and $v_y$ such that $h_y \circ i = h$.
 In particular, $v_y \circ i = u$.
 Thus we only need to prove that $g \circ v_y$ and $v$ are homotopic relative to $i$.
+If $h_u = P(g) \circ h$, then let $h_1 = P(g) \circ h_y$.
+If $h_u = s \circ s \circ P(g) \circ h$, then let $h_1 = s \circ s \circ P(g) \circ h_y$.
+Then $h_1 \circ i = h_u$.
+Thus we have a map $[h_1,h_3] : V \amalg_U V \to P(Z)$.
 Consider the following diagram:
-\[ \xymatrix{ V \amalg_U V \ar[rrr]^{[s \circ P(g) \circ s \circ h_y, s \circ h_3]} \ar[d]_{[\cyli_0,\cyli_1]} & & & P(Z) \ar[d]^{p_0} \\
-              C_U(V) \ar[rrr]_{h_2} & & & Z
+\[ \xymatrix{ V \amalg_U V \ar[rr]^{[h_1, h_3]} \ar[d]_{[\cyli_0,\cyli_1]} & & P(Z) \ar[d]^{p_0} \\
+              C_U(V) \ar[rr]_{h_2} & & Z
             } \]
 Since $p_0$ is pure with respect to $[\cyli_0,\cyli_1]$, we have a lift $q : C_U(V) \to P(Z)$.
 Then $p_1 \circ q$ is a homotopy between $g \circ v_y$ and $v$.
@@ -540,7 +551,7 @@ there exists a path object $P(X)$ such that the following conditions hold:
 \begin{enumerate}
 \item $p_0$ has RLP with respect to $\I$.
 \item For every $f : X \to Y$, there exists a morphism of path objects $(f,P(f)) : P(X) \to P(Y)$,
-\item For every object $X$, there exists a map $s : P(X) \to P(X)$ such that $p_0 \circ s = p_1$ and $p_1 \circ s = p_0$.
+\item Either $p_1$ has RLP with respect to $\I$ or there exists a map $s : P(X) \to P(X)$ such that $p_0 \circ s = p_1$ and $p_1 \circ s = p_0$.
 \item \label{it:either} Either path objects are reflexive and maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_\I$
 or maps in $\Jcell[_\I]$ have RLP up to $\sim^r$ with respect to the domains of maps in $\I$.
 \end{enumerate}
@@ -553,8 +564,8 @@ Note that if the second condition of \eqref{it:either} holds, then condition~\eq
 Thus we only need to prove that the first condition of \eqref{it:either} implies the second.
 Indeed, let $f : X \to Y$ be a map in $\Jcell[_\I]$, and let $g : Y \to X$ be its retraction.
 Consider the following diagram:
-\[ \xymatrix{ X \ar[r]^-{t \circ f} \ar[d]_f & P(Y) \ar[d]^{\langle p_0, p_1 \rangle} \\
-              Y \ar[r]_-{f \circ g, id_Y} \ar@{-->}[ur] & Y \times Y
+\[ \xymatrix{ X \ar[rr]^-{t \circ f} \ar[d]_f & & P(Y) \ar[d]^{\langle p_0, p_1 \rangle} \\
+              Y \ar[rr]_-{\langle f \circ g, id_Y \rangle} \ar@{-->}[urr] & & Y \times Y
             } \]
 We have a lift $h : Y \to P(Y)$ which gives us a right homotopy between $f \circ g$ and $id_Y$.
 Now, for every $u : U \to Y$, we can define a lift $u' = g \circ u : U \to X$ and a homotopy $h \circ u$ between $f \circ u'$ and $u$.
