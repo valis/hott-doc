@@ -100,6 +100,8 @@
 \newref{remark}{remark}{Remark}
 
 \newcommand{\deq}{\equiv}
+\newcommand{\repl}{:=}
+
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\C}{\cat{C}}
 \newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
@@ -440,6 +442,8 @@ Thus this model is isomorphic to the free model $F(\{\,a : (tm,n)\,\})$.
 In this section we describe the theory of an interval type.
 We describe several constructions in this theory which we will need later.
 In partical, we will show that theories with an interval type and path types also have $Id$ types.
+We will use a (slightly informal) named presentation of terms,
+from which a formal presentation in terms of De Bruijn indices can be recovered.
 
 Let $I_0$ be a theory with function symbols $I : (ty,0)$, $left : (tm,0)$, $right : (tm,0)$, and $coe : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$, and the following axioms:
 \begin{center}
@@ -458,15 +462,18 @@ Let $I_0$ be a theory with function symbols $I : (ty,0)$, $left : (tm,0)$, $righ
 
 \medskip
 \begin{center}
-\AxiomC{$I \vdash D\ type$}
-\AxiomC{$\vdash d : D[left]$}
+\AxiomC{$x : I \vdash D\ type$}
+\AxiomC{$\vdash d : D[x \repl left]$}
 \AxiomC{$\vdash i : I$}
-\TrinaryInfC{$\vdash coe(D, d, i) : D[i]$}
+\TrinaryInfC{$\vdash coe(\lambda x.\,D, d, i) : D[x \repl i]$}
 \DisplayProof
-\qquad
-\AxiomC{$I \vdash D\ type$}
-\AxiomC{$\vdash d : D[left]$}
-\BinaryInfC{$\vdash coe(D, d, left) \deq d$}
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$x : I \vdash D\ type$}
+\AxiomC{$\vdash d : D[x \repl left]$}
+\BinaryInfC{$\vdash coe(\lambda x.\,D, d, left) \deq d$}
 \DisplayProof
 \end{center}
 Let $I$ be the regularization of $I_0$.
@@ -481,10 +488,13 @@ Let $HPath$ be a regular theory with function symbols $Path : (ty,n) \times (tm,
 \AxiomC{$\Gamma \vdash a' : A$}
 \BinaryInfC{$\Gamma \vdash Path(A, a, a')\ type$}
 \DisplayProof
-\quad
+\end{center}
+
+\smallskip
+\begin{center}
 \AxiomC{$\Gamma \vdash A\ type$}
-\AxiomC{$\Gamma, I \vdash a : A\!\uparrow$}
-\BinaryInfC{$\Gamma \vdash path(a) : Path(A, a[left], a[right])$}
+\AxiomC{$\Gamma, x : I \vdash a : A$}
+\BinaryInfC{$\Gamma \vdash path(\lambda x.\,a) : Path(A, a[x \repl left], a[x \repl right])$}
 \DisplayProof
 \end{center}
 
@@ -499,16 +509,16 @@ Let $HPath$ be a regular theory with function symbols $Path : (ty,n) \times (tm,
 \smallskip
 \begin{center}
 \AxiomC{$\Gamma \vdash A\ type$}
-\AxiomC{$\Gamma, I \vdash a : A\!\uparrow$}
+\AxiomC{$\Gamma, x : I \vdash a : A$}
 \AxiomC{$\Gamma \vdash i : I$}
-\TrinaryInfC{$\Gamma \vdash at(a[left], a[right], path(a), i) \deq a[i]$}
+\TrinaryInfC{$\Gamma \vdash at(a[x \repl left], a[x \repl right], path(\lambda x.\,a), i) \deq a[x \repl i]$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
 \AxiomC{$\Gamma \vdash p : Path(A, a, a')$}
-\UnaryInfC{$\Gamma \vdash path(at(a\!\uparrow, a'\!\uparrow, p\!\uparrow, v_0)) \deq p$}
+\UnaryInfC{$\Gamma \vdash path(\lambda x.\,at(a, a', p, x)) \deq p$}
 \DisplayProof
 \end{center}
 
@@ -524,30 +534,45 @@ Let $HPath$ be a regular theory with function symbols $Path : (ty,n) \times (tm,
 \end{center}
 We will work with theories under $HPath$, which we call theories with \emph{homogeneous path types}.
 
-Let $refl(a) = path(a\!\uparrow)$.
+Let $refl(a) = path(\lambda x.\,a)$.
 If $\Gamma \vdash a : A$, then $\Gamma \vdash refl(a) : Path(A, a, a)$.
 
-Let $squeeze(i,j) = at(left, j, coe(Path(I, left, v_0), refl(left), j), i)$.
-If $\Gamma \vdash i : I$ and $\Gamma \vdash j : I$,
-    then $\Gamma \vdash squeeze(i,j) : I$, $\Gamma \vdash squeeze(left,j) \deq left$, $\Gamma \vdash squeeze(right,j) \deq j$, and $\Gamma \vdash squeeze(i,left) \deq left$.
+Let $squeeze(i,j) = at(left, j, coe(\lambda x.\,Path(I, left, x), refl(left), j), i)$.
+If $\Gamma \vdash i : I$ and $\Gamma \vdash j : I$, then
+$\Gamma \vdash squeeze(i,j) : I$, $\Gamma \vdash squeeze(left,j) \deq left$,
+$\Gamma \vdash squeeze(right,j) \deq j$, and $\Gamma \vdash squeeze(i,left) \deq left$.
 
-Now, we can define $J(A, D, d, a, a', p)$ as $coe(D', d[a], right)$, where
-    $D' = D\!\uparrow_3[a\!\uparrow, at(a\!\uparrow, a'\!\uparrow, p\!\uparrow, squeeze(v_0,right)), path(at(a\!\uparrow^2, a'\!\uparrow^2, p\!\uparrow^2, squeeze(v_1,v_0)))]$.
-If $\Gamma, A, A\!\uparrow, Id(A\!\uparrow^2, v_1, v_0) \vdash D\ type$, $\Gamma, A \vdash d : D'$, and $\Gamma \vdash p : Id(A, a, a')$,
-    then $\Gamma \vdash J(A, D, d, a, a', p) : D[a, a', p]$.
+Now, we can define $J(A, \lambda x y q.\,D, \lambda x.\,d, a, a', p)$ as $coe(\lambda i.\,D', d[x \repl a], right)$, where $D'$ is defined as
+\[ D[x \repl a, y \repl at(a, a', p, squeeze(i,right)), q \repl path(\lambda j.\,at(a, a', p, squeeze(i,j)))]. \]
+If $\Gamma, x : A, y : A, q : Id(A, x, y) \vdash D\ type$, $\Gamma, x : A \vdash d : D[y \repl x, q \repl refl(x)]$, and $\Gamma \vdash p : Id(A, a, a')$,
+then $\Gamma \vdash J(A, \lambda x y q.\,D, \lambda x.\,d, a, a', p) : D[x \repl a, y \repl a', q \repl p]$.
 
 Thus $Path$, $refl$, and $J$ almost define a morphism from the theory of $Id$ types.
 The only problem is that axiom $\Gamma \vdash J(A, D, d, a, a, refl(a)) \deq d[a]$ is not satisfied.
-This axiom will be satisfied if we assume an additional axiom:
-\medskip
+We can fix this by adding the following additional axiom:
+\smallskip
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
-\UnaryInfC{$\Gamma \vdash coe(A\!\uparrow, a, right) \deq a$}
+\UnaryInfC{$\Gamma \vdash coe(\lambda x.\,A, a, right) \deq a$}
 \DisplayProof
 \end{center}
-\medskip
 But we do not need this axiom, since it holds propositionally.
-That is, \todo{Finish this}
+
+We will need a stronger version of $coe$ which satisfies the following rule:
+\smallskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash A$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash a : A[x \repl i]$}
+\AxiomC{$\Gamma \vdash j : I$}
+\QuaternaryInfC{$\Gamma \vdash coe_2(\lambda x.\,A, i, a, j) : A[x \repl j]$}
+\DisplayProof
+\end{center}
+It can be defined as follows.
+First, note that $I$ is contractible: if $\Gamma \vdash i : I$, then $\Gamma \vdash path\ (\lambda j.\,squeeze(j,i)) : left = i$.
+It follows that we can define a term $pp(i,j)$ such that if $\Gamma \vdash i : I$ and $\Gamma \vdash j : I$, then $\Gamma \vdash pp(i,j) : i = j$.
+Now, let $coe_2(\lambda x.\,A, i, a, j)$ be equal to $coe(\lambda x.\,A[x \repl at(i, j, pp(i,j), x)], a, right)$.
+Note that $\Gamma \vdash pp(left,left) \deq refl(left)$; hence $\Gamma \vdash coe_2(\lambda x.\,A, left, a, left) \deq a$
 
 Finally, let us describe the last construction we will need.
 Let \[ inv(i) = at(right, left, coe(Path(I, v_0, left), refl(left), right), i). \]
@@ -660,6 +685,8 @@ Suppose that for every object $X$, there exists a reflexive path object $P(X)$ s
 Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a set of generating cofibrations,
 $\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of weak equivalences.
 \end{thm}
+
+We will define several sets of maps that can be used as generating cofibrations.
 
 Let $e : \{ ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ty) = ctx$, $e(tm) = ty$.
 Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ty} = ft$, $d_{tm} = ty$.
@@ -839,6 +866,7 @@ If $n > 0$, then let $\Delta = ft(\Gamma)$.
 There exists a context $\Delta' \in X_{(ctx,n-1)}$ such that $f(\Delta') \sim \Delta$.
 By \rlem{hom-ext}, there exists
 \end{proof}
+\end{comment}
 
 \section{A model structure on the category of theories}
 
@@ -916,7 +944,6 @@ Morphism $w : C(\mathbb{V}_{s_1, \ldots s_k, (p,n)}) \to F(\mathbb{V}_{s_1, \ldo
 $w(P) = P$, $w(Q) = Q$, $w(H(x_1, \ldots x_k)) = I \times A(x_1, \ldots x_k)$, $w(h(x_1, \ldots x_k)) = I \times a(x_1, \ldots x_k)$.
 Morphisms $i_0,i_1 : F(\mathbb{U}_{s_1, \ldots s_k, (p,n)}) \to C(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ are defined as follows:
 $i_j(P) = P$, $i_j(Q) = Q$, $i_j(A(x_1, \ldots x_k)) = c_j^*(H(x_1, \ldots x_k))$ and \todo{Fix margins} $i_j(a(x_1, \ldots x_k)) = c_j^*(h(x_1, \ldots x_k))$.
-\end{comment}
 
 % If $p \in \{ ty, tm \}$, then let $\I^1_p$ be the set of morphisms of theories of the form
 % $\{ P(x_1, \ldots x_n) \sststile{}{x_1, \ldots x_n} A(x_1, \ldots x_n)\!\downarrow \land Q(x_1, \ldots x_n) \} \to \{ P(x_1, \ldots x_n) \sststile{}{x_1, \ldots x_n} a(x_1, \ldots x_n)\!\downarrow, a(x_1, \ldots x_n)\!\downarrow\ \sststile{}{x_1 : s_1, \ldots x_n : s_n} d_p(a(x_1, \ldots x_n)) = A(x_1, \ldots x_n) \land Q(x_1, \ldots x_n) \}$
