@@ -712,7 +712,8 @@ Now, we are ready to define our first examples of generating cofibrations.
 These examples are particularly important since they will be used to characterize weak equivalences.
 Let $e : \{ ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ty) = ctx$, $e(tm) = ty$.
 Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ty} = ft$, $d_{tm} = ty$.
-Let $i^0_{(p,n)} : F(\{\,A : (e(p),n)\,\}) \to F(\{\,a : (p,n)\,\})$ be the following map: $i^0_{(p,n)}(A) = d_p(a)$.
+Let $U^0_{(p,n)} = F(\{\,A : (e(p),n)\,\})$ and $V^0_{(p,n)} = F(\{\,a : (p,n)\,\})$.
+Then we define $i^0_{(p,n)} : U^0_{(p,n)} \to V^0_{(p,n)}$ as $i^0_{(p,n)}(A) = d_p(a)$.
 Let $\I^0_p$ be the set of maps of the form $i^0_{(p,n)}$, and let $\I^0 = \I^0_{ty} \cup \I^0_{tm}$.
 
 To define other generating cofibrations, we need to describe a few objects first.
@@ -771,11 +772,20 @@ Map $[\cyli_0,\cyli_1] : V^{k+1}_{tm,n,-1} \amalg_{U^{k+1}_{tm,n,-1}} V^{k+1}_{t
 Map $s : C^{k+1}_{tm,n,-1} \to V^{k+1}_{tm,n,-1}$ is defined as follows:
 $s(A) = A$, $s(a) = s(a') = a$, $s(a_{[i = c]}) = [i = c]^*(a)$ and $s(h) = \delta_{k+1}(a)$.
 
-Note that for every $i \in \I$, map $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$ belongs to $\Icof$.
-\todo{Finish this}
-\[ \xymatrix{ U^0_{(tm,n)} \ar[r]^{A \mapsto } \ar[d]_{i^0_{(tm,n)}} & V^0_{(tm,n)} \amalg_{U^0_{(tm,n)}} V^0_{(tm,n)} \ar[d]^{[\cyli_0,\cyli_1]} \\
-              V^0_{(tm,n)} \ar[r] & C^0_{(tm,n)}
+Let us show that for every $i \in \I$, map $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$ belongs to $\Icof$.
+Map $[\cyli_0,\cyli_1] : V^0_{(tm,n)} \amalg_{U^0_{(tm,n)}} V^0_{(tm,n)} \to C^0_{(tm,n)}$ is (isomorphic to) $i^1_{tm,n,-1}$.
+Also, note that it is a pushout of $i^0_{(tm,n)}$:
+\[ \xymatrix{ U^0_{(tm,n)} \ar[rr]^-{A \mapsto a = a'} \ar[d]_{i^0_{(tm,n)}} & & V^0_{(tm,n)} \amalg_{U^0_{(tm,n)}} V^0_{(tm,n)} \ar[d]^{[\cyli_0,\cyli_1]} \\
+              V^0_{(tm,n)} \ar[rr]_-{a \mapsto path(h)}                      & & \po C^0_{(tm,n)}
             } \]
+where $V^0_{(p,n)} \amalg_{U^0_{(p,n)}} V^0_{(p,n)}$ is defined as $F(\{\,a : (p,n), a' : (p,n)\,\}, \{\,d_p(a) = d_p(a')\,\})$.
+Map $[\cyli_0,\cyli_1] : V^0_{(ty,n)} \amalg_{U^0_{(ty,n)}} V^0_{(ty,n)} \to C^0_{(ty,n)}$ is (isomorphic to) $i^1_{ty,n,0}$.
+
+Maps of the form $i^{k+1}_{p,n,m}$ (including $i^{k+1}_{tm,n,-1}$) can be described as following pushouts:
+\[ \xymatrix{ U^{k+2}_{p,n,m} \ar[r]^-g \ar[d]_{i^{k+2}_{p,n,m}} & V^{k+1}_{p,n,m} \amalg_{U^{k+1}_{p,n,m}} V^{k+1}_{p,n,m} \ar[d]^{[\cyli_0,\cyli_1]} \\
+              V^{k+2}_{p,n,m} \ar[r]_-{a \mapsto h}              & \po C^{k+1}_{p,n,m}
+            } \]
+where $g(a_{[k + 1 = left]}) = a$, $g(a_{[k + 1 = right]}) = a'$, $g(a_{[i = c]}) = \delta_k(a_{[i = c]})$.
 
 Now, for every stable theory $(T,\alpha)$ under $I$, we define a functor $P : \Mod{T} \to \Mod{T}$.
 Let $P(X)_{(p,n)} = \{\,a \in P(X)_{(p,n+1)}\ |\ ctx^n(a) = I\,\}$.
