@@ -516,199 +516,248 @@ Theory $I$ is the regularization of a theory with function symbols $I : (ty,0)$,
 \DisplayProof
 \end{center}
 
-\begin{comment}
+There are at least three different ways to define an eliminator for $I$.
+The idea always the same: given a fibration over $I$ and a point in the fibre over
+some point $i : I$, we can transport it to the fibre over some other point $j : I$.
+In different eliminators, we can take different $i$ and $j$.
+In $coe_0$, we can only take $i = left$ and $j = right$.
+
+\medskip
+\begin{center}
+\AxiomC{$x : I \vdash D\ type$}
+\AxiomC{$\vdash d : D[x \repl left]$}
+\BinaryInfC{$\vdash coe_0(\lambda x.\,D, d) : D[x \repl right]$}
+\DisplayProof
+\end{center}
+
+In $coe_1$, we can take $i = left$ and arbitrary $j$.
+
 \medskip
 \begin{center}
 \AxiomC{$x : I \vdash D\ type$}
 \AxiomC{$\vdash d : D[x \repl left]$}
 \AxiomC{$\vdash i : I$}
-\TrinaryInfC{$\vdash coe(\lambda x.\,D, d, i) : D[x \repl i]$}
+\TrinaryInfC{$\vdash coe_1(\lambda x.\,D, d, i) : D[x \repl i]$}
 \DisplayProof
 \end{center}
 
-, and $coe : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$
 \medskip
 \begin{center}
 \AxiomC{$x : I \vdash D\ type$}
 \AxiomC{$\vdash d : D[x \repl left]$}
-\BinaryInfC{$\vdash coe(\lambda x.\,D, d, left) \deq d$}
+\BinaryInfC{$\vdash coe_1(\lambda x.\,D, d, left) \deq d$}
 \DisplayProof
 \end{center}
-\end{comment}
+
+In $coe_2$, both $i$ and $j$ may be arbitrary.
+
+\medskip
+\begin{center}
+\AxiomC{$x : I \vdash D\ type$}
+\AxiomC{$\vdash i : I$}
+\AxiomC{$\vdash d : D[x \repl i]$}
+\AxiomC{$\vdash j : I$}
+\QuaternaryInfC{$\vdash coe_2(\lambda x.\,D, i, d, j) : D[x \repl j]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$x : I \vdash D\ type$}
+\AxiomC{$\vdash d : D[x \repl left]$}
+\BinaryInfC{$\vdash coe_2(\lambda x.\,D, left d, left) \deq d$}
+\DisplayProof
+\end{center}
+
+It turns out that $coe_0$ is too weak.
+To make it equivalent to other two theories, we need to add theory $sq$ to it,
+which is the regularization of a theory with one function symbol $sq : (tm,0) \times (tm,0) \to (tm,0)$
+with the following axioms:
+\medskip
+\begin{center}
+\AxiomC{$\vdash i : I$}
+\AxiomC{$\vdash j : I$}
+\BinaryInfC{$\vdash sq(i,j) : I$}
+\DisplayProof
+\qquad
+\AxiomC{$\vdash i : I$}
+\UnaryInfC{$\vdash sq(i,left) \deq left$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\vdash j : I$}
+\UnaryInfC{$\vdash sq(left,j) \deq left$}
+\DisplayProof
+\qquad
+\AxiomC{$\vdash j : I$}
+\UnaryInfC{$\vdash sq(right,j) \deq j$}
+\DisplayProof
+\end{center}
+
+Also, these theories correspond to $Id_-$.
+To get theories that correspond to $Id$, we need to add one additional rule to each of them:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash coe_0(\lambda x.\,A, a) \deq a$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash coe_1(\lambda x.\,A, a, right) \deq a$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash coe_2(\lambda x.\,A, left, a, right) \deq a$}
+\DisplayProof
+\end{center}
+\smallskip
+We denote these theories by $coe_0 + \sigma$, $coe_1 + \sigma$ and $coe_2 + \sigma$.
 
 \subsection{Path types}
 
-Let $HPath$ be a regular theory with function symbols $Path : (ty,n) \times (tm,n) \times (tm,n) \to (ty,n)$,
-    $path : (tm,n+1) \to (tm,n)$, and $at : (tm,n) \times (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)$, and the following axioms:
+To define maps between theories with $Id$ types and theories with an interval type,
+we need to add an additional construction to the latter, which we call \emph{homogeneous path types}.
+Let $HPath$ be the regularization of a theory with function symbols $Path : (ty,0) \times (tm,0) \times (tm,0) \to (ty,0)$,
+    $path : (tm,1) \to (tm,0)$, and $at : (tm,0) \times (tm,0) \times (tm,0) \times (tm,0) \to (tm,0)$, and the following axioms:
 \begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash a' : A$}
-\BinaryInfC{$\Gamma \vdash Path(A, a, a')\ type$}
+\AxiomC{$\vdash a : A$}
+\AxiomC{$\vdash a' : A$}
+\BinaryInfC{$\vdash Path(A, a, a')\ type$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A\ type$}
-\AxiomC{$\Gamma, x : I \vdash a : A$}
-\BinaryInfC{$\Gamma \vdash path(\lambda x.\,a) : Path(A, a[x \repl left], a[x \repl right])$}
+\AxiomC{$\vdash A\ type$}
+\AxiomC{$x : I \vdash a : A$}
+\BinaryInfC{$\vdash path(\lambda x.\,a) : Path(A, a[x \repl left], a[x \repl right])$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
-\AxiomC{$\Gamma \vdash p : Path(A, a, a')$}
-\AxiomC{$\Gamma \vdash i : I$}
-\BinaryInfC{$\Gamma \vdash at(a, a', p, i) : A$}
+\AxiomC{$\vdash p : Path(A, a, a')$}
+\AxiomC{$\vdash i : I$}
+\BinaryInfC{$\vdash at(a, a', p, i) : A$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
-\AxiomC{$\Gamma \vdash A\ type$}
-\AxiomC{$\Gamma, x : I \vdash a : A$}
-\AxiomC{$\Gamma \vdash i : I$}
-\TrinaryInfC{$\Gamma \vdash at(a[x \repl left], a[x \repl right], path(\lambda x.\,a), i) \deq a[x \repl i]$}
+\AxiomC{$\vdash A\ type$}
+\AxiomC{$x : I \vdash a : A$}
+\AxiomC{$\vdash i : I$}
+\TrinaryInfC{$\vdash at(a[x \repl left], a[x \repl right], path(\lambda x.\,a), i) \deq a[x \repl i]$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
-\AxiomC{$\Gamma \vdash p : Path(A, a, a')$}
-\UnaryInfC{$\Gamma \vdash path(\lambda x.\,at(a, a', p, x)) \deq p$}
+\AxiomC{$\vdash p : Path(A, a, a')$}
+\UnaryInfC{$\vdash path(\lambda x.\,at(a, a', p, x)) \deq p$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
-\AxiomC{$\Gamma \vdash p : Path(A, a, a')$}
-\UnaryInfC{$\Gamma \vdash at(a, a', p, left) \deq a$}
+\AxiomC{$\vdash p : Path(A, a, a')$}
+\UnaryInfC{$\vdash at(a, a', p, left) \deq a$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash p : Path(A, a, a')$}
-\UnaryInfC{$\Gamma \vdash at(a, a', p, right) \deq a'$}
+\AxiomC{$\vdash p : Path(A, a, a')$}
+\UnaryInfC{$\vdash at(a, a', p, right) \deq a'$}
 \DisplayProof
 \end{center}
-We will work with theories under $HPath$, which we call theories with \emph{homogeneous path types}.
 
-Let $refl(a) = path(\lambda x.\,a)$.
-If $\Gamma \vdash a : A$, then $\Gamma \vdash refl(a) : Path(A, a, a)$.
+We can summarize the relationship between different theories in the following (noncommutative) diagram of theories:
+\[ \xymatrix{ & Id_- \ar[rr] \ar[d] & & Id \ar[d] \\
+              coe_0 + sq \ar[r] & coe_1 \ar[r] & coe_2 \ar[r] & coe_0 + sq + \sigma \ar[r] & coe_1 + \sigma
+            } \]
+where each of the theories in the bottom row are theories with homogeneous path types.
+Note that we have maps going in both directions between theories $coe_0 + sq + \sigma + HPath$ and $coe_1 + \sigma + HPath$,
+which means that we can define all of the constructions that we discussed in either of these theories.
 
-Let $squeeze(i,j) = at(left, j, coe(\lambda x.\,Path(I, left, x), refl(left), j), i)$.
-If $\Gamma \vdash i : I$ and $\Gamma \vdash j : I$, then
-$\Gamma \vdash squeeze(i,j) : I$, $\Gamma \vdash squeeze(left,j) \deq left$,
-$\Gamma \vdash squeeze(right,j) \deq j$, and $\Gamma \vdash squeeze(i,left) \deq left$.
+Arrows $Id_- \to Id$ and $coe_1 + HPath \to coe_2 + HPath$ are obvious.
+Let us construct vertical maps.
+Let $refl(a) = path(\lambda x.\,a)$ and $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a', p) = coe_0(\lambda i.\,D', d[x \repl a])$, where $D'$ is defined as
+\[ D[x \repl a, y \repl at(a, a', p, sq(i,right)), z \repl path(\lambda j.\,at(a, a', p, sq(i,j)))]. \]
+Note that $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a, refl(a))$ equals to $coe_0(\lambda i. D'', d[x \repl a])$ where $D'' = D[x \repl a, y \repl a, z \repl refl(a)]$.
+Thus if we have $\sigma$ rule, then equation $\vdash J(A, \lambda x y z.\,D, \lambda x.\,d, a, a, refl(a)) \deq d[x \repl a]$ holds.
+If we have $coe_1$, then we can define $Jeq(D,d,a)$ as $coe_0(\lambda j.\,Path(D'', coe_1(\lambda i. D'', d[a], j), d[a]), refl(d[a]))$.
 
-Now, we can define $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a', p)$ as $coe(\lambda i.\,D', d[x \repl a], right)$, where $D'$ is defined as
-\[ D[x \repl a, y \repl at(a, a', p, squeeze(i,right)), z \repl path(\lambda j.\,at(a, a', p, squeeze(i,j)))]. \]
-If $\Gamma, x : A, y : A, z : Id(A, x, y) \vdash D\ type$, $\Gamma, x : A \vdash d : D[y \repl x, z \repl refl(x)]$, and $\Gamma \vdash p : Id(A, a, a')$,
-then $\Gamma \vdash J(A, \lambda x y z.\,D, \lambda x.\,d, a, a', p) : D[x \repl a, y \repl a', z \repl p]$.
+Map $sq \to coe_1 + HPath$ can be defined as follows:
+\[ sq(i,j) = at(left, j, coe_1(\lambda x.\,Path(I, left, x), refl(left), j), i). \]
 
-Thus $Path$, $refl$, and $J$ almost define a morphism from the theory of $Id$ types.
-The only problem is that axiom $\Gamma \vdash J(A, D, d, a, a, refl(a)) \deq d[a]$ is not satisfied.
-We can fix this by adding the following additional axiom:
-\smallskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a : A$}
-\UnaryInfC{$\Gamma \vdash coe(\lambda x.\,A, a, right) \deq a$}
-\DisplayProof
-\end{center}
-But we do not need this axiom, since it holds propositionally.
+Finally, let us define arrow $coe_2 \to coe_0 + sq + \sigma + HPath$.
+First, note that we can define a map $coe_1 \to coe_0 + sq + \sigma$ as follows: $coe_1(\lambda x.\,A, a, j) = coe_0(\lambda i.\,A[x \repl sq(i,j)], a)$.
+Then let $Ic(i) = path\ (\lambda j.\,sq(j,i))$.
+Since $Ic(i) : left = i$, we can define a term $pp(i,j)$ of type $i = j$.
+Now, let $coe_2(\lambda x.\,A, i, a, j)$ be equal to $coe_0(\lambda x.\,A[x \repl at(i, j, pp(i,j), x)], a)$.
+Note that $\vdash pp(left,left) \deq refl(left)$; hence $\vdash coe_2(\lambda x.\,A, left, a, left) \deq a$.
 
-We will need a stronger version of $coe$ which satisfies the following rule:
-\smallskip
-\begin{center}
-\AxiomC{$\Gamma, x : I \vdash A$}
-\AxiomC{$\Gamma \vdash i : I$}
-\AxiomC{$\Gamma \vdash a : A[x \repl i]$}
-\AxiomC{$\Gamma \vdash j : I$}
-\QuaternaryInfC{$\Gamma \vdash coe_2(\lambda x.\,A, i, a, j) : A[x \repl j]$}
-\DisplayProof
-\end{center}
-It can be defined as follows.
-First, note that $I$ is contractible: if $\Gamma \vdash i : I$, then $\Gamma \vdash path\ (\lambda j.\,squeeze(j,i)) : left = i$.
-It follows that we can define a term $pp(i,j)$ such that if $\Gamma \vdash i : I$ and $\Gamma \vdash j : I$, then $\Gamma \vdash pp(i,j) : i = j$.
-Now, let $coe_2(\lambda x.\,A, i, a, j)$ be equal to $coe(\lambda x.\,A[x \repl at(i, j, pp(i,j), x)], a, right)$.
-Note that $\Gamma \vdash pp(left,left) \deq refl(left)$; hence $\Gamma \vdash coe_2(\lambda x.\,A, left, a, left) \deq a$
-
+\begin{comment}
 Finally, let us describe the last construction we will need.
 Let \[ inv(i) = at(right, left, coe(Path(I, v_0, left), refl(left), right), i). \]
 If $\Gamma \vdash i : I$, then $\Gamma \vdash inv(i) : I$, $\Gamma \vdash inv(left) \deq right$, and $\Gamma \vdash inv(right) \deq left$.
+\end{comment}
 
 \subsection{Univalence}
 
-If $\Gamma \vdash A\ type$, $\Gamma \vdash B\ type$, $\Gamma \vdash C\ type$, $\Gamma, A \vdash f : B\!\uparrow$ and $\Gamma, B \vdash g : C\!\uparrow$,
-    then we will write $g \circ f$ for term $\Gamma, A \vdash subst(g, v_n, \ldots v_1, f) : C\!\uparrow$.
+We will consider regular theory $UA$ under $coe_0$, which has additional symbol
+\[ iso : (ty,0)^2 \times (tm,1)^4 \times (tm,0) \to (ty,0) \]
 
-We will consider regular theory $UA$ under $HPath$, which has additional symbols
-\[ iso : (ty,n)^2 \times (tm,n+1)^4 \times (tm,n) \to (ty,n) \]
-and the following axioms:
+Axioms of this theory have a lot of premises, so we list them now.
+We will denote by $S$ the following set of formulae:
+\begin{align*}
+& \vdash A\ type \\
+& \vdash B\ type \\
+x : A & \vdash f : B \\
+y : B & \vdash g : A \\
+x : A, i : I & \vdash p : A \\
+x : A & \vdash p[i \repl left] \deq g[y \repl f] \\
+x : A & \vdash p[i \repl right] \deq x \\
+y : B, i : I & \vdash q : B \\
+y : B & \vdash q[i \repl left] \deq f[x \repl g] \\
+y : B & \vdash q[i \repl right] \deq y
+\end{align*}
+If we have path types, then the last six axioms can be replaced with the following two:
+\begin{align*}
+x : A & \vdash p : Path(A, g[y \repl f], x) \\
+y : B & \vdash q : Path(B, f[x \repl g], y)
+\end{align*}
+
+Now, we can define axioms of $UA$:
 \medskip
 \begin{center}
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \Gamma \vdash A\ type$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash B\ type$
-\Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
-\noLine
-\UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
-\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, g \circ f, v_0)$
-\noLine
-\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, f \circ g, v_0)$
-\Axiom$\fCenter \Gamma \vdash i : I$
-\def\extraVskip{2pt}
-\QuaternaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, i)\ type$}
+\AxiomC{$S$}
+\AxiomC{$\vdash j : I$}
+\BinaryInfC{$\vdash iso(A, B, \lambda x.\,f, \lambda y.\,g, \lambda x i.\,p, \lambda y i.\,q, j)\ type$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \Gamma \vdash A\ type$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash B\ type$
-\Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
-\noLine
-\UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
-\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, g \circ f, v_0)$
-\noLine
-\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, f \circ g, v_0)$
-\def\extraVskip{2pt}
-\TrinaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, left) \deq A$}
+\AxiomC{$S$}
+\UnaryInfC{$\vdash iso(A, B, \lambda x.\,f, \lambda y.\,g, \lambda x i.\,p, \lambda y i.\,q, left) \deq A$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \Gamma \vdash A\ type$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash B\ type$
-\Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
-\noLine
-\UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
-\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, g \circ f, v_0)$
-\noLine
-\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, f \circ g, v_0)$
-\def\extraVskip{2pt}
-\TrinaryInfC{$\Gamma \vdash iso(A, B, f, g, p, q, right) \deq B$}
+\AxiomC{$S$}
+\UnaryInfC{$\vdash iso(A, B, \lambda x.\,f, \lambda y.\,g, \lambda x i.\,p, \lambda y i.\,q, right) \deq B$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\def\extraVskip{0.5pt}
-\Axiom$\fCenter \Gamma \vdash A\ type$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash B\ type$
-\Axiom$\fCenter \Gamma, A \vdash f : B\!\uparrow$
-\noLine
-\UnaryInf$\fCenter \Gamma, B \vdash g : A\!\uparrow$
-\Axiom$\fCenter \Gamma, A \vdash p : Path(A\!\uparrow, g \circ f, v_0)$
-\noLine
-\UnaryInf$\fCenter \Gamma, B \vdash q : Path(B\!\uparrow, f \circ g, v_0)$
-\def\extraVskip{2pt}
-\TrinaryInfC{$\Gamma \vdash coe(iso(A\!\uparrow, B\!\uparrow, f\!\uparrow_1, g\!\uparrow_1, p\!\uparrow_1, q\!\uparrow_1, v_0), a, right) \deq f[a]$}
+\AxiomC{$S$}
+\UnaryInfC{$\vdash coe_0(\lambda j.\,iso(A, B, \lambda x.\,f, \lambda y.\,g, \lambda x i.\,p, \lambda y i.\,q, j), a) \deq f[x \repl a]$}
 \DisplayProof
 \end{center}
 \medskip
@@ -716,7 +765,7 @@ and the following axioms:
 This theory is similar to the univalence axiom, but it is defined for all types.
 The univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
 
-\todo{Add some constructions}
+\todo{Fillers?}
 
 \section{A model structure on models of theories with an interval type}
 
