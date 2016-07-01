@@ -461,28 +461,29 @@ and the following axioms:
 \DisplayProof
 \quad
 \AxiomC{}
-\UnaryInfC{$\Gamma \vdash refl(a) : Id(ty(a), a, a)$}
+\UnaryInfC{$\Gamma \vdash refl(a) : Id(a, a)$}
 \DisplayProof
 \end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : A, y : A, z : Id(x,y) \vdash D\ type$}
+\AxiomC{$\Gamma, x : A \vdash d : D'$}
+\AxiomC{$\Gamma \vdash p : Id(a,a')$}
+\TrinaryInfC{$\Gamma \vdash J(D,d,a,a',p) : D[a,a',p]$}
+\DisplayProof
+\end{center}
+where $D' = D[y \repl x, z \repl refl(x)]$ and $A = ty(a)$.
 
 \medskip
 \begin{center}
 \AxiomC{$\Gamma, x : ty(a), y : ty(a), z : Id(x,y) \vdash D\ type$}
 \AxiomC{$\Gamma, x : ty(a) \vdash d : D'$}
-\AxiomC{$\Gamma \vdash p : Id(a,a')$}
-\TrinaryInfC{$\Gamma \vdash J(D,d,a,a',p) : D[a,a',p]$}
-\DisplayProof
-\end{center}
-where $D' = D[y \repl x, z \repl refl(x)]$.
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : ty(a), y : ty(a), z : Id(x,y) \vdash D\ type$}
-\AxiomC{$\Gamma, x : ty(a) \vdash d : D[y \repl x, z \repl refl(x)]$}
 \BinaryInfC{$\Gamma \vdash J(D,d,a,a,refl(a)) \deq d[a]$}
 \DisplayProof
 \end{center}
 \medskip
+where $D' = D[y \repl x, z \repl refl(x)]$.
 
 We will also need slightly weaker version of $Id$ which we will denote by $Id_-$.
 It has all of the function symbols of $Id$ together with the following one:
@@ -490,11 +491,12 @@ It has all of the function symbols of $Id$ together with the following one:
 Theory $Id_-$ has all of the axioms of $Id$ except the last one; instead it has the following additional axiom:
 \begin{center}
 \AxiomC{$\Gamma, x : ty(a), y : ty(a), z : Id(x,y) \vdash D\ type$}
-\AxiomC{$\Gamma, x : ty(a) \vdash d : D[y \repl x, z \repl refl(x)]$}
+\AxiomC{$\Gamma, x : ty(a) \vdash d : D'$}
 \BinaryInfC{$\Gamma \vdash Jeq(D,d,a) : Id(J(D,d,a,a,refl(a)),d[a])$}
 \DisplayProof
 \end{center}
 \medskip
+where $D' = D[y \repl x, z \repl refl(x)]$.
 The idea is that the last axiom of $Id$ holds in $Id_-$ only propositionally.
 
 Now, we can define the theory of the interval type.
@@ -617,6 +619,57 @@ To get theories that correspond to $Id$, we need to add one additional rule to e
 \smallskip
 We denote these theories by $coe_0 + \sigma$, $coe_1 + \sigma$ and $coe_2 + \sigma$.
 
+We will also consider theories $coe_3$ and $coe_4$.
+Theory $coe_3$ is $coe_2$ together with the following axiom:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash D\ type$}
+\AxiomC{$\Gamma \vdash d : D[x \repl left]$}
+\BinaryInfC{$\Gamma \vdash coe_2(\lambda x.\,D, right, d, right) \deq d$}
+\DisplayProof
+\end{center}
+Theory $coe_4$ is $coe_2$ together with the following axiom:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash D\ type$}
+\AxiomC{$\Gamma \vdash d : D[x \repl left]$}
+\AxiomC{$\Gamma \vdash i : I$}
+\TrinaryInfC{$\Gamma \vdash coe_2(\lambda x.\,D, i, d, i) \deq d$}
+\DisplayProof
+\end{center}
+\medskip
+
+Theory $coe_4$ is slightly stronger than other theories.
+To make them equivalent to $coe_4$, we need to assume additional operations.
+For example, we can consider regular theory $dc$ which has one function symbol
+$dc : (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)$ and the following axiom:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash j : I$}
+\AxiomC{$\Gamma \vdash k : I$}
+\TrinaryInfC{$\Gamma \vdash dc(i,j,k) : I$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash j : I$}
+\BinaryInfC{$\Gamma \vdash dc(i,j,left) \deq i$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash j : I$}
+\BinaryInfC{$\Gamma \vdash dc(i,j,right) \deq j$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma \vdash k : I$}
+\BinaryInfC{$\Gamma \vdash dc(i,i,k) \deq i$}
+\DisplayProof
+\end{center}
+
 \subsection{Homogeneous path types}
 
 To define maps between theories with $Id$ types and theories with an interval type,
@@ -676,13 +729,14 @@ Let $HPath$ be a regular theory with function symbols $=\ : (tm,n) \times (tm,n)
 
 We can summarize the relationship between different theories in the following (noncommutative) diagram of theories:
 \[ \xymatrix{ & Id_- \ar[rr] \ar[d] & & Id \ar[d] \\
-              coe_0 + sq \ar[r] & coe_1 \ar[r] & coe_2 \ar[r] & coe_0 + sq + \sigma \ar[r] & coe_1 + \sigma
+              coe'_0 + sq \ar[r] & coe'_1 \ar[r] & coe'_2 \ar[r] \ar[d] & coe'_0 + sq + \sigma \ar[r] & coe'_1 + \sigma \ar[dd] \\
+                                 &               & coe'_3 \ar[d]        &                             & \\
+              sq \ar[r]          & dc \ar[r]     & coe'_4 \ar[r]        & coe'_0 + \sigma + dc \ar[r] & coe'_1 + \sigma + dc
             } \]
-where each of the theories in the bottom row are theories with homogeneous path types.
-Note that we have maps going in both directions between theories $coe_0 + sq + \sigma + HPath$ and $coe_1 + \sigma + HPath$,
-which means that we can define all of the constructions that we discussed in either of these theories.
+where $coe'_\alpha = coe_\alpha + HPath$.
+This diagram does not commute strictly, but it should commute up to some appropriately defined notion of homotopy between morphisms of theories.
 
-Arrows $Id_- \to Id$ and $coe_1 + HPath \to coe_2 + HPath$ are obvious.
+Arrows $Id_- \to Id$ and $coe'_1 \to coe'_2$ are obvious.
 Let us construct vertical maps.
 Let $refl(a) = path(\lambda x.\,a)$ and $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a', p) = coe_0(\lambda i.\,D', d[x \repl a])$, where $D'$ is defined as
 \[ D[x \repl a, y \repl at(a, a', p, sq(i,right)), z \repl path(\lambda j.\,at(a, a', p, sq(i,j)))]. \]
@@ -690,15 +744,22 @@ Note that $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a, refl(a))$ equals to $coe
 Thus if we have $\sigma$ rule, then equation $\vdash J(A, \lambda x y z.\,D, \lambda x.\,d, a, a, refl(a)) \deq d[x \repl a]$ holds.
 If we have $coe_1$, then we can define $Jeq(D,d,a)$ as $coe_0(\lambda j.\,coe_1(\lambda i. D'', d[a], j) = d[a], refl(d[a]))$.
 
-Map $sq \to coe_1 + HPath$ can be defined as follows:
+Map $sq \to coe'_1$ can be defined as follows:
 \[ sq(i,j) = at(left, j, coe_1(\lambda x.\,left = x, refl(left), j), i). \]
 
-Finally, let us define arrow $coe_2 \to coe_0 + sq + \sigma + HPath$.
-First, note that we can define a map $coe_1 \to coe_0 + sq + \sigma$ as follows: $coe_1(\lambda x.\,A, a, j) = coe_0(\lambda i.\,A[x \repl sq(i,j)], a)$.
-Then let $Ic(i) = path\ (\lambda j.\,sq(j,i))$.
-Since $Ic(i) : left = i$, we can define a term $pp(i,j)$ of type $i = j$.
-Now, let $coe_2(\lambda x.\,A, i, a, j)$ be equal to $coe_0(\lambda x.\,A[x \repl at(i, j, pp(i,j), x)], a)$.
-Note that $\vdash pp(left,left) \deq refl(left)$; hence $\vdash coe_2(\lambda x.\,A, left, a, left) \deq a$.
+Now, let us define arrow $coe_2 \to coe'_0 + sq + \sigma$.
+First, note that we can define a map $coe_1 \to coe_0 + sq + \sigma$ as follows: $coe_1(\lambda x.\,D, d, j) = coe_0(\lambda i.\,D[x \repl sq(i,j)], d)$.
+Then let $Ic(i) = path(\lambda j.\,sq(j,i))$.
+Since $Ic(i) : left = i$, we can define a term $dc'(i,j)$ of type $i = j$.
+Now, let $coe_2(\lambda x.\,D, i, d, j)$ be equal to $coe_0(\lambda x.\,D[x \repl at(i, j, dc'(i,j), x)], d)$.
+Note that $\Gamma \vdash dc'(left,left) \deq refl(left)$; hence $\Gamma \vdash coe_2(\lambda x.\,D, left, d, left) \deq d$.
+
+Maps in the bottom row are easy to define:
+\begin{align*}
+sq(i,j) & = dc(left,j,i) \\
+dc(i,j,k) & = at(i,j,coe_2(\lambda x.\,i = x, i, refl(i), j),k) \\
+coe_2(\lambda x.\,D, i, d, j) & = coe_0(\lambda x.\,D[x \repl dc(i,j,x)], d)
+\end{align*}
 
 \begin{comment}
 Finally, let us describe the last construction we will need.
@@ -762,6 +823,67 @@ Theory $Path$ be a theory with function symbols $Path : (ty,n+1) \times (tm,n) \
 
 There is an obvious morphism $f : HPath \to Path$ such that $f(a = a') = Path(\lambda x.\,ty(a), a, a')$.
 
+\subsection{Local versions of $coe$}
+
+Usually, we can define two different versions of an eliminator for a type in type theory, one of which is stronger.
+For example, stronger versions of $coe$ look like this:
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I, \Delta \vdash D\ type$}
+\AxiomC{$\Gamma, \Delta[x \repl left] \vdash d : D[x \repl left]$}
+\BinaryInfC{$\Gamma, \Delta[x \repl right] \vdash coe^l_0(\lambda x.\,D, d) : D[x \repl right]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I, \Delta \vdash D\ type$}
+\AxiomC{$\Gamma, \Delta[x \repl left] \vdash d : D[x \repl left]$}
+\AxiomC{$\Gamma \vdash i : I$}
+\TrinaryInfC{$\Gamma, \Delta[x \repl i] \vdash coe^l_1(\lambda x.\,D, d, i) : D[x \repl i]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I, \Delta \vdash D\ type$}
+\AxiomC{$\Gamma, \Delta[x \repl left] \vdash d : D[x \repl left]$}
+\BinaryInfC{$\Gamma, \Delta[x \repl left] \vdash coe^l_1(\lambda x.\,D, d, left) \deq d$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I, \Delta \vdash D\ type$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma, \Delta[x \repl i] \vdash d : D[x \repl i]$}
+\AxiomC{$\Gamma \vdash j : I$}
+\QuaternaryInfC{$\Gamma, \Delta[x \repl j] \vdash coe^l_2(\lambda x.\,D, i, d, j) : D[x \repl j]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I, \Delta \vdash D\ type$}
+\AxiomC{$\Gamma, \Delta[x \repl left] \vdash d : D[x \repl left]$}
+\BinaryInfC{$\Gamma, \Delta[x \repl left] \vdash coe^l_2(\lambda x.\,D, left d, left) \deq d$}
+\DisplayProof
+\end{center}
+
+We call such verions of these operations \emph{local}, and the ones that were defined before \emph{global}.
+Usually, if we have $\Pi$ type, then we can define local versions in terms of global, but without them local are strictly stronger.
+But this is not the case for $coe$ operations; it turns out that $coe^l$ follow from $coe$ even without $\Pi$ types.
+
+\todo{Finish this}
+
+\subsection{Fillers}
+
+Operation $coe_1$ allows us to define one-dimensional cubical fillers.
+That is, given a one-dimensional cube in 
+
+\todo{Finish this}
+
 \subsection{Univalence}
 
 We will consider regular theory $UA$ under $coe_0$, which has additional symbol
@@ -820,8 +942,6 @@ Now, we can define axioms of $UA$:
 
 This theory is similar to the univalence axiom, but it is defined for all types.
 The univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
-
-\todo{Fillers?}
 
 \section{A model structure on models of theories with an interval type}
 
