@@ -570,15 +570,58 @@ For example, stronger versions of $coe$ look like this:
 \begin{center}
 \AxiomC{$\Gamma, x : I, \Delta \vdash D\ type$}
 \AxiomC{$\Gamma, \Delta[x \repl left] \vdash d : D[x \repl left]$}
-\BinaryInfC{$\Gamma, \Delta[x \repl left] \vdash coe^l_2(\lambda x.\,D, left d, left) \deq d$}
+\BinaryInfC{$\Gamma, \Delta[x \repl left] \vdash coe^l_2(\lambda x.\,D, left, d, left) \deq d$}
+\DisplayProof
+\end{center}
+
+We can also consider theory $coe^l_2 + \beta^l_2$ which is $coe^l_2$ together with the following axiom:
+\begin{center}
+\AxiomC{$\Gamma, x : I, \Delta \vdash D\ type$}
+\AxiomC{$\Gamma \vdash i : I$}
+\AxiomC{$\Gamma, \Delta[x \repl i] \vdash d : D[x \repl i]$}
+\TrinaryInfC{$\Gamma, \Delta[x \repl i] \vdash coe^l_2(\lambda x.\,D, i, d, i) \deq d$}
 \DisplayProof
 \end{center}
 
 We call such verions of these operations \emph{local}, and the ones that were defined before \emph{global}.
 Usually, if we have $\Pi$ type, then we can define local versions in terms of global, but without them local are strictly stronger.
-But this is not the case for $coe$ operations; it turns out that $coe^l$ follow from $coe$ even without $\Pi$ types.
+But this is not the case for $coe_2 + \beta_2$; it turns out that $coe^l_2 + \beta^l_2$ follow from $coe_2 + \beta_2$ even without $\Pi$ types.
 
-\todo{Finish this}
+It is not convenient to work with such local operations directly since context in the conclusion is extended, but we can always rewrite them in the usual form.
+For example, if $\Delta$ equals to $y_1 : B_1, \ldots y_k : B_k$, then we can rewrite $coe^l_2$ as follows:
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma, x : I, \Delta \vdash D\ type$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash i : I$
+\noLine
+\UnaryInf$\fCenter \Gamma, \Delta[x \repl i] \vdash d : D[x \repl i]$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash j : I$
+\def\extraVskip{2pt}
+\Axiom$\fCenter \Gamma \vdash b_1 : B_1[x \repl j]$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash b_k : B_k[x \repl j, y_1 \repl b_1, \ldots y_{k-1} \repl b_{k-1}]$
+\BinaryInfC{$\Gamma \vdash coe^{l'}_2(\lambda x\,y_1 \ldots y_k.\,D, i, d, j, b_1, \ldots b_k) : D[x \repl j, y_1 \repl b_1, \ldots y_k \repl b_k]$}
+\DisplayProof
+\end{center}
+Then theories $coe^l_2$ and $coe^{l'}_2$ are isomorphic.
+Maps between them are defined as follows:
+\begin{align*}
+coe^l_2(\lambda x.\,D, i, d, j) & = coe^{l'}_2(\lambda x\,y_1 \ldots y_k.\,D, i, d, j, y_1, \ldots y_k) \\
+coe^{l'}_2(\lambda x\,y_1 \ldots t_k.\,D, i, d, j, b_1, \ldots b_k) & = coe^l_2(\lambda x.\,D, i, d, j)[b_1, \ldots b_k]
+\end{align*}
+
+Now, we can define a map $coe^{l'}_2 + \beta^l_2 \to coe_2 + \beta_2$.
+First, let $b'_m(z)$ be equal to
+\[ coe_2(\lambda x.\,B_m[y_1 \repl b_1'(x), \ldots y_{m-1} \repl b_{m-1}'(x)], j, b_m, z) \]
+for every $1 \leq m \leq k$.
+If $\Gamma \vdash z : I$, then $\Gamma \vdash b_m'(z) : B_m[x \repl z, y_1 \repl b_1'(z), \ldots b_{m-1}'(z)]$.
+Now, we can define $coe^{l'}_2(\lambda x\,y_1 \ldots y_k.\,D, i, d, j, b_1, \ldots b_m)$ as follows:
+\[ coe_2(\lambda x.\,D[y_1 \repl b_1'(x), \ldots y_k \repl b_k'(x)], i, d[y_1 \repl b'_1(i), \ldots y_k \repl b'_k(i)], j) \]
 
 \subsection{Univalence}
 
