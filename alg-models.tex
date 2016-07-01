@@ -619,16 +619,7 @@ To get theories that correspond to $Id$, we need to add one additional rule to e
 \smallskip
 We denote these theories by $coe_0 + \sigma$, $coe_1 + \sigma$ and $coe_2 + \sigma$.
 
-We will also consider theories $coe_3$ and $coe_4$.
-Theory $coe_3$ is $coe_2$ together with the following axiom:
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, x : I \vdash D\ type$}
-\AxiomC{$\Gamma \vdash d : D[x \repl left]$}
-\BinaryInfC{$\Gamma \vdash coe_2(\lambda x.\,D, right, d, right) \deq d$}
-\DisplayProof
-\end{center}
-Theory $coe_4$ is $coe_2$ together with the following axiom:
+We will also consider theory $coe_2 + \beta_2$ which is $coe_2$ together with the following axiom:
 \medskip
 \begin{center}
 \AxiomC{$\Gamma, x : I \vdash D\ type$}
@@ -639,8 +630,8 @@ Theory $coe_4$ is $coe_2$ together with the following axiom:
 \end{center}
 \medskip
 
-Theory $coe_4$ is slightly stronger than other theories.
-To make them equivalent to $coe_4$, we need to assume additional operations.
+Theory $coe_2 + \beta_2$ is slightly stronger than other theories.
+To make them equivalent to $coe_2 + \beta_2$, we need to assume additional operations.
 For example, we can consider regular theory $dc$ which has one function symbol
 $dc : (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)$ and the following axiom:
 \medskip
@@ -729,9 +720,8 @@ Let $HPath$ be a regular theory with function symbols $=\ : (tm,n) \times (tm,n)
 
 We can summarize the relationship between different theories in the following (noncommutative) diagram of theories:
 \[ \xymatrix{ & Id_- \ar[rr] \ar[d] & & Id \ar[d] \\
-              coe'_0 + sq \ar[r] & coe'_1 \ar[r] & coe'_2 \ar[r] \ar[d] & coe'_0 + sq + \sigma \ar[r] & coe'_1 + \sigma \ar[dd] \\
-                                 &               & coe'_3 \ar[d]        &                             & \\
-              sq \ar[r]          & dc \ar[r]     & coe'_4 \ar[r]        & coe'_0 + \sigma + dc \ar[r] & coe'_1 + \sigma + dc
+              coe'_0 + sq \ar[r] & coe'_1 \ar[r] & coe'_2 \ar[d]    \ar[r] & coe'_0 + \sigma + sq \ar@<1.5pt>[r] \ar[d] & coe'_1 + \sigma \ar[d] \ar@<1.5pt>[l] \\
+              sq          \ar[r] & dc     \ar[r] & coe'_2 + \beta_2 \ar[r] & coe'_0 + \sigma + dc \ar@<1.5pt>[r]        & coe'_1 + \sigma + dc   \ar@<1.5pt>[l]
             } \]
 where $coe'_\alpha = coe_\alpha + HPath$.
 This diagram does not commute strictly, but it should commute up to some appropriately defined notion of homotopy between morphisms of theories.
@@ -877,13 +867,6 @@ But this is not the case for $coe$ operations; it turns out that $coe^l$ follow 
 
 \todo{Finish this}
 
-\subsection{Fillers}
-
-Operation $coe_1$ allows us to define one-dimensional cubical fillers.
-That is, given a one-dimensional cube in 
-
-\todo{Finish this}
-
 \subsection{Univalence}
 
 We will consider regular theory $UA$ under $coe_0$, which has additional symbol
@@ -943,10 +926,17 @@ Now, we can define axioms of $UA$:
 This theory is similar to the univalence axiom, but it is defined for all types.
 The univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
 
+\subsection{Fillers}
+
+Operation $coe_1$ allows us to define one-dimensional cubical fillers.
+That is, given a one-dimensional cube in 
+
+\todo{Finish this}
+
 \section{A model structure on models of theories with an interval type}
 
 In this section we construct a model structure on the category of models of an algebraic type theory with enough additional structure.
-Let $T$ be a regular theory under $UA$.
+Let $T$ be a regular theory under $I$.
 Then we define a model structure on the category of models of $T$.
 To do this, we will need the following theorem from \cite{f-model-structures}:
 \begin{thm}
@@ -968,15 +958,10 @@ Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a
 $\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of weak equivalences.
 \end{thm}
 
-\begin{comment}
 Now, we want to define the set of generating cofibrations.
-We will see later that we can take smaller sets to get either the same or different classes of cofibrations.
+We will see later that we can take smaller sets to get different (or, in some cases, the same) classes of cofibrations.
 We will show that even if the class of cofibrations is different,
 the model structure will often have the same class of weak equivalences.
-\end{comment}
-
-There are a few different model structures on categories of models;
-thus now we define several sets of morphisms which can be used as generating cofibrations.
 
 First, let us introduce a bit of notation.
 Recall that if $(a_1, \ldots a_k)$ is a morphism of contexts $\Gamma$ and $\Delta$ and $b \in X_{(p,k+m)}$ is such that $ctx^m(b) = \Delta$,
@@ -995,30 +980,13 @@ We will also need an operation that gives us degenerate cubes.
 Let $\Gamma : (ctx,n)$, and $a : (p,n+k+m)$ are such that $ctx^m(a) = (\Gamma, I^k \vdash)$.
 Then for every $0 \leq i \leq k$, let $\delta_i(a) = subst^m((\Gamma, I^{k+1}), a, v_{n+k}, \ldots v_{i+1}, v_{i-1}, \ldots v_0)$.
 
-Now, we are ready to define our first examples of generating cofibrations.
-These examples are particularly important since they will be used to characterize weak equivalences.
-Let $e : \{ ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ty) = ctx$, $e(tm) = ty$.
-Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ty} = ft$, $d_{tm} = ty$.
-Let $U^0_{(p,n)} = F(\{\,A : (e(p),n)\,\})$ and $V^0_{(p,n)} = F(\{\,a : (p,n)\,\})$.
-Then we define $i^0_{(p,n)} : U^0_{(p,n)} \to V^0_{(p,n)}$ as $i^0_{(p,n)}(A) = d_p(a)$.
-Let $\I^0_p$ be the set of maps of the form $i^0_{(p,n)}$, and let $\I^0 = \I^0_{ty} \cup \I^0_{tm}$.
+Now, we are ready to define generating cofibrations:
+\[ i^k_{(tm,n)} : F(\{\,I^k, \Gamma \vdash A\ type\,\} \cup S^k_{(tm,n)}) \to F(\{\,I^k, \Gamma \vdash a : A\,\}), \]
+where $S^k_{(tm,n)} = \{\,I^{k-1}, [i = c]^*(\Gamma) \vdash a_{[i = c]} : [i = c]^*(A)\ |\ 0 \leq i < k,\ c \in \{ left, right \}\,\}$.
+\[ i^k_{(ty,n)} : F(\{\,I^k, \Gamma \vdash A\,\} \cup S^k_{(ty,n)}) \to F(\{\,I^k, \Gamma \vdash A\ type\,\}), \]
+where $S^k_{(ty,n)} = \{\,I^{k-1}, [i = c]^*(\Gamma) \vdash A_{[i = c]}\ type\ |\ 0 \leq i < k,\ c \in \{ left, right \}\,\}$.
 
-To define other generating cofibrations, we need to describe a few objects first.
-Let us define $V^{k+1}_{p,n,m}$ as follows:
-\[ F(\{\,\Gamma : (ctx,n), a : (p,n+k+1+m)\,\}, \{\,ctx^m(a) = (\Gamma, I^{k+1} \vdash)\,\}) \]
-Let $U^{k+1}_{p,n,m}$ be the object generated by $\Gamma : (ctx,n)$ and $a_{[i = c]} : (p,n+k+m)$ for every $0 \leq i \leq k$ and $c \in \{ left, right \}$,
-with relations $ctx^m(a_{[i = c]}) = (\Gamma, I^k \vdash)$ for every $0 \leq i \leq k$ and $c$,
-and $[i_1 = c_1]^*(a_{[i_2 = c_2]}) = [i_2 - 1 = c_2]^*(a_{[i_1 = c_1]})$ for every $0 \leq i_1 < i_2 \leq k$ and $c_1$, $c_2$.
-Let $i^{k+1}_{p,n,m} : U^{k+1}_{p,n,m} \to V^{k+1}_{p,n,m}$ be the following map: $i^{k+1}_{p,n,m}(\Gamma) = \Gamma$, $i^{k+1}_{p,n,m}(a_{[i = c]}) = [i = c]^*(a)$.
-
-Finally, let us define $V^{k+1}_{tm,n,-1}$ as
-\[ F(\{\,A : (ty,n), a : (tm,n+k+1)\,\}, \{\,ty(a) = (ft(A), I^{k+1} \vdash A\!\!\uparrow^{k+1})\,\}), \]
-and let $U^{k+1}_{tm,n,-1}$ be generated by $A : (ty,n)$ and $a_{[i = c]} : (tm,n+k)$ for every $0 \leq i \leq k$ and $c \in \{ left, right \}$,
-with relations $ty(a_{[i = c]}) = (ft(A), I^k \vdash A\!\!\uparrow^k)$ for every $0 \leq i \leq k$ and $c$,
-and $[i_1 = c_1]^*(a_{[i_2 = c_2]}) = [i_2 - 1 = c_2]^*(a_{[i_1 = c_1]})$ for every $0 \leq i_1 < i_2 \leq k$ and $c_1$, $c_2$.
-Let $i^{k+1}_{tm,n,-1} : U^{k+1}_{tm,n,-1} \to V^{k+1}_{tm,n,-1}$ be the following map: $i^{k+1}_{tm,n,-1}(A) = A$, $i^{k+1}_{tm,n,-1}(a_{[i = c]}) = [i = c]^*(a)$.
-Let $\I$ be the set of maps of the form $i^{k+1}_{p,n,m}$ together with maps from $\I^0$.
-
+\begin{comment}
 Now, we need to define relative cylinder objects for maps in $\I$.
 First, let us define them for maps in $\I^0$.
 Let $C^0_{(tm,n)} = F(\{\,h : (tm,n+1), A : (ty,n)\,\}, \{\,ty(h) = (I(ft(A)) \vdash A\!\!\uparrow)\,\})$.
@@ -1100,6 +1068,7 @@ we need to find a type $I, \Gamma \vdash H$ such that $left^*(H) = A$.
 
 Finally, let us prove that $\langle p_0, p_1 \rangle$ has RLP with respect to $\J_\I$.
 \todo{Finish this}
+\end{comment}
 
 \begin{comment}
 We will define several sets of maps that can be used as generating cofibrations.
