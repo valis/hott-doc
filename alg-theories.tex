@@ -1,0 +1,527 @@
+\documentclass[reqno]{amsart}
+
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{turnstile}
+\usepackage{etex}
+\usepackage{todonotes}
+
+\hypersetup{colorlinks=true,linkcolor=blue}
+
+\renewcommand{\turnstile}[6][s]
+    {\ifthenelse{\equal{#1}{d}}
+        {\sbox{\first}{$\displaystyle{#4}$}
+        \sbox{\second}{$\displaystyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{t}}
+        {\sbox{\first}{$\textstyle{#4}$}
+        \sbox{\second}{$\textstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{s}}
+        {\sbox{\first}{$\scriptstyle{#4}$}
+        \sbox{\second}{$\scriptstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{ss}}
+        {\sbox{\first}{$\scriptscriptstyle{#4}$}
+        \sbox{\second}{$\scriptscriptstyle{#5}$}}{}
+    \setlength{\dashthickness}{0.111ex}
+    \setlength{\ddashthickness}{0.35ex}
+    \setlength{\leasturnstilewidth}{2em}
+    \setlength{\extrawidth}{0.2em}
+    \ifthenelse{%
+      \equal{#3}{n}}{\setlength{\tinyverdistance}{0ex}}{}
+    \ifthenelse{%
+      \equal{#3}{s}}{\setlength{\tinyverdistance}{0.5\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{d}}{\setlength{\tinyverdistance}{0.5\ddashthickness}
+        \addtolength{\tinyverdistance}{\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{t}}{\setlength{\tinyverdistance}{1.5\dashthickness}
+        \addtolength{\tinyverdistance}{\ddashthickness}}{}
+        \setlength{\verdistance}{0.4ex}
+        \settoheight{\lengthvar}{\usebox{\first}}
+        \setlength{\raisedown}{-\lengthvar}
+        \addtolength{\raisedown}{-\tinyverdistance}
+        \addtolength{\raisedown}{-\verdistance}
+        \settodepth{\raiseup}{\usebox{\second}}
+        \addtolength{\raiseup}{\tinyverdistance}
+        \addtolength{\raiseup}{\verdistance}
+        \setlength{\lift}{0.8ex}
+        \settowidth{\firstwidth}{\usebox{\first}}
+        \settowidth{\secondwidth}{\usebox{\second}}
+        \ifthenelse{\lengthtest{\firstwidth = 0ex}
+            \and
+            \lengthtest{\secondwidth = 0ex}}
+                {\setlength{\turnstilewidth}{\leasturnstilewidth}}
+                {\setlength{\turnstilewidth}{2\extrawidth}
+        \ifthenelse{\lengthtest{\firstwidth < \secondwidth}}
+            {\addtolength{\turnstilewidth}{\secondwidth}}
+            {\addtolength{\turnstilewidth}{\firstwidth}}}
+        \ifthenelse{\lengthtest{\turnstilewidth < \leasturnstilewidth}}{\setlength{\turnstilewidth}{\leasturnstilewidth}}{}
+    \setlength{\turnstileheight}{1.5ex}
+    \sbox{\turnstilebox}
+    {\raisebox{\lift}{\ensuremath{
+        \makever{#2}{\dashthickness}{\turnstileheight}{\ddashthickness}
+        \makehor{#3}{\dashthickness}{\turnstilewidth}{\ddashthickness}
+        \hspace{-\turnstilewidth}
+        \raisebox{\raisedown}
+        {\makebox[\turnstilewidth]{\usebox{\first}}}
+            \hspace{-\turnstilewidth}
+            \raisebox{\raiseup}
+            {\makebox[\turnstilewidth]{\usebox{\second}}}
+        \makever{#6}{\dashthickness}{\turnstileheight}{\ddashthickness}}}}
+        \mathrel{\usebox{\turnstilebox}}}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname n#2\endcsname[1]{\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{theorem}{Theorem}
+\newref{lem}{lemma}{Lemma}
+\newref{prop}{proposition}{Proposition}
+\newref{cor}{corollary}{Corollary}
+\newref{cond}{condition}{Condition}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{remark}{Remark}
+
+\newcommand{\deq}{\equiv}
+\newcommand{\repl}{:=}
+
+\newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\C}{\cat{C}}
+\newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
+\newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
+\newcommand{\Th}{\cat{Th}}
+\newcommand{\algtt}{\cat{AlgTT}}
+\newcommand{\ThC}{\Th_{\mathcal{C}}}
+\newcommand{\emptyCtx}{\mathbf{1}}
+\newcommand{\tta}{\mathbb{T}_0}
+\newcommand{\tts}{\mathbb{T}_1}
+
+\newcommand{\we}{\mathcal{W}}
+\newcommand{\fib}{\mathcal{Fib}}
+\newcommand{\cof}{\mathcal{Cof}}
+\newcommand{\I}{\mathrm{I}}
+\newcommand{\J}{\mathrm{J}}
+\newcommand{\class}[2]{#1\text{-}\mathrm{#2}}
+\newcommand{\Iinj}[1][\I]{\class{#1}{inj}}
+\newcommand{\Icell}[1][\I]{\class{#1}{cell}}
+\newcommand{\Icof}[1][\I]{\class{#1}{cof}}
+\newcommand{\Jinj}[1][]{\Iinj[\J#1]}
+\newcommand{\Jcell}[1][]{\Icell[\J#1]}
+\newcommand{\Jcof}[1][]{\Icof[\J#1]}
+\newcommand{\cyli}{i}
+
+\numberwithin{figure}{section}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\title{On weak equivalences between algebraic dependent type theories}
+
+\author{Valery Isaev}
+
+\begin{abstract}
+\end{abstract}
+
+\maketitle
+
+ \makeatletter
+    \providecommand\@dotsep{5}
+  \makeatother
+  \listoftodos\relax
+
+\section{Introduction}
+
+\section{Properties of categories of theories and their models}
+
+It was shown in \cite{PHL} that partial Horn theories are equivalent to essentially algebraic theories.
+It follows that categories of models of these theories are locally presentable.
+In this section we will prove that different categories of theories are also locally finitely presentable.
+We will also show that the category of models of a theory $T$ is a coreflective full subcategory of theories under $T$.
+
+\subsection{Categories of theories}
+
+We will consider the category $B/\Th_\mathcal{S}$ of theories under some theory $B$.
+Every object of this category is isomorphic to an object of the form
+$((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}_0 \amalg \mathcal{P}), \mathcal{A}_0 \amalg \mathcal{A})$,
+where $\mathcal{F}_0$, $\mathcal{P}_0$ and $\mathcal{A}_0$ are the sets of function and predicate symbols and axioms of $B$ respectively,
+and a map from $B$ is defined in the obvious way.
+Indeed, if $f : B \to T$ is a theory under $B$, then we can just add function and predicate symbols and axioms of $B$
+together with the following axioms for every function symbol $\sigma$ and every predicate symbol $R$ of $B$:
+\begin{align*}
+& \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k) \cong f(\sigma(x_1, \ldots x_k)) \\
+& R(x_1, \ldots x_k) \ssststile{}{x_1, \ldots x_k} f(R(x_1, \ldots x_k))
+\end{align*}
+Clearly, this theory under $B$ is isomorphic to $T$.
+We will denote the full subcategory of $B/\Th_\mathcal{S}$ on theories of this form by $\Th_B$.
+Since inclusion $\Th_B \to B/\Th_\mathcal{S}$ is an equivalence of categories, we will often use $\Th_B$ instead of $B/\Th_\mathcal{S}$.
+
+Now, we give an explicit construction of coproducts and coequalizers in the category $\Th_B$,
+which is similar to the one described in \cite{alg-tt} for the category $\Th_\mathcal{S}$ of theories.
+If $\{ T_i = ((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}_i, \mathcal{P}_0 \amalg \mathcal{P}_i), \mathcal{A}_0 \amalg \mathcal{A}_i) \}_{i \in I}$
+is a set of theories in $\Th_B$, then we can define their coproduct as
+$((\mathcal{S}, \mathcal{F}_0 \amalg \coprod_{i \in I} \mathcal{F}_i, \mathcal{P}_0 \amalg \coprod_{i \in I} \mathcal{P}_i), \mathcal{A}_0 \amalg \coprod_{i \in I} \mathcal{A}_i)$.
+If $T = ((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}_0 \amalg \mathcal{P}), \mathcal{A}_0 \amalg \mathcal{A})$
+and $f,g : T \to T'$ is a pair of maps of theories in $\Th_B$, then their coequalizer can be defined as $T'$ together with the following axioms for every $\sigma \in \mathcal{F}$ and $R \in \mathcal{P}$:
+\begin{align*}
+& \sststile{}{x_1, \ldots x_k} f(\sigma(x_1, \ldots x_k)) \cong g(\sigma(x_1, \ldots x_k)) \\
+& f(R(x_1, \ldots x_k)) \ssststile{}{x_1, \ldots x_k} g(R(x_1, \ldots x_k))
+\end{align*}
+
+If $T : I \to \Th_B$ is a diagram of theoriesm then $colim_{i \in I} T_i$ can be constructed as a coequalizer of the coproduct $\coprod_{i \in I} T_i$ as usual.
+Thus we can assume that the sets of function and predicate symbols of $colim_{i \in I} T_i$ (that are not symbols of $B$) are disjoint unions of the corresponding sets of $T_i$.
+The axioms of $colim_{i \in I} T_i$ are axioms of $T_i$ together with axioms of the form $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n) \cong f(\sigma(x_1, \ldots x_n))$
+and $R(x_1, \ldots x_n) \ssststile{}{x_1, \ldots x_n} f(R(x_1, \ldots x_n))$ for every morphism $f : T_i \to T_j$
+in the diagram and every function symbol $\sigma$ and predicate symbol $R$ of $T_i$ which are not symbols of $B$.
+
+Let $\lambda$ be a regular cardinal.
+We will say that a theory $T = ((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}_0 \amalg \mathcal{P}), \mathcal{A}_0 \amalg \mathcal{A})$
+in $\Th_B$ is \emph{$\lambda$-small} if cardinalities of sets $\mathcal{F}$, $\mathcal{P}$ and $\mathcal{A}$ are less than $\lambda$.
+We will say that $T$ is \emph{finite} if it is $\aleph_0$-small.
+
+\begin{prop}
+Category $\Th_B$ is locally finitely presentable.
+An object of this category is $\lambda$-presentable if and only if it is isomorphic to a $\lambda$-small object.
+\end{prop}
+\begin{proof}
+First, let us prove that every $\lambda$-small object is $\lambda$-presentable.
+Let $colim_{i \in I} T_i$ be a directed colimit of theories in $\Th_B$.
+Every term and every formula of a theory is constructed from a finite number of function and predicate symbols.
+Thus for every formula of $colim_{i \in I} T_i$ there exists a theory $T_i$ such that this formula belongs to $T_i$.
+The same is true for terms and partial terms.
+
+Every derivation of a theorem $\varphi \sststile{}{V} \psi$ is constructed from a finite number of function symbols, predicate symbols and axioms.
+Thus for every theorem $\varphi \sststile{}{V} \psi$ of $colim_{i \in I} T_i$ there exists a theory $T_i$ such that $\varphi \sststile{}{V} \psi$ is a theorem of $T_i$.
+Note that the additional axioms of $colim_{i \in I} T_i$ that was added for every $f : T_i \to T_j$ are always true in $T_j$.
+
+Let $h : T \to colim_{i \in I} T_i$ be a morphism from a $\lambda$-small theory $T$ to a directed colimit of theories $\{ T_i \}_{i \in I}$.
+Since $T$ is $\lambda$-small, there exists a theory $T_i$ such that for every function symbol $\sigma$, predicate symbol $R$ and axiom $\varphi \sststile{}{V} \psi$ of $T$,
+partial terms $h(\sigma(x_1, \ldots x_n))$ and formulae $h(R(x_1, \ldots x_n))$ belong to $T_i$, and $h(\varphi) \sststile{}{V} h(\psi)$ is a theorem of $T$.
+Thus $h$ factors through $T_i$.
+
+Let $h_1,h_2 : T \to T_i$ be morphisms such that $g_i \circ h_1 = g_i \circ h_2$, where $g_i : T_i \to colim_{i \in I} T_i$.
+Then for every function symbol $\sigma$ of $T$, $\sststile{}{x_1, \ldots x_n} h_1(\sigma(x_1, \ldots x_n)) \cong h_2(\sigma(x_1, \ldots x_n))$ is a theorem of $colim_{i \in I} T_i$.
+But we already know that there exists a theory $T_j$ such that $i \leq j$ and this sequent is a theorem of $T_j$.
+The same is true for every predicate symbol of $T$.
+It follows that $f \circ h_1 = f \circ h_2$, where $f : T_i \to T_j$.
+
+Now, let us prove that $\Th_B$ is locally finitely presentable.
+We only need to show that every theory in $\Th_B$ is a colimit of its finite subtheories.
+Let $T$ be a theory, and let $\{ f_i : T_i \to T' \}_{i \in I}$ be a cocone over the diagram of finite subtheories of $T$.
+For every function or predicate symbol $p$ of $T$ which is not a symbol of $B$, there is a finite subtheory $T_p$ of $T$ which contains symbols and axioms of $B$ and one additional symbol $p$ and no other axiom.
+A morphism $h$ of cocones $T$ and $T'$ must commute with morphisms from $T_p$.
+Thus it must be defined as $h(p(x_1, \ldots x_n)) = f_p(p(x_1, \ldots x_n))$; hence it is unique.
+To prove that this defines a morphism, we need to show that $h$ preserves axioms of $T$.
+But every axiom involes only a finite number of symbols of $T$.
+Hence there exists a subtheory $T_i$ of $T$ which consists of these symbols and this axiom.
+Since $f_i$ is a morphism of theories, this axiom also holds in $T'$.
+
+Finally, let us prove that every $\lambda$-presentable theory $T$ in $\Th_B$ is isomorphic to a $\lambda$-small theory.
+Consider the identity map $id_T : T \to T$.
+Since $T$ is a colimit of its finite subtheories, $id_T$ factors through some finite subtheory $T'$ of $T$.
+Thus we have maps $f : T \to T'$ and $g : T' \to T$ such that $g \circ f = id_T$.
+Since $T$ is a coequalizer of $f \circ g$ and $id_{T'}$, it is isomorphic to the coequalizer of $f \circ g$ and $id_{T'}$ as constructed above, which is a finite theory.
+\end{proof}
+
+Since categories $\algtt^0$ and $\algtt^1$ are of the form $T/\Th_\mathcal{S}$, this proposition applies to them.
+We can prove that the same facts hold for contextual theories:
+
+\begin{cor}
+Category $B/\algtt^0_{con}$ is locally finitely presentable.
+An object of this category is $\lambda$-presentable if and only if it is isomorphic to a $\lambda$-small object.
+\end{cor}
+\begin{proof}
+Now, we will prove that category $B/\algtt^0_{con}$ is also locally finitely presentable for every $B$.
+Note that $B/\algtt^0_{con}$ is a full subcategory of $\Th_B$ and is closed under colimits.
+It follows that if an object of $B/\algtt^0_{con}$ is $\lambda$-presentable in $\Th_B$, then it is also $\lambda$-presentable in $B/\algtt^0_{con}$.
+It is easy to see that every contextual theory under $B$ is a colimit of its finite contextual subtheories under $B$.
+Thus $B/\algtt^0_{con}$ is locally finitely presentable and an object of this category is $\lambda$-presentable if and only if it is isomorphic to a $\lambda$-small theory.
+The last statement is proved by the same argument as in the case of $\Th_B$.
+In particular, this implies that $\algtt^0_{con}$ and $\algtt^1_{con}$ are locally finitely presentable.
+\end{proof}
+
+Since categories $\algtt^0_{con}$ and $\algtt^1_{con}$ are of the form $B/\algtt^0_{con}$, this corollary applies to them.
+Now we consider categories of stable and regular theories.
+Category $\algtt^0_{st}$ of stable algebraic dependent type theories was defined in \cite{alg-tt} as the category of algebras for a functor $L : \algtt^0_{con} \to \algtt^0_{con}$.
+Here we will use slightly different (but equivalent) definition.
+
+\begin{cor}
+Categories $\algtt^0_{st}$, $\algtt^1_{st}$ and $\algtt^1_{reg}$ are locally finitely presentable.
+\end{cor}
+\begin{proof}
+Category $\algtt^1_{reg}$ is a reflective subcategory of $\algtt^1_{st}$ and is closed under colimits.
+Hence it is also locally finitely presentable.
+\end{proof}
+
+\subsection{The category of models}
+
+Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a standard partial Horn theory and let $M = (A,\alpha,\beta)$ be its model.
+If $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$, then we will write $M(\sigma) : A_{s_1} \times \ldots A_{s_k} \to A_s$
+    for the partial function defined as $M(\sigma)(a_1, \ldots a_k) = \alpha(x_i \mapsto a_i)(\sigma(x_1, \ldots x_k))$.
+If $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$ then we will write $M(R)$ for the subset of $A_{s_1} \times \ldots A_{s_k}$,
+    which consists of tuples $(a_1, \ldots a_k)$ such that $\beta(x_i \mapsto a_i)(R(x_1, \ldots x_k)) = \top$.
+
+For every model $M$ of $\mathbb{T}$, we define a theory $Lang(M)$.
+It has function and predicate symbols of $\mathbb{T}$ together with function symbol $O_a : s$ for every $a \in A_s$.
+Axioms of $Lang(M)$ are axioms of $\mathbb{T}$ together with the following sequents:
+\begin{align*}
+& \sststile{}{} O_a \downarrow \\
+& \sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M(\sigma)(a_1, \ldots a_k)} \\
+& \sststile{}{} R(O_{a_1}, \ldots O_{a_k})
+\end{align*}
+for every $a \in A_s$, every $a_i \in A_{s_i}$,
+every $\sigma \in \mathcal{F}$ such that $M(\sigma)(a_1, \ldots a_k)$ is defined,
+and every $R \in \mathcal{P}$ such that $(a_1, \ldots a_k) \in M(R)$.
+
+Models of $Lang(M)$ are just models of $\mathbb{T}$ together with a morphism from $M$.
+That is, categories $M/\Mod{\mathbb{T}}$ and $\Mod{Lang(M)}$ are isomorphic.
+In particular, $A$ has a natural structure of a model of $Lang(M)$ defined as follows:
+\begin{align*}
+\alpha'(f)(O_a) & = a \\
+\alpha'(f)(\sigma(x_1, \ldots x_k)) & = \alpha(f)(\sigma(x_1, \ldots x_k)) \\
+\beta'(f)(R(x_1, \ldots x_k)) & = \beta(f)(R(x_1, \ldots x_k))
+\end{align*}
+
+\begin{lem}[cl-term]
+If $t \in Term_\mathcal{F}(\varnothing)_s$ is such that $\sststile{}{} t \downarrow$ is a theorem of $Lang(M)$,
+    then there is a unique $a \in A_s$ such that $\sststile{}{} t = O_a$ is a theorem of $Lang(M)$.
+\end{lem}
+\begin{proof}
+Since $(A,\alpha',\beta')$ is a model of $Lang(M)$, for every theorem $\varphi \sststile{}{V} \psi$ of $Lang(M)$
+    and every total function $f : V \to A$, if $\beta'(f)(\varphi) = \top$, then $\beta'(f)(\psi) = \top$.
+In particular, if $\sststile{}{} O_a = O_{a'}$, then $a = a'$.
+Hence if $\sststile{}{} t = O_a$ and $\sststile{}{} t = O_{a'}$, then $a = a'$, so such $a$ is unique.
+
+Let us prove its existence.
+We do this by induction on $t$.
+If $t = O_a$, then we are done.
+If $t = \sigma(t_1, \ldots t_k)$, then by induction hypothesis, $\sststile{}{} t = \sigma(O_{a_1}, \ldots O_{a_k})$ for some $a_1$, \ldots $a_k$.
+Note that if $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k})\!\!\downarrow$ is derivable, then $M(\sigma)(a_1, \ldots a_k)$ is defined.
+Thus $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M(\sigma)(a_1, \ldots a_k)}$ is also derivable.
+\end{proof}
+
+For every morphism $h : M \to N$ of models of $\mathbb{T}$, we can define a morphism $Lang(h) : Lang(M) \to Lang(N)$ of theories under $\mathbb{T}$ as $Lang(h)(O_a) = O_{h(a)}$.
+Thus $Lang$ is a functor $\Mod{\mathbb{T}} \to \mathbb{T}/\Th_\mathcal{S}$.
+
+\begin{prop}
+$Lang$ is fully faithful.
+\end{prop}
+\begin{proof}
+Let $h_1$, $h_2$ be morphisms of models such that $Lang(h_1) = Lang(h_2)$.
+Then $O_{h_1(a)} = Lang(h_1)(O_a) = Lang(h_2)(O_a) = O_{h_2(a)}$, and by \rlem{cl-term}, $h_1(a) = h_2(a)$.
+Thus $Lang$ is faithful.
+
+Let $M_1 = (A_1,\alpha_1,\beta_1)$ and $M_2 = (A_2,\alpha_2,\beta_2)$ be models of $\mathbb{T}$,
+    and let $h : Lang(M_1) \to Lang(M_2)$ be a morphism of theories under $\mathbb{T}$.
+Then by \rlem{cl-term}, for every $a \in A_1$, there is a unique $h'(a) \in A_2$ such that $\sststile{}{} h(O_a) = O_{h'(a)}$ is a theorem of $Lang(M_2)$.
+Let us show that $h' : A_1 \to A_2$ is a morphism of models $M_1$ and $M_2$.
+Indeed, if $M_1(\sigma)(a_1, \ldots a_k)$ is defined, then $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M_1(\sigma)(a_1, \ldots a_k)}$ is a theorem of $Lang(M_1)$.
+Hence \[ \sststile{}{} \sigma(O_{h'(a_1)}, \ldots O_{h'(a_k)}) = O_{h'(M_1(\sigma)(a_1, \ldots a_k))} \] is a theorem of $Lang(M_2)$.
+But \[ \sststile{}{} \sigma(O_{h'(a_1)}, \ldots O_{h'(a_k)}) = O_{M_2(\sigma)(h'(a_1), \ldots h'(a_k))} \] is also a theorem of $Lang(M_2)$.
+Hence by \rlem{cl-term}, $h'(M_1(\sigma)(a_1, \ldots a_k)) = M_2(\sigma)(h'(a_1), \ldots h'(a_k))$.
+
+If $(a_1, \ldots a_k) \in M_1(R)$, then $\sststile{}{} R(O_{a_1}, \ldots O_{a_k})$ is a theorem of $Lang(M_1)$.
+Hence $\sststile{}{} R(O_{h'(a_1)}, \ldots O_{h'(a_k)})$ is a theorem of $Lang(M_2)$.
+Since $M_2$ is a model of $Lang(M_2)$, it follows that $(h'(a_1), \ldots h'(a_k)) \in M_2(R)$.
+
+Thus $h'$ is a morphism of models.
+Note that by definition of $h'$, $Lang(h') = h$.
+Hence $Lang$ is full.
+\end{proof}
+
+Now, let us describe a functor $Syn : \mathbb{T}/\Th_\mathcal{S} \to \Mod{\mathbb{T}}$.
+For every $i : \mathbb{T} \to \mathbb{T}'$, let $Syn(i) = i^*(0_{\mathbb{T}'})$, where $0_{\mathbb{T}'}$ is the initial object of $\Mod{\mathbb{T}'}$,
+    and $i^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ is the functor that was defined in \cite{alg-tt}.
+If $f : \mathbb{T}_1 \to \mathbb{T}_2$ is a morphism of theories under $\mathbb{T}$, then let $Syn(f) = i_1^*(!_{f^*(0_{\mathbb{T}_2})})$,
+    where $!_{f^*(0_{\mathbb{T}_2})}$ is the unique morphism $0_{\mathbb{T}_1} \to f^*(0_{\mathbb{T}_2})$.
+
+The construction of initial models of partial Horn theories was given in \cite{PHL}.
+Let us repeat it here.
+Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a standard partial Horn theory.
+First, we define a partial equivalence relations on sets $Term_\mathcal{F}(\varnothing)$ as $t_1 \sim t_2$ if and only if $\sststile{}{} t_1 = t_2$ is a theorem of $\mathbb{T}$.
+The interpretation of $R \in \mathcal{P}$ consists of tuples $(t_1, \ldots t_k)$ such that $\sststile{}{} R(t_1, \ldots t_k)$ is derivable in $\mathbb{T}$.
+Then $\mathcal{S}$-set $Term_\mathcal{F}(\varnothing)/\!\sim$ has a natural structure of a model of $((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$, and this model is initial.
+
+\begin{prop}
+$Syn$ is right adjoint to $Lang$.
+\end{prop}
+\begin{proof}
+Let $\epsilon_{\mathbb{T}'} : Lang(Syn(\mathbb{T}')) \to \mathbb{T}'$ be defined as $\epsilon_{\mathbb{T}'}(O_t) = t$.
+It is easy to see that $\epsilon_{\mathbb{T}'}$ preserves axioms of $Lang(Syn(\mathbb{T}'))$.
+Moreover, $\epsilon$ is natural in $\mathbb{T}'$.
+Let us prove that $\epsilon$ is the counit of the adjunction.
+Let $f : Lang(M) \to \mathbb{T}'$ be a morphism.
+Then we need to show that there is a unique morphism $g : Lang(M) \to Lang(Syn(\mathbb{T}'))$ such that $\epsilon_{\mathbb{T}'} \circ g = f$.
+By \rlem{cl-term}, there is a unique $t$ such that $g(O_a) = O_t$.
+Since $t = \epsilon_{\mathbb{T}'}(g(O_a)) = f(O_a)$, $g$ must satisfy equation $g(O_a) = O_{f(O_a)}$.
+Thus $g$ is unique.
+It is easy to see that this $g$ preserves axioms of $Lang(M)$; hence it defines a morphism $g : Lang(M) \to Lang(Syn(\mathbb{T}'))$.
+\end{proof}
+
+Let $\mathbb{T}$ be an algebraic dependent type theory.
+Then categories $\mathbb{T}/\algtt^0$ and $\mathbb{T}/\ThC$ are isomorphic.
+Thus we still have adjoint functors $Lang^0 \dashv Syn^0 : \mathbb{T}/\algtt^0 \to \Mod{\mathbb{T}}$.
+If $\mathbb{T}$ is a contextual theory, then category $\mathbb{T}/\algtt^0_{con}$ is a full subcategory of $\mathbb{T}/\algtt^0$.
+We have functor $Syn^0_{con} : \mathbb{T}/\algtt^0_{con} \to \Mod{\mathbb{T}}$ which is defined as the composition of the inclusion $\mathbb{T}/\algtt^0_{con} \to \mathbb{T}/\algtt^0$ and $Syn$.
+Let us construct its left adjoint $Lang^0_{con} : \Mod{\mathbb{T}} \to \mathbb{T}/\algtt^0_{con}$.
+
+Theory $Lang^0_{con}(M)$ has has function and predicate symbols of $\mathbb{T}$ together with function symbol $O_a : (ctx,n) \to (p,n)$ for every $a \in A_{(p,n)}$, $p \in \{ ty, tm \}$.
+For every $a \in A_{(p,n)}$, we define term $C_a$ of sort $(p,n)$ by induction on $n$.
+If $n = 0$, then let $C_a = O_a(\emptyCtx)$.
+If $n > 0$, then let $C_a = O_a(C_{M(ctx_{p,n})(a)})$.
+
+Axioms of $Lang^0_{con}(M)$ are axioms of $\mathbb{T}$ together with the following sequents:
+\begin{align*}
+O_a(\Gamma) \downarrow & \sststile{}{\Gamma} \Gamma = C_{M(ctx_{p,n})(a)}\\
+& \sststile{}{} \sigma(C_{a_1}, \ldots C_{a_k}) = C_{M(\sigma)(a_1, \ldots a_k)} \\
+& \sststile{}{} R(C_{a_1}, \ldots C_{a_k})
+\end{align*}
+for every $a \in A_s$, every $a_i \in A_{s_i}$,
+every $\sigma \in \mathcal{F}$ such that $M(\sigma)(a_1, \ldots a_k)$ is defined,
+and every $R \in \mathcal{P}$ such that $(a_1, \ldots a_k) \in M(R)$.
+
+For every morphism $h : M \to N$ of models of $\mathbb{T}$, we can define a morphism $Lang^0_{con}(h) : Lang^0_{con}(M) \to Lang^0_{con}(N)$ of theories under $\mathbb{T}$ as $Lang(h)(O_a(\Gamma)) = O_{h(a)}(\Gamma)$.
+Thus $Lang^0_{con}$ is a functor $\Mod{\mathbb{T}} \to \mathbb{T}/\algtt^0_{con}$.
+
+\begin{prop}
+$Lang^0_{con}$ is left adjoint to $Syn^0_{con}$.
+\end{prop}
+\begin{proof}
+To prove this, it is enough to show that the composition of $Lang^0_{con}$ and the inclusion $\mathbb{T}/\algtt^0_{con} \to \mathbb{T}/\algtt^0$ is isomorphic to $Lang^0$.
+Let $\alpha_M : Lang^0(M) \to Lang^0_{con}(M)$ be defined as $\alpha_M(O_a) = C_a$.
+Let $\beta_M : Lang^0_{con}(M) \to Lang^0(M)$ be defined as $\beta_M(O_a(\Gamma)) = O_a|_{\Gamma = C_{M(ctx_{p,n})(a)}}$.
+To prove that $\alpha$ and $\beta$ are inverses of each other, we need to show that $\sststile{}{\Gamma} O_a(\Gamma) \cong C_a|_{\Gamma = C_{M(ctx_{p,n})(a)}}$ is a theorem of $Lang^0_{con}(M)$.
+But this follows from the first axiom of $Lang^0_{con}(M)$.
+\end{proof}
+
+For every algebraic dependent type theory with substitutions $\mathbb{T}$, there are adjoint functors $Lang^1 \dashv Syn^1 : \mathbb{T}/\algtt^1 \to \Mod{\mathbb{T}}$.
+For every contextual algebraic dependent type theory with substitutions $\mathbb{T}$, there are adjoint functors $Lang^1_{con} \dashv Syn^1_{con} : \mathbb{T}/\algtt^1_{con} \to \Mod{\mathbb{T}}$.
+These functors are defined in the same way as $Lang^0 \dashv Syn^0$ and $Lang^0_{con} \dashv Syn^0_{con}$.
+
+For every morphism of theories $f : \mathbb{T} \to \mathbb{T}'$ there is a functor $f^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ which was consttucted in \cite{alg-tt}.
+We also can define functor $f_! : \Mod{\mathbb{T}} \to \Mod{\mathbb{T}'}$ as $f_!(M) = Syn(Lang(M) \amalg_{\mathbb{T}} \mathbb{T}')$.
+It was shown in \cite{PHL} that $f_!$ is left adjoint to $f^*$.
+This theorem was proved there only for a weaker notion of morphisms of theories, but the proof also works for general morphisms as defined in \cite{alg-tt}.
+
+Functor $f_!$ can be used to present a model of a theory by generators and relations.
+Let $\mathbb{T}$ be a fixed $\mathcal{S}$-theory.
+Note that models of the empty theory are just $\mathcal{S}$-sets.
+If $f : 0 \to \mathbb{T}$ is the unique morphism from the empty theory, then $f^*(M)$ is just the underlying $\mathcal{S}$-set of $M$,
+    and $f_!(X)$ is the free model of $\mathbb{T}$ on $\mathcal{S}$-set $X$.
+We will denote this free model by $F(X)$.
+If $R$ is a set of axioms in the language of theory $Lang(X) \amalg \mathbb{T}$,
+    then let $F(X,R)$ be a model of $\mathbb{T}$ defined as $Syn(Lang(X) \amalg \mathbb{T} \cup R)$.
+By definition of $Syn$, to construct a morphism $F(X,R) \to M$ it is necessary and sufficient
+    to construct a morphism from $X$ to the underlying $\mathcal{S}$-set of $M$ such that relations from $R$ are true in $M$.
+
+Sometimes we will omit the set of generators if it can be inferred from the set of relations.
+For examples, we will write $F(\{\,\vdash p : Id(A,a,a')\,\})$ for the model $F(\{\,a : (tm,0), a' : (tm,0), A : (ty,0), p : (tm,0)\,\}, \{\,ty(p) = Id(A,a,a')\,\})$.
+Another examples is $F(\{\,A_1, \ldots A_n \vdash a : A\,\})$ which equals to $F(\{\,A_i : (ty,i), A : (ty,n), a : (tm,n)\,\}, \{\,ty(a) = A, ft^{i+1}(A) = A_{n-i}\,\})$.
+Thus this model is isomorphic to the free model $F(\{\,a : (tm,n)\,\})$.
+
+\section{A model structure on the category of theories}
+
+In this section we construct a model structure on the category $UA/\Th_\mathcal{C}$ of theories with an interval type, homogeneous path types and the univalence axiom.
+For an introduction to the theory of model categories see \cite{hovey}.
+We will need the following proposition to construct our model structure:
+
+\begin{prop}[model-cat]
+Suppose that $\C$ is a complete and cocomplete category, $\we$ is a class of morphisms of $\C$, and $\I$, $\J$ are sets of morphisms of $\C$.
+Then $\C$ is a cofibrantly generated model category with $\I$ as the set of generating cofibrations,
+$\J$ as the set of generating trivial cofibrations, and $\we$ as the class of weak equivalences if and only if the following conditions are satisfied:
+\begin{description}
+\item[(A1)] The domains of maps in $\I$ and $\J$ are small relative to $\Icell$ and $\Jcell$ respectively.
+\item[(A2)] $\we$ has 2-out-of-3 property and is closed under retracts.
+\item[(A3)] $\Iinj \subseteq \we$.
+\item[(A4)] $\Jcell \subseteq \we \cap \Icof$.
+\item[(A5)] Either $\Jinj \cap \we \subseteq \Iinj$ or $\Icof \cap \we \subseteq \Jcof$.
+\end{description}
+\end{prop}
+
+We will often define theories just by specifying its set of axioms.
+The sets of function and predicate symbols then can be defined as the sets of those symbols that appear in the axioms.
+
+Let $e : \{ ctx, ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ctx) = ctx$, $e(ty) = ctx$, $e(tm) = ty$.
+Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ctx}(\Gamma) = \Gamma$ $d_{ty}(A) = ft(A)$, $d_{tm}(a) = ty(a)$.
+Let $s_1, \ldots s_n, s$ be a sequence of sorts such that $s = (p,n)$ for some $p \in \{ ty, tm \}$ and $n \in \mathbb{N}$.
+Then we define algebraic dependent type theories $\mathbb{U}_{s_1, \ldots s_k, s}$ and $\mathbb{V}_{s_1, \ldots s_k, s}$.
+Apart from symbols and axioms of $\mathbb{T}_0$ theories $\mathbb{U}_{s_1, \ldots s_k, s}$
+and $\mathbb{V}_{s_1, \ldots s_k, s}$ have one predicate symbols $P : s_1 \times \ldots \times s_k$.
+$\mathbb{U}_{s_1, \ldots s_k, s}$ has one function symbol $A : s_1 \times \ldots \times s_k \to (e(p),n)$ and one axiom:
+\[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} A(x_1, \ldots x_k)\!\downarrow \]
+$\mathbb{V}_{s_1, \ldots s_k, s}$ has two function symbols $A : s_1 \times \ldots s_k \to (e(p),n)$ and $a : s_1 \times \ldots \times s_k \to (p,n)$ and two axioms:
+\begin{align*}
+P(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \\
+a(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} d_p(a(x_1, \ldots x_k)) = A(x_1, \ldots x_k)
+\end{align*}
+We also define a theory $\mathbb{V}'_{s_1, \ldots s_k, s}$ as $\mathbb{V}_{s_1, \ldots s_k, s}$ together with the following axiom:
+\[ a(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} P(x_1, \ldots x_k) \]
+
+There are obvious morphisms $\mathbb{U}_{s_1, \ldots s_k, s} \to \mathbb{V}_{s_1, \ldots s_k, s}$.
+Let $\I$ be the set of these morphisms for every sequence $s_1, \ldots s_k, s$.
+Let $\I'$ be the set of morphisms of the form $j \circ i$, where $i \in \I$ and $j$ is the inclusion $\mathbb{V}_{s_1, \ldots s_k, s} \to \mathbb{V}'_{s_1, \ldots s_k, s}$.
+Note that every map in $\I'$ is a pushout of a map in $\I$:
+\[ \xymatrix{ \mathbb{U}_{s_1, \ldots s_k, s} \ar[r]^f \ar[d] & \mathbb{U}_{s_1, \ldots s_k, s} \ar[d] \\
+              \mathbb{V}_{s_1, \ldots s_k, s} \ar[r]_g & \po \mathbb{V}'_{s_1, \ldots s_k, s}
+            } \]
+where $f(P) = P$, $f(A) = A|_P$, $g(P) = P$, $g(A) = A|_P$ and $g(a) = a$.
+It follows that $\Icof[\I'] \subseteq \Icof$.
+
+A cylinder object for a theory $\mathbb{T}$ is a theory $C$ together with three maps $i_0,i_1 : \mathbb{T} \to C$ and $w : C \to \mathbb{T}$
+such that $w \circ i_0 = w \circ i_1 = id_{\mathbb{T}}$.
+If $\mathbb{T}$ is an algebraic dependent type theory, then let $F(\mathbb{T})$ be a free theory under $UA$, that is $\mathbb{T} \amalg_{\mathbb{T}_0} UA$.
+For every theory of the form $F(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ we define a cylinder object $C(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$.
+Apart from symbols and axioms of $UA$, it has two predicate symbols $P,Q : s_1 \times \ldots \times s_k$,
+one function symbol $H : s_1 \times \ldots \times s_k \to (e(p),n+1)$ and one axiom:
+\[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} ft^n(d_{e(p)}(H(x_1, \ldots x_k))) = I(\emptyCtx) \land Q(x_1, \ldots x_k) \]
+
+If $A_1, \ldots A_n \vdash a$, then let $I \times a = (I, A_1[], \ldots A_n[v_{n-2}, \ldots v_0] \vdash a[v_{n-1}, \ldots v_0])$.
+Morphism $w : C(\mathbb{U}_{s_1, \ldots s_k, (p,n)}) \to F(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ is defined as follows:
+$w(P) = P$, $w(Q) = Q$, $w(H(x_1, \ldots x_k)) = I \times A(x_1, \ldots x_k)$.
+If $I, A_1, \ldots A_n \vdash h$, then for every $c \in \{ left, right \}$, let $c^*(h) = (A_1[c], \ldots A_n[c, v_{n-2}, \ldots v_0] \vdash h[c, v_{n-1}, \ldots v_0])$.
+Morphisms $i_0,i_1 : F(\mathbb{U}_{s_1, \ldots s_k, (p,n)}) \to C(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ are defined as follows:
+$i_j(P) = P$, $i_j(Q) = Q$ and $i_j(A(x_1, \ldots x_k)) = c_j^*(H(x_1, \ldots x_k))$ for every $j \in \{ 0, 1 \}$, where $c_0 = left$ and $c_1 = right$.
+Note that $c_j^*(I \times A) = A$; hence $w \circ i_0 = w \circ i_1 = id_{F(\mathbb{U}_{s_1, \ldots s_k, (p,n)})}$.
+
+For every theory $F(\mathbb{V}_{s_1, \ldots s_k, (p,n)})$ we define a cylinder object $C(\mathbb{V}_{s_1, \ldots s_k, (p,n)})$.
+Apart from symbols and axioms of $UA$, it has two predicate symbols $P,Q : s_1 \times \ldots \times s_k$,
+two function symbols $H : s_1 \times \ldots \times s_k \to (e(p),n+1)$, $h : s_1 \times \ldots \times s_k \to (p,n+1)$, and the following axioms:
+\begin{align*}
+P(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} h(x_1, \ldots x_k)\!\downarrow \\
+h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ft^n(d_{e(p)}(H(x_1, \ldots x_k))) = I(\emptyCtx) \\
+h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} d_p(h(x_1, \ldots x_k)) = H(x_1, \ldots x_k) \land Q(x_1, \ldots x_k)
+\end{align*}
+Morphism $w : C(\mathbb{V}_{s_1, \ldots s_k, (p,n)}) \to F(\mathbb{V}_{s_1, \ldots s_k, (p,n)})$ is defined as follows:
+$w(P) = P$, $w(Q) = Q$, $w(H(x_1, \ldots x_k)) = I \times A(x_1, \ldots x_k)$, $w(h(x_1, \ldots x_k)) = I \times a(x_1, \ldots x_k)$.
+Morphisms $i_0,i_1 : F(\mathbb{U}_{s_1, \ldots s_k, (p,n)}) \to C(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ are defined as follows:
+$i_j(P) = P$, $i_j(Q) = Q$, $i_j(A(x_1, \ldots x_k)) = c_j^*(H(x_1, \ldots x_k))$ and \todo{Fix margins} $i_j(a(x_1, \ldots x_k)) = c_j^*(h(x_1, \ldots x_k))$.
+
+% If $p \in \{ ty, tm \}$, then let $\I^1_p$ be the set of morphisms of theories of the form
+% $\{ P(x_1, \ldots x_n) \sststile{}{x_1, \ldots x_n} A(x_1, \ldots x_n)\!\downarrow \land Q(x_1, \ldots x_n) \} \to \{ P(x_1, \ldots x_n) \sststile{}{x_1, \ldots x_n} a(x_1, \ldots x_n)\!\downarrow, a(x_1, \ldots x_n)\!\downarrow\ \sststile{}{x_1 : s_1, \ldots x_n : s_n} d_p(a(x_1, \ldots x_n)) = A(x_1, \ldots x_n) \land Q(x_1, \ldots x_n) \}$
+% for every sequence of sorts $s_1$, \ldots $s_n$, $s$, where $s = (p,n)$ for some $n$, and $a : s_1 \times \ldots \times s_n \to s$.
+% We define the set $\I$ of generating cofibrations to be the union $\I_{ty} \cup \I_{tm}$.
+% Let $\J_p$ be the set of arrows of the form $i^0_{(p,n)}$.
+% We define the set $\J$ of generating trivial cofibrations to be the union $\J_{ty} \cup \J_{tm}$.
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
