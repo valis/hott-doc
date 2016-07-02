@@ -486,7 +486,7 @@ Theory $Path$ be a theory with function symbols $Path : (ty,n+1) \times (tm,n) \
 \smallskip
 \begin{center}
 \AxiomC{$\Gamma, x : I \vdash a : A$}
-\UnaryInfC{$\Gamma \vdash path(\lambda x.\,a) : Path(A, a[x \repl left], a[x \repl right])$}
+\UnaryInfC{$\Gamma \vdash path(\lambda x.\,a) : Path(\lambda x.\,A, a[x \repl left], a[x \repl right])$}
 \DisplayProof
 \end{center}
 
@@ -494,7 +494,7 @@ Theory $Path$ be a theory with function symbols $Path : (ty,n+1) \times (tm,n) \
 \begin{center}
 \AxiomC{$\Gamma \vdash p : Path(\lambda x.\,A, a, a')$}
 \AxiomC{$\Gamma \vdash i : I$}
-\BinaryInfC{$\Gamma \vdash at(A, a, a', p, i) : A[x \repl i]$}
+\BinaryInfC{$\Gamma \vdash at(\lambda x.\,A, a, a', p, i) : A[x \repl i]$}
 \DisplayProof
 \end{center}
 
@@ -502,29 +502,90 @@ Theory $Path$ be a theory with function symbols $Path : (ty,n+1) \times (tm,n) \
 \begin{center}
 \AxiomC{$\Gamma, x : I \vdash a : A$}
 \AxiomC{$\Gamma \vdash i : I$}
-\BinaryInfC{$\Gamma \vdash at(A, a[x \repl left], a[x \repl right], path(\lambda x.\,a), i) \deq a[x \repl i]$}
+\BinaryInfC{$\Gamma \vdash at(\lambda x.\,A, a[x \repl left], a[x \repl right], path(\lambda x.\,a), i) \deq a[x \repl i]$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
 \AxiomC{$\Gamma \vdash p : Path(\lambda x.\,A, a, a')$}
-\UnaryInfC{$\Gamma \vdash path(\lambda x.\,at(A, a, a', p, x)) \deq p$}
+\UnaryInfC{$\Gamma \vdash path(\lambda y.\,at(\lambda x.\,A, a, a', p, y)) \deq p$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
 \AxiomC{$\Gamma \vdash p : Path(\lambda x.\,A, a, a')$}
-\UnaryInfC{$\Gamma \vdash at(A, a, a', p, left) \deq a$}
+\UnaryInfC{$\Gamma \vdash at(\lambda x.\,A, a, a', p, left) \deq a$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash p : Path(\lambda x.\,A, a, a')$}
-\UnaryInfC{$\Gamma \vdash at(A, a, a', p, right) \deq a'$}
+\UnaryInfC{$\Gamma \vdash at(\lambda x.\,A, a, a', p, right) \deq a'$}
 \DisplayProof
 \end{center}
 
 There is an obvious morphism $f : HPath \to Path$ such that $f(a = a') = Path(\lambda x.\,ty(a), a, a')$.
+
+The theory we are describing has many similarities to the theory of cubical sets.
+The reason is that we can think of contexts $I, \ldots I \vdash$ as $n$-dimensional cubes.
+Let $M$ be a model of $I$ and let $A,B \in M_{(ty,0)}$, then the sequence of sets
+$\{\,x \in M_{(tm,n+1)}\ |\ ty(x) = (A, I, \ldots I \vdash B\!\uparrow^{n+1})\,\}$ has a natural structure of a cubical set.
+If $M$ is a model of $coe_1 + Path$, then these cubical sets are fibrant, that is have fillers for all cubical horns.
+We will formally define operations $Fill^n$ which give us these fillers in subsection~\ref{sec:fillers}.
+Now, we need these fillers to define several operations that we will use in the next subsection.
+
+First, let us define $sq'$ which satisfies all of the axioms of $sq$ together with axiom $\Gamma \vdash sq(i,right) \deq i$.
+This operation is analogous to connections in cubical sets.
+Actually, this construction shows that cubical sets that we defined before from a model of the theory have connections.
+We can define $sq'$ by filling the following horn:
+\[ \xymatrix @C=0.5pc @R=0.5pc
+    { left \ar[rrrr] \ar[dddd] &          & &                      & left \ar[dddd] \\
+           & left \ar[rr] \ar[dd] \ar[ul] & & left \ar[dd] \ar[ur] & \\
+           &                              & &                      & \\
+           & left \ar[rr] \ar[dl]         & & left \ar[dr]         & \\
+      left \ar[rrrr]           &          & &                      & right
+    }\]
+The inner, left, and top squares are $\lambda i\,j.\,left$, the bottom and right squares are $sq$,
+and the filler gives us the outter square which is the required operation $sq'$.
+Formally, we define $sq'(i,j)$ as
+\[ at(at(coe_0(\lambda x_1.\,Path(\lambda x_2.\,left = sq(x_1,x_2), refl(left), p_1), p_2),i),j) \]
+where we omit first three arguments of $at$, and $p_1 = path(\lambda x_3.\,sq(x_1,x_3))$, $p_2 = refl(refl(left))$.
+
+We will also need operation $dc'$ which satisfies the following axioms:
+\begin{align*}
+\Gamma & \vdash dc'(i,j,left) \deq i \\
+\Gamma & \vdash dc'(i,j,right) \deq j \\
+\Gamma & \vdash dc'(left,left,k) \deq left \\
+\Gamma & \vdash dc'(right,right,k) \deq right
+\end{align*}
+Thus we need to find a map from $I^3$ to $I$, and we can do this by filling some horn.
+Conditions that we put on $dc'$ are not enough to define a cubical horn, but we can fill missing parts.
+Consider the following picture:
+\[ \xymatrix @C=0.5pc @R=0.5pc
+    { right \ar[rrrr] \ar[dddd] &         & &                      & right \ar[dddd] \\
+           & left \ar[rr] \ar[dd] \ar[ul] & & left \ar[dd] \ar[ur] & \\
+           &                              & &                      & \\
+           & left \ar[rr] \ar[dl]         & & right \ar[dr]        & \\
+      left \ar[rrrr]           &          & &                      & right
+    }\]
+Here $j$ is going from left to right, $k$ is going from top to bottom, and $i$ is going diagonally.
+Top square is $\lambda j\,i.\,i$, bottom square is $\lambda j\,i.\,j$, left side of the inner square is $\lambda k.\,left$,
+and the right side of the outter square is $\lambda k.\,right$.
+We can take the inner square to be $\lambda j\,k.\,sq'(j,k)$.
+The left square we can define by the filler operation.
+Thus we only need to fill the right square.
+We can do this by filling the following horn:
+\[ \xymatrix @C=0.5pc @R=0.5pc
+    { left \ar[rrrr] \ar[dddd] &          & &                      & right \ar[dddd] \\
+           & left \ar[rr] \ar[dd] \ar[ul] & & left \ar[dd] \ar[ur] & \\
+           &                              & &                      & \\
+           & left \ar[rr] \ar[dl]         & & left \ar[dr]         & \\
+      right \ar[rrrr]           &         & &                      & right
+    }\]
+The inner square is $\lambda x_1\,x_2.\,left$, the left square is $\lambda x_2\,x_3.\,sq'(x_2,x_3)$,
+the top square is $\lambda x_1\,x_3.\,sq'(x_1,x_3)$, the right square is $\lambda x_2.\,x_3.\,x_3$,
+and the bottom square is $\lambda x_1\,x_3.\,x_3$.
+The outter square gives us the required square for the horn that we considered before.
 
 \subsection{Local versions of $coe$}
 
@@ -623,6 +684,49 @@ If $\Gamma \vdash z : I$, then $\Gamma \vdash b_m'(z) : B_m[x \repl z, y_1 \repl
 Now, we can define $coe^{l'}_2(\lambda x\,y_1 \ldots y_k.\,D, i, d, j, b_1, \ldots b_m)$ as follows:
 \[ coe_2(\lambda x.\,D[y_1 \repl b_1'(x), \ldots y_k \repl b_k'(x)], i, d[y_1 \repl b'_1(i), \ldots y_k \repl b'_k(i)], j) \]
 
+Theories $coe^{l'}_0$ and $coe^{l'}_1$ are defined similarly to $coe^{l'}_2$.
+Theory $coe^{l'}_1 + \sigma^l$ is $coe^{l'}_1$ together with the following axiom:
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma, \Delta \vdash D\ type$
+\noLine
+\UnaryInf$\fCenter \Gamma, \Delta \vdash d : D$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash i : I$
+\def\extraVskip{2pt}
+\Axiom$\fCenter \Gamma \vdash b_1 : B_1$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash b_k : B_k[y_1 \repl b_1, \ldots y_{k-1} \repl b_{k-1}]$
+\BinaryInfC{$\Gamma \vdash coe^{l'}_1(\lambda x\,y_1 \ldots y_k.\,D, d, i, b_1, \ldots b_k) \deq d[b_1, \ldots b_k]$}
+\DisplayProof
+\end{center}
+
+If we have heterogeneous path types, then we can define $coe^{l'}_0 + \sigma^l + sq$ in terms of $coe_0 + \sigma + sq$ and $coe^{l'}_1 + \sigma^l$ in terms of $coe_1 + \sigma$.
+We can define map $coe^{l'}_1 \to coe^{l'}_0$ as before:
+\[ coe^{l'}_1(\lambda x\,y_1 \ldots y_k.\,D, d, i, b_1, \ldots b_k) = coe^{l'}_0(\lambda x\,y_1 \ldots y_k.\,D[x := sq(x,i)], d, b_1, \ldots b_k) \]
+Since we already know that there are maps going in both directions between $coe_0 + \sigma + sq$ and $coe_1 + \sigma$,
+we just need to construct a map $coe^{l'}_0 + \sigma^l + sq + Path \to coe_0 + \sigma + sq + Path$.
+
+To do this, first we define a map $coe_2 \to coe_0 + \sigma + sq + Path$:
+\[ coe_2(\lambda x.\,D, i, d, j)  = coe_0(\lambda x.\,D[x \repl dc'(i,j,x)], d) \]
+This definition of $coe_2$ satisfies additional axiom:
+\[ \Gamma \vdash coe_2(\lambda x.\,D, right, d, right) \deq d \]
+Now, we can define $coe^{l'}_0(\lambda x\,y_1 \ldots y_k.\,D, d, b_1, \ldots b_m)$ as follows:
+\[ coe_0(\lambda x.\,D[y_1 \repl b_1'(x), \ldots y_k \repl b_k'(x)], d[y_1 \repl b'_1(left), \ldots y_k \repl b'_k(left)]) \]
+where $b'_m(z)$ equals to
+\[ coe_2(\lambda x.\,B_m[y_1 \repl b_1'(x), \ldots y_{m-1} \repl b_{m-1}'(x)], right, b_m, z) \]
+
+\subsection{Fillers}
+\label{sec:fillers}
+
+Operation $coe_1$ allows us to define one-dimensional cubical fillers.
+That is, given a one-dimensional cube in 
+
+\todo{Finish this}
+
 \subsection{Univalence}
 
 We will consider regular theory $UA$ under $coe_0$, which has additional symbol
@@ -681,13 +785,6 @@ Now, we can define axioms of $UA$:
 
 This theory is similar to the univalence axiom, but it is defined for all types.
 The univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
-
-\subsection{Fillers}
-
-Operation $coe_1$ allows us to define one-dimensional cubical fillers.
-That is, given a one-dimensional cube in 
-
-\todo{Finish this}
 
 \section{A model structure on models of theories with an interval type}
 
