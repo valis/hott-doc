@@ -722,10 +722,92 @@ where $b'_m(z)$ equals to
 \subsection{Fillers}
 \label{sec:fillers}
 
-Operation $coe_1$ allows us to define one-dimensional cubical fillers.
-That is, given a one-dimensional cube in 
+We already saw examples of two and three-dimensional filler operations.
+Here we define theories $Fill^l_{tm}$ and $Fill^l_{ty}$ of (local) filler operations for terms and types respectively.
+We will also construct morphisms between $Fill^l_{tm} + Path$ and $coe^l_1 + Path$;
+we do not have an analogous construction for $Fill^l_{ty}$.
+In this subsection we switch back to the presentation of terms using de Bruijn indices since it will be notationally more convenient.
 
-\todo{Finish this}
+First, let us introduce a bit of notation.
+Recall that if $(a_1, \ldots a_k)$ is a morphism of contexts $\Gamma$ and $\Delta$ and $b : (p,k+m)$ is such that $\vdash ctx^m(b) \deq \Delta$,
+then we have $s = subst^m(\Gamma, b, a_1, \ldots a_k) : (p,n+m)$ such that $\vdash ctx^m(s) \deq \Gamma$.
+We will also denote $s$ by $(a_1, \ldots a_k)^*(b)$.
+In particular, if $h : (p,n+1)$ is such that $\vdash ctx^n(h) \deq I$, then for every $c \in \{ left, right \}$, we have $c^*(h) = subst^n(\emptyCtx, h, c) : (ctx,n)$.
+Also, if $a : (p,n)$, then let $I \times a = subst^n(I, a) : (p,n+1)$.
+
+Now, we need to describe certain morphisms of contexts which corresponds to cubical faces.
+For every $n,k \in \mathbb{N}$, $0 \leq i \leq k$, and $c \in \{ left, right \}$, let $[i = c]$ denote sequence $v_{n+k-1}, \ldots v_i, c, v_{i-1}, \ldots v_0$.
+The idea is that if $\Gamma : (ctx,n)$, $a : (p,n+k+1+m)$, and $ctx^m(a) = (\Gamma, I^{k+1} \vdash)$,
+then $[i = c]^*(a)$ corresponds to the left or right (depending on $c$) $i$-th face of $a$.
+We will also need an operation that gives us degenerate cubes.
+For every $\Gamma : (ctx,n)$, $a : (p,n+k+m)$ and $0 \leq i \leq k$,
+let $\delta_i(a) = subst^m((\Gamma, I^{k+1} \vdash), a, v_{n+k}, \ldots v_{i+1}, v_{i-1}, \ldots v_0)$.
+
+Now we can define regular theory $Fill^l_{tm}$.
+It is the regularization of a theory that has function symbol $Fill^n_{(tm,n+k)} : (ty,n+k) \times (tm,n-1+k)^{2n-1} \to (tm,n+k)$
+for every $n,k \in \mathbb{N}$, $n > 0$, and the following axioms:
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter I^n, \Delta \vdash D\ type$
+\noLine
+\UnaryInf$\fCenter I^{n-1}, [i = c]^*(\Delta) \vdash d_{[i = c]} : [i = c]^*(D)$
+\noLine
+\UnaryInf$\fCenter [i_1 = c]^*(d_{[i_2 = c']}) = [i_2-1=c']^*(d_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter I^n, \Delta \vdash Fill^n_{(tm,n+k)}(D, d_{[n-1=left]}, d_{[n-1=right]}, \ldots d_{[0=left]}) : D$
+\DisplayProof
+\end{center}
+where $Fill^n_{(tm,n+k)}$ has arguments of the form $d_{[i=c]}$ for every $0 \leq i < n$ and $c \in \{ left, right \}$ except for $d_{[0=right]}$.
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter I^n, \Delta \vdash D\ type$
+\noLine
+\UnaryInf$\fCenter I^{n-1}, [i = c]^*(\Delta) \vdash d_{[i = c]} : [i = c]^*(D)$
+\noLine
+\UnaryInf$\fCenter [i_1 = c]^*(d_{[i_2 = c']}) = [i_2-1=c']^*(d_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter [i=c]^*(Fill^n_{(tm,n+k)}(D, d_{[n-1=left]}, d_{[n-1=right]}, \ldots d_{[0=left]})) = d_{[i=c]}$
+\DisplayProof
+\end{center}
+\medskip
+
+Theory $Fill^l_{ty}$ is defined analogously to $Fill^l_{tm}$ as the regularization
+of a theory with function symbol $Fill^n_{(ty,n+k)} : (ctx,n+k) \times (ty,n-1+k)^{2n-1} \to (ty,n+k)$
+for every $n,k \in \mathbb{N}$, $n > 0$, and the following axioms:
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter I^n, \Delta \vdash ctx$
+\noLine
+\UnaryInf$\fCenter I^{n-1}, [i = c]^*(\Delta) \vdash D_{[i = c]}\ type$
+\noLine
+\UnaryInf$\fCenter [i_1 = c]^*(D_{[i_2 = c']}) = [i_2-1=c']^*(D_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter I^n, \Delta \vdash Fill^n_{(ty,n+k)}((I^n, \Delta \vdash), D_{[n-1=left]}, D_{[n-1=right]}, \ldots D_{[0=left]})\ type$
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter I^n, \Delta \vdash ctx$
+\noLine
+\UnaryInf$\fCenter I^{n-1}, [i = c]^*(\Delta) \vdash D_{[i = c]}\ type$
+\noLine
+\UnaryInf$\fCenter [i_1 = c]^*(D_{[i_2 = c']}) = [i_2-1=c']^*(D_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter [i=c]^*(Fill^n_{(ty,n+k)}((I^n, \Delta \vdash), D_{[n-1=left]}, D_{[n-1=right]}, \ldots D_{[0=left]})) = D_{[i=c]}$
+\DisplayProof
+\end{center}
+
+It is easy to define a map from $coe^l_1$ to $Fill^l_{tm}$:
+\[ coe^l_1(D, d, i) = i^*(Fill^1(D, d)) \]
+Now, let us construct a morphism $Fill^l_{tm} \to coe^l_1 + Path$.
+We define terms $Fill^n_{(tm,n+k)}$ by induction on $n$.
+Let $Fill^1_{(tm,1+k)}(D, d_{[0=left]}) = coe^l_1(I \times D, I \times d_{[0 = left]}, v_0)$.
 
 \subsection{Univalence}
 
@@ -820,7 +902,7 @@ First, let us introduce a bit of notation.
 Recall that if $(a_1, \ldots a_k)$ is a morphism of contexts $\Gamma$ and $\Delta$ and $b \in X_{(p,k+m)}$ is such that $ctx^m(b) = \Delta$,
 then we have $s = subst^m(\Gamma, b, a_1, \ldots a_k) \in X_{(p,n+m)}$ such that $ctx^m(s) = \Gamma$.
 We will also denote $s$ by $(a_1, \ldots a_k)^*(b)$.
-In particular, if $h = X_{(p,n+1)}$ is such that $ctx^n(h) = I$, then for every $c \in \{ left, right \}$, we have $c^*(h) = subst^n(\emptyCtx, h, c) \in X_{(ctx,n)}$.
+In particular, if $h \in X_{(p,n+1)}$ is such that $ctx^n(h) = I$, then for every $c \in \{ left, right \}$, we have $c^*(h) = subst^n(\emptyCtx, h, c) \in X_{(ctx,n)}$.
 Also, if $a \in X_{(p,n)}$, then let $I \times a = subst^n(I, a) \in X_{(p,n+1)}$.
 
 To define generating cofibrations, we first need to describe certain morphisms of contexts which corresponds to cubical faces.
