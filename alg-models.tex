@@ -379,7 +379,7 @@ $dc : (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)$ and the following axiom:
 To define maps between theories with $Id$ types and theories with an interval type,
 we need to add an additional construction to the latter, which we call \emph{homogeneous path types}.
 Let $HPath$ be a regular theory with function symbols $=\ : (tm,n) \times (tm,n) \to (ty,n)$,
-    $path : (tm,n+1) \to (tm,n)$, and $at : (tm,n) \times (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)$, and the following axioms:
+$path : (ty,n) \times (tm,n+1) \to (tm,n)$, and $at : (tm,n) \times (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)$, and the following axioms:
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
 \AxiomC{$\Gamma \vdash a' : A$}
@@ -391,7 +391,7 @@ Let $HPath$ be a regular theory with function symbols $=\ : (tm,n) \times (tm,n)
 \begin{center}
 \AxiomC{$\Gamma \vdash A\ type$}
 \AxiomC{$\Gamma, x : I \vdash a : A$}
-\BinaryInfC{$\Gamma \vdash path(\lambda x.\,a) : a[x \repl left] = a[x \repl right]$}
+\BinaryInfC{$\Gamma \vdash path(A, \lambda x.\,a) : a[x \repl left] = a[x \repl right]$}
 \DisplayProof
 \end{center}
 
@@ -409,14 +409,14 @@ Let $HPath$ be a regular theory with function symbols $=\ : (tm,n) \times (tm,n)
 \AxiomC{$\Gamma \vdash A\ type$}
 \AxiomC{$\Gamma, x : I \vdash a : A$}
 \AxiomC{$\Gamma \vdash i : I$}
-\TrinaryInfC{$\Gamma \vdash at(a[x \repl left], a[x \repl right], path(\lambda x.\,a), i) \deq a[x \repl i]$}
+\TrinaryInfC{$\Gamma \vdash at(a[x \repl left], a[x \repl right], path(A, \lambda x.\,a), i) \deq a[x \repl i]$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
 \AxiomC{$\Gamma \vdash p : a = a'$}
-\UnaryInfC{$\Gamma \vdash path(\lambda x.\,at(a, a', p, x)) \deq p$}
+\UnaryInfC{$\Gamma \vdash path(ty(a), \lambda x.\,at(a, a', p, x)) \deq p$}
 \DisplayProof
 \end{center}
 
@@ -441,8 +441,8 @@ This diagram does not commute strictly, but it should commute up to some appropr
 
 Arrows $Id_- \to Id$ and $coe'_1 \to coe'_2$ are obvious.
 Let us construct vertical maps.
-Let $refl(a) = path(\lambda x.\,a)$ and $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a', p) = coe_0(\lambda i.\,D', d[x \repl a])$, where $D'$ is defined as
-\[ D[x \repl a, y \repl at(a, a', p, sq(i,right)), z \repl path(\lambda j.\,at(a, a', p, sq(i,j)))]. \]
+Let $refl(a) = path(ty(a), \lambda x.\,a)$ and $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a', p) = coe_0(\lambda i.\,D', d[x \repl a])$, where $D'$ is defined as
+\[ D[x \repl a, y \repl at(a, a', p, sq(i,right)), z \repl path(ty(a), \lambda j.\,at(a, a', p, sq(i,j)))]. \]
 Note that $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a, refl(a))$ equals to $coe_0(\lambda i. D'', d[x \repl a])$ where $D'' = D[x \repl a, y \repl a, z \repl refl(a)]$.
 Thus if we have $\sigma$ rule, then equation $\vdash J(A, \lambda x y z.\,D, \lambda x.\,d, a, a, refl(a)) \deq d[x \repl a]$ holds.
 If we have $coe_1$, then we can define $Jeq(D,d,a)$ as $coe_0(\lambda j.\,coe_1(\lambda i. D'', d[a], j) = d[a], refl(d[a]))$.
@@ -452,7 +452,7 @@ Map $sq \to coe'_1$ can be defined as follows:
 
 Now, let us define arrow $coe_2 \to coe'_0 + sq + \sigma$.
 First, note that we can define a map $coe_1 \to coe_0 + sq + \sigma$ as follows: $coe_1(\lambda x.\,D, d, j) = coe_0(\lambda i.\,D[x \repl sq(i,j)], d)$.
-Then let $Ic(i) = path(\lambda j.\,sq(j,i))$.
+Then let $Ic(i) = path(I, \lambda j.\,sq(j,i))$.
 Since $Ic(i) : left = i$, we can define a term $dc'(i,j)$ of type $i = j$.
 Now, let $coe_2(\lambda x.\,D, i, d, j)$ be equal to $coe_0(\lambda x.\,D[x \repl at(i, j, dc'(i,j), x)], d)$.
 Note that $\Gamma \vdash dc'(left,left) \deq refl(left)$; hence $\Gamma \vdash coe_2(\lambda x.\,D, left, d, left) \deq d$.
@@ -868,12 +868,17 @@ Now, we can define axioms of $UA$:
 This theory is similar to the univalence axiom, but it is defined for all types.
 The univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
 
-\section{A model structure on models of theories with an interval type}
+\section{Global model structure on models of theories with heterogeneous path types and univalence}
 
-In this section we construct a model structure on the category of models of an algebraic type theory with enough additional structure.
-Let $T$ be a regular theory under $I$.
-Then we define a model structure on the category of models of $T$.
-To do this, we will need the following theorem from \cite{f-model-structures}:
+\section{Model structure on models of theories with an interval type}
+
+As we explained in the introduction, there are two classes of model structures on categories of models of type theories: global and local.
+First, we describe how to construct both of these model structures on models of theories with fillers.
+Then we show how to construct the global model structure on models of theories with heterogeneous path types and univalence.
+Finally, using the first construction we define model structures on models of theories under $I$;
+this is the most general class of theories that we will consider in this paper.
+
+For some of these constructions, we will need the following theorem from \cite{f-model-structures}:
 \begin{thm}
 Let $\C$ be a complete and cocomplete category, and let $\I$ be a set of maps of $\C$
 such that the domains and the codomains of maps in $\I$ are cofibrant and small relative to $\Icell$.
@@ -893,29 +898,8 @@ Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a
 $\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of weak equivalences.
 \end{thm}
 
-Now, we want to define the set of generating cofibrations.
-We will see later that we can take smaller sets to get different (or, in some cases, the same) classes of cofibrations.
-We will show that even if the class of cofibrations is different,
-the model structure will often have the same class of weak equivalences.
-
-First, let us introduce a bit of notation.
-Recall that if $(a_1, \ldots a_k)$ is a morphism of contexts $\Gamma$ and $\Delta$ and $b \in X_{(p,k+m)}$ is such that $ctx^m(b) = \Delta$,
-then we have $s = subst^m(\Gamma, b, a_1, \ldots a_k) \in X_{(p,n+m)}$ such that $ctx^m(s) = \Gamma$.
-We will also denote $s$ by $(a_1, \ldots a_k)^*(b)$.
-In particular, if $h \in X_{(p,n+1)}$ is such that $ctx^n(h) = I$, then for every $c \in \{ left, right \}$, we have $c^*(h) = subst^n(\emptyCtx, h, c) \in X_{(ctx,n)}$.
-Also, if $a \in X_{(p,n)}$, then let $I \times a = subst^n(I, a) \in X_{(p,n+1)}$.
-
-To define generating cofibrations, we first need to describe certain morphisms of contexts which corresponds to cubical faces.
-For every $n,k \in \mathbb{N}$, $0 \leq i \leq k$, and $c \in \{ left, right \}$, let $[i = c]$ denote sequence $v_{n+k-1}, \ldots v_i, c, v_{i-1}, \ldots v_0$.
-The idea is that if $\Gamma : (ctx,n)$, $a : (p,n+k+1+m)$, and $ctx^m(a) = (\Gamma, I^{k+1} \vdash)$,
-then $[i = c]^*(a)$ corresponds to the left or right (depending on $c$) $i$-th face of $a$.
-Here, $\Gamma, I^k, \Delta \vdash$ denotes $\Gamma, I, \ldots I, \Delta \vdash$, where $I$ is repeated $k$ times.
-
-We will also need an operation that gives us degenerate cubes.
-Let $\Gamma : (ctx,n)$, and $a : (p,n+k+m)$ are such that $ctx^m(a) = (\Gamma, I^k \vdash)$.
-Then for every $0 \leq i \leq k$, let $\delta_i(a) = subst^m((\Gamma, I^{k+1}), a, v_{n+k}, \ldots v_{i+1}, v_{i-1}, \ldots v_0)$.
-
-Now, we are ready to define generating cofibrations:
+Now, let us consider the category of models of some theory under $I$.
+We can define two sets of generating cofibrations: for global and local model structures.
 \[ i^k_{(tm,n)} : F(\{\,I^k, \Gamma \vdash A\ type\,\} \cup S^k_{(tm,n)}) \to F(\{\,I^k, \Gamma \vdash a : A\,\}), \]
 where $S^k_{(tm,n)} = \{\,I^{k-1}, [i = c]^*(\Gamma) \vdash a_{[i = c]} : [i = c]^*(A)\ |\ 0 \leq i < k,\ c \in \{ left, right \}\,\}$.
 \[ i^k_{(ty,n)} : F(\{\,I^k, \Gamma \vdash A\,\} \cup S^k_{(ty,n)}) \to F(\{\,I^k, \Gamma \vdash A\ type\,\}), \]
