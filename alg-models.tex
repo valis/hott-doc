@@ -134,7 +134,7 @@
 
 \begin{document}
 
-\title{Model Structures on Models of Algebraic Dependent Type Theories}
+\title{Model Structures on Categories of Models of Type Theories}
 
 \author{Valery Isaev}
 
@@ -203,12 +203,12 @@ It has all of the function symbols of $Id$ together with the following one:
 \[ Jeq : (tm,n+3) \times (tm,n+1) \times (tm,n) \to (tm,n) \]
 Theory $Id_-$ has all of the axioms of $Id$ except the last one; instead it has the following additional axiom:
 \begin{center}
-\AxiomC{$\Gamma, x : ty(a), y : ty(a), z : Id(x,y) \vdash D\ type$}
-\AxiomC{$\Gamma, x : ty(a) \vdash d : D'$}
-\BinaryInfC{$\Gamma \vdash Jeq(D,d,a) : Id(J(D,d,a,a,refl(a)),d[a])$}
+\AxiomC{$\Gamma, x : A, y : A, z : Id(x,y) \vdash D\ type$}
+\AxiomC{$\Gamma, x : A \vdash d : D'$}
+\AxiomC{$\Gamma \vdash a : A$}
+\TrinaryInfC{$\Gamma \vdash Jeq(D,d,a) : Id(J(D,d,a,a,refl(a)),d[a])$}
 \DisplayProof
 \end{center}
-\medskip
 where $D' = D[y \repl x, z \repl refl(x)]$.
 The idea is that the last axiom of $Id$ holds in $Id_-$ only propositionally.
 
@@ -464,12 +464,6 @@ dc(i,j,k) & = at(i,j,coe_2(\lambda x.\,i = x, i, refl(i), j),k) \\
 coe_2(\lambda x.\,D, i, d, j) & = coe_0(\lambda x.\,D[x \repl dc(i,j,x)], d)
 \end{align*}
 
-\begin{comment}
-Finally, let us describe the last construction we will need.
-Let \[ inv(i) = at(right, left, coe(v_0 = left, refl(left), right), i). \]
-If $\Gamma \vdash i : I$, then $\Gamma \vdash inv(i) : I$, $\Gamma \vdash inv(left) \deq right$, and $\Gamma \vdash inv(right) \deq left$.
-\end{comment}
-
 \subsection{Heterogeneous path types}
 
 \emph{Heterogeneous path types} are a useful generalization of homogeneous path types.
@@ -524,6 +518,8 @@ Theory $Path$ be a theory with function symbols $Path : (ty,n+1) \times (tm,n) \
 \DisplayProof
 \end{center}
 
+We will often omit the first three arguments of $at$ since it is easy to infer them from the type of the fourth argument.
+
 There is an obvious morphism $f : HPath \to Path$ such that $f(a = a') = Path(\lambda x.\,ty(a), a, a')$.
 
 The theory we are describing has many similarities to the theory of cubical sets.
@@ -549,7 +545,7 @@ The inner, left, and top squares are $\lambda i\,j.\,left$, the bottom and right
 and the filler gives us the outter square which is the required operation $sq'$.
 Formally, we define $sq'(i,j)$ as
 \[ at(at(coe_0(\lambda x_1.\,Path(\lambda x_2.\,left = sq(x_1,x_2), refl(left), p_1), p_2),i),j) \]
-where we omit first three arguments of $at$, and $p_1 = path(\lambda x_3.\,sq(x_1,x_3))$, $p_2 = refl(refl(left))$.
+where $p_1 = path(\lambda x_3.\,sq(x_1,x_3))$, $p_2 = refl(refl(left))$.
 
 We will also need operation $dc'$ which satisfies the following axioms:
 \begin{align*}
@@ -645,6 +641,7 @@ We can also consider theory $coe^l_2 + \beta^l_2$ which is $coe^l_2$ together wi
 \end{center}
 
 We call such verions of these operations \emph{local}, and the ones that were defined before \emph{global}.
+The relationship between local versions of these operations is the same as between global ones.
 Usually, if we have $\Pi$ type, then we can define local versions in terms of global, but without them local are strictly stronger.
 But this is not the case for $coe_2 + \beta_2$; it turns out that $coe^l_2 + \beta^l_2$ follow from $coe_2 + \beta_2$ even without $\Pi$ types.
 
@@ -723,9 +720,10 @@ where $b'_m(z)$ equals to
 \label{sec:fillers}
 
 We already saw examples of two and three-dimensional filler operations.
-Here we define theories $Fill^l_{tm}$ and $Fill^l_{ty}$ of (local) filler operations for terms and types respectively.
-We will also construct morphisms between $Fill^l_{tm} + Path$ and $coe^l_1 + Path$;
-we do not have an analogous construction for $Fill^l_{ty}$.
+Here we define theories $Fill^l_{tm}$, $Fill^l_{ty}$, $Fill_{tm}$ and $Fill_{ty}$ of local and global filler operations for terms and types.
+We will also construct morphisms between $Fill_{tm} + Path$ and $coe_1 + Path$;
+we do not have analogous constructions for $Fill_{ty}$.
+It might be possible to construct maps between $Fill_{tm} + \sigma + Path$ and $coe_1 + \sigma + Path$, but it is more complicated and we will not need this construction.
 In this subsection we switch back to the presentation of terms using de Bruijn indices since it will be notationally more convenient.
 
 First, let us introduce a bit of notation.
@@ -755,10 +753,10 @@ for every $n,k \in \mathbb{N}$, $n > 0$, and the following axioms:
 \noLine
 \UnaryInf$\fCenter [i_1 = c]^*(d_{[i_2 = c']}) = [i_2-1=c']^*(d_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter I^n, \Delta \vdash Fill^n_{(tm,n+k)}(D, d_{[n-1=left]}, d_{[n-1=right]}, \ldots d_{[0=left]}) : D$
+\UnaryInf$\fCenter I^n, \Delta \vdash Fill^n_{(tm,n+k)}(D, d_{[0=left]}, d_{[0=right]}, \ldots d_{[n-1=left]}) : D$
 \DisplayProof
 \end{center}
-where $Fill^n_{(tm,n+k)}$ has arguments of the form $d_{[i=c]}$ for every $0 \leq i < n$ and $c \in \{ left, right \}$ except for $d_{[0=right]}$.
+where $Fill^n_{(tm,n+k)}$ has arguments of the form $d_{[i=c]}$ for every $0 \leq i < n$ and $c \in \{ left, right \}$ except for $d_{[n-1=right]}$.
 
 \medskip
 \begin{center}
@@ -769,7 +767,7 @@ where $Fill^n_{(tm,n+k)}$ has arguments of the form $d_{[i=c]}$ for every $0 \le
 \noLine
 \UnaryInf$\fCenter [i_1 = c]^*(d_{[i_2 = c']}) = [i_2-1=c']^*(d_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter [i=c]^*(Fill^n_{(tm,n+k)}(D, d_{[n-1=left]}, d_{[n-1=right]}, \ldots d_{[0=left]})) = d_{[i=c]}$
+\UnaryInf$\fCenter [i=c]^*(Fill^n_{(tm,n+k)}(D, d_{[0=left]}, d_{[0=right]}, \ldots d_{[n-1=left]})) = d_{[i=c]}$
 \DisplayProof
 \end{center}
 \medskip
@@ -786,7 +784,7 @@ for every $n,k \in \mathbb{N}$, $n > 0$, and the following axioms:
 \noLine
 \UnaryInf$\fCenter [i_1 = c]^*(D_{[i_2 = c']}) = [i_2-1=c']^*(D_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter I^n, \Delta \vdash Fill^n_{(ty,n+k)}((I^n, \Delta \vdash), D_{[n-1=left]}, D_{[n-1=right]}, \ldots D_{[0=left]})\ type$
+\UnaryInf$\fCenter I^n, \Delta \vdash Fill^n_{(ty,n+k)}((I^n, \Delta \vdash), D_{[0=left]}, D_{[0=right]}, \ldots D_{[n-1=left]})\ type$
 \DisplayProof
 \end{center}
 
@@ -799,15 +797,22 @@ for every $n,k \in \mathbb{N}$, $n > 0$, and the following axioms:
 \noLine
 \UnaryInf$\fCenter [i_1 = c]^*(D_{[i_2 = c']}) = [i_2-1=c']^*(D_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter [i=c]^*(Fill^n_{(ty,n+k)}((I^n, \Delta \vdash), D_{[n-1=left]}, D_{[n-1=right]}, \ldots D_{[0=left]})) = D_{[i=c]}$
+\UnaryInf$\fCenter [i=c]^*(Fill^n_{(ty,n+k)}((I^n, \Delta \vdash), D_{[0=left]}, D_{[0=right]}, \ldots D_{[n-1=left]})) = D_{[i=c]}$
 \DisplayProof
 \end{center}
 
+Global theories $Fill_{tm}$ and $Fill_{ty}$ are subtheories of $Fill^l_{tm}$ and $Fill^l_{ty}$ respectively which have only function symbols of the form $Fill^n_{(p,n+0)}$.
+We will denote such function symbols by $Fill_{(p,n)}$.
+
 It is easy to define a map from $coe^l_1$ to $Fill^l_{tm}$:
 \[ coe^l_1(D, d, i) = i^*(Fill^1(D, d)) \]
-Now, let us construct a morphism $Fill^l_{tm} \to coe^l_1 + Path$.
-We define terms $Fill^n_{(tm,n+k)}$ by induction on $n$.
-Let $Fill^1_{(tm,1+k)}(D, d_{[0=left]}) = coe^l_1(I \times D, I \times d_{[0 = left]}, v_0)$.
+We also can define $Fill^1_{(tm,1+k)}(D, d_{[0=left]})$ in terms of $coe^l_1$ as $coe^l_1(I \times D, I \times d_{[0 = left]}, v_k)$.
+Actually, theory $coe^l_1$ and subtheory of $Fill^l_{tm}$ which consists of $Fill^1_{(tm,1+k)}$ are isomorphic.
+
+We can define analogous maps between $Fill_{(tm,1)}$ and $coe_1$, but we also can define a morphism $Fill_{tm} \to coe_1 + Path$.
+We define terms $Fill_{(tm,n)}$ by induction on $n$.
+We alredy defined such term for $n = 1$, and we can define $Fill_{(tm,n+1)}$ as
+\[ at(Fill_{(tm,n)}(Path(D, d_{[0=left]}, d_{[0=right]}), path(d_{[1=left]}), \ldots path(d_{[n=left]}))\!\uparrow, v_0). \]
 
 \subsection{Univalence}
 
@@ -870,15 +875,15 @@ The univalence axiom for a universe follows from the assumption that this univer
 
 \section{Global model structure on models of theories with heterogeneous path types and univalence}
 
-\section{Model structure on models of theories with an interval type}
+For every regular theory $T$ under $coe_0 + Path + UA$, we define a (global) model structure on the category of models of $T$.
+Every object of this model structure is fibrant and weak equivalences have several equivalent descriptions.
+The set $\I$ of generating cofibrations consists of the following morphisms:
+\begin{align*}
+i^0_{(tm,n)} & : F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash a : A\,\}) \\
+i^0_{(ty,n)} & : F(\{\,\Gamma \vdash ctx\,\}) \to F(\{\,\Gamma \vdash A\ type\,\})
+\end{align*}
 
-As we explained in the introduction, there are two classes of model structures on categories of models of type theories: global and local.
-First, we describe how to construct both of these model structures on models of theories with fillers.
-Then we show how to construct the global model structure on models of theories with heterogeneous path types and univalence.
-Finally, using the first construction we define model structures on models of theories under $I$;
-this is the most general class of theories that we will consider in this paper.
-
-For some of these constructions, we will need the following theorem from \cite{f-model-structures}:
+We will construct this model structure by means of the following result from \cite{f-model-structures}:
 \begin{thm}
 Let $\C$ be a complete and cocomplete category, and let $\I$ be a set of maps of $\C$
 such that the domains and the codomains of maps in $\I$ are cofibrant and small relative to $\Icell$.
@@ -897,6 +902,54 @@ Suppose that for every object $X$, there exists a reflexive path object $P(X)$ s
 Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a set of generating cofibrations,
 $\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of weak equivalences.
 \end{thm}
+
+Thus for every $i : U \to V \in \I$, we need to define a relative cylinder object $C_U(V)$.
+Let $C_{F(\{\,\Gamma \vdash A\ type\,\})}(F(\{\,\Gamma \vdash a : A\,\}))$ be equal to
+\[ F(\{\,(\Gamma \vdash A\ type), (\Gamma, I \vdash h : A\!\uparrow)\,\}), \]
+$\cyli_0(a) = h[left]$, $\cyli_1(a) = h[right]$, and let $s : C_U(V) \to V$ be defined as $s(h) = a\!\uparrow$.
+Let $C_{F(\{\,\Gamma \vdash ctx\,\})}(F(\{\,\Gamma \vdash A\ type\,\}))$ be equal to
+\[ F(\{\,\Gamma, I \vdash H\ type\,\}), \]
+$\cyli_1(A) = H[left]$, $\cyli_1(A) = H[right]$, and let $s : C_U(V) \to V$ be defined as $s(H) = A\!\uparrow$.
+
+Now, let us describe a general definition of a functor $P : \Mod{T} \to \Mod{T}$ that works for every stable theory $(T,\alpha)$.
+Let $P(X)_{(p,n)} = \{\,a \in P(X)_{(p,n+1)}\ |\ ctx^n(a) = I\,\}$.
+For every function and predicate symbol $S$, define $P(X)(S)(a_1, \ldots a_k)$ as $X(\alpha(L(S)))(a_1, \ldots a_k)$.
+Since $\alpha$ preserves theorems, this definition satisfies axioms of $T$; hence it is a correct definition of a model of $T$.
+For every morphism of models $f : X \to Y$, let $P(f)(a) = f(a)$.
+The fact that $f$ is a morphism of models implies that $P(f)$ is a morphism too.
+It is obvious that $P$ preserves identity morphisms and compositions.
+
+To define the structure of a path object on $P(X)$, we need to assume that $(T,\alpha)$ is regular.
+In this case, we define $t : X \to P(X)$ as $t(a) = I \times a$, and $p_0,p_1 : P(X) \to X$ as $p_0(a) = left^*(a)$ and $right^*(a)$ respectively.
+The regularity conidition ensures that function and predicate symbols are stable under operations $I \times -$ and $c^*(-)$.
+Hence these definitions indeed determine morphisms of models.
+The fact that $p_0 \circ t = p_1 \circ t = id_X$ follows from properties of operation $subst^n$.
+If $T$ is under $HPath + coe_0$, then we can define $s : P(X) \to P(X)$ as $s(a) = subst^n(I, a, inv(v_0))$, where
+\[ inv(i) = at(right, left, coe_0(v_0 = left, refl(left)), i). \]
+
+If $T$ is under $coe^l_2$, then $p_0 : P(X) \to X$ has RLP with respect to $\I$.
+Indeed, given a type $I, \Delta \vdash H$ and a term $left^*(\Delta) \vdash a : left^*(H)$ in $X$,
+we need to find a term $I, \Delta \vdash h : H$ such that $left^*(h) = a$.
+We can define $h$ as $Fill^1_{(tm,1+n)}(H, a, v_n)$.
+Given a context $I, \Delta$ and a type $left^*(\Delta) \vdash A$,
+we need to find a type $I, \Delta \vdash H$ such that $left^*(H) = A$.
+We can define $H$ as $subst(A, b_1, \ldots b_n)$, where $b_i = coe^l_2(A_i, v_n, v_{n-i}, left)$.
+
+Finally, let us prove that $\langle p_0, p_1 \rangle$ has RLP with respect to $\J_\I$.
+First, note that $F(\{\,(\Gamma \vdash A\ type), (\Gamma, I \vdash h : A\!\uparrow)\,\})$ is isomorphic to $F(\{\,\Gamma \vdash A\ type, ty(h) = I \times A)\,\})$.
+Thus, given a term $I, \Delta \vdash h_0 : A$ and terms $h_1$ and $h_2$ such that $ty(h_1) = I \times left^*(A)$, and $ty(h_2) = I \times right^*(A)$,
+we need to define a term $h$ such that $ty(h) = I \times A$, $[1 = left]^*(h) = h_1$, $[1 = right]^*(h) = h_2$ and $[0 = left]^*(h) = h_0$.
+We can define $h$ as $Fill_{(tm,2)}(I \times A, h_1, h_2, h_0)$.
+
+\todo{Finish this}
+
+\section{Model structure on models of theories with an interval type}
+
+As we explained in the introduction, there are two classes of model structures on categories of models of type theories: global and local.
+First, we describe how to construct both of these model structures on models of theories with fillers.
+Then we show how to construct the global model structure on models of theories with heterogeneous path types and univalence.
+Finally, using the first construction we define model structures on models of theories under $I$;
+this is the most general class of theories that we will consider in this paper.
 
 Now, let us consider the category of models of some theory under $I$.
 We can define two sets of generating cofibrations: for global and local model structures.
@@ -960,33 +1013,6 @@ Maps of the form $i^{k+1}_{p,n,m}$ (including $i^{k+1}_{tm,n,-1}$) can be descri
               V^{k+2}_{p,n,m} \ar[r]_-{a \mapsto h}              & \po C^{k+1}_{p,n,m}
             } \]
 where $g(a_{[k + 1 = left]}) = a$, $g(a_{[k + 1 = right]}) = a'$, $g(a_{[i = c]}) = \delta_k(a_{[i = c]})$.
-
-Now, for every stable theory $(T,\alpha)$ under $I$, we define a functor $P : \Mod{T} \to \Mod{T}$.
-Let $P(X)_{(p,n)} = \{\,a \in P(X)_{(p,n+1)}\ |\ ctx^n(a) = I\,\}$.
-For every function and predicate symbol $S$, let $P(X)(S)(a_1, \ldots a_k)$ as $X(\alpha(L(S)))(a_1, \ldots a_k)$.
-Since $\alpha$ preserves theorems, this definition satisfies axioms of $T$; hence it is a correct definition of a model of $T$.
-For every morphism of models $f : X \to Y$, let $P(f)(a) = f(a)$.
-The fact that $f$ is a morphism of models implies that $P(f)$ is a morphism too.
-It is obvious that $P$ preserves identity morphisms and compositions.
-
-To define the structure of a path object on $P(X)$, we need to assume that $(T,\alpha)$ is regular.
-In this case, we define $t : X \to P(X)$ as $t(a) = I \times a$, and $p_0,p_1 : P(X) \to X$ as $p_0(a) = left^*(a)$ and $right^*(a)$ respectively.
-The regularity conidition ensures that function and predicate symbols are stable under operations $I \times -$ and $c^*(-)$.
-Hence these definitions indeed determine morphisms of models.
-The fact that $p_0 \circ t = p_1 \circ t = id_X$ follows from properties of operation $subst^n$.
-We also define $s : P(X) \to P(X)$ as $s(a) = subst^n(I, a, inv(v_0))$.
-Then $p_0 \circ s = p_1$ and $p_1 \circ s = p_0$.
-
-Let us prove that $p_0 : P(X) \to X$ has RLP with respect to $\I$.
-\todo{Rewrite this}
-Given a type $I, \Gamma \vdash H$ and a term $left^*(\Gamma) \vdash a : left^*(H)$ in $X$,
-we need to find a term $I, \Gamma \vdash h : H$ such that $left^*(h) = a$.
-We can define $h$ as $coe'(I \times H, I \times a, v_0)$.
-Given a context $I, \Gamma$ and a type $left^*(\Gamma) \vdash A$,
-we need to find a type $I, \Gamma \vdash H$ such that $left^*(H) = A$.
-
-Finally, let us prove that $\langle p_0, p_1 \rangle$ has RLP with respect to $\J_\I$.
-\todo{Finish this}
 \end{comment}
 
 \begin{comment}
