@@ -670,7 +670,7 @@ Then theories $coe^l_2$ and $coe^{l'}_2$ are isomorphic.
 Maps between them are defined as follows:
 \begin{align*}
 coe^l_2(\lambda x.\,D, i, d, j) & = coe^{l'}_2(\lambda x\,y_1 \ldots y_k.\,D, i, d, j, y_1, \ldots y_k) \\
-coe^{l'}_2(\lambda x\,y_1 \ldots t_k.\,D, i, d, j, b_1, \ldots b_k) & = coe^l_2(\lambda x.\,D, i, d, j)[b_1, \ldots b_k]
+coe^{l'}_2(\lambda x\,y_1 \ldots y_k.\,D, i, d, j, b_1, \ldots b_k) & = coe^l_2(\lambda x.\,D, i, d, j)[b_1, \ldots b_k]
 \end{align*}
 
 Now, we can define a map $coe^{l'}_2 + \beta^l_2 \to coe_2 + \beta_2$.
@@ -720,10 +720,9 @@ where $b'_m(z)$ equals to
 \label{sec:fillers}
 
 We already saw examples of two and three-dimensional filler operations.
-Here we define theories $Fill^l_{tm}$, $Fill^l_{ty}$, $Fill_{tm}$ and $Fill_{ty}$ of local and global filler operations for terms and types.
+Here we define theories $Fill^l_{tm}$ and $Fill_{tm}$ of local and global filler operations.
 We will also construct morphisms between $Fill_{tm} + Path$ and $coe_1 + Path$;
-we do not have analogous constructions for $Fill_{ty}$.
-It might be possible to construct maps between $Fill_{tm} + \sigma + Path$ and $coe_1 + \sigma + Path$, but it is more complicated and we will not need this construction.
+It might be possible to construct a map from $Fill^l_{tm}$ to $coe_2 + \beta_2 + Path$, but it is more complicated and we will not need this construction.
 In this subsection we switch back to the presentation of terms using de Bruijn indices since it will be notationally more convenient.
 
 First, let us introduce a bit of notation.
@@ -772,37 +771,8 @@ where $Fill^n_{(tm,n+k)}$ has arguments of the form $d_{[i=c]}$ for every $0 \le
 \end{center}
 \medskip
 
-Theory $Fill^l_{ty}$ is defined analogously to $Fill^l_{tm}$ as the regularization
-of a theory with function symbol $Fill^n_{(ty,n+k)} : (ctx,n+k) \times (ty,n-1+k)^{2n-1} \to (ty,n+k)$
-for every $n,k \in \mathbb{N}$, $n > 0$, and the following axioms:
-\medskip
-\begin{center}
-\def\extraVskip{1pt}
-\Axiom$\fCenter I^n, \Delta \vdash ctx$
-\noLine
-\UnaryInf$\fCenter I^{n-1}, [i = c]^*(\Delta) \vdash D_{[i = c]}\ type$
-\noLine
-\UnaryInf$\fCenter [i_1 = c]^*(D_{[i_2 = c']}) = [i_2-1=c']^*(D_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter I^n, \Delta \vdash Fill^n_{(ty,n+k)}((I^n, \Delta \vdash), D_{[0=left]}, D_{[0=right]}, \ldots D_{[n-1=left]})\ type$
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\def\extraVskip{1pt}
-\Axiom$\fCenter I^n, \Delta \vdash ctx$
-\noLine
-\UnaryInf$\fCenter I^{n-1}, [i = c]^*(\Delta) \vdash D_{[i = c]}\ type$
-\noLine
-\UnaryInf$\fCenter [i_1 = c]^*(D_{[i_2 = c']}) = [i_2-1=c']^*(D_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter [i=c]^*(Fill^n_{(ty,n+k)}((I^n, \Delta \vdash), D_{[0=left]}, D_{[0=right]}, \ldots D_{[n-1=left]})) = D_{[i=c]}$
-\DisplayProof
-\end{center}
-
-Global theories $Fill_{tm}$ and $Fill_{ty}$ are subtheories of $Fill^l_{tm}$ and $Fill^l_{ty}$ respectively which have only function symbols of the form $Fill^n_{(p,n+0)}$.
-We will denote such function symbols by $Fill_{(p,n)}$.
+Theory $Fill_{tm}$ is the subtheory of $Fill^l_{tm}$ which has only function symbols of the form $Fill^n_{(tm,n+0)}$.
+We will denote such function symbols by $Fill_{(tm,n)}$.
 
 It is easy to define a map from $coe^l_1$ to $Fill^l_{tm}$:
 \[ coe^l_1(D, d, i) = i^*(Fill^1(D, d)) \]
@@ -873,18 +843,13 @@ Now, we can define axioms of $UA$:
 This theory is similar to the univalence axiom, but it is defined for all types.
 The univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
 
-\section{Global model structure on models of theories with heterogeneous path types and univalence}
+\section{Model structure on models of theories with an interval type}
 
-For every regular theory $T$ under $coe_0 + Path + UA$, we define a (global) model structure on the category of models of $T$.
+For every regular theory $T$ under $coe_1 + \sigma + Path + UA$, we define a model structure on the category of models of $T$.
 Every object of this model structure is fibrant and weak equivalences have several equivalent descriptions.
-The set $\I$ of generating cofibrations consists of the following morphisms:
-\begin{align*}
-i^0_{(tm,n)} & : F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash a : A\,\}) \\
-i^0_{(ty,n)} & : F(\{\,\Gamma \vdash ctx\,\}) \to F(\{\,\Gamma \vdash A\ type\,\})
-\end{align*}
 
 We will construct this model structure by means of the following result from \cite{f-model-structures}:
-\begin{thm}
+\begin{thm}[model-structures]
 Let $\C$ be a complete and cocomplete category, and let $\I$ be a set of maps of $\C$
 such that the domains and the codomains of maps in $\I$ are cofibrant and small relative to $\Icell$.
 For every $i : U \to V \in \I$, choose a reflexive relative cylinder object $C_U(V)$
@@ -903,13 +868,32 @@ Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a
 $\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of weak equivalences.
 \end{thm}
 
-Thus for every $i : U \to V \in \I$, we need to define a relative cylinder object $C_U(V)$.
+Let $\I_{tm}$ be the set of the following morphisms:
+\[ i_{(tm,n)} : F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash a : A\,\}) \]
+Let $\I_{ty}$ be the set of the following morphisms:
+\[ i_{(ty,n)} : F(\{\,\Gamma \vdash ctx\,\}) \to F(\{\,\Gamma \vdash A\ type\,\}) \]
+The set $\I$ of generating cofibrations is the union $\I_{tm} \cup \I_{ty}$.
+
+For every $i : U \to V \in \I$, we need to define a relative cylinder object $C_U(V)$.
 Let $C_{F(\{\,\Gamma \vdash A\ type\,\})}(F(\{\,\Gamma \vdash a : A\,\}))$ be equal to
 \[ F(\{\,(\Gamma \vdash A\ type), (\Gamma, I \vdash h : A\!\uparrow)\,\}), \]
 $\cyli_0(a) = h[left]$, $\cyli_1(a) = h[right]$, and let $s : C_U(V) \to V$ be defined as $s(h) = a\!\uparrow$.
-Let $C_{F(\{\,\Gamma \vdash ctx\,\})}(F(\{\,\Gamma \vdash A\ type\,\}))$ be equal to
-\[ F(\{\,\Gamma, I \vdash H\ type\,\}), \]
-$\cyli_1(A) = H[left]$, $\cyli_1(A) = H[right]$, and let $s : C_U(V) \to V$ be defined as $s(H) = A\!\uparrow$.
+Let $C_{F(\{\,\Gamma \vdash ctx\,\})}(F(\{\,\Gamma \vdash A\ type\,\}))$ be the theory generated by the following relations:
+\begin{align*}
+\Gamma & \vdash A\ type \\
+\Gamma & \vdash B\ type \\
+\Gamma, x : A & \vdash b : B \\
+\Gamma, y : B & \vdash a_1 : A \\
+\Gamma, x : A & \vdash p_1 : a_1[y \repl b] = x \\
+\Gamma, y : B & \vdash q_1 : b[x \repl a_1] = y \\
+\Gamma, y : B & \vdash a_2 : A \\
+\Gamma, x : A & \vdash p_2 : a_2[y \repl b] = x \\
+\Gamma, y : B & \vdash q_2 : b[x \repl a_2] = y
+\end{align*}
+$\cyli_0(A) = A$, $\cyli_1(A) = B$, and let $s : C_U(V) \to V$ be defined as follows:
+$s(A) = A$, $s(B) = A$, $s(\lambda x.\,b) = s(\lambda y.\,a_1) = s(\lambda y.\,a_2) = \lambda x.\,x$,
+$s(\lambda x.\,p_1) = s(\lambda y.\,q_1) = s(\lambda x.\,p_2) = s(\lambda y.\,q_2) = \lambda x.\,refl(x)$.
+This is just an adaptation of the definition of equivalences from \cite{hottbook}.
 
 Now, let us describe a general definition of a functor $P : \Mod{T} \to \Mod{T}$ that works for every stable theory $(T,\alpha)$.
 Let $P(X)_{(p,n)} = \{\,a \in P(X)_{(p,n+1)}\ |\ ctx^n(a) = I\,\}$.
@@ -927,22 +911,58 @@ The fact that $p_0 \circ t = p_1 \circ t = id_X$ follows from properties of oper
 If $T$ is under $HPath + coe_0$, then we can define $s : P(X) \to P(X)$ as $s(a) = subst^n(I, a, inv(v_0))$, where
 \[ inv(i) = at(right, left, coe_0(v_0 = left, refl(left)), i). \]
 
-If $T$ is under $coe^l_2$, then $p_0 : P(X) \to X$ has RLP with respect to $\I$.
+We will prove some of the conditions of \rthm{model-structures} in the following two lemmas:
+\begin{lem}
+Maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_{\I_{tm}}$.
+\end{lem}
+\begin{proof}
+\todo{Prove this}
+We are given a type $x : I, \Delta \vdash A\ type$ and terms $x : I, \Delta \vdash f_1 : A$, $\Delta[x \repl left], y : I \vdash f_0 : A[x \repl left]$ and $\Delta[x \repl right], y : I \vdash f_2 : A[x \repl right]$,
+and we need to find a term $t$ that satisfies $x : I, \Delta, y : I \vdash t : A$, $t[y \repl left] = f_1$, $t[x \repl left] = f_0$ and $t[x \repl right] = f_2$.
+Thus, $t$ is just a local two-dimensional filler.
+We cannot construct such fillers in general, but we can do it in our case since $A$ depends only on one of the coordinates.
+Thus, the construction will be similar to the construction of $coe^l_1$.
+
+Let $\Delta$ be equal to $z_1 : B_1, \ldots z_k : B_k$.
+Then to construct a term $t$, we just need for every $\vdash i : I$, $\vdash j : I$ and $\vdash b_1 : B_1[x \repl i]$, \ldots $\vdash b_k : B_k[x \repl i, z_1 \repl b_1, \ldots z_{k-1} \repl b_{k-1}]$,
+to find a term $t'(i, j, b_1, \ldots b_k)$ such that $\vdash t'(i, j, b_1, \ldots b_k) : A[x \repl i, y_1 \repl b_1, \ldots y_k \repl b_k]$, $t'(i, left, b_1, \ldots b_k) = f_1[x \repl i, y_1 \repl b_1, \ldots y_k \repl b_k]$,
+$t'(left, j, b_1, \ldots b_k) = f_0[y \repl j, y_1 \repl b_1, \ldots y_k \repl b_k]$ and $t'(right, j, b_1, \ldots b_k) = f_2[y \repl j, y_1 \repl b_1, \ldots y_k \repl b_k]$.
+Thus, $t'$ is an analog of $coe^{l'}_1$.
+
+First, let $b'_m(w)$ be equal to
+\[ coe_2(\lambda x.\,B_m[y_1 \repl b_1'(x), \ldots y_{m-1} \repl b_{m-1}'(x)], i, b_m, w) \]
+Then the following conditions are satisfied:
+\begin{align*}
+& \vdash b'_m(w) : B_m[x \repl w, z_1 \repl b'_1(w), \ldots z_{m-1} \repl b'_{m-1}(w)] \\
+x : I & \vdash f_1[\overline{z} \repl \overline{b'(x)}] : A[\overline{z} \repl \overline{b'(x)}] \\
+y : I & \vdash f_0[\overline{z} \repl \overline{b'(left)}] : A[x \repl left, \overline{z} \repl \overline{b'(left)}] \\
+y : I & \vdash f_2[\overline{z} \repl \overline{b'(right)}] : A[x \repl right, \overline{z} \repl \overline{b'(right)}]
+\end{align*}
+\end{proof}
+
+\begin{lem}
+Maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_{\I_{ty}}$.
+\end{lem}
+\begin{proof}
+\todo{Prove this}
+\end{proof}
+
+Now, we can complete the construction of the model structure:
+\begin{thm}
+For every regular theory $T$ under $coe_1 + \sigma + Path + UA$, sets $\I$ and $\J_\I$ and functor $P : \Mod{T} \to \Mod{T}$ satisfy conditions of \rthm{model-structures}.
+\end{thm}
+\begin{proof}
+We already checked most of the conditions; we are left to show that $p_0 : P(X) \to X$ has RLP with respect to $\I$.
+This is true for every theory $T$ under $coe^l_2$.
 Indeed, given a type $I, \Delta \vdash H$ and a term $left^*(\Delta) \vdash a : left^*(H)$ in $X$,
 we need to find a term $I, \Delta \vdash h : H$ such that $left^*(h) = a$.
 We can define $h$ as $Fill^1_{(tm,1+n)}(H, a, v_n)$.
 Given a context $I, \Delta$ and a type $left^*(\Delta) \vdash A$,
 we need to find a type $I, \Delta \vdash H$ such that $left^*(H) = A$.
 We can define $H$ as $subst(A, b_1, \ldots b_n)$, where $b_i = coe^l_2(A_i, v_n, v_{n-i}, left)$.
+\end{proof}
 
-Finally, let us prove that $\langle p_0, p_1 \rangle$ has RLP with respect to $\J_\I$.
-First, note that $F(\{\,(\Gamma \vdash A\ type), (\Gamma, I \vdash h : A\!\uparrow)\,\})$ is isomorphic to $F(\{\,\Gamma \vdash A\ type, ty(h) = I \times A)\,\})$.
-Thus, given a term $I, \Delta \vdash h_0 : A$ and terms $h_1$ and $h_2$ such that $ty(h_1) = I \times left^*(A)$, and $ty(h_2) = I \times right^*(A)$,
-we need to define a term $h$ such that $ty(h) = I \times A$, $[1 = left]^*(h) = h_1$, $[1 = right]^*(h) = h_2$ and $[0 = left]^*(h) = h_0$.
-We can define $h$ as $Fill_{(tm,2)}(I \times A, h_1, h_2, h_0)$.
-
-\todo{Finish this}
-
+\begin{comment}
 \section{Model structure on models of theories with an interval type}
 
 As we explained in the introduction, there are two classes of model structures on categories of models of type theories: global and local.
@@ -958,7 +978,6 @@ where $S^k_{(tm,n)} = \{\,I^{k-1}, [i = c]^*(\Gamma) \vdash a_{[i = c]} : [i = c
 \[ i^k_{(ty,n)} : F(\{\,I^k, \Gamma \vdash A\,\} \cup S^k_{(ty,n)}) \to F(\{\,I^k, \Gamma \vdash A\ type\,\}), \]
 where $S^k_{(ty,n)} = \{\,I^{k-1}, [i = c]^*(\Gamma) \vdash A_{[i = c]}\ type\ |\ 0 \leq i < k,\ c \in \{ left, right \}\,\}$.
 
-\begin{comment}
 Now, we need to define relative cylinder objects for maps in $\I$.
 First, let us define them for maps in $\I^0$.
 Let $C^0_{(tm,n)} = F(\{\,h : (tm,n+1), A : (ty,n)\,\}, \{\,ty(h) = (I(ft(A)) \vdash A\!\!\uparrow)\,\})$.
