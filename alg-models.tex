@@ -97,7 +97,7 @@
 \newref{example}{example}{Example}
 
 \theoremstyle{remark}
-\newref{remark}{remark}{Remark}
+\newref{rem}{remark}{Remark}
 
 \newcommand{\deq}{\equiv}
 \newcommand{\repl}{:=}
@@ -848,7 +848,137 @@ The univalence axiom for a universe follows from the assumption that this univer
 For every regular theory $T$ under $coe_1 + \sigma + Path + UA$, we define a model structure on the category of models of $T$.
 Every object of this model structure is fibrant and weak equivalences have several equivalent descriptions.
 
-We will construct this model structure by means of the following result from \cite{f-model-structures}:
+\subsection{Construction of models}
+
+First, we need to describe several constructions of models of a theory.
+
+For every model $M$ of $\mathbb{T}$, we define a theory $Lang(M)$.
+It has function and predicate symbols of $\mathbb{T}$ together with function symbol $O_a : s$ for every $a \in A_s$.
+Axioms of $Lang(M)$ are axioms of $\mathbb{T}$ together with the following sequents:
+\begin{align*}
+& \sststile{}{} O_a \downarrow \\
+& \sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M(\sigma)(a_1, \ldots a_k)} \\
+& \sststile{}{} R(O_{a_1}, \ldots O_{a_k})
+\end{align*}
+for every $a \in A_s$, every $a_i \in A_{s_i}$,
+every $\sigma \in \mathcal{F}$ such that $M(\sigma)(a_1, \ldots a_k)$ is defined,
+and every $R \in \mathcal{P}$ such that $(a_1, \ldots a_k) \in M(R)$.
+
+Models of $Lang(M)$ are just models of $\mathbb{T}$ together with a morphism from $M$.
+That is, categories $M/\Mod{\mathbb{T}}$ and $\Mod{Lang(M)}$ are isomorphic.
+In particular, $A$ has a natural structure of a model of $Lang(M)$ defined as follows:
+\begin{align*}
+\alpha'(f)(O_a) & = a \\
+\alpha'(f)(\sigma(x_1, \ldots x_k)) & = \alpha(f)(\sigma(x_1, \ldots x_k)) \\
+\beta'(f)(R(x_1, \ldots x_k)) & = \beta(f)(R(x_1, \ldots x_k))
+\end{align*}
+
+\begin{lem}[cl-term]
+If $t \in Term_\mathcal{F}(\varnothing)_s$ is such that $\sststile{}{} t \downarrow$ is a theorem of $Lang(M)$,
+    then there is a unique $a \in A_s$ such that $\sststile{}{} t = O_a$ is a theorem of $Lang(M)$.
+\end{lem}
+\begin{proof}
+Since $(A,\alpha',\beta')$ is a model of $Lang(M)$, for every theorem $\varphi \sststile{}{V} \psi$ of $Lang(M)$
+    and every total function $f : V \to A$, if $\beta'(f)(\varphi) = \top$, then $\beta'(f)(\psi) = \top$.
+In particular, if $\sststile{}{} O_a = O_{a'}$, then $a = a'$.
+Hence if $\sststile{}{} t = O_a$ and $\sststile{}{} t = O_{a'}$, then $a = a'$, so such $a$ is unique.
+
+Let us prove its existence.
+We do this by induction on $t$.
+If $t = O_a$, then we are done.
+If $t = \sigma(t_1, \ldots t_k)$, then by induction hypothesis, $\sststile{}{} t = \sigma(O_{a_1}, \ldots O_{a_k})$ for some $a_1$, \ldots $a_k$.
+Note that if $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k})\!\!\downarrow$ is derivable, then $M(\sigma)(a_1, \ldots a_k)$ is defined.
+Thus $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M(\sigma)(a_1, \ldots a_k)}$ is also derivable.
+\end{proof}
+
+For every morphism $h : M \to N$ of models of $\mathbb{T}$, we can define a morphism $Lang(h) : Lang(M) \to Lang(N)$ of theories under $\mathbb{T}$ as $Lang(h)(O_a) = O_{h(a)}$.
+Thus $Lang$ is a functor $\Mod{\mathbb{T}} \to \mathbb{T}/\Th_\mathcal{S}$.
+
+\begin{prop}[lang-ff]
+$Lang$ is fully faithful.
+\end{prop}
+\begin{proof}
+Let $h_1$, $h_2$ be morphisms of models such that $Lang(h_1) = Lang(h_2)$.
+Then $O_{h_1(a)} = Lang(h_1)(O_a) = Lang(h_2)(O_a) = O_{h_2(a)}$, and by \rlem{cl-term}, $h_1(a) = h_2(a)$.
+Thus $Lang$ is faithful.
+
+Let $M_1 = (A_1,\alpha_1,\beta_1)$ and $M_2 = (A_2,\alpha_2,\beta_2)$ be models of $\mathbb{T}$,
+    and let $h : Lang(M_1) \to Lang(M_2)$ be a morphism of theories under $\mathbb{T}$.
+Then by \rlem{cl-term}, for every $a \in A_1$, there is a unique $h'(a) \in A_2$ such that $\sststile{}{} h(O_a) = O_{h'(a)}$ is a theorem of $Lang(M_2)$.
+Let us show that $h' : A_1 \to A_2$ is a morphism of models $M_1$ and $M_2$.
+Indeed, if $M_1(\sigma)(a_1, \ldots a_k)$ is defined, then $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M_1(\sigma)(a_1, \ldots a_k)}$ is a theorem of $Lang(M_1)$.
+Hence \[ \sststile{}{} \sigma(O_{h'(a_1)}, \ldots O_{h'(a_k)}) = O_{h'(M_1(\sigma)(a_1, \ldots a_k))} \] is a theorem of $Lang(M_2)$.
+But \[ \sststile{}{} \sigma(O_{h'(a_1)}, \ldots O_{h'(a_k)}) = O_{M_2(\sigma)(h'(a_1), \ldots h'(a_k))} \] is also a theorem of $Lang(M_2)$.
+Hence by \rlem{cl-term}, $h'(M_1(\sigma)(a_1, \ldots a_k)) = M_2(\sigma)(h'(a_1), \ldots h'(a_k))$.
+
+If $(a_1, \ldots a_k) \in M_1(R)$, then $\sststile{}{} R(O_{a_1}, \ldots O_{a_k})$ is a theorem of $Lang(M_1)$.
+Hence $\sststile{}{} R(O_{h'(a_1)}, \ldots O_{h'(a_k)})$ is a theorem of $Lang(M_2)$.
+Since $M_2$ is a model of $Lang(M_2)$, it follows that $(h'(a_1), \ldots h'(a_k)) \in M_2(R)$.
+
+Thus $h'$ is a morphism of models.
+Note that by definition of $h'$, $Lang(h') = h$.
+Hence $Lang$ is full.
+\end{proof}
+
+Now, let us describe a functor $Syn : \mathbb{T}/\Th_\mathcal{S} \to \Mod{\mathbb{T}}$.
+For every $i : \mathbb{T} \to \mathbb{T}'$, let $Syn(i) = i^*(0_{\mathbb{T}'})$, where $0_{\mathbb{T}'}$ is the initial object of $\Mod{\mathbb{T}'}$,
+    and $i^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ is the functor that was defined in \cite{alg-tt}.
+If $f : \mathbb{T}_1 \to \mathbb{T}_2$ is a morphism of theories under $\mathbb{T}$, then let $Syn(f) = i_1^*(!_{f^*(0_{\mathbb{T}_2})})$,
+    where $!_{f^*(0_{\mathbb{T}_2})}$ is the unique morphism $0_{\mathbb{T}_1} \to f^*(0_{\mathbb{T}_2})$.
+
+The construction of initial models of partial Horn theories was given in \cite{PHL}.
+Let us repeat it here.
+Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a standard partial Horn theory.
+First, we define a partial equivalence relations on sets $Term_\mathcal{F}(\varnothing)$ as $t_1 \sim t_2$ if and only if $\sststile{}{} t_1 = t_2$ is a theorem of $\mathbb{T}$.
+The interpretation of $R \in \mathcal{P}$ consists of tuples $(t_1, \ldots t_k)$ such that $\sststile{}{} R(t_1, \ldots t_k)$ is derivable in $\mathbb{T}$.
+Then $\mathcal{S}$-set $Term_\mathcal{F}(\varnothing)/\!\sim$ has a natural structure of a model of $((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$, and this model is initial.
+
+\begin{prop}[syn-lang]
+$Syn$ is right adjoint to $Lang$.
+\end{prop}
+\begin{proof}
+Let $\epsilon_{\mathbb{T}'} : Lang(Syn(\mathbb{T}')) \to \mathbb{T}'$ be defined as $\epsilon_{\mathbb{T}'}(O_t) = t$.
+It is easy to see that $\epsilon_{\mathbb{T}'}$ preserves axioms of $Lang(Syn(\mathbb{T}'))$.
+Moreover, $\epsilon$ is natural in $\mathbb{T}'$.
+Let us prove that $\epsilon$ is the counit of the adjunction.
+Let $f : Lang(M) \to \mathbb{T}'$ be a morphism.
+Then we need to show that there is a unique morphism $g : Lang(M) \to Lang(Syn(\mathbb{T}'))$ such that $\epsilon_{\mathbb{T}'} \circ g = f$.
+By \rlem{cl-term}, there is a unique $t$ such that $g(O_a) = O_t$.
+Since $t = \epsilon_{\mathbb{T}'}(g(O_a)) = f(O_a)$, $g$ must satisfy equation $g(O_a) = O_{f(O_a)}$.
+Thus $g$ is unique.
+It is easy to see that this $g$ preserves axioms of $Lang(M)$; hence it defines a morphism $g : Lang(M) \to Lang(Syn(\mathbb{T}'))$.
+\end{proof}
+
+\begin{rem}[colimits]
+Propositions \nprop{lang-ff} and \nprop{syn-lang} imply that colimits of models can be constructed as follows:
+\[ colim_{j \in J}(M_j) = Syn(Lang(colim_{j \in J}(M_j))) = Syn(colim_{j \in J}(Lang(M_j))). \]
+Since colimits of theories have simple explicit description (see \cite{alg-tt}), this gives us explicit description of colimits of models.
+\end{rem}
+
+For every morphism of theories $f : \mathbb{T} \to \mathbb{T}'$ there is a functor $f^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ which was consttucted in \cite{alg-tt}.
+We also can define functor $f_! : \Mod{\mathbb{T}} \to \Mod{\mathbb{T}'}$ as $f_!(M) = Syn(Lang(M) \amalg_{\mathbb{T}} \mathbb{T}')$.
+It was shown in \cite{PHL} that $f_!$ is left adjoint to $f^*$.
+This theorem was proved there only for a weaker notion of morphisms of theories, but the proof also works for general morphisms as defined in \cite{alg-tt}.
+
+Functor $f_!$ can be used to present a model of a theory by generators and relations.
+Let $\mathbb{T}$ be a fixed $\mathcal{S}$-theory.
+Note that models of the empty theory are just $\mathcal{S}$-sets.
+If $f : 0 \to \mathbb{T}$ is the unique morphism from the empty theory, then $f^*(M)$ is just the underlying $\mathcal{S}$-set of $M$,
+    and $f_!(X)$ is the free model of $\mathbb{T}$ on $\mathcal{S}$-set $X$.
+We will denote this free model by $F(X)$.
+If $R$ is a set of axioms in the language of theory $Lang(X) \amalg \mathbb{T}$,
+    then let $F(X,R)$ be a model of $\mathbb{T}$ defined as $Syn(Lang(X) \amalg \mathbb{T} \cup R)$.
+By definition of $Syn$, to construct a morphism $F(X,R) \to M$ it is necessary and sufficient
+    to construct a morphism from $X$ to the underlying $\mathcal{S}$-set of $M$ such that relations from $R$ are true in $M$.
+
+Sometimes we will omit the set of generators if it can be inferred from the set of relations.
+For examples, we will write $F(\{\,\vdash p : Id(A,a,a')\,\})$ for the model $F(\{\,a : (tm,0), a' : (tm,0), A : (ty,0), p : (tm,0)\,\}, \{\,ty(p) = Id(A,a,a')\,\})$.
+Another examples is $F(\{\,A_1, \ldots A_n \vdash a : A\,\})$ which equals to $F(\{\,A_i : (ty,i), A : (ty,n), a : (tm,n)\,\}, \{\,ty(a) = A, ft^{i+1}(A) = A_{n-i}\,\})$.
+Thus this model is isomorphic to the free model $F(\{\,a : (tm,n)\,\})$.
+
+\subsection{Model structure}
+
+We will construct model structure on $\Mod{T}$ by means of the following result from \cite{f-model-structures}:
 \begin{thm}[model-structures]
 Let $\C$ be a complete and cocomplete category, and let $\I$ be a set of maps of $\C$
 such that the domains and the codomains of maps in $\I$ are cofibrant and small relative to $\Icell$.
@@ -862,11 +992,13 @@ Suppose that for every object $X$, there exists a reflexive path object $P(X)$ s
 \item $p_0$ has RLP with respect to $\I$.
 \item For every $f : X \to Y$, there exists a morphism of path objects $(f,P(f)) : P(X) \to P(Y)$,
 \item For every object $X$, there exists a map $s : P(X) \to P(X)$ such that $p_0 \circ s = p_1$ and $p_1 \circ s = p_0$.
-\item Maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_\I$.
+\item Either path objects are reflexive and maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_\I$
+or maps in $\Jcell[_\I]$ have RLP up to $\sim^r$ with respect to the domains of maps in $\I$.
 \end{enumerate}
 Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a set of generating cofibrations,
 $\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of weak equivalences.
 \end{thm}
+Here $\sim^r$ denotes the relation of right homotopy with respect to $P(X)$.
 
 Let $\I_{tm}$ be the set of the following morphisms:
 \[ i_{(tm,n)} : F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash a : A\,\}) \]
@@ -911,12 +1043,11 @@ The fact that $p_0 \circ t = p_1 \circ t = id_X$ follows from properties of oper
 If $T$ is under $HPath + coe_0$, then we can define $s : P(X) \to P(X)$ as $s(a) = subst^n(I, a, inv(v_0))$, where
 \[ inv(i) = at(right, left, coe_0(v_0 = left, refl(left)), i). \]
 
-We will prove some of the conditions of \rthm{model-structures} in the following two lemmas:
+We will prove some of the conditions of \rthm{model-structures} in the following lemmas:
 \begin{lem}
 Maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_{\I_{tm}}$.
 \end{lem}
 \begin{proof}
-\todo{Prove this}
 We are given a type $x : I, \Delta \vdash A\ type$ and terms $x : I, \Delta \vdash f_1 : A$, $\Delta[x \repl left], y : I \vdash f_0 : A[x \repl left]$ and $\Delta[x \repl right], y : I \vdash f_2 : A[x \repl right]$,
 and we need to find a term $t$ that satisfies $x : I, \Delta, y : I \vdash t : A$, $t[y \repl left] = f_1$, $t[x \repl left] = f_0$ and $t[x \repl right] = f_2$.
 Thus, $t$ is just a local two-dimensional filler.
@@ -940,11 +1071,63 @@ y : I & \vdash f_2[\overline{z} \repl \overline{b'(right)}] : A[x \repl right, \
 \end{align*}
 \end{proof}
 
+If our theory has some additional structure (local fillers for types),
+then we can prove that maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_{\I_{ty}}$,
+but we cannot do this in general.
+Thus we will use the second option and will prove that objects of the form $F(\{\,\Gamma : (ctx,n)\,\})$ have LLP up to $\sim^r$ with respect to $\Jcell[_\I]$. 
+To do this, we need to establish a few lemmas.
+
+We will consider maps of the form
+\[ F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma, I \vdash H\ type\,\}), \]
+where $A$ is mapped to $H[left]$.
+We will denote the set of such maps by $\J'_{\I_{ty}}$.
+
 \begin{lem}
-Maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_{\I_{ty}}$.
+Pushouts of maps from $\J'_{\I_{ty}}$ have RLP up to $\sim^r$ with respect to objects of the form $F(\{\,\Delta : (ctx,n)\,\})$.
+% For every pushout $f : X \to Y$ of a map from $\J_{\I_{tm}} \cup \J'_{\I_{ty}}$ and its retract $g$,
+% every set of variables $V$ and every term $t \in Term_Y(V)_{(p,n)}$,
+% there exists a term $s(t) \in Term_Y(L(V))_{(p,n+1)}$ (where $L(V) = \{\,x : (p,k+1)\ |\ (x : (p,k)) \in V\,\}$)
+% such that if $t$
 \end{lem}
 \begin{proof}
-\todo{Prove this}
+Maps from $F(\{\,\Delta : (ctx,n)\,\})$ to $Y$ may be identified with elements of $Y_{(ctx,n)}$.
+Since $Y$ is a pushout $X \amalg_{F(\{\,\Gamma \vdash A\ type\,\})} F(\{\,\Gamma, I \vdash H\ type\,\})$,
+by \rrem{colimits}, its elements can be described as closed terms of theory
+$T' = Lang(X) \cup \{\,H : (ty,k+1), \sststile{}{} ctx(H) = I(ctx^2(H)) \land O_{u(A)} = H[left]\,\}$,
+where $u$ is the map $F(\{\,\Gamma \vdash A\ type\,\}) \to X$.
+
+For every set of variables $V$ and every term $t \in Term_{T'}(V)_{(p,n)}$,
+we construct a term $h(t) \in Term_{T'}(L(V))_{(p,n+1)}$, where $L(V) = \{\,x : (p,k+1)\ |\ (x : (p,k)) \in V\,\}$.
+\begin{align*}
+h(x) & = x \text{, if } x \in Var \\
+h(O_a) & = I \times O_a \\
+h(\emptyCtx) & = I \\
+h(ft(t')) & = ft(h(t')) \\
+h(ty(t')) & = ty(h(t')) \\
+h(\sigma(t_1, \ldots t_k)) & = I \times ctx(t) \vdash \sigma_1(h(t_1), \ldots h(t_k)) \\
+h(H) & = I \times ctx(t) \vdash subst(H, v_k, \ldots v_1, sq(v_{k+1}, v_0))
+\end{align*}
+where $\sigma_1$ is the lift of $\sigma$ which is obtained from the stability of $T$.
+
+For every formula $\varphi \in Form_{T'}(V)$, we can define formula $h(\varphi) \in Form_{T'}(L(V))$ as follows:
+\begin{align*}
+h(t_1 = t_2) & = (h(t_1) = h(t_2)) \\
+h(R(t_1, \ldots t_k)) & = R_1(h(t_1), \ldots h(t_k)) \\
+h(\varphi_1 \land \ldots \land \varphi_n) & = h(\varphi_1) \land \ldots \land h(\varphi_n)
+\end{align*}
+It is easy to see that $h$ is stable under substitution.
+Thus to prove that for every theorem $\varphi \sststile{}{V} \psi$ of $T'$, $h(\varphi) \sststile{}{L(V)} h(\psi)$
+is also a theorem of $T'$, it is enough to show that this is the case for axioms.
+If a formula $\varphi$ does not mention $H$, then $h(\varphi)$ coincides with the lifting of $\varphi$.
+Hence if a sequent $\varphi \sststile{}{V} \psi$ does not use $H$, then $h(\varphi) \sststile{}{L(V)} h(\psi)$ is a theorem by stability.
+The only axiom that mentions $H$ is $\sststile{}{} ctx(H) = I(ctx^2(H)) \land O_{u(A)} = H[left]$.
+It is easy to see that applying $h$ to this axiom produces a theorem.
+
+If $t$ is closed term, then $h(t)$ is also closed.
+Thus for every element $t \in Y_{(p,n)}$, we defined an element $h(t) \in Y_{(p,n+1)}$ such that $ctx^n(h(t)) = I$.
+Thus $h(t)$ defines an element of $P(Y)_{(p,n)}$.
+Moreover, $p_1 \circ h(t) = t$ and $p_0 \circ h(t)$ factors throug $X$,
+which shows that $X \to Y$ has RLP up to $\sim^r$ with respect to objects of the form $F(\{\,\Delta : (p,n)\,\})$.
 \end{proof}
 
 Now, we can complete the construction of the model structure:
@@ -952,7 +1135,7 @@ Now, we can complete the construction of the model structure:
 For every regular theory $T$ under $coe_1 + \sigma + Path + UA$, sets $\I$ and $\J_\I$ and functor $P : \Mod{T} \to \Mod{T}$ satisfy conditions of \rthm{model-structures}.
 \end{thm}
 \begin{proof}
-We already checked most of the conditions; we are left to show that $p_0 : P(X) \to X$ has RLP with respect to $\I$.
+First, let us prove that $p_0 : P(X) \to X$ has RLP with respect to $\I$.
 This is true for every theory $T$ under $coe^l_2$.
 Indeed, given a type $I, \Delta \vdash H$ and a term $left^*(\Delta) \vdash a : left^*(H)$ in $X$,
 we need to find a term $I, \Delta \vdash h : H$ such that $left^*(h) = a$.
@@ -960,6 +1143,10 @@ We can define $h$ as $Fill^1_{(tm,1+n)}(H, a, v_n)$.
 Given a context $I, \Delta$ and a type $left^*(\Delta) \vdash A$,
 we need to find a type $I, \Delta \vdash H$ such that $left^*(H) = A$.
 We can define $H$ as $subst(A, b_1, \ldots b_n)$, where $b_i = coe^l_2(A_i, v_n, v_{n-i}, left)$.
+
+To prove the last condition, note that objects of the form $F(\{\,\Gamma : (ctx,n)\,\})$ are finite.
+Thus it is enough to prove that they have LLP up to $\sim^r$ with respect to pushouts of maps in $\J_\I$,
+but this follows from \todo{which lemma?}.
 \end{proof}
 
 \begin{comment}
@@ -1096,13 +1283,13 @@ A \emph{relative homotopy between} terms $(\Gamma \vdash a : A), (\Gamma \vdash 
 Terms $a$ and $b$ are \emph{homotopic relative to $(ty,n)$} if there is a relative homotopy between them.
 In this case we will write $a \sim_r b$.
 
-\begin{remark}[types-hom-ua]
+\begin{rem}[types-hom-ua]
 To define a relative homotopy between types $(\Gamma \vdash A), (\Gamma \vdash B) \in X_{(ty,n)}$,
     it is enought to specify terms $(\Gamma, A \vdash f : B\!\uparrow), (\Gamma, B \vdash g : A\!\uparrow) \in X_{(tm,n+1)}$
     such that $g \circ f \sim_r v_0(A)$ and $f \circ g \sim_r v_0(B)$.
 Then we can define a relative homotopy $\Gamma, I \vdash iso(A\!\uparrow, B\!\uparrow, f\!\uparrow_1, g\!\uparrow_1, path(h_1\!\!\uparrow_2), path(h_2\!\!\uparrow_2), v_0)$ between $A$ and $B$,
     where $h_1$ is a relative homotopy between $g \circ f$ and $v_0(A)$, and $h_2$ is a relative homotopy between $f \circ g$ and $v_0(B)$.
-\end{remark}
+\end{rem}
 
 There is a bijection between morphisms $F(\{\,A : (p,n)\,\}) \to X$ and elements of $X_{(p,n)}$.
 We can directly describe homotopies between morphisms $f,g : F(\{\,A : (p,n)\,\}) \to X$.
@@ -1113,12 +1300,12 @@ A \emph{cylinder object} of sort $(ctx,n)$ is $F(\{\,H : (ctx,n+1)\,\}, \{\,ft^n
 We will denote this object by $Cyl_{(ctx,n)}$.
 Inclusions $i^0_{(ctx,n)}, i^1_{(ctx,n)} : F(\{\,\Gamma : (ctx,n)\,\}) \to Cyl_{(ctx,n)}$ are defined as $i^k_{(ctx,n)}(\Gamma) = c_k^*(H)$, where $c_0 = left$ and $c_1 = right$.
 
-\begin{remark}
+\begin{rem}
 A relative homotopy between $f,g : F(\{\,A : (p,n)\,\}) \to X$ exists only if $f \circ \delta_{(p,n)} = g \circ \delta_{(p,n)}$, and in this case a homotopy $h$ is a map such that the following triangle commutes:
 \[ \xymatrix{ F(\{\,a : (p,n)\,\}) \amalg_{F(\{\,A : (e(p),n)\,\})} F(\{\,a : (p,n)\,\}) \ar[d]_{[i^0,i^1]} \ar[r]^-{[f,g]} & X \\
               RCyl_{(p,n)} \ar@{-->}[ur]_h
             } \]
-\end{remark}
+\end{rem}
 
 Given two morphisms $f \in \I$ and $g : X \to Y$, we say that $f$ \emph{has the left lifting property (LLP) up to $\sim_r$} with respect to $g$,
 and $g$ \emph{has the right lifting property (RLP) up to $\sim_r$} with respect to $f$ if for every commutative square of the form
