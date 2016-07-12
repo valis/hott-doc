@@ -528,12 +528,12 @@ Let $M$ be a model of $I$ and let $A,B \in M_{(ty,0)}$, then the sequence of set
 $\{\,x \in M_{(tm,n+1)}\ |\ ty(x) = (A, I, \ldots I \vdash B\!\uparrow^{n+1})\,\}$ has a natural structure of a cubical set.
 If $M$ is a model of $coe_1 + Path$, then these cubical sets are fibrant, that is have fillers for all cubical horns.
 We will formally define operations $Fill^n$ which give us these fillers in subsection~\ref{sec:fillers}.
-Now, we need these fillers to define several operations that we will use in the next subsection.
+Now we need these fillers to define several operations that we will use in the next subsection.
 
-First, let us define $sq'$ which satisfies all of the axioms of $sq$ together with axiom $\Gamma \vdash sq(i,right) \deq i$.
+First, let us define $sq_l$ which satisfies all of the axioms of $sq$ together with axiom $\Gamma \vdash sq(i,right) \deq i$.
 This operation is analogous to connections in cubical sets.
 Actually, this construction shows that cubical sets that we defined before from a model of the theory have connections.
-We can define $sq'$ by filling the following horn:
+We can define $sq_l$ by filling the following horn:
 \[ \xymatrix @C=0.5pc @R=0.5pc
     { left \ar[rrrr] \ar[dddd] &          & &                      & left \ar[dddd] \\
            & left \ar[rr] \ar[dd] \ar[ul] & & left \ar[dd] \ar[ur] & \\
@@ -542,10 +542,30 @@ We can define $sq'$ by filling the following horn:
       left \ar[rrrr]           &          & &                      & right
     }\]
 The inner, left, and top squares are $\lambda i\,j.\,left$, the bottom and right squares are $sq$,
-and the filler gives us the outter square which is the required operation $sq'$.
-Formally, we define $sq'(i,j)$ as
+and the filler gives us the outter square which is the required operation $sq_l$.
+Formally, we define $sq_l(i,j)$ as
 \[ at(at(coe_0(\lambda x_1.\,Path(\lambda x_2.\,left = sq(x_1,x_2), refl(left), p_1), p_2),i),j) \]
 where $p_1 = path(\lambda x_3.\,sq(x_1,x_3))$, $p_2 = refl(refl(left))$.
+
+Operation $sq_r$ is similar to $sq_l$; it satisfies the following axioms:
+\begin{align*}
+\Gamma & \vdash sq_r(left,j) \deq j \\
+\Gamma & \vdash sq_r(right,j) \deq right \\
+\Gamma & \vdash sq_r(i,left) \deq i \\
+\Gamma & \vdash sq_r(i,right) \deq right
+\end{align*}
+We can define $sq_r$ by filling the following horn:
+\[ \xymatrix @C=0.5pc @R=0.5pc
+    { left \ar[rrrr] \ar[dddd] &          & &                      & right \ar[dddd] \\
+           & left \ar[rr] \ar[dd] \ar[ul] & & left \ar[dd] \ar[ur] & \\
+           &                              & &                      & \\
+           & left \ar[rr] \ar[dl]         & & left \ar[dr]         & \\
+      right \ar[rrrr]           &         & &                      & right
+    }\]
+The inner square is $\lambda x_1\,x_2.\,left$, the left square is $\lambda x_2\,x_3.\,sq_l(x_2,x_3)$,
+the top square is $\lambda x_1\,x_3.\,sq_l(x_1,x_3)$, the right square is $\lambda x_2.\,x_3.\,x_3$,
+and the bottom square is $\lambda x_1\,x_3.\,x_3$.
+The outter square gives us the required operation $sq_r$.
 
 We will also need operation $dc'$ which satisfies the following axioms:
 \begin{align*}
@@ -567,21 +587,42 @@ Consider the following picture:
 Here $j$ is going from left to right, $k$ is going from top to bottom, and $i$ is going diagonally.
 Top square is $\lambda j\,i.\,i$, bottom square is $\lambda j\,i.\,j$, left side of the inner square is $\lambda k.\,left$,
 and the right side of the outter square is $\lambda k.\,right$.
-We can take the inner square to be $\lambda j\,k.\,sq'(j,k)$.
+We can take the inner square to be $\lambda j\,k.\,sq_l(j,k)$ and the right square to be $\lambda j\,k.\,sq_r(j,k)$.
 The left square we can define by the filler operation.
-Thus we only need to fill the right square.
-We can do this by filling the following horn:
-\[ \xymatrix @C=0.5pc @R=0.5pc
-    { left \ar[rrrr] \ar[dddd] &          & &                      & right \ar[dddd] \\
-           & left \ar[rr] \ar[dd] \ar[ul] & & left \ar[dd] \ar[ur] & \\
-           &                              & &                      & \\
-           & left \ar[rr] \ar[dl]         & & left \ar[dr]         & \\
-      right \ar[rrrr]           &         & &                      & right
-    }\]
-The inner square is $\lambda x_1\,x_2.\,left$, the left square is $\lambda x_2\,x_3.\,sq'(x_2,x_3)$,
-the top square is $\lambda x_1\,x_3.\,sq'(x_1,x_3)$, the right square is $\lambda x_2.\,x_3.\,x_3$,
-and the bottom square is $\lambda x_1\,x_3.\,x_3$.
-The outter square gives us the required square for the horn that we considered before.
+
+For every $\Gamma \vdash a : A$, $\Gamma \vdash a' : A$, we have a type of 1-dimensional cubes (that is paths) between $a$ and $a'$.
+We could also consider the type of $n$-dimensional cubes with given boundary.
+For $n = 2$ this can be described as follows.
+Suppose that we have terms $\Gamma, x : I \vdash p_{-0} : A$, $\Gamma, x : I \vdash p_{-1} : A$, $\Gamma, y : I \vdash p_{0-} : A$ and $\Gamma, y : I \vdash p_{1-} : A$
+such that $p_{-0}[x \repl left] = p_{0-}[y \repl left] = a_{00}$, $p_{-0}[x \repl right] = p_{1-}[y \repl left] = a_{10}$,
+$p_{0-}[y \repl right] = p_{-1}[x \repl left] = a_{01}$ and $p_{1-}[y \repl right] = p_{-1}[x \repl right] = a_{11}$.
+\[ \xymatrix{ a_{00} \ar[r]^{p_{-0}} \ar[d]_{p_{0-}} & a_{10} \ar[d]^{p_{1-}} \\
+              a_{01} \ar[r]_{p_{-1}}                 & a_{11}
+            } \]
+Then we define type $Square(p_{-0},p_{-1},p_{0-},p_{1-})$ of 2-dimensional cubes as
+\[ Path(\lambda x.\,p_{-0} = p_{-1}, path(\lambda y.\,p_{0-}), path(\lambda y.\,p_{1-})). \]
+
+We can analogously define types of $n$-dimensional cubes for all $n$.
+It is difficult to describe such types without heterogeneous path types,
+but we can do this at least for small $n$.
+For example, for $n = 2$ we can define it as either $p_{-0} * p_{1-} = p_{0-} * p_{-1}$ (where $*$ is a concatenation of paths) or $p_{0-} = p_{-0} * p_{1-} * sym(p_{-1})$.
+It is easy to see that these types are (homotopy) equivalent, that is we can define mutually inverse functions between them.
+We can show that they are also equivalent to $Square(p_{-0},p_{-1},p_{0-},p_{1-})$:
+
+\begin{lem}[squares-eq]
+Types $Square(p_{-0},p_{-1},p_{0-},p_{1-})$ and $p_{0-} = p_{-0} * p_{1-} * sym(p_{-1})$ are equivalent.
+\end{lem}
+\begin{proof}
+Let $*_l$ be a concatenation of paths such that $refl(x) *_l p = p$ and let $*_r$ be a concatenation such that $p *_r refl(y) = p$.
+Since all concatenations are equivalent, we can replace $*$ with either of these operations.
+We construct a type $\Gamma, i : I \vdash H$ such that $H[left] = Square(p_{-0},p_{-1},p_{0-},p_{1-})$ and $H[right] = (p_{0-} = p_{-0} *_l p_{1-} *_r sym(p_{-1}))$.
+Let $H$ be equal to
+\[ Path(\lambda x.\,at(p_{-0},sq_l(x,i)) = at(p_{-1},sq_l(x,i)), path(\lambda y.\,p_{0-}), t), \]
+where $t$ equals to
+\[ path(\lambda j.\,at(p_{-0},sq_r(i,j))) *_l path(\lambda y.\,p_{1-}) *_r sym(path(\lambda j.\,at(p_{-1},sq_r(i,j)))). \]
+Then $H$ satisfies the required conditions.
+It is easy to define an equivalence between $H[left]$ and $H[right]$.
+\end{proof}
 
 \subsection{Local versions of $coe$}
 
