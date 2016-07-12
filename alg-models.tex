@@ -993,12 +993,12 @@ Suppose that for every object $X$, there exists a reflexive path object $P(X)$ s
 \item For every $f : X \to Y$, there exists a morphism of path objects $(f,P(f)) : P(X) \to P(Y)$,
 \item For every object $X$, there exists a map $s : P(X) \to P(X)$ such that $p_0 \circ s = p_1$ and $p_1 \circ s = p_0$.
 \item Either path objects are reflexive and maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_\I$
-or maps in $\Jcell[_\I]$ have RLP up to $\sim^r$ with respect to the domains of maps in $\I$.
+or maps in $\Jcell[_\I]$ have RLP up to $\sim^{r*}$ with respect to the domains of maps in $\I$.
 \end{enumerate}
 Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a set of generating cofibrations,
 $\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of weak equivalences.
 \end{thm}
-Here $\sim^r$ denotes the relation of right homotopy with respect to $P(X)$.
+Here $\sim^{r*}$ denotes the reflexive transitive closure of the relation of right homotopy with respect to $P(X)$.
 
 Let $\I_{tm}$ be the set of the following morphisms:
 \[ i_{(tm,n)} : F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash a : A\,\}) \]
@@ -1025,17 +1025,16 @@ $s(A) = A$, $s(B) = A$, $s(\lambda x.\,b) = s(\lambda y.\,a_1) = s(\lambda y.\,a
 $s(\lambda x.\,p_1) = s(\lambda y.\,q_1) = s(\lambda x.\,p_2) = s(\lambda y.\,q_2) = \lambda x.\,refl(x)$.
 This is just an adaptation of the definition of equivalences from \cite{hottbook}.
 
-Note that for every $i : U \to V \in \I$, $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$ belongs to $\Icof[\I_{tm}]$.
+Note that for every $i : U \to V \in \I$, $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$ belongs to $\Icell[\I_{tm}]$.
 If $i \in \I_{tm}$, then $[\cyli_0,\cyli_1]$ is (isomorphic to) $F(\{\,(\Gamma \vdash a : A), (\Gamma \vdash a' : A)\,\}) \to F(\{\,(\Gamma \vdash A), (\Gamma, I \vdash h : A\!\uparrow)\,\})$,
 and this map is isomorphic to $F(\{\,(\Gamma \vdash a : A), (\Gamma \vdash : a' : A)\,\}) \to F(\{\,(\Gamma \vdash a : A), (\Gamma \vdash a' : A), (\Gamma \vdash p : a = a')\,\})$,
 which is obviously a pushout of a map from $\I_{tm}$.
 If $i \in \I_{ty}$, then it is easy to see that $[\cyli_0,\cyli_1]$ is a composition of five maps which are pushouts of maps from $\I_{tm}$.
 
 There is another class of cylinder objects for maps in $\I_{ty}$.
-Let $C'_{F(\{\,\Gamma \vdash ctx\,\})}(F(\{\,\Gamma \vdash A\ type\,\}))$ be equal to $F(\{\,\Gamma, I \vdash H\ type\,\})$, $\cyli_0(A) = H[left]$, $\cyli_1(A) = H[right]$.
+Let $C'_{F(\{\,\Gamma \vdash ctx\,\})}(F(\{\,\Gamma \vdash A\ type\,\}))$ be equal to $F(\{\,\Gamma, i : I \vdash H\ type\,\})$, $\cyli_0(A) = H[i \repl left]$, $\cyli_1(A) = H[i \repl right]$.
 We cannot use these cylinder objects directly since $[\cyli_0,\cyli_1]$ is not a cofibration; nevertheless, they will be useful later.
 We will denote the set of maps of the form $\cyli_0 : F(\{\,\Gamma \vdash A\ type\,\}) \to C'_{F(\{\,\Gamma \vdash ctx\,\})}(F(\{\,\Gamma \vdash A\ type\,\}))$ by $\J'_{\I_{ty}}$.
-For every $i_{(p,n)} \in \I$, we will denote corresponding map from $\J_\I$ by $j_{(p,n)}$, and corresponding map from $\J'_{\I_{ty}}$ (if $p = ty$) by $j'_{(ty,n)}$.
 
 Now, let us describe a general definition of a functor $P : \Mod{T} \to \Mod{T}$ that works for every stable theory $(T,\alpha)$.
 Let $P(X)_{(p,n)} = \{\,a \in P(X)_{(p,n+1)}\ |\ ctx^n(a) = I\,\}$.
@@ -1084,30 +1083,10 @@ y : I & \vdash f_2[\overline{z} \repl \overline{b'(right)}] : A[x \repl right, \
 If our theory has some additional structure (local fillers for types),
 then we can prove that maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_{\I_{ty}}$,
 but we cannot do this in general.
-Thus we will use the second option and will prove that objects of the form $F(\{\,\Gamma : (ctx,n)\,\})$ have LLP up to $\sim^r$ with respect to $\Jcell[_\I]$. 
-
-Let $u$ be a map from $F(\{\,\Gamma \vdash A\ type\,\})$ to some object $X$.
-Then we consider pushouts $f : X \to Y$ and $f' : X \to Y'$ of $j_{(ty,n)}$ and $j'_{(ty,n)}$ respectively.
-These maps have retracts $g : Y \to X$ and $g' : Y' \to X$ which are obvious pushouts of retracts of $j_{(ty,n)}$ and $j'_{(ty,n)}$ respectively.
-
-For every pushout $f : X \to Y$ of a map from $\J_{\I_{ty}}$ and its retract $g$,
-we define a cylinder object $C(Y) = X \amalg_V F(\{\,\Gamma \vdash A, \Gamma, I \vdash f : A\!\uparrow \cong B\,\})$,
-$\cyli_0(x) = \cyli_1(x) = x$ for every $x \in X$, $\cyli_0(f) = f[left]$, $\cyli_1(f) = f[right]$.
-For every pushout $f : X \to Y$ of a map from $\J'_{\I_{ty}}$ and its retract $g$,
-we define a cylinder object $C(Y) = X \amalg_V F(\{\,(\Gamma \vdash A), (\Gamma, x : I, y : I \vdash H), (\Gamma, x : I \vdash H[y \repl left] \deq A)\,\})$,
-$\cyli_0(x) = \cyli_1(x) = x$ for every $x \in X$, $\cyli_0(H) = H[x \repl left]$, $\cyli_1(H) = H[x \repl right]$.
-
-% We have a map $f : X \to Y$ and its retract $g : Y \to X$.
-% We can define a cylinder object $C(Y) = X \amalg_V F(\{\,\Gamma \vdash A, \Gamma, I \vdash f : A\!\uparrow \cong B\,\})$,
-% $\cyli_0(x) = \cyli_1(x) = x$ for every $x \in X$, $\cyli_0(f) = f[left]$, $\cyli_1(f) = f[right]$.
-% Now, we want to prove that $f \circ g$ and $id_Y$ are left homotopic with respect to this cylinder object.
+Thus we will use the second option and will prove that objects of the form $F(\{\,\Gamma : (ctx,n)\,\})$ have LLP up to $\sim^{r*}$ with respect to $\Jcell[_\I]$.
 
 \begin{lem}
 Pushouts of maps from $\J'_{\I_{ty}}$ have RLP up to $\sim^r$ with respect to objects of the form $F(\{\,\Delta : (ctx,n)\,\})$.
-% For every pushout $f : X \to Y$ of a map from $\J_{\I_{tm}} \cup \J'_{\I_{ty}}$ and its retract $g$,
-% every set of variables $V$ and every term $t \in Term_Y(V)_{(p,n)}$,
-% there exists a term $s(t) \in Term_Y(L(V))_{(p,n+1)}$ (where $L(V) = \{\,x : (p,k+1)\ |\ (x : (p,k)) \in V\,\}$)
-% such that if $t$
 \end{lem}
 \begin{proof}
 Maps from $F(\{\,\Delta : (ctx,n)\,\})$ to $Y$ may be identified with elements of $Y_{(ctx,n)}$.
@@ -1148,6 +1127,40 @@ Thus for every element $t \in Y_{(p,n)}$, we defined an element $h(t) \in Y_{(p,
 Thus $h(t)$ defines an element of $P(Y)_{(p,n)}$.
 Moreover, $p_1 \circ h(t) = t$ and $p_0 \circ h(t)$ factors throug $X$,
 which shows that $X \to Y$ has RLP up to $\sim^r$ with respect to objects of the form $F(\{\,\Delta : (p,n)\,\})$.
+\end{proof}
+
+\begin{lem}
+Let $u : F(\{\,\Gamma \vdash A\ type\,\}) \to X$ be a map.
+Let $Y = X \amalg_{F(\{ \Gamma \vdash A\ type \})} C_U(V)$ and $Y' = X \amalg_{F(\{ \Gamma \vdash A\ type \})} C'_U(V)$.
+Then there exist maps $v : Y \to Y'$ and $v' : Y' \to Y$ such that $v' \circ v \sim^r id_Y$.
+\end{lem}
+\begin{proof}
+Maps $v$ and $v'$ are induced by maps $w : C_U(V) \to C'_U(V)$ and $w' : C'_U(V) \to C_U(V)$.
+To define these maps, we need to introduce several auxiliary constructions.
+% Let $f(x,k) = coe_2(\lambda i.\,H, left, x, k)$ and $g(y,k) = coe_2(\lambda i.\,H, right, y, k)$.
+% If $\Delta \vdash k : I$, $\Delta \vdash x : H[i \repl left]$ and $\Delta \vdash y : H[r \repl right]$,
+% then $\Delta \vdash f(x,k) : H[i \repl k]$ and $\Gamma \vdash g(y,k) : H[i \repl k]$.
+Let $f(k) = coe_2(\lambda i.\,H, left, x, k)$ and $g(k) = coe_2(\lambda i.\,H, right, y, k)$.
+If $\Gamma \vdash k : I$, then $\Gamma, x : H[i \repl left] \vdash f(k) : H[i \repl k]$ and $\Gamma, y : H[i \repl right] \vdash g(k) : H[i \repl k]$.
+Now, we can define $w$ and $w'$:
+\begin{align*}
+w(A) & = H[i \repl left] \\
+w(B) & = H[i \repl right] \\
+w(b) & = f(right) \\
+w(a_1) = w(a_2) & = g(left) \\
+w(p) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, f(j), left) = x, left, refl(x), right) \\
+w(q) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, g(j), right) = y, right, refl(x), left) \\
+w'(H) & = iso(A, B, \lambda x.\,b, \lambda y.\,a_1, \lambda x.\,p, \lambda y.\,q', i)
+\end{align*}
+where $q'$ is the concatenation of paths $path(\lambda j.\,b[x \repl at(a_1, a_2, p',j)])$ and $q$;
+$p'$ is a path between $a_1$ and $a_2$, which can be obtained from $p$ and $q$ as the following concatenation:
+\[ a_1 \equiv a_1[y \repl y] = a_1[y \repl b[x \repl a_2]] \equiv a_1[y \repl b][x \repl a_2] = x[x \repl a_2] \equiv a_2. \]
+
+Note that $w'(w(A)) = A$, $w'(w(B)) = B$ and $w'(w(b)) = b$.
+To prove that $v' \circ v \sim^r id_Y$, we just need to construct a term $\Delta, i : I \vdash h(x)$ for every symbol $x \in \{\,a_1, a_2, p, q\,\}$,
+so that $h(x)[left] = w'(w(x))$ and $h(x)[right] = x$.
+Then we can define a homotopy $h' : Y \to P(Y)$ between $v' \circ v$ and $id_Y$ as follows: $h'(y) = I \times y$ for every $y \in Y_{(p,k)}$,
+$h'(A) = I \times A$, $h'(B) = I \times B$, $h'(b) = I \times b$, and $h'(x) = (i : I, \Delta \vdash subst(h(x), v_{n-1}, \ldots v_0, v_n))$ for every $x \in \{\,a_1, a_2, p, q\,\}$.
 \end{proof}
 
 Now, we can complete the construction of the model structure:
