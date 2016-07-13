@@ -158,6 +158,11 @@ In partical, we will show that theories with an interval type and path types als
 We will use a (slightly informal) named presentation of terms,
 from which a formal presentation in terms of De Bruijn indices can be recovered.
 
+We will write $T_1 + T_2$ for the union of theories $T_1$ and $T_2$.
+That is $T_1 + T_2 = T_1 \amalg_{T} T_2$, where $T$ is the common subtheory of $T_1$ and $T_2$.
+Sometimes we will write $T_1 + T_2$ even if $T_1$ is a subtheory of $T_2$ (in this case, $T_1 + T_2 = T_2$).
+For example, it is convenient to use this notation when $T_2$ is $T_1$ together with some additional axiom.
+
 Theories with an interval type are closely related to theories with identity types.
 So, let us first recall its definition from \cite{alg-tt}.
 Theory $Id$ is a regular theory with the following function symbols:
@@ -332,7 +337,17 @@ To get theories that correspond to $Id$, we need to add one additional rule to e
 \smallskip
 We denote these theories by $coe_0 + \sigma$, $coe_1 + \sigma$ and $coe_2 + \sigma$.
 
-We will also consider theory $coe_2 + \beta_2$ which is $coe_2$ together with the following axiom:
+We will also consider additional axioms $\beta_1$ and $\beta_2$ for $coe_2$.
+Axiom $\beta_1$ is defined as follows:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : I \vdash D\ type$}
+\AxiomC{$\Gamma \vdash d : D[x \repl left]$}
+\BinaryInfC{$\Gamma \vdash coe_2(\lambda x.\,D, right, d, right) \deq d$}
+\DisplayProof
+\end{center}
+\medskip
+Axiom $\beta_2$ is defined as follows:
 \medskip
 \begin{center}
 \AxiomC{$\Gamma, x : I \vdash D\ type$}
@@ -341,7 +356,7 @@ We will also consider theory $coe_2 + \beta_2$ which is $coe_2$ together with th
 \TrinaryInfC{$\Gamma \vdash coe_2(\lambda x.\,D, i, d, i) \deq d$}
 \DisplayProof
 \end{center}
-\medskip
+Obviously, we have maps from $coe_2$ to $coe_2 + \beta_1$ and from $coe_2 + \beta_1$ to $coe_2 + \beta_2$.
 
 Theory $coe_2 + \beta_2$ is slightly stronger than other theories.
 To make them equivalent to $coe_2 + \beta_2$, we need to assume additional operations.
@@ -748,10 +763,8 @@ We can define map $coe^{l'}_1 \to coe^{l'}_0$ as before:
 Since we already know that there are maps going in both directions between $coe_0 + \sigma + sq$ and $coe_1 + \sigma$,
 we just need to construct a map $coe^{l'}_0 + \sigma^l + sq + Path \to coe_0 + \sigma + sq + Path$.
 
-To do this, first we define a map $coe_2 \to coe_0 + \sigma + sq + Path$:
+To do this, first we define a map $coe_2 + \beta_1 \to coe_0 + \sigma + sq + Path$:
 \[ coe_2(\lambda x.\,D, i, d, j)  = coe_0(\lambda x.\,D[x \repl dc'(i,j,x)], d) \]
-This definition of $coe_2$ satisfies additional axiom:
-\[ \Gamma \vdash coe_2(\lambda x.\,D, right, d, right) \deq d \]
 Now, we can define $coe^{l'}_0(\lambda x\,y_1 \ldots y_k.\,D, d, b_1, \ldots b_m)$ as follows:
 \[ coe_0(\lambda x.\,D[y_1 \repl b_1'(x), \ldots y_k \repl b_k'(x)], d[y_1 \repl b'_1(left), \ldots y_k \repl b'_k(left)]) \]
 where $b'_m(z)$ equals to
@@ -826,8 +839,9 @@ We alredy defined such term for $n = 1$, and we can define $Fill_{(tm,n+1)}$ as
 \[ at(Fill_{(tm,n)}(Path(D, d_{[0=left]}, d_{[0=right]}), path(d_{[1=left]}), \ldots path(d_{[n=left]}))\!\uparrow, v_0). \]
 
 \subsection{Univalence}
+\label{sec:univalence}
 
-We will consider regular theory $UA$ under $coe_0$, which has additional symbol
+We will consider regular theory $wUA$ under $coe_0$, which has additional symbol
 \[ iso : (ty,n)^2 \times (tm,n+1)^4 \times (tm,n) \to (ty,n) \]
 
 Axioms of this theory have a lot of premises, so we list them now.
@@ -850,7 +864,7 @@ If we have path types, then the last six axioms can be replaced with the followi
 \Gamma, y : B & \vdash q : f[x \repl g] = y
 \end{align*}
 
-Now, we can define axioms of $UA$:
+Now, we can define axioms of $wUA$:
 \medskip
 \begin{center}
 \AxiomC{$S$}
@@ -882,11 +896,60 @@ Now, we can define axioms of $UA$:
 \medskip
 
 This theory is similar to the univalence axiom, but it is defined for all types.
-The univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
+Actually, it seems that it is weaker than ordinary univalence, therefore we call this theory weak univalence.
+We can add some additional rules to get the full univalence axiom, but this version will suffice for our purposes.
+The (weak) univalence axiom for a universe follows from the assumption that this universe is closed under $iso$.
+
+Although rules of $wUA$ do not imply that equivalences and paths between types are equivalent, we still can show that they are related.
+First, we need to define a theory of equivalences.
+Several equivalent definitions of equivalences are given in \cite{hottbook},
+but some of them require additional constructions such as $\Sigma$ or $\Pi$ types.
+Thus we will use a definition which requires only path types (actually, we can formulate it in such a way that $I$ will suffice).
+Theory $Eq$ have the following axioms:
+\begin{align*}
+\Gamma & \vdash A\ type \\
+\Gamma & \vdash B\ type \\
+\Gamma, x : A & \vdash b : B \\
+\Gamma, y : B & \vdash a_1 : A \\
+\Gamma, x : A & \vdash p : a_1[y \repl b] = x \\
+\Gamma, y : B & \vdash a_2 : A \\
+\Gamma, y : B & \vdash q : b[x \repl a_2] = y
+\end{align*}
+
+Theory $UEq$ have one axiom $\Gamma, i : I \vdash H\ type$.
+There is a canonical morphism $\varphi : Eq + coe_2 + \beta_1 \to UEq + coe_2 + \beta_2$.
+To define it, let us first introduce auxiliary terms: $f(k) = coe_2(\lambda i.\,H, left, x, k)$ and $g(k) = coe_2(\lambda i.\,H, right, y, k)$.
+If $\Gamma \vdash k : I$, then $\Gamma, x : H[i \repl left] \vdash f(k) : H[i \repl k]$ and $\Gamma, y : H[i \repl right] \vdash g(k) : H[i \repl k]$.
+Let $p'$ be a path between $a_1$ and $a_2$, which can be obtained from $p$ and $q$ as the following concatenation:
+\[ a_1 \equiv a_1[y \repl y] = a_1[y \repl b[x \repl a_2]] \equiv a_1[y \repl b][x \repl a_2] = x[x \repl a_2] \equiv a_2. \]
+Let $q'$ is the concatenation of paths $path(\lambda j.\,b[x \repl at(a_1, a_2, p',j)])$ and $q$.
+Now, we can define $\varphi$ as follows:
+\begin{align*}
+\varphi(A) & = H[i \repl left] \\
+\varphi(B) & = H[i \repl right] \\
+\varphi(b) & = f(right) \\
+\varphi(a_1) & = g(left) \\
+\varphi(a_2) & = g(left) \\
+\varphi(p) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, f(j), left) = x, left, refl(x), right) \\
+\varphi(q) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, g(j), right) = y, right, refl(x), left)
+% \psi(H) & = iso(A, B, \lambda x.\,b, \lambda y.\,a_1, \lambda x.\,p, \lambda y.\,q', i)
+\end{align*}
+
+A theory $UA$ of univalence should satisfy condition that $\varphi + id_{UA} : Eq + coe_2 + \beta_1 + UA \to UEq + coe_2 + \beta_1 + UA$ is an equivalence of theories (in some sense).
+In the case of $wUA$ we still can construct a map $\psi : UEq + coe_2 + \beta_1 + wUA \to Eq + coe_2 + \beta_1 + wUA$ such that $\psi \circ \varphi'$ is homotopic to $id_{Eq + coe_2 + \beta_1 + wUA}$, where $\varphi' = \varphi + id_{wUA}$.
+This means that for every symbol $x$ of $Eq$ such that $\Delta \vdash x$ we can define a term $h(x)$ in $Eq$ such that
+$\Delta, i : I \vdash h(x)$, axioms of $Eq$ hold, $\Delta \vdash h(x)[left] \deq \psi(\varphi(x))$ and $\Delta \vdash h(x)[right] \deq x$.
+
+\begin{lem}[UA]
+There exists a map $\psi : UEq + coe_2 + \beta_1 + wUA \to Eq + coe_2 + \beta_1 + wUA$ such that $\psi \circ \varphi'$ is homotopic to $id$.
+\end{lem}
+\begin{proof}
+\todo{Prove this}
+\end{proof}
 
 \section{Model structure on models of theories with an interval type}
 
-For every regular theory $T$ under $coe_1 + \sigma + Path + UA$, we define a model structure on the category of models of $T$.
+For every regular theory $T$ under $coe_1 + \sigma + Path + wUA$, we define a model structure on the category of models of $T$.
 Every object of this model structure is fibrant and weak equivalences have several equivalent descriptions.
 
 \subsection{Construction of models}
@@ -1051,20 +1114,10 @@ For every $i : U \to V \in \I$, we need to define a relative cylinder object $C_
 Let $C_{F(\{\,\Gamma \vdash A\ type\,\})}(F(\{\,\Gamma \vdash a : A\,\}))$ be equal to
 \[ F(\{\,(\Gamma \vdash A\ type), (\Gamma, I \vdash h : A\!\uparrow)\,\}), \]
 $\cyli_0(a) = h[left]$, $\cyli_1(a) = h[right]$, and let $s : C_U(V) \to V$ be defined as $s(h) = a\!\uparrow$.
-Let $C_{F(\{\,\Gamma \vdash ctx\,\})}(F(\{\,\Gamma \vdash A\ type\,\}))$ be the object generated by the following relations:
-\begin{align*}
-\Gamma & \vdash A\ type \\
-\Gamma & \vdash B\ type \\
-\Gamma, x : A & \vdash b : B \\
-\Gamma, y : B & \vdash a_1 : A \\
-\Gamma, x : A & \vdash p : a_1[y \repl b] = x \\
-\Gamma, y : B & \vdash a_2 : A \\
-\Gamma, y : B & \vdash q : b[x \repl a_2] = y
-\end{align*}
+Let $C_{F(\{\,\Gamma \vdash ctx\,\})}(F(\{\,\Gamma \vdash A\ type\,\})) = Syn(Eq + T)$, where $Eq$ is the theory defined in subsection~\ref{sec:univalence};
 $\cyli_0(A) = A$, $\cyli_1(A) = B$, and let $s : C_U(V) \to V$ be defined as follows:
 $s(A) = A$, $s(B) = A$, $s(\lambda x.\,b) = s(\lambda y.\,a_1) = s(\lambda y.\,a_2) = \lambda x.\,x$,
 $s(\lambda x.\,p_1) = s(\lambda y.\,q_1) = s(\lambda x.\,p_2) = s(\lambda y.\,q_2) = \lambda x.\,refl(x)$.
-This is just an adaptation of the definition of equivalences from \cite{hottbook}.
 
 Note that for every $i : U \to V \in \I$, $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$ belongs to $\Icell[\I_{tm}]$.
 If $i \in \I_{tm}$, then $[\cyli_0,\cyli_1]$ is (isomorphic to) $F(\{\,(\Gamma \vdash a : A), (\Gamma \vdash a' : A)\,\}) \to F(\{\,(\Gamma \vdash A), (\Gamma, I \vdash h : A\!\uparrow)\,\})$,
@@ -1094,7 +1147,7 @@ If $T$ is under $HPath + coe_0$, then we can define $s : P(X) \to P(X)$ as $s(a)
 \[ inv(i) = at(right, left, coe_0(v_0 = left, refl(left)), i). \]
 
 We will prove some of the conditions of \rthm{model-structures} in the following lemmas:
-\begin{lem}
+\begin{lem}[Jtm]
 Maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_{\I_{tm}}$.
 \end{lem}
 \begin{proof}
@@ -1126,7 +1179,7 @@ then we can prove that maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ hav
 but we cannot do this in general.
 Thus we will use the second option and will prove that objects of the form $F(\{\,\Gamma : (ctx,n)\,\})$ have LLP up to $\sim^{r*}$ with respect to $\Jcell[_\I]$.
 
-\begin{lem}
+\begin{lem}[Jty]
 Pushouts of maps from $\J'_{\I_{ty}}$ have RLP up to $\sim^r$ with respect to objects of the form $F(\{\,\Delta : (ctx,n)\,\})$.
 \end{lem}
 \begin{proof}
@@ -1170,43 +1223,22 @@ Moreover, $p_1 \circ h(t) = t$ and $p_0 \circ h(t)$ factors throug $X$,
 which shows that $X \to Y$ has RLP up to $\sim^r$ with respect to objects of the form $F(\{\,\Delta : (p,n)\,\})$.
 \end{proof}
 
-\begin{lem}
+\begin{lem}[Jhom]
 Let $u : F(\{\,\Gamma \vdash A\ type\,\}) \to X$ be a map.
 Let $Y = X \amalg_{F(\{ \Gamma \vdash A\ type \})} C_U(V)$ and $Y' = X \amalg_{F(\{ \Gamma \vdash A\ type \})} C'_U(V)$.
 Then there exist maps $v : Y \to Y'$ and $v' : Y' \to Y$ such that $v' \circ v \sim^r id_Y$.
 \end{lem}
 \begin{proof}
-Maps $v$ and $v'$ are induced by maps $w : C_U(V) \to C'_U(V)$ and $w' : C'_U(V) \to C_U(V)$.
-To define these maps, we need to introduce several auxiliary constructions.
-% Let $f(x,k) = coe_2(\lambda i.\,H, left, x, k)$ and $g(y,k) = coe_2(\lambda i.\,H, right, y, k)$.
-% If $\Delta \vdash k : I$, $\Delta \vdash x : H[i \repl left]$ and $\Delta \vdash y : H[r \repl right]$,
-% then $\Delta \vdash f(x,k) : H[i \repl k]$ and $\Gamma \vdash g(y,k) : H[i \repl k]$.
-Let $f(k) = coe_2(\lambda i.\,H, left, x, k)$ and $g(k) = coe_2(\lambda i.\,H, right, y, k)$.
-If $\Gamma \vdash k : I$, then $\Gamma, x : H[i \repl left] \vdash f(k) : H[i \repl k]$ and $\Gamma, y : H[i \repl right] \vdash g(k) : H[i \repl k]$.
-Now, we can define $w$ and $w'$:
-\begin{align*}
-w(A) & = H[i \repl left] \\
-w(B) & = H[i \repl right] \\
-w(b) & = f(right) \\
-w(a_1) = w(a_2) & = g(left) \\
-w(p) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, f(j), left) = x, left, refl(x), right) \\
-w(q) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, g(j), right) = y, right, refl(x), left) \\
-w'(H) & = iso(A, B, \lambda x.\,b, \lambda y.\,a_1, \lambda x.\,p, \lambda y.\,q', i)
-\end{align*}
-where $q'$ is the concatenation of paths $path(\lambda j.\,b[x \repl at(a_1, a_2, p',j)])$ and $q$;
-$p'$ is a path between $a_1$ and $a_2$, which can be obtained from $p$ and $q$ as the following concatenation:
-\[ a_1 \equiv a_1[y \repl y] = a_1[y \repl b[x \repl a_2]] \equiv a_1[y \repl b][x \repl a_2] = x[x \repl a_2] \equiv a_2. \]
-
-Note that $w'(w(A)) = A$, $w'(w(B)) = B$ and $w'(w(b)) = b$.
-To prove that $v' \circ v \sim^r id_Y$, we just need to construct a term $\Delta, i : I \vdash h(x)$ for every symbol $x \in \{\,a_1, a_2, p, q\,\}$,
-so that $h(x)[left] = w'(w(x))$ and $h(x)[right] = x$.
-Then we can define a homotopy $h' : Y \to P(Y)$ between $v' \circ v$ and $id_Y$ as follows: $h'(y) = I \times y$ for every $y \in Y_{(p,k)}$,
-$h'(A) = I \times A$, $h'(B) = I \times B$, $h'(b) = I \times b$, and $h'(x) = (i : I, \Delta \vdash subst(h(x), v_{n-1}, \ldots v_0, v_n))$ for every $x \in \{\,a_1, a_2, p, q\,\}$.
+Maps $\varphi$ and $\psi$ that were defined in subsection~\ref{sec:univalence} induce maps $C_U(V) \to C'_U(V)$ and $C'_U(V) \to C_U(V)$, which induce maps $v$ and $v'$.
+We can define a homotopy $h' : Y \to P(Y)$ between $v' \circ v$ and $id_Y$ as follows: $h'(y) = I \times y$ for every $y \in Y_{(p,k)}$
+and $h'(x) = (i : I, \Delta \vdash subst(h(x), v_{n-1}, \ldots v_0, v_n))$ for every symbol $x$ of $Eq$,
+where $h$ is a homotopy constructed in \rlem{UA}.
+Note that $h'(A) = I \times A$, so $h'$ is a well-defined map by the universal property of pushouts.
 \end{proof}
 
 Now, we can complete the construction of the model structure:
 \begin{thm}
-For every regular theory $T$ under $coe_1 + \sigma + Path + UA$, sets $\I$ and $\J_\I$ and functor $P : \Mod{T} \to \Mod{T}$ satisfy conditions of \rthm{model-structures}.
+For every regular theory $T$ under $coe_1 + \sigma + Path + wUA$, sets $\I$ and $\J_\I$ and functor $P : \Mod{T} \to \Mod{T}$ satisfy conditions of \rthm{model-structures}.
 \end{thm}
 \begin{proof}
 First, let us prove that $p_0 : P(X) \to X$ has RLP with respect to $\I$.
@@ -1219,8 +1251,12 @@ we need to find a type $I, \Delta \vdash H$ such that $left^*(H) = A$.
 We can define $H$ as $subst(A, b_1, \ldots b_n)$, where $b_i = coe^l_2(A_i, v_n, v_{n-i}, left)$.
 
 To prove the last condition, note that objects of the form $F(\{\,\Gamma : (ctx,n)\,\})$ are finite.
-Thus it is enough to prove that they have LLP up to $\sim^r$ with respect to pushouts of maps in $\J_\I$,
-but this follows from \todo{which lemma?}.
+Thus it is enough to prove that they have LLP up to $\sim^{r*}$ with respect to pushouts of maps in $\J_\I$.
+For pushouts of maps from $\J_{\I_{tm}}$, this follows from \rlem{Jtm}.
+Let $f : X \to Y$ be a pushout of a map in $\J_{\I_{ty}}$ along a map $u : V \to X$ and let $f' : X \to Y'$ be the pushout of the corresponding map from $\J'_{\I_{ty}}$ along $u$.
+Then \rlem{Jty} implies that for every $t : F(\{\,\Gamma : (ctx,n)\,\}) \to Y$, there exists a map $t' : F(\{\,\Gamma : (ctx,n)\,\}) \to X$ such that $f' \circ t' \sim^r v \circ t$.
+By \rlem{Jhom}, $t \sim^r v' \circ v \circ t \sim^r v' \circ f' \circ t' = f \circ t'$.
+Thus $t'$ is the required lifting.
 \end{proof}
 
 \begin{comment}
