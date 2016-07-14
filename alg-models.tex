@@ -285,7 +285,7 @@ In $coe_2$, both $i$ and $j$ may be arbitrary.
 \begin{center}
 \AxiomC{$\Gamma, x : I \vdash D\ type$}
 \AxiomC{$\Gamma \vdash d : D[x \repl left]$}
-\BinaryInfC{$\Gamma \vdash coe_2(\lambda x.\,D, left d, left) \deq d$}
+\BinaryInfC{$\Gamma \vdash coe_2(\lambda x.\,D, left, d, left) \deq d$}
 \DisplayProof
 \end{center}
 
@@ -920,9 +920,6 @@ Theory $UEq$ have one axiom $\Gamma, i : I \vdash H\ type$.
 There is a canonical morphism $\varphi : Eq + coe_2 + \beta_1 \to UEq + coe_2 + \beta_2$.
 To define it, let us first introduce auxiliary terms: $f(k) = coe_2(\lambda i.\,H, left, x, k)$ and $g(k) = coe_2(\lambda i.\,H, right, y, k)$.
 If $\Gamma \vdash k : I$, then $\Gamma, x : H[i \repl left] \vdash f(k) : H[i \repl k]$ and $\Gamma, y : H[i \repl right] \vdash g(k) : H[i \repl k]$.
-Let $p'$ be a path between $a_1$ and $a_2$, which can be obtained from $p$ and $q$ as the following concatenation:
-\[ a_1 \equiv a_1[y \repl y] = a_1[y \repl b[x \repl a_2]] \equiv a_1[y \repl b][x \repl a_2] = x[x \repl a_2] \equiv a_2. \]
-Let $q'$ is the concatenation of paths $path(\lambda j.\,b[x \repl at(a_1, a_2, p',j)])$ and $q$.
 Now, we can define $\varphi$ as follows:
 \begin{align*}
 \varphi(A) & = H[i \repl left] \\
@@ -932,11 +929,10 @@ Now, we can define $\varphi$ as follows:
 \varphi(a_2) & = g(left) \\
 \varphi(p) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, f(j), left) = x, left, refl(x), right) \\
 \varphi(q) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, g(j), right) = y, right, refl(x), left)
-% \psi(H) & = iso(A, B, \lambda x.\,b, \lambda y.\,a_1, \lambda x.\,p, \lambda y.\,q', i)
 \end{align*}
 
 A theory $UA$ of univalence should satisfy condition that $\varphi + id_{UA} : Eq + coe_2 + \beta_1 + UA \to UEq + coe_2 + \beta_1 + UA$ is an equivalence of theories (in some sense).
-In the case of $wUA$ we still can construct a map $\psi : UEq + coe_2 + \beta_1 + wUA \to Eq + coe_2 + \beta_1 + wUA$ such that $\psi \circ \varphi'$ is homotopic to $id_{Eq + coe_2 + \beta_1 + wUA}$, where $\varphi' = \varphi + id_{wUA}$.
+In the case of $wUA$, we still can construct a map $\psi : UEq + coe_2 + \beta_1 + wUA \to Eq + coe_2 + \beta_1 + wUA$ such that $\psi \circ \varphi'$ is homotopic to $id_{Eq + coe_2 + \beta_1 + wUA}$, where $\varphi' = \varphi + id_{wUA}$.
 This means that for every symbol $x$ of $Eq$ such that $\Delta \vdash x$ we can define a term $h(x)$ in $Eq$ such that
 $\Delta, i : I \vdash h(x)$, axioms of $Eq$ hold, $\Delta \vdash h(x)[left] \deq \psi(\varphi(x))$ and $\Delta \vdash h(x)[right] \deq x$.
 
@@ -944,7 +940,51 @@ $\Delta, i : I \vdash h(x)$, axioms of $Eq$ hold, $\Delta \vdash h(x)[left] \deq
 There exists a map $\psi : UEq + coe_2 + \beta_1 + wUA \to Eq + coe_2 + \beta_1 + wUA$ such that $\psi \circ \varphi'$ is homotopic to $id$.
 \end{lem}
 \begin{proof}
-\todo{Prove this}
+Let $\psi(H) = iso(A, B, \lambda x.\,b, \lambda y.\,a_1, \lambda x.\,p, \lambda y.\,q_1, i)$, where
+$q_1$ is the concatenation of paths $path(\lambda j.\,b[x \repl at(a_1, a_2, pa,j)])$ and $q$,
+$pa$ is a path between $a_1$ and $a_2$, which can be obtained from $p$ and $q$ as the following concatenation:
+\[ a_1 \equiv a_1[y \repl y] = a_1[y \repl b[x \repl a_2]] \equiv a_1[y \repl b][x \repl a_2] = x[x \repl a_2] \equiv a_2. \]
+
+We can define $h(A)$ as $A$, $h(B)$ as $B$ and $h(b)$ as $b$.
+Thus we only need to construct $h(a_1)$, $h(a_2)$, $h(p)$ and $h(q)$.
+Terms $h(a_1)$ and $h(a_2)$ should be the following paths:
+\begin{align*}
+& h(a_1) : coe_2(\lambda i.\,\psi(H), right, y, left) = a_1 \\
+& h(a_2) : coe_2(\lambda i.\,\psi(H), right, y, left) = a_2
+\end{align*}
+Terms $h(p)$ and $h(q)$ should be squares with the following boundaries:
+\[ \xymatrix{ coe_2(\lambda i.\,\psi(H), right, b, left) \ar[rr]^-{\psi(\varphi'(p))} \ar[d]_{h(a_1)[y \repl b]} & & x \ar[d]^{refl(x)} \\
+              a_1[y \repl b] \ar[rr]_-p                                                                          & & x
+            } \]
+\[ \xymatrix{ b[x \repl coe_2(\lambda i.\,\psi(H), right, y, left)] \ar[rr]^-{\psi(\varphi'(q))} \ar[d]_{b[x \repl h(a_2)]} & & y \ar[d]^{refl(y)} \\
+              b[x \repl a_2] \ar[rr]_-q                                                                                     & & y
+            } \]
+We construct $h(a_1)$ and $h(p)$, the other two terms are constructed analogously.
+First, note that to construct a square with boundary given on the left, it is enough to construct a square with boundary given on the right:
+\[ \xymatrix{ a_{00} \ar[r]^{p_{-0}} \ar[d]_{p_{0-}} & a_{10} \ar[d]^{p_{1-}} \\
+              a_{01} \ar[r]_{p_{-1}}                 & a_{11}
+            }
+\qquad
+   \xymatrix{ a_{00}[x \repl a_1] \ar[rr]^{p_{-0}[x \repl a_1]} \ar[d]_{p_{0-}[x \repl a_1]} & & a_{10}[x \repl a_1] \ar[d]^{p_{1-}[x \repl a_1]} \\
+              a_{01}[x \repl a_1] \ar[rr]_{p_{-1}[x \repl a_1]}                              & & a_{11}[x \repl a_1]
+            } \]
+Indeed, if $T$ is a filler for the square on the right, then we can construct the following diagram:
+\[ \xymatrix{ a_{00} \ar[rr]^-{a_{00}[x \repl sym(p)]} \ar[d]_{p_{0-}} & & a_{00}[x \repl a_1'] \ar[rr]^{p_{-0}[x \repl a_1']} \ar[d]_{p_{0-}[x \repl a_1']} & & a_{10}[x \repl a_1'] \ar[d]_{p_{1-}[x \repl a_1']} \ar[rr]^-{a_{10}[x \repl p]} & & a_{10} \ar[d]_{p_{1-}} \\
+              a_{01} \ar[rr]_-{a_{01}[x \repl sym(p)]}                 & & a_{01}[x \repl a_1'] \ar[rr]_{p_{-1}[x \repl a_1']}                               & & a_{11}[x \repl a_1']                               \ar[rr]_-{a_{10}[x \repl p]} & & a_{11}
+            } \]
+where $a_1' = a_1[y \repl b]$, the middle square is $T[y \repl b]$ and side squares are naturality squares.
+The right one, for example, is defined as $p_{1-}[x \repl p]$.
+\Rlem{squares-eq} implies that these squares commute (up to homotopy).
+By naturality and \rlem{squares-eq}, top and bottom rows are homotopic to $p_{-0}$ and $p_{-1}$ respectively.
+Thus $p_{-0} * p_{1-} = p_{0-} * p_{-1}$, and \rlem{squares-eq} implies that there exists a filler for the corresponding square.
+
+Thus to construct $h(p)$, it is enough to define $h(a_1)$ in such a way that the outter square in the following diagram commutes:
+\[ \xymatrix{ coe_2(\lambda i.\,\psi(H), right, y, left) \ar[r]^{q_1'} \ar[d]_{h(a_1)} & coe_2(\lambda i.\,\psi(H), right, b', left) \ar[rr]^-{\psi(\varphi'(p))[x \repl a_1]} \ar[d]_{h(a_1)[y \repl b[x \repl a_1]]} & & a_1 \ar[d]_{refl(a_1)} \\
+              a_1 \ar[r]_{a_1[y \repl sym(q_1)]} & a_1[y \repl b'] \ar[rr]_-{p[x \repl a_1]}                                                                                                                           & & a_1
+            } \]
+where $b' = b[x \repl a_1]$ and $q_1' = coe_2(\lambda i.\,\psi(H), right, sym(q_1), left)$.
+The left square commutes by naturality.
+Since $q_1'$ has an inverse, the right square also commutes.
 \end{proof}
 
 \section{Model structure on models of theories with an interval type}
@@ -1242,7 +1282,6 @@ For every regular theory $T$ under $coe_1 + \sigma + Path + wUA$, sets $\I$ and 
 \end{thm}
 \begin{proof}
 First, let us prove that $p_0 : P(X) \to X$ has RLP with respect to $\I$.
-This is true for every theory $T$ under $coe^l_2$.
 Indeed, given a type $I, \Delta \vdash H$ and a term $left^*(\Delta) \vdash a : left^*(H)$ in $X$,
 we need to find a term $I, \Delta \vdash h : H$ such that $left^*(h) = a$.
 We can define $h$ as $Fill^1_{(tm,1+n)}(H, a, v_n)$.
