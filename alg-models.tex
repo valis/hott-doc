@@ -101,6 +101,7 @@
 
 \newcommand{\deq}{\equiv}
 \newcommand{\repl}{:=}
+\newcommand{\idtype}{\rightsquigarrow}
 
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\C}{\cat{C}}
@@ -393,12 +394,12 @@ $dc : (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)$ and the following axiom:
 
 To define maps between theories with $Id$ types and theories with an interval type,
 we need to add an additional construction to the latter, which we call \emph{homogeneous path types}.
-Let $HPath$ be a regular theory with function symbols $=\ : (tm,n) \times (tm,n) \to (ty,n)$,
+Let $HPath$ be a regular theory with function symbols $\idtype\ : (tm,n) \times (tm,n) \to (ty,n)$,
 $path : (ty,n) \times (tm,n+1) \to (tm,n)$, and $at : (tm,n) \times (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)$, and the following axioms:
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
 \AxiomC{$\Gamma \vdash a' : A$}
-\BinaryInfC{$\Gamma \vdash a = a'\ type$}
+\BinaryInfC{$\Gamma \vdash a \idtype a'\ type$}
 \DisplayProof
 \end{center}
 
@@ -406,14 +407,14 @@ $path : (ty,n) \times (tm,n+1) \to (tm,n)$, and $at : (tm,n) \times (tm,n) \time
 \begin{center}
 \AxiomC{$\Gamma \vdash A\ type$}
 \AxiomC{$\Gamma, x : I \vdash a : A$}
-\BinaryInfC{$\Gamma \vdash path(A, \lambda x.\,a) : a[x \repl left] = a[x \repl right]$}
+\BinaryInfC{$\Gamma \vdash path(A, \lambda x.\,a) : a[x \repl left] \idtype a[x \repl right]$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash p : a = a'$}
+\AxiomC{$\Gamma \vdash p : a \idtype a'$}
 \AxiomC{$\Gamma \vdash i : I$}
 \TrinaryInfC{$\Gamma \vdash at(a, a', p, i) : A$}
 \DisplayProof
@@ -430,18 +431,18 @@ $path : (ty,n) \times (tm,n+1) \to (tm,n)$, and $at : (tm,n) \times (tm,n) \time
 
 \smallskip
 \begin{center}
-\AxiomC{$\Gamma \vdash p : a = a'$}
+\AxiomC{$\Gamma \vdash p : a \idtype a'$}
 \UnaryInfC{$\Gamma \vdash path(ty(a), \lambda x.\,at(a, a', p, x)) \deq p$}
 \DisplayProof
 \end{center}
 
 \smallskip
 \begin{center}
-\AxiomC{$\Gamma \vdash p : a = a'$}
+\AxiomC{$\Gamma \vdash p : a \idtype a'$}
 \UnaryInfC{$\Gamma \vdash at(a, a', p, left) \deq a$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash p : a = a'$}
+\AxiomC{$\Gamma \vdash p : a \idtype a'$}
 \UnaryInfC{$\Gamma \vdash at(a, a', p, right) \deq a'$}
 \DisplayProof
 \end{center}
@@ -460,22 +461,22 @@ Let $refl(a) = path(ty(a), \lambda x.\,a)$ and $J(A, \lambda x y z.\,D, \lambda 
 \[ D[x \repl a, y \repl at(a, a', p, sq(i,right)), z \repl path(ty(a), \lambda j.\,at(a, a', p, sq(i,j)))]. \]
 Note that $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a, refl(a))$ equals to $coe_0(\lambda i. D'', d[x \repl a])$ where $D'' = D[x \repl a, y \repl a, z \repl refl(a)]$.
 Thus if we have $\sigma$ rule, then equation $\vdash J(A, \lambda x y z.\,D, \lambda x.\,d, a, a, refl(a)) \deq d[x \repl a]$ holds.
-If we have $coe_1$, then we can define $Jeq(D,d,a)$ as $coe_0(\lambda j.\,coe_1(\lambda i. D'', d[a], j) = d[a], refl(d[a]))$.
+If we have $coe_1$, then we can define $Jeq(D,d,a)$ as $coe_0(\lambda j.\,coe_1(\lambda i. D'', d[a], j) \idtype d[a], refl(d[a]))$.
 
 Map $sq \to coe'_1$ can be defined as follows:
-\[ sq(i,j) = at(left, j, coe_1(\lambda x.\,left = x, refl(left), j), i). \]
+\[ sq(i,j) = at(left, j, coe_1(\lambda x.\,left \idtype x, refl(left), j), i). \]
 
 Now, let us define arrow $coe_2 \to coe'_0 + sq + \sigma$.
 First, note that we can define a map $coe_1 \to coe_0 + sq + \sigma$ as follows: $coe_1(\lambda x.\,D, d, j) = coe_0(\lambda i.\,D[x \repl sq(i,j)], d)$.
 Then let $Ic(i) = path(I, \lambda j.\,sq(j,i))$.
-Since $Ic(i) : left = i$, we can define a term $dc'(i,j)$ of type $i = j$.
+Since $Ic(i) : left \idtype i$, we can define a term $dc'(i,j)$ of type $i \idtype j$.
 Now, let $coe_2(\lambda x.\,D, i, d, j)$ be equal to $coe_0(\lambda x.\,D[x \repl at(i, j, dc'(i,j), x)], d)$.
 Note that $\Gamma \vdash dc'(left,left) \deq refl(left)$; hence $\Gamma \vdash coe_2(\lambda x.\,D, left, d, left) \deq d$.
 
 Maps in the bottom row are easy to define:
 \begin{align*}
 sq(i,j) & = dc(left,j,i) \\
-dc(i,j,k) & = at(i,j,coe_2(\lambda x.\,i = x, i, refl(i), j),k) \\
+dc(i,j,k) & = at(i,j,coe_2(\lambda x.\,i \idtype x, i, refl(i), j),k) \\
 coe_2(\lambda x.\,D, i, d, j) & = coe_0(\lambda x.\,D[x \repl dc(i,j,x)], d)
 \end{align*}
 
@@ -535,7 +536,7 @@ Theory $Path$ be a theory with function symbols $Path : (ty,n+1) \times (tm,n) \
 
 We will often omit the first three arguments of $at$ since it is easy to infer them from the type of the fourth argument.
 
-There is an obvious morphism $f : HPath \to Path$ such that $f(a = a') = Path(\lambda x.\,ty(a), a, a')$.
+There is an obvious morphism $f : HPath \to Path$ such that $f(a \idtype a') = Path(\lambda x.\,ty(a), a, a')$.
 
 The theory we are describing has many similarities to the theory of cubical sets.
 The reason is that we can think of contexts $I, \ldots I \vdash$ as $n$-dimensional cubes.
@@ -559,7 +560,7 @@ We can define $sq_l$ by filling the following horn:
 The inner, left, and top squares are $\lambda i\,j.\,left$, the bottom and right squares are $sq$,
 and the filler gives us the outter square which is the required operation $sq_l$.
 Formally, we define $sq_l(i,j)$ as
-\[ at(at(coe_0(\lambda x_1.\,Path(\lambda x_2.\,left = sq(x_1,x_2), refl(left), p_1), p_2),i),j) \]
+\[ at(at(coe_0(\lambda x_1.\,Path(\lambda x_2.\,left \idtype sq(x_1,x_2), refl(left), p_1), p_2),i),j) \]
 where $p_1 = path(\lambda x_3.\,sq(x_1,x_3))$, $p_2 = refl(refl(left))$.
 
 Operation $sq_r$ is similar to $sq_l$; it satisfies the following axioms:
@@ -615,24 +616,24 @@ $p_{0-}[y \repl right] = p_{-1}[x \repl left] = a_{01}$ and $p_{1-}[y \repl righ
               a_{01} \ar[r]_{p_{-1}}                 & a_{11}
             } \]
 Then we define type $Square(p_{-0},p_{-1},p_{0-},p_{1-})$ of 2-dimensional cubes as
-\[ Path(\lambda x.\,p_{-0} = p_{-1}, path(\lambda y.\,p_{0-}), path(\lambda y.\,p_{1-})). \]
+\[ Path(\lambda x.\,p_{-0} \idtype p_{-1}, path(\lambda y.\,p_{0-}), path(\lambda y.\,p_{1-})). \]
 
 We can analogously define types of $n$-dimensional cubes for all $n$.
 It is difficult to describe such types without heterogeneous path types,
 but we can do this at least for small $n$.
-For example, for $n = 2$ we can define it as either $p_{-0} * p_{1-} = p_{0-} * p_{-1}$ (where $*$ is a concatenation of paths) or $p_{0-} = p_{-0} * p_{1-} * sym(p_{-1})$.
+For example, for $n = 2$ we can define it as either $p_{-0} * p_{1-} \idtype p_{0-} * p_{-1}$ (where $*$ is a concatenation of paths) or $p_{0-} \idtype p_{-0} * p_{1-} * sym(p_{-1})$.
 It is easy to see that these types are (homotopy) equivalent, that is we can define mutually inverse functions between them.
 We can show that they are also equivalent to $Square(p_{-0},p_{-1},p_{0-},p_{1-})$:
 
 \begin{lem}[squares-eq]
-Types $Square(p_{-0},p_{-1},p_{0-},p_{1-})$ and $p_{0-} = p_{-0} * p_{1-} * sym(p_{-1})$ are equivalent.
+Types $Square(p_{-0},p_{-1},p_{0-},p_{1-})$ and $p_{0-} \idtype p_{-0} * p_{1-} * sym(p_{-1})$ are equivalent.
 \end{lem}
 \begin{proof}
-Let $*_l$ be a concatenation of paths such that $refl(x) *_l p = p$ and let $*_r$ be a concatenation such that $p *_r refl(y) = p$.
+Let $*_l$ be a concatenation of paths such that $refl(x) *_l p \idtype p$ and let $*_r$ be a concatenation such that $p *_r refl(y) \idtype p$.
 Since all concatenations are equivalent, we can replace $*$ with either of these operations.
-We construct a type $\Gamma, i : I \vdash H$ such that $H[left] = Square(p_{-0},p_{-1},p_{0-},p_{1-})$ and $H[right] = (p_{0-} = p_{-0} *_l p_{1-} *_r sym(p_{-1}))$.
+We construct a type $\Gamma, i : I \vdash H$ such that $H[left] = Square(p_{-0},p_{-1},p_{0-},p_{1-})$ and $H[right] = (p_{0-} \idtype p_{-0} *_l p_{1-} *_r sym(p_{-1}))$.
 Let $H$ be equal to
-\[ Path(\lambda x.\,at(p_{-0},sq_l(x,i)) = at(p_{-1},sq_l(x,i)), path(\lambda y.\,p_{0-}), t), \]
+\[ Path(\lambda x.\,at(p_{-0},sq_l(x,i)) \idtype at(p_{-1},sq_l(x,i)), path(\lambda y.\,p_{0-}), t), \]
 where $t$ equals to
 \[ path(\lambda j.\,at(p_{-0},sq_r(i,j))) *_l path(\lambda y.\,p_{1-}) *_r sym(path(\lambda j.\,at(p_{-1},sq_r(i,j)))). \]
 Then $H$ satisfies the required conditions.
@@ -759,7 +760,7 @@ Theory $coe^{l'}_1 + \sigma^l$ is $coe^{l'}_1$ together with the following axiom
 
 If we have heterogeneous path types, then we can define $coe^{l'}_0 + \sigma^l + sq$ in terms of $coe_0 + \sigma + sq$ and $coe^{l'}_1 + \sigma^l$ in terms of $coe_1 + \sigma$.
 We can define map $coe^{l'}_1 \to coe^{l'}_0$ as before:
-\[ coe^{l'}_1(\lambda x\,y_1 \ldots y_k.\,D, d, i, b_1, \ldots b_k) = coe^{l'}_0(\lambda x\,y_1 \ldots y_k.\,D[x := sq(x,i)], d, b_1, \ldots b_k) \]
+\[ coe^{l'}_1(\lambda x\,y_1 \ldots y_k.\,D, d, i, b_1, \ldots b_k) = coe^{l'}_0(\lambda x\,y_1 \ldots y_k.\,D[x \repl sq(x,i)], d, b_1, \ldots b_k) \]
 Since we already know that there are maps going in both directions between $coe_0 + \sigma + sq$ and $coe_1 + \sigma$,
 we just need to construct a map $coe^{l'}_0 + \sigma^l + sq + Path \to coe_0 + \sigma + sq + Path$.
 
@@ -804,12 +805,12 @@ for every $n,k \in \mathbb{N}$, $n > 0$, and the following axioms:
 \noLine
 \UnaryInf$\fCenter I^{n-1}, [i = c]^*(\Delta) \vdash d_{[i = c]} : [i = c]^*(D)$
 \noLine
-\UnaryInf$\fCenter [i_1 = c]^*(d_{[i_2 = c']}) = [i_2-1=c']^*(d_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
+\UnaryInf$\fCenter [i_1 = c]^*(d_{[i_2 = c']}) = [i_2-1 = c']^*(d_{[i_1 = c]}),\ 0 \leq i_1 < i_2 \leq n-1$
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter I^n, \Delta \vdash Fill^n_{(tm,n+k)}(D, d_{[0=left]}, d_{[0=right]}, \ldots d_{[n-1=left]}) : D$
+\UnaryInf$\fCenter I^n, \Delta \vdash Fill^n_{(tm,n+k)}(D, d_{[0 = left]}, d_{[0 = right]}, \ldots d_{[n-1 = left]}) : D$
 \DisplayProof
 \end{center}
-where $Fill^n_{(tm,n+k)}$ has arguments of the form $d_{[i=c]}$ for every $0 \leq i < n$ and $c \in \{ left, right \}$ except for $d_{[n-1=right]}$.
+where $Fill^n_{(tm,n+k)}$ has arguments of the form $d_{[i = c]}$ for every $0 \leq i < n$ and $c \in \{ left, right \}$ except for $d_{[n-1 = right]}$.
 
 \medskip
 \begin{center}
@@ -818,9 +819,9 @@ where $Fill^n_{(tm,n+k)}$ has arguments of the form $d_{[i=c]}$ for every $0 \le
 \noLine
 \UnaryInf$\fCenter I^{n-1}, [i = c]^*(\Delta) \vdash d_{[i = c]} : [i = c]^*(D)$
 \noLine
-\UnaryInf$\fCenter [i_1 = c]^*(d_{[i_2 = c']}) = [i_2-1=c']^*(d_{[i_1=c]}),\ 0 \leq i_1 < i_2 \leq n-1$
+\UnaryInf$\fCenter [i_1 = c]^*(d_{[i_2 = c']}) = [i_2-1 = c']^*(d_{[i_1 = c]}),\ 0 \leq i_1 < i_2 \leq n-1$
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter [i=c]^*(Fill^n_{(tm,n+k)}(D, d_{[0=left]}, d_{[0=right]}, \ldots d_{[n-1=left]})) = d_{[i=c]}$
+\UnaryInf$\fCenter [i = c]^*(Fill^n_{(tm,n+k)}(D, d_{[0 = left]}, d_{[0 = right]}, \ldots d_{[n-1 = left]})) = d_{[i = c]}$
 \DisplayProof
 \end{center}
 \medskip
@@ -830,13 +831,13 @@ We will denote such function symbols by $Fill_{(tm,n)}$.
 
 It is easy to define a map from $coe^l_1$ to $Fill^l_{tm}$:
 \[ coe^l_1(D, d, i) = i^*(Fill^1(D, d)) \]
-We also can define $Fill^1_{(tm,1+k)}(D, d_{[0=left]})$ in terms of $coe^l_1$ as $coe^l_1(I \times D, I \times d_{[0 = left]}, v_k)$.
+We also can define $Fill^1_{(tm,1+k)}(D, d_{[0 = left]})$ in terms of $coe^l_1$ as $coe^l_1(I \times D, I \times d_{[0 = left]}, v_k)$.
 Actually, theory $coe^l_1$ and subtheory of $Fill^l_{tm}$ which consists of $Fill^1_{(tm,1+k)}$ are isomorphic.
 
 We can define analogous maps between $Fill_{(tm,1)}$ and $coe_1$, but we also can define a morphism $Fill_{tm} \to coe_1 + Path$.
 We define terms $Fill_{(tm,n)}$ by induction on $n$.
 We alredy defined such term for $n = 1$, and we can define $Fill_{(tm,n+1)}$ as
-\[ at(Fill_{(tm,n)}(Path(D, d_{[0=left]}, d_{[0=right]}), path(d_{[1=left]}), \ldots path(d_{[n=left]}))\!\uparrow, v_0). \]
+\[ at(Fill_{(tm,n)}(Path(D, d_{[0 = left]}, d_{[0 = right]}), path(d_{[1 = left]}), \ldots path(d_{[n = left]}))\!\uparrow, v_0). \]
 
 \subsection{Univalence}
 \label{sec:univalence}
@@ -858,10 +859,10 @@ We will denote by $S$ the following set of formulae:
 \Gamma, y : B & \vdash q[i \repl left] \deq f[x \repl g] \\
 \Gamma, y : B & \vdash q[i \repl right] \deq y
 \end{align*}
-If we have path types, then the last six axioms can be replaced with the following two:
+If we have homogeneous path types, then the last six axioms can be replaced with the following two:
 \begin{align*}
-\Gamma, x : A & \vdash p : g[y \repl f] = x \\
-\Gamma, y : B & \vdash q : f[x \repl g] = y
+\Gamma, x : A & \vdash p : g[y \repl f] \idtype x \\
+\Gamma, y : B & \vdash q : f[x \repl g] \idtype y
 \end{align*}
 
 Now, we can define axioms of $wUA$:
@@ -911,9 +912,9 @@ Theory $Eq$ have the following axioms:
 \Gamma & \vdash B\ type \\
 \Gamma, x : A & \vdash b : B \\
 \Gamma, y : B & \vdash a_1 : A \\
-\Gamma, x : A & \vdash p : a_1[y \repl b] = x \\
+\Gamma, x : A & \vdash p : a_1[y \repl b] \idtype x \\
 \Gamma, y : B & \vdash a_2 : A \\
-\Gamma, y : B & \vdash q : b[x \repl a_2] = y
+\Gamma, y : B & \vdash q : b[x \repl a_2] \idtype y
 \end{align*}
 
 Theory $UEq$ have one axiom $\Gamma, i : I \vdash H\ type$.
@@ -927,8 +928,8 @@ Now, we can define $\varphi$ as follows:
 \varphi(b) & = f(right) \\
 \varphi(a_1) & = g(left) \\
 \varphi(a_2) & = g(left) \\
-\varphi(p) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, f(j), left) = x, left, refl(x), right) \\
-\varphi(q) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, g(j), right) = y, right, refl(x), left)
+\varphi(p) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, f(j), left) \idtype x, left, refl(x), right) \\
+\varphi(q) & = coe_2(\lambda j.\,coe_2(\lambda i.\,H, j, g(j), right) \idtype y, right, refl(x), left)
 \end{align*}
 
 A theory $UA$ of univalence should satisfy condition that $\varphi + id_{UA} : Eq + coe_2 + \beta_1 + UA \to UEq + coe_2 + \beta_1 + UA$ is an equivalence of theories (in some sense).
@@ -943,14 +944,14 @@ There exists a map $\psi : UEq + coe_2 + \beta_1 + wUA \to Eq + coe_2 + \beta_1 
 Let $\psi(H) = iso(A, B, \lambda x.\,b, \lambda y.\,a_1, \lambda x.\,p, \lambda y.\,q_1, i)$, where
 $q_1$ is the concatenation of paths $path(\lambda j.\,b[x \repl at(a_1, a_2, pa,j)])$ and $q$,
 $pa$ is a path between $a_1$ and $a_2$, which can be obtained from $p$ and $q$ as the following concatenation:
-\[ a_1 \equiv a_1[y \repl y] = a_1[y \repl b[x \repl a_2]] \equiv a_1[y \repl b][x \repl a_2] = x[x \repl a_2] \equiv a_2. \]
+\[ a_1 = a_1[y \repl y] \idtype a_1[y \repl b[x \repl a_2]] = a_1[y \repl b][x \repl a_2] \idtype x[x \repl a_2] = a_2. \]
 
 We can define $h(A)$ as $A$, $h(B)$ as $B$ and $h(b)$ as $b$.
 Thus we only need to construct $h(a_1)$, $h(a_2)$, $h(p)$ and $h(q)$.
 Terms $h(a_1)$ and $h(a_2)$ should be the following paths:
 \begin{align*}
-& h(a_1) : coe_2(\lambda i.\,\psi(H), right, y, left) = a_1 \\
-& h(a_2) : coe_2(\lambda i.\,\psi(H), right, y, left) = a_2
+& h(a_1) : coe_2(\lambda i.\,\psi(H), right, y, left) \idtype a_1 \\
+& h(a_2) : coe_2(\lambda i.\,\psi(H), right, y, left) \idtype a_2
 \end{align*}
 Terms $h(p)$ and $h(q)$ should be squares with the following boundaries:
 \[ \xymatrix{ coe_2(\lambda i.\,\psi(H), right, b, left) \ar[rr]^-{\psi(\varphi'(p))} \ar[d]_{h(a_1)[y \repl b]} & & x \ar[d]^{refl(x)} \\
@@ -976,7 +977,7 @@ where $a_1' = a_1[y \repl b]$, the middle square is $T[y \repl b]$ and side squa
 The right one, for example, is defined as $p_{1-}[x \repl p]$.
 \Rlem{squares-eq} implies that these squares commute (up to homotopy).
 By naturality and \rlem{squares-eq}, top and bottom rows are homotopic to $p_{-0}$ and $p_{-1}$ respectively.
-Thus $p_{-0} * p_{1-} = p_{0-} * p_{-1}$, and \rlem{squares-eq} implies that there exists a filler for the corresponding square.
+Thus $p_{-0} * p_{1-} \idtype p_{0-} * p_{-1}$, and \rlem{squares-eq} implies that there exists a filler for the corresponding square.
 
 Thus to construct $h(p)$, it is enough to define $h(a_1)$ in such a way that the outter square in the following diagram commutes:
 \[ \xymatrix{ coe_2(\lambda i.\,\psi(H), right, y, left) \ar[r]^{q_1'} \ar[d]_{h(a_1)} & coe_2(\lambda i.\,\psi(H), right, b', left) \ar[rr]^-{\psi(\varphi'(p))[x \repl a_1]} \ar[d]_{h(a_1)[y \repl b[x \repl a_1]]} & & a_1 \ar[d]_{refl(a_1)} \\
@@ -1161,7 +1162,7 @@ $s(\lambda x.\,p_1) = s(\lambda y.\,q_1) = s(\lambda x.\,p_2) = s(\lambda y.\,q_
 
 Note that for every $i : U \to V \in \I$, $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$ belongs to $\Icell[\I_{tm}]$.
 If $i \in \I_{tm}$, then $[\cyli_0,\cyli_1]$ is (isomorphic to) $F(\{\,(\Gamma \vdash a : A), (\Gamma \vdash a' : A)\,\}) \to F(\{\,(\Gamma \vdash A), (\Gamma, I \vdash h : A\!\uparrow)\,\})$,
-and this map is isomorphic to $F(\{\,(\Gamma \vdash a : A), (\Gamma \vdash : a' : A)\,\}) \to F(\{\,(\Gamma \vdash a : A), (\Gamma \vdash a' : A), (\Gamma \vdash p : a = a')\,\})$,
+and this map is isomorphic to $F(\{\,(\Gamma \vdash a : A), (\Gamma \vdash : a' : A)\,\}) \to F(\{\,(\Gamma \vdash a : A), (\Gamma \vdash a' : A), (\Gamma \vdash p : a \idtype a')\,\})$,
 which is obviously a pushout of a map from $\I_{tm}$.
 If $i \in \I_{ty}$, then it is easy to see that $[\cyli_0,\cyli_1]$ is a composition of five maps which are pushouts of maps from $\I_{tm}$.
 
@@ -1179,12 +1180,12 @@ The fact that $f$ is a morphism of models implies that $P(f)$ is a morphism too.
 It is obvious that $P$ preserves identity morphisms and compositions.
 
 To define the structure of a path object on $P(X)$, we need to assume that $(T,\alpha)$ is regular.
-In this case, we define $t : X \to P(X)$ as $t(a) = I \times a$, and $p_0,p_1 : P(X) \to X$ as $p_0(a) = left^*(a)$ and $right^*(a)$ respectively.
+In this case, we define $t : X \to P(X)$ as $t(a) = I \times a$, and $p_0,p_1 : P(X) \to X$ as $p_0(a) = left^*(a)$ and $p_1(a) = right^*(a)$.
 The regularity conidition ensures that function and predicate symbols are stable under operations $I \times -$ and $c^*(-)$.
 Hence these definitions indeed determine morphisms of models.
 The fact that $p_0 \circ t = p_1 \circ t = id_X$ follows from properties of operation $subst^n$.
 If $T$ is under $HPath + coe_0$, then we can define $s : P(X) \to P(X)$ as $s(a) = subst^n(I, a, inv(v_0))$, where
-\[ inv(i) = at(right, left, coe_0(v_0 = left, refl(left)), i). \]
+\[ inv(i) = at(right, left, coe_0(v_0 \idtype left, refl(left)), i). \]
 
 We will prove some of the conditions of \rthm{model-structures} in the following lemmas:
 \begin{lem}[Jtm]
@@ -1301,12 +1302,20 @@ Thus $t'$ is the required lifting.
 \subsection{Homotopy category}
 
 If $T$ is under $HPath$, then for every model $X$ of $T$ we can define its homotopy category $Ho(X)$.
-To define it, we need to introduce an equivalence relation on the set of terms.
-We will say that terms $a,a' \in X_{(tm,n)}$ are equivalent if $ty(a) = ty(a')$ and there exists a term $p$ such that $ctx(a) \vdash p : a = a'$.
+Recall that every model $X$ is a contextual category with some aditional structure.
+We consider the underlying category of $X$.
+Its objects are contexts, that is elements of $X_{(ctx,n)}$ for all $n$.
+Morphisms between $\Gamma \in X_{(ctx,n)}$ and $\Delta \in X_{(ctx,k)}$ are sequences $b_1, \ldots b_k$ of elements of $X_{(tm,n)}$
+such that $\Gamma \vdash b_i : subst(ft^{k-i}(\Delta), b_1, \ldots b_{i-1})$ for every $1 \leq i \leq k$.
+
+To define $Ho(X)$, we need to introduce an equivalence relation on the set of context morphisms.
+If $h = (b_1, \ldots b_k) : (\Gamma,A) \to \Delta$ is a context morphism and $\Gamma \vdash a : A$, then we define $h[a] : \Gamma \to \Delta$ as $(b_1[a], \ldots b_k[a])$.
+A homotopy between $f,g : \Gamma \to \Delta$ is a morphism $h : (\Gamma,I) \to \Delta$ such that $h[left] = f$ and $h[right] = g$.
+We will say that terms $a,a' \in X_{(tm,n)}$ are equivalent if $ty(a) = ty(a')$ and there exists a term $p$ such that $ctx(a) \vdash p : a \idtype a'$.
 Objects of $Ho(X)$ are closed types, that is elements of $X_{(ty,0)}$.
 For every $A,B \in X_{(ty,0)}$, morphisms from $A$ to $B$ are equivalence classes of terms $b \in X_{(tm,1)}$ such that $A \vdash b : B\!\uparrow$.
 Identity morphism is $v_0$ and composition of $b : A \to B$ and $c : B \to C$ is $subst(c,b)$.
-If $x : A \vdash p : b = b'$ and $y : B \vdash q : c = c'$, then $x : A \vdash path(\lambda i.\,at(c,c',q,i)[y \repl at(b,b',p,i)]) : c[y \repl b] = c'[y \repl b']$.
+If $x : A \vdash p : b \idtype b'$ and $y : B \vdash q : c \idtype c'$, then $x : A \vdash path(\lambda i.\,at(c,c',q,i)[y \repl at(b,b',p,i)]) : c[y \repl b] \idtype c'[y \repl b']$.
 Thus composition is well-defined.
 
 For every morphism $f : X \to Y$ of models of $T$, we define a functor $Ho(f) : Ho(X) \to Ho(Y)$ in the obvious way:
@@ -1387,22 +1396,22 @@ $(\ref{it:ct} \Rightarrow \ref{it:ho})$
 Let $A$ and $B$ be objects of $Ho(X)$, and let $f(A) \vdash b : f(B)\!\uparrow$ be a morphism of $Ho(Y)$.
 Then there exists a term $A \vdash b' : B\!\uparrow$ such that $f(b')$ and $b$ are homotopic.
 Hence $f(b')$ and $b$ are equals as morphisms of $Ho(Y)$, so $Ho(f)$ is full.
-Let $b$ and $b'$ be terms such that $A \vdash b : B\!\uparrow$, $A \vdash b' : B\!\uparrow$ and there exists a term $p$ such that $f(A) \vdash p : f(b) = f(b')$.
-Then there exists a term $p'$ such that $A \vdash p' : b = b'$.
+Let $b$ and $b'$ be terms such that $A \vdash b : B\!\uparrow$, $A \vdash b' : B\!\uparrow$ and there exists a term $p$ such that $f(A) \vdash p : f(b) \idtype f(b')$.
+Then there exists a term $p'$ such that $A \vdash p' : b \idtype b'$.
 Hence $Ho(f)$ is faithful.
 
 $(\ref{it:ho} \Rightarrow \ref{it:ct})$
 Let us show that $f$ has RLP up to $\sim_{i_{(tm,n)}}$.
 Let $\Gamma \vdash A$ be a type in $X_{(ty,n)}$, and let $a$ be a term in $Y_{(tm,n)}$ such that $f(\Gamma) \vdash a : f(A)$.
 If $n = 0$, then there is a morphism $I \vdash a\!\uparrow : f(A)\!\uparrow$ in $Ho(Y)$.
-Since $f$ is full, there exists a term $I \vdash a' : A\!\uparrow$ in $X$ and a term $I \vdash p : f(a') = a\!\uparrow$ in $Y$.
-If we define $a''$ as $a'[left]$, then $\vdash a'' : A$ and $\vdash p[left] : f(a'') = a$.
+Since $f$ is full, there exists a term $I \vdash a' : A\!\uparrow$ in $X$ and a term $I \vdash p : f(a') \idtype a\!\uparrow$ in $Y$.
+If we define $a''$ as $a'[left]$, then $\vdash a'' : A$ and $\vdash p[left] : f(a'') \idtype a$.
 Thus $a''$ is the required lift.
 
 If $n > 0$, then there is a morphism
 \[ \Sigma(f(\Gamma)) \vdash pair(v_0,d^*(a)) : \Sigma(\Sigma(f(\Gamma)),d^*(f(A)))\!\uparrow. \]
 Since $f$ is full, there exists a term $\Sigma(\Gamma) \vdash a' : \Sigma(\Sigma(\Gamma),d^*(A))\!\uparrow$ in $X$ and
-a term $\Sigma(f(\Gamma)) \vdash p : f(a') = pair(v_0,d^*(a))$ in $Y$.
+a term $\Sigma(f(\Gamma)) \vdash p : f(a') \idtype pair(v_0,d^*(a))$ in $Y$.
 Since $f(proj_1(a'))$ and $f(v_0)$ are equal in the homotopy category and $Ho(f)$ is faithful,
 there exists a term $\Sigma(\Gamma), I \vdash p' : \Sigma(\Gamma)\!\uparrow^2$ such that $p'[left] = proj_1(a')$ and $p'[right] = v_0$.
 Note that $\Sigma(\Gamma) \vdash coe_0(p'^*d^*(A), proj_2(a')) : d^*(A)$.
