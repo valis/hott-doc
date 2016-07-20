@@ -1299,29 +1299,10 @@ By \rlem{Jhom}, $t \sim^r v' \circ v \circ t \sim^r v' \circ f' \circ t' = f \ci
 Thus $t'$ is the required lifting.
 \end{proof}
 
-\subsection{Homotopy category}
+\section{Theories with $\Sigma$ types}
 
-If $T$ is under $HPath$, then for every model $X$ of $T$ we can define its homotopy category $Ho(X)$.
-Recall that every model $X$ is a contextual category with some aditional structure.
-We consider the underlying category of $X$.
-Its objects are contexts, that is elements of $X_{(ctx,n)}$ for all $n$.
-Morphisms between $\Gamma \in X_{(ctx,n)}$ and $\Delta \in X_{(ctx,k)}$ are sequences $b_1, \ldots b_k$ of elements of $X_{(tm,n)}$
-such that $\Gamma \vdash b_i : subst(ft^{k-i}(\Delta), b_1, \ldots b_{i-1})$ for every $1 \leq i \leq k$.
-
-To define $Ho(X)$, we need to introduce an equivalence relation on the set of context morphisms.
-If $h = (b_1, \ldots b_k) : (\Gamma,A) \to \Delta$ is a context morphism and $\Gamma \vdash a : A$, then we define $h[a] : \Gamma \to \Delta$ as $(b_1[a], \ldots b_k[a])$.
-A homotopy between $f,g : \Gamma \to \Delta$ is a morphism $h : (\Gamma,I) \to \Delta$ such that $h[left] = f$ and $h[right] = g$.
-We will say that terms $a,a' \in X_{(tm,n)}$ are equivalent if $ty(a) = ty(a')$ and there exists a term $p$ such that $ctx(a) \vdash p : a \idtype a'$.
-Objects of $Ho(X)$ are closed types, that is elements of $X_{(ty,0)}$.
-For every $A,B \in X_{(ty,0)}$, morphisms from $A$ to $B$ are equivalence classes of terms $b \in X_{(tm,1)}$ such that $A \vdash b : B\!\uparrow$.
-Identity morphism is $v_0$ and composition of $b : A \to B$ and $c : B \to C$ is $subst(c,b)$.
-If $x : A \vdash p : b \idtype b'$ and $y : B \vdash q : c \idtype c'$, then $x : A \vdash path(\lambda i.\,at(c,c',q,i)[y \repl at(b,b',p,i)]) : c[y \repl b] \idtype c'[y \repl b']$.
-Thus composition is well-defined.
-
-For every morphism $f : X \to Y$ of models of $T$, we define a functor $Ho(f) : Ho(X) \to Ho(Y)$ in the obvious way:
-$Ho(f)(A) = f(A)$ for every object $A$, and $Ho(f)(b) = f(b)$ for every morphism $b$.
-It is obvious that $Ho$ preserves identity morphisms and compositions.
-Thus $Ho$ is a functor $\Mod{T} \to \cat{Cat}$.
+In this section we give several equivalent descriptions of weak equivalences between models of theories with $\Sigma$ types.
+We also discuss the relationship between such models and fibration categories.
 
 Recall that the theory of $\Sigma$ types with eta has the following rules:
 \medskip
@@ -1368,15 +1349,52 @@ Recall that the theory of $\Sigma$ types with eta has the following rules:
 We will usually omit first two arguments to $pair$, $proj_1$ nad $proj_2$.
 
 If $T$ has $\Sigma$ types and $X$ is a model of $T$, then every nonempty context of $X$ is isomorphic to a context of length 1.
-Indeed, for every $A \in X_{(ty,n)}$, we define an object $\Sigma(A) \in X_{(ty,0)}$ by induction on $n$.
-If $n = 0$, then let $\Sigma(A) = A$.
-If $n > 0$, then let $\Sigma(A) = \Sigma(\Sigma(ft(A), A))$.
-
+Indeed, for every $(A_1, \ldots A_n \vdash) \in X_{(ty,n)}$, we define $\Sigma(A_1, \ldots A_n) \in X_{(ty,0)}$ as $\Sigma(A_1, \ldots \Sigma(A_{n-1},A_n))$.
 Morphisms between $A$ and $\Sigma(A)$ are defined as follows:
 $c : A \to \Sigma(A)$ is $pair(v_{n-1}, \ldots pair(v_1,v_0), \ldots))$ and $d : \Sigma(A) \to A$ is $b_0, \ldots b_{n-1}$,
-where for every $0 \leq i < n-1$, $b_i = proj_1(proj_2(\ldots proj_2(v_0) \ldots ))$, where $proj_2$ is repeated $i$ times,
-and $b_{n-1} = proj_2(\ldots proj_2(v_0) \ldots )$, where $proj_2$ is repeated $n-1$ times.
+where $b_{n-1} = proj_2(\ldots proj_2(v_0) \ldots )$, where $proj_2$ is repeated $n-1$ times, and
+for every $0 \leq i < n-1$, $b_i = proj_1(proj_2(\ldots proj_2(v_0) \ldots ))$, where $proj_2$ is repeated $i$ times,
 It is easy to see that $c$ and $d$ are mutually inverse.
+
+\begin{prop}
+Let $T$ be a theory under $coe_1 + \sigma + Path + wUA + \Sigma$.
+Then a map between models of $T$ is a weak equivalence if and only if it has RLP up to $\sim_i$ with respect to $i = i_{(ty,0)}$ and $i = i_{(tm,1)}$.
+\end{prop}
+\begin{proof}
+Since $i_{(ty,0)},i_{(tm,1)} \in \I$, the ``only if'' direction is obvious.
+Let us prove the converse.
+Let $f : X \to Y$ be a map which has RLP up to $\sim_{i_{(tm,1)}}$ with respect to $i_{(tm,1)}$.
+Let $(\Gamma \vdash A) \in X_{(ty,n)}$ and $(f(\Gamma) \vdash a : f(A)) \in Y_{(tm,n)}$.
+If $n = 0$, then there exists terms $I \vdash a' : A\!\uparrow$ and $I \vdash p : f(a') = a\!\uparrow$.
+Then $\vdash a'[left] : A$ and $\vdash p[left] : f(a'[left]) = a$.
+If $n > 0$, then there exists terms $\Sigma(\Gamma) \vdash a' : d^*(A)$ and $f(\Sigma(\Gamma)) \vdash p : f(a') : d^*(a)$.
+Then $\Gamma \vdash c^*(a') : A$ and $f(\Gamma) \vdash c^*(p) : f(c^*(a')) = a$.
+Thus $f$ has RLP up to $\sim_i$ with respect to every $i \in \I_{tm}$.
+
+Now, suppose that $f$ also has RLP up to $\sim_{i_{(ty,0)}}$ with respect to $i_{(ty,0)}$.
+\end{proof}
+
+If $T$ is under $HPath$, then for every model $X$ of $T$ we can define its homotopy category $Ho(X)$.
+Recall that every model $X$ is a contextual category with some aditional structure.
+We consider the underlying category of $X$.
+Its objects are contexts, that is elements of $X_{(ctx,n)}$ for all $n$.
+Morphisms between $\Gamma \in X_{(ctx,n)}$ and $\Delta \in X_{(ctx,k)}$ are sequences $b_1, \ldots b_k$ of elements of $X_{(tm,n)}$
+such that $\Gamma \vdash b_i : subst(ft^{k-i}(\Delta), b_1, \ldots b_{i-1})$ for every $1 \leq i \leq k$.
+
+To define $Ho(X)$, we need to introduce an equivalence relation on the set of context morphisms.
+If $h = (b_1, \ldots b_k) : (\Gamma,A) \to \Delta$ is a context morphism and $\Gamma \vdash a : A$, then we define $h[a] : \Gamma \to \Delta$ as $(b_1[a], \ldots b_k[a])$.
+A homotopy between $f,g : \Gamma \to \Delta$ is a morphism $h : (\Gamma,I) \to \Delta$ such that $h[left] = f$ and $h[right] = g$.
+We will say that terms $a,a' \in X_{(tm,n)}$ are equivalent if $ty(a) = ty(a')$ and there exists a term $p$ such that $ctx(a) \vdash p : a \idtype a'$.
+Objects of $Ho(X)$ are closed types, that is elements of $X_{(ty,0)}$.
+For every $A,B \in X_{(ty,0)}$, morphisms from $A$ to $B$ are equivalence classes of terms $b \in X_{(tm,1)}$ such that $A \vdash b : B\!\uparrow$.
+Identity morphism is $v_0$ and composition of $b : A \to B$ and $c : B \to C$ is $subst(c,b)$.
+If $x : A \vdash p : b \idtype b'$ and $y : B \vdash q : c \idtype c'$, then $x : A \vdash path(\lambda i.\,at(c,c',q,i)[y \repl at(b,b',p,i)]) : c[y \repl b] \idtype c'[y \repl b']$.
+Thus composition is well-defined.
+
+For every morphism $f : X \to Y$ of models of $T$, we define a functor $Ho(f) : Ho(X) \to Ho(Y)$ in the obvious way:
+$Ho(f)(A) = f(A)$ for every object $A$, and $Ho(f)(b) = f(b)$ for every morphism $b$.
+It is obvious that $Ho$ preserves identity morphisms and compositions.
+Thus $Ho$ is a functor $\Mod{T} \to \cat{Cat}$.
 
 If $T$ has $\Sigma$ types, then there is an equivalent description of weak equivalences in $\Mod{T}$:
 
