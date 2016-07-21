@@ -1299,7 +1299,7 @@ By \rlem{Jhom}, $t \sim^r v' \circ v \circ t \sim^r v' \circ f' \circ t' = f \ci
 Thus $t'$ is the required lifting.
 \end{proof}
 
-\section{Theories with $\Sigma$ types}
+\section{Theories with sigma types}
 
 In this section we give several equivalent descriptions of weak equivalences between models of theories with $\Sigma$ types.
 We also discuss the relationship between such models and fibration categories.
@@ -1321,11 +1321,11 @@ Recall that the theory of $\Sigma$ types with eta has the following rules:
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\Gamma \vdash proj_1(A, B, p) : A$}
+\UnaryInfC{$\Gamma \vdash \pi_1(A, B, p) : A$}
 \DisplayProof
 \quad
 \AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\Gamma \vdash proj_2(A, B, p) : B[proj_1(A, B, p)]$}
+\UnaryInfC{$\Gamma \vdash \pi_2(A, B, p) : B[\pi_1(A, B, p)]$}
 \DisplayProof
 \end{center}
 
@@ -1334,7 +1334,7 @@ Recall that the theory of $\Sigma$ types with eta has the following rules:
 \AxiomC{$\Gamma, A \vdash B\ type$}
 \AxiomC{$\Gamma \vdash a : A$}
 \AxiomC{$\Gamma \vdash b : B[a]$}
-\TrinaryInfC{$\Gamma \vdash proj_1(A, B, pair(A, B, a, b)) \deq a$}
+\TrinaryInfC{$\Gamma \vdash \pi_1(A, B, pair(A, B, a, b)) \deq a$}
 \DisplayProof
 \end{center}
 
@@ -1343,17 +1343,17 @@ Recall that the theory of $\Sigma$ types with eta has the following rules:
 \AxiomC{$\Gamma, A \vdash B\ type$}
 \AxiomC{$\Gamma \vdash a : A$}
 \AxiomC{$\Gamma \vdash b : B[a]$}
-\TrinaryInfC{$\Gamma \vdash proj_2(A, B, pair(A, B, a, b)) \deq b$}
+\TrinaryInfC{$\Gamma \vdash \pi_2(A, B, pair(A, B, a, b)) \deq b$}
 \DisplayProof
 \end{center}
-We will usually omit first two arguments to $pair$, $proj_1$ nad $proj_2$.
+We will usually omit first two arguments to $pair$, $\pi_1$ nad $\pi_2$.
 
 If $T$ has $\Sigma$ types and $X$ is a model of $T$, then every nonempty context of $X$ is isomorphic to a context of length 1.
 Indeed, for every $(A_1, \ldots A_n \vdash) \in X_{(ty,n)}$, we define $\Sigma(A_1, \ldots A_n) \in X_{(ty,0)}$ as $\Sigma(A_1, \ldots \Sigma(A_{n-1},A_n))$.
-Morphisms between $A$ and $\Sigma(A)$ are defined as follows:
-$c : A \to \Sigma(A)$ is $pair(v_{n-1}, \ldots pair(v_1,v_0), \ldots))$ and $d : \Sigma(A) \to A$ is $b_0, \ldots b_{n-1}$,
-where $b_{n-1} = proj_2(\ldots proj_2(v_0) \ldots )$, where $proj_2$ is repeated $n-1$ times, and
-for every $0 \leq i < n-1$, $b_i = proj_1(proj_2(\ldots proj_2(v_0) \ldots ))$, where $proj_2$ is repeated $i$ times,
+Morphisms between $\Gamma$ and $\Sigma(\Gamma)$ are defined as follows:
+$c : \Gamma \to \Sigma(\Gamma)$ is $pair(v_{n-1}, \ldots pair(v_1,v_0), \ldots))$ and $d : \Sigma(\Gamma) \to \Gamma$ is $b_0, \ldots b_{n-1}$,
+where $b_{n-1} = \pi_2(\ldots \pi_2(v_0) \ldots )$, where $\pi_2$ is repeated $n-1$ times, and
+for every $0 \leq i < n-1$, $b_i = \pi_1(\pi_2(\ldots \pi_2(v_0) \ldots ))$, where $\pi_2$ is repeated $i$ times,
 It is easy to see that $c$ and $d$ are mutually inverse.
 
 \begin{prop}
@@ -1372,7 +1372,40 @@ Then $\Gamma \vdash c^*(a') : A$ and $f(\Gamma) \vdash c^*(p) : f(c^*(a')) = a$.
 Thus $f$ has RLP up to $\sim_i$ with respect to every $i \in \I_{tm}$.
 
 Now, suppose that $f$ also has RLP up to $\sim_{i_{(ty,0)}}$ with respect to $i_{(ty,0)}$.
+Factor $f$ into a trivial cofibration $g$ followed by a fibration $f'$.
+By \cite[lemma~3.4]{f-model-structures}, $f'$ has the same right lifting properties as $f$.
+If we can prove that $f'$ is a weak equivalence, then $f$ is a weak equivalence as well by 2-out-of-3 property.
+Thus we may assume that $f$ is a fibration.
+Then $f$ has RLP with respect to $i_{(ty,0)}$ and $i_{(tm,1)}$.
+
+Let $\Gamma \in X_{(ctx,n)}$ and $(f(\Gamma) \vdash A) \in Y_{(ty,n)}$.
+Then there exists a type $A' \in X_{(ty,0)}$ such that $f(A') = \Sigma(\Sigma(\Gamma),d^*(A))$.
+There exists a term $A' \vdash a : \Sigma(\Gamma)\!\uparrow$ such that $f(a) = \pi_1(v_0)$.
+Now, consider type $(\Sigma(\Gamma) \vdash A'') \in X_{(ty,1)}$ which is defined as $\Sigma(A', a \idtype v_1)$.
+
+Let us prove that there is an equivalence between $f(A'')$ and $d^*(A)$ in context $\Sigma(f(\Gamma))$.
+Actually, this is a well-known fact.
+For example, it follows from \cite[lemmas 3.11.8 and 3.11.9]{hottbook}.
+But since we are working in a restricted context (we do not have $\Pi$ types), we will give a direct proof.
+
+To simplify the notation, let $B = \Sigma(f(\Gamma))$ and $C(t) = d^*(A)[t]$.
+A map from $f(A'')$ to $d^*(A)$ is a term $g$ which satisfies
+\[ y : B, w : \Sigma(x : \Sigma(z : B, C(z)), \pi_1(x) \idtype y) \vdash g : C(y). \]
+Let $t(i) = coe_1(\lambda i.\,C(at(\pi_2(w),i)), \pi_2(\pi_1(w)), i)$.
+Then we can define a map $g$ from $f(A'')$ to $d^*(A)$ as $t(right)$.
+
+A map from $d^*(A)$ to $f(A'')$ is a term $g'$ which satisfies
+\[ y : B, c : C(y) \vdash g' : \Sigma(x : \Sigma(z : B, C(z)), \pi_1(x) \idtype y). \]
+We can define such map $g'$ as $pair(pair(y,c),refl(y))$.
+Then $g[g'] = c$ and we can construct a path between $g'[g]$ and $w$ as follows:
+\[ path(\lambda i.\,pair(pair(at(\pi_2(w),i), t(i)), path(\lambda j.\,at(\pi_2(w),sq_r(i,j))))) \]
+
+Thus $g$ and $g'$ define an equivalence between $f(A'')$ and $d^*(A)$.
+Then $c^*(g)$ and $c^*(g')$ define an equivalence between $f(c^*(A''))$ and $A$.
+Thus $\Gamma \vdash c^*(A'')$ is the required lift of $A$.
 \end{proof}
+
+\subsection{Homotopy category}
 
 If $T$ is under $HPath$, then for every model $X$ of $T$ we can define its homotopy category $Ho(X)$.
 Recall that every model $X$ is a contextual category with some aditional structure.
@@ -1430,10 +1463,10 @@ If $n > 0$, then there is a morphism
 \[ \Sigma(f(\Gamma)) \vdash pair(v_0,d^*(a)) : \Sigma(\Sigma(f(\Gamma)),d^*(f(A)))\!\uparrow. \]
 Since $f$ is full, there exists a term $\Sigma(\Gamma) \vdash a' : \Sigma(\Sigma(\Gamma),d^*(A))\!\uparrow$ in $X$ and
 a term $\Sigma(f(\Gamma)) \vdash p : f(a') \idtype pair(v_0,d^*(a))$ in $Y$.
-Since $f(proj_1(a'))$ and $f(v_0)$ are equal in the homotopy category and $Ho(f)$ is faithful,
-there exists a term $\Sigma(\Gamma), I \vdash p' : \Sigma(\Gamma)\!\uparrow^2$ such that $p'[left] = proj_1(a')$ and $p'[right] = v_0$.
-Note that $\Sigma(\Gamma) \vdash coe_0(p'^*d^*(A), proj_2(a')) : d^*(A)$.
-Thus we can define a term $\Gamma \vdash a'' : A$ as $c^*(coe_0(p'^*d^*(A), proj_2(a')))$.
+Since $f(\pi_1(a'))$ and $f(v_0)$ are equal in the homotopy category and $Ho(f)$ is faithful,
+there exists a term $\Sigma(\Gamma), I \vdash p' : \Sigma(\Gamma)\!\uparrow^2$ such that $p'[left] = \pi_1(a')$ and $p'[right] = v_0$.
+Note that $\Sigma(\Gamma) \vdash coe_0(p'^*d^*(A), \pi_2(a')) : d^*(A)$.
+Thus we can define a term $\Gamma \vdash a'' : A$ as $c^*(coe_0(p'^*d^*(A), \pi_2(a')))$.
 
 $(\ref{it:we} \Rightarrow \ref{it:ct})$ Obvious.
 
