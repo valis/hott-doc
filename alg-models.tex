@@ -1356,7 +1356,7 @@ where $b_{n-1} = \pi_2(\ldots \pi_2(v_0) \ldots )$, where $\pi_2$ is repeated $n
 for every $0 \leq i < n-1$, $b_i = \pi_1(\pi_2(\ldots \pi_2(v_0) \ldots ))$, where $\pi_2$ is repeated $i$ times,
 It is easy to see that $c$ and $d$ are mutually inverse.
 
-\begin{prop}
+\begin{prop}[sigma-we-i]
 Let $T$ be a theory under $coe_1 + \sigma + Path + wUA + \Sigma$.
 Then a map between models of $T$ is a weak equivalence if and only if it has RLP up to $\sim_i$ with respect to $i = i_{(ty,0)}$ and $i = i_{(tm,1)}$.
 \end{prop}
@@ -1408,20 +1408,12 @@ Thus $\Gamma \vdash c^*(A'')$ is the required lift of $A$.
 \subsection{Homotopy category}
 
 If $T$ is under $HPath$, then for every model $X$ of $T$ we can define its homotopy category $Ho(X)$.
-Recall that every model $X$ is a contextual category with some aditional structure.
-We consider the underlying category of $X$.
-Its objects are contexts, that is elements of $X_{(ctx,n)}$ for all $n$.
-Morphisms between $\Gamma \in X_{(ctx,n)}$ and $\Delta \in X_{(ctx,k)}$ are sequences $b_1, \ldots b_k$ of elements of $X_{(tm,n)}$
-such that $\Gamma \vdash b_i : subst(ft^{k-i}(\Delta), b_1, \ldots b_{i-1})$ for every $1 \leq i \leq k$.
-
-To define $Ho(X)$, we need to introduce an equivalence relation on the set of context morphisms.
-If $h = (b_1, \ldots b_k) : (\Gamma,A) \to \Delta$ is a context morphism and $\Gamma \vdash a : A$, then we define $h[a] : \Gamma \to \Delta$ as $(b_1[a], \ldots b_k[a])$.
-A homotopy between $f,g : \Gamma \to \Delta$ is a morphism $h : (\Gamma,I) \to \Delta$ such that $h[left] = f$ and $h[right] = g$.
-We will say that terms $a,a' \in X_{(tm,n)}$ are equivalent if $ty(a) = ty(a')$ and there exists a term $p$ such that $ctx(a) \vdash p : a \idtype a'$.
+To define it, we need to introduce an equivalence relation on the set of terms.
+We will say that terms $a,a' \in X_{(tm,n)}$ are equivalent if $ty(a) = ty(a')$ and there exists a term $p$ such that $ctx(a) \vdash p : a = a'$.
 Objects of $Ho(X)$ are closed types, that is elements of $X_{(ty,0)}$.
 For every $A,B \in X_{(ty,0)}$, morphisms from $A$ to $B$ are equivalence classes of terms $b \in X_{(tm,1)}$ such that $A \vdash b : B\!\uparrow$.
 Identity morphism is $v_0$ and composition of $b : A \to B$ and $c : B \to C$ is $subst(c,b)$.
-If $x : A \vdash p : b \idtype b'$ and $y : B \vdash q : c \idtype c'$, then $x : A \vdash path(\lambda i.\,at(c,c',q,i)[y \repl at(b,b',p,i)]) : c[y \repl b] \idtype c'[y \repl b']$.
+If $x : A \vdash p : b = b'$ and $y : B \vdash q : c = c'$, then $x : A \vdash path(\lambda i.\,at(c,c',q,i)[y \repl at(b,b',p,i)]) : c[y \repl b] = c'[y \repl b']$.
 Thus composition is well-defined.
 
 For every morphism $f : X \to Y$ of models of $T$, we define a functor $Ho(f) : Ho(X) \to Ho(Y)$ in the obvious way:
@@ -1429,21 +1421,18 @@ $Ho(f)(A) = f(A)$ for every object $A$, and $Ho(f)(b) = f(b)$ for every morphism
 It is obvious that $Ho$ preserves identity morphisms and compositions.
 Thus $Ho$ is a functor $\Mod{T} \to \cat{Cat}$.
 
-If $T$ has $\Sigma$ types, then there is an equivalent description of weak equivalences in $\Mod{T}$:
+If $T$ has $\Sigma$ types, then there is an equivalent characterization of weak equivalences in terms of the homotopy category.
+This proposition is similar to \cite[Th\'eor\`eme~3.25]{cis10b}.
+Actually, we can probably derive it from results of \cite{cis10b}, but it is easier to give a direct proof.
 
 \begin{prop}
 Let $T$ be a theory under $coe_1 + \sigma + Path + wUA + \Sigma$, and let $f : X \to Y$ be a morphism of models of $T$.
-Then the following conditions are equivalent:
-\begin{enumerate}
-\item \label{it:we} $f$ is a weak equivalence.
-\item \label{it:ct} $f$ has RLP up to $\sim_i$ with respect to every $i \in I_{tm} \cup \{ i_{(ty,0)} \}$.
-\item \label{it:ho} $Ho(f)$ is an equivalence of categories.
-\end{enumerate}
+Then a map $f : X \to Y$ between models of $T$ is a weak equivalence if and only if $Ho(f)$ is an equivalence of categories.
 \end{prop}
 \begin{proof}
-Note that $Ho(f)$ is essentially surjective on objects if and only if $f$ has RLP up to $\sim_{i_{(ty,0)}}$.
+Note that $Ho(f)$ is essentially surjective on objects if and only if $f$ has RLP up to $\sim_{i_{(ty,0)}}$ with respect to $\sim_{i_{(ty,0)}}$.
 
-$(\ref{it:ct} \Rightarrow \ref{it:ho})$
+Assume that $f$ is a weak equivalence.
 Let $A$ and $B$ be objects of $Ho(X)$, and let $f(A) \vdash b : f(B)\!\uparrow$ be a morphism of $Ho(Y)$.
 Then there exists a term $A \vdash b' : B\!\uparrow$ such that $f(b')$ and $b$ are homotopic.
 Hence $f(b')$ and $b$ are equals as morphisms of $Ho(Y)$, so $Ho(f)$ is full.
@@ -1451,26 +1440,39 @@ Let $b$ and $b'$ be terms such that $A \vdash b : B\!\uparrow$, $A \vdash b' : B
 Then there exists a term $p'$ such that $A \vdash p' : b \idtype b'$.
 Hence $Ho(f)$ is faithful.
 
-$(\ref{it:ho} \Rightarrow \ref{it:ct})$
-Let us show that $f$ has RLP up to $\sim_{i_{(tm,n)}}$.
-Let $\Gamma \vdash A$ be a type in $X_{(ty,n)}$, and let $a$ be a term in $Y_{(tm,n)}$ such that $f(\Gamma) \vdash a : f(A)$.
-If $n = 0$, then there is a morphism $I \vdash a\!\uparrow : f(A)\!\uparrow$ in $Ho(Y)$.
-Since $f$ is full, there exists a term $I \vdash a' : A\!\uparrow$ in $X$ and a term $I \vdash p : f(a') \idtype a\!\uparrow$ in $Y$.
-If we define $a''$ as $a'[left]$, then $\vdash a'' : A$ and $\vdash p[left] : f(a'') \idtype a$.
-Thus $a''$ is the required lift.
+Now, assume that $Ho(f)$ is an equivalence of categories.
+By \rprop{sigma-we-i}, we just need to prove that $f$ has RLP up to $\sim_{i_{(tm,1)}}$ with respect to $\sim_{i_{(tm,1)}}$.
+Factor $f$ intro a trivial cofibration $g$ followed by a fibration $f'$.
+Since $Ho(g)$ is an equivalence, $f'$ is also an equivalence by 2-out-of-3 property.
+If we can prove that $f'$ is a weak equivalence, then $f$ is a weak equivalence as well by 2-out-of-3 property.
+Thus we may assume that $f$ is a fibration.
 
-If $n > 0$, then there is a morphism
-\[ \Sigma(f(\Gamma)) \vdash pair(v_0,d^*(a)) : \Sigma(\Sigma(f(\Gamma)),d^*(f(A)))\!\uparrow. \]
-Since $f$ is full, there exists a term $\Sigma(\Gamma) \vdash a' : \Sigma(\Sigma(\Gamma),d^*(A))\!\uparrow$ in $X$ and
-a term $\Sigma(f(\Gamma)) \vdash p : f(a') \idtype pair(v_0,d^*(a))$ in $Y$.
-Since $f(\pi_1(a'))$ and $f(v_0)$ are equal in the homotopy category and $Ho(f)$ is faithful,
-there exists a term $\Sigma(\Gamma), I \vdash p' : \Sigma(\Gamma)\!\uparrow^2$ such that $p'[left] = \pi_1(a')$ and $p'[right] = v_0$.
-Note that $\Sigma(\Gamma) \vdash coe_0(p'^*d^*(A), \pi_2(a')) : d^*(A)$.
-Thus we can define a term $\Gamma \vdash a'' : A$ as $c^*(coe_0(p'^*d^*(A), \pi_2(a')))$.
+Let $A \vdash B$ be a type in $X_{(ty,1)}$, and let $b$ be a term in $Y_{(tm,1)}$ such that $f(A) \vdash b : f(B)$.
+Since $Ho(f)$ is full, there exists a term $A \vdash b' : \Sigma(A,B)\!\uparrow$ such that $f(b')$ is homotopic to $pair(v_0,b)$.
+Since $f$ is a fibration, we can assume that $f(b') = pair(v_0,b)$.
+We need to find a term $s$ such that $A \vdash s : \pi_1(b') = v_0$ and $f(s)$ is homotopic to $refl(v_0)$.
+If such term exists, then since $f$ is a fibration, there exists a term $s'$ such that $A \vdash s' : \pi_1(b') = v_0$ and $f(s') = refl(v_0)$.
+Then we can define $A \vdash b'' : B$ as $coe_0(\lambda i.\,B[at(s',i)], \pi_2(b))$.
+This $b''$ is the required lift since $f(b'') = b$.
 
-$(\ref{it:we} \Rightarrow \ref{it:ct})$ Obvious.
+It is easy to find a term $s$ which satisfies the first condition using the fact that $Ho(f)$ is faithful, but the second condition is more difficult.
+Let us show how to construct a term which satisfies both of them.
+Since $Ho(f)$ is full, there exists a term $A \vdash s' : \Sigma(A, \pi_1(b') \idtype v_0)\!\uparrow$ such that $f(s')$ is homotopic to $pair(v_0, refl(v_0))$.
+Since $f$ is a fibration, we can assume that $f(s') = pair(v_0, refl(v_0))$.
+Since $Ho(f)$ is faithful and $f(\pi_1 \circ s') = f(v_0)$, there exists a term $h$ such that $A \vdash h : \pi_1(s') \idtype v_0$.
+Let $t(i) = coe_1(\lambda j.\,\pi_1(b')[at(h,j)] \idtype at(h,j), \pi_2(s'), i)$.
+If we define $s$ as $t(right)$, then $A \vdash s : \pi_1(b') \idtype v_0$.
 
-$(\ref{it:ct} \Rightarrow \ref{it:we})$
+Let us prove that $f(s)$ is homotopic to $refl(v_0)$.
+If we define $h'$ as
+\[ path(\lambda i.\,pair(at(h,i), t(i))), \]
+then $A \vdash h' : s' \idtype pair(v_0,s)$.
+Hence, we have the following homotopy:
+\[ f(A) \vdash f(h') : pair(v_0, refl(v_0)) \idtype pair(v_0, f(s)). \]
+If we have $\Gamma \vdash p : \Sigma(A, v_0 \idtype v_0)$, $\Gamma \vdash p' : \Sigma(A, v_0 \idtype v_0)$ and $\Gamma \vdash h : p \idtype p'$,
+then it is easy to see that there exist terms $\Gamma \vdash q_1 : \pi_1(p) = \pi_1(p')$ and $\Gamma \vdash q_2 : sym(q_1) * \pi_2(p) * q_1 \idtype \pi_2(p')$.
+If we take $p = pair(v_0, refl(v_0))$, $p' = pair(v_0, f(s))$ and $h = f(h')$, then $f(A) \vdash q_2 : sym(q_1) * q_1 \idtype f(s)$,
+which implies that $f(s)$ is homotopic to $refl(v_0)$.
 \end{proof}
 
 \bibliographystyle{amsplain}
