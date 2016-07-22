@@ -140,9 +140,9 @@
 
 \begin{abstract}
 Models of dependent type theories are contextual categories with some additional structure.
-We will prove that if a theory $T$ has enough additional structure, then the category $\Mod{T}$ of its models carries the structure of a model category.
-We will also show that if $T$ has $\Sigma$ types, then there exists an exact functor from $\Mod{T}$
-to the category of fibration categories which preserves and reflects weak equivalences.
+We prove that if a theory $T$ has enough structure, then the category $\Mod{T}$ of its models carries the structure of a model category.
+We also show that if $T$ has $\Sigma$ and unit types, then there exists an exact functor from $\Mod{T}$
+to the category of fibration categories which reflects weak equivalences.
 \end{abstract}
 
 \maketitle
@@ -1344,6 +1344,13 @@ Recall that the theory of $\Sigma$ types with eta has the following rules:
 \TrinaryInfC{$\Gamma \vdash \pi_2(A, B, pair(A, B, a, b)) \deq b$}
 \DisplayProof
 \end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
+\UnaryInfC{$\Gamma \vdash pair(A, B, proj_1(A, B, p), proj_2(A, B, p)) \deq p$}
+\DisplayProof
+\end{center}
 We will usually omit first two arguments to $pair$, $\pi_1$ nad $\pi_2$.
 
 If $T$ has $\Sigma$ types and $X$ is a model of $T$, then every nonempty context of $X$ is isomorphic to a context of length 1.
@@ -1423,7 +1430,7 @@ If $T$ has $\Sigma$ types, then there is an equivalent characterization of weak 
 This proposition is similar to \cite[Th\'eor\`eme~3.25]{cis10b}.
 Actually, we can probably derive it from results of \cite{cis10b}, but it is easier to give a direct proof.
 
-\begin{prop}
+\begin{prop}[sigma-we-ho]
 Let $T$ be a theory under $coe_1 + \sigma + Path + wUA + \Sigma$, and let $f : X \to Y$ be a morphism of models of $T$.
 Then a map $f : X \to Y$ between models of $T$ is a weak equivalence if and only if $Ho(f)$ is an equivalence of categories.
 \end{prop}
@@ -1479,29 +1486,57 @@ Fibration categories were introduced in \cite{brown}.
 It was shown in \cite{szumilo} that the category of fibration categories itself carries the structure of a fibration category,
 and this fibration category is equivalent to the fibration category of finitely complete quasicategories.
 
-We conjecture that the model category of models of $T_\Sigma = coe_1 + \sigma + Path + wUA + \Sigma$
+We conjecture that the model category of models of $coe_1 + \sigma + Path + wUA + \Sigma$
 presents the $\infty$-category of finitely complete $\infty$-categories.
-Thus it is natural to stduy the relationship between the category of models of $T_\Sigma$ and the category of fibration categories.
+Thus it is natural to study the relationship between the category of models of $coe_1 + \sigma + Path + wUA + \Sigma$ and the category of fibration categories.
 
-Every model of $T_\Sigma$ carries the structure of a fibration category, which was proved in \cite{tt-fibr-cat}.
+It turns out that if we want to construct an exact functor from the category of models to the category of fibration categories,
+then we need to assume that our theory has unit types.
+Recall that theory $\top$ is defined as follows:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \vdash \top\ type$}
+\DisplayProof
+\quad
+\AxiomC{}
+\UnaryInfC{$\Gamma \vdash unit : \top$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash t : \top$}
+\UnaryInfC{$\Gamma \vdash t \deq unit$}
+\DisplayProof
+\end{center}
+
+Let $T_{\Sigma + \top} = coe_1 + \sigma + Path + wUA + \Sigma + \top$.
+Every model of $T_{\Sigma + \top}$ carries the structure of a fibration category, which was proved in \cite{tt-fibr-cat}.
 The proofs there work in our case too.
 Let us briefly describe this construction.
-If $X$ is a model of $T_\Sigma$, then we define category $U(X)$, which has contexts of length $\leq 1$ as objects and context morphisms as morphisms.
-Note that since we have $\Sigma$ types, this category is equivalent to the category which has all contexts as objects.
+If $X$ is a model of $T_{\Sigma + \top}$, then we define category $U(X)$, which has types from $X_{(ty,0)}$ as objects and terms of the form $A \vdash b : B\!\uparrow$ as morphisms between $A$ and $B$.
+A map $f : A \to B$ is a fibration if and only if it is isomorphic over $B$ to a map of the form $\pi_1 : \Sigma(B,C) \to B$.
 Weak equivalences of $U(X)$ are homotopy equivalences.
+Note that the homotopy category $Ho(X)$ is equivalent to the localization of $U(X)$ with respect to homotopy equivalences.
+This can be proved in the usual way (see, for example, \cite[Corollary~1.2.9]{hovey}).
 
-The homotopy category $Ho(X)$ is equivalent to the localization of $U(X)$ with respect to homotopy equivalences.
-Indeed, first let $Ho(U(X))$ be the category which has the same objects as $U(X)$ and morphisms of $Ho(U(X))$
-are equivalence classes of maps of $U(X)$ with respect to the homotopy relation.
-Then $Ho(U(X))$ is equivalent to the localization of $U(X)$, which is proved as usual (see, for example, \cite[Corollary~1.2.9]{hovey}).
-Then $Ho(X)$ is a full subcategory of $Ho(U(X))$.
-The only object that $Ho(X)$ lacks is the empty context.
-But it contains the interval type which is isomorphic to the empty context in the homotopy category
-(both of them are terminal objects in $Ho(U(X))$), so $Ho(X)$ is equivalent to $Ho(U(X))$.
+Usually, category $U(X)$ is defined in such a way that it has all contexts as objects.
+Since we have $\Sigma$ and unit types, these definitions give equivalent categories,
+but if we want $U$ to be exact, then we must use our definition, since otherwise $U$ does not preserve finite limits.
 
-Since every object of $\Mod{T_\Sigma}$ is fibrant, $\Mod{T_\Sigma}$ is a fibration category.
-Then $U : \Mod{T_\Sigma} \to \cat{FibCat}$ is a functor to the category of fibration categories and exact functors.
+Since every object of $\Mod{T_{\Sigma + \top}}$ is fibrant, $\Mod{T_{\Sigma + \top}}$ is a fibration category.
+Then $U : \Mod{T_{\Sigma + \top}} \to \cat{FibCat}$ is a functor to the category of fibration categories and exact functors.
 We already defined $U$ on objects and it is easy to see that every morphism $f : X \to Y$ of models determines morphism $U(f) : U(X) \to U(Y)$ of fibration categories.
+
+\begin{prop}
+Functor $U : \Mod{T_{\Sigma + \top}} \to \cat{FibCat}$ is exact.
+\end{prop}
+\begin{proof}
+Limits in $\Mod{T_{\Sigma + \top}}$ are computed pointwise.
+This implies that $U$ sends limits of models to limits of categories.
+Since there is a unique structure of a fibration category on the terminal category, this implies that $U$ preserves terminal objects.
+The structure of a fibration category on a pullback of (fibration) categories is also defined pointwise, which implies that $U$ preserves pullbacks.
+
+\Rprop{sigma-we-ho} implies that $U$ preserves weak equivalences.
+Thus we only need to prove that $U$ preserves fibrations.
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
