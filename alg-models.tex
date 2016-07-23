@@ -9,7 +9,6 @@
 \usepackage{xargs}
 \usepackage{bussproofs}
 \usepackage{turnstile}
-\usepackage{etex}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
 
@@ -90,6 +89,7 @@
 \newref{prop}{proposition}{Proposition}
 \newref{cor}{corollary}{Corollary}
 \newref{cond}{condition}{Condition}
+\newref{conj}{conjecture}{Conjecture}
 
 \theoremstyle{definition}
 \newref{defn}{definition}{Definition}
@@ -104,27 +104,17 @@
 
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\C}{\cat{C}}
-\newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\Th}{\cat{Th}}
-\newcommand{\algtt}{\cat{AlgTT}}
-\newcommand{\ThC}{\Th_{\mathcal{C}}}
 \newcommand{\emptyCtx}{\mathbf{1}}
-\newcommand{\tta}{\mathbb{T}_0}
-\newcommand{\tts}{\mathbb{T}_1}
 
 \newcommand{\we}{\mathcal{W}}
-\newcommand{\fib}{\mathcal{Fib}}
-\newcommand{\cof}{\mathcal{Cof}}
 \newcommand{\I}{\mathrm{I}}
 \newcommand{\J}{\mathrm{J}}
 \newcommand{\class}[2]{#1\text{-}\mathrm{#2}}
-\newcommand{\Iinj}[1][\I]{\class{#1}{inj}}
 \newcommand{\Icell}[1][\I]{\class{#1}{cell}}
 \newcommand{\Icof}[1][\I]{\class{#1}{cof}}
-\newcommand{\Jinj}[1][]{\Iinj[\J#1]}
 \newcommand{\Jcell}[1][]{\Icell[\J#1]}
-\newcommand{\Jcof}[1][]{\Icof[\J#1]}
 \newcommand{\cyli}{i}
 
 \numberwithin{figure}{section}
@@ -141,19 +131,57 @@
 \begin{abstract}
 Models of dependent type theories are contextual categories with some additional structure.
 We prove that if a theory $T$ has enough structure, then the category $\Mod{T}$ of its models carries the structure of a model category.
-We also show that if $T$ has $\Sigma$ and unit types, then there exists an exact functor from $\Mod{T}$
-to the category of fibration categories which reflects weak equivalences.
+We also show that if $T$ has $\Sigma$ types, then weak equivalences can be characterized in terms of homotopy categories of models.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
 
+It is well-known that algebraic models (such as categories with attributes \cite{pitts}, categories with families \cite{cwf} and contextual categories \cite{GAT})
+of dependent type theories are related to categories with additional structure.
+For example, it was prove in \cite{ext-eq} that models of the type theory with extensional $Id$ and $\Sigma$ types are equivalent (in a weak bicategorical sense)
+to finitely complete categories, and if we assume $\Pi$ types, then we obtain an equivalence with locally cartesian closed categories.
+
+Ideas of homotopy type theory suggest that models of dependent type theories with intensional $Id$ types should be related to $\infty$-categories.
+There are several results (for example, \cite{shul-inv}, \cite{local-universes}, \cite{kapulkin}) that support this intuition,
+but to make this relationship precise we need an appropriate definition of equivalences of models of type theories.
+
+The main contribution of this paper is the construction of a model structure on categories of models of dependent type theories.
+We define this model structure for every algebraic dependent type theory (as defined in \cite{alg-tt}) which has enough structure
+(essentially, path types and a weak form of the univalence axiom).
+Let $T_\Sigma$ be the theory with path types and $\Sigma$ types (see subsection~\ref{sec:sigma} for a precise definition).
+Then we can state a formal conjecture:
+\begin{conj}
+The $(\infty,1)$-category presented by model category $\Mod{T_\Sigma}$ is equivalent to the $(\infty,1)$-category of finitely complete $(\infty,1)$-categories.
+\end{conj}
+Analogous conjectures can be stated for other theories such as the theory with path types, $\Sigma$ types and $\Pi$ types.
+
+It was shown in \cite{szumilo} that the fibration category of fibration categories is equivalent to the fibration category of finitely complete quasicategories.
+Thus it is natural to study the relationship between fibration categories and models of $T_\Sigma$.
+For every model $X$ of $T_\Sigma$, we can define a fibration category $U(X)$ (see \cite{tt-fibr-cat}), and this correspondence defines a functor $U : \Mod{T_\Sigma} \to \cat{FibCat}$
+from the category of models of $T_\Sigma$ to the category of fibration categories.
+Since both $\Mod{T_\Sigma}$ and $\cat{FibCat}$ are fibration categories, it is natural to conjecture that $U$ is exact, but it seems that it is not.
+The main problem is that it seems that $U$ does not preserve fibrations.
+Nevertheless, we can show that $U$ preserves and reflects weak equivalences (see \rprop{sigma-we-ho}), which indicates that $\Mod{T}$ has the correct class of weak equivalences.
+
+We will describe a theory with the interval type and define a model structure on the category of models of theories that have the interval type.
+We can define usual $Id$ types in this theory, but it is stronger than the theory of $Id$ types.
+For example, function extensionality holds in this theory.
+It might be possible to define a model structure on the category of models of theories with $Id$ types,
+but it is more difficult, and we do not know how to do it.
+
+The paper is organized as follows.
+In section 1, we define different theories with the interval type and describe several constructions in these theories.
+We also define a weak univalence axiom and prove that it implies a part of the usual version of this axiom.
+In section 2, we define a model structure on the category of models of a dependent type theory
+and prove a characterization of weak equivalences in this category.
+
 \section{Theories with an interval type}
 
 In this section we describe the theory of an interval type.
 We describe several constructions in this theory which we will need later.
-In partical, we will show that theories with an interval type and path types also have $Id$ types.
+In particular, we will show that theories with an interval type and path types also have $Id$ types.
 We will use a (slightly informal) named presentation of terms,
 from which a formal presentation in terms of De Bruijn indices can be recovered.
 
@@ -556,7 +584,7 @@ We can define $sq_l$ by filling the following horn:
       left \ar[rrrr]           &          & &                      & right
     }\]
 The inner, left, and top squares are $\lambda i\,j.\,left$, the bottom and right squares are $sq$,
-and the filler gives us the outter square which is the required operation $sq_l$.
+and the filler gives us the outer square which is the required operation $sq_l$.
 Formally, we define $sq_l(i,j)$ as
 \[ at(at(coe_0(\lambda x_1.\,Path(\lambda x_2.\,left \idtype sq(x_1,x_2), refl(left), p_1), p_2),i),j) \]
 where $p_1 = path(\lambda x_3.\,sq(x_1,x_3))$, $p_2 = refl(refl(left))$.
@@ -579,7 +607,7 @@ We can define $sq_r$ by filling the following horn:
 The inner square is $\lambda x_1\,x_2.\,left$, the left square is $\lambda x_2\,x_3.\,sq_l(x_2,x_3)$,
 the top square is $\lambda x_1\,x_3.\,sq_l(x_1,x_3)$, the right square is $\lambda x_2.\,x_3.\,x_3$,
 and the bottom square is $\lambda x_1\,x_3.\,x_3$.
-The outter square gives us the required operation $sq_r$.
+The outer square gives us the required operation $sq_r$.
 
 We will also need operation $dc'$ which satisfies the following axioms:
 \begin{align*}
@@ -600,7 +628,7 @@ Consider the following picture:
     }\]
 Here $j$ is going from left to right, $k$ is going from top to bottom, and $i$ is going diagonally.
 Top square is $\lambda j\,i.\,i$, bottom square is $\lambda j\,i.\,j$, left side of the inner square is $\lambda k.\,left$,
-and the right side of the outter square is $\lambda k.\,right$.
+and the right side of the outer square is $\lambda k.\,right$.
 We can take the inner square to be $\lambda j\,k.\,sq_l(j,k)$ and the right square to be $\lambda j\,k.\,sq_r(j,k)$.
 The left square we can define by the filler operation.
 
@@ -695,7 +723,7 @@ We can also consider theory $coe^l_2 + \beta^l_2$ which is $coe^l_2$ together wi
 \DisplayProof
 \end{center}
 
-We call such verions of these operations \emph{local}, and the ones that were defined before \emph{global}.
+We call such versions of these operations \emph{local}, and the ones that were defined before \emph{global}.
 The relationship between local versions of these operations is the same as between global ones.
 Usually, if we have $\Pi$ type, then we can define local versions in terms of global, but without them local are strictly stronger.
 But this is not the case for $coe_2 + \beta_2$; it turns out that $coe^l_2 + \beta^l_2$ follow from $coe_2 + \beta_2$ even without $\Pi$ types.
@@ -776,7 +804,7 @@ We already saw examples of two and three-dimensional filler operations.
 Here we define theories $Fill^l_{tm}$ and $Fill_{tm}$ of local and global filler operations.
 We will also construct morphisms between $Fill_{tm} + Path$ and $coe_1 + Path$;
 It might be possible to construct a map from $Fill^l_{tm}$ to $coe_2 + \beta_2 + Path$, but it is more complicated and we will not need this construction.
-In this subsection we switch back to the presentation of terms using de Bruijn indices since it will be notationally more convenient.
+In this subsection we switch back to the presentation of terms using De Bruijn indices since it will be notationally more convenient.
 
 First, let us introduce a bit of notation.
 Recall that if $(a_1, \ldots a_k)$ is a morphism of contexts $\Gamma$ and $\Delta$ and $b : (p,k+m)$ is such that $\vdash ctx^m(b) \deq \Delta$,
@@ -834,7 +862,7 @@ Actually, theory $coe^l_1$ and subtheory of $Fill^l_{tm}$ which consists of $Fil
 
 We can define analogous maps between $Fill_{(tm,1)}$ and $coe_1$, but we also can define a morphism $Fill_{tm} \to coe_1 + Path$.
 We define terms $Fill_{(tm,n)}$ by induction on $n$.
-We alredy defined such term for $n = 1$, and we can define $Fill_{(tm,n+1)}$ as
+We already defined such term for $n = 1$, and we can define $Fill_{(tm,n+1)}$ as
 \[ at(Fill_{(tm,n)}(Path(D, d_{[0 = left]}, d_{[0 = right]}), path(d_{[1 = left]}), \ldots path(d_{[n = left]}))\!\uparrow, v_0). \]
 
 \subsection{Univalence}
@@ -977,7 +1005,7 @@ The right one, for example, is defined as $p_{1-}[x \repl p]$.
 By naturality and \rlem{squares-eq}, top and bottom rows are homotopic to $p_{-0}$ and $p_{-1}$ respectively.
 Thus $p_{-0} * p_{1-} \idtype p_{0-} * p_{-1}$, and \rlem{squares-eq} implies that there exists a filler for the corresponding square.
 
-Thus to construct $h(p)$, it is enough to define $h(a_1)$ in such a way that the outter square in the following diagram commutes:
+Thus to construct $h(p)$, it is enough to define $h(a_1)$ in such a way that the outer square in the following diagram commutes:
 \[ \xymatrix{ coe_2(\lambda i.\,\psi(H), right, y, left) \ar[r]^{q_1'} \ar[d]_{h(a_1)} & coe_2(\lambda i.\,\psi(H), right, b', left) \ar[rr]^-{\psi(\varphi'(p))[x \repl a_1]} \ar[d]_{h(a_1)[y \repl b[x \repl a_1]]} & & a_1 \ar[d]_{refl(a_1)} \\
               a_1 \ar[r]_{a_1[y \repl sym(q_1)]} & a_1[y \repl b'] \ar[rr]_-{p[x \repl a_1]}                                                                                                                           & & a_1
             } \]
@@ -988,7 +1016,7 @@ Since $q_1'$ has an inverse, the right square also commutes.
 
 \section{Model structure on models of theories with an interval type}
 
-For every regular theory $T$ under $coe_1 + \sigma + Path + wUA$, we define a model structure on the category of models of $T$.
+In this section for every regular theory $T$ under $coe_1 + \sigma + Path + wUA$, we define a model structure on the category of models of $T$.
 Every object of this model structure is fibrant and weak equivalences have several equivalent descriptions.
 
 \subsection{Construction of models}
@@ -1098,7 +1126,7 @@ Propositions \nprop{lang-ff} and \nprop{syn-lang} imply that colimits of models 
 Since colimits of theories have simple explicit description (see \cite{alg-tt}), this gives us explicit description of colimits of models.
 \end{rem}
 
-For every morphism of theories $f : \mathbb{T} \to \mathbb{T}'$ there is a functor $f^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ which was consttucted in \cite{alg-tt}.
+For every morphism of theories $f : \mathbb{T} \to \mathbb{T}'$ there is a functor $f^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ which was constructed in \cite{alg-tt}.
 We also can define functor $f_! : \Mod{\mathbb{T}} \to \Mod{\mathbb{T}'}$ as $f_!(M) = Syn(Lang(M) \amalg_{\mathbb{T}} \mathbb{T}')$.
 It was shown in \cite{PHL} that $f_!$ is left adjoint to $f^*$.
 This theorem was proved there only for a weaker notion of morphisms of theories, but the proof also works for general morphisms as defined in \cite{alg-tt}.
@@ -1121,7 +1149,19 @@ Thus this model is isomorphic to the free model $F(\{\,a : (tm,n)\,\})$.
 
 \subsection{Model structure}
 
-We will construct model structure on $\Mod{T}$ by means of the following result from \cite{f-model-structures}:
+To construct a model structure on $\Mod{T}$, we need to recall a few definitions from \cite{f-model-structures}.
+A reflexive path object $P(X)$ for an object $X$ is any factorization of the diagonal $X \to X \times X$.
+A reflexive cylinder object $C_U(V)$ for a map $i : U \to V$ is any factorization of $[id_V,id_V] : V \amalg_U V \to V$.
+Maps $f,g : V \to X$ are homotopic relative to a cylinder object $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, if there exists a map $h : C_U(V) \to X$
+such that $h \circ \cyli_0 = f$ and $h \circ \cyli_1 = g$.
+In this case we will write $f \sim_i g$.
+We say that a map $f : X \to Y$ has RLP up to $\sim_i$ with respect to $i : U \to V$ if for every commutative square of the form
+\[ \xymatrix{ U \ar[r]^u \ar@{}[dr]|(.7){\sim_i} \ar[d]_i & X \ar[d]^f \\
+              V \ar[r]_v \ar@{-->}[ur]^g                  & Y,
+            } \]
+there is a dotted arrow $g : V \to X$ such that $g \circ i = u$ and $(f \circ g) \sim_i v$.
+
+We will also need the following theorem from \cite{f-model-structures}:
 \begin{thm}[model-structures]
 Let $\C$ be a complete and cocomplete category, and let $\I$ be a set of maps of $\C$
 such that the domains and the codomains of maps in $\I$ are cofibrant and small relative to $\Icell$.
@@ -1135,7 +1175,7 @@ Suppose that for every object $X$, there exists a reflexive path object $P(X)$ s
 \item $p_0$ has RLP with respect to $\I$.
 \item For every $f : X \to Y$, there exists a morphism of path objects $(f,P(f)) : P(X) \to P(Y)$,
 \item For every object $X$, there exists a map $s : P(X) \to P(X)$ such that $p_0 \circ s = p_1$ and $p_1 \circ s = p_0$.
-\item Either path objects are reflexive and maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_\I$
+\item Either maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_\I$
 or maps in $\Jcell[_\I]$ have RLP up to $\sim^{r*}$ with respect to the domains of maps in $\I$.
 \end{enumerate}
 Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a set of generating cofibrations,
@@ -1179,7 +1219,7 @@ It is obvious that $P$ preserves identity morphisms and compositions.
 
 To define the structure of a path object on $P(X)$, we need to assume that $(T,\alpha)$ is regular.
 In this case, we define $t : X \to P(X)$ as $t(a) = I \times a$, and $p_0,p_1 : P(X) \to X$ as $p_0(a) = left^*(a)$ and $p_1(a) = right^*(a)$.
-The regularity conidition ensures that function and predicate symbols are stable under operations $I \times -$ and $c^*(-)$.
+The regularity condition ensures that function and predicate symbols are stable under operations $I \times -$ and $c^*(-)$.
 Hence these definitions indeed determine morphisms of models.
 The fact that $p_0 \circ t = p_1 \circ t = id_X$ follows from properties of operation $subst^n$.
 If $T$ is under $HPath + coe_0$, then we can define $s : P(X) \to P(X)$ as $s(a) = subst^n(I, a, inv(v_0))$, where
@@ -1258,7 +1298,7 @@ It is easy to see that applying $h$ to this axiom produces a theorem.
 If $t$ is closed term, then $h(t)$ is also closed.
 Thus for every element $t \in Y_{(p,n)}$, we defined an element $h(t) \in Y_{(p,n+1)}$ such that $ctx^n(h(t)) = I$.
 Thus $h(t)$ defines an element of $P(Y)_{(p,n)}$.
-Moreover, $p_1 \circ h(t) = t$ and $p_0 \circ h(t)$ factors throug $X$,
+Moreover, $p_1 \circ h(t) = t$ and $p_0 \circ h(t)$ factors through $X$,
 which shows that $X \to Y$ has RLP up to $\sim^r$ with respect to objects of the form $F(\{\,\Delta : (p,n)\,\})$.
 \end{proof}
 
@@ -1276,7 +1316,7 @@ Note that $h'(A) = I \times A$, so $h'$ is a well-defined map by the universal p
 \end{proof}
 
 Now, we can complete the construction of the model structure:
-\begin{thm}
+\begin{thm}[main]
 For every regular theory $T$ under $coe_1 + \sigma + Path + wUA$, sets $\I$ and $\J_\I$ and functor $P : \Mod{T} \to \Mod{T}$ satisfy conditions of \rthm{model-structures}.
 \end{thm}
 \begin{proof}
@@ -1297,7 +1337,8 @@ By \rlem{Jhom}, $t \sim^r v' \circ v \circ t \sim^r v' \circ f' \circ t' = f \ci
 Thus $t'$ is the required lifting.
 \end{proof}
 
-\section{Theories with sigma types}
+\subsection{Theories with sigma types}
+\label{sec:sigma}
 
 In this section we give several equivalent descriptions of weak equivalences between models of theories with $\Sigma$ types.
 We also discuss the relationship between such models and fibration categories.
@@ -1348,10 +1389,10 @@ Recall that the theory of $\Sigma$ types with eta has the following rules:
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\Gamma \vdash pair(A, B, proj_1(A, B, p), proj_2(A, B, p)) \deq p$}
+\UnaryInfC{$\Gamma \vdash pair(A, B, \pi_1(A, B, p), \pi_2(A, B, p)) \deq p$}
 \DisplayProof
 \end{center}
-We will usually omit first two arguments to $pair$, $\pi_1$ nad $\pi_2$.
+We will usually omit first two arguments to $pair$, $\pi_1$ and $\pi_2$.
 
 If $T$ has $\Sigma$ types and $X$ is a model of $T$, then every nonempty context of $X$ is isomorphic to a context of length 1.
 Indeed, for every $(A_1, \ldots A_n \vdash) \in X_{(ty,n)}$, we define $\Sigma(A_1, \ldots A_n) \in X_{(ty,0)}$ as $\Sigma(A_1, \ldots \Sigma(A_{n-1},A_n))$.
@@ -1409,8 +1450,6 @@ Thus $g$ and $g'$ define an equivalence between $f(A'')$ and $d^*(A)$.
 Then $c^*(g)$ and $c^*(g')$ define an equivalence between $f(c^*(A''))$ and $A$.
 Thus $\Gamma \vdash c^*(A'')$ is the required lift of $A$.
 \end{proof}
-
-\subsection{Homotopy category}
 
 If $T$ is under $HPath$, then for every model $X$ of $T$ we can define its homotopy category $Ho(X)$.
 To define it, we need to introduce an equivalence relation on the set of terms.
@@ -1480,63 +1519,25 @@ If we take $p = pair(v_0, refl(v_0))$, $p' = pair(v_0, f(s))$ and $h = f(h')$, t
 which implies that $f(s)$ is homotopic to $refl(v_0)$.
 \end{proof}
 
-\subsection{Fibration categories}
-
-Fibration categories were introduced in \cite{brown}.
-It was shown in \cite{szumilo} that the category of fibration categories itself carries the structure of a fibration category,
-and this fibration category is equivalent to the fibration category of finitely complete quasicategories.
-
-We conjecture that the model category of models of $coe_1 + \sigma + Path + wUA + \Sigma$
-presents the $\infty$-category of finitely complete $\infty$-categories.
-Thus it is natural to study the relationship between the category of models of $coe_1 + \sigma + Path + wUA + \Sigma$ and the category of fibration categories.
-
-It turns out that if we want to construct an exact functor from the category of models to the category of fibration categories,
-then we need to assume that our theory has unit types.
-Recall that theory $\top$ is defined as follows:
-\begin{center}
-\AxiomC{}
-\UnaryInfC{$\Gamma \vdash \top\ type$}
-\DisplayProof
-\quad
-\AxiomC{}
-\UnaryInfC{$\Gamma \vdash unit : \top$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma \vdash t : \top$}
-\UnaryInfC{$\Gamma \vdash t \deq unit$}
-\DisplayProof
-\end{center}
-
-Let $T_{\Sigma + \top} = coe_1 + \sigma + Path + wUA + \Sigma + \top$.
-Every model of $T_{\Sigma + \top}$ carries the structure of a fibration category, which was proved in \cite{tt-fibr-cat}.
-The proofs there work in our case too.
+Let $T_\Sigma = coe_1 + \sigma + Path + wUA + \Sigma$.
+Every model of $T_\Sigma$ carries the structure of a fibration category, which was proved in \cite{tt-fibr-cat}.
 Let us briefly describe this construction.
-If $X$ is a model of $T_{\Sigma + \top}$, then we define category $U(X)$, which has types from $X_{(ty,0)}$ as objects and terms of the form $A \vdash b : B\!\uparrow$ as morphisms between $A$ and $B$.
+If $X$ is a model of $T_\Sigma$, then we define category $U(X)$, which has contexts (that is, elements of $X_{(ctx,n)}$) as objects and context morphisms as morphisms.
 A map $f : A \to B$ is a fibration if and only if it is isomorphic over $B$ to a map of the form $\pi_1 : \Sigma(B,C) \to B$.
 Weak equivalences of $U(X)$ are homotopy equivalences.
-Note that the homotopy category $Ho(X)$ is equivalent to the localization of $U(X)$ with respect to homotopy equivalences.
-This can be proved in the usual way (see, for example, \cite[Corollary~1.2.9]{hovey}).
 
-Usually, category $U(X)$ is defined in such a way that it has all contexts as objects.
-Since we have $\Sigma$ and unit types, these definitions give equivalent categories,
-but if we want $U$ to be exact, then we must use our definition, since otherwise $U$ does not preserve finite limits.
+The homotopy category $Ho(X)$ is equivalent to the localization of $U(X)$ with respect to homotopy equivalences.
+Indeed, first note that since we have $\Sigma$ types, $U(X)$ is equivalent to its full subcategory on contexts of length $\leq 1$.
+Let $Ho'(X)$ be the category which has contexts of length $\leq 1$ as objects,
+and morphisms of $Ho'(X)$ are equivalence classes of maps of $U(X)$ with respect to the homotopy relation.
+Then $Ho'(X)$ is equivalent to the localization of $U(X)$, which can be proved as usual (see, for example, \cite[Corollary~1.2.9]{hovey}).
+Then $Ho(X)$ is a full subcategory of $Ho'(X)$.
+The only object that $Ho(X)$ lacks is the empty context.
+But it contains the interval type which is isomorphic to the empty context in the homotopy category
+(both of them are terminal objects in $Ho'(X)$), so $Ho(X)$ is equivalent to $Ho'(X)$.
 
-Since every object of $\Mod{T_{\Sigma + \top}}$ is fibrant, $\Mod{T_{\Sigma + \top}}$ is a fibration category.
-Then $U : \Mod{T_{\Sigma + \top}} \to \cat{FibCat}$ is a functor to the category of fibration categories and exact functors.
-We already defined $U$ on objects and it is easy to see that every morphism $f : X \to Y$ of models determines morphism $U(f) : U(X) \to U(Y)$ of fibration categories.
-
-\begin{prop}
-Functor $U : \Mod{T_{\Sigma + \top}} \to \cat{FibCat}$ is exact.
-\end{prop}
-\begin{proof}
-Limits in $\Mod{T_{\Sigma + \top}}$ are computed pointwise.
-This implies that $U$ sends limits of models to limits of categories.
-Since there is a unique structure of a fibration category on the terminal category, this implies that $U$ preserves terminal objects.
-The structure of a fibration category on a pullback of (fibration) categories is also defined pointwise, which implies that $U$ preserves pullbacks.
-
-\Rprop{sigma-we-ho} implies that $U$ preserves weak equivalences.
-Thus we only need to prove that $U$ preserves fibrations.
-\end{proof}
+Thus, \rprop{sigma-we-ho} implies that a map $f : X \to Y$ of models is a weak equivalence if and only if
+corresponding map $U(f)$ of fibration categories is a weak equivalence.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
