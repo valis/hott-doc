@@ -4,7 +4,6 @@
 \usepackage{hyperref}
 \usepackage{mathtools}
 \usepackage[all]{xy}
-\usepackage{verbatim}
 \usepackage{ifthen}
 \usepackage{xargs}
 \usepackage{bussproofs}
@@ -172,12 +171,13 @@ It might be possible to define a model structure on the category of models of th
 but it is more difficult, and we do not know how to do it.
 
 The paper is organized as follows.
-In section 1, we define different theories with the interval type and describe several constructions in these theories.
+In section~\ref{sec:HoTT-I}, we define different theories with the interval type and describe several constructions in these theories.
 We also define a weak univalence axiom and prove that it implies a part of the usual version of this axiom.
-In section 2, we define a model structure on the category of models of a dependent type theory
+In section~\ref{sec:model-structure}, we define a model structure on the category of models of a dependent type theory
 and prove a characterization of weak equivalences in this category.
 
 \section{Theories with an interval type}
+\label{sec:HoTT-I}
 
 In this section we describe the theory of an interval type.
 We describe several constructions in this theory which we will need later.
@@ -483,7 +483,12 @@ This diagram does not commute strictly, but it should commute up to some appropr
 
 Arrows $Id_- \to Id$ and $coe'_1 \to coe'_2$ are obvious.
 Let us construct vertical maps.
-Let $refl(a) = path(ty(a), \lambda x.\,a)$ and $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a', p) = coe_0(\lambda i.\,D', d[x \repl a])$, where $D'$ is defined as
+Define $refl$ and $J$ as follows:
+\begin{align*}
+refl(a) & = path(ty(a), \lambda x.\,a) \\
+J(A, \lambda x y z.\,D, \lambda x.\,d, a, a', p) & = coe_0(\lambda i.\,D', d[x \repl a])
+\end{align*}
+where $D'$ is defined as follows:
 \[ D[x \repl a, y \repl at(a, a', p, sq(i,right)), z \repl path(ty(a), \lambda j.\,at(a, a', p, sq(i,j)))]. \]
 Note that $J(A, \lambda x y z.\,D, \lambda x.\,d, a, a, refl(a))$ equals to $coe_0(\lambda i. D'', d[x \repl a])$ where $D'' = D[x \repl a, y \repl a, z \repl refl(a)]$.
 Thus if we have $\sigma$ rule, then equation $\vdash J(A, \lambda x y z.\,D, \lambda x.\,d, a, a, refl(a)) \deq d[x \repl a]$ holds.
@@ -1015,17 +1020,19 @@ Since $q_1'$ has an inverse, the right square also commutes.
 \end{proof}
 
 \section{Model structure on models of theories with an interval type}
+\label{sec:model-structure}
 
-In this section for every regular theory $T$ under $coe_1 + \sigma + Path + wUA$, we define a model structure on the category of models of $T$.
+In this section for every regular theory $T$ (see \cite{alg-tt} for a definition of regular theories)
+under $coe_1 + \sigma + Path + wUA$, we define a model structure on the category of models of $T$.
 Every object of this model structure is fibrant and weak equivalences have several equivalent descriptions.
 
 \subsection{Construction of models}
 
 First, we need to describe several constructions of models of a theory.
 
-For every model $M$ of $\mathbb{T}$, we define a theory $Lang(M)$.
-It has function and predicate symbols of $\mathbb{T}$ together with function symbol $O_a : s$ for every $a \in A_s$.
-Axioms of $Lang(M)$ are axioms of $\mathbb{T}$ together with the following sequents:
+For every model $M$ of a theory $T$, we define a theory $Lang(M)$.
+It has function and predicate symbols of $T$ together with function symbol $O_a : s$ for every $a \in A_s$.
+Axioms of $Lang(M)$ are axioms of $T$ together with the following sequents:
 \begin{align*}
 & \sststile{}{} O_a \downarrow \\
 & \sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M(\sigma)(a_1, \ldots a_k)} \\
@@ -1035,8 +1042,8 @@ for every $a \in A_s$, every $a_i \in A_{s_i}$,
 every $\sigma \in \mathcal{F}$ such that $M(\sigma)(a_1, \ldots a_k)$ is defined,
 and every $R \in \mathcal{P}$ such that $(a_1, \ldots a_k) \in M(R)$.
 
-Models of $Lang(M)$ are just models of $\mathbb{T}$ together with a morphism from $M$.
-That is, categories $M/\Mod{\mathbb{T}}$ and $\Mod{Lang(M)}$ are isomorphic.
+Models of $Lang(M)$ are just models of $T$ together with a morphism from $M$.
+That is, categories $M/\Mod{T}$ and $\Mod{Lang(M)}$ are isomorphic.
 In particular, $A$ has a natural structure of a model of $Lang(M)$ defined as follows:
 \begin{align*}
 \alpha'(f)(O_a) & = a \\
@@ -1062,8 +1069,8 @@ Note that if $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k})\!\!\downarrow$ is de
 Thus $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M(\sigma)(a_1, \ldots a_k)}$ is also derivable.
 \end{proof}
 
-For every morphism $h : M \to N$ of models of $\mathbb{T}$, we can define a morphism $Lang(h) : Lang(M) \to Lang(N)$ of theories under $\mathbb{T}$ as $Lang(h)(O_a) = O_{h(a)}$.
-Thus $Lang$ is a functor $\Mod{\mathbb{T}} \to \mathbb{T}/\Th_\mathcal{S}$.
+For every morphism $h : M \to N$ of models of $T$, we can define a morphism $Lang(h) : Lang(M) \to Lang(N)$ of theories under $T$ as $Lang(h)(O_a) = O_{h(a)}$.
+Thus $Lang$ is a functor $\Mod{T} \to T/\Th_\mathcal{S}$.
 
 \begin{prop}[lang-ff]
 $Lang$ is fully faithful.
@@ -1073,8 +1080,8 @@ Let $h_1$, $h_2$ be morphisms of models such that $Lang(h_1) = Lang(h_2)$.
 Then $O_{h_1(a)} = Lang(h_1)(O_a) = Lang(h_2)(O_a) = O_{h_2(a)}$, and by \rlem{cl-term}, $h_1(a) = h_2(a)$.
 Thus $Lang$ is faithful.
 
-Let $M_1 = (A_1,\alpha_1,\beta_1)$ and $M_2 = (A_2,\alpha_2,\beta_2)$ be models of $\mathbb{T}$,
-    and let $h : Lang(M_1) \to Lang(M_2)$ be a morphism of theories under $\mathbb{T}$.
+Let $M_1 = (A_1,\alpha_1,\beta_1)$ and $M_2 = (A_2,\alpha_2,\beta_2)$ be models of $T$,
+    and let $h : Lang(M_1) \to Lang(M_2)$ be a morphism of theories under $T$.
 Then by \rlem{cl-term}, for every $a \in A_1$, there is a unique $h'(a) \in A_2$ such that $\sststile{}{} h(O_a) = O_{h'(a)}$ is a theorem of $Lang(M_2)$.
 Let us show that $h' : A_1 \to A_2$ is a morphism of models $M_1$ and $M_2$.
 Indeed, if $M_1(\sigma)(a_1, \ldots a_k)$ is defined, then $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M_1(\sigma)(a_1, \ldots a_k)}$ is a theorem of $Lang(M_1)$.
@@ -1091,33 +1098,33 @@ Note that by definition of $h'$, $Lang(h') = h$.
 Hence $Lang$ is full.
 \end{proof}
 
-Now, let us describe a functor $Syn : \mathbb{T}/\Th_\mathcal{S} \to \Mod{\mathbb{T}}$.
-For every $i : \mathbb{T} \to \mathbb{T}'$, let $Syn(i) = i^*(0_{\mathbb{T}'})$, where $0_{\mathbb{T}'}$ is the initial object of $\Mod{\mathbb{T}'}$,
-    and $i^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ is the functor that was defined in \cite{alg-tt}.
-If $f : \mathbb{T}_1 \to \mathbb{T}_2$ is a morphism of theories under $\mathbb{T}$, then let $Syn(f) = i_1^*(!_{f^*(0_{\mathbb{T}_2})})$,
-    where $!_{f^*(0_{\mathbb{T}_2})}$ is the unique morphism $0_{\mathbb{T}_1} \to f^*(0_{\mathbb{T}_2})$.
+Now, let us describe a functor $Syn : T/\Th_\mathcal{S} \to \Mod{T}$.
+For every $i : T \to T'$, let $Syn(i) = i^*(0_{T'})$, where $0_{T'}$ is the initial object of $\Mod{T'}$,
+and $i^* : \Mod{T'} \to \Mod{T}$ is the functor that was defined in \cite{alg-tt}.
+If $f : T_1 \to T_2$ is a morphism of theories under $T$, then let $Syn(f) = i_1^*(!_{f^*(0_{T_2})})$,
+where $!_{f^*(0_{T_2})}$ is the unique morphism $0_{T_1} \to f^*(0_{T_2})$.
 
 The construction of initial models of partial Horn theories was given in \cite{PHL}.
 Let us repeat it here.
-Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a standard partial Horn theory.
-First, we define a partial equivalence relations on sets $Term_\mathcal{F}(\varnothing)$ as $t_1 \sim t_2$ if and only if $\sststile{}{} t_1 = t_2$ is a theorem of $\mathbb{T}$.
-The interpretation of $R \in \mathcal{P}$ consists of tuples $(t_1, \ldots t_k)$ such that $\sststile{}{} R(t_1, \ldots t_k)$ is derivable in $\mathbb{T}$.
+Let $T = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a standard partial Horn theory.
+First, we define a partial equivalence relations on sets $Term_\mathcal{F}(\varnothing)$ as $t_1 \sim t_2$ if and only if $\sststile{}{} t_1 = t_2$ is a theorem of $T$.
+The interpretation of $R \in \mathcal{P}$ consists of tuples $(t_1, \ldots t_k)$ such that $\sststile{}{} R(t_1, \ldots t_k)$ is derivable in $T$.
 Then $\mathcal{S}$-set $Term_\mathcal{F}(\varnothing)/\!\sim$ has a natural structure of a model of $((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$, and this model is initial.
 
 \begin{prop}[syn-lang]
 $Syn$ is right adjoint to $Lang$.
 \end{prop}
 \begin{proof}
-Let $\epsilon_{\mathbb{T}'} : Lang(Syn(\mathbb{T}')) \to \mathbb{T}'$ be defined as $\epsilon_{\mathbb{T}'}(O_t) = t$.
-It is easy to see that $\epsilon_{\mathbb{T}'}$ preserves axioms of $Lang(Syn(\mathbb{T}'))$.
-Moreover, $\epsilon$ is natural in $\mathbb{T}'$.
+Let $\epsilon_{T'} : Lang(Syn(T')) \to T'$ be defined as $\epsilon_{T'}(O_t) = t$.
+It is easy to see that $\epsilon_{T'}$ preserves axioms of $Lang(Syn(T'))$.
+Moreover, $\epsilon$ is natural in $T'$.
 Let us prove that $\epsilon$ is the counit of the adjunction.
-Let $f : Lang(M) \to \mathbb{T}'$ be a morphism.
-Then we need to show that there is a unique morphism $g : Lang(M) \to Lang(Syn(\mathbb{T}'))$ such that $\epsilon_{\mathbb{T}'} \circ g = f$.
+Let $f : Lang(M) \to T'$ be a morphism.
+Then we need to show that there is a unique morphism $g : Lang(M) \to Lang(Syn(T'))$ such that $\epsilon_{T'} \circ g = f$.
 By \rlem{cl-term}, there is a unique $t$ such that $g(O_a) = O_t$.
-Since $t = \epsilon_{\mathbb{T}'}(g(O_a)) = f(O_a)$, $g$ must satisfy equation $g(O_a) = O_{f(O_a)}$.
+Since $t = \epsilon_{T'}(g(O_a)) = f(O_a)$, $g$ must satisfy equation $g(O_a) = O_{f(O_a)}$.
 Thus $g$ is unique.
-It is easy to see that this $g$ preserves axioms of $Lang(M)$; hence it defines a morphism $g : Lang(M) \to Lang(Syn(\mathbb{T}'))$.
+It is easy to see that this $g$ preserves axioms of $Lang(M)$; hence it defines a morphism $g : Lang(M) \to Lang(Syn(T'))$.
 \end{proof}
 
 \begin{rem}[colimits]
@@ -1126,19 +1133,19 @@ Propositions \nprop{lang-ff} and \nprop{syn-lang} imply that colimits of models 
 Since colimits of theories have simple explicit description (see \cite{alg-tt}), this gives us explicit description of colimits of models.
 \end{rem}
 
-For every morphism of theories $f : \mathbb{T} \to \mathbb{T}'$ there is a functor $f^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ which was constructed in \cite{alg-tt}.
-We also can define functor $f_! : \Mod{\mathbb{T}} \to \Mod{\mathbb{T}'}$ as $f_!(M) = Syn(Lang(M) \amalg_{\mathbb{T}} \mathbb{T}')$.
+For every morphism of theories $f : T \to T'$ there is a functor $f^* : \Mod{T'} \to \Mod{T}$ which was constructed in \cite{alg-tt}.
+We also can define functor $f_! : \Mod{T} \to \Mod{T'}$ as $f_!(M) = Syn(Lang(M) \amalg_{T} T')$.
 It was shown in \cite{PHL} that $f_!$ is left adjoint to $f^*$.
 This theorem was proved there only for a weaker notion of morphisms of theories, but the proof also works for general morphisms as defined in \cite{alg-tt}.
 
 Functor $f_!$ can be used to present a model of a theory by generators and relations.
-Let $\mathbb{T}$ be a fixed $\mathcal{S}$-theory.
+Let $T$ be a fixed $\mathcal{S}$-theory.
 Note that models of the empty theory are just $\mathcal{S}$-sets.
-If $f : 0 \to \mathbb{T}$ is the unique morphism from the empty theory, then $f^*(M)$ is just the underlying $\mathcal{S}$-set of $M$,
-    and $f_!(X)$ is the free model of $\mathbb{T}$ on $\mathcal{S}$-set $X$.
+If $f : 0 \to T$ is the unique morphism from the empty theory, then $f^*(M)$ is just the underlying $\mathcal{S}$-set of $M$,
+    and $f_!(X)$ is the free model of $T$ on $\mathcal{S}$-set $X$.
 We will denote this free model by $F(X)$.
-If $R$ is a set of axioms in the language of theory $Lang(X) \amalg \mathbb{T}$,
-    then let $F(X,R)$ be a model of $\mathbb{T}$ defined as $Syn(Lang(X) \amalg \mathbb{T} \cup R)$.
+If $R$ is a set of axioms in the language of theory $Lang(X) \amalg T$,
+    then let $F(X,R)$ be a model of $T$ defined as $Syn(Lang(X) \amalg T \cup R)$.
 By definition of $Syn$, to construct a morphism $F(X,R) \to M$ it is necessary and sufficient
     to construct a morphism from $X$ to the underlying $\mathcal{S}$-set of $M$ such that relations from $R$ are true in $M$.
 
