@@ -101,6 +101,7 @@
 
 \newcommand{\deq}{\equiv}
 \newcommand{\repl}{:=}
+\newcommand{\idtype}{\rightsquigarrow}
 
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\C}{\cat{C}}
@@ -150,14 +151,11 @@
 
 \section{Introduction}
 
-\section{Properties of categories of theories and their models}
+\section{Categories of theories}
 
 It was shown in \cite{PHL} that partial Horn theories are equivalent to essentially algebraic theories.
 It follows that categories of models of these theories are locally presentable.
 In this section we will prove that different categories of theories are also locally finitely presentable.
-We will also show that the category of models of a theory $T$ is a coreflective full subcategory of theories under $T$.
-
-\subsection{Categories of theories}
 
 We will consider the category $B/\Th_\mathcal{S}$ of theories under some theory $B$.
 Every object of this category is isomorphic to an object of the form
@@ -269,8 +267,10 @@ Categories $\algtt^0_{st}$, $\algtt^1_{st}$ and $\algtt^1_{reg}$ are locally fin
 \begin{proof}
 Category $\algtt^1_{reg}$ is a reflective subcategory of $\algtt^1_{st}$ and is closed under colimits.
 Hence it is also locally finitely presentable.
+\todo{Finish the proof}
 \end{proof}
 
+\begin{comment}
 \subsection{The category of models}
 
 Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a standard partial Horn theory and let $M = (A,\alpha,\beta)$ be its model.
@@ -278,103 +278,6 @@ If $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$, then
     for the partial function defined as $M(\sigma)(a_1, \ldots a_k) = \alpha(x_i \mapsto a_i)(\sigma(x_1, \ldots x_k))$.
 If $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$ then we will write $M(R)$ for the subset of $A_{s_1} \times \ldots A_{s_k}$,
     which consists of tuples $(a_1, \ldots a_k)$ such that $\beta(x_i \mapsto a_i)(R(x_1, \ldots x_k)) = \top$.
-
-For every model $M$ of $\mathbb{T}$, we define a theory $Lang(M)$.
-It has function and predicate symbols of $\mathbb{T}$ together with function symbol $O_a : s$ for every $a \in A_s$.
-Axioms of $Lang(M)$ are axioms of $\mathbb{T}$ together with the following sequents:
-\begin{align*}
-& \sststile{}{} O_a \downarrow \\
-& \sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M(\sigma)(a_1, \ldots a_k)} \\
-& \sststile{}{} R(O_{a_1}, \ldots O_{a_k})
-\end{align*}
-for every $a \in A_s$, every $a_i \in A_{s_i}$,
-every $\sigma \in \mathcal{F}$ such that $M(\sigma)(a_1, \ldots a_k)$ is defined,
-and every $R \in \mathcal{P}$ such that $(a_1, \ldots a_k) \in M(R)$.
-
-Models of $Lang(M)$ are just models of $\mathbb{T}$ together with a morphism from $M$.
-That is, categories $M/\Mod{\mathbb{T}}$ and $\Mod{Lang(M)}$ are isomorphic.
-In particular, $A$ has a natural structure of a model of $Lang(M)$ defined as follows:
-\begin{align*}
-\alpha'(f)(O_a) & = a \\
-\alpha'(f)(\sigma(x_1, \ldots x_k)) & = \alpha(f)(\sigma(x_1, \ldots x_k)) \\
-\beta'(f)(R(x_1, \ldots x_k)) & = \beta(f)(R(x_1, \ldots x_k))
-\end{align*}
-
-\begin{lem}[cl-term]
-If $t \in Term_\mathcal{F}(\varnothing)_s$ is such that $\sststile{}{} t \downarrow$ is a theorem of $Lang(M)$,
-    then there is a unique $a \in A_s$ such that $\sststile{}{} t = O_a$ is a theorem of $Lang(M)$.
-\end{lem}
-\begin{proof}
-Since $(A,\alpha',\beta')$ is a model of $Lang(M)$, for every theorem $\varphi \sststile{}{V} \psi$ of $Lang(M)$
-    and every total function $f : V \to A$, if $\beta'(f)(\varphi) = \top$, then $\beta'(f)(\psi) = \top$.
-In particular, if $\sststile{}{} O_a = O_{a'}$, then $a = a'$.
-Hence if $\sststile{}{} t = O_a$ and $\sststile{}{} t = O_{a'}$, then $a = a'$, so such $a$ is unique.
-
-Let us prove its existence.
-We do this by induction on $t$.
-If $t = O_a$, then we are done.
-If $t = \sigma(t_1, \ldots t_k)$, then by induction hypothesis, $\sststile{}{} t = \sigma(O_{a_1}, \ldots O_{a_k})$ for some $a_1$, \ldots $a_k$.
-Note that if $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k})\!\!\downarrow$ is derivable, then $M(\sigma)(a_1, \ldots a_k)$ is defined.
-Thus $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M(\sigma)(a_1, \ldots a_k)}$ is also derivable.
-\end{proof}
-
-For every morphism $h : M \to N$ of models of $\mathbb{T}$, we can define a morphism $Lang(h) : Lang(M) \to Lang(N)$ of theories under $\mathbb{T}$ as $Lang(h)(O_a) = O_{h(a)}$.
-Thus $Lang$ is a functor $\Mod{\mathbb{T}} \to \mathbb{T}/\Th_\mathcal{S}$.
-
-\begin{prop}
-$Lang$ is fully faithful.
-\end{prop}
-\begin{proof}
-Let $h_1$, $h_2$ be morphisms of models such that $Lang(h_1) = Lang(h_2)$.
-Then $O_{h_1(a)} = Lang(h_1)(O_a) = Lang(h_2)(O_a) = O_{h_2(a)}$, and by \rlem{cl-term}, $h_1(a) = h_2(a)$.
-Thus $Lang$ is faithful.
-
-Let $M_1 = (A_1,\alpha_1,\beta_1)$ and $M_2 = (A_2,\alpha_2,\beta_2)$ be models of $\mathbb{T}$,
-    and let $h : Lang(M_1) \to Lang(M_2)$ be a morphism of theories under $\mathbb{T}$.
-Then by \rlem{cl-term}, for every $a \in A_1$, there is a unique $h'(a) \in A_2$ such that $\sststile{}{} h(O_a) = O_{h'(a)}$ is a theorem of $Lang(M_2)$.
-Let us show that $h' : A_1 \to A_2$ is a morphism of models $M_1$ and $M_2$.
-Indeed, if $M_1(\sigma)(a_1, \ldots a_k)$ is defined, then $\sststile{}{} \sigma(O_{a_1}, \ldots O_{a_k}) = O_{M_1(\sigma)(a_1, \ldots a_k)}$ is a theorem of $Lang(M_1)$.
-Hence \[ \sststile{}{} \sigma(O_{h'(a_1)}, \ldots O_{h'(a_k)}) = O_{h'(M_1(\sigma)(a_1, \ldots a_k))} \] is a theorem of $Lang(M_2)$.
-But \[ \sststile{}{} \sigma(O_{h'(a_1)}, \ldots O_{h'(a_k)}) = O_{M_2(\sigma)(h'(a_1), \ldots h'(a_k))} \] is also a theorem of $Lang(M_2)$.
-Hence by \rlem{cl-term}, $h'(M_1(\sigma)(a_1, \ldots a_k)) = M_2(\sigma)(h'(a_1), \ldots h'(a_k))$.
-
-If $(a_1, \ldots a_k) \in M_1(R)$, then $\sststile{}{} R(O_{a_1}, \ldots O_{a_k})$ is a theorem of $Lang(M_1)$.
-Hence $\sststile{}{} R(O_{h'(a_1)}, \ldots O_{h'(a_k)})$ is a theorem of $Lang(M_2)$.
-Since $M_2$ is a model of $Lang(M_2)$, it follows that $(h'(a_1), \ldots h'(a_k)) \in M_2(R)$.
-
-Thus $h'$ is a morphism of models.
-Note that by definition of $h'$, $Lang(h') = h$.
-Hence $Lang$ is full.
-\end{proof}
-
-Now, let us describe a functor $Syn : \mathbb{T}/\Th_\mathcal{S} \to \Mod{\mathbb{T}}$.
-For every $i : \mathbb{T} \to \mathbb{T}'$, let $Syn(i) = i^*(0_{\mathbb{T}'})$, where $0_{\mathbb{T}'}$ is the initial object of $\Mod{\mathbb{T}'}$,
-    and $i^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ is the functor that was defined in \cite{alg-tt}.
-If $f : \mathbb{T}_1 \to \mathbb{T}_2$ is a morphism of theories under $\mathbb{T}$, then let $Syn(f) = i_1^*(!_{f^*(0_{\mathbb{T}_2})})$,
-    where $!_{f^*(0_{\mathbb{T}_2})}$ is the unique morphism $0_{\mathbb{T}_1} \to f^*(0_{\mathbb{T}_2})$.
-
-The construction of initial models of partial Horn theories was given in \cite{PHL}.
-Let us repeat it here.
-Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ be a standard partial Horn theory.
-First, we define a partial equivalence relations on sets $Term_\mathcal{F}(\varnothing)$ as $t_1 \sim t_2$ if and only if $\sststile{}{} t_1 = t_2$ is a theorem of $\mathbb{T}$.
-The interpretation of $R \in \mathcal{P}$ consists of tuples $(t_1, \ldots t_k)$ such that $\sststile{}{} R(t_1, \ldots t_k)$ is derivable in $\mathbb{T}$.
-Then $\mathcal{S}$-set $Term_\mathcal{F}(\varnothing)/\!\sim$ has a natural structure of a model of $((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$, and this model is initial.
-
-\begin{prop}
-$Syn$ is right adjoint to $Lang$.
-\end{prop}
-\begin{proof}
-Let $\epsilon_{\mathbb{T}'} : Lang(Syn(\mathbb{T}')) \to \mathbb{T}'$ be defined as $\epsilon_{\mathbb{T}'}(O_t) = t$.
-It is easy to see that $\epsilon_{\mathbb{T}'}$ preserves axioms of $Lang(Syn(\mathbb{T}'))$.
-Moreover, $\epsilon$ is natural in $\mathbb{T}'$.
-Let us prove that $\epsilon$ is the counit of the adjunction.
-Let $f : Lang(M) \to \mathbb{T}'$ be a morphism.
-Then we need to show that there is a unique morphism $g : Lang(M) \to Lang(Syn(\mathbb{T}'))$ such that $\epsilon_{\mathbb{T}'} \circ g = f$.
-By \rlem{cl-term}, there is a unique $t$ such that $g(O_a) = O_t$.
-Since $t = \epsilon_{\mathbb{T}'}(g(O_a)) = f(O_a)$, $g$ must satisfy equation $g(O_a) = O_{f(O_a)}$.
-Thus $g$ is unique.
-It is easy to see that this $g$ preserves axioms of $Lang(M)$; hence it defines a morphism $g : Lang(M) \to Lang(Syn(\mathbb{T}'))$.
-\end{proof}
 
 Let $\mathbb{T}$ be an algebraic dependent type theory.
 Then categories $\mathbb{T}/\algtt^0$ and $\mathbb{T}/\ThC$ are isomorphic.
@@ -415,77 +318,105 @@ But this follows from the first axiom of $Lang^0_{con}(M)$.
 For every algebraic dependent type theory with substitutions $\mathbb{T}$, there are adjoint functors $Lang^1 \dashv Syn^1 : \mathbb{T}/\algtt^1 \to \Mod{\mathbb{T}}$.
 For every contextual algebraic dependent type theory with substitutions $\mathbb{T}$, there are adjoint functors $Lang^1_{con} \dashv Syn^1_{con} : \mathbb{T}/\algtt^1_{con} \to \Mod{\mathbb{T}}$.
 These functors are defined in the same way as $Lang^0 \dashv Syn^0$ and $Lang^0_{con} \dashv Syn^0_{con}$.
+\end{comment}
 
-For every morphism of theories $f : \mathbb{T} \to \mathbb{T}'$ there is a functor $f^* : \Mod{\mathbb{T}'} \to \Mod{\mathbb{T}}$ which was consttucted in \cite{alg-tt}.
-We also can define functor $f_! : \Mod{\mathbb{T}} \to \Mod{\mathbb{T}'}$ as $f_!(M) = Syn(Lang(M) \amalg_{\mathbb{T}} \mathbb{T}')$.
-It was shown in \cite{PHL} that $f_!$ is left adjoint to $f^*$.
-This theorem was proved there only for a weaker notion of morphisms of theories, but the proof also works for general morphisms as defined in \cite{alg-tt}.
+\section{Model structure on category of theories}
 
-Functor $f_!$ can be used to present a model of a theory by generators and relations.
-Let $\mathbb{T}$ be a fixed $\mathcal{S}$-theory.
-Note that models of the empty theory are just $\mathcal{S}$-sets.
-If $f : 0 \to \mathbb{T}$ is the unique morphism from the empty theory, then $f^*(M)$ is just the underlying $\mathcal{S}$-set of $M$,
-    and $f_!(X)$ is the free model of $\mathbb{T}$ on $\mathcal{S}$-set $X$.
-We will denote this free model by $F(X)$.
-If $R$ is a set of axioms in the language of theory $Lang(X) \amalg \mathbb{T}$,
-    then let $F(X,R)$ be a model of $\mathbb{T}$ defined as $Syn(Lang(X) \amalg \mathbb{T} \cup R)$.
-By definition of $Syn$, to construct a morphism $F(X,R) \to M$ it is necessary and sufficient
-    to construct a morphism from $X$ to the underlying $\mathcal{S}$-set of $M$ such that relations from $R$ are true in $M$.
+Let $T_I = coe_1 + \sigma + Path + wUA$.
+In this section we define a model structure on category $T_I/\algtt^1_{reg}$.
+To construct this model structure, we need to recall a few definitions from \cite{f-model-structures}.
+A reflexive cylinder object $C_U(V)$ for a map $i : U \to V$ is any factorization of $[id_V,id_V] : V \amalg_U V \to V$.
+Maps $f,g : V \to X$ are homotopic relative to a cylinder object $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, if there exists a map $h : C_U(V) \to X$
+such that $h \circ \cyli_0 = f$ and $h \circ \cyli_1 = g$.
+In this case we will write $f \sim_i g$.
+We say that a map $f : X \to Y$ has RLP up to $\sim_i$ with respect to $i : U \to V$ if for every commutative square of the form
+\[ \xymatrix{ U \ar[r]^u \ar@{}[dr]|(.7){\sim_i} \ar[d]_i & X \ar[d]^f \\
+              V \ar[r]_v \ar@{-->}[ur]^g                  & Y,
+            } \]
+there is a dotted arrow $g : V \to X$ such that $g \circ i = u$ and $(f \circ g) \sim_i v$.
 
-Sometimes we will omit the set of generators if it can be inferred from the set of relations.
-For examples, we will write $F(\{\,\vdash p : Id(A,a,a')\,\})$ for the model $F(\{\,a : (tm,0), a' : (tm,0), A : (ty,0), p : (tm,0)\,\}, \{\,ty(p) = Id(A,a,a')\,\})$.
-Another examples is $F(\{\,A_1, \ldots A_n \vdash a : A\,\})$ which equals to $F(\{\,A_i : (ty,i), A : (ty,n), a : (tm,n)\,\}, \{\,ty(a) = A, ft^{i+1}(A) = A_{n-i}\,\})$.
-Thus this model is isomorphic to the free model $F(\{\,a : (tm,n)\,\})$.
+We will also need the following theorem from \cite{f-model-structures}:
+\begin{thm}[model-structures]
+Let $\C$ be a complete and cocomplete category, and let $\I$ be a set of maps of $\C$
+such that the domains and the codomains of maps in $\I$ are cofibrant and small relative to $\Icell$.
+For every $i : U \to V \in \I$, choose a reflexive relative cylinder object $C_U(V)$
+such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V) \in \Icof$.
+Let $\J_\I = \{\ \cyli_0 : V \to C_U(V)\ |\ i : U \to V \in \I \ \}$, and
+let $\we_\I$ be the set of maps which have RLP up to $\sim_i$ with respect to every $i \in \I$.
 
-\section{A model structure on the category of theories}
-
-In this section we construct a model structure on the category $UA/\Th_\mathcal{C}$ of theories with an interval type, homogeneous path types and the univalence axiom.
-For an introduction to the theory of model categories see \cite{hovey}.
-We will need the following proposition to construct our model structure:
-
-\begin{prop}[model-cat]
-Suppose that $\C$ is a complete and cocomplete category, $\we$ is a class of morphisms of $\C$, and $\I$, $\J$ are sets of morphisms of $\C$.
-Then $\C$ is a cofibrantly generated model category with $\I$ as the set of generating cofibrations,
-$\J$ as the set of generating trivial cofibrations, and $\we$ as the class of weak equivalences if and only if the following conditions are satisfied:
-\begin{description}
-\item[(A1)] The domains of maps in $\I$ and $\J$ are small relative to $\Icell$ and $\Jcell$ respectively.
-\item[(A2)] $\we$ has 2-out-of-3 property and is closed under retracts.
-\item[(A3)] $\Iinj \subseteq \we$.
-\item[(A4)] $\Jcell \subseteq \we \cap \Icof$.
-\item[(A5)] Either $\Jinj \cap \we \subseteq \Iinj$ or $\Icof \cap \we \subseteq \Jcof$.
-\end{description}
-\end{prop}
-
-We will often define theories just by specifying its set of axioms.
-The sets of function and predicate symbols then can be defined as the sets of those symbols that appear in the axioms.
+Suppose that for every object $X$ which either domain or codomain of a map in $\I$,
+there exists a cylinder object $C(X)$ such that the following conditions hold:
+\begin{enumerate}
+\item For every $i : U \to V \in \I$, there exists a morphism of cylinder objects $(i,C(i)) : C(U) \to C(V)$.
+\item There exists a map $s : C(X) \to C(X)$ such that $s \circ i_0 = i_1$, $s \circ i_1 = i_0$, and $C(i) \circ s = s \circ C(i)$.
+\item These cylinder objects satisfy homotopy extension property. That is,
+if $i : U \to V \in \cof$, $u : U \to X$ and $v : V \to X$ are maps, and $h : C(U) \to X$ is a homotopy between $v \circ i$ and $u$,
+then there exists a map $v' : V \to X$ and a homotopy $h' : C(V) \to X$ between $v$ and $v'$ such that $h = h' \circ C(i)$.
+\item Maps in $\Jcell[_\I]$ have RLP up to $\sim^*$ (reflexive transitive closure of $\sim$) with respect to domains of maps in $\I$.
+\item For every $i : U \to V \in \I$, we have a lift $p$ in the following diagram:
+\[ \xymatrix{ V \amalg_U V \ar[r]^-f \ar[d]_{[\cyli_0,\cyli_1]} & T \\
+              C_U(V) \ar@{-->}[ur]_p
+            } \]
+where $T = C_U(V) \amalg_{(V \amalg_U V)} (C(V) \amalg_{C(U)} C(V))$ is the pushout of maps $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$
+and $\cyli_0 \amalg_{\cyli_0} \cyli_0 : V \amalg_U V \to C(V) \amalg_{C(U)} C(V)$,
+and $f : V \amalg_U V \to T$ is the composite $V \amalg_U V \xrightarrow{\cyli_1 \amalg_{\cyli_1} \cyli_1} C(V) \amalg_{C(U)} C(V) \to T$.
+\end{enumerate}
+Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a set of generating cofibrations,
+$\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of weak equivalences.
+\end{thm}
+Here $\sim^*$ denotes the reflexive transitive closure of the relation of left homotopy with respect to $C(X)$.
 
 Let $e : \{ ctx, ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ctx) = ctx$, $e(ty) = ctx$, $e(tm) = ty$.
 Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ctx}(\Gamma) = \Gamma$ $d_{ty}(A) = ft(A)$, $d_{tm}(a) = ty(a)$.
-Let $s_1, \ldots s_n, s$ be a sequence of sorts such that $s = (p,n)$ for some $p \in \{ ty, tm \}$ and $n \in \mathbb{N}$.
-Then we define algebraic dependent type theories $\mathbb{U}_{s_1, \ldots s_k, s}$ and $\mathbb{V}_{s_1, \ldots s_k, s}$.
-Apart from symbols and axioms of $\mathbb{T}_0$ theories $\mathbb{U}_{s_1, \ldots s_k, s}$
-and $\mathbb{V}_{s_1, \ldots s_k, s}$ have one predicate symbols $P : s_1 \times \ldots \times s_k$.
-$\mathbb{U}_{s_1, \ldots s_k, s}$ has one function symbol $A : s_1 \times \ldots \times s_k \to (e(p),n)$ and one axiom:
+For every sequence $s_1, \ldots s_k, s$ of sorts such that $s = (p,n)$ for some $p \in \{ ty, tm \}$ and $n \in \mathbb{N}$,
+let $U_{s_1, \ldots s_k, s}$ be the theory under $T_I$ with one predicate symbol $P : s_1 \times \ldots \times s_k$
+and one function symbol $A : s_1 \times \ldots \times s_k \to (e(p),n)$ and one axiom:
 \[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} A(x_1, \ldots x_k)\!\downarrow \]
-$\mathbb{V}_{s_1, \ldots s_k, s}$ has two function symbols $A : s_1 \times \ldots s_k \to (e(p),n)$ and $a : s_1 \times \ldots \times s_k \to (p,n)$ and two axioms:
+Let $V_{s_1, \ldots s_k, s}$ be the theory under $U_{s_1, \ldots s_k, s}$ with one additional function symbol $a : s_1 \times \ldots \times s_k \to s$ and two axioms:
 \begin{align*}
 P(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \\
 a(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} d_p(a(x_1, \ldots x_k)) = A(x_1, \ldots x_k)
 \end{align*}
-We also define a theory $\mathbb{V}'_{s_1, \ldots s_k, s}$ as $\mathbb{V}_{s_1, \ldots s_k, s}$ together with the following axiom:
+Let $i_{s_1, \ldots s_k, s} : U_{s_1, \ldots s_k} \to V_{s_1, \ldots s_k, s}$ be the inclusion of the subtheory.
+Let $\I$ be the set of morphisms of the form $i_{s_1, \ldots s_k, s}$.
+
+For every $i : U \to V \in \I$, we need to define a relative cylinder object $C_U(V)$.
+Let $C_{U_{s_1, \ldots s_k, (tm,n)}}(V_{s_1, \ldots s_k, s})$ be the theory with one predicate symbol $P : s_1 \times \ldots \times s_k$,
+four function symbols:
+\begin{align*}
+A & : s_1 \times \ldots \times s_k \to (ty,n) \\
+a & : s_1 \times \ldots \times s_k \to (tm,n) \\
+a' & : s_1 \times \ldots \times s_k \to (tm,n) \\
+h & : s_1 \times \ldots \times s_k \to (tm,n+1)
+\end{align*}
+and the following axioms:
+\begin{align*}
+P(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \land\ a'(x_1, \ldots x_k)\!\downarrow \\
+a(x_1, \ldots x_k)\!\downarrow \land\ a'(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ctx^n(h(x_1, \ldots x_k)) = I \\
+a(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ty(a(x_1, \ldots x_k)) = A(x_1, \ldots x_k) \\
+a'(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ty(a'(x_1, \ldots x_k)) = A(x_1, \ldots x_k) \\
+h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ty(h(x_1, \ldots x_k)) = A(x_1, \ldots x_k)\!\uparrow \\
+h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} left^*(h(x_1, \ldots x_k)) = a(x_1, \ldots x_k) \\
+h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} right^*(h(x_1, \ldots x_k)) = a'(x_1, \ldots x_k)
+\end{align*}
+Maps $\cyli_0,\cyli_1 : V_{s_1, \ldots s_k, (tm,n)} \to C_{U_{s_1, \ldots s_k, (p,n)}}(V_{s_1, \ldots s_k, (p,n)})$ are defined as follows:
+$\cyli_0(a) = a$, $\cyli_1(a) = a'$, and $\cyli_0(x) = \cyli_1(x) = x$ for every other symbol $x$.
+
+\begin{comment}
+We also define theory $V'_{s_1, \ldots s_k, s}$ as $V_{s_1, \ldots s_k, s}$ together with the following axiom:
 \[ a(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} P(x_1, \ldots x_k) \]
 
-There are obvious morphisms $\mathbb{U}_{s_1, \ldots s_k, s} \to \mathbb{V}_{s_1, \ldots s_k, s}$.
+There are obvious morphisms $U_{s_1, \ldots s_k, s} \to V_{s_1, \ldots s_k, s}$.
 Let $\I$ be the set of these morphisms for every sequence $s_1, \ldots s_k, s$.
-Let $\I'$ be the set of morphisms of the form $j \circ i$, where $i \in \I$ and $j$ is the inclusion $\mathbb{V}_{s_1, \ldots s_k, s} \to \mathbb{V}'_{s_1, \ldots s_k, s}$.
+Let $\I'$ be the set of morphisms of the form $j \circ i$, where $i \in \I$ and $j$ is the inclusion $V_{s_1, \ldots s_k, s} \to V'_{s_1, \ldots s_k, s}$.
 Note that every map in $\I'$ is a pushout of a map in $\I$:
-\[ \xymatrix{ \mathbb{U}_{s_1, \ldots s_k, s} \ar[r]^f \ar[d] & \mathbb{U}_{s_1, \ldots s_k, s} \ar[d] \\
-              \mathbb{V}_{s_1, \ldots s_k, s} \ar[r]_g & \po \mathbb{V}'_{s_1, \ldots s_k, s}
+\[ \xymatrix{ U_{s_1, \ldots s_k, s} \ar[r]^f \ar[d] & U_{s_1, \ldots s_k, s} \ar[d] \\
+              V_{s_1, \ldots s_k, s} \ar[r]_g & \po V'_{s_1, \ldots s_k, s}
             } \]
 where $f(P) = P$, $f(A) = A|_P$, $g(P) = P$, $g(A) = A|_P$ and $g(a) = a$.
 It follows that $\Icof[\I'] \subseteq \Icof$.
 
-A cylinder object for a theory $\mathbb{T}$ is a theory $C$ together with three maps $i_0,i_1 : \mathbb{T} \to C$ and $w : C \to \mathbb{T}$
+A cylinder object for a theory $T$ is a theory $C(T)$ together with three maps $i_0,i_1 : \mathbb{T} \to C$ and $w : C \to \mathbb{T}$
 such that $w \circ i_0 = w \circ i_1 = id_{\mathbb{T}}$.
 If $\mathbb{T}$ is an algebraic dependent type theory, then let $F(\mathbb{T})$ be a free theory under $UA$, that is $\mathbb{T} \amalg_{\mathbb{T}_0} UA$.
 For every theory of the form $F(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ we define a cylinder object $C(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$.
@@ -513,6 +444,7 @@ Morphism $w : C(\mathbb{V}_{s_1, \ldots s_k, (p,n)}) \to F(\mathbb{V}_{s_1, \ldo
 $w(P) = P$, $w(Q) = Q$, $w(H(x_1, \ldots x_k)) = I \times A(x_1, \ldots x_k)$, $w(h(x_1, \ldots x_k)) = I \times a(x_1, \ldots x_k)$.
 Morphisms $i_0,i_1 : F(\mathbb{U}_{s_1, \ldots s_k, (p,n)}) \to C(\mathbb{U}_{s_1, \ldots s_k, (p,n)})$ are defined as follows:
 $i_j(P) = P$, $i_j(Q) = Q$, $i_j(A(x_1, \ldots x_k)) = c_j^*(H(x_1, \ldots x_k))$ and \todo{Fix margins} $i_j(a(x_1, \ldots x_k)) = c_j^*(h(x_1, \ldots x_k))$.
+\end{comment}
 
 % If $p \in \{ ty, tm \}$, then let $\I^1_p$ be the set of morphisms of theories of the form
 % $\{ P(x_1, \ldots x_n) \sststile{}{x_1, \ldots x_n} A(x_1, \ldots x_n)\!\downarrow \land Q(x_1, \ldots x_n) \} \to \{ P(x_1, \ldots x_n) \sststile{}{x_1, \ldots x_n} a(x_1, \ldots x_n)\!\downarrow, a(x_1, \ldots x_n)\!\downarrow\ \sststile{}{x_1 : s_1, \ldots x_n : s_n} d_p(a(x_1, \ldots x_n)) = A(x_1, \ldots x_n) \land Q(x_1, \ldots x_n) \}$
