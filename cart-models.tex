@@ -1,0 +1,183 @@
+\documentclass[reqno]{amsart}
+
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage[all]{xy}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{turnstile}
+
+\hypersetup{colorlinks=true,linkcolor=blue}
+
+\renewcommand{\turnstile}[6][s]
+    {\ifthenelse{\equal{#1}{d}}
+        {\sbox{\first}{$\displaystyle{#4}$}
+        \sbox{\second}{$\displaystyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{t}}
+        {\sbox{\first}{$\textstyle{#4}$}
+        \sbox{\second}{$\textstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{s}}
+        {\sbox{\first}{$\scriptstyle{#4}$}
+        \sbox{\second}{$\scriptstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{ss}}
+        {\sbox{\first}{$\scriptscriptstyle{#4}$}
+        \sbox{\second}{$\scriptscriptstyle{#5}$}}{}
+    \setlength{\dashthickness}{0.111ex}
+    \setlength{\ddashthickness}{0.35ex}
+    \setlength{\leasturnstilewidth}{2em}
+    \setlength{\extrawidth}{0.2em}
+    \ifthenelse{%
+      \equal{#3}{n}}{\setlength{\tinyverdistance}{0ex}}{}
+    \ifthenelse{%
+      \equal{#3}{s}}{\setlength{\tinyverdistance}{0.5\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{d}}{\setlength{\tinyverdistance}{0.5\ddashthickness}
+        \addtolength{\tinyverdistance}{\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{t}}{\setlength{\tinyverdistance}{1.5\dashthickness}
+        \addtolength{\tinyverdistance}{\ddashthickness}}{}
+        \setlength{\verdistance}{0.4ex}
+        \settoheight{\lengthvar}{\usebox{\first}}
+        \setlength{\raisedown}{-\lengthvar}
+        \addtolength{\raisedown}{-\tinyverdistance}
+        \addtolength{\raisedown}{-\verdistance}
+        \settodepth{\raiseup}{\usebox{\second}}
+        \addtolength{\raiseup}{\tinyverdistance}
+        \addtolength{\raiseup}{\verdistance}
+        \setlength{\lift}{0.8ex}
+        \settowidth{\firstwidth}{\usebox{\first}}
+        \settowidth{\secondwidth}{\usebox{\second}}
+        \ifthenelse{\lengthtest{\firstwidth = 0ex}
+            \and
+            \lengthtest{\secondwidth = 0ex}}
+                {\setlength{\turnstilewidth}{\leasturnstilewidth}}
+                {\setlength{\turnstilewidth}{2\extrawidth}
+        \ifthenelse{\lengthtest{\firstwidth < \secondwidth}}
+            {\addtolength{\turnstilewidth}{\secondwidth}}
+            {\addtolength{\turnstilewidth}{\firstwidth}}}
+        \ifthenelse{\lengthtest{\turnstilewidth < \leasturnstilewidth}}{\setlength{\turnstilewidth}{\leasturnstilewidth}}{}
+    \setlength{\turnstileheight}{1.5ex}
+    \sbox{\turnstilebox}
+    {\raisebox{\lift}{\ensuremath{
+        \makever{#2}{\dashthickness}{\turnstileheight}{\ddashthickness}
+        \makehor{#3}{\dashthickness}{\turnstilewidth}{\ddashthickness}
+        \hspace{-\turnstilewidth}
+        \raisebox{\raisedown}
+        {\makebox[\turnstilewidth]{\usebox{\first}}}
+            \hspace{-\turnstilewidth}
+            \raisebox{\raiseup}
+            {\makebox[\turnstilewidth]{\usebox{\second}}}
+        \makever{#6}{\dashthickness}{\turnstileheight}{\ddashthickness}}}}
+        \mathrel{\usebox{\turnstilebox}}}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname n#2\endcsname[1]{\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{theorem}{Theorem}
+\newref{lem}{lemma}{Lemma}
+\newref{prop}{proposition}{Proposition}
+\newref{cor}{corollary}{Corollary}
+\newref{cond}{condition}{Condition}
+\newref{conj}{conjecture}{Conjecture}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{rem}{remark}{Remark}
+
+\newcommand{\deq}{\equiv}
+\newcommand{\repl}{:=}
+\newcommand{\idtype}{\rightsquigarrow}
+
+\newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\C}{\cat{C}}
+\newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
+\newcommand{\Th}{\cat{Th}}
+\newcommand{\emptyCtx}{\mathbf{1}}
+\newcommand{\Set}{\cat{Set}}
+\newcommand{\sSet}{\cat{sSet}}
+\newcommand{\cSet}{\cat{cSet}}
+
+\newcommand{\we}{\mathcal{W}}
+\newcommand{\I}{\mathrm{I}}
+\newcommand{\J}{\mathrm{J}}
+\newcommand{\class}[2]{#1\text{-}\mathrm{#2}}
+\newcommand{\Icell}[1][\I]{\class{#1}{cell}}
+\newcommand{\Icof}[1][\I]{\class{#1}{cof}}
+\newcommand{\Jcell}[1][]{\Icell[\J#1]}
+\newcommand{\cyli}{i}
+
+\numberwithin{figure}{section}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\title{Equivalence between locally cartesian (closed) quasicategories and models of homotopy type theory}
+
+\author{Valery Isaev}
+
+\begin{abstract}
+Abstract.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+\section{Cubically enriched categories}
+
+In this section we recall the definition of the category $\cat{Cat}_\square$ of cubically enriched categories and Quillen adjunction between
+the cateogry simplicial sets $\sSet$ (with Joyal model structure) and $\cat{Cat}_\square$.
+We also define Quillen adjunction between $\cat{Cat}_\square$ and categories of models of suitable algebraic dependent type theories.
+
+Let $D$ be poset $\{0,1\}$ where $0 \leq 1$.
+For every $0 \leq n$, $1 \leq i \leq n+1$, $\epsilon \in D$, let $\delta^{i,\epsilon}_n : D^n \to D^{n+1}$ and $\sigma^i_n : D^{n+1} \to D^n$ be the following morphisms of posets:
+\begin{align*}
+\delta^{i,\epsilon}_n(x_1, \ldots x_n) & = (x_1, \ldots x_{i-1}, \epsilon, x_{i+1}, \ldots x_n) \\
+\sigma^i_n(x_1, \ldots x_{n+1}) & = (x_1, \ldots x_{i-1}, x_{i+1}, \ldots x_{n+1})
+\end{align*}
+Category of cubes $\square$ is the subcategory of the category of posets on objects of the form $D^n$ generated by morphisms $\delta^{i,\epsilon}_n$ and $\sigma^i_n$.
+Let $\cSet$ be the category of cubical sets $\Set^{\square^{op}}$.
+Let $\square^n \in \cSet$ be the representable presheaf on $D^n$.
+Let $d^{i,\epsilon}_n : \square^n \to \square^{n+1}$ and $s^i_n : \square^{n+1} \to \square^n$ be the maps represented by $\delta^{i,\epsilon}_n$ and $\sigma^i_n$.
+
+There is a (unique) closed monoidal structure $(\otimes,1)$ on $\cSet$ such that $\square^n \otimes \square^m \cong \square^{n+m}$ and $1 = \square^0$ (see, for example, \cite{jardine}).
+Let $X$ be an object of a cocomplete monoidal category $\C$.
+Then there exists a (unique) colimit-preserving strong monoidal functor $F : \cSet \to \C$ such that $F(\square^1) = X$.
+This functor has a right adjoint $G : \C \to \cSet$ given by formula $G(X) = Hom_\C(F(y(-)),X)$, where $y : \square \to \cSet$ is the Yoneda embedding.
+An examples of this construction is the adjunction $|-| : \cSet \rightleftarrows \sSet : S$ such that $|\square^1| = \Delta^1$.
+
+For every $n \geq 0$, let $\partial \square^n$ be the following coequalizer:
+\[ \coprod_{1 \leq i < j \leq n, \epsilon_1,\epsilon_2 \in D} \square^{n-2} \rightrightarrows \coprod_{1 \leq i \leq n, \epsilon \in D} \square^{n-1} \to \partial \square^n, \]
+where one of the morphisms maps $(i,j,\epsilon_1,\epsilon_2)$-th component to $(i,\epsilon_1)$-th component by map $d^{j-1,\epsilon_2}_{n-2}$,
+the other one maps $(i,j,\epsilon_1,\epsilon_2)$-th component to $(j,\epsilon_2)$-th component by map $d^{i,\epsilon_1}_{n-2}$,
+Consider morphism $f : \coprod_{1 \leq i \leq n, \epsilon \in D} \square^{n-1}$ that is defined on $(i,\epsilon)$-th component by $d^{i,\epsilon}_{n-1}$.
+Then this morphism determines a morphism $i^n : \partial \square^n \to \square^n$.
+
+For every $n \geq 0$, $1 \leq i \leq n$, $\epsilon \in D$, let $\sqcap^n_{i,\epsilon}$ be the following coequalizer:
+\[ \coprod_{\substack{1 \leq j_1 < j_2 \leq n, \gamma_1,\gamma_2 \in D, \\ (j_1,\gamma_1) \neq (i,\epsilon), (j_2,\gamma_2) \neq (i,\epsilon)}} \square^{n-2} \rightrightarrows \coprod_{\substack{1 \leq j \leq n, \gamma \in D, \\ (j,\gamma) \neq (i,\epsilon)}} \square^{n-1} \to \sqcap^n_{i,\epsilon}, \]
+where morphisms are defined as before.
+The restriction of $f$ determines a morphism $u^n_{i,\epsilon} : \sqcap^n_{i,\epsilon} \to \square^n$.
+
+There is a model structure on $\cSet$ with maps $i^n : \partial \square^n \to \square^n$ as generating cofibrations
+and maps $u^n_{i,\epsilon} : \sqcap^n_{i,\epsilon} \to \square^n$ as generating trivial cofibrations (see, for example, \cite[Example~52, Theorem~88]{jardine}).
+Functors $|-| : \cSet \rightleftarrows \sSet : S$ determine a Quillen equivalence.
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
