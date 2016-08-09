@@ -110,6 +110,9 @@
 \newcommand{\emptyCtx}{\mathbf{1}}
 \newcommand{\Set}{\cat{Set}}
 \newcommand{\sSet}{\cat{sSet}}
+\newcommand{\lcsSet}{\sSet^{\mathrm{lc}}}
+\newcommand{\lcN}{N^{\mathrm{lc}}}
+\newcommand{\lcC}{\mathfrak{C}^{\mathrm{lc}}}
 \newcommand{\cSet}{\cat{cSet}}
 \newcommand{\Hom}{\mathrm{Hom}}
 
@@ -129,7 +132,7 @@
 
 \begin{document}
 
-\title[Equivalence between quasicategories and models of type theory]{Equivalence between locally cartesian (closed) quasicategories and models of homotopy type theory}
+\title[Equivalence between quasicategories and models of type theory]{Equivalence between locally cartesian (closed) quasicategories and models of homotopy type theory with an interval type}
 
 \author{Valery Isaev}
 
@@ -381,6 +384,50 @@ The second condition can be reformulated as follows: for every closed type $A$ o
 there exists an equivalence $p' : A \to B'$ in $X$ such that $f(p') = p$.
 But this follows from the fact that $f$ has RLP with respect to $\J_{\I_{ty}}$.
 \end{proof}
+
+\section{Simplicial sets with chosen cones}
+
+Let $T_\Sigma = coe_1 + \sigma + Path + wUA + \Sigma$.
+Quillen adjunction between $\sSet$ and $\Mod{T_\Sigma}$ that we constructed in the previous section is not a Quillen equivalence.
+Model category $\Mod{T_\Sigma}$ should represent the $(\infty,1)$-category of finitely complete $(\infty,1)$-categories (and exact functor),
+but $\sSet$ represent the $(\infty,1)$-category of all $(\infty,1)$-categories.
+To fix this problem, we define model category $\lcsSet$ which is closely related to $\sSet$ and which is Quillen equivalent to $\Mod{T_\Sigma}$.
+We will prove later that the fibration category corresponding to $\lcsSet$ is equivalent to the fibration category of finitely complete quasicategories.
+
+Objects of $\lcsSet$ are simplicial sets ``with chosen cones for finite diagrams''.
+More precisely, an object of $\lcsSet$ is a pointed simplicial set $(X, * \in X_0)$ with a function that to every pair of edges $f : B \to D$, $g : C \to D$ in $X$ associates a square $\Delta^1 \times \Delta^1 \to X$ as follows:
+\[ \xymatrix{ A \ar@{-->}[r] \ar@{-->}[d] & B \ar[d]^f \\
+              C \ar[r]_g & D
+            } \]
+Morphisms of $X,Y \in \lcsSet$ are morphisms of pointed simplicial sets that preserve chosen squares.
+
+We will call objects of $\lcsSet$ \emph{simplicial sets with chosen cones}.
+The intention is that these chosen cones are the terminal object and pullback squares of $X$.
+Of course, in general, this may not be the case, but we will construct a model structure on $\lcsSet$ in which an object is fibrant if and only if it is a quasicategory and chosen cones are limit diagrams.
+
+Let $X$ be an object of $\Mod{T}$.
+Edges of $N(X)$ are classified by maps $\mathfrak{C}(\Delta^1) \to X$, or equivalently by terms $x : A \vdash b : B$.
+Squares $\Delta^1 \times \Delta^1 \to N(X)$ are classified by the following data:
+types $A,B,C,D \in X_{(ty,0)}$ and terms $f,g,f',g',r \in X_{(tm,1)}$, $h_1,h_2 \in X_{(tm,2)}$ such that $y : B \vdash f : D$, $z : C \vdash g : D$, $x : A \vdash f' : C$, $x : A \vdash g' : B$, $x : A \vdash r : D$,
+$x : A, i : I \vdash h_1 : D$, $x : A, i : I \vdash h_2 : D$, $h_1[left] = f[y \repl g']$, $h_1[right] = h_2[right] = r$, and $h_2[left] = g[z \repl f']$.
+These data can be depicted in the following diagram (where the top and the bottom triangles correspond to $h_1$ and $h_2$ respectively):
+\[ \xymatrix{ A \ar[r]^{g'} \ar[d]_{f'} \ar[rd]^r & B \ar[d]^f \\
+              C \ar[r]_g & D
+            } \]
+
+If $T$ is under $T_\Sigma$, then $N : \Mod{T} \to \sSet$ factors through the forgetful functor $U : \lcsSet \to \sSet$.
+Let the chosen vertex of $N(X)$ be the interval type.
+For every $y : B \vdash f : D$ and $z : C \vdash g : D$, the chosen square in $N(X)$ is defined as follows:
+$A = \Sigma(y : B, \Sigma(z : C, f \idtype g))$, $f' = (x : A \vdash \pi_1(\pi_2(x)) : C)$, $g' = (x : A \vdash \pi_1(x) : B)$,
+$r = (x : A \vdash g[z \repl f'] : D)$, $h_1 = (x : A, y : I \vdash at(\pi_2(\pi_2(x)),y) : D)$, and $h_2 = (x : A, y : I \vdash r : D)$.
+We will denote this functor by $\lcN : \Mod{T} \to \lcsSet$.
+
+Functor $\lcN$ has a left adjoint $\lcC : \lcsSet \to \Mod{T}$.
+For every $X \in \lcsSet$, $\lcC(X)$ is defined by the same generators and relations as $\mathfrak{C}(X)$
+together relations that make chosen cones in $X$ equal to corresponding data in the theory.
+
+Forgetful functor $U : \lcsSet \to \sSet$ has a left adjoint $F : \sSet \to \lcsSet$.
+We define the set of generating cofibrations $\I$ of $\lcsSet$ to be the set $F(\I')$, where $\I'$ is the set of inclusions $\partial \Delta^n \to \Delta^n$.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
