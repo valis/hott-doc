@@ -128,6 +128,7 @@
 \newcommand{\cSet}{\cat{cSet}}
 \newcommand{\Hom}{\mathrm{Hom}}
 \newcommand{\Map}{\mathrm{Map}}
+\newcommand{\colim}{\mathrm{colim}}
 
 \newcommand{\we}{\mathcal{W}}
 \newcommand{\I}{\mathrm{I}}
@@ -441,6 +442,76 @@ there exists an equivalence $p' : A \to B'$ in $X$ such that $f(p') = p$.
 But this follows from the fact that $f$ has RLP with respect to $\J_{\I_{ty}}$.
 \end{proof}
 
+\section{Category of marked objects}
+
+In this section for every combinatorial model category $\C$, we define a new model category $\C^m$ of marked objects of $\C$.
+This model category is Quillen equivalent to $\C$, so it is not interesting by itself.
+The idea is that we should take a left Bousfield localization of $\C^m$ to obtain an interesting model category.
+We will show examples of this construction in later sections of this paper.
+
+\begin{defn}
+Let $\C$ be a category and let $\mathcal{K}$ be a set of objects of $\C$.
+A \emph{marked object} of $\C$ is a pair $(X,\mathcal{E})$ where $X$ is an object of $\C$ and $\mathcal{E}$ is a subset of $\coprod_{K \in \mathcal{K}} \Hom(K,X)$.
+Morphisms that belong to $\mathcal{E}$ will be caled \emph{marked}.
+A morphism of marked objects is a morphism of the underlying objects that preserves marked morphisms.
+The category of marked objects will be denoted by $\C^m$.
+\end{defn}
+
+Forgetful functor $U : \C^m \to \C$ has a left adjoint $(-)^\flat : \C \to \C^m$ and a right adjoint $(-)^\sharp : \C \to \C^m$.
+For every $X \in \C$, $X^\flat$ is the marked object in which no morphisms are marked (that is, $X^\flat = (X,\varnothing)$),
+and $X^\sharp$ is the marked object in which all morphisms are marked (that is, $X^\sharp = (X,\coprod_{K \in \mathcal{K}} \Hom(K,X))$).
+Objects of the form $X^\flat$ and of the form $X^\sharp$ will be called \emph{flat} and \emph{sharp} respectively.
+
+Category $\C^m$ has the same limits and colimits as $\C$.
+Let $D : J \to \C^m$ be a diagram.
+Then underlying objects of $\lim(D)$ and $\colim(D)$ are a limit and a colimit of underlying objects in $\C$ respectively.
+Morphism $K \to \lim(D)$ is marked if and only if morphism $K \to \lim(D) \to D_j$ is marked for every $j \in J$.
+Morphism $K \to \colim(D)$ is marked if and only if it factors through some marked morphism $K \to D_j$.
+
+\begin{prop}
+If $\C$ is locally presentable, then so is $\C^m$.
+\end{prop}
+\begin{proof}
+First, let us prove that there exists a set of objects $S^m$ of $\C^m$ which generates the whole category under colimits.
+Let $\lambda$ be a regular cardinal such that $\C$ is locally $\lambda$-presentable and every $K \in \mathcal{K}$ is $\lambda$-presentable.
+Let $S$ be a set of objects of $\C$ such that every object of $X$ is a $\lambda$-filtered colimit of objects from $S$.
+Note that for every object $X$ of $\C$, there is only a set of marked objects $Y$ such that $U(Y) = X$.
+Let $S^m$ be the set of objects $Y$ such that $U(Y) \in S$.
+Let $X$ be a marked object, and let $D : J \to \C$ be a $\lambda$-filtered diagram such that $\colim(D) = U(X)$.
+Then define diagram $D' : J \to \C^m$ so that $U(D'_j) = D_j$ and $f : K \to D_j$ is marked if and only if $K \overset{f}\to D_j \to \colim(D) = U(X)$ is marked.
+To prove that $\colim(D') = X$, we need to show that $f : K \to U(X)$ is marked in $X$ only if it factors through some $D_j \to U(X)$.
+But this follows from the fact that $D$ is $\lambda$-filtered and $K$ is $\lambda$-presentable.
+
+Now, let us prove that every object of $\C^m$ is small.
+Let $(X,\mathcal{E})$ be a marked object, and let $\lambda$ be a regular cardinal such that every $K \in \mathcal{K}$ is $\lambda$-presentable, $X$ is $\lambda$-presentable, and $|\mathcal{E}| < \lambda$.
+Let $D : J \to \C^m$ be a $\lambda$-filtered diagram.
+It is easy to see that $\colim_{j \in J} \Hom((X,\mathcal{E}), D_j) \to \Hom((X,\mathcal{E}), \colim_{j \in J} D_j)$ is injective.
+Let us show that it is surjective.
+Let $f : (X,\mathcal{E}) \to \colim_{j \in J} D_j$ be a map of marked objects.
+Then $U(f)$ factors as $X \overset{g}\to U(D_j) \to \colim_{j \in J} U(D_j)$ for some $j$.
+By the description of colimts that we gave above, for every marked $k : K \to X$, map $U(f) \circ k$ factors through some marked $h_k : K \to U(D_k)$.
+Since $K$ is $\lambda$-presentable and maps $K \xrightarrow{h_k} U(D_k) \to \colim_{j \in J} U(D_j)$ and $K \overset{k}\to X \overset{g}\to U(D_j) \to \colim_{j \in J} U(D_j)$ are equal,
+there exists an object $D'_k$ and maps $D_j \to D'_k$ and $D_k \to D'_k$ in the diagram such that $K \xrightarrow{h_k} U(D_k) \to U(D'_k)$ and $K \overset{k}\to X \overset{g}\to U(D_j) \to U(D'_k)$ are also equal.
+In particular, $K \overset{k}\to X \overset{g}\to U(D_j) \to U(D'_k)$ is marked.
+Finally, since $D$ is $\lambda$-filtered and $|\mathcal{E}| < \lambda$, there exists an object $D_i$ together with maps $D'_k \to D_i$ for every $k$.
+For every $k : K \to X$, map $K \overset{k}\to X \overset{g}\to U(D_j) \to U(D_i)$ is marked.
+Hence $X \overset{g}\to U(D_j) \to U(D_i)$ is a morphism of marked objects.
+Thus $f : (X,\mathcal{E}) \to \colim_{j \in J} D_j$ factors through $D_i \to \colim_{j \in J} D_j$.
+\end{proof}
+
+To construct a model structure on $\C^m$, we will need the following theorem by Jeff Smith (see, for example, \cite[Proposition~A.2.6.8]{lurie-topos}):
+\begin{thm}
+Let $\C$ be a locally presentable category, let $\I$ be a set of maps of $\C$, and let $\we$ be a class of maps of $\C$.
+Suppose that the following conditions hold:
+\begin{enumerate}
+\item The intersection $\Icof \cap \we$ is closed under pushouts and transfinite compositions.
+\item The full subcategory $\we$ of the category of arrows of $\C$ is accessible subcategory.
+\item The class $\we$ has the 2-out-of-3 property.
+\item $\Iinj \subseteq \we$.
+\end{enumerate}
+Then there exists a cofibrantly generated model structure on $\C$ with $\Icof$ as the class of cofibrations and $\we$ as the class of weak equivalences.
+\end{thm}
+
 \section{Marked simplicial sets}
 
 In this section for every set $\mathcal{K}$ of simplicial sets, we define a model category $\csSet$ of \K-marked simplicial sets.
@@ -458,7 +529,7 @@ To distinguish these marking from each other and from marking defined in \cite{l
 
 \begin{defn}
 Let $\mathcal{K}$ be a set of simplicial sets.
-A \emph{\K-marked simplicial set} is a pair $(X,\mathcal{E})$, where $X$ is a simplicial set and $\mathcal{E}$ is a subset of $\bigcup_{K \in \mathcal{K}} \Hom(\Delta^0 \join K, X)$.
+A \emph{\K-marked simplicial set} is a pair $(X,\mathcal{E})$, where $X$ is a simplicial set and $\mathcal{E}$ is a subset of $\coprod_{K \in \mathcal{K}} \Hom(\Delta^0 \join K, X)$.
 Cones that belong to $\mathcal{E}$ will be caled \emph{marked}.
 A morphism of \K-marked simplicial sets is a map of the underlying simplicial sets that preserves marked cones.
 The category of \K-marked simplicial sets will be denoted by $\csSet$.
@@ -466,21 +537,8 @@ The category of \K-marked simplicial sets will be denoted by $\csSet$.
 
 Forgetful functor $U : \csSet \to \sSet$ has a left adjoint $(-)^\flat : \sSet \to \csSet$ and a right adjoint $(-)^\sharp : \sSet \to \csSet$.
 For every simplicial set $X$, $X^\flat$ is the \K-marked simplicial set in which no cones are marked (that is, $X^\flat = (X,\varnothing)$),
-and $X^\sharp$ is the \K-marked simplicial set in which all cones are marked (that is, $X^\sharp = (X,\bigcup_{K \in \mathcal{K}} \Hom(\Delta^0 \join K, X))$).
+and $X^\sharp$ is the \K-marked simplicial set in which all cones are marked (that is, $X^\sharp = (X,\coprod_{K \in \mathcal{K}} \Hom(\Delta^0 \join K, X))$).
 Objects of the form $X^\flat$ and of the form $X^\sharp$ will be called \emph{flat} and \emph{sharp} respectively.
-
-To construct a model structure on $\csSet$, we will need the following theorem by Jeff Smith (see \cite[Proposition~A.2.6.8]{lurie-topos}):
-\begin{thm}
-Let $\C$ be a locally presentable category, let $\I$ be a set of maps of $\C$, and let $\we$ be a class of maps of $\C$.
-Suppose that the following conditions hold:
-\begin{enumerate}
-\item The intersection $\Icof \cap \we$ is closed under pushouts and transfinite compositions.
-\item The full subcategory $\we$ of the category of arrows of $\C$ is accessible subcategory.
-\item The class $\we$ has the 2-out-of-3 property.
-\item $\Iinj \subseteq \we$.
-\end{enumerate}
-Then there exists a cofibrantly generated model structure on $\C$ with $\Icof$ as the class of cofibrations and $\we$ as the class of weak equivalences.
-\end{thm}
 
 We will say that a map $f : X \to Y$ of \K-marked simplicial sets is a \emph{cofibration} if and only if $U(f)$ is a monomorphism of simplicial sets. 
 The class of cofibrations is generated by the set $\I$ which consists of the following maps:
