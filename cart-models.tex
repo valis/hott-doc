@@ -7,71 +7,9 @@
 \usepackage{ifthen}
 \usepackage{xargs}
 \usepackage{bussproofs}
-\usepackage{turnstile}
 \usepackage{verbatim}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
-
-\renewcommand{\turnstile}[6][s]
-    {\ifthenelse{\equal{#1}{d}}
-        {\sbox{\first}{$\displaystyle{#4}$}
-        \sbox{\second}{$\displaystyle{#5}$}}{}
-    \ifthenelse{\equal{#1}{t}}
-        {\sbox{\first}{$\textstyle{#4}$}
-        \sbox{\second}{$\textstyle{#5}$}}{}
-    \ifthenelse{\equal{#1}{s}}
-        {\sbox{\first}{$\scriptstyle{#4}$}
-        \sbox{\second}{$\scriptstyle{#5}$}}{}
-    \ifthenelse{\equal{#1}{ss}}
-        {\sbox{\first}{$\scriptscriptstyle{#4}$}
-        \sbox{\second}{$\scriptscriptstyle{#5}$}}{}
-    \setlength{\dashthickness}{0.111ex}
-    \setlength{\ddashthickness}{0.35ex}
-    \setlength{\leasturnstilewidth}{2em}
-    \setlength{\extrawidth}{0.2em}
-    \ifthenelse{%
-      \equal{#3}{n}}{\setlength{\tinyverdistance}{0ex}}{}
-    \ifthenelse{%
-      \equal{#3}{s}}{\setlength{\tinyverdistance}{0.5\dashthickness}}{}
-    \ifthenelse{%
-      \equal{#3}{d}}{\setlength{\tinyverdistance}{0.5\ddashthickness}
-        \addtolength{\tinyverdistance}{\dashthickness}}{}
-    \ifthenelse{%
-      \equal{#3}{t}}{\setlength{\tinyverdistance}{1.5\dashthickness}
-        \addtolength{\tinyverdistance}{\ddashthickness}}{}
-        \setlength{\verdistance}{0.4ex}
-        \settoheight{\lengthvar}{\usebox{\first}}
-        \setlength{\raisedown}{-\lengthvar}
-        \addtolength{\raisedown}{-\tinyverdistance}
-        \addtolength{\raisedown}{-\verdistance}
-        \settodepth{\raiseup}{\usebox{\second}}
-        \addtolength{\raiseup}{\tinyverdistance}
-        \addtolength{\raiseup}{\verdistance}
-        \setlength{\lift}{0.8ex}
-        \settowidth{\firstwidth}{\usebox{\first}}
-        \settowidth{\secondwidth}{\usebox{\second}}
-        \ifthenelse{\lengthtest{\firstwidth = 0ex}
-            \and
-            \lengthtest{\secondwidth = 0ex}}
-                {\setlength{\turnstilewidth}{\leasturnstilewidth}}
-                {\setlength{\turnstilewidth}{2\extrawidth}
-        \ifthenelse{\lengthtest{\firstwidth < \secondwidth}}
-            {\addtolength{\turnstilewidth}{\secondwidth}}
-            {\addtolength{\turnstilewidth}{\firstwidth}}}
-        \ifthenelse{\lengthtest{\turnstilewidth < \leasturnstilewidth}}{\setlength{\turnstilewidth}{\leasturnstilewidth}}{}
-    \setlength{\turnstileheight}{1.5ex}
-    \sbox{\turnstilebox}
-    {\raisebox{\lift}{\ensuremath{
-        \makever{#2}{\dashthickness}{\turnstileheight}{\ddashthickness}
-        \makehor{#3}{\dashthickness}{\turnstilewidth}{\ddashthickness}
-        \hspace{-\turnstilewidth}
-        \raisebox{\raisedown}
-        {\makebox[\turnstilewidth]{\usebox{\first}}}
-            \hspace{-\turnstilewidth}
-            \raisebox{\raiseup}
-            {\makebox[\turnstilewidth]{\usebox{\second}}}
-        \makever{#6}{\dashthickness}{\turnstileheight}{\ddashthickness}}}}
-        \mathrel{\usebox{\turnstilebox}}}
 
 \newcommand{\newref}[4][]{
 \ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
@@ -111,23 +49,13 @@
 \newcommand{\emptyCtx}{\mathbf{1}}
 \newcommand{\Set}{\cat{Set}}
 \newcommand{\sSet}{\cat{sSet}}
-\newcommand{\lc}{lc}
-\newcommand{\lcc}{lcc}
-\newcommand{\mlc}{\mathrm{\lc}}
-\newcommand{\mlcc}{\mathrm{\lcc}}
+\newcommand{\qcat}{\cat{qcat}}
 \newcommand{\K}{$\mathcal{K}$}
-\newcommand{\csSet}{\sSet_\mathcal{L}}
-\newcommand{\cqCat}{\cat{qcat}_\mathcal{L}}
-\newcommand{\lcsSet}{\sSet^\mlc}
-\newcommand{\lccsSet}{\sSet^\mlcc}
-\newcommand{\lcN}{N^\mlc}
-\newcommand{\lcC}{\mathfrak{C}^\mlc}
-\newcommand{\cI}{\I_\mathcal{K}}
-\newcommand{\cJ}{\J_\mathcal{K}}
 \newcommand{\join}{\star}
-\newcommand{\cSet}{\cat{cSet}}
+\newcommand{\fjoin}{\diamond}
 \newcommand{\Hom}{\mathrm{Hom}}
 \newcommand{\Map}{\mathrm{Map}}
+\newcommand{\Fun}{\mathrm{Fun}}
 \newcommand{\colim}{\mathrm{colim}}
 
 \newcommand{\we}{\mathcal{W}}
@@ -140,7 +68,6 @@
 \newcommand{\Jinj}[1][]{\Iinj[\J#1]}
 \newcommand{\Jcell}[1][]{\Icell[\J#1]}
 \newcommand{\Jcof}[1][]{\Icof[\J#1]}
-\newcommand{\cyli}{i}
 
 \numberwithin{figure}{section}
 
@@ -149,7 +76,7 @@
 
 \begin{document}
 
-\title[Equivalence between quasicategories and models of type theory]{Equivalence between locally cartesian (closed) quasicategories and models of homotopy type theory with an interval type}
+\title[Equivalence between quasicategories and models of type theory]{Equivalence between finitely complete quasicategories and models of homotopy type theory with an interval type}
 
 \author{Valery Isaev}
 
@@ -160,81 +87,6 @@ Abstract.
 \maketitle
 
 \section{Introduction}
-
-\begin{comment}
-\section{Cubically enriched categories}
-
-In this section we recall the definition of the category $\Cat_\square$ of cubically enriched categories and Quillen adjunction between
-the cateogry simplicial sets $\sSet$ (with Joyal model structure) and $\Cat_\square$.
-We also define Quillen adjunction between $\Cat_\square$ and categories of models of suitable algebraic dependent type theories.
-
-Let $D$ be poset $\{0,1\}$ where $0 \leq 1$.
-For every $0 \leq n$, $1 \leq i \leq n+1$, $\epsilon \in D$, let $\delta^{i,\epsilon}_n : D^n \to D^{n+1}$ and $\sigma^i_n : D^{n+1} \to D^n$ be the following morphisms of posets:
-\begin{align*}
-\delta^{i,\epsilon}_n(x_1, \ldots x_n) & = (x_1, \ldots x_{i-1}, \epsilon, x_{i+1}, \ldots x_n) \\
-\sigma^i_n(x_1, \ldots x_{n+1}) & = (x_1, \ldots x_{i-1}, x_{i+1}, \ldots x_{n+1})
-\end{align*}
-Category of cubes $\square$ is the subcategory of the category of posets on objects of the form $D^n$ generated by morphisms $\delta^{i,\epsilon}_n$ and $\sigma^i_n$.
-Let $\cSet$ be the category of cubical sets $\Set^{\square^{op}}$.
-Let $\square^n \in \cSet$ be the representable presheaf on $D^n$.
-Let $d^{i,\epsilon}_n : \square^n \to \square^{n+1}$ and $s^i_n : \square^{n+1} \to \square^n$ be the maps represented by $\delta^{i,\epsilon}_n$ and $\sigma^i_n$.
-
-There is a (unique) closed monoidal structure $(\otimes,1)$ on $\cSet$ such that $\square^n \otimes \square^m \cong \square^{n+m}$ and $1 = \square^0$ (see, for example, \cite{jardine}).
-Let $X$ be an object of a cocomplete monoidal category $\C$.
-Then there exists a (unique) colimit-preserving strong monoidal functor $F : \cSet \to \C$ such that $F(\square^1) = X$.
-This functor has a right adjoint $G : \C \to \cSet$ given by formula $G(X) = \Hom_\C(F(y(-)),X)$, where $y : \square \to \cSet$ is the Yoneda embedding.
-An examples of this construction is the adjunction $|-| : \cSet \rightleftarrows \sSet : S$ such that $|\square^1| = \Delta^1$.
-
-For every $n \geq 0$, let $\partial \square^n$ be the following coequalizer:
-\[ \coprod_{1 \leq i < j \leq n, \epsilon_1,\epsilon_2 \in D} \square^{n-2} \rightrightarrows \coprod_{1 \leq i \leq n, \epsilon \in D} \square^{n-1} \to \partial \square^n, \]
-where one of the morphisms maps $(i,j,\epsilon_1,\epsilon_2)$-th component to $(i,\epsilon_1)$-th component by map $d^{j-1,\epsilon_2}_{n-2}$,
-the other one maps $(i,j,\epsilon_1,\epsilon_2)$-th component to $(j,\epsilon_2)$-th component by map $d^{i,\epsilon_1}_{n-2}$,
-Consider morphism $f : \coprod_{1 \leq i \leq n, \epsilon \in D} \square^{n-1}$ that is defined on $(i,\epsilon)$-th component by $d^{i,\epsilon}_{n-1}$.
-Then this morphism determines a morphism $i^n : \partial \square^n \to \square^n$.
-
-For every $n \geq 0$, $1 \leq i \leq n$, $\epsilon \in D$, let $\sqcap^n_{i,\epsilon}$ be the following coequalizer:
-\[ \coprod_{\substack{1 \leq j_1 < j_2 \leq n, \gamma_1,\gamma_2 \in D, \\ (j_1,\gamma_1) \neq (i,\epsilon), (j_2,\gamma_2) \neq (i,\epsilon)}} \square^{n-2} \rightrightarrows \coprod_{\substack{1 \leq j \leq n, \gamma \in D, \\ (j,\gamma) \neq (i,\epsilon)}} \square^{n-1} \to \sqcap^n_{i,\epsilon}, \]
-where morphisms are defined as before.
-The restriction of $f$ determines a morphism $u^n_{i,\epsilon} : \sqcap^n_{i,\epsilon} \to \square^n$.
-
-There is a model structure on $\cSet$ with maps $i^n : \partial \square^n \to \square^n$ as generating cofibrations
-and maps $u^n_{i,\epsilon} : \sqcap^n_{i,\epsilon} \to \square^n$ as generating trivial cofibrations (see, for example, \cite[Example~52, Theorem~88]{jardine}).
-Functors $|-| : \cSet \rightleftarrows \sSet : S$ determine a Quillen equivalence.
-
-Let $\Cat_\Delta$ and $\Cat_\square$ be the categories of simplicially and cubically enriched categories respectively (that is, categories enriched in $\sSet$ and $\cSet$).
-Bergner constructed a model structure on $\Cat_\Delta$ in \cite{bergner}.
-Lurie generalized this construction (\cite[Proposition~A.3.2.4]{lurie-topos}).
-In particular, this proposition applies to the category of cubically enriched categories.
-To describe the class of cofibrations of this model category, we need too define a functor $ar : \cSet \to \Cat_\square$.
-For every cubical set $A$, let $ar(A)$ be the cubically enriched category with two objects $X$ and $Y$ and $\Hom(X,Y) = A$, $\Hom(X,X) = \Hom(Y,Y) = 1$, $\Hom(Y,X) = \varnothing$.
-The class of cofibrations is generated by the set of maps of the form $ar(i^n)$ and map $\varnothing \to 1$.
-
-\begin{rem}
-Fibrations in $\Cat_\square$ do not have simple description, but fibrant objects have.
-Since the category of simplicial sets is excellent, the category of cubical sets is also excellent by \cite[Remark~A.3.2.21]{lurie-topos}.
-By \cite[Theorem~A.3.2.24]{lurie-topos}, a cubically enriched category $C$ is fibrant
-if and only if for every objects $X$ and $Y$ of $C$, $\Hom_C(X,Y)$ is a fibrant cubical set.
-Also, a map $F : C \to D$ between cubically enriched categories, where $D$ is fibrant, is a fibration if and only if the following conditions are satisfied:
-\begin{enumerate}
-\item For every object $X$ and $Y$ of $C$, $\Hom_C(X,Y) \to \Hom_D(F(X),F(Y))$ is a fibration of cubical sets.
-\item For every object $X$ of $C$ and every equivalence $f : F(X) \to Y$ in $D$, there exists an equivalence $f' : X \to Y'$ in $C$ such that $F(f') = f$.
-\end{enumerate}
-\end{rem}
-
-There is a pair of adjoint functors $\mathfrak{C}_\Delta : \sSet \rightleftarrows \Cat_\Delta : N_\Delta$ which is defined in \cite[Section~1.1.5]{lurie-topos}.
-We will need analogous functors for cubically enriched categories.
-We define a cubically enriched category $\mathfrak{C}_\square(\Delta^n)$ as follows:
-\begin{itemize}
-\item The objects of $\mathfrak{C}_\square(\Delta^n)$ are natural numbers between $0$ and $n$.
-\item For every $0 \leq j < i \leq n$, $\Hom_{\mathfrak{C}_\square(\Delta^n)}(i,j) = \varnothing$.
-\item For every $0 \leq i \leq n$, $\Hom_{\mathfrak{C}_\square(\Delta^n)}(i,i) = 1$.
-\item For every $0 \leq i < j \leq n$, $\Hom_{\mathfrak{C}_\square(\Delta^n)}(i,j) = \square^{j-i-1}$.
-\item For every object $i$ of $\mathfrak{C}_\square(\Delta^n)$, the identity morphism on $i$ is the unique element of $\Hom_{\mathfrak{C}_\square(\Delta^n)}(i,i)$.
-\item For every $0 \leq i < j < k \leq n$, the composition
-\[ \Hom_{\mathfrak{C}_\square(\Delta^n)}(i,j) \otimes \Hom_{\mathfrak{C}_\square(\Delta^n)}(j,k) \to \Hom_{\mathfrak{C}_\square(\Delta^n)}(i,k) \]
-is the composite $\square^{j-i-1} \otimes \square^{k-j-1} \cong \square^{k-i-2} \to \square^{k-i-1}$.
-\end{itemize}
-\end{comment}
 
 \section{Functors between $\sSet$ and $\Mod{T}$}
 
@@ -447,6 +299,7 @@ But this follows from the fact that $f$ has RLP with respect to $\J_{\I_{ty}}$.
 \end{proof}
 
 \section{Category of marked objects}
+\label{sec:marked}
 
 In this section for every combinatorial model category $\C$, we define a new model category $\C^m$ of marked objects of $\C$.
 This model category is usually not useful by itself.
@@ -746,7 +599,7 @@ Since $Y$ is fibrant and $e(x)$ preserves marked maps, so does every map homotop
 Let $\Map(X,Y)$ be the Kan subcomplex of $\Map(U(X),U(Y))$ which consists of those components of
 $\Map(U(X),U(Y))$ in which some (and hence every) vertex corresponds to a map $U(X) \to U(Y)$ that lifts to a map of marked objects.
 
-\begin{lem}
+\begin{lem}[mark-map]
 Kan complex $\Map(X,Y)$ is equivalent to the homotopy function complex from $X$ to $Y$.
 \end{lem}
 \begin{proof}
@@ -772,266 +625,151 @@ Since $Y$ is fibrant, $K \xrightarrow{k} QU(X)^n \to U(Y)$ is also marked.
 
 \section{Marked simplicial sets}
 
-In this section for every set $\mathcal{L}$ of simplicial sets, we define a model category $\csSet$
-which represents the $(\infty,1)$-category of $(\infty,1)$-categories in which for every $L \in \mathcal{L}$ limits of shape $L$ exist.
-For example, if $\mathcal{L} = \{ \varnothing, \Lambda^2_2 \}$, then $\csSet$ represents $(\infty,1)$-category of finitely complete categories and exact functors.
-We also define a model category which represents the $(\infty,1)$-category of locally cartesian closed $(\infty,1)$-categories.
-These model categories are left Bousfield localizations of certain categories of marked simplicial sets.
+In this section for every set $\mathcal{L}$ of simplicial sets, we define a model category $\sSet_\mathcal{L}$ of marked simplicial sets
+which represents the $(\infty,1)$-category of $(\infty,1)$-categories which have a limit for every diagram of every shape from $\mathcal{L}$.
+In particular, if $\mathcal{L} = \{ \varnothing, \Lambda^2_2 \}$, then $\sSet_\mathcal{L}$ represents the $(\infty,1)$-category of finitely complete $(\infty,1)$-categories.
 
-For every set $\mathcal{L}$ of simplicial sets, we define set $\Delta^0 \join \mathcal{L}$ as $\{ \Delta^0 \join L\ |\ L \in \mathcal{L} \}$.
-Then let $\csSet$ be the category of $(\Delta^0 \join \mathcal{L})$-marked simplicial sets.
+For every set of simplicial sets $\mathcal{L}$, we define set $\mathcal{K}$ as $\{ \Delta^0 \join L\ |\ L \in \mathcal{L} \}$.
+Let $\sSet_\mathcal{L}$ be the category of \K-marked objects.
+Let $\J$ be the following set of maps of $\sSet_\mathcal{L}$:
+\begin{enumerate}
+\item For every $L \in \mathcal{L}$, maps $L^\flat \to (\Delta^0 \join L, \{ id : \Delta^0 \join L \to \Delta^0 \join L \})$.
+\item For every $n > 0$ and $L \in \mathcal{L}$, maps $(\partial \Delta^n \join L, \{ \Delta^{\{n\}} \join L : \Delta^0 \join L \to \partial \Delta^n \join L \}) \to (\Delta^n \join L, \{ \Delta^{\{n\}} \join L : \Delta^0 \join L \to \Delta^n \join L \})$.
+\end{enumerate}
+We define a model structure on $\sSet_\mathcal{L}$ as the left Bousfield localization of the model structure defined in section~\ref{sec:marked} with respect to $\J$.
+The following propositions give us a characterization of fibrant objects and fibrations between them in $\sSet_\mathcal{L}$.
 
-We will say that a quasicategory $X$ is \K-complete if for every $K \in \mathcal{K}$, limits of shape $K$ exist in $X$.
-Let $\cqCat$ be the full subcategory of $\sSet$ on \K-complete quasicategories.
-For every $X \in \cqCat$, we define a \K-marked simplicial set $X^\natural$ as simplicial set $X$ in which a cone is marked if and only if it is a limit cone.
-We will later see that fibrant objects of $\csSet$ are precisely objects of the form $X^\natural$.
-
-Let $S : \Delta \to \sSet$ be a cosimplicial frame on $\Delta^0$ (in the Quillen model structure) such that $S(\Delta^n)$ is a Kan complex for every $n$.
-First, extend $S$ to a colimit-preserving functor $S : \sSet \to \sSet$.
-For every \K-marked simplicial sets $X$ and $Y$, we define a simplicial set $\Map(X,Y)$ as follows:
-\[ \Map(X,Y) = \Hom(S(-)^\sharp \times X, Y). \]
-Note that cartesian product in $\csSet$ preserves colimits.
-It follows that $\Map(-,Y)$ sends colimits to limits.
-
-We will say that a map $f : X \to Y$ of \K-marked simplicial sets is a \emph{weak equivalence} if for every $Z \in \cqCat$,
-induced map $\Map(Y,Z^\natural) \to \Map(X,Z^\natural)$ is a weak equivalence of simplicial sets in the Quillen model structure.
-
-\begin{prop}[map-fib]
-For every cofibration $f : X \to Y$, induced map $\Map(Y,Z^\natural) \to \Map(X,Z^\natural)$ is a fibration in the Quillen model structure.
-\end{prop}
-\begin{proof}
-Map $\Map(Y,Z^\natural) \to \Map(X,Z^\natural)$ has RLP with respect to a horn inclusion
-$j : \Lambda^n_i \to \Delta^n$ if and only if $Z^\natural$ has RLP with respect to the following map:
-\[ j \wedge f : S(\Delta^n)^\sharp \times X \amalg_{(S(\Lambda^n_i),\mathcal{E}) \times X} (S(\Lambda^n_i),\mathcal{E}) \times Y \to S(\Delta^n)^\sharp \times Y \]
-A cone $\Delta^0 \join K \to S(\Lambda^n_i)$ belongs to $\mathcal{E}$ if and only if it factors through some face $S(\Delta^{n-1}) \to S(\Lambda^n_i)$.
-
-Since cartesian product of \K-marked simplicial sets preserve colimits, $X \times -$ has a right adjoint.
-Hence we may assume that $f : X \to Y$ belongs to $\I$.
-First, let us consider the case when $f$ is a map $(\partial \Delta^k)^\flat \to (\Delta^k)^\flat$.
-Then both the domain and the codomain of $j \wedge f$ are flat.
-Hence $Z^\natural$ has RLP with respect to $j \wedge f$ if and only if $Z$ has RLP with respect to $U(j) \wedge U(f)$.
-Since $Z$ is fibrant in the Joyal model structure and $U(j) \wedge U(f)$ is a cofibration,
-we just need to show that $U(j) \wedge U(f)$ is a weak equivalence in the Joyal model structure.
-Since $S$ is a cosimplicial frame on $\Delta^0$, map $U(j)$ is a weak equivalence.
-By \cite[Corollary~2.2.5.4]{lurie-topos}, for every simplicial set $X$, $U(j) \times X$ is also a weak equivalence.
-Since $U(j)$ is a trivial cofibration, $S(\Lambda^n_i) \times U(Y) \to S(\Delta^n) \times U(X) \amalg_{S(\Lambda^n_i) \times U(X)} S(\Lambda^n_i) \times U(Y)$ is also a trivial cofibration.
-Hence by 2-out-of-3 property, $U(j) \wedge U(f)$ is a weak equivalence.
-
-Now, assume that $f$ is a map $(\Delta^0 \join K)^\flat \to (\Delta^0 \join K, \{ id \})$.
-Then $j \wedge f$ is the following map: $(S(\Delta^n),\mathcal{E}') \times (\Delta^0 \join K, \{ id \}) \to S(\Delta^n)^\sharp \times (\Delta^0 \join K, \{ id \})$.
-A cone $\Delta^0 \join K' \to S(\Delta^n)$ belongs to $\mathcal{E}'$ if and only if
-it factors through $S(\Lambda^n_i)$ and $\Delta^0 \join K' \to S(\Lambda^n_i)$ belongs to $\mathcal{E}$.
-Consider a map $g : (S(\Delta^n),\mathcal{E}') \times (\Delta^0 \join K, \{ id \}) \to Z^\natural$.
-Since $U(j \wedge f)$ is an isomorphism, we just need to show that for every cone $k' : \Delta^0 \join K' \to S(\Delta^n) \times (\Delta^0 \join K)$,
-if $k'$ is marked in $S(\Delta^n)^\sharp \times (\Delta^0 \join K, \{ id \})$, then $U(g) \circ k'$ is marked in $Z^\natural$.
-Cone $k'$ is marked in $S(\Delta^n)^\sharp \times (\Delta^0 \join K, \{ id \})$ only if it is of the form $\langle k, id \rangle$ for some cone $k : \Delta^0 \join K \to S(\Delta^n)$.
-Since $S(\Delta^n)$ is a contractible Kan complex, every two cones $k_1,k_2 : \Delta^0 \join K \to S(\Delta^n)$ are homotopic.
-
-Since there exists at least one marked cone in $(S(\Delta^n),\mathcal{E}') \times (\Delta^0 \join K, \{ id \})$,
-we just need to prove that if a cone $k_1 : \Delta^0 \join K \to Z$ is marked in $Z^\natural$ and $k_2$ is homotopic to $k_1$, then $k_2$ is also marked in $Z^\natural$.
-But a cone is marked in $Z^\natural$ if and only if it is a limit cone.
-It is easy to see that a cone homotopic to a limit cone is also a limit cone.
-\end{proof}
-
-\begin{cor}[obj-fib]
-For every $X \in \csSet$ and $Z \in \cqCat$, $\Map(X,Z^\natural)$ is a Kan complex.
-\end{cor}
-
-\begin{cor}
-Trivial cofibrations in $\csSet$ are closed under pushouts.
-\end{cor}
-\begin{proof}
-Consider the following pushout where $A \to B$ is a trivial cofibration:
-\[ \xymatrix{ A \ar[r] \ar[d] & C \ar[d] \\
-              B \ar[r]        & \po D
-            } \]
-By \rprop{map-fib}, $\Map(B,Z^\natural) \to \Map(A,Z^\natural)$ is a trivial fibration in the Quillen model structure.
-Since $\Map(-,Z^\natural)$ sends colimits to limits, we have the following cartesian square:
-\[ \xymatrix{ \Map(D,Z^\natural) \ar[r] \ar[d] \pb & \Map(B,Z^\natural) \ar[d] \\
-              \Map(C,Z^\natural) \ar[r]            & \Map(A,Z^\natural)
-            } \]
-Thus $\Map(D,Z^\natural) \to \Map(C,Z^\natural)$ is also a trivial fibration.
-Hence $C \to D$ is a weak equivalence.
-\end{proof}
-
-\begin{prop}[hom-we]
-Let $f : X \to Y$ and $g : Y \to X$ be maps of \K-marked simplicial sets such that $U(g \circ f)$ and $U(f \circ g)$ are left homotopic to identity morphisms.
-Then $f$ and $g$ are weak equivalences.
-\end{prop}
-\begin{proof}
-To prove this, it is enough to show that if $f,g : X \to Y$ are maps of \K-marked simplicial sets such that $U(f)$ and $U(g)$ are left homotopic,
-then corresponding maps $\Map(Y,Z^\natural) \to \Map(X,Z^\natural)$ are also homotopic.
-Let $S(\Delta^1) \times U(X) \to U(Y)$ be a homotopy between $U(f)$ and $U(g)$.
-Then we can lift it to a map $h : C(X) \to Y$, where $C(X) = (S(\Delta^1),\mathcal{E}) \times X$,
-a cone belongs to $\mathcal{E}$ if and only if it factors through one of the two faces $S(\Delta^0) \to S(\Delta^1)$.
-
-Homotopy $h$ determines a map $\Map(Y,Z^\natural) \to \Map(C(X),Z^\natural)$.
-Thus we just need to prove that $\Map(C(X),Z^\natural)$ is a path object for $\Map(X,Z^\natural)$.
-First, note that $\Map(C(X),Z^\natural) \to \Map(X,Z^\natural) \times \Map(X,Z^\natural)$
-is a fibration by \rprop{map-fib} and $\Map(X,Z^\natural) \to \Map(C(X),Z^\natural)$ is a cofibration.
-Thus it is enough to show that $\Map(C(X),Z^\natural) \to \Map(X,Z^\natural)$ is a trivial fibration.
-This map has RLP with respect to $i : \partial \Delta^n \to \Delta^n$ if and only if $Z^\natural$ has RLP with respect to the following map:
-\[ t : S(\Delta^n)^\sharp \times X \amalg_{(S(\partial \Delta^n),\mathcal{E'}) \times X} (S(\partial \Delta^n),\mathcal{E'}) \times C(X) \to S(\Delta^n)^\sharp \times C(X) \]
-
-First, note that the underlying map of simplicial sets $U(t)$ is a trivial cofibration in the Joyal model structure.
-Indeed, it follows from the fact that $S(\partial \Delta^n) \to S(\Delta^n)$ is a cofibration
-and $X \to S(\Delta^1) \times X$ is a trivial cofibration in the same way as in \rprop{map-fib}.
-It follows that $Z$ has RLP with respect to $U(t)$.
-To prove that this lifting $g : S(\Delta^n) \times U(C(X)) \to Z$ extends to a morphism of \K-marked simplicial sets,
-we just need to show that for every cone $k : (\Delta^0 \join K, \{id\}) \to S(\Delta^n)^\sharp \times C(X)$, cone $g \circ U(k)$ is marked in $Z^\natural$.
-Note that cone $\Delta^0 \join K \to S(\Delta^n) \times U(C(X)) \to S(\Delta^n) \times U(X) \to S(\Delta^n) \times U(C(X)) \to Z$ is marked in $Z^\natural$.
-Since this cone is homotopic to $k$, $k$ is also marked in $Z^\natural$.
-\end{proof}
-
-\begin{cor}[iinj]
-If a map $f : X \to Y$ of \K-marked simplicial sets has RLP with respect to $\I$, then $f$ is a weak equivalence.
-\end{cor}
-\begin{proof}
-Since $Y$ is cofibrant, $f$ has a section $g : Y \to X$.
-Since $U(f)$ is a trivial fibration, $U(g \circ f)$ and $U(f \circ g)$ are homotopic to identities.
-\end{proof}
-
-\begin{prop}
-A map $f : X^\natural \to Y^\natural$ is a weak equivalence if and only if $U(f)$ is a weak equivalence in the Joyal model structure.
-\end{prop}
-\begin{proof}
-First, suppose that $f$ is a weak equivalence.
-Then $\Map(Y^\natural,X^\natural) \to \Map(X^\natural,X^\natural)$ is a weak equivalence.
-By \rcor{obj-fib}, simplicial sets $\Map(Y^\natural,X^\natural)$ and $\Map(X^\natural,X^\natural)$ are Kan complexes.
-Hence for every vertex $v : \Delta^0 \to \Map(X^\natural,X^\natural)$ there exists a vertex $u : \Delta^0 \to \Map(Y^\natural,X^\natural)$
-such that $\Delta^0 \xrightarrow{u} \Map(Y^\natural,X^\natural) \to \Map(X^\natural,X^\natural)$ is homotopic to $v$.
-Since vertices of $\Map(A,B)$ classify maps $\Hom(A,B)$, we can take the vertex $\Delta^0 \to \Map(X^\natural,X^\natural)$ that classifies the identity morphism,
-to obtain a map $g : Y^\natural \to X^\natural$ and a homotopy $h : S(\Delta^1)^\sharp \times X^\natural \to X^\natural$ between $g \circ f$ and $id$.
-Now, consider the following diagram:
-\[ \xymatrix{ \partial \Delta^1 \ar[d] \ar[r] & \Map(Y^\natural,Y^\natural) \ar[d] \\
-              \Delta^1 \ar[r] & \Map(X^\natural,Y^\natural)
-            } \]
-where the top map classifies maps $f \circ g$ and $id$, and the bottom map is $f \circ h$.
-Since the right map is a weak equivalence between fibrant objects, there exists a homotopy $h' : S(\Delta^1)^\sharp \times Y^\natural \to Y^\natural$ between $f \circ g$ and $id$.
-Thus $U(f)$ is a homotopy equivalence.
-
-Now, assume that $U(f)$ is a weak equivalence.
-Factor $f$ as a cofibration $g : X^\natural \to Z$ followed by a map $h : Z \to Y^\natural$ that has RLP with respect to $\I$.
-By \rcor{iinj}, $h$ is a weak equivalence.
-Thus by 2-out-of-3 property, we just need to show that $g$ is a weak equivalence.
-Since $U(g)$ is a trivial cofibration and $U(Z)$ is fibrant object, there exists a retraction $g' : U(Z) \to U(X)$ of $U(g) : U(X) \to U(Z)$.
-To prove that $g'$ lifts to a morphism of \K-marked simplicial sets, we just need to show that for every limit cone $k : \Delta^0 \join K \to U(Z)$, $g' \circ k'$ is also a limit cone.
-But $g'$ is a weak equivalence by 2-out-of-3 property, so it preserves limit cones.
-Thus we have maps $g : X^\natural \to Z$ and $g'' : Z \to X^\natural$ such that $U(g'' \circ g)$ and $U(g \circ g'')$ are homotopic to identity morphisms.
-By \rprop{hom-we}, $g$ is a weak equivalence.
-\end{proof}
-
-Let $\J$ be the set which consists of the following maps:
+\begin{comment}
+Let $\J'$ be the set of maps of $\sSet_\mathcal{L}$ which consists of the maps in $\J$ and the following maps:
 \begin{enumerate}
 \item For every $0 < i < n$, inclusions $(\Lambda^n_i)^\flat \to (\Delta^n)^\flat$.
-\item For every $K \in \mathcal{K}$, maps $K^\flat \to (\Delta^0 \join K, \{ id : \Delta^0 \join K \to \Delta^0 \join K \})$.
-\item For every $n > 0$ and $K \in \mathcal{K}$, maps $(\partial \Delta^n \join K, \{ \Delta^{\{n\}} \join K : \Delta^0 \join K \to \partial \Delta^n \join K \}) \to (\Delta^n \join K, \{ \Delta^{\{n\}} \join K : \Delta^0 \join K \to \Delta^n \join K \})$.
-\item For every $K \in \mathcal{K}$, maps $(N(\{ 0 \cong 1 \}) \join K,\{ f_1 \}) \to (N(\{ 0 \cong 1 \}) \join K,\{ f_0, f_1 \})$, where
+\item For every $L \in \mathcal{L}$, maps $(S,\{ f_1 \}) \to (S,\{ f_0, f_1 \})$, where
+\[ S = \Delta^1 \join L \amalg_{\Delta^1} N(\{ 0 \cong 1 \}), \]
 $\{ 0 \cong 1 \}$ is the groupoid with two objects and a unique isomorphism between them, and
-$f_i$ is the map $\Delta^0 \join K \cong N(\{i\}) \join K \to N(\{ 0 \cong 1 \}) \join K$.
-% \item For every $K \in \{ \varnothing, \Lambda^2_2 \}$, maps $(S,\{ f_1 \}) \to (S,\{ f_0, f_1 \})$, where
-% \[ S = \Delta^1 \join K \amalg_{\Delta^1} N(\{ 0 \cong 1 \}), \]
-% $\{ 0 \cong 1 \}$ is the groupoid with two objects and a unique isomorphism between them, and
-% $f_i$ is the composite $\Delta^0 \join K \xrightarrow{\Delta^{\{i\}} \join K} \Delta^1 \join K \to S$.
+$f_i$ is the composite $\Delta^0 \join L \xrightarrow{\Delta^{\{i\}} \join L} \Delta^1 \join L \to S$.
 \end{enumerate}
-
-% A map $f : X \to Y$ of \lc-marked simplicial sets is a \emph{weak equivalence} if for
-
-\begin{comment}
-\begin{defn}
-An \emph{\lcc-marked simplicial set} is an \lc-marked simplicial set $X$ together with a subset of the set of edges $\Delta^1 \to X$.
-Edges that belong to this subset will be caled \emph{marked}.
-A morphism of \lcc-marked simplicial sets is a map of the underlying \lc-marked simplicial sets that preserves marked edges.
-The category of \lcc-marked simplicial sets will be denoted by $\lccsSet$.
-\end{defn}
 \end{comment}
 
-\begin{comment}
-Let $T^a_\Sigma = coe_1 + \sigma + Path + wUA + \Sigma + sq^a_l$.
-Quillen adjunction between $\sSet$ and $\Mod{T^a_\Sigma}$ that we constructed in the previous section is not a Quillen equivalence.
-Model category $\Mod{T^a_\Sigma}$ should represent the $(\infty,1)$-category of finitely complete $(\infty,1)$-categories (and exact functor),
-but $\sSet$ represent the $(\infty,1)$-category of all $(\infty,1)$-categories.
-To fix this problem, we define model category $\lcsSet$ which is closely related to $\sSet$ and which is Quillen equivalent to $\Mod{T^a_\Sigma}$.
-We will prove later that the fibration category corresponding to $\lcsSet$ is equivalent to the fibration category of finitely complete quasicategories.
-
-We will consider simplicial sets with marked vertices and squares.
-This marking is not related to the marking of simplicial sets as defined in \cite{lurie-topos}.
-So we will call such simplicial sets \emph{\lc-marked}.
-The intention is that marked vertices should be terminal objects and marked squares should be cartesian.
-Of course, in general, this may not be the case, but we will construct a model structure on
-the category of \lc-marked simplicial sets in which fibrant objects have this property.
-
-The set of generating cofibrations $\lcI$ consists of the following maps:
+\begin{prop}[mark-fib-obj]
+For every marked simplicial set $Z$, the following conditions are equivalent:
 \begin{enumerate}
-\item Inclusions $(\partial \Delta^n)^\flat \to (\Delta^n)^\flat$.
-\item Inclusion $\varnothing \to (\Delta^0)^\sharp$.
-\item Inclusion $L^\flat \to S$, where $S$ is simplicial set $\Delta^1 \times \Delta^1$ in which only $id : \Delta^1 \times \Delta^1 \to \Delta^1 \times \Delta^1$ is marked,
-and $L$ is simplicial set with three vertexes and two nondegenerate edges which looks like this:
-\[ \xymatrix{                & \bullet \ar[d] \\
-              \bullet \ar[r] & \bullet
-            } \]
-The map $L^\flat \to S$ is the obvious inclusion.
-\end{enumerate}
-
-\begin{prop}
-A map $f : X \to Y$ of \lc-marked simplicial sets is a cofibration if and only if the following conditions hold:
-\begin{enumerate}
-\item $f$ is a monomorphism of simplicial sets.
-\item For every vertex or square $x$ of $X$, if $f(x)$ is marked in $Y$, then $x$ is marked in $X$.
-\item For every marked square of $Y$ which does not belong to $X$, every nondegenerate simplex of $\Delta^1 \times \Delta^1$,
-which is degenerate in $Y$, belongs to $L^\flat$.
-\item For every distinct marked squares $y_1$ and $y_2$ of $Y$ at least one of which does not belong to $X$,
-every common simplex of $y_1$ and $y_2$ belongs to $L^\flat$.
+\item \label{it:fib} $Z$ is a fibrant object of $\sSet_\mathcal{L}$.
+% \item \label{it:jp} $Z$ has RLP with respect to $\J'$.
+\item \label{it:exp} $Z$ is a quasicategory which has a limit for every diagram of every shape from $\mathcal{L}$, and a cone is marked in $Z$ if and only if it is a limit cone.
 \end{enumerate}
 \end{prop}
-
-Let $X$ be a model of some theory $T$.
-Edges of $N(X)$ are classified by maps $\mathfrak{C}(\Delta^1) \to X$, or equivalently by terms $x : A \vdash b : B$.
-Squares $\Delta^1 \times \Delta^1 \to N(X)$ are classified by the following data:
-types $A,B,C,D \in X_{(ty,0)}$ and terms $f,g,f',g',r \in X_{(tm,1)}$, $h_1,h_2 \in X_{(tm,2)}$ such that
-$y : B \vdash f : D$, $z : C \vdash g : D$, $x : A \vdash f' : C$, $x : A \vdash g' : B$, $x : A \vdash r : D$,
-$x : A, i : I \vdash h_1 : D$, $x : A, i : I \vdash h_2 : D$, $h_1[left] = f[y \repl g']$, $h_1[right] = h_2[right] = r$, and $h_2[left] = g[z \repl f']$.
-These data can be depicted in the following diagram (where the top and the bottom triangles correspond to $h_1$ and $h_2$ respectively):
-\[ \xymatrix{ A \ar[r]^{g'} \ar[d]_{f'} \ar[rd]^r & B \ar[d]^f \\
-              C \ar[r]_g & D
-            } \]
-
-If $T$ is under $T^a_\Sigma$, then $N : \Mod{T} \to \sSet$ factors through the forgetful functor $U : \lcsSet \to \sSet$.
-Let the chosen vertex of $N(X)$ be the interval type.
-For every $y : B \vdash f : D$ and $z : C \vdash g : D$, the chosen square in $N(X)$ is defined as follows:
-$A = \Sigma(y : B, \Sigma(z : C, f \idtype g))$, $f' = (x : A \vdash \pi_1(\pi_2(x)) : C)$, $g' = (x : A \vdash \pi_1(x) : B)$,
-$r = (x : A \vdash g[z \repl f'] : D)$, $h_1 = (x : A, y : I \vdash at(\pi_2(\pi_2(x)),y) : D)$, and $h_2 = (x : A, y : I \vdash r : D)$.
-We will denote this functor by $\lcN : \Mod{T} \to \lcsSet$.
-
-Functor $\lcN$ has a left adjoint $\lcC : \lcsSet \to \Mod{T}$.
-For every $X \in \lcsSet$, $\lcC(X)$ is defined by the same generators and relations as $\mathfrak{C}(X)$
-together relations that make chosen cones in $X$ equal to corresponding data in the theory.
-Let us give a more explicit description of models of the form $\mathfrak{C}(X)$.
-By \cite[Remark~3.4]{alg-models}, elements of $\mathfrak{C}(X)_{(p,n)}$ are equivalence classes of closed terms constructed from function symbols of $T^a_\Sigma$.
-The (partial) equivalence relation on the set of terms is generated by a relation $\red$ such that every term has a unique normal form
-(that is, for every term $t$, there exists a unique term $t'$ such that $t \red^* t'$ and there is no term $t''$ such that $t' \red t''$).
-This implies that there is a bijection between the set of equivalences classes of terms and the set of terms in a normal form.
-
-Relation $\red$ is defined as the minimal relation that is closed under application of function symbols and that contains all axioms in which direction is chosen in the obvious way.
-
-To construct a model structure on $\lcsSet$, we need to prove a few technical lemmas.
-
-\begin{lem}
-\end{lem}
 \begin{proof}
+% It is easy to see that \eqref{it:fib} implies \eqref{it:jp}, and that \eqref{it:jp} and \eqref{it:exp} are equivalent.
+% To prove that \eqref{it:exp} implies \eqref{it:fib}, we need to define homotopy function complexes for $\sSet_\mathcal{L}$.
+It is easy to see that \eqref{it:fib} implies \eqref{it:exp}.
+To prove the converse, we need to define homotopy function complexes for $\sSet_\mathcal{L}$.
+First, recall that the inclusion of Kan complexes into quasicategories has a right adjoint which we denote by $E$ (see, for example, \cite[Proposition~1.2.5.3]{lurie-topos}).
+Let $\Fun(X,Y)$ be the internal Hom in the category of simplicial sets.
+By \cite[Corollary~3.1.4.4]{lurie-topos}, $E(\Fun(X,Y))$ is a homotopy function complex in the Joyal model structure.
+If $X$ and $Y$ are marked simplicial sets, then by \rlem{mark-map}, we can define a homotopy function complex $\Map(X,Y)$ as certain subcomplex of $E(\Fun(U(X),U(Y)))$.
+
+Let $X$ be a marked simplicial set of the form $(A \join L, \{ p \join L \})$ for some $L \in \mathcal{L}$ and $p : \Delta^0 \to A$.
+Then we can give an equivalent definition of a homotopy function complex $\Map'(X,Y)$ in terms of fat join.
+Let $\Map'(X,Y)$ be the subcomplex of $E(\Fun(A \fjoin L, Y))$ which consists of those components in which some (and hence every) vertex
+corresponds to a map $f : A \fjoin L \to Y$ such that $\Delta^0 \fjoin L \xrightarrow{p \fjoin L} A \fjoin L \xrightarrow{f} Y$ is a limit cone.
+Since $A \fjoin L \to A \join L$ is a weak equivalence in the Joyal model structure, induced map $\Map(X,Y) \to \Map'(X,Y)$ is a weak equivalence of Kan complexes.
+
+An object $Z$ of $\sSet_\mathcal{L}$ is fibrant if and only if it is a quasicategory, marked maps in $Z$ are stable under homotopy,
+and for every map $X \to Y$ in $\J$, induced map of Kan complexes $\Map(Y,Z) \to \Map(X,Z)$ is a weak equivalence.
+Let $Z$ be a marked simplicial set that satisfies \eqref{it:exp}.
+Since limits cones are stable under homotopy, we just need to prove that $\Map(Y,Z) \to \Map(X,Z)$ is a weak equivalence for every $X \to Y$ in $\J$.
+By assumption, this map is surjective on vertices.
+Thus we only need to prove that for every $p : X \to Z$, the fiber of $\Map(Y,Z) \to \Map(X,Z)$ over $p$ is contractible.
+
+First, let us consider maps of the form $L^\flat \to (\Delta^0 \join L, \{ id \})$.
+Since $L^\flat$ is flat, $\Map(L^\flat,Z) = E(\Fun(L,U(Z)))$.
+For any simplicial sets $K$, $A$ and $Z'$ and every map $p : K \to Z'$, we have the following cartesian square:
+\[ \xymatrix{ \Fun(A,Z'^{/p}) \ar[r] \ar[d] \pb & \Fun(A \fjoin K, Z') \ar[d] \\
+              \Delta^0 \ar[r]_-p & \Fun(K,Z')
+            } \]
+In particuler, if we let $K = L$, $A = \Delta^0$ and $Z' = U(Z)$, then we obtain the following cartesian square:
+\[ \xymatrix{ U(Z)^{/p} \ar[r] \ar[d] \pb & \Fun(\Delta^0 \fjoin L, U(Z)) \ar[d] \\
+              \Delta^0 \ar[r]_-p & \Fun(L,U(Z))
+            } \]
+Since $E$ is a right adjoint, it preserves pullbacks.
+Hence fiber of $\Map'((\Delta^0 \join L, \{ id \}), Z) \to \Map(L^\flat, Z)$ is the subcomplex of $E(U(Z)^{/p})$
+spanned by vertices that correspond to limit cones, and it is easy to see that it is contractible (see, for example, \cite[Lemma~2.11]{szumilo}).
+
+Now, let us consider maps of the form $(\partial \Delta^n \join L, \{ \Delta^{\{n\}} \join L \}) \to (\Delta^n \join L, \{ \Delta^{\{n\}} \join L \})$.
+First, let us consider the special case when $L = \varnothing$.
+We prove that fibers of $\Map((\Delta^n, \{ \Delta^{\{n\}} \}), Z) \to \Map((\partial \Delta^n, \{ \Delta^{\{n\}} \}), Z)$ are contractible by induction on $n$.
+If $n = 1$, then for every $p : \Delta^0 \to X$, we have the following diagram:
+\[ \xymatrix{ U(Z)^{/p} \ar[d] \ar[r] \pb & \Fun(\Delta^1, U(Z)) \ar[d] \\
+              U(Z) \ar[d] \ar[r] \pb & \Fun(\partial \Delta^1, U(Z)) \ar[d] \\
+              \Delta^0 \ar[r]_p & U(Z)
+            } \]
+If $p$ is final, then $U(Z)^{/p} \to U(Z)$ is a weak equivalence (see, for example, \cite[Corollary~1.2.12.5]{lurie-topos}).
+Since every map $\Delta^0 \to \Map((\partial \Delta^1, \{ \Delta^{\{1\}} \}), Z)$ factors through $U(Z)$ for some final $p$,
+fibers of $\Map((\Delta^1, \{ \Delta^{\{1\}} \}), Z) \to \Map((\partial \Delta^1, \{ \Delta^{\{1\}} \}), Z)$ are contractible.
+
+Now, assume $n > 1$.
+Consider the following diagram:
+\[ \xymatrix{ \Map((\Delta^n, \{ \Delta^{\{n\}} \}), Z) \ar[d] \\
+              \Map((\partial \Delta^n, \{ \Delta^{\{n\}} \}), Z) \ar[r] \ar[d] \pb & \Map((\Delta^{n-1}, \{ \Delta^{\{n-1\}} \}), Z) \ar[d] \\
+              \Map((\Lambda^n_1, \{ \Delta^{\{n\}} \}), Z) \ar[r] & \Map((\partial \Delta^{n-1}, \{ \Delta^{\{n-1\}} \}), Z)
+            } \]
+Since $\Lambda^n_1 \to \Delta^n$ is a weak equivalence in the Joyal model structure, map
+\[ \Map((\Delta^n, \{ \Delta^{\{n\}} \}), Z) \to \Map((\Lambda^n_1, \{ \Delta^{\{n\}} \}), Z) \]
+is also a weak equivalence.
+By induction hypothesis, $\Map((\Delta^{n-1}, \{ \Delta^{\{n-1\}} \}), Z) \to \Map((\partial \Delta^{n-1}, \{ \Delta^{\{n-1\}} \}), Z)$ is a weak equivalence.
+Since it is a fibration, map
+\[ \Map((\partial \Delta^n, \{ \Delta^{\{n\}} \}), Z) \to \Map((\Lambda^n_1, \{ \Delta^{\{n\}} \}), Z) \]
+is also a weak equivalence.
+Hence by 2-out-of-3 property, $\Map((\Delta^n, \{ \Delta^{\{n\}} \}), Z) \to \Map((\partial \Delta^n, \{ \Delta^{\{n\}} \}), Z)$ is a weak equivalence.
+
+Finally, we consider the general case.
+For every $p : L \to U(Z)$, we have the following diagram:
+\[ \xymatrix{ \Fun(\Delta^n, U(Z)^{/p}) \ar[r] \ar[d] \pb & \Fun(\Delta^n \fjoin L, U(Z)) \ar[d] \\
+              \Fun(\partial \Delta^n, U(Z)^{/p}) \ar[r] \ar[d] \pb & \Fun(\partial \Delta^n \fjoin L, U(Z)) \ar[d] \\
+              \Delta^0 \ar[r]_-p & \Fun(L,U(Z))
+            } \]
+It follows that the following square is cartesian:
+\[ \xymatrix{ \Map(\Delta^n, U(Z)^{/p}) \ar[r] \ar[d] \pb & \Map'(\Delta^n \join L, U(Z)) \ar[d] \\
+              \Map(\partial \Delta^n, U(Z)^{/p}) \ar[r] & \Map'(\partial \Delta^n \join L, U(Z))
+            } \]
+Since every vertex $\Delta^0 \to \Map'(\partial \Delta^n \join L, U(Z))$ factors through $\Map(\partial \Delta^n, U(Z)^{/p})$
+for some $p$, it is enough to show that every fiber of \[ \Map(\Delta^n, U(Z)^{/p}) \to \Map(\partial \Delta^n, U(Z)^{/p}) \] is contractible.
+But this follows from the special case when $L = \varnothing$.
 \end{proof}
 
-\begin{prop}
-There is a combinatorial model structure on $\lcsSet$ such that $\lcI$ is a set of generating cofibrations
-and a map $f$ is a weak equivalence if and only if $\lcC(f)$ is a weak equivalence in $\Mod{T^a_\Sigma}$.
-Adjunction $\lcC \dashv \lcN$ is a Quillen equivalence.
+\begin{prop}[mark-fib-map]
+A map $f : X \to Y$ between fibrant marked simplicial sets is a fibration if and only if its underlying map is a fibration in the Joyal model structure.
 \end{prop}
 \begin{proof}
-By a theorem of Jeff Smith (see, for example, \cite[Proposition~A.2.6.8]{lurie-topos}),
-to construct such model structure, it is enough to prove that for every map $f$ in $\lcsSet$ which has RLP with respect to $\lcI$, $\lcC(f)$ is a weak equivalence.
-Let $f : X \to Y$ be such a map.
+\Rprop{mark-fib-obj} implies that an object of $\sSet_\mathcal{L}$ is fibrant if and only if it is a quasicategory
+and has RLP with respect to sets $\J$ and $\J_\mathcal{K}$ (which was defined in \rthm{mark-main}).
+By \cite[Proposition~3.6]{f-model-structures}, a map of marked simplicial sets with fibrant codomain is a fibration
+if and only if it is a fibration in the Joyal model structure and has RLP with respect to $\J \cup \J_\mathcal{K}$.
+Let us prove that every map $f : X \to Y$ between fibrant marked simplicial sets which is a fibration in the Joyal model structure has RLP with respect to $\J \cup \J_\mathcal{K}$.
+
+Since $X$ has RLP with respect to $\J_\mathcal{K}$, $f$ also has RLP with respect to this set.
+Consider the following commutative square:
+\[ \xymatrix{ L \ar[r] \ar[d] & U(X) \ar[d]^f \\
+              \Delta^0 \join L \ar[r]_v \ar@{-->}[ur]^g & U(Y),
+            } \]
+where $v$ is marked in $Y$.
+Since $X$ is fibrant, there exists a marked map $g : \Delta^0 \join L \to U(X)$ such that the top triangle in the square above commutes.
+Since $f \circ g$ and $v$ are limit cones, they are homotopic relative to $L$.
+Sincce $U(f)$ is a fibration in the Joyal model structure, we can lift this homotopy to obtain a lift in the square above such that both triangles commute.
+The same argument shows that $f$ has RLP with respect to maps $(\partial \Delta^n \join L, \{ \Delta^{\{n\}} \join L \}) \to (\Delta^n \join L, \{ \Delta^{\{n\}} \join L \})$.
 \end{proof}
-\end{comment}
+
+Let $\kappa$ be a regular cardinal, and let $\mathcal{L}$ be the set of all (representatives of) sets with cardinality less than $\kappa$ together with simplicial set $\Lambda^2_2$.
+Let $\sSet_\mathcal{L}^f$ be the full subcategory of $\sSet_\mathcal{L}^f$ on the fibrant object.
+Then $\sSet_\mathcal{L}^f$ is a category with fibrations.
+Let $\qcat^c$ be the category of $\kappa$-complete quasicategories and functors that preserve $\kappa$-small limits.
+A structure of a category with fibrations on $\qcat^c$ was constructed in \cite{szumilo}.
+These two categories with fibrations are isomorphic.
+Indeed, \rprop{mark-fib-obj} implies that forgetful functor $U : \sSet_\mathcal{L}^f \to \qcat^c$ is an isomorphism of categories.
+Thus we just need to show that $U$ preserves weak equivalences and fibrations.
+Weak equivalences in both cases are just weak equivalences of underlying quasicategories.
+Fibrations in $\qcat^c$ are fibrations of underlying quasicategories.
+By \rprop{mark-fib-map}, this is also true in $\sSet_\mathcal{L}^f$.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
