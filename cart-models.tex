@@ -58,6 +58,10 @@
 \newcommand{\Fun}{\mathrm{Fun}}
 \newcommand{\colim}{\mathrm{colim}}
 
+\newcommand{\vtx}[2]{\Delta^{\{#2\}}}
+\newcommand{\face}[1]{#1}
+\newcommand{\degen}[1]{#1}
+
 \newcommand{\we}{\mathcal{W}}
 \newcommand{\I}{\mathrm{I}}
 \newcommand{\J}{\mathrm{J}}
@@ -100,14 +104,18 @@ to the category of categories extends to a functor to the category of simplicial
 Theory $T_\Delta$ is a regular theory with the following function symbols:
 \begin{align*}
 \Delta^n & : (ty,0) \text{, for every } n \geq 1 \\
-\delta^n_i & : (tm,0) \text{, for every } 0 \leq i \leq n \\
-\delta_f & : (tm,1) \text{, for every } f \in \Delta^{>0}_+ \\
-\sigma_f & : (tm,1) \text{, for every } f \in \Delta^{>0}_- \\
-fill_1 & : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \\
-fill_n & : (ty,1) \times (tm,1)^n \times (tm,0) \to (tm,0) \text{, for every } n \geq 2
+\vtx{n}{i} & : (tm,0) \text{, for every } 0 \leq i \leq n \\
+\face{f} & : (tm,1) \text{, for every } f \in \Delta^{>0}_+ \\
+\degen{f} & : (tm,1) \text{, for every } f \in \Delta^{>0}_- \\
+fill^1_i & : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \text{, for every } 0 \leq i \leq 1 \\
+fill^n_i & : (ty,1) \times (tm,1)^n \times (tm,0) \to (tm,0) \text{, for every } n \geq 2 \text{, } 0 \leq i \leq n
 \end{align*}
 where $\Delta^{>0}_+$ is the set of injective nonidentity maps between finite linearly ordered sets with at least two elements,
 and $\Delta^{>0}_-$ is the set of surjective nonidentity maps between such sets.
+
+The idea is that types $\Delta^n$ represent objects of the simplex category and terms $x : \Delta^m \vdash f(x) : \Delta^n$ represent its morphisms.
+We do not add a type for $\Delta^0$, instead it is represented by the empty context.
+The identity morphism is represented by $x : \Delta^n \vdash x : \Delta^n$ and morphisms $\Delta^{\{i\}} : \Delta^0 \to \Delta^n$ are represented by terms $\vdash \vtx{n}{i} : \Delta^n$.
 
 Theory $T_\Delta$ has the following axioms:
 \medskip
@@ -119,7 +127,7 @@ Theory $T_\Delta$ has the following axioms:
 \qquad
 \AxiomC{$\Gamma \vdash$}
 \RightLabel{, for every $0 \leq i \leq n$}
-\UnaryInfC{$\Gamma \vdash \delta^n_i : \Delta^n$}
+\UnaryInfC{$\Gamma \vdash \vtx{n}{i} : \Delta^n$}
 \DisplayProof
 \end{center}
 
@@ -127,7 +135,7 @@ Theory $T_\Delta$ has the following axioms:
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
 \RightLabel{, for every $f : \Delta^m \to \Delta^n \in \Delta^{>0}_+$}
-\UnaryInfC{$\Gamma, x : \Delta^m \vdash \delta_f : \Delta^n$}
+\UnaryInfC{$\Gamma, x : \Delta^m \vdash \face{f} : \Delta^n$}
 \DisplayProof
 \end{center}
 
@@ -135,7 +143,7 @@ Theory $T_\Delta$ has the following axioms:
 \begin{center}
 \AxiomC{$\Gamma \vdash$}
 \RightLabel{, for every $f : \Delta^m \to \Delta^n \in \Delta^{>0}_-$}
-\UnaryInfC{$\Gamma, x : \Delta^m \vdash \sigma_f : \Delta^n$}
+\UnaryInfC{$\Gamma, x : \Delta^m \vdash \degen{f} : \Delta^n$}
 \DisplayProof
 \end{center}
 
@@ -143,8 +151,19 @@ Theory $T_\Delta$ has the following axioms:
 \begin{center}
 \AxiomC{$\Gamma, x : \Delta^1 \vdash A\ type$}
 \AxiomC{$\Gamma \vdash a : A$}
-\AxiomC{$\Gamma \vdash$}
-\TrinaryInfC{$\Gamma \vdash \Delta^n\ type$}
+\AxiomC{$\Gamma \vdash d : \Delta^1$}
+\RightLabel{, for every $0 \leq i \leq 1$}
+\TrinaryInfC{$\Gamma \vdash fill^1_i(x. A, a, d) : A[x \repl d]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : \Delta^n \vdash A\ type$}
+\AxiomC{$\Gamma, y : \Delta^{n-1} \vdash a_j : A[x \repl \face{\delta^n_j}(y)]$}
+\AxiomC{$\Gamma \vdash d : \Delta^n$}
+\RightLabel{, for every $0 \leq i \leq n$}
+\TrinaryInfC{$\Gamma \vdash fill^n_i(x. A, a_0, \ldots a_{i-1}, a_{i+1}, \ldots a_n, d) : A[x \repl d]$}
 \DisplayProof
 \end{center}
 
