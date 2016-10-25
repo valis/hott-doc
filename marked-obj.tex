@@ -83,12 +83,17 @@
 \author{Valery Isaev}
 
 \begin{abstract}
-Abstract.
+For every functor $\mathcal{K} \to \mathbf{C}$, where $\mathcal{K}$ is a small category and $\mathbf{C}$ is a model category which satisfies some mild hypotheses,
+we define a model category $\mathbf{C}^m$ of $\mathcal{K}$-marked objects of $\mathbf{C}$.
+As an application, we construct a model category of quasicategories which have limits of all diagrams of any given shape.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
+
+If $\mathbf{C}$ is a model for the $(\infty,1)$-category of $(\infty,1)$-categories such as the category of simplicial sets with the Joyal model structure,
+then a localization of $\mathbf{C}^m$ should model the $(\infty,1)$-category of $(\infty,1)$-categories with some additional structure which depends on $\mathcal{F}$.
 
 \section{Category of marked objects}
 \label{sec:marked}
@@ -190,8 +195,8 @@ Then $f$ is a retract of $X \to Z'$.
 Hence $f$ belongs to $\Icof[\I^m]$.
 \end{proof}
 
-Let $\mathcal{J}_0$ be a set of marked objects.
-We want to define a model structure on $\C^m$ such that $\I^m$ is a set of generating cofibrations,
+Let $\mathcal{J}_0$ be a set of cofibrant marked objects.
+We are going to define a model structure on $\C^m$ such that $\I^m$ is a set of generating cofibrations,
 and for every $J \in \mathcal{J}_0$, map $U(J)^\flat \to J$ is a trivial cofibration.
 
 Let us define a fibrant replacement functor $R^m$ for $\C^m$.
@@ -202,61 +207,119 @@ or factors through a marked map $K \to U(J)$ for some $J \in \mathcal{J}_0$.
 
 We will say that a map $f$ of marked objects is a \emph{weak equivalence}
 if and only if the underlying map of $f$ is a weak equivalence and $R^m(f)$ reflects marked maps.
-Unfolding the definition of $R^m$, we obtain the following characterization of weak equivalences.
-A map $f : (X,\mathcal{E}_X) \to (Y,\mathcal{E}_Y)$ of marked objects is a weak equivalence if and only if $U(f)$ is a weak equivalence,
-and for every $h : K \to R(X)$ and every marked $k : K \to Y$ such that $R(U(f)) \circ h$ and $t_{Y} \circ k$ are homotopic,
-there exists a marked map $k' : K \to X$ such that $t_X \circ k'$ and $h$ are homotopic:
-\[ \xymatrix{                                          & X \ar[r]^{t_X} \ar@{}[d]|(.35){\sim} \ar@{}[dr]_(.6){\sim} & R(X) \ar[d]^{R(U(f))} \\
-              K \ar[r]_k \ar[urr]_h \ar@{-->}[ur]^{k'} & Y \ar[r]_{t_Y}                                             & R(Y)
+
+\begin{prop}[2-out-of-3]
+Weak equivalences of marked objects satisfy 2-out-of-3 property.
+\end{prop}
+\begin{proof}
+Let $f : X \to Y$ and $g : Y \to Z$ be maps of marked objects such that $U(f)$ and $U(g)$ are equivalences.
+If $R^m(f)$ and $R^m(g)$ reflect marked maps, then so is $R^m(g \circ f)$.
+If $R^m(g \circ f)$ reflects marked maps, then so is $R^m(f)$.
+Let us prove that if $R^m(g \circ f)$ reflects marked maps, then so is $R^m(g)$.
+Let $k : K \to R(U(Y))$ be a map such that $R(U(g)) \circ k$ is marked.
+Since $K$ is cofibrant and $R(U(f))$ is a weak equivalence between fibrant objects,
+there exists a map $k' : K \to R(U(X))$ such that $R(U(f)) \circ k'$ is homotopic to $k$.
+Since $R(U(g)) \circ k$ and $R(U(g \circ f)) \circ k'$ are homotopic and $R(U(g)) \circ k$ is marked, $R(U(g \circ f)) \circ k'$ is also marked.
+Since $g \circ f$ reflects marked maps, $k'$ is marked.
+Since $R(U(f)) \circ k'$ and $k$ are homotopic and $R(U(f)) \circ k'$ is marked, $k$ is also marked.
+\end{proof}
+
+The following lemma gives a useful explicit description of weak equivalences.
+
+\begin{lem}[we]
+If $f : X \to Y$ is a map of marked objects such that $U(f)$ is a weak equivalence,
+then it is a weak equivalence if and only if for every $h : K \to R(U(X))$ and every marked $k : K \to U(Y)$,
+if $R(U(f)) \circ h$ and $t_{U(Y)} \circ k$ are homotopic, then $h$ is marked in $R^m(X)$.
+\end{lem}
+\begin{proof}
+By the definition, $f$ is a weak equivalence if and only if for every $h : K \to R(U(X))$ such that $R(U(f)) \circ h$ is marked in $Y$, $h$ is marked in $R^m(X)$.
+Map $R(U(f)) \circ h$ is marked in $R^m(Y)$ if and only if either there exists marked map $k : K \to U(Y)$ such that $t_{U(Y)} \circ k$ is homotopic to $R(U(f)) \circ h$,
+or there exist $J \in \mathcal{J}_0$, a marked map $k : K \to U(J)$ and a map $g : U(J) \to R(U(Y))$ such that $g \circ k$ is homotopic to $R(U(f)) \circ h$.
+We just need to prove that if the second case holds, then $h$ is marked in $R^m(X)$.
+
+Since $U(J)$ is cofibrant and $R(U(f))$ is a weak equivalence between fibrant objects,
+there exists a map $g' : U(J) \to R(U(X))$ such that $R(U(f)) \circ g'$ is homotopic to $g$.
+Hence $R(U(f)) \circ h$ is homotopic to $R(U(f)) \circ g' \circ k$.
+Since $R(U(f))$ is a weak equivalence between fibrant objects, this implies that $h$ is homotopic to $g' \circ k$.
+\end{proof}
+
+\begin{prop}[iinj]
+Every map $f : X \to Y \in \Iinj[\I^m]$ is a weak equivalence.
+\end{prop}
+\begin{proof}
+Let $k : K \to U(Y)$ be a marked map, and let $h : K \to R(U(X))$ be a map such that $R(U(f)) \circ h$ and $t_{U(Y)} \circ k$ are homotopic.
+Since $(K, G \{id\})$ is cofibrant, we have a lift in the following diagram:
+\[ \xymatrix{                                    & X \ar[d]^f \\
+              (K, G \{id\}) \ar[r] \ar@{-->}[ur] & Y
             } \]
+Hence there exists a marked map $k' : K \to U(X)$ such that $U(f) \circ k' = k$.
+Note that $R(U(f)) \circ t_{U(X)} \circ k' = t_{U(Y)} \circ U(f) \circ k' = t_{U(Y)} \circ k \sim R(U(f)) \circ h$.
+Since $R(U(f))$ is a weak equivalence between fibrant objects, this implies that $t_{U(X)} \circ k'$ is homotopic to $h$.
+Hence $h$ is marked in $R^m(X)$, and by the previous lemma, $f$ is a weak equivalence.
+\end{proof}
 
-Since $R(U(f))$ is a weak equivalence between fibrant objects, $t_X \circ k'$ and $h$ are homotopic
-if and only if $t_Y \circ U(f) \circ k'$ and $t_Y \circ k$ are homotopic.
-This implies that every map $f \in \Iinj[\I^m]$ is a weak equivalence since we have a lift in the following diagram:
-\[ \xymatrix{                                            & (X,\mathcal{E}_X) \ar[d]^f \\
-              (K, G \{id\}) \ar[r]_-k \ar@{-->}[ur]^{k'} & (Y,\mathcal{E}_Y)
+The following lemma gives a useful characterization of trivial cofibrations.
+
+\begin{lem}
+Let $f : X \to Y$ be a cofibration of marked objects such that $U(f)$ is a weak equivalence.
+Let $g : U(Y) \to R(U(X))$ be a map such that $g \circ U(f) = t_{U(X)}$.
+Then $f$ is a weak equivalence if and only if for every marked $k : K \to U(Y)$, map $g \circ k$ is marked in $R^m(X)$.
+\end{lem}
+\begin{proof}
+First, suppose that $f$ is a weak equivalence.
+Let $k : K \to U(Y)$ be a marked map.
+Since $U(f)$ is a trivial cofibration, $R(U(f)) \circ g \circ k$ and $t_{U(Y)} \circ k$ are homotopic.
+Hence, by \rlem{we}, map $g \circ k$ is marked.
+Conversely, let $k : K \to U(Y)$ be a marked map, and let $h : K \to R(U(X))$ be a map such that $R(U(f)) \circ h$ is homotopic to $t_{U(Y)} \circ k$.
+Note that $R(U(f)) \circ h \sim t_{U(Y)} \circ k \sim R(U(f)) \circ g \circ k$.
+Since $R(U(f))$ is a weak equivalence between fibrant objects, this implies that $h$ is homotopic to $g \circ k$.
+Since $g \circ k$ is marked, $h$ is also marked.
+\end{proof}
+
+Now, we need to establish the following simple lemma:
+
+\begin{lem}
+Let $f : X \to Y$ be a map of marked objects, and let $g : R(U(X)) \to R(U(Y))$ be a map such that the following diagram commutes:
+\[ \xymatrix{ U(X) \ar[r]^{U(f)} \ar[d]_{t_{U(X)}} & U(Y) \ar[d]^{t_{U(Y)}} \\
+              R(U(X)) \ar[r]_g & R(U(Y))
             } \]
+Then $g$ preserves marked maps.
+\end{lem}
+\begin{proof}
+Let $k : K \to R(U(X))$ be a marked map.
+Then either there exists a marked map $k' : K \to U(X)$ such that $t_{U(X)} \circ k'$ is homotopic to $k$,
+or there exist $J \in \mathcal{J}_0$, a marked map $k' : K \to U(J)$ and a map $h : U(J) \to R(U(X))$ such that $h \circ k'$ is homotopic to $k$.
+If the first case holds, then $U(f) \circ k'$ is marked and $t_{U(Y)} \circ U(f) \circ k'$ is homotopic to $g \circ k$.
+If the second case holds, then $g \circ h \circ k'$ is homotopic to $g \circ k$.
+Thus $g \circ k$ is marked.
+\end{proof}
 
-Let $f : (X,\mathcal{E}_X) \to (Y,\mathcal{E}_Y)$ be a cofibration of marked objects such that $U(f)$ is a weak equivalence.
-Then $t_X : X \to R(X)$ factors as $X \xrightarrow{U(f)} Y \xrightarrow{g} R(X)$ for some map $g$.
-We prove that $f$ is a weak equivalence if and only if for every marked $k : K \to Y$, there exists a marked $k' : K \to X$ such that $g \circ k$ and $t_X \circ k'$ are homotopic:
-\[ \xymatrix{                                                  & X \ar[r]^-{t_X} & R(X) \\
-              K \ar[r]_k \ar@{-->}[ur]^{k'} \ar@{}[urr]|{\sim} & Y \ar[ur]_g
-            } \]
-
-First, assume that $f$ satisfies this condition.
-Let $k : K \to Y$ be a marked map.
-Then there exists a marked map $k' : K \to X$ such that $t_X \circ k'$ is homotopic to $g \circ k$.
-Since $U(f)$ is a trivial cofibration, $R(U(f)) \circ g$ is homotopic to $t_Y$.
-Hence $R(U(f)) \circ t_X \circ k' = t_Y \circ U(f) \circ k'$ is homotopic to $t_Y \circ k$.
-Conversely, suppose that $f$ is a weak equivalence.
-Let $k : K \to Y$ be a marked map.
-Since $R(U(f)) \circ g \circ k$ is homotopic to $t_Y \circ k$, there exists a marked map $k' : K \to X$ such that $t_X \circ k'$ is homotopic to $g \circ k$.
-
-Using this characterization of trivial cofibrations, we can prove that they are closed under pushout and transfinite compositions.
+\begin{prop}[pushouts-trans-comp]
+Trivial cofibrations are closed under pushouts and transfinite compositions.
+\end{prop}
+\begin{proof}
 First, let us prove the latter.
-Let $X_0 \to X_\lambda$ be a transfinite composition of a sequence $X : \lambda \to \C^m$.
-Let $k : K \to U(X_\lambda)$ be a marked map.
-Then it factors through some marked map $k' : K \to U(X_\alpha)$.
-Since $X_0 \to X_\alpha$ is a trivial cofibration, there exists a marked map $k'' : K \to U(X_0)$
-such that $t_{U(X_0)} \circ k''$ is homotopic to $U(X_\alpha) \to U(X_\lambda) \to R(U(X_0))$.
+Let $c : X_0 \to X_\lambda$ be a transfinite composition of a sequence $X : \lambda \to \C^m$.
+By \rprop{2-out-of-3}, weak equivalences are closed under composition.
+Thus we may assume that $\lambda$ is a limit ordinal.
+Let $k : K \to U(X_\lambda)$ be a marked map, and let $g : U(X_\lambda) \to R(U(X_0))$ be a map such that $g \circ c = t_{U(X_0)}$.
+Since $k$ is marked, it factors through some marked map $k' : K \to U(X_\alpha)$.
+Since $X_0 \to X_\alpha$ is a trivial cofibration, map $K \xrightarrow{k'} U(X_\alpha) \to U(X_\lambda) \xrightarrow{g} R(U(X_0))$ is marked.
+Hence $c$ is a trivial cofibration.
 
 Now, let us prove that trivial cofibrations are closed under pushouts.
-Let $f : (X,\mathcal{E}_X) \to (Y,\mathcal{E}_Y)$ be a trivial cofibration,
-and let $(Z,\mathcal{E}_Z) \to (T,\mathcal{E}_T)$ be a pushout of $f$.
-Let $k : K \to T$ be a marked map.
-Then $k$ factors through either $Z$ or $Y$.
-If $k$ factors through $Z$, then this gives us the required lifting immediately.
-If $k$ factors through a marked map $K \xrightarrow{k'} Y$, then there exists a marked map $k'' : K \to X$
-such that $t_X \circ k''$ is homotopic to $g \circ k'$, where $g : Y \to R(X)$ is such that $t_X = g \circ U(f)$:
-\[ \xymatrix{ \ar@{}[rdd]_(0.6){\sim}           & X \ar[r] \ar[d]^{U(f)} & Z \ar[d] \\
-              K \ar[d]_{k'} \ar@{-->}[ur]^{k''} & Y \ar[r] \ar[d]^g      & \po T \ar[d]^{g'} \\
-              Y \ar[r]_-g                       & R(X) \ar[r]            & R(Z)
+Consider the following pushout square, where $f$ is a trivial cofibration:
+\[ \xymatrix{ X \ar[r]^p \ar[d]_f & Z \ar[d]^{f'} \\
+              Y \ar[r]_q & \po T
             } \]
-Since $t_X$ is a trivial cofibration and $R(Z)$ is fibrant, there exists a map $R(X) \to R(Z)$.
-Then there exists a (unique) map $g' : T \to R(Z)$ such that the diagram above commutes and $Z \to T \xrightarrow{g'} R(Z)$ equals to $t_Z$.
-We can define the required map as $K \xrightarrow{k''} X \to Z$.
-Then $K \xrightarrow{k''} X \to Z \xrightarrow{t_Z} R(Z)$ is homotopic to $K \xrightarrow{k} T \xrightarrow{g'} R(Z)$.
+Let $k' : K \to U(T)$ be a marked map, and let $g' : U(T) \to R(U(Z))$ be a map such that $g' \circ U(f') = t_{U(Z)}$.
+Then $k'$ factors through either $U(Z)$ or $U(Y)$.
+If $k'$ factors through $U(Z)$, then this immediately implies that $g' \circ k'$ is marked.
+If $k'$ factors through a marked map $k : K \to U(Y)$, then there exists a map $g : U(Y) \to R(U(X))$ such that $g \circ U(f) = t_{U(X)}$ and $g \circ k$ is marked.
+By the previous lemma, $R(U(p)) \circ g \circ k$ is marked.
+Since $f$ is a trivial cofibration, $R(U(p)) \circ g$ is homotopic to $g' \circ U(q)$.
+Hence $g' \circ U(q) \circ k = g' \circ k'$ is also marked.
+\end{proof}
 
 To construct a model structure on $\C^m$, we will need the following theorem by Jeff Smith (see, for example, \cite[Proposition~A.2.6.8]{lurie-topos}):
 \begin{thm}[mod-comb]
@@ -271,7 +334,7 @@ Suppose that the following conditions hold:
 Then there exists a cofibrantly generated model structure on $\C$ with $\Icof$ as the class of cofibrations and $\we$ as the class of weak equivalences.
 \end{thm}
 
-We will also need the following theorem (see, for example, \cite{hovey}):
+We will also need the following theorem (see, for example, \cite[Theorem~2.1.19]{hovey}):
 \begin{thm}[mod-cof]
 Suppose that $\C$ is a complete and cocomplete category, $\we$ is a class of morphisms of $\C$, and $\I$, $\J$ are sets of morphisms of $\C$.
 Then $\C$ is a cofibrantly generated model category with $\I$ as the set of generating cofibrations,
@@ -285,10 +348,10 @@ $\J$ as the set of generating trivial cofibrations, and $\we$ as the class of we
 \end{enumerate}
 \end{thm}
 
-Now, we can prove the main theorem of this section:
+Now, we can prove our main result:
 
 \begin{thm}[mark-main]
-Let $\C$ be a model category, and let $\mathcal{K}$ be a multiset of cofibrant objects of $\C$.
+Let $\C$ be a model category, let $\mathcal{K}$ be a multiset of cofibrant objects of $\C$, and let $\mathcal{J}_0$ be a set of cofibrant marked objects.
 Suppose that one of the following conditions hold:
 \begin{enumerate}
 \item \label{it:comb} $\C$ is a combinatorial model category.
@@ -296,34 +359,30 @@ Suppose that one of the following conditions hold:
 the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
 \end{enumerate}
 Then there exists a cofibrantly generated model structure on $\C^m$.
-A marked object $X$ is fibrant in $\C^m$ if and only if the underlying object $U(X)$ is fibrant in $\C$ and marked maps in $X$ are stable under homotopy
-(that is, if two maps $K \to U(X)$ are homotopic and one of them is marked, then so is the other).
 Both adjoint pairs $(-)^\flat \dashv U$ and $U \dashv (-)^\sharp$ are Quillen pairs.
 If $\C$ is left proper, then so is $\C^m$.
+A marked object $X$ is fibrant in $\C^m$ if and only if the following conditions hold:
+\begin{enumerate}
+\item Underlying object $U(X)$ is fibrant in $\C$
+\item For every $J \in \mathcal{J}_0$, $X$ has RLP with respect to $U(J)^\flat \to J$.
+\item Marked maps in $X$ are stable under homotopy (that is, if two maps $K \to U(X)$ are homotopic and one of them is marked, then so is the other).
+\end{enumerate}
 \end{thm}
 \begin{proof}
-We already proved that every map in $\Iinj[\I^m]$ is a weak equivalence and that trivial cofibrations are stable under pushouts and transfinite compositions.
-It is easy to see that weak equivalences are closed under retracts.
-Let us prove that the class of weak equivalences has 2-out-of-3 property.
-Let $f : X \to Y$ and $g : Y \to Z$ be maps of marked objects such that $U(f)$ and $U(g)$ are equivalences.
-If $R^m(f)$ and $R^m(g)$ reflect marked maps, then so is $R^m(g \circ f)$.
-If $R^m(g \circ f)$ reflects marked maps, then so is $R^m(f)$.
-Let us prove that if $R^m(g \circ f)$ reflects marked maps, then so is $R^m(g)$.
-Let $k : K \to R(U(Y))$ be a map such that $R(U(g)) \circ k$ is marked.
-Since $K$ is cofibrant and $R(U(f))$ is a weak equivalence between fibrant objects,
-there exists a map $k' : K \to R(U(X))$ such that $R(U(f)) \circ k'$ is homotopic to $k$.
-Since $R(U(g)) \circ k$ and $R(U(g \circ f)) \circ k'$ are homotopicc and $R(U(g)) \circ k$ is marked, $R(U(g \circ f)) \circ k'$ is also marked.
-Since $g \circ f$ reflects marked maps, $k'$ is marked.
-Since $R(U(f)) \circ k'$ and $k$ are homotopic and $R(U(f)) \circ k'$ is marked, $k$ is also marked.
+Every map in $\Iinj[\I^m]$ is a weak equivalence by \rprop{iinj},
+trivial cofibrations are stable under pushouts and transfinite compositions by \rprop{pushouts-trans-comp},
+weak equivalences has 2-out-of-3 property by \rprop{2-out-of-3},
+and it is easy to see that they are closed under retracts.
 
-Assume that \eqref{it:comb} holds.
+First, assume that \eqref{it:comb} holds.
 By \rprop{mark-comb}, $\C^m$ is locally presentable.
 By \rthm{mod-comb}, we just need to prove that the class of weak equivalences is an accessible subcategory of $\C^m$.
 Let $\J$ be a set of generating trivial cofibrations in $\C$.
 Then we can take $R$ to be the functor obtained form the small object argument for $\J$.
 Let $\J_\mathcal{K}$ be the set of maps $(C(K), G \{i_0\}) \to (C(K), G \{i_0,i_1\})$ for every $K \in \mathcal{K}$, where $[i_0,i_1] : K \amalg K \to C(K)$ is a cylinder object for $K$.
+Let $\J_0$ be the set of maps $U(J)^\flat \to J$ for every $J \in \mathcal{J}_0$.
 Then $R^m$ can be described as the composition of two functors $R_1$ and $R_2$.
-The former is obtained from the small object argument for $\J^\flat$ and the latter from the small object argument for $\J_\mathcal{K}$.
+The former is obtained from the small object argument for $\J^\flat$ and the latter from the small object argument for $\J_\mathcal{K} \cup \J_0$.
 Thus $R^m$ preserves $\kappa$-filtered colimits for some regular cardinal $\kappa$.
 
 Let $\C^m_0$ be the full subcategory of the arrow category of $\C^m$ on maps $f$ such that $U(f)$ is a weak equivalence and $f$ reflects marked maps.
@@ -335,19 +394,20 @@ is closed under $\kappa$-filtered colimits and every object in $\mathcal{K}$ is 
 
 Now, assume that \eqref{it:all-fib} holds.
 By \cite[Corollary~3.2]{f-model-structures}, there exists a set $\J_\I$ of generating trivial cofibrations for $\C$.
-Then $\J^m = \J_\I^\flat \cup \J_\mathcal{K}$ is a set of generating trivial cofibrations for $\C^m$.
+Then $\J^m = \J_\I^\flat \cup \J_\mathcal{K} \cup \J_0$ is a set of generating trivial cofibrations for $\C^m$.
 Indeed, every map in $\J^m$ is cofibration and a weak equivalence.
-Every map in $\J_\I^\flat$ is a weak equivalence since its underlying map is a weak equivalence and its codomain is flat, so $R^m(f) = R(f)^\flat$.
-Every map $f$ in $\J_\mathcal{K}$ is a weak equivalence since $R^m(f)$ is an isomorphism.
+Every map $f \in \J_\I^\flat$ is a weak equivalence since its underlying map is a weak equivalence and its codomain is flat, so $R^m(f) = R(f)^\flat$.
+Every map $f \in \J_\mathcal{K} \cup \J_0$ is a weak equivalence since $R^m(f)$ is an identity.
 
 By \rthm{mod-cof}, we just need to prove that every weak equivalence that has RLP with respect to $\J^m$ also has RLP with respect to $\I^m$.
-Let $f$ be such a map.
+Let $f : X \to Y$ be such a map.
 Since $U(f)$ is a weak equivalence and a fibration, it has RLP with respect to $\I$.
 Hence $f$ has RLP with respect to $\I^\flat$.
 Since every object of $\C$ is fibrant, we can take $R$ to be the identity functor.
 Let $k : K \to U(X)$ be a map such that $U(f) \circ k$ is marked.
-Since $f$ is a weak equivalence, there exists a marked map $k' : K \to U(X)$ such that $U(f) \circ k'$ is homotopic to $U(f) \circ k$.
-Since $U(f)$ is a weak equivalence between fibrant objects, this implies that $k'$ is homotopic to $k$.
+Since $f$ is a weak equivalence, $k$ is marked in $R^m(X)$.
+Thus either there exists a marked map $k' : K \to U(X)$ which is homotopic to $k$,
+or 
 Since $f$ has RLP with respect to $\J_\mathcal{K}$, $k'$ and $U(f) \circ k$ are marked, $k$ is also marked.
 Thus $f$ has RLP with respect to $K^\flat \to (K, G \{id\})$ for every $K \in \mathcal{K}$.
 
@@ -433,7 +493,8 @@ Let $\J$ be the following set of maps of $\sSet_\mathcal{L}$:
 \item For every $L \in \mathcal{L}$, maps $L^\flat \to (\Delta^0 \join L, \{ id : \Delta^0 \join L \to \Delta^0 \join L \})$.
 \item For every $n > 0$ and $L \in \mathcal{L}$, maps $(\partial \Delta^n \join L, \{ \Delta^{\{n\}} \join L : \Delta^0 \join L \to \partial \Delta^n \join L \}) \to (\Delta^n \join L, \{ \Delta^{\{n\}} \join L : \Delta^0 \join L \to \Delta^n \join L \})$.
 \end{enumerate}
-We define a model structure on $\sSet_\mathcal{L}$ as the left Bousfield localization of the model structure defined in section~\ref{sec:marked} with respect to $\J$.
+We define a model structure on $\sSet_\mathcal{L}$ as the left Bousfield localization of the model structure
+defined in section~\ref{sec:marked} (with $\mathcal{J}_0 = \varnothing$) with respect to $\J$.
 The following propositions give us a characterization of fibrant objects and fibrations between them in $\sSet_\mathcal{L}$.
 
 \begin{prop}[mark-fib-obj]
