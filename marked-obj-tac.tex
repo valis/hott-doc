@@ -1,4 +1,6 @@
-\documentclass[reqno]{amsart}
+\documentclass{tac}
+
+% TAC style, 12 pp, Xy-pic ver 3.9, MikTeX version 3.2
 
 \usepackage{amssymb}
 \usepackage{hyperref}
@@ -9,6 +11,15 @@
 \usepackage{bussproofs}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
+
+\author{Valery Isaev}
+
+\title{Model category of marked objects}
+
+\copyrightyear{2016}
+
+\keywords{Quillen model structures}
+\amsclass{55U35}
 
 \newcommand{\newref}[4][]{
 \ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
@@ -30,7 +41,6 @@
 
 \theoremstyle{definition}
 \newref{defn}{definition}{Definition}
-\newref{example}{example}{Example}
 
 \theoremstyle{remark}
 \newref{rem}{remark}{Remark}
@@ -44,8 +54,6 @@
 \newcommand{\C}{\cat{C}}
 \newcommand{\Cat}{\cat{Cat}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
-\newcommand{\Th}{\cat{Th}}
-\newcommand{\emptyCtx}{\mathbf{1}}
 \newcommand{\Set}{\cat{Set}}
 \newcommand{\sSet}{\cat{sSet}}
 \newcommand{\qcat}{\cat{qcat}}
@@ -56,9 +64,6 @@
 \newcommand{\Map}{\mathrm{Map}}
 \newcommand{\Fun}{\mathrm{Fun}}
 \newcommand{\colim}{\mathrm{colim}}
-
-\newcommand{\vtx}[2]{\Delta^{\{#2\}}}
-\newcommand{\cmap}[1]{\mathrm{c}_{#1}}
 
 \newcommand{\we}{\mathcal{W}}
 \newcommand{\I}{\mathrm{I}}
@@ -78,24 +83,38 @@
 
 \begin{document}
 
-\title{Model category of marked objects}
-
-\author{Valery Isaev}
+\maketitle
 
 \begin{abstract}
 For every functor $\mathcal{F} : \mathcal{K} \to \mathbf{C}$, where $\mathcal{K}$ is a small category and $\mathbf{C}$ is a model category which satisfies some mild hypotheses,
 we define a model category $\mathbf{C}^m$ of $\mathcal{K}$-marked objects of $\mathbf{C}$.
 We consider an application of this construction to the category of simplicial sets with the Joyal model structure.
 Marked simplicial sets can be thought of as $(\infty,1)$-categories with some additional structure which depends on $\mathcal{F}$.
-In particular, we construct a model category of quasicategories which have limits of all diagrams of any given shape.
+In particular, we construct a model category of quasi-categories which have limits of all diagrams of any given shape.
 \end{abstract}
-
-\maketitle
 
 \section{Introduction}
 
-If $\mathbf{C}$ is a model for the $(\infty,1)$-category of $(\infty,1)$-categories such as the category of simplicial sets with the Joyal model structure,
-then a localization of $\mathbf{C}^m$ should model the $(\infty,1)$-category of $(\infty,1)$-categories with some additional structure which depends on $\mathcal{F}$.
+Model categories, introduced in \cite{quillen}, are an important tool in homotopy theory and higher category theory.
+For every model category $\C$ which satisfies some mild hypotheses and every functor $\mathcal{F} : \mathcal{K} \to \C$, we define a model category $\C^m$ of marked objects.
+A marked object is an object of $\C$ in which some maps of the form $\mathcal{F}(K) \to X$ are marked (see \rdefn{marked-obj} for a precise definition).
+
+If $\C$ is a category of simplicial sets with the Joyal model structure (see \cite{Joyal,lurie-topos})
+and $\mathcal{K}$ is a set of objects of the form $\Delta^0 \join L$ for some simplicial set $L$,
+then a marked simplicial set is a simplicial set in which some cones of some diagrams are marked.
+The idea is that a cone should be marked if and only if it is a limit cone.
+Of course, in general, this is might not hold, but we will construct a model structure on the category of marked simplicial sets in which fibrant objects have this property (see \rprop{mark-fib-obj}).
+Moreover, every diagram of a given shape in a fibrant marked simplicial set has a limit.
+Thus, this model category represents the $(\infty,1)$-category of $(\infty,1)$-categories in which limits of certain diagrams exist (and functors between $(\infty,1)$-categories that preserve them).
+
+Of course, there is a dual model category of simplicial sets with marked cocones which represents the $(\infty,1)$-category of $(\infty,1)$-categories in which colimits of certain diagrams exist.
+By choosing another category $\mathcal{K}$, it should be possible to construct model categories that represent $(\infty,1)$-categories of $(\infty,1)$-categories with other categorical structures,
+such as the $(\infty,1)$-category of (locally) Cartesian closed $(\infty,1)$-categories.
+We will not discuss such constructions in this paper.
+
+In section~\ref{sec:marked}, we define categories of marked objects and prove some of their properties.
+In section~\ref{sec:model-structure}, we construct model structures on categories of marked objects.
+In section~\ref{sec:marked-simp-sets}, we consider a localization of a model category of marked simplicial sets and give a characterization of fibrant objects in this model category.
 
 \section{Category of marked objects}
 \label{sec:marked}
@@ -105,10 +124,10 @@ This model category is usually not useful by itself.
 The idea is that we should take a left Bousfield localization of $\C^m$ to obtain an interesting model category.
 We will show examples of this construction in the next section.
 
-\begin{defn}
+\begin{defn}[marked-obj]
 Let $\C$ be a category, let $\mathcal{K}$ be a small category, and let $\mathcal{F} : \mathcal{K} \to \C$ be a functor.
 A \emph{\K-marked object} of $\C$ is a pair $(X,\mathcal{E})$ where $X$ is an object of $\C$ and $\mathcal{E} : \mathcal{K}^{op} \to \Set$ is a subfunctor of $\Hom(\mathcal{F}(-),X)$.
-Morphisms $f : \mathcal{F}(K) \to X$ that belong to $\mathcal{E}$ will be caled \emph{marked}.
+Morphisms $f : \mathcal{F}(K) \to X$ that belong to $\mathcal{E}$ will be called \emph{marked}.
 A morphism of marked objects is a morphism of the underlying objects that preserves marked morphisms.
 The category of marked objects will be denoted by $\C^m$.
 \end{defn}
@@ -153,7 +172,7 @@ It is easy to see that $\colim_{j \in J} \Hom((X,\mathcal{E}), D_j) \to \Hom((X,
 Let us show that it is surjective.
 Let $f : (X,\mathcal{E}) \to \colim_{j \in J} D_j$ be a map of marked objects.
 Then $U(f)$ factors as $X \xrightarrow{g} U(D_j) \to \colim_{j \in J} U(D_j)$ for some $j$.
-By the description of colimts that we gave above, for every marked $k : K \to X$, map $U(f) \circ k$ factors through some marked $h_k : K \to U(D_k)$.
+By the description of colimits that we gave above, for every marked $k : K \to X$, map $U(f) \circ k$ factors through some marked $h_k : K \to U(D_k)$.
 Since $K$ is $\lambda$-presentable and maps $K \xrightarrow{h_k} U(D_k) \to \colim_{j \in J} U(D_j)$
 and $K \xrightarrow{k} X \xrightarrow{g} U(D_j) \to \colim_{j \in J} U(D_j)$ are equal,
 there exists an object $D'_k$ and maps $D_j \to D'_k$ and $D_k \to D'_k$ in the diagram such that
@@ -322,6 +341,9 @@ By the previous lemma, $R(U(p)) \circ g \circ k$ is marked.
 Since $f$ is a trivial cofibration, $R(U(p)) \circ g$ is homotopic to $g' \circ U(q)$.
 Hence $g' \circ U(q) \circ k = g' \circ k'$ is also marked.
 \end{proof}
+
+\section{Model structure on the category of marked objects}
+\label{sec:model-structure}
 
 To construct a model structure on $\C^m$, we will need the following theorem by Jeff Smith (see, for example, \cite[Proposition~A.2.6.8]{lurie-topos}):
 \begin{thm}[mod-comb]
@@ -500,6 +522,7 @@ Since $Y$ is fibrant, $K \xrightarrow{k} QU(X)^n \to U(Y)$ is also marked.
 \end{proof}
 
 \section{Marked simplicial sets}
+\label{sec:marked-simp-sets}
 
 In this section for every set $\mathcal{L}$ of simplicial sets, we define a model category $\sSet_\mathcal{L}$ of marked simplicial sets
 which represents the $(\infty,1)$-category of $(\infty,1)$-categories which have a limit for every diagram of every shape from $\mathcal{L}$.
@@ -513,20 +536,20 @@ Let $\J$ be the following set of maps of $\sSet_\mathcal{L}$:
 \item For every $n > 0$ and $L \in \mathcal{L}$, maps $(\partial \Delta^n \join L, \{ \Delta^{\{n\}} \join L : \Delta^0 \join L \to \partial \Delta^n \join L \}) \to (\Delta^n \join L, \{ \Delta^{\{n\}} \join L : \Delta^0 \join L \to \Delta^n \join L \})$.
 \end{enumerate}
 We define a model structure on $\sSet_\mathcal{L}$ as the left Bousfield localization of the model structure
-defined in section~\ref{sec:marked} (with $\mathcal{J} = \varnothing$) with respect to $\J$.
+defined in section~\ref{sec:model-structure} (with $\mathcal{J} = \varnothing$) with respect to $\J$.
 The following propositions give us a characterization of fibrant objects and fibrations between them in $\sSet_\mathcal{L}$.
 
 \begin{prop}[mark-fib-obj]
 For every marked simplicial set $Z$, the following conditions are equivalent:
 \begin{enumerate}
 \item \label{it:fib} $Z$ is a fibrant object of $\sSet_\mathcal{L}$.
-\item \label{it:exp} $Z$ is a quasicategory which has a limit for every diagram of every shape from $\mathcal{L}$, and a cone is marked in $Z$ if and only if it is a limit cone.
+\item \label{it:exp} $Z$ is a quasi-category which has a limit for every diagram of every shape from $\mathcal{L}$, and a cone is marked in $Z$ if and only if it is a limit cone.
 \end{enumerate}
 \end{prop}
 \begin{proof}
 It is easy to see that \eqref{it:fib} implies \eqref{it:exp}.
 To prove the converse, we need to define homotopy function complexes for $\sSet_\mathcal{L}$.
-First, recall that the inclusion of Kan complexes into quasicategories has a right adjoint which we denote by $E$ (see, for example, \cite[Proposition~1.2.5.3]{lurie-topos}).
+First, recall that the inclusion of Kan complexes into quasi-categories has a right adjoint which we denote by $E$ (see, for example, \cite[Proposition~1.2.5.3]{lurie-topos}).
 Let $\Fun(X,Y)$ be the internal Hom in the category of simplicial sets.
 By \cite[Corollary~3.1.4.4]{lurie-topos}, $E(\Fun(X,Y))$ is a homotopy function complex in the Joyal model structure.
 If $X$ and $Y$ are marked simplicial sets, then by \rlem{mark-map}, we can define a homotopy function complex $\Map(X,Y)$ as certain subcomplex of $E(\Fun(U(X),U(Y)))$.
@@ -537,7 +560,7 @@ Let $\Map'(X,Y)$ be the subcomplex of $E(\Fun(A \fjoin L, Y))$ which consists of
 corresponds to a map $f : A \fjoin L \to Y$ such that $\Delta^0 \fjoin L \xrightarrow{p \fjoin L} A \fjoin L \xrightarrow{f} Y$ is a limit cone.
 Since $A \fjoin L \to A \join L$ is a weak equivalence in the Joyal model structure, induced map $\Map(X,Y) \to \Map'(X,Y)$ is a weak equivalence of Kan complexes.
 
-An object $Z$ of $\sSet_\mathcal{L}$ is fibrant if and only if it is a quasicategory, marked maps in $Z$ are stable under homotopy,
+An object $Z$ of $\sSet_\mathcal{L}$ is fibrant if and only if it is a quasi-category, marked maps in $Z$ are stable under homotopy,
 and for every map $X \to Y$ in $\J$, induced map of Kan complexes $\Map(Y,Z) \to \Map(X,Z)$ is a weak equivalence.
 Let $Z$ be a marked simplicial set that satisfies \eqref{it:exp}.
 Since limits cones are stable under homotopy, we just need to prove that $\Map(Y,Z) \to \Map(X,Z)$ is a weak equivalence for every $X \to Y$ in $\J$.
@@ -545,11 +568,11 @@ Thus we only need to prove that for every $p : X \to Z$, the fiber of $\Map(Y,Z)
 
 First, let us consider maps of the form $L^\flat \to (\Delta^0 \join L, \{ id \})$.
 Since $L^\flat$ is flat, $\Map(L^\flat,Z) = E(\Fun(L,U(Z)))$.
-For any simplicial sets $K$, $A$ and $Z'$ and every map $p : K \to Z'$, we have the following cartesian square:
+For any simplicial sets $K$, $A$ and $Z'$ and every map $p : K \to Z'$, we have the following Cartesian square:
 \[ \xymatrix{ \Fun(A,Z'^{/p}) \ar[r] \ar[d] \pb & \Fun(A \fjoin K, Z') \ar[d] \\
               \Delta^0 \ar[r]_-p & \Fun(K,Z')
             } \]
-In particuler, if we let $K = L$, $A = \Delta^0$ and $Z' = U(Z)$, then we obtain the following cartesian square:
+In particular, if we let $K = L$, $A = \Delta^0$ and $Z' = U(Z)$, then we obtain the following Cartesian square:
 \[ \xymatrix{ U(Z)^{/p} \ar[r] \ar[d] \pb & \Fun(\Delta^0 \fjoin L, U(Z)) \ar[d] \\
               \Delta^0 \ar[r]_-p & \Fun(L,U(Z))
             } \]
@@ -590,7 +613,7 @@ For every $p : L \to U(Z)$, we have the following diagram:
               \Fun(\partial \Delta^n, U(Z)^{/p}) \ar[r] \ar[d] \pb & \Fun(\partial \Delta^n \fjoin L, U(Z)) \ar[d] \\
               \Delta^0 \ar[r]_-p & \Fun(L,U(Z))
             } \]
-It follows that the following square is cartesian:
+It follows that the following square is Cartesian:
 \[ \xymatrix{ \Map(\Delta^n, U(Z)^{/p}) \ar[r] \ar[d] \pb & \Map'(\Delta^n \join L, U(Z)) \ar[d] \\
               \Map(\partial \Delta^n, U(Z)^{/p}) \ar[r] & \Map'(\partial \Delta^n \join L, U(Z))
             } \]
@@ -603,7 +626,7 @@ But this follows from the special case when $L = \varnothing$.
 A map $f : X \to Y$ between fibrant marked simplicial sets is a fibration if and only if its underlying map is a fibration in the Joyal model structure.
 \end{prop}
 \begin{proof}
-\Rprop{mark-fib-obj} implies that an object of $\sSet_\mathcal{L}$ is fibrant if and only if it is a quasicategory
+\Rprop{mark-fib-obj} implies that an object of $\sSet_\mathcal{L}$ is fibrant if and only if it is a quasi-category
 and has RLP with respect to sets $\J$ and $\J_\mathcal{K}$ (which was defined in \rthm{mark-main}).
 By \cite[Proposition~3.6]{f-model-structures}, a map of marked simplicial sets with fibrant codomain is a fibration
 if and only if it is a fibration in the Joyal model structure and has RLP with respect to $\J \cup \J_\mathcal{K}$.
@@ -617,20 +640,20 @@ Consider the following commutative square:
 where $v$ is marked in $Y$.
 Since $X$ is fibrant, there exists a marked map $g : \Delta^0 \join L \to U(X)$ such that the top triangle in the square above commutes.
 Since $f \circ g$ and $v$ are limit cones, they are homotopic relative to $L$.
-Sincce $U(f)$ is a fibration in the Joyal model structure, we can lift this homotopy to obtain a lift in the square above such that both triangles commute.
+Since $U(f)$ is a fibration in the Joyal model structure, we can lift this homotopy to obtain a lift in the square above such that both triangles commute.
 The same argument shows that $f$ has RLP with respect to maps $(\partial \Delta^n \join L, \{ \Delta^{\{n\}} \join L \}) \to (\Delta^n \join L, \{ \Delta^{\{n\}} \join L \})$.
 \end{proof}
 
 Let $\kappa$ be a regular cardinal, and let $\mathcal{L}$ be the set of all (representatives of) sets with cardinality less than $\kappa$ together with simplicial set $\Lambda^2_2$.
 Let $\sSet_\mathcal{L}^f$ be the full subcategory of $\sSet_\mathcal{L}^f$ on the fibrant object.
 Then $\sSet_\mathcal{L}^f$ is a category with fibrations.
-Let $\qcat^c$ be the category of $\kappa$-complete quasicategories and functors that preserve $\kappa$-small limits.
+Let $\qcat^c$ be the category of $\kappa$-complete quasi-categories and functors that preserve $\kappa$-small limits.
 A structure of a category with fibrations on $\qcat^c$ was constructed in \cite{szumilo}.
 These two categories with fibrations are isomorphic.
 Indeed, \rprop{mark-fib-obj} implies that forgetful functor $U : \sSet_\mathcal{L}^f \to \qcat^c$ is an isomorphism of categories.
 Thus we just need to show that $U$ preserves weak equivalences and fibrations.
-Weak equivalences in both cases are just weak equivalences of underlying quasicategories.
-Fibrations in $\qcat^c$ are fibrations of underlying quasicategories.
+Weak equivalences in both cases are just weak equivalences of underlying quasi-categories.
+Fibrations in $\qcat^c$ are fibrations of underlying quasi-categories.
 By \rprop{mark-fib-map}, this is also true in $\sSet_\mathcal{L}^f$.
 
 \bibliographystyle{amsplain}
