@@ -8,8 +8,70 @@
 \usepackage{xargs}
 \usepackage{bussproofs}
 \usepackage{verbatim}
+\usepackage{turnstile}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
+
+\renewcommand{\turnstile}[6][s]
+    {\ifthenelse{\equal{#1}{d}}
+        {\sbox{\first}{$\displaystyle{#4}$}
+        \sbox{\second}{$\displaystyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{t}}
+        {\sbox{\first}{$\textstyle{#4}$}
+        \sbox{\second}{$\textstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{s}}
+        {\sbox{\first}{$\scriptstyle{#4}$}
+        \sbox{\second}{$\scriptstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{ss}}
+        {\sbox{\first}{$\scriptscriptstyle{#4}$}
+        \sbox{\second}{$\scriptscriptstyle{#5}$}}{}
+    \setlength{\dashthickness}{0.111ex}
+    \setlength{\ddashthickness}{0.35ex}
+    \setlength{\leasturnstilewidth}{2em}
+    \setlength{\extrawidth}{0.2em}
+    \ifthenelse{%
+      \equal{#3}{n}}{\setlength{\tinyverdistance}{0ex}}{}
+    \ifthenelse{%
+      \equal{#3}{s}}{\setlength{\tinyverdistance}{0.5\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{d}}{\setlength{\tinyverdistance}{0.5\ddashthickness}
+        \addtolength{\tinyverdistance}{\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{t}}{\setlength{\tinyverdistance}{1.5\dashthickness}
+        \addtolength{\tinyverdistance}{\ddashthickness}}{}
+        \setlength{\verdistance}{0.4ex}
+        \settoheight{\lengthvar}{\usebox{\first}}
+        \setlength{\raisedown}{-\lengthvar}
+        \addtolength{\raisedown}{-\tinyverdistance}
+        \addtolength{\raisedown}{-\verdistance}
+        \settodepth{\raiseup}{\usebox{\second}}
+        \addtolength{\raiseup}{\tinyverdistance}
+        \addtolength{\raiseup}{\verdistance}
+        \setlength{\lift}{0.8ex}
+        \settowidth{\firstwidth}{\usebox{\first}}
+        \settowidth{\secondwidth}{\usebox{\second}}
+        \ifthenelse{\lengthtest{\firstwidth = 0ex}
+            \and
+            \lengthtest{\secondwidth = 0ex}}
+                {\setlength{\turnstilewidth}{\leasturnstilewidth}}
+                {\setlength{\turnstilewidth}{2\extrawidth}
+        \ifthenelse{\lengthtest{\firstwidth < \secondwidth}}
+            {\addtolength{\turnstilewidth}{\secondwidth}}
+            {\addtolength{\turnstilewidth}{\firstwidth}}}
+        \ifthenelse{\lengthtest{\turnstilewidth < \leasturnstilewidth}}{\setlength{\turnstilewidth}{\leasturnstilewidth}}{}
+    \setlength{\turnstileheight}{1.5ex}
+    \sbox{\turnstilebox}
+    {\raisebox{\lift}{\ensuremath{
+        \makever{#2}{\dashthickness}{\turnstileheight}{\ddashthickness}
+        \makehor{#3}{\dashthickness}{\turnstilewidth}{\ddashthickness}
+        \hspace{-\turnstilewidth}
+        \raisebox{\raisedown}
+        {\makebox[\turnstilewidth]{\usebox{\first}}}
+            \hspace{-\turnstilewidth}
+            \raisebox{\raiseup}
+            {\makebox[\turnstilewidth]{\usebox{\second}}}
+        \makever{#6}{\dashthickness}{\turnstileheight}{\ddashthickness}}}}
+        \mathrel{\usebox{\turnstilebox}}}
 
 \newcommand{\newref}[4][]{
 \ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
@@ -93,24 +155,30 @@ Abstract.
 \section{Morita equivalences of theories}
 
 In this section we define a Morita equivalence of algebraic dependent type theories as defined in \cite{alg-tt}.
-We also consider morphisms of theories which have a right inverse, and give some lemmas that can be used to prove that such a morphism is a Morita equivalence.
+We also consider several equivalent descriptions of Morita equivalences.
 
-Consider the category $\Mod{T}$ of models of some theory $T$.
-Recall that the set $\I$ of morphisms in $\Mod{T}$ consists of the following maps:
-\begin{align*}
-i_{(tm,n)} & : F(\{\,\Gamma \vdash A\ type\,\}) \to F(\{\,\Gamma \vdash a : A\,\}) \\
-i_{(ty,n)} & : F(\{\,\Gamma \vdash ctx\,\}) \to F(\{\,\Gamma \vdash A\ type\,\})
-\end{align*}
-We will say that a morphism in $\Mod{T}$ is a weak equivalence if it has RLP up to $\sim_i$ with respect every $i \in \I$.
+Let $T$ be a theory with the interval type (that is, $T$ is equipped with a morphism from theory $I$, which was defined in \cite{alg-models}).
+Let $X$ be a model of $T$.
+A \emph{homotopy} between elements $a,a' \in X_{(p,n)}$ is an element $h \in X_{(p,n+1)}$ such that $ctx^n(h) = I$, $left^*(h) = a$, and $right^*(h) = a'$.
+We will say that $h$ is a \emph{relative homotopy} if $e_p(h) = I \times e_p(a)$, where $e_p : (p,n) \to (d_p,n)$, $d_{tm} = ty$, $e_{tm} = ty$, $d_{ty} = ctx$ and $e_{ty} = ft$.
+We will say that a morphism of models $f : X \to Y$ is \emph{weak equivalence} if it satisfies the following conditions:
+\begin{enumerate}
+\item For every $A \in X_{(ty,n)}$ and $a \in Y_{(tm,n)}$ such that $ty(a) = f(A)$,
+there is a term $a' \in X_{(tm,n)}$ such that $ty(a') = A$ and $f(a')$ is relatively homotopic to $a$.
+In this case we will say that $f$ is \emph{essentially surjective on terms}.
+\item For every $\Gamma \in X_{(ctx,n)}$ and $A \in Y_{(ty,n)}$ such that $ft(A) = f(\Gamma)$,
+there is a type $A' \in X_{(ty,n)}$ such that $ft(A') = \Gamma$ and $f(A')$ is relatively homotopic to $A$.
+In this case we will say that $f$ is \emph{essentially surjective on types}.
+\end{enumerate}
 
 \begin{defn}
 A \emph{Morita equivalence} between theories $T_1$ and $T_2$ is a morphism $f : T_1 \to T_2$ such that for every model $X$ of $T_1$,
-the unit $\eta_X : X \to f^*(f_!(X))$ of the adjunction $f_! \dashv f^* : \Mod{T_2} \to \Mod{T_1}$ is a weak equivalence.
+the unit $\eta_X : X \to f^*(f_!(X))$ of the adjunction $f_! \dashv f^*$ is a weak equivalence.
 \end{defn}
 
 Let $B$ be the regular theory that can be described as $coe_1 + \sigma + Path + wUA$.
 This theory was defined in \cite{alg-models}, and it was proved there that if $T$ is a regular theory under $B$,
-then there is a model structure on $\Mod{T}$ with this class of weak equivalences.
+then there is a model structure on $\Mod{T}$ in which the class of weak equivalences agrees with the one defined above.
 The following simple proposition characterizes Morita equivalences between such theories in terms of this model stucture.
 
 \begin{prop}
@@ -125,6 +193,27 @@ are both defined in terms of generators and relations, this implies that $f_!$ p
 Hence $f_! \dashv f^*$ is a Quillen adjunction.
 Moreover, this implies that $U$ reflects weak equivalences.
 Hence a Quillen adjunction is a Quillen equivalence if and only if the unit of the adjunction is a weak equivalence.
+\end{proof}
+
+\begin{prop}
+Let $f : T_1 \to T_2$ be a morphism of stable theories under $I$.
+Then $f$ is a Morita equivalence if and only if for every $\mathcal{S}$-set of variables $V$, every formula $\varphi \in Form_{T_1}(V)$,,
+every term $A \in Term_{T_1}(V)_{(d_p,n)}$, and every term $a \in Term_{T_2}(V)_{(p,n)}$ such that $f(\varphi) \sststile{}{V} e_p(a) = f(A)$,
+there exists a term $a' \in Term_{T_1}(V)_{(p,n)}$ and a term $h \in Term_{T_2}(V)_{(p,n+1)}$, which satisfy the following conditions:
+\begin{enumerate}
+\item $\varphi \sststile{}{V} e_p(a') = A$,
+\item $f(\varphi) \sststile{}{V} e_p(h) = I \times f(A)$,
+\item $f(\varphi) \sststile{}{V} left^*(h) = f(a')$,
+\item $f(\varphi) \sststile{}{V} right^*(h) = a$.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+First, assume that $f$ is a Morita equivalence.
+There is a unique morphism of theories $u : 0 \to T_1$, where $0$ is the initial theory.
+This morphism induces a pair of ajoint functor $u^* : \Mod{T_1} \to \Set^\mathcal{S}$ and $u_! : \Set^\mathcal{S} \to \Mod{T_1}$.
+For every $\mathcal{S}$-set $V$, there is a natural bijection $Term_{T_2}(V) \simeq Term_{T_2 \amalg_{T_1} Lang(u_!(V))}(\varnothing)$.
+
+Let $V$, $\varphi$, $A$, and $a$ be data as in the statement of the proposition.
 \end{proof}
 
 \section{Simplicial type theories}
