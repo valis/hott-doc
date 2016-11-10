@@ -253,18 +253,29 @@ Let $f : T_1 \to T_2$ be a morphism of theories with a retraction $g : T_2 \to T
 If we want to prove that $f$ is a Morita equivalence, we can try to define for every term $a$ of $T_2$ its lift as $g(a)$.
 Then we only need to prove that $f(g(a))$ is homotopic to $a$.
 We can try to do this using the same idea as in the proof of \cite[Lemma~3.7]{alg-models}.
-We define a function $h : Term_{T_2}(V)_{(p,n)} \to Term_{T_2}(V)_{(p,n+1)}$ which preserves theorems.
-Let $a$ be a term of $T_2$, let $A$ be a variable, and let $\varphi$ be a formula of $T_1$ such that $f(\varphi) \sststile{}{V} e_p(a) = A$.
-Since $h$ preserves theorems, it follows that $h(f(\varphi)) \sststile{}{V} h(e_p(a)) = h(A)$.
-If we assume that $h(A) = I \times A$ and sequents $f(\varphi) \sststile{}{V} h(f(\varphi))$ and $\sststile{}{V} h(e_p(a)) \simeq e_p(h(a))$ are derivable,
-then it follows that $f(\varphi) \sststile{}{V} e_p(h(a)) = I \times A$.
-Then we just need to prove that sequents $h(a)\!\downarrow\ \sststile{}{V} left^*(h(a)) = f(g(a))$ and $h(a)\!\downarrow\ \sststile{}{V} right^*(h(a)) = a$ are derivable.
+For this we need to define a function on terms that for every term $a$ constructs a homotopy $h(a)$ between $f(g(a))$ and $a$.
+If $h$ preserves axioms and satisfies some other conditions, then we can show that it define the required homotopy.
 
 The problem with this construction is that $h$ might not preserve all axioms.
-But sometimes it is possible to prove that some sequents of $T_2$ are derivable from a subset of axioms of $T_2$ which is preserved by $h$.
-Then we can show that sequent $f(\varphi) \sststile{}{V} e_p(a) = A$ in the proof above can be replaced with a sequent which has this property
-and which is close enough to the original sequent so that the proof still works.
+But sometimes it is enough to know that $h$ preserves only some axioms.
 These ideas are formalized in the following lemma:
+
+% Let $f : T_1 \to T_2$ be a morphism of theories with a retraction $g : T_2 \to T_1$.
+% If we want to prove that $f$ is a Morita equivalence, we can try to define for every term $a$ of $T_2$ its lift as $g(a)$.
+% Then we only need to prove that $f(g(a))$ is homotopic to $a$.
+% We can try to do this using the same idea as in the proof of \cite[Lemma~3.7]{alg-models}.
+% First, we need to define a function $h : Term_{T_2}(V)_{(p,n)} \to Term_{T_2}(V)_{(p,n+1)}$ which preserves theorems.
+% Let $a$ be a term of $T_2$, let $A$ be a variable, and let $\varphi$ be a formula of $T_1$ such that $f(\varphi) \sststile{}{V} e_p(a) = A$.
+% Since $h$ preserves theorems, it follows that $h(f(\varphi)) \sststile{}{V} h(e_p(a)) = h(A)$.
+% If we assume that $h(A) = I \times A$ and sequents $f(\varphi) \sststile{}{V} h(f(\varphi))$ and $\sststile{}{V} h(e_p(a)) \simeq e_p(h(a))$ are derivable,
+% then it follows that $f(\varphi) \sststile{}{V} e_p(h(a)) = I \times A$.
+% Then we just need to prove that sequents $h(a)\!\downarrow\ \sststile{}{V} left^*(h(a)) = f(g(a))$ and $h(a)\!\downarrow\ \sststile{}{V} right^*(h(a)) = a$ are derivable.
+
+% The problem with this construction is that $h$ might not preserve all axioms.
+% But sometimes it is possible to prove that some sequents of $T_2$ are derivable from a subset of axioms of $T_2$ which is preserved by $h$.
+% Then we can show that sequent $f(\varphi) \sststile{}{V} e_p(a) = A$ in the proof above can be replaced with a sequent which has this property
+% and which is close enough to the original sequent so that the proof still works.
+% These ideas are formalized in the following lemma:
 
 \begin{lem}
 Let $f : T_1 \to T_2$ and $g : T_2 \to T_1$ be morphisms of theories such that $g \circ f = id_{T_1}$.
@@ -273,7 +284,9 @@ Suppose that the following conditions hold:
 \item There is a function $\nf : Term_{T_2} \to Term_{T_2}$ such that for every term $t$, sequent $t\!\downarrow\ \sststile{}{V} \nf(t) = t$ is derivable in $T_2$.
 \item There is a subtheory $T_2' \subseteq T_2$ which has the same sets of function and predicate symbols such that
 for every theorem $\varphi \sststile{}{V} \psi$ of $T_2$, sequent $\nf(\varphi) \sststile{}{V} \nf(\psi)$ is derivable in $T_2'$.
-\item There is 
+\item There is a function $h : Term_{T_2}(V)_{(p,n)} \to Term_{T_2}(L(V))_{(p,n+1)}$ which preserves $ft$, $ty$, variables, substitutions, and axioms of $T_2'$.
+\item For every formula $\varphi$, sequent $f(\varphi) \sststile{}{V} h'(f(\varphi))$ is derivable, where $h'(t) = h(t)[\rho_V]$ and $\rho_V(x) = I \times x$ for every $x \in V$.
+\item For every term $a$, sequent $h'(a)\!\downarrow\ \sststile{}{V} e_p(h'(a)) = I \times e_p(a) \land left^*(h'(a)) = f(g(a)) \land right^*(h'(a)) = a$ is derivable.
 \end{enumerate}
 Then $f$ is a Morita equivalence.
 \end{lem}
