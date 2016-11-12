@@ -274,93 +274,68 @@ Then the previous proposition immediately implies the following corollary:
 A morphism of theories is a Morita equivalence if and only if it has RLP up to $\sim_i$ with respect to every $i \in \I$.
 \end{cor}
 
-Now, let us prove a simple lemma:
-
-\begin{lem}[term-form]
-Let $T_1$ and $T_2$ be theories and let $f,g : Term_{T_1}(V)_s \to Term_{T_2}(V)_{s'}$ be two functions.
-If $f(t)\!\downarrow\ \sststile{T_2}{V} f(t) = g(t)$ for every term $t$, then $f(\varphi) \sststile{T_2}{V} g(\varphi)$ for every formula $\varphi$.
-If $f$ and $g$ preserve variables, then the converse holds.
-\end{lem}
-\begin{proof}
-We can assume that $\varphi$ is atomic.
-Then there exists a predicate symbol $R$ (including =) such that $\varphi = R(t_1, \ldots t_k)$.
-It is easy to see by induction on $i$ that $R(g(t_1), \ldots g(t_i), f(t_{i+1}), \ldots f(t_k)) \sststile{T_2}{V} R(g(t_1), \ldots g(t_{i+1}), f(t_{i+1}), \ldots f(t_k))$.
-Conversely, let $\varphi = (x = t)$.
-Then $x = f(t) \sststile{T_2}{V,x} x = g(t)$, and the required property easily follows from this.
-\end{proof}
-
 If we want to prove that a morphism $f : T_1 \to T_2$ is a Morita equivalence, we can try to use the same idea as in the proof of \cite[Lemma~3.7]{alg-models}.
 We define functions $g : Term_{T_2}(V)_{(p,n)} \to Term_{T_1}(V)_{(p,n)}$ and $h : Term_{T_2}(V)_{(p,n)} \to Term_{T_2}(V)_{(p,n+1)}$.
 To show that $g(a)$ and $h(a)$ satisfy conditions of \rprop{mor-eq}, we need to prove several properties of $g$ and $h$,
 one of which is that they must preserve axioms of $T_2$.
 The problem with this construction is that they might not preserve all axioms.
-But sometimes it is enough to know that $g$ and $h$ preserve only some axioms.
-These ideas are formalized in the following lemma:
+Often we have some axioms that express reduction rules.
+If $g$ and $h$ do not preserve these axioms, then we can try to fix this problem by first applying a normalization function.
+Such function usually does not preserve substitutions and thus does not define morphisms of theories.
+We call such functions \emph{pseudomorphisms}:
+
+\begin{defn}
+Let $T_1$ and $T_2$ be a pair of theories and let $k$ be a natural number.
+Then a \emph{pseudomorphism} $f$ between $T_1$ and $T_2$ of degree $k$ is an equivalence classes of pairs of maps $f : Term_{T_1}(V)_{(p,n)} \to PTerm_{T_2}(V)_{(p,n+k)}$ and
+$f : Form_{T_1}(V) \to Form_{T_2}(V)$ such that $f$ preserves theorems and sequents $f(\varphi \land \psi) \ssststile{}{V} f(\varphi) \land f(\psi)$,
+$f(t = t') \ssststile{}{V} f(t) = f(t')$ and $\sststile{}{V} f(e_p(t)) \simeq e_p(f(t))$ are derivable in $T_2$.
+Two such pairs $f$ and $f'$ are equivalent if and only if for every term $t$ and every formula $\varphi$,
+sequents $\sststile{}{V} f(t) \simeq f'(t)$ and $f(\varphi) \ssststile{}{V} f'(\varphi)$ are derivable.
+
+There is a partial order on the set of pseudomorphisms of some fixed degree $k$.
+We will write $f \leq f'$ if for every term $t$ and every formula $\varphi$,
+sequents $f(t)\!\downarrow\ \sststile{}{V} f(t) = f'(t)$ and $f(\varphi) \sststile{}{V} f'(\varphi)$ are derivable.
+\end{defn}
+
+\begin{example}
+If $f : T_1 \to T_2$ and $g : T_2 \to T_3$ are pseudomorphisms of degrees $k$ and $m$ respectively, then there is an obvious pseudomorphism $g \circ f : T_1 \to T_3$ of degree $k+m$.
+\end{example}
+
+\begin{example}
+Every morphism of theories is a pseudomorphism of degree 0.
+In particular, for every theory $T$, there is the identity pseudomorphism $id_T : T \to T$.
+\end{example}
+
+\begin{example}
+For every theory $T$ and every natural number $k$, there is a pseudomorphism $I^k : T \to T$ of degree $k$ which is defined as follows.
+For every term $t$, $I^k(t) = I^k \times t$.
+For every formula $\varphi$, $I^k(\varphi) = \varphi$.
+\end{example}
+
+The following lemma describes a way to prove that a morphism of theories is a Morita equivalence using pseudomorphisms:
 
 \begin{lem}
 Let $f : T_1 \to T_2$ be a morphism of theories under $I$.
-Suppose that there are a subtheory $T_2' \subseteq T_2$ which has the same sets of function and predicate symbols as $T_2$ and
-a function $\nf : Term_{T_2} \to Term_{T_2}$ which satisfies the following conditions:
-\begin{description}
-\item[(nf1)\label{it:mel-nfc}] $\nf(t)\!\downarrow\ \sststile{T_2'}{V} \nf(e_p(t)) = e_p(\nf(t))$ for every term $t$.
-\item[(nf2)\label{it:mel-nfa}] $\nf(\varphi) \sststile{T_2'}{V} \nf(\psi)$ for every theorem $\varphi \sststile{}{V} \psi$ of $T_2$.
-\item[(nf3)\label{it:mel-nft}] $f(t)\!\downarrow\ \sststile{T_2'}{V} \nf(f(t)) = f(t)$ for every term $t$.
-\item[(nf4)\label{it:mel-nfe}] $t\!\downarrow\ \sststile{T_2}{V} \nf(t) = t$ for every term $t$.
-\end{description}
-
-Suppose that there is a function $g : Term_{T_2}(V)_{(p,n)} \to Term_{T_1}(V)_{(p,n)}$ which satisfies the following conditions:
-\begin{description}
-\item[(g1)\label{it:mel-gc}] $g(t)\!\downarrow\ \sststile{T_1}{V} g(e_p(t)) = e_p(g(t))$ for every term $t$.
-\item[(g2)\label{it:mel-gp}] $g(\varphi) \sststile{T_1}{V} g(\psi)$ for every theorem $\varphi \sststile{}{V} \psi$ of $T_2'$.
-\item[(g3)\label{it:mel-gt}] $t\!\downarrow\ \sststile{T_1}{V} g(f(t)) = t$ for every term $t$.
-\end{description}
-
-Suppose that there is a function $h : Term_{T_2}(V)_{(p,n)} \to Term_{T_2}(V)_{(p,n+1)}$ which satisfies the following conditions:
-\begin{description}
-\item[(h1)\label{it:mel-hc}] $h(t)\!\downarrow\ \sststile{T_2}{V} h(e_p(t)) = e_p(h(t))$ for every term $t$.
-\item[(h2)\label{it:mel-hp}] $h(\varphi) \sststile{T_2}{V} h(\psi)$ for every theorem $\varphi \sststile{}{V} \psi$ of $T_2'$.
-\item[(h3)\label{it:mel-ht}] $f(t)\!\downarrow\ \sststile{T_2}{V} h(f(t)) = I \times f(t)$ for every term $t$.
-\item[(h4)\label{it:mel-he}] $h(t)\!\downarrow\ \sststile{T_2}{V} left^*(h(t)) = f(g(t)) \land right^*(h(t)) = t$ for every term $t$.
-\end{description}
-
-Then $f$ is a Morita equivalence.
+Suppose that there are a pseudomorphism $g : T_2 \to T_1$ of degrere 0 and a pseudomorphism $h : T_2 \to T_2$ of degree 1 which satisfy the following conditions:
+\begin{enumerate}
+\item $id_{T_1} \leq g \circ f$,
+\item $I \circ f \leq h \circ f$,
+\item For every term $t$, sequents
+\begin{align*}
+t\!\downarrow \land\ h(t)\!\downarrow\ & \sststile{}{V} left^*(h(t)) = f(g(t)) \\
+t\!\downarrow \land\ h(t)\!\downarrow\ & \sststile{}{V} right^*(h(t)) = t
+\end{align*}
+are derivable in $T_2$.
+\end{enumerate}
 \end{lem}
 \begin{proof}
 Let $a$ and $A$ be terms of $T_2$ and let $\varphi$ be a formula of $T_1$ such that $\varphi \sststile{T_1}{V} A\!\downarrow$ and $f(\varphi) \sststile{T_2}{V} e_p(a) = f(A)$.
-Conditions \ref{it:mel-nfa} and \ref{it:mel-gp} imply that $g(\nf(f(\varphi))) \sststile{T_1}{V} g(\nf(e_p(a))) = g(\nf(f(A)))$.
-Conditions \ref{it:mel-nft} and \ref{it:mel-gp} imply that $g(f(t))\!\downarrow\ \sststile{T_1}{V} g(\nf(f(t))) = g(f(t))$.
-Now, condition~\ref{it:mel-gt} implies that $t\!\downarrow\ \sststile{T_1}{V} g(\nf(f(t))) = t$.
-By lemma~\rlem{term-form}, $\varphi \sststile{T_1}{V} g(\nf(f(\varphi)))$.
-Thus we obtain the following theorem:
-\[ \varphi \sststile{T_1}{V} g(\nf(e_p(a))) = g(\nf(f(A))) \]
-
-Conditions \ref{it:mel-nft} and \ref{it:mel-gp} imply that $g(f(A))\!\downarrow\ \sststile{T_1}{V} g(\nf(f(A))) = g(f(A))$.
-Condition~\ref{it:mel-gt} implies that $A\!\downarrow\ \sststile{T_1}{V} g(\nf(f(A))) = A$.
-Thus we have the following theorem:
-\[ \varphi \sststile{T_1}{V} g(\nf(e_p(a))) = A \]
-
-Condition~\ref{it:mel-nfe} implies that sequent $f(\varphi) \sststile{}{V} e_p(\nf(a)) = A$ is also derivable in $T_2$.
-Hence, if we define $a'$ as $g(\nf(a))$, then sequent $\varphi \sststile{}{V} e_p(a') = A$ is derivable in $T_1$.
-We just need to define a term $h'$ which satisfies conditions \eqref{it:mcs}-\eqref{it:mcl} of \rprop{mor-eq}.
-
-Let $h' = h_V(\nf(a))$.
-By conditions \ref{it:mel-nfa} and \ref{it:mel-hp}, sequent $h_V(\nf(f(\varphi))) \sststile{}{V} h_V(\nf(e_p(a))) = h_V(\nf(A))$ is derivable in $T_2$.
-Conditions \ref{it:mel-nft}, \ref{it:mel-hp} and \ref{it:mel-ht} imply that sequent $f(t)\!\downarrow\ \sststile{}{V} h_V(\nf(f(t))) = f(t)$ is also derivable in $T_2$.
-It follows that sequent $f(\varphi) \sststile{}{V} h_V(\nf(f(\varphi)))$ is a theorem of $T_2$ for every formula $\varphi$.
-Hence, sequent
-\[ f(\varphi) \sststile{}{V} h_V(\nf(e_p(a))) = h_V(\nf(A)) \]
-is also a theorem of $T_2$.
-Since $f(\varphi) \sststile{}{V} a\!\downarrow$, conditions \ref{it:mel-nfa} and \ref{it:mel-hp} imply that $h_V(\nf(f(\varphi))) \sststile{}{V} h_V(\nf(a))\!\downarrow$.
-Conditions \ref{it:mel-nfc} and \ref{it:mel-hp} imply that $h_V(\nf(a))\!\downarrow\ \sststile{}{V} h_V(\nf(e_p(a))) = h_V(e_p(\nf(a)))$.
-Hence the following sequent is a theorem of $T_2$:
-\[ f(\varphi) \sststile{}{V} h_V(\nf(e_p(a))) = h_V(e_p(\nf(a))). \]
-Condition~\ref{it:mel-hc} implies that sequent
-\[ f(\varphi) \sststile{}{V} h_V(e_p(\nf(a))) = e_p(h_V(\nf(a))) \]
-is also a theorem of $T_2$.
-Since $f(\varphi) \sststile{}{V} h_V(\nf(A)) = h_V(A)$ and $h_V(A) = I \times A$, these facts imply that $f(\varphi) \sststile{}{V} e_p(h') = I \times A$.
-Thus $h'$ satisfies condition~\eqref{it:mcs} of \rprop{mor-eq}.
-Condition~\ref{it:mel-nfe} implies that $f(\varphi) \sststile{}{V} \nf(a) = a$.
-This fact and condition~\ref{it:mel-he} imply that $h'$ also satisfies the other two conditions of \rprop{mor-eq}.
+Let $a' = g(a)$ and $h' = h(a)$.
+Then $\varphi \sststile{T_1}{V} g(f(\varphi))$ and $g(f(\varphi)) \sststile{T_1}{V} g(e_p(a)) = g(f(A))$.
+It follows that $\varphi \sststile{T_1}{V} e_p(a') = A$.
+Analogously, $f(\varphi) \sststile{T_2}{V} h(f(\varphi))$ and $h(f(\varphi)) \sststile{T_2}{V} h(e_p(a)) = h(f(A))$.
+Hence $f(\varphi) \sststile{T_2}{V} e_p(h') = I \times f(A)$.
+The last condition implies that $f(\varphi) \sststile{T_2}{V} left^*(h') = f(a')$ and $f(\varphi) \sststile{T_2}{V} right^*(h') = a$.
 \end{proof}
 
 \section{Simplicial type theories}
