@@ -134,6 +134,19 @@
 \newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
 \newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
 
+\makeatletter
+\let\orgdescriptionlabel\descriptionlabel
+\renewcommand*{\descriptionlabel}[1]{%
+  \let\orglabel\label
+  \let\label\@gobble
+  \phantomsection
+  \edef\@currentlabel{#1}%
+  %\edef\@currentlabelname{#1}%
+  \let\label\orglabel
+  \orgdescriptionlabel{#1}%
+}
+\makeatother
+
 \begin{document}
 
 \title[Equivalence between quasicategories and models of type theory]{Equivalence between finitely complete quasicategories and models of homotopy type theory with an interval type}
@@ -152,6 +165,18 @@ Abstract.
 
 In this section we define a Morita equivalence of algebraic dependent type theories as defined in \cite{alg-tt}.
 We also give several equivalent descriptions of Morita equivalences.
+
+Recall that an algebraic dependent type theory $T$ consists of a set $\mathcal{F}$ of function symbols, a set $\mathcal{P}$ of predicate symbols and a set of axioms.
+The set of sorts $\mathcal{S}$ is defined as $\{ ctx, tm \} \times \mathbb{N}$.
+We also write $(ty,n)$ for $(ctx,n+1)$.
+Every function symbol $\sigma \in \mathcal{F}$ is equipped with a signature $\sigma : s_1 \times \ldots \times s_k \to s$ where $s_1, \ldots s_k, s \in \mathcal{S}$.
+Every predicate symbol $R \in \mathcal{P}$ is equipped with a signature $R : s_1 \times \ldots \times s_k$ where $s_1, \ldots s_k \in \mathcal{S}$.
+The set $Term_T(V)_s$ of terms of sort $s$ with variable in $V$ is defined inductively from $\mathcal{F}$ as usual.
+An atomic formula with variables in $V$ is an expression either of the form $t_1 = t_2$  where $t_i \in Term_T(V)_s$ or of the form $R(t_1, \ldots t_k)$ where $t_i \in Term_T(V)_{s_i}$.
+A formula with variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulas.
+An axiom is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are formulas with variables in $V$.
+We will write $\varphi \sststile{T}{V} \psi$ to denote the fact that sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$.
+The set of derivation rules is described in \cite{PHL} and \cite{alg-tt}.
 
 Let $T$ be a theory with the interval type (that is, $T$ is equipped with a morphism from theory $I$, which was defined in \cite{alg-models}).
 Let $X$ be a model of $T$.
@@ -249,65 +274,93 @@ Then the previous proposition immediately implies the following corollary:
 A morphism of theories is a Morita equivalence if and only if it has RLP up to $\sim_i$ with respect to every $i \in \I$.
 \end{cor}
 
-Let $f : T_1 \to T_2$ be a morphism of theories with a retraction $g : T_2 \to T_1$.
-If we want to prove that $f$ is a Morita equivalence, we can try to define for every term $a$ of $T_2$ its lift as $g(a)$.
-Then we only need to prove that $f(g(a))$ is homotopic to $a$.
-We can try to do this using the same idea as in the proof of \cite[Lemma~3.7]{alg-models}.
-For this we need to define a function on terms that for every term $a$ constructs a homotopy $h(a)$ between $f(g(a))$ and $a$.
-If $h$ preserves axioms and satisfies some other conditions, then we can show that it define the required homotopy.
+Now, let us prove a simple lemma:
 
-The problem with this construction is that $h$ might not preserve all axioms.
-But sometimes it is enough to know that $h$ preserves only some axioms.
+\begin{lem}[term-form]
+Let $T_1$ and $T_2$ be theories and let $f,g : Term_{T_1}(V)_s \to Term_{T_2}(V)_{s'}$ be two functions.
+If $f(t)\!\downarrow\ \sststile{T_2}{V} f(t) = g(t)$ for every term $t$, then $f(\varphi) \sststile{T_2}{V} g(\varphi)$ for every formula $\varphi$.
+If $f$ and $g$ preserve variables, then the converse holds.
+\end{lem}
+\begin{proof}
+We can assume that $\varphi$ is atomic.
+Then there exists a predicate symbol $R$ (including =) such that $\varphi = R(t_1, \ldots t_k)$.
+It is easy to see by induction on $i$ that $R(g(t_1), \ldots g(t_i), f(t_{i+1}), \ldots f(t_k)) \sststile{T_2}{V} R(g(t_1), \ldots g(t_{i+1}), f(t_{i+1}), \ldots f(t_k))$.
+Conversely, let $\varphi = (x = t)$.
+Then $x = f(t) \sststile{T_2}{V,x} x = g(t)$, and the required property easily follows from this.
+\end{proof}
+
+If we want to prove that a morphism $f : T_1 \to T_2$ is a Morita equivalence, we can try to use the same idea as in the proof of \cite[Lemma~3.7]{alg-models}.
+We define functions $g : Term_{T_2}(V)_{(p,n)} \to Term_{T_1}(V)_{(p,n)}$ and $h : Term_{T_2}(V)_{(p,n)} \to Term_{T_2}(V)_{(p,n+1)}$.
+To show that $g(a)$ and $h(a)$ satisfy conditions of \rprop{mor-eq}, we need to prove several properties of $g$ and $h$,
+one of which is that they must preserve axioms of $T_2$.
+The problem with this construction is that they might not preserve all axioms.
+But sometimes it is enough to know that $g$ and $h$ preserve only some axioms.
 These ideas are formalized in the following lemma:
 
 \begin{lem}
-Let $f : T_1 \to T_2$ and $g : T_2 \to T_1$ be morphisms of theories under $I$ such that $g \circ f = id_{T_1}$.
-Suppose that the following conditions hold:
-\begin{enumerate}
-\item \label{it:mel-nfe} There is a function $\nf : Term_{T_2} \to Term_{T_2}$ such that for every term $t$,
-    sequent $t\!\downarrow\ \sststile{}{V} \nf(t) = t$ is derivable in $T_2$.
-\item \label{it:mel-nfc} There is a subtheory $T_2' \subseteq T_2$ which has the same sets of function and predicate symbols as $T_2$ and
-    such that for every term $t$, sequent $\nf(t)\!\downarrow\ \sststile{}{V} \nf(e_p(t)) = e_p(\nf(t))$ is derivable in $T_2'$.
-\item \label{it:mel-nfw} For every term $t$ of $T_1$, sequent $f(t)\!\downarrow\ \sststile{}{V} \nf(f(t)) = f(t)$ is derivable in $T_2'$.
-\item \label{it:mel-nfa} For every theorem $\varphi \sststile{}{V} \psi$ of $T_2$, sequent $\nf(\varphi) \sststile{}{V} \nf(\psi)$ is derivable in $T_2'$.
-\item \label{it:mel-hd} There is a function $h : Term_{T_2}(V)_{(p,n)} \to Term_{T_2}(L(V))_{(p,n+1)}$ which preserves $ft$, $ty$, variables and substitutions.
-\item \label{it:mel-hp} For every axiom $\varphi \sststile{}{V} \psi$ of $T_2'$, sequent $h(\varphi) \sststile{}{L(V)} h(\psi)$ is a theorem of $T_2$.
-\item \label{it:mel-ht} For every term $t$ of $T_1$, sequent $f(t)\!\downarrow\ \sststile{}{V} h_V(f(t)) = f(t)$ is derivable in $T_2$,
-    where $h_V(a) = h(a)[\rho_V]$ for every term $a$, and $\rho_V(x) = I \times x$ for every $x \in V$.
-\item \label{it:mel-he} For every term $a$, sequents
-\begin{align*}
-h_V(a)\!\downarrow\ & \sststile{}{V} left^*(h_V(a)) = f(g(a)) \\
-h_V(a)\!\downarrow\ & \sststile{}{V} right^*(h_V(a)) = a
-\end{align*}
-are derivable in $T_2$.
-\end{enumerate}
+Let $f : T_1 \to T_2$ be a morphism of theories under $I$.
+Suppose that there are a subtheory $T_2' \subseteq T_2$ which has the same sets of function and predicate symbols as $T_2$ and
+a function $\nf : Term_{T_2} \to Term_{T_2}$ which satisfies the following conditions:
+\begin{description}
+\item[(nf1)\label{it:mel-nfc}] $\nf(t)\!\downarrow\ \sststile{T_2'}{V} \nf(e_p(t)) = e_p(\nf(t))$ for every term $t$.
+\item[(nf2)\label{it:mel-nfa}] $\nf(\varphi) \sststile{T_2'}{V} \nf(\psi)$ for every theorem $\varphi \sststile{}{V} \psi$ of $T_2$.
+\item[(nf3)\label{it:mel-nft}] $f(t)\!\downarrow\ \sststile{T_2'}{V} \nf(f(t)) = f(t)$ for every term $t$.
+\item[(nf4)\label{it:mel-nfe}] $t\!\downarrow\ \sststile{T_2}{V} \nf(t) = t$ for every term $t$.
+\end{description}
+
+Suppose that there is a function $g : Term_{T_2}(V)_{(p,n)} \to Term_{T_1}(V)_{(p,n)}$ which satisfies the following conditions:
+\begin{description}
+\item[(g1)\label{it:mel-gc}] $g(t)\!\downarrow\ \sststile{T_1}{V} g(e_p(t)) = e_p(g(t))$ for every term $t$.
+\item[(g2)\label{it:mel-gp}] $g(\varphi) \sststile{T_1}{V} g(\psi)$ for every theorem $\varphi \sststile{}{V} \psi$ of $T_2'$.
+\item[(g3)\label{it:mel-gt}] $t\!\downarrow\ \sststile{T_1}{V} g(f(t)) = t$ for every term $t$.
+\end{description}
+
+Suppose that there is a function $h : Term_{T_2}(V)_{(p,n)} \to Term_{T_2}(V)_{(p,n+1)}$ which satisfies the following conditions:
+\begin{description}
+\item[(h1)\label{it:mel-hc}] $h(t)\!\downarrow\ \sststile{T_2}{V} h(e_p(t)) = e_p(h(t))$ for every term $t$.
+\item[(h2)\label{it:mel-hp}] $h(\varphi) \sststile{T_2}{V} h(\psi)$ for every theorem $\varphi \sststile{}{V} \psi$ of $T_2'$.
+\item[(h3)\label{it:mel-ht}] $f(t)\!\downarrow\ \sststile{T_2}{V} h(f(t)) = I \times f(t)$ for every term $t$.
+\item[(h4)\label{it:mel-he}] $h(t)\!\downarrow\ \sststile{T_2}{V} left^*(h(t)) = f(g(t)) \land right^*(h(t)) = t$ for every term $t$.
+\end{description}
+
 Then $f$ is a Morita equivalence.
 \end{lem}
 \begin{proof}
-Let $a$ be a term of $T_2$, let $A$ be a variable, and let $\varphi$ be a formula of $T_1$ such that $f(\varphi) \sststile{}{V} e_p(a) = A$ is derivable in $T_2$.
-Condition~\eqref{it:mel-nfe} implies that sequent $f(\varphi) \sststile{}{V} e_p(\nf(a)) = A$ is also derivable in $T_2$.
+Let $a$ and $A$ be terms of $T_2$ and let $\varphi$ be a formula of $T_1$ such that $\varphi \sststile{T_1}{V} A\!\downarrow$ and $f(\varphi) \sststile{T_2}{V} e_p(a) = f(A)$.
+Conditions \ref{it:mel-nfa} and \ref{it:mel-gp} imply that $g(\nf(f(\varphi))) \sststile{T_1}{V} g(\nf(e_p(a))) = g(\nf(f(A)))$.
+Conditions \ref{it:mel-nft} and \ref{it:mel-gp} imply that $g(f(t))\!\downarrow\ \sststile{T_1}{V} g(\nf(f(t))) = g(f(t))$.
+Now, condition~\ref{it:mel-gt} implies that $t\!\downarrow\ \sststile{T_1}{V} g(\nf(f(t))) = t$.
+By lemma~\rlem{term-form}, $\varphi \sststile{T_1}{V} g(\nf(f(\varphi)))$.
+Thus we obtain the following theorem:
+\[ \varphi \sststile{T_1}{V} g(\nf(e_p(a))) = g(\nf(f(A))) \]
+
+Conditions \ref{it:mel-nft} and \ref{it:mel-gp} imply that $g(f(A))\!\downarrow\ \sststile{T_1}{V} g(\nf(f(A))) = g(f(A))$.
+Condition~\ref{it:mel-gt} implies that $A\!\downarrow\ \sststile{T_1}{V} g(\nf(f(A))) = A$.
+Thus we have the following theorem:
+\[ \varphi \sststile{T_1}{V} g(\nf(e_p(a))) = A \]
+
+Condition~\ref{it:mel-nfe} implies that sequent $f(\varphi) \sststile{}{V} e_p(\nf(a)) = A$ is also derivable in $T_2$.
 Hence, if we define $a'$ as $g(\nf(a))$, then sequent $\varphi \sststile{}{V} e_p(a') = A$ is derivable in $T_1$.
 We just need to define a term $h'$ which satisfies conditions \eqref{it:mcs}-\eqref{it:mcl} of \rprop{mor-eq}.
 
 Let $h' = h_V(\nf(a))$.
-By conditions \eqref{it:mel-nfa} and \eqref{it:mel-hp}, sequent $h_V(\nf(f(\varphi))) \sststile{}{V} h_V(\nf(e_p(a))) = h_V(\nf(A))$ is derivable in $T_2$.
-Conditions \eqref{it:mel-nfw}, \eqref{it:mel-hp} and \eqref{it:mel-ht} imply that sequent $f(t)\!\downarrow\ \sststile{}{V} h_V(\nf(f(t))) = f(t)$ is also derivable in $T_2$.
+By conditions \ref{it:mel-nfa} and \ref{it:mel-hp}, sequent $h_V(\nf(f(\varphi))) \sststile{}{V} h_V(\nf(e_p(a))) = h_V(\nf(A))$ is derivable in $T_2$.
+Conditions \ref{it:mel-nft}, \ref{it:mel-hp} and \ref{it:mel-ht} imply that sequent $f(t)\!\downarrow\ \sststile{}{V} h_V(\nf(f(t))) = f(t)$ is also derivable in $T_2$.
 It follows that sequent $f(\varphi) \sststile{}{V} h_V(\nf(f(\varphi)))$ is a theorem of $T_2$ for every formula $\varphi$.
 Hence, sequent
 \[ f(\varphi) \sststile{}{V} h_V(\nf(e_p(a))) = h_V(\nf(A)) \]
 is also a theorem of $T_2$.
-Since $f(\varphi) \sststile{}{V} a\!\downarrow$, conditions \eqref{it:mel-nfa} and \eqref{it:mel-hp} imply that $h_V(\nf(f(\varphi))) \sststile{}{V} h_V(\nf(a))\!\downarrow$.
-Conditions \eqref{it:mel-nfc} and \eqref{it:mel-hp} imply that $h_V(\nf(a))\!\downarrow\ \sststile{}{V} h_V(\nf(e_p(a))) = h_V(e_p(\nf(a)))$.
+Since $f(\varphi) \sststile{}{V} a\!\downarrow$, conditions \ref{it:mel-nfa} and \ref{it:mel-hp} imply that $h_V(\nf(f(\varphi))) \sststile{}{V} h_V(\nf(a))\!\downarrow$.
+Conditions \ref{it:mel-nfc} and \ref{it:mel-hp} imply that $h_V(\nf(a))\!\downarrow\ \sststile{}{V} h_V(\nf(e_p(a))) = h_V(e_p(\nf(a)))$.
 Hence the following sequent is a theorem of $T_2$:
 \[ f(\varphi) \sststile{}{V} h_V(\nf(e_p(a))) = h_V(e_p(\nf(a))). \]
-Condition~\eqref{it:mel-hd} implies that sequent
+Condition~\ref{it:mel-hc} implies that sequent
 \[ f(\varphi) \sststile{}{V} h_V(e_p(\nf(a))) = e_p(h_V(\nf(a))) \]
 is also a theorem of $T_2$.
-By condition \eqref{it:mel-nfw}, sequent $f(\varphi) \sststile{}{V} h_V(\nf(A)) = h_V(A)$ is derivable in $T_2$.
-Since $h_V(A) = I \times A$, these facts imply that $f(\varphi) \sststile{}{V} e_p(h') = I \times A$.
+Since $f(\varphi) \sststile{}{V} h_V(\nf(A)) = h_V(A)$ and $h_V(A) = I \times A$, these facts imply that $f(\varphi) \sststile{}{V} e_p(h') = I \times A$.
 Thus $h'$ satisfies condition~\eqref{it:mcs} of \rprop{mor-eq}.
-Condition~\eqref{it:mel-nfe} implies that $f(\varphi) \sststile{}{V} \nf(a) = a$.
-This fact and condition~\eqref{it:mel-he} imply that $h'$ also satisfies the other two conditions of \rprop{mor-eq}.
+Condition~\ref{it:mel-nfe} implies that $f(\varphi) \sststile{}{V} \nf(a) = a$.
+This fact and condition~\ref{it:mel-he} imply that $h'$ also satisfies the other two conditions of \rprop{mor-eq}.
 \end{proof}
 
 \section{Simplicial type theories}
