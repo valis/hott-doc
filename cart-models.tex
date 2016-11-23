@@ -231,35 +231,34 @@ there exist terms $a' \in Term_{T_1}(V)_{(p,n)}$ and $h \in Term_{T_2}(V)_{(p,n+
 \end{enumerate}
 \end{prop}
 \begin{proof}
-First, recall that if $T'$ is a theory under $T$, then $Syn(T')$ is a model $T$ which is defined as the set of closed terms of $T'$ quotiented by a partial equivalence relation.
-We can generalize this construction as follows.
-For every set $V$, we define a model $Syn(T',V)$ as $Term_{T'}(V)/\!\sim$, where $Term_{T'}(V)$ is the set of terms of $T'$ with variables in $V$,
-and $\sim$ is a partial equivalence relation, defined as follows: $t_1 \sim t_2$ if and only if $\sststile{}{V} t_1 = t_2$.
-For every predicate symbol $R$, we define $R(Syn(T',V))$ as the set of tuples $t_1, \ldots t_k$ such that $\sststile{}{V} R(t_1, \ldots t_k)$.
-If $f : T_1 \to T_2$ is a morphism of theories under $T$, then it is easy to see that $f_!(Syn(T_1,V)) = Syn(T_2,V)$.
+First, we need to introduce an auxiliary construction.
+Let $T$ be a theory, let $V$ be a set of variables, and let $\mathcal{A}$ be a set formulas of $T$ with variables in $V$.
+Then we define $Syn(T,V,\mathcal{A})$ as $Syn(T \cup \{ O_x : s\ |\ s \in V_s \} \cup \mathrm{sp}(\mathcal{A}))$,
+where $\mathrm{sp}(\mathcal{A})$ consists of formulas of the form $\sststile{}{} O_x\!\downarrow$ for every $x \in V$
+and formulas of $\mathcal{A}$ in which every variable $x$ is replaced with $O_x$.
+If $f : T_1 \to T_2$ is a morphism of theories, then it is easy to see that $f_!(Syn(T_1,V,\mathcal{A})) = Syn(T_2,V,f(\mathcal{A}))$.
 
-Now we can prove the ``only if'' direction.
-Note that elements of $Syn(T_1 \cup \{\,\sststile{}{}~\varphi\,\}, V)$ correspond to terms $t$ of $T_1$ with variables in $V$ such that $\varphi \sststile{}{V} t\!\downarrow$.
-Moreover, two terms $t_1$ and $t_2$ map to the same element under this correspondence if and only if $\varphi \sststile{}{V} t_1 = t_2$.
-Analogous statement holds for $Syn(T_2 \cup \{\,\sststile{}{}~f(\varphi)\,\}, V)$.
-Using this correspondence, the required property immediately follows from the fact that
-map $Syn(T_1 \cup \{\,\sststile{}{}~\varphi\,\}, V) \to f^*(Syn(T_2 \cup \{\,\sststile{}{}~f(\varphi)\,\}, V))$ is a weak equivalence.
+Let us prove the ``only if'' direction.
+Note that elements of $Syn(T_1, V, \{\,\sststile{}{}~\varphi\,\})$ correspond to terms $t$ of $T_1$ with variables in $V$ such that $\varphi \sststile{T_1}{V} t\!\downarrow$.
+Moreover, two terms $t_1$ and $t_2$ map to the same element under this correspondence if and only if $\varphi \sststile{T_1}{V} t_1 = t_2$.
+Analogous statement holds for $Syn(T_2, V, \{\,\sststile{}{}~f(\varphi)\,\})$.
+Using this correspondence, the required conditions immediately follow from the fact that
+map $Syn(T_1, V, \{\,\sststile{}{}~\varphi\,\}) \to f^*(Syn(T_2, V, \{\,\sststile{}{}~f(\varphi)\,\}))$ is a weak equivalence.
 
 Now, let us prove the ``if'' direction.
 Let $M$ be a model of $T_1$.
-Note that $M = Syn(T_1 \cup \mathcal{A}, U(M))$, where $\mathcal{A}$ is the set of axioms of $Lang(M)$ in which elements $O_a$ are replaced with $a$.
+Note that $M = Syn(T_1, U(M), \mathcal{A})$, where $\mathcal{A}$ is the set of axioms of $Lang(M)$.
 Let $A \in M_{(d_p,n)}$ and $a \in f^*(f_!(M))$ be elements such that $e_p(a) = A$.
-Since $f_!(M) = Syn(T_2 \cup f(\mathcal{A}), U(M))$, $a$ corresponds to a term of $T_2$ with variables in $U(M)$.
-There is a finite subset $\mathcal{A}'$ of $\mathcal{A}$ such that $\sststile{}{U(M)} e_p(a) = A$ is derivable in $T_2 \cup \mathcal{A}'$.
-Let $\varphi$ be the conjunction of $\mathcal{A}'$.
-Then $\varphi \sststile{}{U(M)} e_p(a) = A$.
-By assumption, there exist terms $a' \in Term_{T_1}(U(M))_{(p,n)}$ and $h \in Term_{T_2}(U(M))_{(p,n+1)}$ which satisfy conditions \eqref{it:mcf} -- \eqref{it:mcl}.
-These terms correspond to elements of $M$ and $f^*(f_!(M))$ respectively.
-These conditions imply that $a'$ is the required lifting and $h$ is the required homotopy.
+Since $f_!(M) = Syn(T_2, U(M), f(\mathcal{A}))$, $a$ is a closed term of $T_2$.
+There is a finite subset $\mathcal{A}_0$ of $\mathcal{A}$ such that $\sststile{T_2 \cup \mathrm{sp}(\mathcal{A}_0)}{} e_p(a) = A$.
+Let $\varphi$ be the conjunction of $\mathcal{A}$, and let $b$ and $B$ be $a$ and $A$ respectively in which every constant $O_x$ is replaced with variable $x$.
+Then $\varphi \sststile{T_1}{U(M)} e_p(b) = B$.
+By assumption, there exist terms $b' \in Term_{T_1}(U(M))_{(p,n)}$ and $h \in Term_{T_2}(U(M))_{(p,n+1)}$ which satisfy conditions \eqref{it:mcf} -- \eqref{it:mcl}.
+These terms correspond under $\mathrm{sp}$ to elements of $M$ and $f^*(f_!(M))$ respectively.
+These conditions imply that $b'$ is the required lifting and $h$ is the required homotopy.
 \end{proof}
 
-The proof implies that we can assume that $A$ is a variable in this characterization of Morita equivalences.
-Also, this proposition implies that Morita equivalences can be characterized in terms of a lifting property.
+This proposition implies that Morita equivalences can be characterized in terms of a lifting property.
 Let $\I$ be the set of the following morphisms of theories:
 For every predicate symbol $P : s_1 \times \ldots \times s_k$ and every function symbols $A : s_1 \times \ldots \times s_k \to (d_p,n)$ and $a : s_1 \times \ldots \times s_k \to (p,n)$,
 let $i_{P,A,a}$ be the following morphism of theories:
@@ -287,7 +286,7 @@ We call such functions \emph{pseudomorphisms}:
 \begin{defn}
 Let $T_1$ and $T_2$ be a pair of theories and let $k$ be a natural number.
 Then a \emph{pseudomorphism} $f$ between $T_1$ and $T_2$ of degree $k$ is an equivalence classes of pairs of maps $f : Term_{T_1}(V)_{(p,n)} \to PTerm_{T_2}(V)_{(p,n+k)}$ and
-$f : Form_{T_1}(V) \to Form_{T_2}(V)$ such that $f$ preserves theorems and sequents $f(\varphi \land \psi) \ssststile{}{V} f(\varphi) \land f(\psi)$,
+$f : Form_{T_1}(V) \to Form_{T_2}(V)$ such that sequents $f(\varphi \land \psi) \ssststile{}{V} f(\varphi) \land f(\psi)$,
 $f(t = t') \ssststile{}{V} f(t) = f(t')$ and $\sststile{}{V} f(e_p(t)) \simeq e_p(f(t))$ are derivable in $T_2$.
 Two such pairs $f$ and $f'$ are equivalent if and only if for every term $t$ and every formula $\varphi$,
 sequents $\sststile{}{V} f(t) \simeq f'(t)$ and $f(\varphi) \ssststile{}{V} f'(\varphi)$ are derivable.
@@ -320,6 +319,7 @@ Suppose that there are a pseudomorphism $g : T_2 \to T_1$ of degrere 0 and a pse
 \begin{enumerate}
 \item $id_{T_1} \leq g \circ f$,
 \item $I \circ f \leq h \circ f$,
+\item $g$ and $h$ preserve theorems of the form $f(\varphi) \sststile{}{V} \psi$.
 \item For every term $t$, sequents
 \begin{align*}
 t\!\downarrow \land\ h(t)\!\downarrow\ & \sststile{}{V} left^*(h(t)) = f(g(t)) \\
@@ -390,7 +390,7 @@ Theory $T_\Delta$ has the following typing axioms:
 \UnaryInf$\fCenter S^n_i$
 \RightLabel{, for every $0 \leq i \leq n$}
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter \Gamma \vdash fill^n_i(x. A, y.a_0, \ldots y.a_{\hat{i}}, \ldots a.a_n, d) : A[x \repl d]$
+\UnaryInf$\fCenter \Gamma \vdash fill^n_i(x. A, y.a_0, \ldots y.a_{\hat{i}}, \ldots y.a_n, d) : A[x \repl d]$
 \DisplayProof
 \end{center}
 \medskip
