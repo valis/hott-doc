@@ -108,7 +108,7 @@
 \newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\Th}{\cat{Th}}
-\newcommand{\algtt}{\cat{AlgTT}}
+\newcommand{\algtt}{\cat{TT}}
 \newcommand{\ThC}{\Th_{\mathcal{C}}}
 \newcommand{\emptyCtx}{\mathbf{1}}
 \newcommand{\nf}{\mathrm{nf}}
@@ -241,7 +241,7 @@ Note that $M = Syn(T_1, U(M), \mathcal{A})$, where $\mathcal{A}$ is the set of a
 Let $A \in M_{(d_p,n)}$ and $a \in f^*(f_!(M))$ be elements such that $e_p(a) = A$.
 Since $f_!(M) = Syn(T_2, U(M), f(\mathcal{A}))$, $a$ is a closed term of $T_2$.
 There is a finite subset $\mathcal{A}_0$ of $\mathcal{A}$ such that $\sststile{T_2 \cup \mathrm{sp}(\mathcal{A}_0)}{} e_p(a) = A$.
-Let $\varphi$ be the conjunction of $\mathcal{A}$, and let $b$ and $B$ be $a$ and $A$ respectively in which every constant $O_x$ is replaced with variable $x$.
+Let $\varphi$ be the conjunction of $\mathcal{A}_0$, and let $b$ and $B$ be $a$ and $A$ respectively in which every constant $O_x$ is replaced with variable $x$.
 Then $\varphi \sststile{T_1}{U(M)} e_p(b) = B$.
 By assumption, there exist terms $b' \in Term_{T_1}(U(M))_{(p,n)}$ and $h \in Term_{T_2}(U(M))_{(p,n+1)}$ which satisfy conditions \eqref{it:mcf} -- \eqref{it:mcl}.
 These terms correspond under $\mathrm{sp}$ to elements of $M$ and $f^*(f_!(M))$ respectively.
@@ -346,6 +346,10 @@ We cannot prove this in general, but often instead of proving that $f$ is a Mori
 the induced map $T_1 \amalg_T T' \to T_2 \amalg_T T'$ is a Morita equivalence.
 All examples of Morita equivalences in this section will be given in this general form.
 
+\subsection{Normalization}
+
+To be able to apply \rlem{equiv-lem}, we need to construct a normalization function on terms.
+
 \subsection{Strict associativity}
 
 Consider theory $T_0 = Id_-$.
@@ -402,18 +406,19 @@ These rules are simply (some of) the axioms of $T_a$ in which we choose a direct
 \begin{align*}
 ctx(\sigma(\Gamma, a_1, \ldots a_k)) & \red \Gamma \\
 ty(subst(\Gamma, a, a_1, \ldots a_k)) & \red subst(\Gamma, ty(a), a_1, \ldots a_k) \\
-ty(v_{n,i}(\Gamma)) & \red subst(\Gamma, ft^i_{n-i}(\Gamma), b_{n-1}, \ldots b_{i+1}) \\
+ty(v_{n,i}(\Gamma)) & \red subst(\Gamma, ft^i_{n-i}(\Gamma), c_{n-1}, \ldots c_{i+1}) \\
 subst(\Gamma, v_i(A), a_1, \ldots a_k) & \red a_{k-i} \\
 subst(\Gamma, a, v_{n-1}(A_n), \ldots v_0(A_0)) & \red a \\
-subst(C, subst(B, a, a_1, \ldots a_m), b_1, \ldots b_k) & \red subst(C, a, a_1' \ldots a_k') \\
+subst(\Gamma, subst(\Delta, a, a_1, \ldots a_m), b_1, \ldots b_k) & \red subst(\Gamma, a, a_1' \ldots a_k') \\
 conc(p,refl(a_2)) & \red p \\
 conc(refl(a_1),p) & \red p \\
 conc(conc(p,q),r) & \red conc(p,conc(q,r))
 \end{align*}
 where the first rule is defined for every function symbol $\sigma$,
-in the third rule, $b_i$ is $v_{n,i}(\Gamma)$,
-and in the sixth rule, $a_i'$ is $subst(C, a_i, b_1, \ldots b_k)$.
+in the third rule, $c_i$ is $v_{n,i}(\Gamma)$,
+and in the sixth rule, $a_i'$ is $subst(\Gamma, a_i, b_1, \ldots b_k)$.
 
+It is easy to show that these reduction rules define a confluent and terminating rewriting system using standard techniques as described, for example, in \cite{Terese}.
 We define a pseudomorphism $\nf : T_a \to T_a$ as follows:
 
 \subsection{$\Sigma$ types}

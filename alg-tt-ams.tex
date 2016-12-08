@@ -92,18 +92,17 @@
 }{\end{h#2}}
 }
 
-\newref[section]{thm}{theorem}{Theorem}
-\newref{lem}{lemma}{Lemma}
-\newref{prop}{proposition}{Proposition}
-\newref{cor}{corollary}{Corollary}
-\newref{cond}{condition}{Condition}
+\newref[section]{thm}{Theorem}{Theorem}
+\newref{lem}{Lemma}{Lemma}
+\newref{prop}{Proposition}{Proposition}
+\newref{cor}{Corollary}{Corollary}
 
 \theoremstyle{definition}
-\newref{defn}{definition}{Definition}
-\newref{example}{example}{Example}
+\newref{defn}{Definition}{Definition}
+\newref{example}{Example}{Example}
 
 \theoremstyle{remark}
-\newref{remark}{remark}{Remark}
+\newref{remark}{Remark}{Remark}
 
 \newcommand{\red}{\Rightarrow}
 \newcommand{\deq}{\equiv}
@@ -116,17 +115,13 @@
 \newcommand{\PSet}{\cat{PSet}}
 \newcommand{\PMnd}{\cat{PMnd}}
 \newcommand{\ccat}{\cat{CCat}}
-\newcommand{\syntt}{\cat{SynTT}}
-\newcommand{\algtt}{\cat{AlgTT}}
-\newcommand{\PStr}[1]{#1\text{-}\cat{PStr}}
+\newcommand{\algtt}{\cat{TT}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
-\newcommand{\Sig}{\cat{Sig}}
 \newcommand{\Th}{\cat{Th}}
-\newcommand{\CTh}{\cat{CTh}}
-\newcommand{\emptyCtx}{\mathbf{1}}
+\newcommand{\St}{\cat{St}}
+\newcommand{\emptyCtx}{*}
 \newcommand{\ThC}{\Th_{\mathcal{C}}}
-\newcommand{\ttvdash}{\vartriangleright}
 
 \numberwithin{figure}{section}
 
@@ -206,26 +201,26 @@ In most cases this equivalence is too strong, so it is necessary to consider wea
 For example, if two theories differ only by the amount of arguments to some of the constructions,
 then they are isomorphic (assuming omitted arguments can be inferred from the rest).
 
-One of the problems of algebraic dependent type theories is that their terms often contains a lot of redundant information.
-We will show that this information can be omitted, which reduces the size of terms.
-Finally, we introduce a concept of a \emph{stable} theory which formalize the idea that usually in a type theory constructions are available in all contexts.
+One of the key features of type theories is the use of variable bindings in terms.
+Such bindings are represented by de Bruijn indices in our approach.
+If we want to use ordinary representation of terms with named bindings, then we need to put some additional structure on out theories.
+We call theories with such structure \emph{stable}.
+This additional structure allows us to use all constructions of the theory in every context and guarantees that they commute with substitutions.
 
 The paper is organized as follows.
 In section 2, we define the category of partial Horn theories and discuss its properties.
 In section 3, we define algebraic dependent type theories in terms of partial Horn theories and prove that the category of models of the initial theory with substitution is equivalent to the category of contextual categories.
-In section 4, we describe a way of simplifying theories, so that their terms contain less redundant information,
-    which allows us to present theories in the usual syntax (using De Bruijn indices).
-In section 5, we define the concept of stable theories, which formalizes the idea that every construction in a type theory can be lifted in a larger context.
+In section 4, we define the concept of stable theories, which formalizes the idea that every construction in a type theory can be lifted to a larger context.
 Finally, we give a few standard examples of algebraic dependent type theories.
 
 \section{Partial Horn theories}
 \label{sec:PHT}
 
 There are several equivalent ways of defining essentially algebraic theories (\cite{LPC}, \cite{GAT}, \cite{PHL}, \cite[D 1.3.4]{elephant}).
-We will use approach introduced in \cite{PHL} under the name of partial Horn theories since it is the most convenient one.
-We will define morphisms of partial Horn theories in terms of morphisms of monads and left modules over them.
-In this section we will review necessary for our development parts of the theory of monads, left modules over them and partial Horn theories.
-We will also define algebraic dependent type theories as certain partial Horn theories.
+We use approach introduced in \cite{PHL} under the name of partial Horn theories since it is the most convenient one.
+We define morphisms of partial Horn theories in terms of morphisms of monads and left modules over them.
+In this section we review necessary for our development parts of the theory of monads, left modules over them and partial Horn theories.
+We also define algebraic dependent type theories as certain partial Horn theories.
 
 \subsection{Monads and left modules over them}
 
@@ -270,7 +265,7 @@ Let $\mathcal{S}$ be a set of sorts, and let $(T,\eta,(-)^*)$ be a monad on the 
 We think of elements of $T(V)_s$ as terms of sort $s$ with free variables in $V$.
 Given $t \in T(V)_s$ and $\rho : V \to T(V')$, we will write $t[\rho] \in T(V')_s$ for $\rho^*(t)$.
 Let $(F,(-)^\circ)$ be a left module over $T$ with values in $\Set$.
-We think of elements of $F(V)$ as formulae with free variables in $V$.
+We think of elements of $F(V)$ as formulas with free variables in $V$.
 Given $\varphi \in F(V)$ and $\rho : V \to T(V')$, we will write $\varphi[\rho] \in F(V')$ for $\rho^\circ(\varphi)$.
 
 Let $T : \Set^\mathcal{S} \to \Set^\mathcal{S}$ be a monad.
@@ -286,7 +281,7 @@ Then \emph{a free variables structure} on $F$ is a function $FV$ that to each $\
 This function must satisfy the following condition:
 \[ FV(\varphi[\rho]) = \bigcup_{x \in FV(\varphi)} FV(\rho(x)) \]
 
-\emph{A module of formulae} over $T$ is a left module $F$ over $T$ together with a function
+\emph{A module of formulas} over $T$ is a left module $F$ over $T$ together with a function
     $\land : F(V) \times F(V) \to F(V)$ and a constant $\top \in F(V)$ for every $V \in \Set^\mathcal{S}$, satisfying the following conditions:
 \begin{itemize}
 \item For every $\rho : V \to T(V')$, $\top[\rho] = \top$.
@@ -298,12 +293,12 @@ For every $V \in \Set^\mathcal{S}$, let $E(V)$ be the set of triples $(s,t,t')$,
 For every $\rho : V \to T(V')$ and $(s,t,t') \in E(V)$, we let $(s,t,t')[\rho] = (s,t[\rho],t'[\rho])$.
 We think of $(s,t,t')$ as a formula asserting the equality of terms $t$ and $t'$.
 We write $t =_s t'$ (or simply $t = t'$) for $(s,t,t')$.
-\emph{A module of formulae with equality} over $T$ is a module $F$ of formulae over $T$ together with a morphism $e : E \to F$.
+\emph{A module of formulas with equality} over $T$ is a module $F$ of formulas over $T$ together with a morphism $e : E \to F$.
 
 \begin{defn}[mon-pres]
 A \emph{monadic presentation of a partial Horn theory} is a triple $(T,F,\mu)$, where
     $T : \Set^\mathcal{S} \to \Set^\mathcal{S}$ is a finitary monad with a free variables structure,
-    $F : \Set^\mathcal{S} \to \Set$ is a finitary module of formulae with equality and a free variables structure, and
+    $F : \Set^\mathcal{S} \to \Set$ is a finitary module of formulas with equality and a free variables structure, and
     $\mu_V : T(V) \times F(V) \to T(V)$ is a function such that the following conditions hold:
 \begin{itemize}
 \item For every $\rho : V \to T(V')$, $\mu_V(t,\varphi)[\rho] = \mu_{V'}(t[\rho],\varphi[\rho])$.
@@ -336,9 +331,9 @@ Thus $Term_\mathcal{F} : \Set^\mathcal{S} \to \Set^\mathcal{S}$ is a monad, whic
 
 An \emph{atomic formula} with free variables in $V$ is an expression either of the form $t_1 =_s t_2$ (we will usually omit $s$ in the notation),
     where $s \in \mathcal{S}$ and $t_1, t_2 \in T(V)_s$, or of the form $R(t_1, \ldots t_n)$, where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in T(V)_{s_i}$.
-A \emph{Horn formula} (over $\mathcal{P}$) with free variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulae.
+A \emph{Horn formula} (over $\mathcal{P}$) with free variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulas.
 If $n = 0$, then we write such a formula as $\top$.
-The set of Horn formulae with free variables in $V$ is denoted by $Form_\mathcal{P}(V)$.
+The set of Horn formulas with free variables in $V$ is denoted by $Form_\mathcal{P}(V)$.
 If $\varphi \in Form_\mathcal{P}(V)$ and $\rho : V \to T(V')$, then we will write $\varphi[\rho]$ for a formula defined as follows:
 \begin{align*}
 (t = t')[\rho] & = (t[\rho] = t'[\rho]) \\
@@ -353,7 +348,7 @@ FV(R(t_1, \ldots t_k)) & = FV(t_1) \cup \ldots \cup FV(t_k) \\
 FV(\varphi_1 \land \ldots \land \varphi_n) & = FV(\varphi_1) \cup \ldots \cup FV(\varphi_n)
 \end{align*}
 
-A \emph{Horn sequent} is an expression of the form $\varphi \sststile{}{V} \psi$, where $\varphi$ and $\psi$ are Horn formulae with free variables in $V$.
+A \emph{Horn sequent} is an expression of the form $\varphi \sststile{}{V} \psi$, where $\varphi$ and $\psi$ are Horn formulas with free variables in $V$.
 We will often write $\varphi_1, \ldots \varphi_n \sststile{}{V} \psi_1, \ldots \psi_k$ instead of $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi_1 \land \ldots \land \psi_k$.
 A \emph{partial Horn theory} is a set of Horn sequents.
 The rules of \emph{partial Horn logic} are listed below.
@@ -499,7 +494,7 @@ If $f$ preserves axioms of $\mathbb{T}$, then it extends to a morphism of theori
 Moreover, there is at most one morphism with these properties.
 \end{prop}
 \begin{proof}
-Morphism $f$ is already defined on terms, and we can define it on formulae as follows:
+Morphism $f$ is already defined on terms, and we can define it on formulas as follows:
 \begin{align*}
 f(a = b) & = f(a) = f(b) \\
 f(R(a_1, \ldots a_k)) & = \beta(R)[x_i \mapsto f(a_i)] \\
@@ -519,7 +514,7 @@ Let $f$ and $f'$ be morphisms of theories such that $f(t) = f'(t)$ for every $t 
 Then we prove that $f = f'$.
 
 Let us prove that $f(\varphi) = f'(\varphi)$ for every $\varphi \in Form_\mathcal{P}(V)$.
-It is enough to prove this for atomic formulae $\varphi$.
+It is enough to prove this for atomic formulas $\varphi$.
 If $\varphi$ equals to $t = t'$, then $f(\varphi)$ equals to $f(t) = f(t')$ and $f'(\varphi)$ equals to $f'(t) = f'(t')$.
 We know that $\sststile{}{V} f(t) \cong f'(t)$ and $\sststile{}{V} f(t') \cong f'(t')$.
 Thus by transitivity and symmetry we can conclude that $f(t) = f(t)' \sststile{}{V} f'(t) = f'(t')$.
@@ -582,7 +577,7 @@ For every morphism $h : (A,\alpha) \to (A',\alpha')$ of partial algebras, let $G
 It is easy to see that functors $F$ and $G$ determine isomorphisms of categories.
 \end{proof}
 
-If $F : \Set^\mathcal{S} \to \Set$ is a left module of formulae over $T$, then we define a category of its partial algebras.
+If $F : \Set^\mathcal{S} \to \Set$ is a left module of formulas over $T$, then we define a category of its partial algebras.
 A \emph{partial algebra} over $(T,F)$ is a partial algebra $(A,\alpha)$ over $T$ together with a function $\beta_V : Hom_{\PSet^\mathcal{S}}(V,A) \to Hom_\Set(F(V),\Omega)$,
     where $\Omega = \{ \top, \bot \}$ is the set of truth-values.
 This function must satisfy the following conditions:
@@ -597,11 +592,11 @@ A morphism of partial algebras $(A,\alpha,\beta)$ and $(A',\alpha',\beta')$ is a
 
 We define a function $\epsilon_V : Hom_{\PSet^\mathcal{S}}(V,A) \to Hom_\Set(E(V),\Omega)$ for the left module $E$ of equality.
 Let $\epsilon_V(e(s,t,t')) = \top$ if and only if $\alpha_V(f)(t)$ and $\alpha_V(f)(t')$ are defined and equal.
-If $F$ is a left module of formulae with equality over $T$, then we say that a partial algebra $(A,\alpha,\beta)$ is standard
+If $F$ is a left module of formulas with equality over $T$, then we say that a partial algebra $(A,\alpha,\beta)$ is standard
     if for every partial function $f : V \to A$, $e_V \circ \beta_V(f) = \epsilon_V(f)$, where $e_V : E(V) \to F(V)$.
 
 \begin{lem}[par-alg-pred]
-If $Term_\mathcal{F}$ is the standard monad and $Form_\mathcal{P}$ is the left module of Horn formulae,
+If $Term_\mathcal{F}$ is the standard monad and $Form_\mathcal{P}$ is the left module of Horn formulas,
     then categories of partial algebras over $(Term_\mathcal{F},Form_\mathcal{P})$ and partial structures for signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ are isomorphic.
 \end{lem}
 \begin{proof}
@@ -675,6 +670,7 @@ It is easy to see that these definitions satisfy all required conditions.
 \end{proof}
 
 \subsection{Properties of the category of theories}
+\label{sec:prop}
 
 Now we prove a few properties of the category of theories.
 We begin with a proof of the existence of colimits.
@@ -694,7 +690,7 @@ Now, let $f,g : \mathbb{T}_1 \to \mathbb{T}_2$ be a pair of morphisms of theorie
 Then we can define their coequalizer $\mathbb{T}$ as the theory with the same set of function and predicate symbols as $\mathbb{T}_2$ and the set of axioms which consists of the axioms of $\mathbb{T}_2$
 together with $\sststile{}{x_1, \ldots x_n} f(\sigma(x_1, \ldots x_n)) \cong g(\sigma(x_1, \ldots x_n))$ for each function symbols $\sigma$ of $\mathbb{T}_1$
 and $f(R(x_1, \ldots x_n)) \ssststile{}{x_1, \ldots x_n} g(R(x_1, \ldots x_n))$ for each predicate symbols $R$ of $\mathbb{T}_1$.
-Then we can define $e : \mathbb{T}_2 \to \mathbb{T}$ as identity function on terms and formulae.
+Then we can define $e : \mathbb{T}_2 \to \mathbb{T}$ as identity function on terms and formulas.
 By \rprop{mor-def}, $e \circ f = e \circ g$.
 If $h : \mathbb{T}_2 \to X$ is such that $h \circ f = h \circ g$, then it extends to a morphism $\mathbb{T} \to X$ since additional axioms are preserved by the assumption on $h$.
 This extension is unique since $e$ is an epimorphism.
@@ -832,7 +828,7 @@ Thus $i$ is essentially surjective on objects.
 \section{Algebraic dependent type theories}
 \label{sec:T1}
 
-In this section we will define algebraic dependent type theories and theories with substitution, describe two partial Horn theories $\mathbb{T}_0$, $\mathbb{T}_1$
+In this section we define algebraic dependent type theories and theories with substitution, describe two partial Horn theories $\mathbb{T}_0$, $\mathbb{T}_1$
     in terms of which algebraic dependent type theories are defined, and prove that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
 
 \subsection{Algebraic dependent type theories}
@@ -848,7 +844,6 @@ ft^0_n(A) & = A \\
 ft^{i+1}_n(A) & = ft^i_n(ft_{n+i}(A))
 \end{align*}
 Let $ctx_{p,n} : (p,n) \to (ctx,n)$ be defined as follows: $ctx_{ty,n}(t) = ft_n(t)$ and $ctx_{tm,n}(t) = ft_n(ty_n(t))$.
-Also, $ctx^i_{p,n} : (p,n+i) \to (ctx,n)$ is defined as follows: $ctx^i_{p,n}(t) = ft^i_n(ctx_{p,n+i}(t))$.
 
 Now, we can define the notion of algebraic dependent type theories.
 
@@ -1160,404 +1155,237 @@ Let $u : \mathbb{T}_1 \to \mathbb{T}$ be an algebraic dependent type theory with
 Then it follows from \rprop{func-mod} and \rprop{T1-CCat} that models of $\mathbb{T}$ are contextual categories with additional structure,
     where $u^* : \Mod{\mathbb{T}} \to \Mod{\mathbb{T}_1}$ is the forgetful functor.
 
-\section{Terms with holes}
-
-Terms of algebraic theories may contain a lot of redundant information, which makes them inconvenient to work with.
-In this section we show how to construct monadic presentations of a partial Horn theory which are isomorphic to the one
-    defined in \rdefn{mon-pres} (which we call the standard presentation), but has less redundant information.
-
-Let $\mathcal{F}$ be a set of function symbols.
-Then we define a monad $HTerm_\mathcal{F} : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of terms with holes.
-It is defined inductively as the usual monad of terms with one additional clause:
-\begin{itemize}
-\item $* \in HTerm_\mathcal{F}(V)_s$.
-\item If $x \in V_s$, then $x \in HTerm_\mathcal{F}(V)_s$.
-\item If $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$ and $t_i \in HTerm_\mathcal{F}(V)_{s_i}$, then $\sigma(t_1, \ldots t_n) \in HTerm_\mathcal{F}(V)_s$.
-\end{itemize}
-
-Now we define a relation $H \subseteq HTerm_\mathcal{F}(V)_s \times Term(V)_s$ for every $V \in \Set^\mathcal{S}$ and $s \in \mathcal{S}$:
-\begin{itemize}
-\item $H(*,t)$ for every $t \in Term(V)$.
-\item $H(x,x)$ for every $x \in V_s$.
-\item If $H(h_i,t_i)$ for every $1 \leq i \leq n$, then $H(\sigma(h_1, \ldots h_n), \sigma(t_1, \ldots t_n))$.
-\end{itemize}
-The idea is that $H(h,t)$ if and only if $t$ can be obtained from $h$ by filling holes with some terms.
-
-Let $WTerm$ be a submonad of $HTerm_\mathcal{F}$ that contains $Term$ as a submonad.
-Then we can define Horn formulae, partial terms, inference rules, partial Horn theories, and the category of partial Horn theories
-    in the same way as we did in section~\ref{sec:PHT}, but with $WTerm$ in place of $Term$.
-
-We want to prove that every theory over $WTerm$ satisfying some conditions is isomorphic to some standard theory.
-Let $\mathbb{T}$ be a theory over $WTerm$, and let $\beta$ be a function $WTerm(V)_s \to Term(V)_s$.
-Then $\beta$ extends to a function on formulae as in \rprop{mor-def}.
-Now, we can define a theory $\beta(\mathbb{T})$ over $Term$, which consists of axioms
-    $\beta(\varphi) \sststile{}{V} \beta(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$.
-
-\begin{lem}[w-standard]
-Let $\mathbb{T}$ be a theory over $WTerm$, and let $\beta : WTerm(V)_s \to Term(V)_s$ be a function.
-Suppose that the following conditions hold for every $h \in WTerm(V)_s$:
-\begin{enumerate}
-\item \label{it:b-rep} $H(h,\beta(h))$.
-\item \label{it:b-FV} $FV(\beta(h)) \subseteq FV(h)$.
-\item \label{it:b-eq-w} Sequent $\sststile{}{V} h \cong \beta(h)$ is a theorem of $\mathbb{T}$.
-\item \label{it:b-subst} For every $\rho : V \to WTerm(V')$, sequent $\sststile{}{V'} \beta(t[\rho]) \cong \beta(t)[\beta \circ \rho]$ is a theorem of $\beta(\mathbb{T})$.
-\end{enumerate}
-Then theories $\beta(\mathbb{T})$ and $\mathbb{T}$ are isomorphic.
-\end{lem}
-\begin{proof}
-Let $\alpha : Term(V)_s \to WTerm(V)_s$ be the inclusion.
-It follows from \eqref{it:b-eq-w} that for every formula $\varphi$ over $WTerm$, sequent $\varphi \ssststile{}{V} \beta(\varphi)$ is a theorem of $\mathbb{T}$.
-Hence if $\beta(\varphi) \sststile{}{V} \beta(\psi)$ is a theorem of $\beta(\mathbb{T})$, then $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}$.
-Thus $\alpha$ determines a morphism $\widetilde{\alpha} : P(\beta(\mathbb{T})) \to P(\mathbb{T})$ of monadic presentations.
-
-It follows from \eqref{it:b-FV} and \eqref{it:b-subst} that $\beta$ preserves inference rules.
-Hence if $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $\beta(\varphi) \sststile{}{V} \beta(\psi)$ is a theorem of $\beta(\mathbb{T})$.
-Thus $\beta$ determines a morphism $\widetilde{\beta} : P(\mathbb{T}) \to P(\beta(\mathbb{T}))$ of monadic presentations.
-
-By \eqref{it:b-rep}, for every $t \in Term(V)_s$, $\beta(\alpha(t)) = t$.
-By \eqref{it:b-eq-w}, for every $h \in WTerm(V)_s$, $\widetilde{\beta}(\widetilde{\alpha}(t)) = t$.
-It follows that $\widetilde{\alpha}$ and $\widetilde{\beta}$ determine an isomorphism of monadic presentations $P(\beta(\mathbb{T}))$ and $P(\mathbb{T})$.
-\end{proof}
-
-Now, we define a specific presentation of algebraic dependent type theories, using terms with holes.
-Let $\mathcal{F}_0$ be a set of function symbols of $\mathbb{T}_0$, and let $\mathcal{F}$ and $\mathcal{P}$ be sets of function and predicate symbols that satisfy the following condition:
-\begin{cond}[ctx]
-For every $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
-    $k$ is nonzero, $p$ equals to either $ty$ or $tm$, $p_1$ equals to $ctx$, $n_1$ equals to $n$, and for every $1 < i \leq k$, $(p_i,n_i)$ does not equal to $(ctx,0)$.
-
-For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$, $1 \leq i \leq k$, $s_i$ does not equal to $(ctx,0)$.
-\end{cond}
-The idea is that the first argument of $\sigma$ should represent the context in which $\sigma(\Gamma, x_1, \ldots x_k)$ is defined.
-Let $\algtt^0_{con}$ be the full subcategory of $\algtt^0$ which consists of theories of the form $((\mathcal{C}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}), \mathcal{A})$
-    such that $\mathcal{F}$ and $\mathcal{P}$ satisfy \rcond{ctx}, axioms of $\mathbb{T}_0$ and the following sequent are derivable:
-\begin{equation}
-\sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p,n}(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma \axtag{c1}
-\end{equation}
-We call such theories \emph{contextual}.
-We will sometimes write $\sigma : s_1 \times \ldots \times s_k \to (p,n)$ instead of $\sigma : (ctx,n) \times s_1 \times \ldots \times s_k \to (p,n)$
-    when it is clear that we are working with a contextual theory.
-The construction of colimits in \rprop{th-cocomplete} implies that $\algtt^0_{con}$ closed under colimits in $\algtt^0$.
-Note that $\mathbb{T}_1$ is contextual.
-The under category $\mathbb{T}_1/\algtt^0_{con}$ will be denoted by $\algtt^1_{con}$.
-We will call objects of this category \emph{contextual theories with substitution}.
-
-Now, we define a submonad $WTerm$ of $HTerm_{\mathcal{F} \amalg \mathcal{F}_0}$.
-The idea is that we can often omit the first argument in subterms of the form $\sigma(\Gamma, t_1, \ldots t_k)$.
-To do this, it should be possible to reconstruct it from the whole term.
-First, we define when it is possible; we will say that a term has \emph{a well-defined context} in this case.
-Second, we define a submonad $BTerm$ of $HTerm_{\mathcal{F} \amalg \mathcal{F}_0}$, which consists of terms, where the first argument can be omitted.
-Then we define a submonad $WTerm$ of $BTerm$ which consists of terms from $BTerm$ with a well-defined context.
-
-We will say that a term $t \in HTerm_{\mathcal{F} \amalg \mathcal{F}_0}(V)_s$ has \emph{a well-defined context} if one of the following conditions hold:
-\begin{itemize}
-\item $t \in Term(V)_s$.
-\item $t = ft(t')$ and $t'$ has a well-defined context.
-\item $t = ty(t')$ and $t'$ has a well-defined context.
-\item $t = \sigma(\Gamma, t_1, \ldots t_k)$, $\sigma \in \mathcal{F}$, and $\Gamma$ has a well-defined context.
-\end{itemize}
-
-To define monad $BTerm$, we need an additional structure.
-Suppose that for every function symbol $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$
-    and for every $1 \leq i \leq k$ such that $p_i$ equals to either $ty$ or $tm$, it is specified whether context may be omitted in $(i+1)$-argument to $\sigma$,
-    and if it can be omitted, then there is a term $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})) \in WTerm(\{ \Gamma, x_1, \ldots x_{i-1} \})_{(ctx_i,n_i)}$.
-This term allows us to recover the omitted context.
-
-Sets $BTerm(V)_s$ are defined inductively:
-\begin{itemize}
-\item If $t \in Term(V)_s$, then $t \in BTerm(V)_s$.
-\item If $t \in BTerm(V)_{(ty,n)}$ and $t$ has a well-defined context, then $ft(t) \in BTerm(V)_{(ctx,n)}$.
-\item If $t \in BTerm(V)_{(tm,n)}$, then $ty(t) \in BTerm(V)_{(ty,n)}$.
-\item Let $\sigma \in \mathcal{F}$, $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, and $t_i \in BTerm(V)_{(p_i,n_i)}$.
-    Suppose that for every $i$ such that the context in $(i+1)$-th argument of $\sigma$ can be omitted, $t_i$ has a well-defined context.
-    Then $\sigma(*, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$ and for every $\Gamma \in BTerm(V)_{(ctx,n)}$
-        with a well-defined context, $\sigma(\Gamma, t_1, \ldots t_k) \in BTerm(V)_{(p,n)}$.
-\end{itemize}
-
-Finally, $WTerm(V)_s$ consists of those terms from $BTerm(V)_s$ which have a well-defined context.
-Note that if $t \in BTerm(V)_s$, then either $t \in WTerm(V)_s$, or $t$ is of the form $\sigma(*, t_1, \ldots t_k)$, or it is of the form $ty(\sigma(*, t_1, \ldots t_k))$.
-We will write a term $\sigma(*, t_1, \ldots t_k)$ simply as $\sigma(t_1, \ldots t_k)$, and if $k = 0$, then we will write it as $\sigma$.
-
-Now, we define $\beta : WTerm(V)_s \to Term(V)_s$ together with a function $\beta' : Term(V)_{(ctx,n)} \times BTerm(V)_{(p,n)} \to Term(V)_{(p,n)}$, where $p \in \{ tm,ty \}$.
-\begin{align*}
-\beta(t) & = t \text{, if } t \in Term(V)_s \\
-\beta(ft(t)) & = ft(\beta(t)) \\
-\beta(ty(t)) & = ty(\beta(t)) \\
-\beta(\sigma(\Gamma, t_1, \ldots t_k)) & = \beta'(\beta(\Gamma), \sigma(*, t_1, \ldots t_k)) \\
-\beta'(\Delta, t) & = \beta(t) \text{, if } t \in WTerm(V)_s \\
-\beta'(\Delta, ty(t)) & = ty(\beta'(\Delta, t)) \\
-\beta'(\Delta, \sigma(*, t_1, \ldots t_k)) & = \sigma(\Delta, t_1', \ldots t_k')
-\end{align*}
-where $t_i' = \beta'(\beta(D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})))[\Gamma \mapsto \Delta, x_1 \mapsto t_1', \ldots x_{i-1} \mapsto t_{i-1}'], t_i)$
-    if the context in $(i+1)$-th argument of $\sigma$ can be omitted, and $t_i' = \beta(t_i)$ otherwise.
-In order for this to be a correct definition, we need some additional assumptions on $D_i$.
-The simplest assumption is that there is a well-ordering on the set of function symbols, and for every $\sigma \in \mathcal{F}$,
-    every symbol that appears in $D_i(\sigma(\Gamma, x_1, \ldots x_{i-1}))$ is less than $\sigma$.
-
-Let $\mathbb{T}$ be a partial horn theory over $WTerm$.
-Then conditions \eqref{it:b-rep}, \eqref{it:b-FV} and \eqref{it:b-subst} of \rlem{w-standard} hold.
-Indeed, the first two hold by definition, and the last follows from the fact that $\beta(t[\rho]) = \beta(t)[\beta \circ \rho]$, which is easy to prove by induction.
-Assume that that condition~\eqref{it:b-eq-w} holds, and also that axioms of $\mathbb{T}_0$ are derivable in $\mathbb{T}$.
-Then is isomorphic to $\beta(\mathbb{T})$, which is an algebraic dependent type theory in a natural way.
-
-Terms from $BTerm$ may or may not contain redundant information about contexts.
-Now, we will show that under additional assumptions on $\mathbb{T}$ every term is equivalent to a one with no redundant information.
-First, let $STerm$ be a subfunctor of $BTerm$ which consists of terms in which the first argument to every function is omitted whenever possible.
-Let $LTerm$ be a subfunctor of $BTerm$ such that $t \in LTerm(V)_s$ if and only if $t$ satisfies one of the following conditions:
-\begin{itemize}
-\item $t = ctx^i(x)$, where $x$ is a variable.
-\item $t = \emptyCtx$.
-\item $t = ty(t')$, where $t' \in LTerm(V)_{(tm,n)}$.
-\item $t = \sigma(\Gamma, t_1, \ldots t_k)$, where $\Gamma \in LTerm(V)_{(ctx,n)}$ and $t_1, \ldots t_k$ belong to $STerm$.
-\end{itemize}
-Note that $LTerm$ is a subfunctor of $WTerm$, while $STerm$ is not, so we can use terms from $LTerm$ in formulae, but not terms from $STerm$.
-
-\begin{prop}
-Let $\mathbb{T}$ be a contextual theory such that for every $t \in WTerm(V)_s$, $\sigma \in \mathcal{F}$,
-    and $i$ such that the context in $(i+1)$-th argument of $\sigma$ can be omitted, the following sequents are theorems of $\mathbb{T}$:
-\begin{align*}
-\sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} ctx_{p_i,n_i}(x_i) = D_i(\sigma(\Gamma, x_1, \ldots x_{i-1})) \axtag{c2} \\
-& \sststile{}{V} t \cong \beta(t) \axtag{h1}
-\end{align*}
-Then for every $t \in WTerm(V)_s$, there is a partial term $r(t) \in PLTerm(V)_s$ such that $\sststile{}{V} t \cong r(t)$ is a theorem of $\mathbb{T}$.
-\end{prop}
-\begin{proof}
-By \axref{h1}, we only need to show that such $r(t)$ exists for every $t \in Term(V)_s$.
-We do this by induction on $t$.
-If $t$ is of the form $ctx^i(x)$ or $t = \emptyCtx$, then we can take $r(t) = t$.
-So suppose that $t$ is of the form $ctx^i(\sigma(\Gamma, t_1, \ldots t_k))$.
-If $i > 0$, then by \axref{c1}, $t$ is equivalent to $ctx^{i-1}(\Gamma)$, so we can take $r(t) = r(ctx^{i-1}(\Gamma))$.
-So suppose that $i = 0$.
-If $t = ty(\sigma(\Gamma, t_1, \ldots t_k))$, then we can take $r(t) = ty(r(\sigma(\Gamma, t_1, \ldots t_k)))$.
-
-Finally, suppose that $t = \sigma(\Gamma, t_1, \ldots t_k)$.
-Then $r(\Gamma) = \Gamma'|_\varphi$ and $r(t_i) = t_i'|_{\varphi_i}$.
-Let $t_i'' = t_i'$ and $\varphi_i' = \top$ if $t_i'$ is a term in $STerm$ or if the context in $t_i'$ cannot be omitted.
-If $t_i' = \tau(\Delta_i, q_1, \ldots q_n)$ or $t_i' = ty(\tau(\Delta_i, q_1, \ldots q_n))$,
-    then let $t_i'' = \tau(*, q_1, \ldots q_n)$ or $t_i'' = ty(\tau(*, q_1, \ldots q_n))$ respectively.
-Also, let $\varphi_i' = (\Delta_i = \Delta_i')$, where $\Delta_i' = D_i(A, x_1, \ldots x_{i-1})[A \mapsto \Gamma', x_1 \mapsto t_1', \ldots x_{i-1} \mapsto t_{i-1}']$.
-Let $r(t) = \sigma(\Gamma', t_1'', \ldots t_k'')|_{\varphi \land \varphi_1 \land \varphi_1' \land \ldots \land \varphi_k \land \varphi_k'}$.
-
-Note that $\sigma(\Gamma', t_1'', \ldots t_k'')$ is equivalent to $\sigma(\Gamma', t_1''', \ldots t_k''')$,
-    where $t_i''' = t_i'$ if $t_i'$ is a term in $STerm$ or if the context in $t_i'$ cannot be omitted,
-    $t_i''' = \tau(\Delta_i''', q_1, \ldots q_n)$ if $t_i' = \tau(\Delta_i, q_1, \ldots q_n)$, and
-    $t_i''' = ty(\tau(\Delta_i''', q_1, \ldots q_n))$ if $t_i' = ty(\tau(\Delta_i, q_1, \ldots q_n))$,
-    where $\Delta_i''' = D_i(A, x_1, \ldots x_{i-1})[A \mapsto \Gamma', x_1 \mapsto t_1''', \ldots x_{i-1} \mapsto t_{i-1}''']$.
-
-By induction hypothesis, $t$ is equivalent to $\sigma(\Gamma', t_1', \ldots t_k')|_{\varphi \land \varphi_1 \land \ldots \land \varphi_k}$.
-Thus it is enough to prove that $\sigma(\Gamma', t_1', \ldots t_k')$ and $\sigma(\Gamma', t_1''', \ldots t_k''')|_{\varphi_1' \land \ldots \land \varphi_k'}$ are equivalent.
-First, note that by \axref{c2}, $\sigma(\Gamma', t_1', \ldots t_k')\!\downarrow\ \sststile{}{V} t_i' = t_i''' \land \varphi_i'$ is derivable.
-It follows that $\sigma(\Gamma', t_1', \ldots t_k')\!\downarrow\ \sststile{}{V} \sigma(\Gamma', t_1', \ldots t_k') = \sigma(\Gamma', t_1''', \ldots t_k''')|_{\varphi_1' \land \ldots \land \varphi_k'}$ is also derivable.
-Finally, note that $t_1'''|_{\varphi_1'}\!\downarrow \land \ldots \land t_i'''|_{\varphi_i'}\!\downarrow\ \sststile{}{V} t_i' = t_i'''$ is derivable.
-Hence $\sigma(\Gamma', t_1''', \ldots t_k''')|_{\varphi_1' \land \ldots \land \varphi_k'}\!\downarrow\ \sststile{}{V} \sigma(\Gamma', t_1', \ldots t_k') = \sigma(\Gamma', t_1''', \ldots t_k''')|_{\varphi_1' \land \ldots \land \varphi_k'}$ is also derivable.
-\end{proof}
-
-Thus we can always work with terms in $LTerm$ instead of terms from $WTerm$.
-Actually, we can even forget about $LTerm$ and work with $STerm$ only.
-To do this, we define introduce some standard notation.
-If $\Gamma \in WTerm(V)_{(ctx,n)}$ and $t \in BTerm(V)_{(p,n)}$, $p \in \{ ty, tm \}$, then $\Gamma \vdash t$ is a partial term in $PWTerm(V)_{(p,n)}$, which is defined as follows:
-\begin{align*}
-(\Gamma \vdash \sigma(*, t_1, \ldots t_k)) & = \sigma(\Gamma, t_1, \ldots t_k) \\
-(\Gamma \vdash ty(\sigma(*, t_1, \ldots t_k))) & = ty(\sigma(\Gamma, t_1, \ldots t_k)) \\
-(\Gamma \vdash t) & = t|_{ctx_{p,n}(t) = \Gamma} \text{, if } t \in WTerm(V)_{(p,n)}
-\end{align*}
-Note that if $\Gamma \in LTerm(V)_{(ctx,n)}$ and $t \in STerm(V)_{(p,n)}$, then $\Gamma \vdash t$ belongs to $PLTerm(V)_{(p,n)}$.
-
-Let $A_1, \ldots A_n$ be a sequence of terms such that $A_i \in STerm(V)_{(ctx,i)}$.
-Then we define a term $A_1, \ldots A_n \vdash$ in $PLTerm(V)_{(ctx,n)}$ by induction on $n$.
-If $n = 0$, then it equals to $\emptyCtx$.
-If $n > 0$, then let $A_1, \ldots A_n \vdash$ be equal to $\Gamma \vdash A_n$, where $\Gamma$ equals to $A_1, \ldots A_{n-1} \vdash$.
-Note that every term in $LTerm$ is equivalent to a term of the form $A_1, \ldots A_n \vdash t$, where all terms belong to $STerm$.
-
-We also introduce a notation for formulae:
-\begin{align*}
-\Gamma \vdash ctx & \text{ means } (\Gamma \vdash)\downarrow \\
-\Gamma \vdash A\ type & \text{ means } (\Gamma \vdash A)\downarrow \\
-\Gamma \vdash A \deq A' & \text{ means } (\Gamma \vdash A) = (\Gamma \vdash A') \\
-\Gamma \vdash a : A & \text{ means } \Gamma \vdash ty(a) \deq A \\
-\Gamma \vdash a \deq a' : A & \text{ means } (\Gamma \vdash a : A) \land (\Gamma \vdash a \deq a')
-\end{align*}
-Finally, we will write sequents $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \varphi$ and $\varphi_1 \land \ldots \land \varphi_n \ssststile{}{V} \varphi$ as
-\begin{center}
-\AxiomC{$\varphi_1$}
-\AxiomC{$\ldots$}
-\AxiomC{$\varphi_n$}
-\TrinaryInfC{$\varphi$}
-\DisplayProof
-\quad
-and
-\quad
-\AxiomC{$\varphi_1$}
-\AxiomC{$\ldots$}
-\AxiomC{$\varphi_n$}
-\doubleLine
-\TrinaryInfC{$\varphi$}
-\DisplayProof
-\end{center}
-respectively.
-Usually, we will not specify $D_i$ explicitly, instead we will give a sequent of the form (or a similar sequent)
-\begin{center}
-\AxiomC{$(\Gamma_1 \vdash x_1)\!\downarrow$}
-\AxiomC{$\ldots$}
-\AxiomC{$(\Gamma_k \vdash x_k)\!\downarrow$}
-\TrinaryInfC{$(\Gamma \vdash \sigma(x_1, \ldots x_k))\!\downarrow$}
-\DisplayProof
-\end{center}
-Then we let $D_i(\sigma(\Gamma, x_1, \ldots x_k)) = \Gamma_i$.
-We will usually assume axioms \axref{h1}, \axref{c1} and \axref{c2} implicitly.
-
-As an example of constructions from this section, we show how $\mathbb{T}_1$ can be presented in this style.
-The set $\mathcal{F}$ of function symbols defined as before:
-\begin{align*}
-v_{n,i}       & : (ctx,n) \to (tm,n) \text{, } 0 \leq i < n \\
-subst_{p,n,k} & : (ctx,n) \times (p,k) \times (tm,n)^k \to (p,n) \text{, } p \in \{ tm, ty \}
-\end{align*}
-Note that it satisfies \rcond{ctx}.
-For every $m,n \in \mathbb{N}$ and $p \in \{ ty, tm \}$, we define $wk^m_{p,n} : (ctx,n+m) \times (p,n) \to (p,n+m)$ as follows:
-\[ wk^m_{p,n}(\Gamma,a) = subst_{p,n+m,n}(\Gamma, a, v_{n+m-1}, \ldots v_m) \]
-We will write $a\uparrow^m$ for $wk^m_{p,n}(*,a)$.
-
-Now we describe axioms of the theory.
-First axiom is equivalent to axioms \eqref{ax:def-var} and \eqref{ax:type-var}.
-\begin{center}
-\AxiomC{$A_1, \ldots A_n \vdash ctx$}
-\UnaryInfC{$A_1, \ldots A_n \vdash v_i : A_{n-i}\!\uparrow^{i+1}$}
-\DisplayProof
-\end{center}
-\medskip
-
-The following axioms (together with \axref{h1} and \axref{c1}) are equivalent to axioms \eqref{ax:def-subst}, \eqref{ax:type-subst-ty} and \eqref{ax:type-subst-tm}.
-\begin{center}
-\AxiomC{$\Gamma \vdash ctx$}
-\AxiomC{$\Gamma \vdash a_i : subst_{ty,n,i-1}(ft^{k+1-i}(B), a_1, \ldots a_{i-1})$}
-\doubleLine
-\BinaryInfC{$\Gamma \vdash subst_{ty,n,k}(B, a_1, \ldots a_k)\ type$}
-\DisplayProof
-\end{center}
-\medskip
-
-\begin{center}
-\AxiomC{$\Gamma \vdash ctx$}
-\AxiomC{$\Gamma \vdash a_i : subst_{ty,n,i-1}(ft^{k+1-i}(ty(b)), a_1, \ldots a_{i-1})$}
-\doubleLine
-\BinaryInfC{$\Gamma \vdash subst_{tm,n,k}(b, a_1, \ldots a_k) : subst_{ty,n,k}(ty(b), a_1, \ldots a_k)$}
-\DisplayProof
-\end{center}
-\medskip
-
-Note that the context of arguments $a_i$ can be inferred from the context of $subst_{p,n,k}(B, a_1, \ldots a_k)$, but not the context of $B$.
-So the context of $B$ cannot be omitted, but the context of $a_i$ can be, and $D_i(subst_{p,n,k}(\Gamma, B, a_1, \ldots a_{i-2})) = \Gamma$.
-Finally, axioms \eqref{ax:subst-var}, \eqref{ax:var-subst} and \eqref{ax:subst-subst} are stated as before.
-
-Derived operation $wk^m_{p,n}$ satisfies the following rules:
-\begin{center}
-\AxiomC{$\Gamma, B_1, \ldots B_m \vdash ctx$}
-\AxiomC{$\Gamma \vdash A\ type$}
-\BinaryInfC{$\Gamma, B_1, \ldots B_m \vdash A\!\uparrow^m type$}
-\DisplayProof
-\quad
-\AxiomC{$\Gamma, B_1, \ldots B_m \vdash ctx$}
-\AxiomC{$\Gamma \vdash a : A$}
-\BinaryInfC{$\Gamma, B_1, \ldots B_m \vdash a\!\uparrow^m : A\!\uparrow^m$}
-\DisplayProof
-\end{center}
-
-Thus $v_i$ are just usual De Bruijn indices and $wk^m_{p,n}$ are usual weakening operations.
-We also define the usual substitution operation as follows:
-\[ B[a_1, \ldots a_k] = subst_{p,n,n+k}(B, v_{n-1}, \ldots v_0, a_1, \ldots a_k) \]
-It satisfies the following rules:
-\begin{center}
-\AxiomC{$\Gamma, A_1, \ldots A_k \vdash B\ type$}
-\AxiomC{$\Gamma \vdash a_i : A_i[a_1, \ldots a_{i-1}]$}
-\BinaryInfC{$\Gamma \vdash B[a_1, \ldots a_k]\ type$}
-\DisplayProof
-\end{center}
-\medskip
-
-\begin{center}
-\AxiomC{$\Gamma, A_1, \ldots A_k \vdash b : B$}
-\AxiomC{$\Gamma \vdash a_i : A_i[a_1, \ldots a_{i-1}]$}
-\BinaryInfC{$\Gamma \vdash b[a_1, \ldots a_k] : B[a_1, \ldots a_k]$}
-\DisplayProof
-\end{center}
-
 \section{Stable theories}
 
-In this section we will consider a particular kind of algebraic dependent type theories which we call \emph{stable}.
-Also we will define the category $\algtt_{st}$ of stable algebraic dependent type theories and its full subcategory $\algtt_{reg}$ of regular theories.
-Finally, we will give a few examples of such theories.
+In this section we consider algebraic dependent type theories with additional structure which we call \emph{stable}.
+We also define category $\algtt^1_{st}$ of stable algebraic dependent type theories with substitutions and its full subcategory $\algtt_{reg}$ of regular theories.
+Finally, we give a few examples of such theories.
+
+\subsection{Stable theories}
 
 Usually in type theories all of the function symbols are available in every context.
 We call such theories \emph{stable}.
+Let $\mathcal{S}_0$ be a set of (non-dependent) sorts.
+Then we define the corresponding set $\mathcal{S}$ of dependent sorts as $\mathcal{S}_0 \times \mathbb{N}$.
+Suppose that $\mathcal{S}_0$ contains a distinguished sort $ctx$.
+Let $\mathbb{T}_{\mathcal{S}_0}$ be a theory with the following function symbols:
+\begin{align*}
+\emptyCtx  &: (ctx,0) \\
+ft_n & : (ctx,n+1) \to (ctx,n) \\
+ctx_{p,n} & : (p,n) \to (ctx,n) \text{ for every } p \in \mathcal{S}_0
+\end{align*}
+and axioms of $\mathbb{T}_{(ctx,0)}$ as defined in section~\ref{sec:prop} together with the following axiom:
+\[ \sststile{}{x} ctx_{ctx,n}(x) = x \]
+
+To define stable theories, we need to introduce a few auxiliary constructions.
 First, we define a function $L : \mathcal{C} \to \mathcal{C}$ as follows:
 \begin{align*}
 L(ctx,n) & = L(ctx,n+1) \\
 L(tm,n) & = L(tm,n+1)
 \end{align*}
-Let $\mathcal{F}$ be a set of function symbols.
-For every such set $\mathcal{F}$, we define another set $L(\mathcal{F})$ which consists of the same function symbols as $\mathcal{F}$, but with different signatures.
-If $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$, then $L(\sigma) \in L(\mathcal{F})$, $L(\sigma) : L(s_1) \times \ldots \times L(s_k) \to L(s)$.
 
+For every set $\mathcal{F}$ of function symbols, we define another set $L(\mathcal{F})$ which consists of symbols $L(\sigma)$ for every $\sigma \in \mathcal{F}$.
+If $\sigma : s_1 \times \ldots \times s_k \to s$, then $L(\sigma) : (ctx,1) \times L(s_1) \times \ldots \times L(s_k) \to L(s)$.
 For every set of variables $V$ we define a set $L(V)$ which contains a variable $x$ of sort $L(s)$ for every variable $x$ of sort $s$ in $V$.
-Now, let us define function $L : HTerm_{L(\mathcal{F})}(V)_{(ctx,1)} \times HTerm_{\mathcal{F}}(V)_s \to HTerm_{L(\mathcal{F})}(L(V))_{L(s)}$.
+For every terms $\Gamma \in Term_{L(\mathcal{F})}(L(V))_{(ctx,1)}$ and $t \in Term_{\mathcal{F}}(V)_{(p,n)}$,
+we define a partial term $L(\Gamma,t) \in PTerm_{L(\mathcal{F})}(L(V))_{(p,n+1)}$ as follows:
 \begin{align*}
-& L(\Gamma, *) = * \\
-& L(\Gamma, t) = \Gamma \text{, if $t$ has sort $(ctx,0)$} \\
-& L(\Gamma, x) = x \\
-& L(\Gamma, \sigma(t_1, \ldots t_k)) = L(\sigma)(L(\Gamma, A), L(\Gamma, t_1), \ldots L(\Gamma, t_k))
-\end{align*}
-Note that sets $Term$, $WTerm$, $BTerm$, $LTerm$ and $STerm$ are closed under $L$.
-If $\mathcal{F}$ satisfies \rcond{ctx}, then we define function
-    $L : WTerm_{\mathcal{F}_0 \amalg \mathcal{F}}(V)_s \to WTerm_{\mathcal{F}_0 \amalg L(\mathcal{F})}(L(V))_{L(s)}$ for every $s \neq (ctx,0)$ as follows:
-\begin{align*}
-L(x) & = x \\
-L(ft(t)) & = ft(L(t)) \\
-L(ty(t)) & = ty(L(t)) \\
-L(\sigma(\Gamma, t_1, \ldots t_k)) & = L(ft^m(L(\Gamma)), \sigma(\Gamma, t_1, \ldots t_k))
-\end{align*}
-where $m$ is such that $ft^m(L(\Gamma))$ has sort $(ctx,1)$.
-
-For every set $\mathcal{P}$ of relation symbols, we define another set $L(\mathcal{P})$ which consists of symbols
-    $L(R) : L(s_1) \times \ldots \times L(s_k)$ for every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$,
-    where in the sequence $L(s_1)$, \ldots $L(s_k)$ are skipped sorts $L(s_i)$ such that $s_i = (ctx,0)$.
-For every formula $\varphi \in Form_\mathcal{P}(V)$ we define a formula $L(\varphi) \in Form_{L(\mathcal{P})}(L(V))$ as follows:
-\begin{align*}
-L(t = t') & = (L(t) = L(t')) \\
-L(R(t_1, \ldots t_k)) & = L(R)(L(t_1), \ldots L(t_k)) \\
-L(\varphi_1 \land \ldots \land \varphi_n) & = L(\varphi_1) \land \ldots \land L(\varphi_n)
+L(\Gamma, x) & = x|_{L(ctx_{p,n})(\Gamma, x) \downarrow} \\
+L(\Gamma, \sigma(t_1, \ldots t_k)) & = L(\sigma)(\Gamma, L(\Gamma, t_1), \ldots L(\Gamma, t_k))
 \end{align*}
 
-For every sequent $S$ we define another sequent $L(S)$.
-If $S$ is $\varphi \sststile{}{V} \psi$, then let $L(S)$ to be $L(\varphi) \sststile{}{L(V)} L(\psi)$.
-Now, let us define functor $L : \algtt^0_{con} \to \algtt^0_{con}$.
-Let $L((\mathcal{C}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}), \mathcal{A}) = ((\mathcal{C}, \mathcal{F}_0 \amalg L(\mathcal{F}), L(\mathcal{P})), L(\mathcal{A}))$.
-If $f : \mathbb{T} \to \mathbb{T}'$, then let $L(f)$ be defined as follows:
+For every set $\mathcal{P}$ of relation symbols, we define set $L(\mathcal{P})$ which consists of symbols
+    $L(R) : (ctx,1) \times L(s_1) \times \ldots \times L(s_k)$ for every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$.
+For every formula $\varphi \in Form_\mathcal{P}(V)$ and term $\Gamma \in Term_{L(\mathcal{F})}(L(V))_{(ctx,1)}$,
+we define a formula $L(\Gamma, \varphi) \in Form_{L(\mathcal{P})}(L(V))$ as follows:
 \begin{align*}
-L(f)(L(\sigma)(x_1, \ldots x_k)) & = L(f(\sigma(x_1, \ldots x_k))) \\
-L(f)(L(R)(x_1, \ldots x_k)) & = L(f(R(x_1, \ldots x_k)))
+L(\Gamma, t_1 = t_2) & = (L(\Gamma, t_1) = L(\Gamma, t_2)) \\
+L(\Gamma, R(t_1, \ldots t_k)) & = L(R)(\Gamma, L(\Gamma, t_1), \ldots L(\Gamma, t_k))
 \end{align*}
+
+Now, let us define a functor $L : \mathbb{T}_{\mathcal{S}_0}/\Th_\mathcal{S} \to \mathbb{T}_{\mathcal{S}_0}/\Th_\mathcal{S}$.
+Let $L((\mathcal{S}, \mathcal{F}, \mathcal{P}), \mathcal{A}) = ((\mathcal{S}, L(\mathcal{F}) \cup \mathcal{F}_{\mathcal{S}_0}, L(\mathcal{P})), \mathcal{A}' \cup \mathcal{A}_{\mathcal{S}_0})$,
+where $\mathcal{F}_{\mathcal{S}_0}$ and $\mathcal{A}_{\mathcal{S}_0}$ are the sets of function symbols and axioms of $\mathbb{T}_{\mathcal{S}_0}$, and $\mathcal{A}'$ consists of the following axioms:
+\[ ft^n(ctx_{p,n+1}(x)) = \Gamma \sststile{}{\Gamma,x} ctx_{p,n+1}(x) = L(ctx_{p,n})(\Gamma,x) \]
+for every $p \in \mathcal{S}_0$,
+\begin{align*}
+L(\sigma)(\Gamma, x_1, \ldots x_k)\!\downarrow & \sststile{}{\Gamma, x_1, \ldots x_k} ft^n(ctx_{p,n}(L(\sigma)(\Gamma, x_1, \ldots x_k))) = \Gamma \\
+L(\sigma)(\Gamma, x_1, \ldots x_k)\!\downarrow & \sststile{}{\Gamma, x_1, \ldots x_k} ft^{n_i}(ctx_{p_i,n_i}(x_i)) = \Gamma
+\end{align*}
+for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and every $1 \leq i \leq k$,
+\[ L(R)(\Gamma, x_1, \ldots x_k) \sststile{}{\Gamma, x_1, \ldots x_k} ft^{n_i}(ctx_{p_i,n_i}(x_1)) = \Gamma \]
+for every $R \in \mathcal{P}$, $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ and every $1 \leq i \leq k$, and
+\[ L(\Gamma,\varphi) \land \bigwedge_{1 \leq i \leq k} ft^{n_i}(ctx_{p_i,n_i}(x_i)) = \Gamma \sststile{}{\Gamma, x_1, \ldots x_k} L(\Gamma,\psi) \]
+for every axiom $\varphi \sststile{}{x_1 : (p_1,n_1), \ldots x_k : (p_k,n_k)} \psi$ in $\mathcal{A}$.
+
+If $f : \mathbb{T} \to \mathbb{T}'$, then let $L(f) : L(\mathbb{T}) \to L(\mathbb{T}')$ be defined as follows:
+\begin{align*}
+L(f)(L(\sigma)(\Gamma, x_1, \ldots x_k)) & = L(\Gamma, f(\sigma(x_1, \ldots x_k))) \\
+L(f)(L(R)(\Gamma, x_1, \ldots x_k)) & = L(\Gamma, f(R(x_1, \ldots x_k)))
+\end{align*}
+It is easy to see that this defines a morphism of theories and that $L$ preserves identity morphisms and compositions.
 
 \begin{defn}
-A \emph{stable algebraic dependent type theory} is an algebra for functor $L$,
-    that is a tuple $(\mathbb{T},\alpha)$, where $\mathbb{T} \in \algtt^0_{con}$ and $\alpha : L(\mathbb{T}) \to \mathbb{T}$.
-We will call $\alpha$ \emph{the stabilization map} of $(\mathbb{T},\alpha)$.
-The category $\algtt^0_{st}$ of stable theories is the category of algebras for $L$.
+A \emph{stable (essentially) algebraic theory} is an algebra for functor $L$,
+that is a pair $(\mathbb{T},\alpha)$, where $\mathbb{T}$ is a theory under $\mathbb{T}_{\mathcal{S}_0}$ and $\alpha : L(\mathbb{T}) \to \mathbb{T}$.
+The category $\St_{\mathcal{S}_0}$ of stable theories is the category of algebras for $L$.
+\end{defn}
+
+Theories $\mathbb{T}_0$ and $\mathbb{T}_1$ are stable.
+Indeed, we can define maps $\alpha_0 : L(\mathbb{T}_0) \to \mathbb{T}_0$ and $\alpha_1 : L(\mathbb{T}_1) \to \mathbb{T}_1$ as follows:
+\begin{align*}
+\alpha_0(L(ty_n)(\Gamma,a)) & = ty_{n+1}(a)|_{ft^n(ctx_{tm,n+1}(a)) = \Gamma} \\
+\alpha_1(L(v_{n,i})(\Gamma,\Delta)) & = v_{n+1,i}(\Delta)|_{ft^n(\Delta) = \Gamma}
+\end{align*}
+and $\alpha_1(L(subst_{p,n,k})(\Gamma, \Delta, B, a_1, \ldots a_k))$ is defined as
+\[ subst_{p,n+1,k+1}(\Delta, B, v_{n+1,n}(\Delta), a_1, \ldots a_k)|_{ft^n(\Delta) = \Gamma} \]
+
+\begin{defn}
+A \emph{stable algebraic dependent type theory} is a stable theory under $(\mathbb{T}_0,\alpha_0)$.
+The category $(\mathbb{T}_0,\alpha_0)/\St_{\{ctx,tm\}}$ will be denoted by $\algtt^0_{st}$.
+A \emph{stable algebraic dependent type theory with substitution} is a stable algebraic dependent type theory under $(\mathbb{T}_1,\alpha_1)$.
+The category $(\mathbb{T}_1,\alpha_1)/\St_{\{ctx,tm\}}$ will be denoted by $\algtt^1_{st}$.
 \end{defn}
 
 The construction of colimits in \rprop{th-cocomplete} implies that $L$ preserves colimits.
-It follows that $\algtt^0_{st}$ is cocomplete.
+It follows that $\St_{\mathcal{S}_0}$ is cocomplete.
+Since $L$ preserves colimits, the forgetful functor $\St_{\mathcal{S}_0} \to \mathbb{T}_{\mathcal{S}_0}/\Th_\mathcal{S}$
+has a left adjoint $st : \mathbb{T}_{\mathcal{S}_0}/\Th_\mathcal{S} \to \St_{\mathcal{S}_0}$, which we call the stabilization functor.
+More generally, for every $(\mathbb{T}_a,\alpha) \in \St_{\mathcal{S}_0}$, we define a left adjoint $st_{(\mathbb{T}_a,\alpha)} : \mathbb{T}_a/\Th_{\mathcal{S}} \to (\mathbb{T}_a,\alpha)/\St_{\mathcal{S}_0}$
+to the forgetful functor $U_{(\mathbb{T}_a,\alpha)} : (\mathbb{T}_a,\alpha)/\St_{\mathcal{S}_0} \to \mathbb{T}_a/\Th_{\mathcal{S}}$.
+Let $a : \mathbb{T}_a \to \mathbb{T}$ be an object of $\mathbb{T}_a/\Th_{\mathcal{S}}$.
+Let $e : L^\infty(\mathbb{T}) \to E$ be the coequalizer of the following maps:
+\[ \xymatrix{ \coprod\limits_{n \in \mathbb{N}} L^{n+1}(T_a) \ar@<+1ex>[rr]^{\coprod\limits_{n \in \mathbb{N}} L^n(f)} \ar@<-1ex>[rr]_{\coprod\limits_{n \in \mathbb{N}} L^n(g)}
+    & & \coprod\limits_{n \in \mathbb{N}} L^n(L^\infty(\mathbb{T})) \ar@{^{(}->}[r]^-{i^n} & L^\infty(\mathbb{T}) } \]
+where $L^\infty(X)$ is the following colimit:
+\[ X \to X \amalg L(X) \to X \amalg L(X \amalg L(X)) \to \ldots \]
+and $f,g : L(\mathbb{T}_a) \to L^\infty(\mathbb{T})$ are defined as follows: $f$ is the composite $L(\mathbb{T}_a) \xrightarrow{\alpha} \mathbb{T}_a \xrightarrow{a} \mathbb{T} \hookrightarrow L^\infty(\mathbb{T})$,
+and $g$ is the composite $L(\mathbb{T}_a) \xrightarrow{L(a)} L(\mathbb{T}) \hookrightarrow L^\infty(\mathbb{T})$.
+Since $L$ preserves colimits, $L(E)$ is a coequalizer of $i^{n+1} \circ \coprod_{n \in \mathbb{N}} L^{n+1}(f)$ and $i^{n+1} \circ \coprod_{n \in \mathbb{N}} L^{n+1}(g)$.
+By the universal property of coequalizers we have a map $\beta : L(E) \to E$.
+We define $st_{(\mathbb{T}_a,\alpha)}(a)$ as $(E,\beta)$, and morphism $(\mathbb{T}_a,\alpha) \to (E,\beta)$ as the composite $\mathbb{T}_a \xrightarrow{a} \mathbb{T} \hookrightarrow L^\infty(\mathbb{T}) \xrightarrow{e} E$.
+This map is a morphism of algebras for $L$ since $e$ coequalizes $f$ and $g$.
+Moreover, if $(D,\delta)$ is an object of $(\mathbb{T}_a,\alpha)/\St_{\mathcal{S}_0} $,
+then a map $L^\infty(\mathbb{T}) \to D$ is a morphism of algebras if and only if it factors through $E$.
+It follows that $st_{(\mathbb{T}_a,\alpha)}$ is left adjoint to $U_{(\mathbb{T}_a,\alpha)}$.
+In particular, there are stabilization functors $st^0 : \algtt^0 \to \algtt^0_{st}$ and $st^1 : \algtt^1 \to \algtt^1_{st}$.
 
-An example of a stable theory is $\mathbb{T}_1$, $\alpha_1 : L(\mathbb{T}_1) \to \mathbb{T}_1$ is defined as follows:
+\subsection{Named representation of terms}
+
+We can use usual named representation of terms for stable theories.
+Let $var$ be a set of variables.
+Let $\mathbb{T} = ((\mathcal{C}, \mathcal{F}, \mathcal{P}), \mathcal{A})$ be a stable theory.
+Then for every set $V$, we define the set $NTerm(V)$ of named preterms of theory $T$ inductively as follows:
+\begin{enumerate}
+\item For every $x \in var$, $x$ is a preterm.
+\item For every $X \in V$, $X$ is a preterm.
+\item For every term $t$, $ft(t)$ and $ctx_{p,n}(t)$ are preterms.
+\item For every $\sigma \in \mathcal{F}$, $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
+variables $x^1_1$, \ldots $x^1_{n_1}$, \ldots $x^k_1$, \ldots $x^k_{n_k}$, preterms $A^1_1$, \ldots $A^1_{n_1}$, \ldots $A^k_1$, \ldots $A^k_{n_k}$
+and preterms $t_1$, \ldots $t_k$, the following expression is a preterm:
+\[ \sigma(x^1_1 : A^1_1 \ldots x^1_{n_1} : A^1_{n_1}.\ t_1, \ldots x^k_1 : A^k_1 \ldots x^k_{n_k} : A^k_{n_k}.\ t_k). \]
+\end{enumerate}
+
+Let $Ctx(V)$ be the set of precontext, that is finite sequences of expressions of the form $x : t$, where $x \in var$ and $t \in NTerm(V)$.
+Now, we can define partial functions $E : Ctx(V) \times NTerm(V) \to \coprod_{s \in \mathcal{C}} PTerm(V)_s$ and $E : Ctx(V) \to \coprod_{s \in \mathcal{C}} PTerm(V)_s$ as follows:
 \begin{align*}
-\alpha_1(L(v_{n,i})(\Gamma)) & = v_{n+1,i}(\Gamma) \\
-\alpha_1(L(subst_{p,n,k})(\Gamma, B, a_1, \ldots a_k)) & = subst_{p,n+1,k+1}(\Gamma, B, v_{n+1,n}, a_1, \ldots a_k)
+E(\cdot) & = \emptyCtx \text{, where $\cdot$ is the empty precontext} \\
+E(x_1:A_1, \ldots x_n:A_n) & = E((x_1:A_1, \ldots x_{n-1}:A_{n-1}), A_n) \\
+E((x_1:A_1, \ldots x_n:A_n), x_i) & = v_{n,n-i}(E((x_1:A_1, \ldots x_{n-1}:A_{n-1}), A_n)) \\
+E(\Gamma,ft^n(X)) & = ft^n(X)|_{ft^{n+1}(X) = E(\Gamma)} \\
+E(\Gamma,\sigma(t_1', \ldots t_k')) & = \sigma_{|\Gamma|}(E(\Gamma), t_1'', \ldots t_k'')
+\end{align*}
+where $t_i' = x^i_1 : A^i_1, \ldots x^i_{n_i} : A^i_{n_i}.\ t_i$, $t_i'' = E((\Gamma, x^i_1 : A^i_1, \ldots x^i_{n_i} : A^i_{n_i}), t_i)$,
+and $\sigma_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m)$ is defined inductively as follows:
+\begin{align*}
+\sigma_0(\Gamma, x_1, \ldots x_k) & = \sigma(x_1, \ldots x_k) \\
+\sigma_{m+1}(\Gamma, x_1, \ldots x_k) & = \alpha(L(ft^m(\Gamma), \sigma_m(\Gamma, x_1, \ldots x_k)))
 \end{align*}
 
-If $t \in WTerm_{\mathcal{F}_0 \amalg \mathcal{F}}(V)_s$, then we define $\alpha^n(t) \in WTerm_{\mathcal{F}_0 \amalg \mathcal{F}}(L^n(V))_{L^n(s)}$ as follows:
-    $\alpha^0(t) = t$ and $\alpha^{n+1}(t) = \alpha^n(\alpha(L(t)))$.
-If $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$ and $n \in \mathbb{N}$,
-    then we define $\sigma_n : L^n(s_1) \times \ldots \times L^n(s_n) \to L^n(s)$ as follows: $\sigma_n(x_1, \ldots x_k) = \alpha^n(\sigma(x_1, \ldots x_k))$.
+We say that a preterm $t$ is a \emph{correct term} in a context $\Gamma$ and write $\Gamma \vdash t$ if $E(\Gamma,t)$ is defined.
+If we associate to every $X \in V_{(p,n)}$ a context $x_1, \ldots x_n$ in which it is defined,
+then we can also use the ordinary syntax for substitutions, that is write $X[y_1 \mapsto t_1, \ldots y_k \mapsto t_k]$,
+where $\{ y_1, \ldots y_k \}$ is a subset of $\{ x_1, \ldots x_n \}$.
 
-Now, we need to introduce new derived operation.
+If $A$ and $A'$ are terms of sort $(ty,n)$, $a$ and $a'$ are terms of sort $(tm,n)$, and $\Gamma$ is a context of length $n$, then we use the following abbreviations:
+\begin{align*}
+\Gamma \vdash ctx & \text{ means } E(\Gamma)\!\downarrow \\
+\Gamma \vdash a & \text{ means } E(\Gamma,a)\!\downarrow \\
+\Gamma \vdash A\ type & \text{ means } E(\Gamma,A)\!\downarrow \\
+\Gamma \vdash a : A & \text{ means } ty(E(\Gamma,a) = E(\Gamma,A) \\
+\Gamma \vdash A \deq A' & \text{ means } E(\Gamma,A) = E(\Gamma,A') \\
+\Gamma \vdash a \deq a' : A & \text{ means } E(\Gamma,a) = E(\Gamma,a') \land (\Gamma \vdash a : A)
+\end{align*}
+
+The following rule
+\medskip
+\begin{center}
+\AxiomC{$J_1$}
+\AxiomC{$\ldots$}
+\AxiomC{$J_n$}
+\TrinaryInfC{$\Gamma \vdash a : A$}
+\DisplayProof
+\end{center}
+denotes the conjunction of two sequents $E(\Gamma,a)\!\downarrow\ \sststile{}{V} J_1 \land \ldots \land J_n$ and $J_1 \land \ldots \land J_n \sststile{}{V} \Gamma \vdash a : A$,
+where $V$ is the set of variables that occur in $J_1$, \ldots $J_n$, $\Gamma$, $a$, and $A$.
+That is, when we write such rule we mean that this sequents are derivable in the theory.
+
+The following rule
+\medskip
+\begin{center}
+\AxiomC{$J_1$}
+\AxiomC{$\ldots$}
+\AxiomC{$J_n$}
+\TrinaryInfC{$\Gamma \vdash A\ type$}
+\DisplayProof
+\end{center}
+denotes sequents $J_1 \land \ldots \land J_n \ssststile{}{V} \Gamma \vdash A\ type$.
+
+Finally, other rules of the form
+\medskip
+\begin{center}
+\AxiomC{$J_1$}
+\AxiomC{$\ldots$}
+\AxiomC{$J_n$}
+\TrinaryInfC{$J$}
+\DisplayProof
+\end{center}
+denote sequent $J_1 \land \ldots \land J_n \sststile{}{V} J$.
+
+If our theory has substitutions, then we can also use weakening in named terms.
+The operations of weakening $wk^m_{p,n} : (ctx,n+m) \times (p,n) \to (p,n+m)$ are defined as follows:
+\[ wk^m_{p,n}(\Gamma,a) = subst_{p,n+m,n}(\Gamma, a, v_{n+m-1}, \ldots v_m) \]
+We can extend the definition of preterms to include the following clause.
+If $t$ is a preterm and $m \in \mathbb{N}$, then $t\!\uparrow^m$ is also a preterm.
+The definition of $E$ is extended as follows:
+\[ E(\Gamma, t\!\uparrow^m) = wk^m_{p,n}(E(\Gamma), E(\Gamma, t)) \]
+We can also omit the first argument in $subst_{p,n,k}$ since they can be recovered as follows:
+\[ E(\Gamma, subst_{p,n,k}(B, a_1, \ldots a_k)) = subst_{p,n,k}(E(\Gamma), E(\Gamma,B), E(\Gamma,a_1), \ldots E(\Gamma,a_k)) \]
+
+\begin{example}
+The weakening operations satisfy the following rules:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, y_1 : B_1, \ldots y_m : B_m \vdash ctx$}
+\AxiomC{$\Gamma \vdash A\ type$}
+\BinaryInfC{$\Gamma, y_1 : B_1, \ldots y_m : B_m \vdash A\!\uparrow^m type$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, B_1, \ldots B_m \vdash ctx$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma, B_1, \ldots B_m \vdash a\!\uparrow^m : A\!\uparrow^m$}
+\DisplayProof
+\end{center}
+\end{example}
+
+Often, we left the weakening operations implicit since they can be easily recovered.
+
+\subsection{Regular theories}
+
+To define regular theories, we need to introduce a new derived operation.
 For every $m,n,k \in \mathbb{N}$ and $p \in \{ ctx, ty, tm \}$, we define $subst^m_{p,n,k} : (ctx,n) \times (p,k+m) \times (tm,n)^k \to (p,n+m)$.
 First, let $subst^0_{ctx,n,k}(B, A, a_1, \ldots a_k) = B$ and $subst^{m+1}_{ctx,n,k} = subst^m_{ty,n,k}$.
 If $p \in \{ ty, tm \}$, then let $subst^m_{p,n,k}(B, a, a_1, \ldots a_k)$ be equal to
@@ -1566,82 +1394,64 @@ where $B' = subst^m_{ctx,n,k}(B, ctx_{k+m}(a), a_1, \ldots a_k)$.
 This operation satisfies the following rule:
 \medskip
 \begin{center}
-\AxiomC{$(A_1, \ldots A_k, C_1, \ldots C_m \vdash B)\!\downarrow$}
-\AxiomC{$\Gamma \vdash ctx$}
-\AxiomC{$\Gamma \vdash a_i : subst(A_i, a_1, \ldots a_{i-1})$}
-\TrinaryInfC{$(\Gamma, C_1', \ldots C_m' \vdash subst^m_{p,n,k}(\Gamma, B, a_1, \ldots a_k))\!\downarrow$}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash ctx$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash a_i : A_i[x_1 \mapsto a_1, \ldots x_{i-1} \mapsto a_{i-1}]$
+\noLine
+\UnaryInf$\fCenter x_1 : A_1, \ldots x_k : A_k, y_1 : C_1, \ldots y_m : C_m \vdash B$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \Gamma, y_1 : C_1', \ldots y_m : C_m' \vdash subst^m_{p,n,k}(B, a_1, \ldots a_k)$
 \DisplayProof
 \end{center}
-where $C_i' = subst^i_{ctx,n,k}(\Gamma, C_i, a_1, \ldots a_k)$.
+where $C_i' = subst^i_{ctx,n,k}(C_i, a_1, \ldots a_k)$.
 
 \begin{defn}
-A \emph{stable algebraic dependent type theory with substitution} is a stable algebraic dependent type theory under $(\mathbb{T}_1,\alpha_1)$.
-The category $(\mathbb{T}_1,\alpha_1)/\algtt^0_{st}$ will be denoted by $\algtt^1_{st}$.
-
-We will say that a stable algebraic dependent type theory with substitution is \emph{regular} if
-    for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,q)$
-    and every $R \in \mathcal{P}$, $R : (p_1,q_1) \times \ldots \times (p_m,q_m)$, the following sequents are derivable in it:
+A stable algebraic dependent type theory with substitution is \emph{regular} if
+for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,q)$
+and every $R \in \mathcal{P}$, $R : (p_1,q_1) \times \ldots \times (p_m,q_m)$, the following sequents are derivable in it:
 \medskip
 \begin{center}
-\AxiomC{$(A_1, \ldots A_k, \Delta\!\uparrow^k \vdash \sigma_k(b_1, \ldots b_m))\!\downarrow$}
+\AxiomC{$x_1 : A_1, \ldots x_k : A_k, \Delta\!\uparrow^k\ \vdash \sigma_k(b_1, \ldots b_m)$}
 \AxiomC{$\Gamma \vdash ctx$}
 \AxiomC{$J$}
-\TrinaryInfC{$\Gamma, \Delta\!\uparrow^n \vdash subst^q(\sigma_k(b_1, \ldots b_m), a_1, \ldots a_k) \deq \sigma_n(b_1', \ldots b_m')$}
+\TrinaryInfC{$\Gamma, \Delta\!\uparrow^n\ \vdash subst^q(\sigma_k(b_1, \ldots b_m), a_1, \ldots a_k) \deq \sigma_n(b_1', \ldots b_m')$}
 \DisplayProof
 \end{center}
 \medskip
 \begin{center}
-\AxiomC{$(A_1, \ldots A_k, \Delta_i \vdash b_i)\!\downarrow$}
+\AxiomC{$x_1 : A_1, \ldots x_k : A_k, \Delta_i \vdash b_i$}
 \AxiomC{$R_k(b_1, \ldots b_m)$}
 \AxiomC{$\Gamma \vdash ctx$}
 \AxiomC{$J$}
 \QuaternaryInfC{$R_n(b_1', \ldots b_m')$}
 \DisplayProof
 \end{center}
-where $J = (\Gamma \vdash a_i : subst(A_i, a_1, \ldots a_{i-1}))$ and $b_i' = subst^{q_i}(b_i, a_1, \ldots a_k)$.
+where $J = \{ \Gamma \vdash a_i : A_i[x_1 \mapsto a_1, \ldots x_{i-1} \mapsto a_{i-1}]\ |\ 1 \leq i \leq k \}$ and $b_i' = subst^{q_i}(b_i, a_1, \ldots a_k)$.
 We call these sequents \emph{the regularity axioms}.
 The full subcategory of $\algtt^1_{st}$ on regular theories will be denoted by $\algtt^1_{reg}$.
 \end{defn}
 
+\begin{remark}
 The construction of colimits in \rprop{th-cocomplete} implies that $\algtt^1_{reg}$ is closed under colimits in $\algtt^1_{st}$.
-
-Now, let us define stabilization and regularization functors $st^0 : \algtt^0_{con} \to \algtt^0_{st}$,
-    $st^1 : \algtt^1_{con} \to \algtt^1_{st}$ and $reg : \algtt^1_{st} \to \algtt^1_{reg}$.
-Let $st^0(\mathbb{T}) = (L^\infty(\mathbb{T}), \alpha)$, where $L^\infty(\mathbb{T}) = \coprod\limits_{n \in \mathbb{N}} L^n(\mathbb{T})$, $\alpha = i^1$, and $i^k$ is the following composition:
-    $L^k(L^\infty(\mathbb{T})) = \coprod\limits_{n \in \mathbb{N}} L^k(L^n(\mathbb{T})) \hookrightarrow L^\infty(\mathbb{T})$.
-It is easy to see that $st^0$ is a left adjoint to the forgetful functor $U^0 : \algtt^0_{st} \to \algtt^0_{con}$, $U^0(\mathbb{T},\alpha) = \mathbb{T}$.
-
-To define $st^1$, first, for every $(\mathbb{T}_a,\alpha) \in \algtt^0_{st}$, we define a left adjoint $st^0_{(\mathbb{T}_a,\alpha)} : \mathbb{T}_a/\algtt^0_{con} \to (\mathbb{T}_a,\alpha)/\algtt^0_{st}$
-    to the forgetful functor $U^0_{(\mathbb{T}_a,\alpha)} : (\mathbb{T}_a,\alpha)/\algtt^0_{st} \to \mathbb{T}_a/\algtt^0_{con}$,
-    $U^0_{(\mathbb{T}_a,\alpha)}(\mathbb{T},\beta) = \mathbb{T}$.
-Let $e : \mathbb{T}_a \to \mathbb{T}$ be an object of $\mathbb{T}_a/\algtt^0_{con}$.
-Let $E$ be the coequalizer of the following maps:
-\[ \xymatrix{ \coprod\limits_{n \in \mathbb{N}} L^{n+1}(T_a) \ar@<+1ex>[rr]^{\coprod\limits_{n \in \mathbb{N}} L^n(f)} \ar@<-1ex>[rr]_{\coprod\limits_{n \in \mathbb{N}} L^n(g)}
-    & & \coprod\limits_{n \in \mathbb{N}} L^n(L^\infty(\mathbb{T})) \ar@{^{(}->}[r]^-{i^n} & L^\infty(\mathbb{T}) } \]
-    where $f,g : L(\mathbb{T}_a) \to L^\infty(\mathbb{T})$ are defined as follows: $f$ is the composite $L(\mathbb{T}_a) \xrightarrow{\alpha} \mathbb{T}_a \xrightarrow{e} \mathbb{T} \hookrightarrow L^\infty(\mathbb{T})$,
-    and $g$ is the composite $L(\mathbb{T}_a) \xrightarrow{L(e)} L(\mathbb{T}) \hookrightarrow L^\infty(\mathbb{T})$.
-Since $L$ preserves colimits, $L(E)$ is a coequalizer of $i^{n+1} \circ \coprod_{n \in \mathbb{N}} L^{n+1}(f)$ and $i^{n+1} \circ \coprod_{n \in \mathbb{N}} L^{n+1}(g)$.
-By the universal property of coequalizers we have a map $\beta : L(E) \ to E$.
-We define $st^0_{(\mathbb{T}_a,\alpha)}(e)$ as $(E,\beta)$, and morphism $(\mathbb{T}_a,\alpha) \to (E,\beta)$ as the composite $\mathbb{T}_a \xrightarrow{e} \mathbb{T} \hookrightarrow L^\infty(\mathbb{T}) \to E$.
-This map is a morphism of algebras for $L$ since $L^\infty(\mathbb{T}) \to E$ coequalizes $f$ and $g$.
-Moreover, if $(D,\delta)$ is an object of $\algtt^0_{st}$, then a map $L^\infty(\mathbb{T}) \to D$ it is a morphism of algebras if and only if it factors through $E$.
-It follows that $st^0_{(\mathbb{T}_a,\alpha)}(e)$ is a left adjoint to $U^0_{(\mathbb{T}_a,\alpha)}(\mathbb{T},\beta) = \mathbb{T}$.
-Now, we can define $st^1$ as $st^0_{(\mathbb{T}_1,\alpha_1)}$.
+\end{remark}
 
 Let $(\mathbb{T},\alpha) \in \algtt^0_{st}$ be a stable theory, and let $\mathcal{A}$ be a set of sequents.
-Then we will say that $\mathcal{A}$ is stable in $\mathbb{T}$ if $\alpha(L(\mathcal{A}))$ is derivable in $\mathbb{T} \amalg \mathcal{A}$.
+Then we will say that $\mathcal{A}$ is stable in $\mathbb{T}$ if $\alpha(L(\mathcal{A}))$ is derivable in $\mathbb{T} \cup \mathcal{A}$.
 For every set $\mathcal{A}$, there is the minimal stable set $st(\mathcal{A})$ which contains $\mathcal{A}$.
-We call this set the \emph{stabilization} of $\mathcal{A}$, and it is defined as $L^\infty(\mathcal{A}) = \coprod_{n \in \mathbb{N}} \alpha^n(\mathcal{A})$,
+We call this set the \emph{stabilization} of $\mathcal{A}$, and it is defined as $\bigcup_{n \in \mathbb{N}} \alpha^n(\mathcal{A})$,
     where $\alpha^0(\mathcal{A}) = \mathcal{A}$, and $\alpha^{n+1}(\mathcal{A}) = \alpha^n(\alpha(L(\mathcal{A})))$.
-If $\mathcal{A}$ is a stable set, then $\mathbb{T} \amalg \mathcal{A}$ is a stable theory.
+If $\mathcal{A}$ is a stable set, then $\mathbb{T} \cup \mathcal{A}$ is a stable theory.
 Note that the regularity axioms are stable in any theory.
-Thus we can define regularization functor $reg : \algtt^1_{st} \to \algtt^1_{reg}$ as follows: $reg(\mathbb{T}) = \mathbb{T} \amalg \mathcal{R}$,
+Thus we can define regularization functor $reg : \algtt^1_{st} \to \algtt^1_{reg}$ as follows: $reg(\mathbb{T}) = \mathbb{T} \cup \mathcal{R}$,
     where $\mathcal{R}$ is the set of regularity axioms.
 It is easy to see that $reg$ is a left adjoint to the inclusion $\algtt^1_{reg} \hookrightarrow \algtt^1_{st}$.
 
-Finally, let us give a few examples of algebraic dependent type theories with substitution.
+\subsection{Examples}
+
+Now, let us describe a few examples of algebraic dependent type theories with substitution.
 We implicitly assume that all of these theories contain function symbols and axioms of $\mathbb{T}_1$.
-If we take their stabilization, regularization and coproduct, then we get a theory corresponding to a usual variation of a type theory.
+If we take their stabilization and regularization, then we get theories corresponding to usual constructions of the type theory.
 
 \begin{example}
 The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and $unit : (tm,0)$ and the following axioms:
@@ -1666,15 +1476,18 @@ The theory of unit types without eta rules has function symbols $\top : (ty,0)$,
 The axioms for $\top$ and $unit$ are the same, and the axioms for $\top\text{-}elim$ are
 \medskip
 \begin{center}
-\AxiomC{$\top \vdash D\ type$}
-\AxiomC{$\vdash d : D[unit]$}
+\AxiomC{$x : \top \vdash D\ type$}
+\AxiomC{$\vdash d : D[x \mapsto unit]$}
 \AxiomC{$\vdash t : \top$}
-\TrinaryInfC{$\vdash \top\text{-}elim(D, d, t) : D[t]$}
+\TrinaryInfC{$\vdash \top\text{-}elim(x. D, d, t) : D[x \mapsto t]$}
 \DisplayProof
-\quad
-\AxiomC{$\top \vdash D\ type$}
-\AxiomC{$\vdash d : D[unit]$}
-\BinaryInfC{$\vdash \top\text{-}elim(D, d, unit) \deq d$}
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$x : \top \vdash D\ type$}
+\AxiomC{$\vdash d : D[x \mapsto unit]$}
+\BinaryInfC{$\vdash \top\text{-}elim(x. D, d, unit) \deq d$}
 \DisplayProof
 \end{center}
 \end{example}
@@ -1682,58 +1495,58 @@ The axioms for $\top$ and $unit$ are the same, and the axioms for $\top\text{-}e
 \begin{example}[sigma-eta]
 The theory of $\Sigma$ types with eta rules has function symbols
 \begin{align*}
-\Sigma & : (ty,0) \times (ty,1) \to (ty,0) \\
-pair & : (ty,0) \times (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \\
-proj_1 & : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0) \\
-proj_2 & : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0)
+\Sigma & : (ty,1) \to (ty,0) \\
+pair & : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \\
+proj_1 & : (ty,1) \times (tm,0) \to (tm,0) \\
+proj_2 & : (ty,1) \times (tm,0) \to (tm,0)
 \end{align*}
 and the following axioms:
 \medskip
 \begin{center}
-\AxiomC{$A \vdash B\ type$}
-\UnaryInfC{$\vdash \Sigma(A, B)\ type$}
+\AxiomC{$x : A \vdash B\ type$}
+\UnaryInfC{$\vdash \Sigma(x : A.\ B)\ type$}
 \DisplayProof
 \quad
-\AxiomC{$A \vdash B\ type$}
+\AxiomC{$x : A \vdash B\ type$}
 \AxiomC{$\vdash a : A$}
-\AxiomC{$\vdash b : B[a]$}
-\TrinaryInfC{$\vdash pair(A, B, a, b) : \Sigma(A, B)$}
+\AxiomC{$\vdash b : B[x \mapsto a]$}
+\TrinaryInfC{$\vdash pair(x : A.\ B, a, b) : \Sigma(x : A.\ B)$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\vdash proj_1(A, B, p) : A$}
+\AxiomC{$\vdash p : \Sigma(x : A.\ B)$}
+\UnaryInfC{$\vdash proj_1(x : A.\ B, p) : A$}
 \DisplayProof
 \quad
-\AxiomC{$\vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\vdash proj_2(A, B, p) : B[proj_1(A, B, p)]$}
+\AxiomC{$\vdash p : \Sigma(x : A.\ B)$}
+\UnaryInfC{$\vdash proj_2(x : A.\ B, p) : B[x \mapsto proj_1(x : A.\ B, p)]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$A \vdash B\ type$}
+\AxiomC{$x : A \vdash B\ type$}
 \AxiomC{$\vdash a : A$}
-\AxiomC{$\vdash b : B[a]$}
-\TrinaryInfC{$\vdash proj_1(A, B, pair(A, B, a, b)) \deq a$}
+\AxiomC{$\vdash b : B[x \mapsto a]$}
+\TrinaryInfC{$\vdash proj_1(x : A.\ B, pair(x : A.\ B, a, b)) \deq a$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$A \vdash B\ type$}
+\AxiomC{$x : A \vdash B\ type$}
 \AxiomC{$\vdash a : A$}
-\AxiomC{$\vdash b : B[a]$}
-\TrinaryInfC{$\vdash proj_2(A, B, pair(A, B, a, b)) \deq b$}
+\AxiomC{$\vdash b : B[x \mapsto a]$}
+\TrinaryInfC{$\vdash proj_2(x : A.\ B, pair(x : A.\ B, a, b)) \deq b$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\vdash p : \Sigma(A, B)$}
-\UnaryInfC{$\vdash pair(A, B, proj_1(A, B, p), proj_2(A, B, p)) \deq p$}
+\AxiomC{$\vdash p : \Sigma(x : A.\ B)$}
+\UnaryInfC{$\vdash pair(x : A.\ B, proj_1(x : A.\ B, p), proj_2(x : A.\ B, p)) \deq p$}
 \DisplayProof
 \end{center}
 \end{example}
@@ -1741,27 +1554,36 @@ and the following axioms:
 \begin{example}[sigma-no-eta]
 The theory of $\Sigma$ types without eta rules has the following function symbols:
 \begin{align*}
-\Sigma & : (ty,0) \times (ty,1) \to (ty,0) \\
-pair & : (ty,0) \times (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \\
-\Sigma\text{-}elim & : (ty,0) \times (ty,1) \times (ty,1) \times (tm,2) \times (tm,0) \to (tm,0)
+\Sigma & : (ty,1) \to (ty,0) \\
+pair & : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \\
+\Sigma\text{-}elim & : (ty,1) \times (ty,1) \times (tm,2) \times (tm,0) \to (tm,0)
 \end{align*}
 The axioms for $\Sigma$ and $pair$ are the same, and the axioms for $\Sigma\text{-}elim$ are
 \medskip
 \begin{center}
-\AxiomC{$\Sigma(A, B) \vdash D\ type$}
-\AxiomC{$A, B \vdash d : D[pair(A, B, v_1, v_0)]$}
-\AxiomC{$\vdash p : \Sigma(A, B)$}
-\TrinaryInfC{$\vdash \Sigma\text{-}elim(A, B, D, d, p) : D[p]$}
+\def\extraVskip{1pt}
+\Axiom$\fCenter z : \Sigma(x : A.\ B) \vdash D\ type$
+\noLine
+\UnaryInf$\fCenter x : A, y : B \vdash d : D[z \mapsto pair(x : A.\ B, x, y)]$
+\noLine
+\UnaryInf$\fCenter \vdash p : \Sigma(x : A.\ B)$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \vdash \Sigma\text{-}elim(x : A.\ B, z. D, x y. d, p) : D[z \mapsto p]$
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\Sigma(A, B) \vdash D\ type$}
-\AxiomC{$A, B \vdash d : D[pair(A, B, v_1, v_0)]$}
-\AxiomC{$\vdash a : A$}
-\AxiomC{$\vdash b : B[a]$}
-\QuaternaryInfC{$\vdash \Sigma\text{-}elim(A, B, D, d, pair(A, B, a, b)) \deq d[a, b]$}
+\def\extraVskip{1pt}
+\Axiom$\fCenter z : \Sigma(x : A.\ B) \vdash D\ type$
+\noLine
+\UnaryInf$\fCenter x : A, y : B \vdash d : D[z \mapsto pair(x : A.\ B, x, y)]$
+\noLine
+\UnaryInf$\fCenter \vdash a : A$
+\noLine
+\UnaryInf$\fCenter \vdash b : B[x \mapsto a]$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \vdash \Sigma\text{-}elim(x : A. B, z. D, x y. d, pair(x : A.\ B, a, b)) \deq d[x \mapsto a, y \mapsto b]$
 \DisplayProof
 \end{center}
 \end{example}
@@ -1769,36 +1591,39 @@ The axioms for $\Sigma$ and $pair$ are the same, and the axioms for $\Sigma\text
 \begin{example}[pi-eta]
 The theory of $\Pi$ types with eta rules has function symbols
 \begin{align*}
-\Pi & : (ty,0) \times (ty,1) \to (ty,0) \\
-\lambda & : (ty,0) \times (tm,1) \to (tm,0) \\
+\Pi & : (ty,1) \to (ty,0) \\
+\lambda & : (tm,1) \to (tm,0) \\
 app & : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)
 \end{align*}
 and the following axioms:
 \medskip
 \begin{center}
-\AxiomC{$A \vdash B\ type$}
-\UnaryInfC{$\vdash \Pi(A, B)\ type$}
+\AxiomC{$x : A \vdash B\ type$}
+\UnaryInfC{$\vdash \Pi(x : A.\ B)\ type$}
 \DisplayProof
 \quad
-\AxiomC{$A \vdash b : B$}
-\UnaryInfC{$\vdash \lambda(A, b) : \Pi(A, B)$}
+\AxiomC{$x : A \vdash b : B$}
+\UnaryInfC{$\vdash \lambda(x : A.\ b) : \Pi(x : A.\ B)$}
 \DisplayProof
-\quad
-\AxiomC{$\vdash f : \Pi(A, B)$}
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\vdash f : \Pi(x : A.\ B)$}
 \AxiomC{$\vdash a : A$}
-\BinaryInfC{$\vdash app(B, f, a) : B[a]$}
+\BinaryInfC{$\vdash app(x : A.\ B, f, a) : B[x \mapsto a]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
 \AxiomC{$\vdash a : A$}
-\AxiomC{$A \vdash b : B$}
-\BinaryInfC{$\vdash app(B, \lambda(A, b), a) \deq b[a]$}
+\AxiomC{$x : A \vdash b : B$}
+\BinaryInfC{$\vdash app(x : A.\ B, \lambda(x : A.\ b), a) \deq b[x \mapsto a]$}
 \DisplayProof
 \quad
-\AxiomC{$\vdash b : \Pi(A, B)$}
-\UnaryInfC{$\vdash \lambda(A, app(B, b\!\uparrow, v_0)) \deq b$}
+\AxiomC{$\vdash b : \Pi(x : A.\ B)$}
+\UnaryInfC{$\vdash \lambda(x : A.\ app(x : A.\ B, b, x)) \deq b$}
 \DisplayProof
 \end{center}
 \end{example}
@@ -1825,22 +1650,24 @@ and the following inference rules:
 
 \medskip
 \begin{center}
-\AxiomC{$A, A\!\uparrow, Id(A\!\uparrow^2, v_1, v_0) \vdash D\ type$}
-\AxiomC{$A \vdash d : D'$}
+\AxiomC{$x : A, y : A, z : Id(A, x, y) \vdash D\ type$}
+\AxiomC{$x : A \vdash d : D'$}
 \AxiomC{$\vdash p : Id(A, a, a')$}
-\TrinaryInfC{$\vdash J(A, D, d, a, a', p) : D[a, a', p]$}
+\TrinaryInfC{$\vdash J(A, x y z. D, x. d, a, a', p) : D[x \mapsto a, y \mapsto a', z \mapsto p]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$A, A\!\uparrow, Id(A\!\uparrow^2, v_1, v_0) \vdash D\ type$}
-\AxiomC{$A \vdash d : D'$}
+\AxiomC{$x : A, y : A, z : Id(A, x, y) \vdash D\ type$}
+\AxiomC{$x : A \vdash d : D'$}
 \AxiomC{$\vdash a : A$}
-\TrinaryInfC{$\vdash J(A, D, d, a, a, refl(A, a)) \deq d[a]$}
+\TrinaryInfC{$\vdash J(A, x y z. D, x. d, a, a, refl(A, a)) \deq d[x \mapsto a]$}
 \DisplayProof
 \end{center}
-where $D'$ is $D[v_0, v_0, refl(A\!\uparrow, v_0)]$.
+\medskip
+
+where $D' = D[y \mapsto x, z \mapsto refl(A, x)]$.
 \end{example}
 
 \begin{example}[Id-simpl]
@@ -1864,80 +1691,99 @@ Then the axioms should look like this:
 
 \medskip
 \begin{center}
-\AxiomC{$A, A\!\uparrow, Id(v_1, v_0) \vdash D\ type$}
-\AxiomC{$A \vdash d : D[v_0, v_0, refl(v_0)]$}
+\AxiomC{$x : A, y : A, z : Id(x, y) \vdash D\ type$}
+\AxiomC{$x : A \vdash d : D'$}
 \AxiomC{$\vdash p : Id(a, a')$}
-\TrinaryInfC{$\vdash J(D, d, a, a', p) : D[a, a', p]$}
+\TrinaryInfC{$\vdash J(x y z. D, x. d, a, a', p) : D[x \mapsto a, y \mapsto a', z \mapsto p]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$A, A\!\uparrow, Id(v_1, v_0) \vdash D\ type$}
-\AxiomC{$A \vdash d : D[v_0, v_0, refl(v_0)]$}
-\BinaryInfC{$\vdash J(D, d, a, a, refl(a)) \deq d[a]$}
+\AxiomC{$x : A, y : A, z : Id(x, y) \vdash D\ type$}
+\AxiomC{$x : A \vdash d : D'$}
+\BinaryInfC{$\vdash J(x y z. D, x. d, a, a, refl(a)) \deq d[x \mapsto a]$}
 \DisplayProof
 \end{center}
-where $A$ is $ty(a)$.
+\medskip
+
+where $A = ty(a)$ and $D' = D[y \mapsto x, z \mapsto refl(x)]$.
 \end{example}
 
-Now, let us discuss the final example.
-Let $\mathbb{T}$ be a theory in $\algtt^1_{con}$, and let $\mathcal{F}'$ be a subset of the set $\mathcal{F}$ of function symbols of $\mathbb{T}$.
-We will define a theory that contains a universe that is closed under functions in $\mathcal{F}'$.
-Theory $U(\mathbb{T})$ has the same function symbols, predicate symbols and axioms as $\mathbb{T}$, and also the following symbols:
+\begin{example}
+Let $\mathbb{T}$ be a theory in $\algtt^1$, and let $\mathcal{F}'$ be a subset of the set $\mathcal{F}$ of function symbols of $\mathbb{T}$.
+We want to define a theory that contains a universe that is closed under functions in $\mathcal{F}'$.
+We cannot do this in general, so let us assume (for the sake of example) that $\mathbb{T}$ is the coproduct of theories of $\Sigma$, $\Pi$ and $Id$ types.
+Then theory $U(\mathbb{T})$ has the same function symbols, predicate symbols and axioms as $\mathbb{T}$, and also the following symbols:
 \begin{align*}
-Type_n & : (ty,n) \\
-El_n & : (tm,n) \to (ty,n)
+U & : (ty,n) \\
+El & : (tm,n) \to (ty,n) \\
+\Sigma_U & : (tm,n) \times (tm,n+1) \to (tm,n) \\
+\Pi_U & : (tm,n) \times (tm,n+1) \to (tm,n) \\
+Id_U & : (tm,n) \times (tm,n) \times (tm,n) \to (tm,n)
 \end{align*}
-Moreover, for every $\sigma \in \mathcal{F}'$, $\sigma : (ctx,n) \times s_1 \times \ldots \times s_k \to (p,n)$,
-    we add symbol $\sigma_U : (ctx,n) \times u(s_1) \times \ldots \times u(s_k) \to u(p,n)$ to $U(\mathbb{T})$,
-    where $u(tm,n) = (tm,n)$ and $u(ty,n) = (tm,n)$.
 We also add the following axioms:
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash ctx$}
-\UnaryInfC{$\Gamma \vdash Type_n$}
+\UnaryInfC{$\Gamma \vdash U\ type$}
 \DisplayProof
 \quad
-\AxiomC{$\Gamma \vdash A : Type$}
-\UnaryInfC{$\Gamma \vdash El_n(A)\ type$}
-\DisplayProof
-\end{center}
-Also, we add the following axiom for every $\sigma \in \mathcal{F}'$, $\sigma : s_1 \times \ldots \times s_k \to (ty,n)$:
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash \sigma_U(x_1, \ldots x_k)\!\downarrow$}
-\UnaryInfC{$\Gamma \vdash El_n(\sigma_U(x_1, \ldots x_k)) \deq \sigma(e(x_1), \ldots e(x_k))$}
-\DisplayProof
-\end{center}
-where $e(x_i) = El_{n+n_i}(x_i)$ if $s_i = (ty,n_i)$, and $e(x_i) = x_i$ otherwise.
-Finally, we should add axioms which tell when functions $\sigma_U$ are defined.
-We cannot do this in general, so let us assume (for the sake of example) that $\mathbb{T}$ is the coproduct of theories of $\Sigma$, $\Pi$ and $Id$ types.
-Then the rest of axioms look like this:
-\medskip
-\begin{center}
-\AxiomC{$\vdash A : Type$}
-\AxiomC{$El_0(A) \vdash B : Type$}
-\BinaryInfC{$\vdash \Sigma_U(A, B) : Type$}
-\DisplayProof
-\quad
-\AxiomC{$\vdash A : Type$}
-\AxiomC{$El_0(A) \vdash B : Type$}
-\BinaryInfC{$\vdash \Pi_U(A, B) : Type$}
+\AxiomC{$\Gamma \vdash A : U$}
+\UnaryInfC{$\Gamma \vdash El(A)\ type$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\vdash A : Type$}
-\AxiomC{$\vdash a : El_0(A)$}
-\AxiomC{$\vdash a' : El_0(A)$}
-\TrinaryInfC{$\vdash Id_U(A, a, a') : Type$}
+\AxiomC{$\Gamma \vdash A : U$}
+\AxiomC{$\Gamma, x : El(A) \vdash B : U$}
+\BinaryInfC{$\Gamma \vdash \Sigma_U(A, x.B) : U$}
 \DisplayProof
 \end{center}
 
-Note that this construction of a theory with a universe does not work well in general.
-For instance, we should use $Id$ types of \rexample{Id} instead of $Id$ types from \rexample{Id-simpl}.
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A : U$}
+\AxiomC{$\Gamma, x : El(A) \vdash B : U$}
+\BinaryInfC{$\Gamma \vdash \Pi_U(A, x.B) : U$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A : U$}
+\AxiomC{$\Gamma \vdash a : El(A)$}
+\AxiomC{$\Gamma \vdash a' : El(A)$}
+\TrinaryInfC{$\Gamma \vdash Id_U(A, a, a') : U$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A : U$}
+\AxiomC{$\Gamma, x : A \vdash B : U$}
+\BinaryInfC{$\Gamma \vdash El(\Sigma_U(A, x.B)) \deq \Sigma(x : El(A).\ El(B))$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A : U$}
+\AxiomC{$\Gamma, x : A \vdash B : U$}
+\BinaryInfC{$\Gamma \vdash El(\Pi_U(A, x.B)) \deq \Pi(x : El(A).\ El(B))$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash A : U$}
+\AxiomC{$\Gamma \vdash a : El(A)$}
+\AxiomC{$\Gamma \vdash a' : El(A)$}
+\TrinaryInfC{$\Gamma \vdash El(Id_U(A, a, a')) \deq Id(El(A), a, a')$}
+\DisplayProof
+\end{center}
+\end{example}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
