@@ -310,6 +310,7 @@ The category of monadic presentations of partial Horn theories with $\mathcal{S}
 \end{defn}
 
 \subsection{The category of partial Horn theories}
+\label{sec:PHT-rules}
 
 Let $\mathcal{S}$ be a set of sorts, $T : \Set^\mathcal{S} \to \Set^\mathcal{S}$ a monad with a free variables structure,
     and $\mathcal{P}$ a set of predicate symbols together with a function that to each $R \in \mathcal{P}$
@@ -466,7 +467,7 @@ To fix this we introduce an equivalence relation on sets $PT(V)_s$ and $Form_\ma
 Let $\mathbb{T}$ be a partial Horn theory.
 For every $t, t' \in PT(V)_s$, $t \sim t'$ if and only if $FV(t) = FV(t')$ and $\sststile{}{V} t \cong t'$ is a theorem of $\mathbb{T}$.
 For every $\varphi, \psi \in Form_\mathcal{P}(V)$, $\varphi \sim \psi$ if and only if $FV(\varphi) = FV(\psi)$ and $\varphi \ssststile{}{V} \psi$ is a theorem of $\mathbb{T}$.
-Then let $P(V)_s = PT(V)_s/\sim$ and $F(V) = Form_\mathcal{P}(V)/\sim$.
+Then let $P(V)_s = PT(V)_s/\!\!\sim$ and $F(V) = Form_\mathcal{P}(V)/\!\!\sim$.
 For every $x \in V_s$, $\eta_V(x)$ is the equivalence class of $x|_\top$.
 Substitution functions respect equivalence relations, and it is easy to see that they define a structure of a monad and of a left module over it on $T$ and $F$.
 For every $t,t' \in T(V)_s$, $e(s,t,t')$ is the equivalence class of $t = t'$.
@@ -833,7 +834,7 @@ In this section we define algebraic dependent type theories and theories with su
 
 \subsection{Algebraic dependent type theories}
 
-Let $\mathcal{C} = \{ ctx, tm \} \times \mathbb{N}$ be a set of sorts.
+Let $\mathcal{C} = \{ ctx, tm \} \times \mathbb{N}$ be the set of sorts.
 We will write $(ty,n)$ for $(ctx,n+1)$.
 Sort $(tm,n)$ represents terms in contexts of length $n$, sort $(ctx,n)$ represents contexts of length $n$, and sort $(ty,n)$ represents types in contexts of length $n$.
 
@@ -1159,7 +1160,6 @@ Then it follows from \rprop{func-mod} and \rprop{T1-CCat} that models of $\mathb
 
 In this section we consider algebraic dependent type theories with additional structure which we call \emph{stable}.
 We also define category $\algtt^1_{st}$ of stable algebraic dependent type theories with substitutions and its full subcategory $\algtt_{reg}$ of regular theories.
-Finally, we give a few examples of such theories.
 
 \subsection{Stable theories}
 
@@ -1269,6 +1269,262 @@ Moreover, if $(D,\delta)$ is an object of $(\mathbb{T}_a,\alpha)/\St_{\mathcal{S
 then a map $L^\infty(\mathbb{T}) \to D$ is a morphism of algebras if and only if it factors through $E$.
 It follows that $st_{(\mathbb{T}_a,\alpha)}$ is left adjoint to $U_{(\mathbb{T}_a,\alpha)}$.
 In particular, there are stabilization functors $st^0 : \algtt^0 \to \algtt^0_{st}$ and $st^1 : \algtt^1 \to \algtt^1_{st}$.
+
+\subsection{Regular theories}
+
+Regular theories are stable theories in which substitution commutes with all function symbols.
+To define such theories, we need to define weakening first.
+For every $p \in \{ty,tm\}$, the operations of weakening $wk^{m,l}_{p,n} : (ctx,n+m) \times (p,n+l) \to (p,n+m+l)$ are defined as follows:
+\begin{align*}
+wk^{m,0}_{p,n}(\Gamma,a) & = subst_{p,n+m,n}(\Gamma, a, v_{n+m-1}, \ldots v_m) \\
+wk^{m,l+1}_{p,n}(\Gamma,a) & = subst_{p,n+m+l,n+l}(\Gamma', a, v_{n+m+l+1}, \ldots v_{m+l+1}, v_l, \ldots v_0),
+\end{align*}
+where $\Gamma' = wk^{m,l}_{p,ty}(\Gamma,ctx(a))$.
+We also define $wk^{m,l}_{ctx,n} : (ctx,n+m) \times (ctx,n+l) \to (ctx,n+m+l)$ as follows:
+\begin{align*}
+wk^{m,0}_{ctx,n}(\Gamma,a) & = \Gamma \\
+wk^{m,l+1}_{ctx,n}(\Gamma,a) & = wk^{m,l}_{ty,n}(\Gamma,a)
+\end{align*}
+
+To define regular theories, we need to introduce a new derived operation.
+For every $m,n,k \in \mathbb{N}$ and $p \in \{ ctx, ty, tm \}$, we define $subst^m_{p,n,k} : (ctx,n) \times (p,k+m) \times (tm,n)^k \to (p,n+m)$.
+First, let $subst^0_{ctx,n,k}(B, A, a_1, \ldots a_k) = B$ and $subst^{m+1}_{ctx,n,k} = subst^m_{ty,n,k}$.
+If $p \in \{ ty, tm \}$, then let $subst^m_{p,n,k}(B, a, a_1, \ldots a_k)$ be equal to
+\[ subst_{p,n+m,k+m}(B', a, wk^m_{tm,n}(a_1), \ldots wk^m_{tm,n}(a_k), v_{m-1}, \ldots v_0) \]
+where $B' = subst^m_{ctx,n,k}(B, ctx_{k+m}(a), a_1, \ldots a_k)$.
+
+\begin{defn}
+A stable algebraic dependent type theory with substitution is \emph{regular} if
+for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,q)$
+and every $R \in \mathcal{P}$, $R : (p_1,q_1) \times \ldots \times (p_m,q_m)$, the following sequents are derivable in it:
+\medskip
+\begin{center}
+\AxiomC{$x_1 : A_1, \ldots x_k : A_k, \Delta\!\uparrow^k\ \vdash \sigma_k(b_1, \ldots b_m)$}
+\AxiomC{$\Gamma \vdash ctx$}
+\AxiomC{$J$}
+\TrinaryInfC{$\Gamma, \Delta\!\uparrow^n\ \vdash subst^q(\sigma_k(b_1, \ldots b_m), a_1, \ldots a_k) \deq \sigma_n(b_1', \ldots b_m')$}
+\DisplayProof
+\end{center}
+\medskip
+\begin{center}
+\AxiomC{$x_1 : A_1, \ldots x_k : A_k, \Delta_i \vdash b_i$}
+\AxiomC{$R_k(b_1, \ldots b_m)$}
+\AxiomC{$\Gamma \vdash ctx$}
+\AxiomC{$J$}
+\QuaternaryInfC{$R_n(b_1', \ldots b_m')$}
+\DisplayProof
+\end{center}
+where $J = \{ \Gamma \vdash a_i : A_i[x_1 \mapsto a_1, \ldots x_{i-1} \mapsto a_{i-1}]\ |\ 1 \leq i \leq k \}$ and $b_i' = subst^{q_i}(b_i, a_1, \ldots a_k)$.
+We call these sequents \emph{the regularity axioms}.
+The full subcategory of $\algtt^1_{st}$ on regular theories will be denoted by $\algtt^1_{reg}$.
+\end{defn}
+
+\begin{remark}
+The construction of colimits in \rprop{th-cocomplete} implies that $\algtt^1_{reg}$ is closed under colimits in $\algtt^1_{st}$.
+\end{remark}
+
+Let $(\mathbb{T},\alpha) \in \algtt^0_{st}$ be a stable theory, and let $\mathcal{A}$ be a set of sequents.
+Then we will say that $\mathcal{A}$ is stable in $\mathbb{T}$ if $\alpha(L(\mathcal{A}))$ is derivable in $\mathbb{T} \cup \mathcal{A}$.
+For every set $\mathcal{A}$, there is the minimal stable set $st(\mathcal{A})$ which contains $\mathcal{A}$.
+We call this set the \emph{stabilization} of $\mathcal{A}$, and it is defined as $\bigcup_{n \in \mathbb{N}} \alpha^n(\mathcal{A})$,
+    where $\alpha^0(\mathcal{A}) = \mathcal{A}$, and $\alpha^{n+1}(\mathcal{A}) = \alpha^n(\alpha(L(\mathcal{A})))$.
+If $\mathcal{A}$ is a stable set, then $\mathbb{T} \cup \mathcal{A}$ is a stable theory.
+Note that the regularity axioms are stable in any theory.
+Thus we can define regularization functor $reg : \algtt^1_{st} \to \algtt^1_{reg}$ as follows: $reg(\mathbb{T}) = \mathbb{T} \cup \mathcal{R}$,
+    where $\mathcal{R}$ is the set of regularity axioms.
+It is easy to see that $reg$ is a left adjoint to the inclusion $\algtt^1_{reg} \hookrightarrow \algtt^1_{st}$.
+
+\section{Contextual representation of theories}
+
+The definition of algebraic dependent type theories that we used before has a disadvantage that terms contain a lot of redundant information.
+For example, when we describe a term we need to repeat the context in which it is defined several times.
+Also, we need explicitly specify when we use weakening.
+In this subsection, we describe a representation of stable theories that is often equivalent to our previous definition and that does not have these disadvantages.
+We call such theories \emph{contextual}.
+
+First, let us describe the syntax of contextual theories.
+We will use the following set of sorts: $\mathcal{T} = \{ty,tm\} \times \mathbb{N}$.
+A contextual theory $\mathbb{T} = (\mathcal{F}_0,\mathcal{P}_0,\mathcal{A})$ consists of sets $\mathcal{F}_0$ and $\mathcal{P}_0$ of function and predicate symbols respectively and a set of axioms $\mathcal{A}$.
+Each function symbol $\sigma \in \mathcal{F}_0$ is equipped with a signature:
+\[ \sigma : s_1 \times \ldots \times s_k \to p, \]
+where $s_1, \ldots s_k \in \mathcal{T}$ and $p \in \{ty,tm\}$.
+Similarly, each predicate symbol $R \in \mathcal{P}_0$ is equipped with a signature:
+\[ R : s_1 \times \ldots \times s_k, \]
+where $s_1, \ldots s_k \in \mathcal{T}$.
+
+For every $\mathcal{T}$-set $V$ of variables, we define the $\mathcal{T}$-set $CTerm(V)$ of contextual terms inductively:
+\begin{enumerate}
+\item $v_i \in CTerm(V)_{(tm,n)}$ for every $i < n$.
+\item $x \in CTerm(V)_{(p,n)}$ for every $x \in V_{(p,m)}$, $m \leq n$.
+\item $\sigma((A^1_1, \ldots A^1_{n_1}).\,t_1, \ldots (A^k_1, \ldots A^k_{n_k}).\,t_k) \in CTerm(V)_{(p,n)}$
+for every $\sigma \in \mathcal{F}_0$, $\sigma : (p_1,n_1) \times \ldots (p_k,n_k) \to p$, every $t_i \in CTerm(V)_{(p_i,n+n_i)}$, and every $A^i_j \in CTerm(V)_{(ty,n+j)}$.
+\end{enumerate}
+
+A \emph{context} with free variables in $V$ is a finite sequence $A_1, \ldots A_n$, where $A_i \in CTerm(V)_{(ty,i-1)}$.
+The set of contexts will be denoted by $Ctx(V)$.
+The length of a context $\Gamma$ will be denoted by $|\Gamma|$.
+Let us denote by $CForm(V)_n$ the set of expressions of the following forms:
+\begin{enumerate}
+\item $a \deq a'$, where $\Gamma \in Ctx(V)$ and $a,a' \in CTerm(V)_{(p,n)}$.
+\item $R((A^1_1, \ldots A^1_{n_1}).\,t_1, \ldots (A^k_1, \ldots A^k_{n_k}).\,t_k)$, where $R \in \mathcal{P}_0$, $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$, $t_i \in CTerm(V)_{(p,n+n_i)}$, and $A^i_j \in CTerm(V)_{(ty,n+j)}$.
+\end{enumerate}
+
+An \emph{atomic contextual formula} with free variables in $V$ is an expression of the form $\Gamma \vdash \varphi$, where $\Gamma \in Ctx(V)$ and $\varphi \in CForm(V)_{|\Gamma|}$.
+We write $\Gamma \vdash a\!\downarrow$ for $\Gamma \vdash a = a$.
+We write $\Gamma \vdash ctx$ for $\top$ if $\Gamma$ is empty, and if $\Gamma = A_1, \ldots A_n$, $n > 0$, then $\Gamma \vdash ctx$ means $A_1, \ldots A_{n-1} \vdash A_n\!\downarrow$.
+
+A \emph{contextual formula} is a finite conjunction of atomic contextual formulas.
+A \emph{sequent} is an expression of the form $\varphi \sststile{}{V} \psi$, where $\varphi$ and $\psi$ are contextual formulas with free variables in $V$ such that every variable in $V$ appears in $\varphi$.
+The set of axioms of a theory consists of sequents.
+
+Now, let us describe the inference rules of the logic of contextual theories.
+The first chunk of inference rules is given by rules \axref{b1}-\axref{b6} as defined in subsection~\eqref{sec:PHT-rules}.
+The rest of the inference rules is given below.
+Since we do not have an analog of \axref{a1} here, we need to add analogs of \axref{a4}, \axref{a4'} and \axref{a5}.
+
+\medskip
+\begin{center}
+$(\Gamma \vdash x \deq y) \land \varphi \sststile{}{V,x,y} \varphi[y/x]$ \axlabel{c2}
+\qquad
+\AxiomC{$\varphi \sststile{}{V,x} \psi$}
+\RightLabel{\axlabel{c3}}
+\UnaryInfC{$\varphi[t/x] \sststile{}{V,V'} \psi[t/x]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+$\Gamma \vdash  R(\ldots, (A^i_1, \ldots A^i_{n_i}).\,x_i, \ldots) \sststile{}{\Gamma, A^1_1, \ldots A^k_{n_k}, x_1, \ldots x_k} \Gamma, A^i_1, \ldots A^i_{n_i} \vdash x_i\!\downarrow$ \axlabel{c4}
+\end{center}
+
+\medskip
+\begin{center}
+$\Gamma \vdash x \deq y \sststile{}{\Gamma,x,y} \Gamma \vdash x\!\downarrow$ \axlabel{c4'}
+\end{center}
+
+\medskip
+\begin{center}
+$\Gamma \vdash \sigma(\ldots, (A^i_1, \ldots A^i_{n_i}).\,x_i, \ldots)\!\downarrow\ \sststile{}{\Gamma, A^1_1, \ldots A^k_{n_k}, x_1, \ldots x_k} \Gamma, A^i_1, \ldots A^i_{n_i} \vdash x_i\!\downarrow$ \axlabel{c5}
+\end{center}
+
+\medskip
+\begin{center}
+$A_1, \ldots A_n \vdash \varphi \sststile{}{A_1, \ldots A_n, V} A_1, \ldots A_{n-1} \vdash A_n\!\downarrow$ \axlabel{c6}
+\end{center}
+
+\medskip
+\begin{center}
+$(\Gamma \vdash \varphi) \land (\Gamma \vdash A\!\downarrow) \sststile{}{\Gamma, A, V} A, \Gamma \vdash \varphi$ \axlabel{c7}
+\end{center}
+
+Now, we define partial contextual terms as pairs of contextual terms and contextual formulas.
+As before, we define equivalence relations on partial contextual terms and contextual formulas.
+Partial contextual terms $t$ and $t'$ are equivalent if and only if $FV(t) = FV(t')$ and sequents $\sststile{}{FV(t)} t \cong t'$ are derivable.
+Contextual formulas $\varphi$ and $\psi$ are equivalent if and only if $FV(\varphi) = FV(\psi)$ and sequents $\varphi \ssststile{}{FV(\varphi)} \psi$ are derivable.
+
+Morphisms of contextual theories $\mathbb{T}$ and $\mathbb{T}'$ are equivalence classes of functions $f$ such that for every function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to p$ of $\mathbb{T}$, $f(\sigma)$ is a partial contextual term of $\mathbb{T}'$ of sort $(p,0)$ with free variables in $\{ A^1_1 , \ldots A^1_{n_1}, x_1, \ldots A^k_1, \ldots A^k_{n_k}, x_k \}$, where $A^i_j : (ty,j)$ and $x_i : (p,n_i)$, and for every predicate symbol $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$, $f(R)$ is a contextual formula of $\mathbb{T}'$ with free variables in the same set as above.
+
+A \emph{$\mathbb{T}_0$-theory} is a contextual theory with a distinguished function symbol $ty : (tm,0) \to ty$ such that the following sequents are derivable:
+\begin{align*}
+\Gamma \vdash a\!\downarrow\ & \ssststile{}{\Gamma,a} \Gamma \vdash ty(a)\!\downarrow \\
+A_1, \ldots A_n \vdash ctx & \sststile{}{A_1, \ldots A_n} A_1, \ldots A_n \vdash v_i : A_{n-i},
+\end{align*}
+where $\Gamma \vdash a : A$ stands for $\Gamma \vdash ty(a) \deq A$.
+We will also write $\Gamma \vdash a \deq a' : A$ for $(\Gamma \vdash a \deq a') \land (\Gamma \vdash a : A)$.
+A \emph{$\mathbb{T}_1$-theory} is a $\mathbb{T}_0$-theory with two distinguished function symbols $-[-] : (p,1) \times (tm,0) \to p$ such that the following sequent is derivable:
+\begin{align*}
+\Gamma, ty(a) \vdash b\!\downarrow\ & \ssststile{}{\Gamma, a, b} \Gamma \vdash b[a]\!\downarrow \\
+\Gamma, ty(a) \vdash b\!\downarrow\ & \sststile{}{\Gamma, a, b} \Gamma \vdash ty(b[a]) \deq ty(b)[a] \\
+(\Gamma \vdash a_0\!\downarrow) \land \ldots \land (\Gamma \vdash a_i\!\downarrow)\ & \sststile{}{\Gamma, a_0, \ldots a_i} \Gamma \vdash v_i[a_0] \ldots [a_i] \deq a_i
+\end{align*}
+
+For every $\mathbb{T}_1$-theory $\mathbb{T}$, we define ordinary theory $C(\mathbb{T})$ under $\mathbb{T}_1$.
+The set of function symbols of $C(\mathbb{T})$ consists of symbols
+\[ \sigma_n : (ctx,n) \times (p_1,n+n_1) \times \ldots \times (p_k,n+n_k)\to (p,n) \]
+for every $n \in \mathbb{N}$ and every $\sigma \in \mathcal{F}_0$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to p$ together with function symbols of $\mathbb{T}_1$.
+Similarly, the set of predicate symbols of $C(\mathbb{T})$ consists of symbols
+\[ R_n : (ctx,n) \times (p_1,n+n_1) \times \ldots \times (p_k,n+n_k) \]
+for every $n \in \mathbb{N}$ and every $R \in \mathcal{P}_0$, $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$.
+
+Now, let us define a function $C : Term_{C(\mathbb{T})}(V)_{(ctx,n)} \times CTerm_\mathbb{T}(V)_{(p,n)} \to Term_{C(\mathbb{T})}(V)_{(p,n)}$ as follows:
+\begin{align*}
+C(\Gamma, v_i) & = v_{n,i}(\Gamma) \\
+C(\Gamma, x) & = x|_{ctx(x) = \Gamma} \\
+C(\Gamma, \sigma(\ldots, (A^i_1, \ldots A^i_{n_i}).\,t_i, \ldots)) & = \sigma_n(\ldots, C(C(\Gamma, \ldots C(\Gamma, A^i_1) \ldots A^i_{n_i}), t_i), \ldots)
+\end{align*}
+
+Function $C : Term_{C(\mathbb{T})}(V)_{(ctx,n)} \times CForm_\mathbb{T}(V)_n \to Form_{C(\mathbb{T})}(V)$ is defined similarly:
+\begin{align*}
+C(\Gamma, a \deq a') & = (C(\Gamma, a) = C(\Gamma, a')) \\
+C(\Gamma, R(\ldots, (A^i_1, \ldots A^i_{n_i}).\,t_i, \ldots)) & = R_n(\ldots, C(C(\Gamma, \ldots C(\Gamma, A^i_1) \ldots A^i_{n_i}), t_i), \ldots)
+\end{align*}
+
+For every context $\Gamma$, we define a term $C(\Gamma)$ of $C(\mathbb{T})$ of sort $(ctx,|\Gamma|)$.
+If $\Gamma$ is empty, then let $C(\Gamma)$ be equal to $*$.
+If $\Gamma = \Gamma', A$, then let $C(\Gamma)$ be equal to $C(C(\Gamma'), A)$.
+For every atomic formula $\Gamma \vdash \varphi$ of $\mathbb{T}$. we define an atomic formula $C(\Gamma \vdash \varphi)$ of $C(\mathbb{T})$ as $C(C(\Gamma), \varphi)$.
+Now, it is easy to define $C$ on formulas and sequents.
+
+The set of axioms of $C(\mathbb{T})$ consists of axioms of $\mathbb{T}_1$, axiom $C(S)$ for every axiom $S$ of $\mathbb{T}$, and the following axioms:
+\begin{align*}
+\sigma_n(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} ctx(\sigma_n(\Gamma, x_1, \ldots x_k)) = \Gamma \\
+& \sststile{}{\Gamma, B, a} subst_{p,n,1}(\Gamma, B, a) \cong (-[-])_n(\Gamma, B, a)
+\end{align*}
+where the first axiom is defined for every function symbol $\sigma$.
+
+For every theory $\mathbb{T}$, we can define a function $\alpha : L(C(\mathbb{T})) \to C(\mathbb{T})$ as follows:
+\begin{align*}
+\alpha(L(\sigma_n)(\Gamma, \Delta, x_1, \ldots x_k)) & = \sigma_{n+1}(\Delta, x_1, \ldots x_k)|_{ft^n(\Delta) = \Gamma} \\
+\alpha(L(R_n)(\Gamma, \Delta, x_1, \ldots x_k)) & = R_{n+1}(\Delta, x_1, \ldots x_k)|_{ft^n(\Delta) = \Gamma}
+\end{align*}
+This function might not preserve axioms of $L(C(\mathbb{T}))$.
+We say that a theory $\mathbb{T}$ is \emph{stable} if for every axiom
+\[ \bigwedge_{1 \leq i \leq n} \Gamma_i \vdash \varphi_i \sststile{}{V} \bigwedge_{1 \leq i \leq k} \Delta_i \vdash \psi_i, \]
+the following sequent is derivable in $\mathbb{T}$:
+\[ \bigwedge_{1 \leq i \leq n} A, \Gamma_i \vdash \varphi_i \sststile{}{A,V} \bigwedge_{1 \leq i \leq k} A, \Delta_i \vdash \psi_i, \]
+Note that if $n < m$, then $CTerm(V)_{(p,n)}$ is a subset of $CTerm(V)_{(p,m)}$.
+Hence the sequent above actually makes sense.
+If $\mathbb{T}$ is stable, then $\alpha$ preserves axioms, and so $C(\mathbb{T})$ is also stable.
+
+\begin{prop}
+Function $C$ determines a bijection between the set of morphism between stable theories $\mathbb{T}$ and $\mathbb{T}'$ and the set of stable morphisms between theories $C(\mathbb{T})$ and $C(\mathbb{T}')$.
+\end{prop}
+\begin{proof}
+First, let us prove that $C$ preserves substitution in a weak sence.
+Let $t$ be a term, and let $x$ be a variable.
+Then for every occurrence of $x$ in $t$, we can define a context $\Delta$ such that $\Gamma \vdash t\!\downarrow\ \sststile{}{V} ctx(x) = \Delta$.
+This context is defined recursively in the obvious way.
+it is easy to see that if $x \in FV(t)$ and $\Delta$ is a context corresponding to some occurrence of $x$ in $t$, then the following sequent is derivable:
+\[ \sststile{}{V} C(\Gamma, t[s/x]) \cong C(\Gamma, t)[C(\Delta,s)/x] \]
+
+Now, let us prove that $C$ preserves theorems.
+Rules $\axref{b1}-\axref{b2}$ are mapped to rules of the same form.
+Rule \axref{c2} is mapped to the following rule:
+\[ x = y \land ctx(x) = C(\Gamma) \land ctx(y) = C(\Gamma) \land C(\varphi) \sststile{}{\Gamma, x, y} C(\varphi)[y/x] \land ctx(y) = \Delta, \]
+where $\Delta$ is a context corresponding to an occurence of $x$ in $\varphi$.
+Since $C(\varphi)$ implies $ctx(x) = \Delta$ and $ctx(x) = ctx(y)$, this sequent follows from \axref{a2}.
+
+Rule $\axref{c3}$ is mapped to the following rule:
+\medskip
+\begin{center}
+\AxiomC{$C(\varphi) \sststile{}{V,x} C(\psi)$}
+\UnaryInfC{$C(\varphi)[C(\Delta,t)/x] \sststile{}{V,V'} C(\psi)[C(\Delta',t)/x]$}
+\DisplayProof
+\end{center}
+Note that $C(\varphi) \sststile{}{V,x} C(\psi)$ implies that $C(\Delta) = C(\Delta')$.
+Hence this rule is admissible.
+Finally, it is easy to see that rules $\axref{c4}-\axref{c5}$ are also preserved.
+
+It follows that $C$ is well-defined.
+Let us prove that $C$ is surjective.
+First, we need to define functions $D : Term_{C(\mathbb{T})}(V)_{(p,n)} \to CTerm_\mathbb{T}(D(V))_{(p,n)}$ and $D : Term_{C(\mathbb{T})}(V)_{(ctx,n)} \to Ctx(V)_n$,
+where $D(V)$ is the union of $V$ and the set of variables $x^i$ for every $x : (p,n)$ in $V$, $p \in \{ty,tm\}$ and $0 \leq i < n$.
+They are defined recursively:
+\begin{align*}
+D(x) & = x \\
+D(\sigma_n(\Gamma, t_1, \ldots t_k)) & = \sigma(\ldots, ctx_{\leq n}(t_i).\,D(t_i), \ldots)
+\end{align*}
+\end{proof}
 
 \subsection{Named representation of terms}
 
@@ -1382,70 +1638,6 @@ The weakening operations satisfy the following rules:
 \end{example}
 
 Often, we left the weakening operations implicit since they can be easily recovered.
-
-\subsection{Regular theories}
-
-To define regular theories, we need to introduce a new derived operation.
-For every $m,n,k \in \mathbb{N}$ and $p \in \{ ctx, ty, tm \}$, we define $subst^m_{p,n,k} : (ctx,n) \times (p,k+m) \times (tm,n)^k \to (p,n+m)$.
-First, let $subst^0_{ctx,n,k}(B, A, a_1, \ldots a_k) = B$ and $subst^{m+1}_{ctx,n,k} = subst^m_{ty,n,k}$.
-If $p \in \{ ty, tm \}$, then let $subst^m_{p,n,k}(B, a, a_1, \ldots a_k)$ be equal to
-\[ subst_{p,n+m,k+m}(B', a, wk^m_{tm,n}(a_1), \ldots wk^m_{tm,n}(a_k), v_{m-1}, \ldots v_0) \]
-where $B' = subst^m_{ctx,n,k}(B, ctx_{k+m}(a), a_1, \ldots a_k)$.
-This operation satisfies the following rule:
-\medskip
-\begin{center}
-\def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \vdash ctx$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash a_i : A_i[x_1 \mapsto a_1, \ldots x_{i-1} \mapsto a_{i-1}]$
-\noLine
-\UnaryInf$\fCenter x_1 : A_1, \ldots x_k : A_k, y_1 : C_1, \ldots y_m : C_m \vdash B$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \Gamma, y_1 : C_1', \ldots y_m : C_m' \vdash subst^m_{p,n,k}(B, a_1, \ldots a_k)$
-\DisplayProof
-\end{center}
-where $C_i' = subst^i_{ctx,n,k}(C_i, a_1, \ldots a_k)$.
-
-\begin{defn}
-A stable algebraic dependent type theory with substitution is \emph{regular} if
-for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_m,q_m) \to (p,q)$
-and every $R \in \mathcal{P}$, $R : (p_1,q_1) \times \ldots \times (p_m,q_m)$, the following sequents are derivable in it:
-\medskip
-\begin{center}
-\AxiomC{$x_1 : A_1, \ldots x_k : A_k, \Delta\!\uparrow^k\ \vdash \sigma_k(b_1, \ldots b_m)$}
-\AxiomC{$\Gamma \vdash ctx$}
-\AxiomC{$J$}
-\TrinaryInfC{$\Gamma, \Delta\!\uparrow^n\ \vdash subst^q(\sigma_k(b_1, \ldots b_m), a_1, \ldots a_k) \deq \sigma_n(b_1', \ldots b_m')$}
-\DisplayProof
-\end{center}
-\medskip
-\begin{center}
-\AxiomC{$x_1 : A_1, \ldots x_k : A_k, \Delta_i \vdash b_i$}
-\AxiomC{$R_k(b_1, \ldots b_m)$}
-\AxiomC{$\Gamma \vdash ctx$}
-\AxiomC{$J$}
-\QuaternaryInfC{$R_n(b_1', \ldots b_m')$}
-\DisplayProof
-\end{center}
-where $J = \{ \Gamma \vdash a_i : A_i[x_1 \mapsto a_1, \ldots x_{i-1} \mapsto a_{i-1}]\ |\ 1 \leq i \leq k \}$ and $b_i' = subst^{q_i}(b_i, a_1, \ldots a_k)$.
-We call these sequents \emph{the regularity axioms}.
-The full subcategory of $\algtt^1_{st}$ on regular theories will be denoted by $\algtt^1_{reg}$.
-\end{defn}
-
-\begin{remark}
-The construction of colimits in \rprop{th-cocomplete} implies that $\algtt^1_{reg}$ is closed under colimits in $\algtt^1_{st}$.
-\end{remark}
-
-Let $(\mathbb{T},\alpha) \in \algtt^0_{st}$ be a stable theory, and let $\mathcal{A}$ be a set of sequents.
-Then we will say that $\mathcal{A}$ is stable in $\mathbb{T}$ if $\alpha(L(\mathcal{A}))$ is derivable in $\mathbb{T} \cup \mathcal{A}$.
-For every set $\mathcal{A}$, there is the minimal stable set $st(\mathcal{A})$ which contains $\mathcal{A}$.
-We call this set the \emph{stabilization} of $\mathcal{A}$, and it is defined as $\bigcup_{n \in \mathbb{N}} \alpha^n(\mathcal{A})$,
-    where $\alpha^0(\mathcal{A}) = \mathcal{A}$, and $\alpha^{n+1}(\mathcal{A}) = \alpha^n(\alpha(L(\mathcal{A})))$.
-If $\mathcal{A}$ is a stable set, then $\mathbb{T} \cup \mathcal{A}$ is a stable theory.
-Note that the regularity axioms are stable in any theory.
-Thus we can define regularization functor $reg : \algtt^1_{st} \to \algtt^1_{reg}$ as follows: $reg(\mathbb{T}) = \mathbb{T} \cup \mathcal{R}$,
-    where $\mathcal{R}$ is the set of regularity axioms.
-It is easy to see that $reg$ is a left adjoint to the inclusion $\algtt^1_{reg} \hookrightarrow \algtt^1_{st}$.
 
 \subsection{Examples}
 
