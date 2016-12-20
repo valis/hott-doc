@@ -1377,8 +1377,15 @@ We write $\Gamma \vdash a\!\downarrow$ for $\Gamma \vdash a = a$.
 We write $\Gamma \vdash ctx$ for $\top$ if $\Gamma$ is empty, and if $\Gamma = A_1, \ldots A_n$, $n > 0$, then $\Gamma \vdash ctx$ means $A_1, \ldots A_{n-1} \vdash A_n\!\downarrow$.
 
 A \emph{contextual formula} is a finite conjunction of atomic contextual formulas.
-A \emph{sequent} is an expression of the form $\varphi \sststile{}{V} \psi$, where $\varphi$ and $\psi$ are contextual formulas with free variables in $V$ such that every variable in $V$ appears in $\varphi$.
-The set of axioms of a theory consists of sequents.
+A \emph{sequent} is an expression of the form $\varphi \sststile{}{} \psi$, where $\varphi$ and $\psi$ are contextual formulas such that $FV(\psi) \subseteq FV(\varphi)$.
+We do not have the condition on free variables in the usual definition of sequents since we have axiom \axref{a1}.
+We do not have an analog of this axiom in the contextual setting, so we need to assume that the premise of every sequent explicitly mentions every variable.
+This also means that we do not need to explicitly list all variables since they all must appear in the left hand side of the sequent.
+
+For simplicity, we left weakening operations implicit in this notation.
+This means that we need to define substitution functions slightly differently.
+For every term or formula $e$, every variable $x$, and every term $t$, we define $e[t/x]$ recursively as usual with the only difference:
+if $x \in V_{(p,m)}$ is a term of sort $(p,n)$, then we define $x[t/x]$ as $t\!\uparrow^{m-n}$, where $\!\uparrow^i$ is the usual operation of lifting de Bruijn indices.
 
 Now, let us describe the inference rules of the logic of contextual theories.
 The first chunk of inference rules is given by rules \axref{b1}-\axref{b6} as defined in subsection~\eqref{sec:PHT-rules}.
@@ -1387,59 +1394,130 @@ Since we do not have an analog of \axref{a1} here, we need to add analogs of \ax
 
 \medskip
 \begin{center}
-$(\Gamma \vdash x \deq y) \land \varphi \sststile{}{V,x,y} \varphi[y/x]$ \axlabel{c2}
+$(\Gamma \vdash x \deq y) \land \varphi \sststile{}{} \varphi[y/x]$ \axlabel{c2}
 \qquad
-\AxiomC{$\varphi \sststile{}{V,x} \psi$}
+\AxiomC{$\varphi \sststile{}{} \psi$}
 \RightLabel{\axlabel{c3}}
-\UnaryInfC{$\varphi[t/x] \sststile{}{V,V'} \psi[t/x]$}
+\UnaryInfC{$\varphi[t/x] \sststile{}{} \psi[t/x]$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-$\Gamma \vdash  R(\ldots, (A^i_1, \ldots A^i_{n_i}).\,x_i, \ldots) \sststile{}{\Gamma, A^1_1, \ldots A^k_{n_k}, x_1, \ldots x_k} \Gamma, A^i_1, \ldots A^i_{n_i} \vdash x_i\!\downarrow$ \axlabel{c4}
+$\Gamma \vdash  R(\ldots, (A^i_1, \ldots A^i_{n_i}).\,x_i, \ldots) \sststile{}{} \Gamma, A^i_1, \ldots A^i_{n_i} \vdash x_i\!\downarrow$ \axlabel{c4}
 \end{center}
 
 \medskip
 \begin{center}
-$\Gamma \vdash x \deq y \sststile{}{\Gamma,x,y} \Gamma \vdash x\!\downarrow$ \axlabel{c4'}
+$\Gamma \vdash x \deq y \sststile{}{} \Gamma \vdash x\!\downarrow$ \axlabel{c4'}
 \end{center}
 
 \medskip
 \begin{center}
-$\Gamma \vdash \sigma(\ldots, (A^i_1, \ldots A^i_{n_i}).\,x_i, \ldots)\!\downarrow\ \sststile{}{\Gamma, A^1_1, \ldots A^k_{n_k}, x_1, \ldots x_k} \Gamma, A^i_1, \ldots A^i_{n_i} \vdash x_i\!\downarrow$ \axlabel{c5}
+$\Gamma \vdash \sigma(\ldots, (A^i_1, \ldots A^i_{n_i}).\,x_i, \ldots)\!\downarrow\ \sststile{}{} \Gamma, A^i_1, \ldots A^i_{n_i} \vdash x_i\!\downarrow$ \axlabel{c5}
 \end{center}
 
 \medskip
 \begin{center}
-$A_1, \ldots A_n \vdash \varphi \sststile{}{A_1, \ldots A_n, V} A_1, \ldots A_{n-1} \vdash A_n\!\downarrow$ \axlabel{c6}
+$A_1, \ldots A_n \vdash \varphi \sststile{}{} A_1, \ldots A_{n-1} \vdash A_n\!\downarrow$ \axlabel{c6}
 \end{center}
 
 \medskip
 \begin{center}
-$(\Gamma \vdash \varphi) \land (\Gamma \vdash A\!\downarrow) \sststile{}{\Gamma, A, V} A, \Gamma \vdash \varphi$ \axlabel{c7}
+$(\Gamma \vdash \varphi) \land (\Gamma \vdash A\!\downarrow) \sststile{}{} A, \Gamma \vdash \varphi$ \axlabel{c7}
 \end{center}
 
 Now, we define partial contextual terms as pairs of contextual terms and contextual formulas.
 As before, we define equivalence relations on partial contextual terms and contextual formulas.
-Partial contextual terms $t$ and $t'$ are equivalent if and only if $FV(t) = FV(t')$ and sequents $\sststile{}{FV(t)} t \cong t'$ are derivable.
-Contextual formulas $\varphi$ and $\psi$ are equivalent if and only if $FV(\varphi) = FV(\psi)$ and sequents $\varphi \ssststile{}{FV(\varphi)} \psi$ are derivable.
+Partial contextual terms $t$ and $t'$ are equivalent if and only if $FV(t) = FV(t')$ and sequents $\sststile{}{} t \cong t'$ are derivable.
+Contextual formulas $\varphi$ and $\psi$ are equivalent if and only if $FV(\varphi) = FV(\psi)$ and sequents $\varphi \ssststile{}{} \psi$ are derivable.
 
-Morphisms of contextual theories $\mathbb{T}$ and $\mathbb{T}'$ are equivalence classes of functions $f$ such that for every function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to p$ of $\mathbb{T}$, $f(\sigma)$ is a partial contextual term of $\mathbb{T}'$ of sort $(p,0)$ with free variables in $\{ A^1_1 , \ldots A^1_{n_1}, x_1, \ldots A^k_1, \ldots A^k_{n_k}, x_k \}$, where $A^i_j : (ty,j)$ and $x_i : (p,n_i)$, and for every predicate symbol $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$, $f(R)$ is a contextual formula of $\mathbb{T}'$ with free variables in the same set as above.
+Morphisms of contextual theories $\mathbb{T}$ and $\mathbb{T}'$ are equivalence classes of functions $f$ such that for every function symbol
+$\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to p$ of $\mathbb{T}$, $f(\sigma)$ is a partial contextual term of $\mathbb{T}'$ of sort $(p,0)$
+with free variables in $\{ A^1_1 , \ldots A^1_{n_1}, x_1, \ldots A^k_1, \ldots A^k_{n_k}, x_k \}$, where $A^i_j : (ty,j)$ and $x_i : (p,n_i)$,
+and for every predicate symbol $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$, $f(R)$ is a contextual formula of $\mathbb{T}'$ with free variables in the same set as above.
+
+We can use the traditional notation and write $\Gamma \vdash a : A$ and $\Gamma \vdash a \deq a' : A$
+for $\Gamma \vdash ty(a) \deq A$ and $(\Gamma \vdash a \deq a') \land (\Gamma \vdash a : A)$ respectively.
+We also write
+\medskip
+\begin{center}
+\AxiomC{$\varphi_1$}
+\AxiomC{$\ldots$}
+\AxiomC{$\varphi_n$}
+\TrinaryInfC{$\psi$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi_1$}
+\AxiomC{$\ldots$}
+\AxiomC{$\varphi_n$}
+\doubleLine
+\TrinaryInfC{$\psi$}
+\DisplayProof
+\end{center}
+for $\varphi_1 \land \ldots \land \varphi_n \sststile{}{} \psi$ and $\varphi_1 \land \ldots \land \varphi_n \ssststile{}{} \psi$ respectively.
 
 A \emph{$\mathbb{T}_0$-theory} is a contextual theory with a distinguished function symbol $ty : (tm,0) \to ty$ such that the following sequents are derivable:
-\begin{align*}
-\Gamma \vdash a\!\downarrow\ & \ssststile{}{\Gamma,a} \Gamma \vdash ty(a)\!\downarrow \\
-A_1, \ldots A_n \vdash ctx & \sststile{}{A_1, \ldots A_n} A_1, \ldots A_n \vdash v_i : A_{n-i},
-\end{align*}
-where $\Gamma \vdash a : A$ stands for $\Gamma \vdash ty(a) \deq A$.
-We will also write $\Gamma \vdash a \deq a' : A$ for $(\Gamma \vdash a \deq a') \land (\Gamma \vdash a : A)$.
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a\!\downarrow$}
+\doubleLine
+\UnaryInfC{$\Gamma \vdash ty(a)\!\downarrow$}
+\DisplayProof
+\qquad
+\AxiomC{$A_1, \ldots A_n \vdash ctx$}
+\UnaryInfC{$A_1, \ldots A_n \vdash v_i : A_{n-i}$}
+\DisplayProof
+\end{center}
 A \emph{$\mathbb{T}_1$-theory} is a $\mathbb{T}_0$-theory with two distinguished function symbols $-[-] : (p,1) \times (tm,0) \to p$ such that the following sequent is derivable:
-\begin{align*}
-\Gamma, ty(a) \vdash b\!\downarrow\ & \ssststile{}{\Gamma, a, b} \Gamma \vdash b[a]\!\downarrow \\
-\Gamma, ty(a) \vdash b\!\downarrow\ & \sststile{}{\Gamma, a, b} \Gamma \vdash ty(b[a]) \deq ty(b)[a] \\
-(\Gamma \vdash a_0\!\downarrow) \land \ldots \land (\Gamma \vdash a_i\!\downarrow)\ & \sststile{}{\Gamma, a_0, \ldots a_i} \Gamma \vdash v_i[a_0] \ldots [a_i] \deq a_i
-\end{align*}
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, ty(a) \vdash b\!\downarrow$}
+\doubleLine
+\UnaryInfC{$\Gamma \vdash b[a]\!\downarrow$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma, ty(a) \vdash b\!\downarrow$}
+\UnaryInfC{$\Gamma \vdash ty(b[a]) \deq ty(b)[a]$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash a_j\!\downarrow$, $0 \leq j \leq i$}
+\UnaryInfC{$\Gamma \vdash v_i[a_0] \ldots [a_i] \deq a_i$}
+\DisplayProof
+\end{center}
+
+A \emph{regular} contextual theory is a $\mathbb{T}_1$-theory $\mathbb{T}$ such that for every function symbol $\sigma$ and every predicate symbol $R$, the following sequents are derivable:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, A \vdash \sigma(\ldots, (B^i_1, \ldots B^i_{n_i}).\,x_i, \ldots)\!\downarrow$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma \vdash \sigma(\ldots, (B^i_1, \ldots B^i_{n_i}).\,x_i, \ldots)[a] \deq \sigma(\ldots, x_i', \ldots)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, A \vdash R(\ldots, (B^i_1, \ldots B^i_{n_i}).\,x_i, \ldots)$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma \vdash R(\ldots, x_i', \ldots)$}
+\DisplayProof
+\end{center}
+where $x_i' = (B^i_1[a], \ldots B^i_{n_i}[v_0] \ldots [v_{n_i-2}][a]).\,x_i[v_0] \ldots [v_{n_i-1}][a]$.
+
+\begin{remark}
+This is only one half of the regularity axioms.
+The other half states that the weakening operations commute with function and predicate symbols.
+This property is already incorporated in the definition of contextual theories.
+Thus we cannot work with non-regular stable theories in this syntax.
+If we want to do so, we just need to make weakening operations explicit.
+\end{remark}
+
+\begin{remark}
+It is possible to use ordinary named representation for contextual theories.
+That is we can use binding instead of de Bruijn indices.
+The translation between two representations is straightforward.
+We give several examples of theories described in terms of the named syntax in the next subsection.
+\end{remark}
 
 For every $\mathbb{T}_1$-theory $\mathbb{T}$, we define ordinary theory $C(\mathbb{T})$ under $\mathbb{T}_1$.
 The set of function symbols of $C(\mathbb{T})$ consists of symbols
@@ -1528,119 +1606,6 @@ D(x) & = x \\
 D(\sigma_n(\Gamma, t_1, \ldots t_k)) & = \sigma(\ldots, ctx_{\leq n}(t_i).\,D(t_i), \ldots)
 \end{align*}
 \end{proof}
-
-\subsection{Named representation of terms}
-
-We can use usual named representation of terms for stable theories.
-Let $var$ be a set of variables.
-Let $\mathbb{T} = ((\mathcal{C}, \mathcal{F}, \mathcal{P}), \mathcal{A})$ be a stable theory.
-Then for every set $V$, we define the set $NTerm(V)$ of named preterms of theory $T$ inductively as follows:
-\begin{enumerate}
-\item For every $x \in var$, $x$ is a preterm.
-\item For every $X \in V$, $X$ is a preterm.
-\item For every term $t$, $ft(t)$ and $ctx_{p,n}(t)$ are preterms.
-\item For every $\sigma \in \mathcal{F}$, $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
-variables $x^1_1$, \ldots $x^1_{n_1}$, \ldots $x^k_1$, \ldots $x^k_{n_k}$, preterms $A^1_1$, \ldots $A^1_{n_1}$, \ldots $A^k_1$, \ldots $A^k_{n_k}$
-and preterms $t_1$, \ldots $t_k$, the following expression is a preterm:
-\[ \sigma(x^1_1 : A^1_1 \ldots x^1_{n_1} : A^1_{n_1}.\ t_1, \ldots x^k_1 : A^k_1 \ldots x^k_{n_k} : A^k_{n_k}.\ t_k). \]
-\end{enumerate}
-
-Let $Ctx(V)$ be the set of precontext, that is finite sequences of expressions of the form $x : t$, where $x \in var$ and $t \in NTerm(V)$.
-Now, we can define partial functions $E : Ctx(V) \times NTerm(V) \to \coprod_{s \in \mathcal{C}} PTerm(V)_s$ and $E : Ctx(V) \to \coprod_{s \in \mathcal{C}} PTerm(V)_s$ as follows:
-\begin{align*}
-E(\cdot) & = \emptyCtx \text{, where $\cdot$ is the empty precontext} \\
-E(x_1:A_1, \ldots x_n:A_n) & = E((x_1:A_1, \ldots x_{n-1}:A_{n-1}), A_n) \\
-E((x_1:A_1, \ldots x_n:A_n), x_i) & = v_{n,n-i}(E((x_1:A_1, \ldots x_{n-1}:A_{n-1}), A_n)) \\
-E(\Gamma,ft^n(X)) & = ft^n(X)|_{ft^{n+1}(X) = E(\Gamma)} \\
-E(\Gamma,\sigma(t_1', \ldots t_k')) & = \sigma_{|\Gamma|}(E(\Gamma), t_1'', \ldots t_k'')
-\end{align*}
-where $t_i' = x^i_1 : A^i_1, \ldots x^i_{n_i} : A^i_{n_i}.\ t_i$, $t_i'' = E((\Gamma, x^i_1 : A^i_1, \ldots x^i_{n_i} : A^i_{n_i}), t_i)$,
-and $\sigma_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m)$ is defined inductively as follows:
-\begin{align*}
-\sigma_0(\Gamma, x_1, \ldots x_k) & = \sigma(x_1, \ldots x_k) \\
-\sigma_{m+1}(\Gamma, x_1, \ldots x_k) & = \alpha(L(ft^m(\Gamma), \sigma_m(\Gamma, x_1, \ldots x_k)))
-\end{align*}
-
-We say that a preterm $t$ is a \emph{correct term} in a context $\Gamma$ and write $\Gamma \vdash t$ if $E(\Gamma,t)$ is defined.
-If we associate to every $X \in V_{(p,n)}$ a context $x_1, \ldots x_n$ in which it is defined,
-then we can also use the ordinary syntax for substitutions, that is write $X[y_1 \mapsto t_1, \ldots y_k \mapsto t_k]$,
-where $\{ y_1, \ldots y_k \}$ is a subset of $\{ x_1, \ldots x_n \}$.
-
-If $A$ and $A'$ are terms of sort $(ty,n)$, $a$ and $a'$ are terms of sort $(tm,n)$, and $\Gamma$ is a context of length $n$, then we use the following abbreviations:
-\begin{align*}
-\Gamma \vdash ctx & \text{ means } E(\Gamma)\!\downarrow \\
-\Gamma \vdash a & \text{ means } E(\Gamma,a)\!\downarrow \\
-\Gamma \vdash A\ type & \text{ means } E(\Gamma,A)\!\downarrow \\
-\Gamma \vdash a : A & \text{ means } ty(E(\Gamma,a) = E(\Gamma,A) \\
-\Gamma \vdash A \deq A' & \text{ means } E(\Gamma,A) = E(\Gamma,A') \\
-\Gamma \vdash a \deq a' : A & \text{ means } E(\Gamma,a) = E(\Gamma,a') \land (\Gamma \vdash a : A)
-\end{align*}
-
-The following rule
-\medskip
-\begin{center}
-\AxiomC{$J_1$}
-\AxiomC{$\ldots$}
-\AxiomC{$J_n$}
-\TrinaryInfC{$\Gamma \vdash a : A$}
-\DisplayProof
-\end{center}
-denotes the conjunction of two sequents $E(\Gamma,a)\!\downarrow\ \sststile{}{V} J_1 \land \ldots \land J_n$ and $J_1 \land \ldots \land J_n \sststile{}{V} \Gamma \vdash a : A$,
-where $V$ is the set of variables that occur in $J_1$, \ldots $J_n$, $\Gamma$, $a$, and $A$.
-That is, when we write such rule we mean that this sequents are derivable in the theory.
-
-The following rule
-\medskip
-\begin{center}
-\AxiomC{$J_1$}
-\AxiomC{$\ldots$}
-\AxiomC{$J_n$}
-\TrinaryInfC{$\Gamma \vdash A\ type$}
-\DisplayProof
-\end{center}
-denotes sequents $J_1 \land \ldots \land J_n \ssststile{}{V} \Gamma \vdash A\ type$.
-
-Finally, other rules of the form
-\medskip
-\begin{center}
-\AxiomC{$J_1$}
-\AxiomC{$\ldots$}
-\AxiomC{$J_n$}
-\TrinaryInfC{$J$}
-\DisplayProof
-\end{center}
-denote sequent $J_1 \land \ldots \land J_n \sststile{}{V} J$.
-
-If our theory has substitutions, then we can also use weakening in named terms.
-The operations of weakening $wk^m_{p,n} : (ctx,n+m) \times (p,n) \to (p,n+m)$ are defined as follows:
-\[ wk^m_{p,n}(\Gamma,a) = subst_{p,n+m,n}(\Gamma, a, v_{n+m-1}, \ldots v_m) \]
-We can extend the definition of preterms to include the following clause.
-If $t$ is a preterm and $m \in \mathbb{N}$, then $t\!\uparrow^m$ is also a preterm.
-The definition of $E$ is extended as follows:
-\[ E(\Gamma, t\!\uparrow^m) = wk^m_{p,n}(E(\Gamma), E(\Gamma, t)) \]
-We can also omit the first argument in $subst_{p,n,k}$ since they can be recovered as follows:
-\[ E(\Gamma, subst_{p,n,k}(B, a_1, \ldots a_k)) = subst_{p,n,k}(E(\Gamma), E(\Gamma,B), E(\Gamma,a_1), \ldots E(\Gamma,a_k)) \]
-
-\begin{example}
-The weakening operations satisfy the following rules:
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, y_1 : B_1, \ldots y_m : B_m \vdash ctx$}
-\AxiomC{$\Gamma \vdash A\ type$}
-\BinaryInfC{$\Gamma, y_1 : B_1, \ldots y_m : B_m \vdash A\!\uparrow^m type$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, B_1, \ldots B_m \vdash ctx$}
-\AxiomC{$\Gamma \vdash a : A$}
-\BinaryInfC{$\Gamma, B_1, \ldots B_m \vdash a\!\uparrow^m : A\!\uparrow^m$}
-\DisplayProof
-\end{center}
-\end{example}
-
-Often, we left the weakening operations implicit since they can be easily recovered.
 
 \subsection{Examples}
 
