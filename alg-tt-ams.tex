@@ -1368,7 +1368,7 @@ The set of contexts will be denoted by $Ctx(V)$.
 The length of a context $\Gamma$ will be denoted by $|\Gamma|$.
 Let us denote by $CForm(V)_n$ the set of expressions of the following forms:
 \begin{enumerate}
-\item $a \deq a'$, where $\Gamma \in Ctx(V)$ and $a,a' \in CTerm(V)_{(p,n)}$.
+\item $a \deq a'$, where $a,a' \in CTerm(V)_{(p,n)}$.
 \item $R((A^1_1, \ldots A^1_{n_1}).\,t_1, \ldots (A^k_1, \ldots A^k_{n_k}).\,t_k)$, where $R \in \mathcal{P}_0$, $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$, $t_i \in CTerm(V)_{(p,n+n_i)}$, and $A^i_j \in CTerm(V)_{(ty,n+j)}$.
 \end{enumerate}
 
@@ -1432,10 +1432,12 @@ As before, we define equivalence relations on partial contextual terms and conte
 Partial contextual terms $t$ and $t'$ are equivalent if and only if $FV(t) = FV(t')$ and sequents $\sststile{}{} t \cong t'$ are derivable.
 Contextual formulas $\varphi$ and $\psi$ are equivalent if and only if $FV(\varphi) = FV(\psi)$ and sequents $\varphi \ssststile{}{} \psi$ are derivable.
 
-Morphisms of contextual theories $\mathbb{T}$ and $\mathbb{T}'$ are equivalence classes of functions $f$ such that for every function symbol
+Let $f$ be a function such that for every function symbol
 $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to p$ of $\mathbb{T}$, $f(\sigma)$ is a partial contextual term of $\mathbb{T}'$ of sort $(p,0)$
-with free variables in $\{ A^1_1 , \ldots A^1_{n_1}, x_1, \ldots A^k_1, \ldots A^k_{n_k}, x_k \}$, where $A^i_j : (ty,j)$ and $x_i : (p,n_i)$,
-and for every predicate symbol $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$, $f(R)$ is a contextual formula of $\mathbb{T}'$ with free variables in the same set as above.
+with the set of free variables equal to $\{ A^1_1 , \ldots A^1_{n_1}, x_1, \ldots A^k_1, \ldots A^k_{n_k}, x_k \}$, where $A^i_j : (ty,j)$ and $x_i : (p,n_i)$,
+and for every predicate symbol $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$, $f(R)$ is a contextual formula of $\mathbb{T}'$ with the same free variables as above.
+Then $f$ can be extended in an obvious way to a function on terms, formulas, and contexts.
+Morphisms of contextual theories $\mathbb{T}$ and $\mathbb{T}'$ are equivalence classes of functions $f$ as above which preserve axioms.
 
 We can use the traditional notation and write $\Gamma \vdash a : A$ and $\Gamma \vdash a \deq a' : A$
 for $\Gamma \vdash ty(a) \deq A$ and $(\Gamma \vdash a \deq a') \land (\Gamma \vdash a : A)$ respectively.
@@ -1546,7 +1548,7 @@ If $\Gamma = \Gamma', A$, then let $C(\Gamma)$ be equal to $C(C(\Gamma'), A)$.
 For every atomic formula $\Gamma \vdash \varphi$ of $\mathbb{T}$. we define an atomic formula $C(\Gamma \vdash \varphi)$ of $C(\mathbb{T})$ as $C(C(\Gamma), \varphi)$.
 Now, it is easy to define $C$ on formulas and sequents.
 
-The set of axioms of $C(\mathbb{T})$ consists of axioms of $\mathbb{T}_1$, axiom $C(S)$ for every axiom $S$ of $\mathbb{T}$, and the following axioms:
+The set of axioms of $C(\mathbb{T})$ consists of axioms of $\mathbb{T}_1$, regularity axioms, axiom $C(S)$ for every axiom $S$ of $\mathbb{T}$, and the following axioms:
 \begin{align*}
 \sigma_n(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} ctx(\sigma_n(\Gamma, x_1, \ldots x_k)) = \Gamma \\
 & \sststile{}{\Gamma, B, a} subst_{p,n,1}(\Gamma, B, a) \cong (-[-])_n(\Gamma, B, a)
@@ -1560,9 +1562,9 @@ For every theory $\mathbb{T}$, we can define a function $\alpha : L(C(\mathbb{T}
 \end{align*}
 This function might not preserve axioms of $L(C(\mathbb{T}))$.
 We say that a theory $\mathbb{T}$ is \emph{stable} if for every axiom
-\[ \bigwedge_{1 \leq i \leq n} \Gamma_i \vdash \varphi_i \sststile{}{V} \bigwedge_{1 \leq i \leq k} \Delta_i \vdash \psi_i, \]
+\[ \bigwedge_{1 \leq i \leq n} \Gamma_i \vdash \varphi_i \sststile{}{} \bigwedge_{1 \leq i \leq k} \Delta_i \vdash \psi_i, \]
 the following sequent is derivable in $\mathbb{T}$:
-\[ \bigwedge_{1 \leq i \leq n} A, \Gamma_i \vdash \varphi_i \sststile{}{A,V} \bigwedge_{1 \leq i \leq k} A, \Delta_i \vdash \psi_i, \]
+\[ \vdash A\!\downarrow \land \bigwedge_{1 \leq i \leq n} A, \Gamma_i \vdash \varphi_i \sststile{}{} \bigwedge_{1 \leq i \leq k} A, \Delta_i \vdash \psi_i, \]
 Note that if $n < m$, then $CTerm(V)_{(p,n)}$ is a subset of $CTerm(V)_{(p,m)}$.
 Hence the sequent above actually makes sense.
 If $\mathbb{T}$ is stable, then $\alpha$ preserves axioms, and so $C(\mathbb{T})$ is also stable.
@@ -1573,7 +1575,7 @@ Function $C$ determines a bijection between the set of morphism between stable t
 \begin{proof}
 First, let us prove that $C$ preserves substitution in a weak sence.
 Let $t$ be a term, and let $x$ be a variable.
-Then for every occurrence of $x$ in $t$, we can define a context $\Delta$ such that $\Gamma \vdash t\!\downarrow\ \sststile{}{V} ctx(x) = \Delta$.
+Then for every occurrence of $x$ in $t$, we can define a context $\Delta$ such that $\Gamma \vdash t\!\downarrow\ \sststile{}{} ctx(x) = \Delta$.
 This context is defined recursively in the obvious way.
 it is easy to see that if $x \in FV(t)$ and $\Delta$ is a context corresponding to some occurrence of $x$ in $t$, then the following sequent is derivable:
 \[ \sststile{}{V} C(\Gamma, t[s/x]) \cong C(\Gamma, t)[C(\Delta,s)/x] \]
@@ -1598,13 +1600,20 @@ Finally, it is easy to see that rules $\axref{c4}-\axref{c5}$ are also preserved
 
 It follows that $C$ is well-defined.
 Let us prove that $C$ is surjective.
-First, we need to define functions $D : Term_{C(\mathbb{T})}(V)_{(p,n)} \to CTerm_\mathbb{T}(D(V))_{(p,n)}$ and $D : Term_{C(\mathbb{T})}(V)_{(ctx,n)} \to Ctx(V)_n$,
-where $D(V)$ is the union of $V$ and the set of variables $x^i$ for every $x : (p,n)$ in $V$, $p \in \{ty,tm\}$ and $0 \leq i < n$.
+First, we need to define functions $D_p : Term_{C(\mathbb{T})}(V)_{(p,n)} \to CTerm_\mathbb{T}(D(V))_{(p,n)}$ and $D_{ctx} : Term_{C(\mathbb{T})}(V)_{(p,n)} \to Ctx(D(V))_n$,
+where $D(V)$ is the union of $V$ and the set of variables $x^i : (ty,i)$ for every $x : (p,n)$ in $V$, $p \in \{ty,tm\}$ and $0 \leq i < n$.
 They are defined recursively:
 \begin{align*}
-D(x) & = x \\
-D(\sigma_n(\Gamma, t_1, \ldots t_k)) & = \sigma(\ldots, ctx_{\leq n}(t_i).\,D(t_i), \ldots)
+D_p(x) & = x \\
+D_p(\sigma_n(\Gamma, t_1, \ldots t_k)) & = \sigma(\ldots, D_{ctx}(t_i)_{\geq n}.\,D_p(t_i), \ldots)|_{\bigwedge_{1 \leq i \leq k} D_{ty}(\Gamma) = D_{ctx}(t_i)_{<n}} \\
+D_p(v_{n,i}(\Gamma)) & = v_i \\
+D_p(subst(\Gamma, b, a_1, \ldots a_k)) & = D_p(b)[D_{tm}(a_1)] \ldots [D_{tm}(a_k)]|_{\bigwedge_{1 \leq i \leq k} D_{ty}(\Gamma) = D_{ctx}(a_i)} \\
+D_{ty}(ty_n(t)) & = ty(D_{tm}(t)) \\
+D_p(ft^k(ctx(x))) & = x^{n-k-1} \\
+D_{ty}(ctx(\sigma_n(\Gamma, t_1, \ldots t_k))) & = D_{ty}(\Gamma) \\
+D_{ctx}(t) & = D_{ctx}(ft(ctx(t))), D_{ty}(ctx(t))
 \end{align*}
+where $\Gamma_{<n}$ is the first $n$ types in context $\Gamma$ and $\Gamma_{\geq n}$ is the rest of the context.
 \end{proof}
 
 \subsection{Examples}
