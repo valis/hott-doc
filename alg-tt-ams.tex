@@ -10,6 +10,7 @@
 \usepackage{bussproofs}
 \usepackage{turnstile}
 \usepackage{etex}
+\usepackage{todonotes}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
 
@@ -1419,12 +1420,7 @@ $\Gamma \vdash \sigma(\ldots, (A^i_1, \ldots A^i_{n_i}).\,x_i, \ldots)\!\downarr
 
 \medskip
 \begin{center}
-$A_1, \ldots A_n \vdash \varphi \sststile{}{} A_1, \ldots A_{n-1} \vdash A_n\!\downarrow$ \axlabel{c6}
-\end{center}
-
-\medskip
-\begin{center}
-$(\Gamma \vdash \varphi) \land (\Gamma \vdash A\!\downarrow) \sststile{}{} A, \Gamma \vdash \varphi$ \axlabel{c7}
+$\Gamma \vdash x\!\downarrow \land \Delta \vdash x\!\downarrow\ \sststile{}{\Gamma, \Delta, x} \Gamma = \Delta$ \axlabel{c6}
 \end{center}
 
 Now, we define partial contextual terms as pairs of contextual terms and contextual formulas.
@@ -1612,7 +1608,7 @@ Rule $\axref{c3}$ is mapped to the following rule:
 \end{center}
 Note that $C(\varphi) \sststile{}{V,x} C(\psi)$ implies that $C(\Delta) = C(\Delta')$.
 Hence this rule is admissible.
-Finally, it is easy to see that rules $\axref{c4}-\axref{c5}$ are also preserved.
+Finally, it is easy to see that rules $\axref{c4}-\axref{c6}$ are also preserved.
 
 It follows that $C$ is well-defined.
 Let us prove that $C$ is surjective.
@@ -1638,6 +1634,7 @@ To prove that $C(g) = f$, it is enough to show that $C(g)(\sigma_0) = f(\sigma_0
 Unfolding the definitions, we can see that we just need to show that for every term $t$, the following sequent is derivable:
 \[ \sststile{}{x_1, \ldots x_k} C(ctx(t), D_p(t)) \cong t[ft^{n_i-1-j}(ctx(x_i))/x_i^j] \]
 This is easy to prove by induction on $t$.
+\todo{Easy?}
 
 Finally, let us prove that $C$ is injective.
 We will show that if $C(f)$ and $C(g)$ agree on function symbols, then so do $f$ and $g$.
@@ -1651,12 +1648,13 @@ D(t = t') & = D_{ctx}(t) \vdash D_p(t) \deq D_p(t') \land D_{ctx}(t) = D_{ctx}(t
 D(R_n(\Gamma, t_1, \ldots t_k)) & = \Gamma' \vdash R(\ldots, D_{ctx}(t_i)_{\geq n}.\,D_{p_i}(t_i), \ldots)|_{\bigwedge_{1 \leq i \leq k} \Gamma' = D_{ctx}(t_i)_{<n}},
 \end{align*}
 where $\Gamma' = D_{ty}(\Gamma)$.
-If $f,g : \mathbb{T} \to \mathbb{T}'$ are morphisms of contextual theories such that $\sststile{}{V} C(f)(\sigma_0(\emptyCtx, x_1, \ldots x_k)) \cong C(g)(\sigma_0(\emptyCtx, x_1, \ldots x_k))$ is derivable,
-then
+If $f,g : \mathbb{T} \to \mathbb{T}'$ are morphisms of contextual theories such that $\sststile{}{V} C(f)(\sigma_0(\emptyCtx, x_1, \ldots x_k)) \cong C(g)(\sigma_0(\emptyCtx, x_1, \ldots x_k))$ is derivable, then
 \[ \bigwedge_{1 \leq i \leq k} \varphi_i \sststile{}{}\ \vdash D_p(C(f)(\sigma_0(\emptyCtx, x_1, \ldots x_k))) \cong D_p(C(g)(\sigma_0(\emptyCtx, x_1, \ldots x_k))) \]
 is also derivable, where $\varphi_i = x_i^0, \ldots x_i^{n_i-1} \vdash x_i\!\downarrow$.
 Thus we only need to prove that for every context $\Gamma$ and every contextual term $t$ with free variables in $D(\{ x_1, \ldots x_k \})$, the following sequent is derivable:
-\[ \bigwedge_{1 \leq i \leq k} x^0_i, \ldots x^{n_i-1}_i \vdash x_i\!\downarrow\ \sststile{}{} \Gamma \vdash t \cong D_p(C(\Gamma,t)) \]
+\[ \bigwedge_{1 \leq i \leq k} \varphi_i \sststile{}{} \Gamma \vdash t \cong D_p(C(\Gamma,t)) \]
+If $t$ is a variable, then this follows from \axref{c6}.
+\todo{Finish this}
 \end{proof}
 
 \subsection{Examples}
