@@ -47,6 +47,7 @@
 \newcommand{\cof}{\mathcal{C}}
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\C}{\cat{C}}
+\newcommand{\D}{\cat{D}}
 
 \newcommand{\I}{\mathrm{I}}
 \newcommand{\J}{\mathrm{J}}
@@ -59,6 +60,7 @@
 \newcommand{\Jcof}[1][]{\Icof[\J#1]}
 \newcommand{\cyli}{i}
 
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
 \newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
 
 \begin{document}
@@ -137,7 +139,9 @@ We say a map $f$ has the right lifting property up to $R$ with respect to
 an object $V$ if it has this property with respect to the map $0 \to V$.
 Given a morphism $f$ and a set of morphisms $\I$, $f$ has the left (right) lifting property up to $R$
 with respect to $\I$ if it has this property with respect to all morphisms in $\I$.
-A map has the right (left) lifting property if it has this property up to the equality relation.
+Note that a map has the right (left) lifting property if it has this property up to the equality relation.
+Often, we need to talk about maps which have RLP up to $\sim_i$ with respect to some map $i$.
+In this case, we will say that a map has RLP up to relative homotopy with respect to $i$.
 
 Let $R$ be the maximal relation on the set $\C(V,Y)$, that is for every $f_1,f_2 : V \to Y$, we have $f_1\,R\,f_2$.
 We will say that $g : X \to Y$ is \emph{pure} with respect to $f : U \to V$ if $g$ has RLP up to $R$ with respect to $f$.
@@ -311,7 +315,7 @@ Let us denote by $\J_\I$ the class of maps $\cyli_0 : V \to C_U(V)$ for each $U 
 
 \begin{prop}[triv-fib-iinj]
 Let $\C$ be a category, and let $\I$ be a class of maps of $\C$.
-If $f : X \to Y \in \Jinj[_\I]$ has RLP up to $\sim_i$ with respect to every $i \in \I$, then $f \in \Iinj$.
+If $f : X \to Y \in \Jinj[_\I]$ has RLP up to relative homotopy with respect to $\I$, then $f \in \Iinj$.
 \end{prop}
 \begin{proof}
 Suppose we have a commutative square as below.
@@ -438,8 +442,8 @@ Let $f : X \to Y$ be a morphism of $\C$ such that $X$ and $Y$ are fibrant.
 Then the following conditions are equivalent:
 \begin{enumerate}
 \item $f$ is a weak equivalence.
-\item $f$ has RLP up to $\sim_i$ with respect to every cofibration $i$.
-\item $f$ has RLP up to $\sim_i$ with respect to every $i \in \I$.
+\item $f$ has RLP up to relative homotopy with respect to cofibrations.
+\item $f$ has RLP up to relative homotopy with respect to $\I$.
 \end{enumerate}
 \end{prop}
 \begin{proof}
@@ -461,7 +465,7 @@ For every morphism $u : U \to Z$ we can define a lift $u' : U \to Y$ as $g' \cir
 Then $h \circ u$ is a homotopy between $f' \circ u'$ and $u$.
 
 Since $Z$ and $Y$ are fibrant, conditions of \rlem{we-bot} are satisfied.
-Hence $g$ has RLP up to $\sim_i$ with respect to every $i \in \I$.
+Hence $g$ has RLP up to relative homotopy with respect to $\I$.
 Since $\J_\I$ consists of trivial cofibrations, by \rprop{triv-fib-iinj}, $g$ is a trivial fibration.
 Thus $f$ is a weak equivalence by 2-out-of-3 property.
 \end{proof}
@@ -498,7 +502,7 @@ Factor $f$ into a map $g : X \to Y \in \Icell[(\J_\I \cup S)]$ followed by a map
               Z \ar@{=}[r] \ar@{-->}[ur] & Z
             } \]
 By 2-out-of-3 property, $h$ is a weak equivalence.
-Since it is a weak equivalence between fibrant objects, by \rprop{min-we}, it has RLP up to $i$ with respect to every $i \in \I$.
+Since it is a weak equivalence between fibrant objects, by \rprop{min-we}, it has RLP up to relative homotopy with respect to $\I$.
 By \rprop{triv-fib-iinj}, $f \in \Iinj$.
 Hence, we have a lift $Z \to Y$ as shown in the diagram above.
 Thus $f$ is a retract of $g$, and it belongs to $\Icof[(\J_\I \cup S)]$.
@@ -519,6 +523,139 @@ For example, if every map in $\Iinj[(\J_\I \cup S)]$ is a pullback of a map in $
 then $\J_\I \cup S$ generates the whole class of trivial cofibrations.
 But we do not know any general situation when this property holds.
 
+\subsection{Quillen equivalences}
+
+Let $U : \D \to \C$ be a right Quillen functor with left adjoint $F : \C \to \D$.
+Then $F \dashv U$ is a Quillen equivalence if and only if $U$ reflects weak equivalences between fibrant objects and
+for every cofibrant $X$, map $X \xrightarrow{\eta_X} UF(X) \xrightarrow{U(r_{F(X)})} URF(X)$ is a weak equivalence,
+where $\eta$ is the unit of the adjunction and $r_{F(X)}$ is a fibrant replacement for $F(X)$.
+In this subsection, we give an equivalent condition for the first part of this characterization, which is easier to verify sometimes.
+We prove that $U$ reflects weak equivalences between fibrant objects if and only if $F(\cof_\C)$ generates $\cof_\D$ in a certain sense,
+where $\cof_\C$ and $\cof_\D$ are classes of cofibrations of $\C$ and $\D$ respectively.
+
+To describe this characterization, we need to introduce a bit of notation.
+This notation is similar to the usual notation related to lifting properties, but we work with lifting properties up to a homotopy relation.
+Let $\I$ be a class of cofibrations of some model category $\C$.
+Then we define $\Iinj_h$ as the set of maps of $\C$ between fibrant objects which have RLP up to relative homotopy with respect to $\I$.
+We define $\Icof_h$ as the set of cofibrations of $\C$ which have LLP up to relative homotopy with respect to $\Iinj_h$.
+We will call elements of $\Icof_h$ \emph{weak $\I$-cofibrations}.
+
+As usual, we have the following properties: $\I \subseteq \Icof_h$, $\Iinj[\Icof_h]_h = \Iinj_h$, $\Icof[\Icof_h]_h = \Icof_h$, $\Iinj \subseteq \Iinj_h$,
+and if $\I \subseteq \J$, then $\Jinj_h \subseteq \Iinj_h$ and $\Icof_h \subseteq \Jcof_h$.
+\Rprop{min-we} implies that $\Iinj[\cof]_h = \we$ and if $\Icof = \cof$, then $\Iinj_h = \we$ and $\Icof_h = \cof$.
+
+\begin{lem}
+Let $U : \D \to \C$ be a right Quillen functor with left adjoint $F : \C \to \D$.
+Then the following is true:
+\begin{enumerate}
+\item \label{it:adj} If $f$ is a cofibration in $\C$ and $g$ is a map between fibrant objects in $\D$,
+then $F(f)$ has LLP up to relative homotopy with respect to $g$ if and only if $f$ has this property with respect to $U(g)$.
+\item \label{it:adj-prop} $U(\Iinj[F\I]_h) \subseteq \Iinj_h$ for every class of cofibrations $\I$.
+\item $F(\Icof_h) \subseteq \Icof[F\I]_h$ for every class of cofibrations $\I$.
+\end{enumerate}
+\end{lem}
+\begin{proof}
+The proof is identical to the proof of the analogous lemma for ordinary lifting properties.
+\begin{enumerate}
+\item Since $F$ is a left Quillen functor, it preserves relative cylinder objects, and hence also relations $\sim_f$ for every cofibration $f$.
+Now, the statement hold by adjunction as usual.
+\item Let $g \in \Iinj[F\I]_h$ and $f \in \I$.
+Then $g$ has RLP up to $\sim_{F(f)}$ with respect to $F(f)$, and by \eqref{it:adj}, $U(g)$ has RLP up to $\sim_f$ with respect to $f$.
+Thus $U(g) \in \Iinj_h$, as required.
+\item Let $f \in \Icof_h$ and $g \in \Iinj[F\I]_h$.
+Then by \eqref{it:adj-prop}, $U(g)$ has RLP up to $\sim_f$ with respect to $f$.
+By \eqref{it:adj}, $g$ has RLP up to $\sim_{F(f)}$ with respect to $F(f)$.
+Thus $F(f) \in \Icof[F\I]_h$.
+\end{enumerate}
+\end{proof}
+
+Now, we can prove the characterization of Quillen equivalences.
+Sometimes this condition is easier to verify.
+For example, if a set of generating cofibration of $\D$ is defined as $F(\I)$ for some set $\I$ of generating cofibrations of $\C$, then this condition holds immediately.
+
+\begin{prop}
+Let $U : \D \to \C$ be a right Quillen functor with left adjoint $F : \C \to \D$.
+Then $U$ reflects weak equivalences if and only if $\cof_\D \subseteq \Icof[F(\cof_\C)]_h$.
+\end{prop}
+\begin{proof}
+Let $f : X \to Y$ be a map of $\D$ such that $X$ and $Y$ are fibrant.
+Then $U(f)$ is a weak equivalence if and only if $U(f) \in \Iinj[\cof_\C]_h$.
+But $U(f) \in \Iinj[\cof_\C]_h$ if and only if $f \in \Iinj[F(\cof_\C)]_h$.
+Thus we only need to prove that $\Iinj[F(\cof_\C)]_h \subseteq \we_\D$ if and only if $\cof_\D \subseteq \Icof[F(\cof_\C)]_h$.
+But this follows from the facts that $\we_\D = \Iinj[\cof_\D]_h$ and $\Icof[\cof_\D]_h = \cof_\D$.
+\end{proof}
+
+\begin{cor}
+A Quillen adjunction $F \dashv U$ is a Quillen equivalence if and only if the map $X \to URF(X)$ is a weak equivalence of every cofibrant $X$ and $\cof_\D \subseteq \Icof[F(\cof_\C)]_h$.
+\end{cor}
+
+Just as ordinary cofibrations, the class of weak cofibrations is closed under retracts as we will see in the proposition below.
+But it is also closed under weaker notion of retracts that we now introduce.
+Let $f : X \to Y$ and $g : Z \to W$ be maps of some model category.
+Then we say that $f$ is a retract of $g$ in a weak sense if there exists the following diagram:
+\[ \xymatrix{ X \ar[r] \ar[d]_f & Z \ar[r] \ar[d]_g & X \ar[d] \\
+              Y \ar[r]          & W \ar[r]          & Y'
+            } \]
+where the composition of the top row is the identity morphism and the composition of the bottom row is a trivial cofibration.
+
+We do not know whether the class of weak cofibrations is always closed under transfinite compositions, but we can prove that it is closed under pushouts and compositions:
+
+\begin{prop}
+The class of weak $\I$-cofibrations is closed under pushouts, compositions and retracts in a weak sense.
+\end{prop}
+\begin{proof}
+Suppose $i : U \to V$ is a weak $\I$-cofibration.
+Let $i' : U' \to V'$ be a pushout of $i$.
+Let $f : X \to Y \in \Iinj_h$.
+Then consider the following diagram:
+\[ \xymatrix{ U \ar[r] \ar[d]^i &     U' \ar[r] \ar[d]^{i'} & X \ar[d]^f \\
+              V \ar[r]          & \po V' \ar[r]             & Y
+            } \]
+Since $i \in \Icof_h$, there exist a map $v : V \to X$ and a homotopy $h : V \to P(Y)$ between $f \circ v$ and $V \to V' \to Y$ constant on $i$.
+Then by the universal property of pushouts, there exist maps $v' : V' \to X$ and $h' : V' \to P(Y)$ such that $V \to V' \xrightarrow{v'} X$ is $v$,
+$U' \xrightarrow{i'} V' \xrightarrow{v'} X$ is $U' \to X$, $V \to V' \xrightarrow{h'} P(Y)$ is $h$, and $h'$ is constant on $i'$.
+Thus $i'$ has LLP up to $\sim_{i'}$ with respect to $f$.
+
+Now, let us show that weak $\I$-cofibrations are closed under compositions.
+Let $i : U \to V$ and $j : V \to W$ be weak $\I$-cofibrations, and let $f : X \to Y$ be a map between fibrant objects.
+Consider the following diagram:
+\[ \xymatrix{ U \ar[r] \ar[d]_i \ar@{}[rdd]|(.6){\sim_i} & X \ar[dd]^f \\
+              V \ar[d]_j \ar@{-->}[ur]^v                 &             \\
+              W \ar[r]_w                                 & Y
+            } \]
+Since $i$ has LLP up to $\sim_i$ with respect to $f$, there exist a map $v : V \to X$ and a homotopy $h : V \to P(Y)$ constant on $i$.
+By the homotopy extension property, there exist a map $w' : W \to Y$ such that $w' \circ j = f \circ v$ and a homotopy $h' : W \to P(Y)$ between $w$ and $w'$ constant on $j \circ i$.
+Since $j$ has LLP up to $\sim_j$ with respect to $f$, there exist a map $w'' : W \to X$ such that $f \circ w''$ is relatively homotopic to $w$.
+
+Finally, let us prove that $\I$-cofibrations are closed under retract in a weak sense.
+Suppose that $i : U \to V$ is a retract of a weak $\I$-cofibration $f : X \to Y$.
+Then there exist maps $V \to Y$ and $Y \to V'$ such that $V \to Y \to V'$ is a trivial cofibration.
+Let $g : Z \to W \in \Iinj_h$, $u : U \to Z$, and $v : V \to W$ be maps such that $v \circ i = g \circ u$.
+Since $W$ is fibrant, $v$ factor through $V \to Y \to V'$.
+Thus we have the following diagram:
+\[ \xymatrix{ U \ar[r] \ar[d]_i & X \ar[r] \ar[d]_f & U \ar[r]^u \ar[d] & Z \ar[d]^g \\
+              V \ar[r]          & Y \ar[r]          & V' \ar[r]         & W
+            } \]
+Since $f$ is a weak $\I$-cofibration, there exists a lift $Y \to Z$ such that $Y \to Z \xrightarrow{g} W$ is relatively homotopic to $Y \to V' \to W$.
+Then $V \to Y \to Z$ is the required lift in the original square.
+\end{proof}
+
+We can also prove the following standard proposition:
+
+\begin{prop}
+If the class $\I$ is a set that admits the small object argument, then every weak $\I$-cofibration is a retract in a weak sense of a relative $\I$-cell complex.
+\end{prop}
+\begin{proof}
+Let $f : X \to Y$ be an $\I$-cofibration.
+Let $r_Y : Y \to R(Y)$ be a fibrant replacement for $Y$.
+Factor $r_Y \circ f$ into a relative $\I$-cell complex $X \to Z$ followed by a map $Z \to R(Y) \in \Iinj$.
+Since $Z \to R(Y)$ is a weak equivalence between fibrant objects, we have a lift in the following diagram:
+\[ \xymatrix{ X \ar[r] \ar[d]_f             & Z \ar[d] \\
+              Y \ar[r]_{r_Y} \ar@{-->}[ur]  & R(Y)
+            } \]
+Thus $f$ is a retract in a weak sense of $X \to Z$.
+\end{proof}
+
 \section{Existence of model structures}
 
 In this section, we will give necessary and sufficient conditions for the existence of a model structure in which all objects are fibrant.
@@ -527,7 +664,7 @@ such that the domains and the codomains of maps in $\I$ are small relative to $\
 For every $i : U \to V \in \I$, choose a reflexive relative cylinder object $C_U(V)$
 such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V) \in \Icof$.
 Let $\J_\I = \{\ \cyli_0 : V \to C_U(V)\ |\ i : U \to V \in \I \ \}$, and
-let $\we_\I$ be the set of maps which have RLP up to $\sim_i$ with respect to every $i \in \I$.
+let $\we_\I$ be the set of maps which have RLP up to relative homotopy with respect to $\I$.
 
 We will consider the following conditions:
 \begin{align}
@@ -539,7 +676,7 @@ We will consider the following conditions:
 If condition~\eqref{cond:main} holds, then the following is true:
 \begin{enumerate}
 \item Every weak equivalence factors into a map in $\Jcell[_\I]$ followed by a map in $\Iinj$.
-\item Every weak equivalence has RLP up to $\sim_i$ with respect to every $i \in \Icof$.
+\item Every weak equivalence has RLP up to relative homotopy with respect to $\Icof$.
 \item \label{it:we-top} For every $f : X \to Y$ and $g : Y \to Z$, if $g \in \we_\I$ and $g \circ f \in \we_\I$, then $f \in \we_\I$.
 \item For every $f : X \to Y$ and $g : Y \to Z$, if $f \in \we_\I$ and $g \in \we_\I$, then $g \circ f \in \we_\I$.
 \item $\Jcell[_\I] \subseteq \we_\I$.
