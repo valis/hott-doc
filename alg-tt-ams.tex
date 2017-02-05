@@ -215,7 +215,8 @@ The paper is organized as follows.
 In section 2, we define the category of partial Horn theories and discuss its properties.
 In section 3, we define algebraic dependent type theories in terms of partial Horn theories and prove that the category of models of the initial theory with substitution is equivalent to the category of contextual categories.
 In section 4, we define the concept of stable theories, which formalizes the idea that every construction in a type theory can be lifted to a larger context.
-Finally, we give a few standard examples of algebraic dependent type theories.
+In section 5, we define contextual theories which can be represented in a way that does not involve explicit weakening operations.
+In section 6, we give a few standard examples of algebraic dependent type theories.
 
 \section{Partial Horn theories}
 \label{sec:PHT}
@@ -1317,7 +1318,7 @@ and every $R \in \mathcal{P}$, $R : (p_1,q_1) \times \ldots \times (p_k,q_k)$, t
 \sigma_m(\Delta, b_1, \ldots b_k)\!\downarrow \land \varphi & \sststile{}{V} subst^q_{p,n,m}(\Gamma, \sigma_m(b_1, \ldots b_k), a_1, \ldots a_m) = \sigma_n(\Gamma, b_1', \ldots b_k') \\
 R_m(\Delta, b_1, \ldots b_k)\!\downarrow \land \varphi & \sststile{}{V} R_n(\Gamma, b_1', \ldots b_k')
 \end{align*}
-where $\varphi = \bigwedge_{1 \leq i \leq m} ty(a_i) = subst(\Gamma, ft^{m-i}(\Delta), a_1, \ldots a_{i-1})$, $V = \Gamma$, $\Delta$, $b_1, \ldots b_k$, $a_1, \ldots a_m$,
+where $\varphi = \bigwedge_{1 \leq i \leq m} ty(a_i) = subst(\Gamma, ft^{m-i}(\Delta), a_1, \ldots a_{i-1})$, $V = \{ \Gamma$, $\Delta$, $b_1, \ldots b_k$, $a_1, \ldots a_m \}$,
 and $b_i' = subst^{q_i}_{p_i,n,m}(\Gamma, b_i, a_1, \ldots a_m)$.
 
 We call these sequents \emph{the regularity axioms}.
@@ -1347,7 +1348,7 @@ Also, we need explicitly specify when we use weakening.
 In this subsection, we describe a representation of stable theories that is often equivalent to our previous definition and that does not have these disadvantages.
 We call such theories \emph{contextual}.
 
-\subsection{Contextual theories}
+\subsection{Contextual representation}
 
 First, let us describe the syntax of contextual theories.
 We will use the following set of sorts: $\mathcal{T} = \{ty,tm\} \times \mathbb{N}$.
@@ -1648,7 +1649,7 @@ For every function or predicate symbol $\sigma$, we define $C(f)(\sigma_n(\Gamma
 \begin{prop}
 Function $C$ determines a bijection between the set of morphism between stable theories $\mathbb{T}$ and $\mathbb{T}'$ and the set of stable morphisms between theories $C(\mathbb{T})$ and $C(\mathbb{T}')$.
 Moreover, $C$ preserves compositions and identity morphisms.
-Thus $C$ is a fully faithful functor from the category of stable contextual $\mathbb{T}_1$-theories to the category of regular algebraic dependent type theories.
+Thus $C$ is a fully faithful functor from the category of regular contextual $\mathbb{T}_1$-theories to the category of regular algebraic dependent type theories.
 \end{prop}
 \begin{proof}
 First, let us prove that $C$ preserves substitution in a weak sense.
@@ -1657,10 +1658,6 @@ Then, for every occurrence of $x$ in $t$, we can define a context $\Delta$ such 
 It is easy to see that if $x \in FV(t)$, $\Gamma$ is a term such that $x \notin FV(\Gamma)$, then the following sequent is derivable:
 \[ \bigwedge_{i \in I} \Delta = \Delta_i[s/x] \sststile{}{V} C(\Gamma, t[s/x]) \cong C(\Gamma, t)[C(\Delta,s)/x], \label{eq:C-subst} \tag{*} \]
 where $\{ \Delta_i \}_{i \in I}$ is the set of contexts corresponding to all occurrences of $x$ in $t$.
-
-This implies that, for every term contextual $t$ and every morphism $f$, sequent $\sststile{}{V} C(f)(C(\Gamma,t)) \cong C(\Gamma, f(t))$ is derivable.
-It follows that $C$ preserves compositions.
-The fact that $C$ preserves identity morphisms is obvious.
 
 Now, let us prove that $C$ preserves theorems.
 Rules \axref{b1}-\axref{b2} are mapped to rules of the same form.
@@ -1690,28 +1687,38 @@ which is easy to do by induction on $t$.
 
 Thus $C$ preserves theorems.
 It follows that $C$ is well-defined.
+It is obvious that $C$ preserves identity morphisms.
+To prove that it preserves compositions, it is enough to show that sequent $\sststile{}{V} C(f)(C(\Gamma,t)) \cong C(\Gamma, f(t))$ is derivable.
+But this follows from \eqref{eq:C-subst} and the fact that sequents $\vdash f(\sigma)\!\downarrow\ \sststile{}{} f(D_i(\sigma)) \vdash x_i\!\downarrow$
+and $\vdash f(R) \sststile{}{} f(D_i(R)) \vdash x_i\!\downarrow$ are derivable.
+
 Let us prove that $C$ is surjective and injective.
-First, we need to define functions $F_p : Term_{C(\mathbb{T})}(V)_{(p,n)} \to PCTerm_\mathbb{T}(F(V))_{(p,n)}$ and $G : Term_{C(\mathbb{T})}(V)_{(ctx,n)} \to PCtx(F(V))_n$,
+First, we need to define functions $F : Term_{C(\mathbb{T})}(V)_{(p,n)} \to PCTerm_\mathbb{T}(F(V))_{(p,n)}$ and $G : Term_{C(\mathbb{T})}(V)_{(ctx,n)} \to PCtx(F(V))_n$,
 where $F(V)$ is the union of $V$ and the set of variables $x^i : (ty,i)$ for every $x : (p,n)$ in $V$, $p \in \{ty,tm\}$ and $0 \leq i < n$.
 They are defined recursively:
 \begin{align*}
-F_p(x) & = x^0, \ldots x^{n-1} \vdash x \\
-F_p(\sigma_n(\Gamma, t_1, \ldots t_k)) & = G(\Gamma) \vdash \sigma(F_{p_1}(t_1), \ldots F_{p_k}(t_k)) \\
-F_{tm}(v_{n,i}(\Gamma)) & = v_i \\
-F_p(subst(\Gamma, b, t_1, \ldots t_k)) & = G(\Gamma) \vdash F_p(b)[F_{tm}(t_1)] \ldots [F_{tm}(t_k)] \\
-F_{ty}(ty_n(t)) & = ty(F_{tm}(t)) \\
-F_{ty}(ft^k(ctx(x))) & = x^0, \ldots x^{n-k-2} \vdash x^{n-k-1} \\
-F_{ty}(ft^k(ctx(\sigma_n(\Gamma, t_1, \ldots t_k)))) & = F_{ty}(ft^k(\Gamma)) \\
-G(t) & = G(ft(t)), F_{ty}(t)
+F(x) & = x \\
+F(\sigma_n(\Gamma, t_1, \ldots t_k)) & = \sigma(F(t_1), \ldots F(t_k))|_{G(\Gamma) \vdash ctx \land \bigwedge_{1 \leq i \leq k} \varphi_i} \\
+F(v_{n,i}(\Gamma)) & = v_i|_{G(\Gamma) \vdash ctx} \\
+F(subst(\Gamma, b, t_1, \ldots t_k)) & = F(b)[F(t_1)] \ldots [F(t_k)]|_{G(\Gamma) \vdash ctx \land \bigwedge_{1 \leq i \leq k} \varphi_i} \\
+F(ty_n(t)) & = ty(F(t)) \\
+F(ft^k(ctx(x))) & = x^{n-k-1} \\
+F(ft^k(ctx(\sigma_n(\Gamma, t_1, \ldots t_k)))) & = F(ft^k(\Gamma))|_{\bigwedge_{1 \leq i \leq k} \varphi_i} \\
+G(t) & = G(ft(t)), F(t)
 \end{align*}
-where $\Gamma \vdash t$ stands for $t|_{\Gamma \vdash t \downarrow}$
+where $\varphi_i$ equals to $G(ctx(t_i)) = G(\Gamma), D_i(\sigma)[F(t_1)/x_1, \ldots F(t_{i-1})/x_{i-1}]$.
 
-Let us prove that $C$ is surjective.
+Note that $F$ preserves compositions in the sense that the following sequent is derivable:
+\[ \Gamma \vdash F(t[s/x]) \cong F(t)[F(s)/x]|_{\bigwedge_{i \in I} \Gamma, E_i[s/x] = \Gamma, G(ctx(s))}, \]
+where $\{ E_i \}_{i \in I}$ is the set of contexts corresponding to all occurrences of $x$ in $F(t)$.
+It follows that $F$ preserves inference rules.
+
+Now, let us prove that $C$ is surjective.
 If $f : C(\mathbb{T}) \to C(\mathbb{T}')$ is a stable morphism, then we define a contextual morphism $g : \mathbb{T} \to \mathbb{T}'$ as follows:
-\[ g(\sigma(\ldots, (x_i^0, \ldots x_i^{n_i-1}).\,x_i, \ldots)) = F_p(f(\sigma_0(\emptyCtx, x_1, \ldots x_k)))|_{\bigwedge_{1 \leq i \leq k} x_i^0, \ldots x_i^{n_i-1} \vdash x_i \downarrow} \]
+\[ g(\sigma(\ldots, (x_i^0, \ldots x_i^{n_i-1}).\,x_i, \ldots)) = F(f(\sigma_0(\emptyCtx, x_1, \ldots x_k)))|_{\bigwedge_{1 \leq i \leq k} x_i^0, \ldots x_i^{n_i-1} \vdash x_i \downarrow} \]
 To prove that $C(g) = f$, it is enough to show that $C(g)(\sigma_0) = f(\sigma_0)$ for every function and predicate symbol $\sigma$ since $f$ and $C(g)$ are stable.
 Unfolding the definitions, we can see that we just need to show that, for every term $t$, the following sequents are derivable:
-% \[ \sststile{}{x_1, \ldots x_k} C(\Gamma, F_p(t))[ft^{n_i-1-j}(ctx(x_i))/x_i^j] \cong t|_{ctx(t) = \Gamma} \]
+% \[ \sststile{}{x_1, \ldots x_k} C(\Gamma, F(t))[ft^{n_i-1-j}(ctx(x_i))/x_i^j] \cong t|_{ctx(t) = \Gamma} \]
 \begin{align*}
 & \sststile{}{x_1, \ldots x_k} C(C(G(ctx(t))), F_p(t))[ft^{n_i-1-j}(ctx(x_i))/x_i^j] \cong t \\
 & \sststile{}{x_1, \ldots x_k} C(G(t))[ft^{n_i-1-j}(ctx(x_i))/x_i^j] \cong t
@@ -1722,24 +1729,26 @@ Finally, let us prove that $C$ is injective.
 We will show that if $C(f)$ and $C(g)$ agree on function symbols, then so do $f$ and $g$.
 Analogous statement for relation symbols is proved similarly.
 
-It is easy to see that $F_p$ preserves inference rules.
-It follows that $F_p$ preserves theorems in the sense that if $\varphi \sststile{}{x_1, \ldots x_k} \psi$ is a theorem,
+It is easy to see that $F$ preserves inference rules.
+It follows that $F$ preserves theorems in the sense that if $\varphi \sststile{}{x_1, \ldots x_k} \psi$ is a theorem,
 then $\bigwedge_{1 \leq i \leq k} x_i^0, \ldots x_i^{n_i-1} \vdash x_i\!\downarrow \land F(\varphi) \sststile{}{} F(\psi)$ is also a theorem, where $F$ is defined as follows:
 \begin{align*}
-F(t = t') & = G(ctx(t)) \vdash F_p(t) \deq F_p(t') \land G(ctx(t)) = G(ctx(t')) \\
-F(R_n(\Gamma, t_1, \ldots t_k)) & = \Gamma' \vdash R(\ldots, G(ctx(t_i))_{\geq n}.\,F_{p_i}(t_i), \ldots)|_{\bigwedge_{1 \leq i \leq k} \Gamma' = G(ctx(t_i))_{<n}},
+F(t = t') & = G(ctx(t)) \vdash F(t) \deq F(t') \land G(ctx(t)) = G(ctx(t')) \\
+F(R_n(\Gamma, t_1, \ldots t_k)) & = \Gamma' \vdash R(\ldots, G(ctx(t_i))_{\geq n}.\,F(t_i), \ldots)|_{\bigwedge_{1 \leq i \leq k} \Gamma' = G(ctx(t_i))_{<n}},
 \end{align*}
-where $\Gamma' = F_{ty}(\Gamma)$.
+where $\Gamma' = F(\Gamma)$.
 If $f,g : \mathbb{T} \to \mathbb{T}'$ are morphisms of contextual theories such that $\sststile{}{V} C(f)(\sigma_0(\emptyCtx, x_1, \ldots x_k)) \cong C(g)(\sigma_0(\emptyCtx, x_1, \ldots x_k))$ is derivable, then
-\[ \bigwedge_{1 \leq i \leq k} \varphi_i \sststile{}{}\ \vdash F_p(C(f)(\sigma_0(\emptyCtx, x_1, \ldots x_k))) \cong F_p(C(g)(\sigma_0(\emptyCtx, x_1, \ldots x_k))) \]
+\[ \bigwedge_{1 \leq i \leq k} \varphi_i \sststile{}{}\ \vdash F(C(f)(\sigma_0(\emptyCtx, x_1, \ldots x_k))) \cong F(C(g)(\sigma_0(\emptyCtx, x_1, \ldots x_k))) \]
 is also derivable, where $\varphi_i = x_i^0, \ldots x_i^{n_i-1} \vdash x_i\!\downarrow$.
 Thus we only need to prove that, for every context $\Gamma$ and every contextual term $t$ with free variables in $\{ x_1, \ldots x_k \}$, the following sequent is derivable:
-\[ \bigwedge_{1 \leq i \leq k} \varphi_i \sststile{}{} \Gamma \vdash t \cong F_p(C(C(\Gamma),t)) \]
+\[ \bigwedge_{1 \leq i \leq k} \varphi_i \sststile{}{} \Gamma \vdash t \cong F(C(C(\Gamma),t)) \]
 If $t$ is a variable, then this follows from \axref{c6}.
 If $t$ is of the form $\sigma(t_1, \ldots t_k)$, then this follows from the inductive hypothesis.
 \end{proof}
 
-\subsection{Examples}
+\subsection{Contextual theories}
+
+\section{Examples}
 
 Now, let us describe a few examples of algebraic dependent type theories with substitution.
 We implicitly assume that all of these theories contain function symbols and axioms of $\mathbb{T}_1$.
