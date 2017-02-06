@@ -215,8 +215,7 @@ The paper is organized as follows.
 In section 2, we define the category of partial Horn theories and discuss its properties.
 In section 3, we define algebraic dependent type theories in terms of partial Horn theories and prove that the category of models of the initial theory with substitution is equivalent to the category of contextual categories.
 In section 4, we define the concept of stable theories, which formalizes the idea that every construction in a type theory can be lifted to a larger context.
-In section 5, we define contextual theories which can be represented in a way that does not involve explicit weakening operations.
-In section 6, we give a few standard examples of algebraic dependent type theories.
+In section 5, we give a few standard examples of algebraic dependent type theories.
 
 \section{Partial Horn theories}
 \label{sec:PHT}
@@ -1340,413 +1339,36 @@ Thus we can define regularization functor $reg : \algtt^1_{st} \to \algtt^1_{reg
     where $\mathcal{R}$ is the set of regularity axioms.
 It is easy to see that $reg$ is a left adjoint to the inclusion $\algtt^1_{reg} \hookrightarrow \algtt^1_{st}$.
 
-\section{Contextual representation of theories}
+\subsection{Contextual theories}
 
 The definition of algebraic dependent type theories that we used before has a disadvantage that terms contain a lot of redundant information.
 For example, when we describe a term we need to repeat the context in which it is defined several times.
 Also, we need explicitly specify when we use weakening.
-In this subsection, we describe a representation of stable theories that is often equivalent to our previous definition and that does not have these disadvantages.
-We call such theories \emph{contextual}.
+In this subsection, we define contextual theories which we use to address this issues.
 
-\subsection{Contextual representation}
-
-First, let us describe the syntax of contextual theories.
-We will use the following set of sorts: $\mathcal{T} = \{ty,tm\} \times \mathbb{N}$.
-Each function symbol $\sigma \in \mathcal{F}_0$ of a contextual theory is equipped with a signature:
-\[ \sigma : s_1 \times \ldots \times s_k \to p, \]
-where $s_1, \ldots s_k \in \mathcal{T}$ and $p \in \{ty,tm\}$.
-Similarly, each predicate symbol $R \in \mathcal{P}_0$ is equipped with a signature:
-\[ R : s_1 \times \ldots \times s_k, \]
-where $s_1, \ldots s_k \in \mathcal{T}$.
-
-For every $\mathcal{T}$-set $V$ of variables, we define the $\mathcal{T}$-set $CTerm(V)$ of contextual terms inductively:
+\begin{defn}
+We say that a theory is \emph{contextual} if (it is isomorphic to a theory in which) the following conditions hold:
 \begin{enumerate}
-\item $v_i \in CTerm(V)_{(tm,n)}$ for every $i < n$.
-\item $x \in CTerm(V)_{(p,n)}$ for every $x \in V_{(p,m)}$, $m \leq n$.
-\item $\sigma(t_1, \ldots t_k) \in CTerm(V)_{(p,n)}$
-for every $\sigma \in \mathcal{F}_0$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to p$ and $t_i \in CTerm(V)_{(p_i,n+n_i)}$.
+\item For every $\sigma \in \mathcal{F}$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
+    $k$ is nonzero, $p$ equals to either $ty$ or $tm$, $p_1$ equals to $ctx$, $n_1$ equals to $n$, and for every $1 < i \leq k$, $(p_i,n_i)$ does not equal to $(ctx,0)$.
+\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$, $1 \leq i \leq k$, $s_i$ does not equal to $(ctx,0)$.
 \end{enumerate}
+\end{defn}
 
-A \emph{context} with free variables in $V$ is a finite sequence $A_1, \ldots A_n$, where $A_i \in CTerm(V)_{(ty,i-1)}$.
-The set of contexts will be denoted by $Ctx(V)$.
-The length of a context $\Gamma$ will be denoted by $|\Gamma|$.
-Let us denote by $CForm(V)_n$ the set of expressions of the following forms:
-\begin{enumerate}
-\item $a \deq a'$, where $a,a' \in CTerm(V)_{(p,n)}$.
-\item $R(t_1, \ldots t_k)$, where $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ and $t_i \in CTerm(V)_{(p,n+n_i)}$.
-\end{enumerate}
+We often omit first arguments to function symbols in a contextual theories since they usually can be inferred.
+For every function symbol $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and every $1 \leq i \leq k$,
+we usually have an (essentially unique) theorem of the following form:
+\[ \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx(x_i) = \Delta_i, \]
+where $FV(\Delta_i) \subseteq \{ \Gamma, x_1, \ldots x_{i-1} \}$.
+Then if we have an expression of the form $\sigma(\Gamma, \sigma_1(t^1_1, \ldots t^1_{m_1}), \ldots \sigma_k(t^k_1, \ldots t^k_{m_k}))$,
+where the first arguments to functions $\sigma_i$ are omitted, then we can infer them as follows: $\sigma(\Gamma, t_1', \ldots t_k')$, where
+\[ t_i' = \sigma_i(\Delta_i[t_1'/x_1, \ldots t_{i-1}'/x_{i-1}], t^i_1, \ldots t^i_{m_i}). \]
 
-An \emph{atomic contextual formula} with free variables in $V$ is an expression of the form $\Gamma \vdash \varphi$, where $\Gamma \in Ctx(V)$ and $\varphi \in CForm(V)_{|\Gamma|}$.
-We write $\Gamma \vdash a\!\downarrow$ for $\Gamma \vdash a = a$.
-We write $\Gamma \vdash ctx$ for $\top$ if $\Gamma$ is empty, and if $\Gamma = A_1, \ldots A_n$, $n > 0$, then $\Gamma \vdash ctx$ means $A_1, \ldots A_{n-1} \vdash A_n\!\downarrow$.
-
-A \emph{contextual formula} is a finite conjunction of atomic contextual formulas.
-A \emph{sequent} is an expression of the form $\varphi \sststile{}{} \psi$, where $\varphi$ and $\psi$ are contextual formulas such that $FV(\psi) \subseteq FV(\varphi)$.
-We do not have the condition on free variables in the usual definition of sequents since we have axiom \axref{a1}.
-We do not have an analog of this axiom in the contextual setting, so we need to assume that the premise of every sequent explicitly mentions every variable.
-This also means that we do not need to explicitly list all variables since they all must appear in the left hand side of the sequent.
-
-For simplicity, we left weakening operations implicit in this notation.
-This means that we need to define substitution functions slightly differently.
-For every term or formula $e$, every variable $x$, and every term $t$, we define $e[t/x]$ recursively as usual with the only difference:
-if $e = x \in V_{(p,m)}$ is a term of sort $(p,n)$, then we define $x[t/x]$ as $t\!\uparrow^{n-m}$, where $\uparrow^i = \uparrow^i_0$ and
-$\uparrow^i_j : CTerm(V)_{(p,m)} \to CTerm(V)_{(p,m+i)}$ is the usual operation of lifting de Bruijn indices defined as follows:
-\begin{align*}
-v_k\!\uparrow^i_j & =
-  \begin{cases}
-    v_k         & \text{if } k < j \\
-    v_{k+i}     & \text{if } k \geq j \\
-  \end{cases} \\
-x\!\uparrow^i_j & = x \\
-\sigma(t_1, \ldots t_k)\!\uparrow^i_j & = \sigma(t_1\!\uparrow^i_{j+n_1}, \ldots t_k\!\uparrow^i_{j+n_k})
-\end{align*}
-
-A \emph{contextual theory} consists consists of sets $\mathcal{F}_0$ and $\mathcal{P}_0$ of function and predicate symbols respectively and a set of axioms $\mathcal{A}$.
-Moreover, every function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to p$ is equipped with
-a context $D_i(\sigma) \in Ctx(\{ x_1, \ldots x_{i-1} \})$ of length $n_i$ for every $1 \leq i \leq k$.
-Similarly, every predicate symbol $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ is equipped with
-a context $D_i(R) \in Ctx(\{ x_1, \ldots x_{i-1} \})$ of length $n_i$ for every $1 \leq i \leq k$.
-Note that for every occurrence of a variable in a term or a formula, we can define a context that corresponds to this occurrence repeatedly applying functions $D_i$.
-
-We need to assume that contexts $D_i(\sigma)$ satisfies two technical assumptions.
-First, we assume that every variable occurs at most once in $D_i(\sigma)$.
-Second, let $\prec$ be the relation on the set of function symbols which is defined as follows:
-$\tau \prec \sigma$ if and only if $\tau$ occurs in $D_i(\sigma)$ for some $i$.
-We assume that this relation is well-founded.
-
-Now, let us describe the inference rules of the logic of contextual theories.
-The first chunk of inference rules is given by rules \axref{b1}-\axref{b6} as defined in subsection~\eqref{sec:PHT-rules}.
-The rest of the inference rules is given below.
-Since we do not have an analog of \axref{a1} here, we need to add analogs of \axref{a4}, \axref{a4'} and \axref{a5}.
-
-\medskip
-\begin{center}
-$(\Gamma \vdash x \deq y) \land \varphi \sststile{}{} \varphi[y/x]$ \axlabel{c2}
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\varphi \sststile{}{} \psi$}
-\RightLabel{\axlabel{c3}}
-\UnaryInfC{$\bigwedge_{i \in I} E = E_i[t/x] \land \varphi[t/x] \sststile{}{} \psi[t/x]$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-$\Gamma \vdash  R(x_1, \ldots x_k) \sststile{}{} \Gamma, D_i(R) \vdash x_i\!\downarrow$ \axlabel{c4}
-\qquad
-$\Gamma \vdash x \deq y \sststile{}{} \Gamma \vdash x\!\downarrow$ \axlabel{c4'}
-\end{center}
-
-\medskip
-\begin{center}
-$\Gamma \vdash \sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{} \Gamma, D_i(\sigma) \vdash x_i\!\downarrow$ \axlabel{c5}
-\qquad
-$\Gamma \vdash x\!\downarrow \land \Delta \vdash x\!\downarrow\ \sststile{}{} \Gamma = \Delta$ \axlabel{c6}
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma_1 \vdash \varphi_1 \land \ldots \land \Gamma_n \vdash \varphi_n \sststile{}{} \Gamma \vdash \psi$}
-\RightLabel{\axlabel{c7}}
-\UnaryInfC{$A \vdash ctx \land A, \Gamma_1 \vdash \varphi_1 \land \ldots \land A, \Gamma_n \vdash \varphi_n \sststile{}{} A, \Gamma \vdash \psi$}
-\DisplayProof
-\end{center}
-where $E$ is a context corresponding to the leftmost occurrence of $x$ in $\varphi$.
-Since $E$ corresponds to the leftmost occurrence of $x$, $x \notin FV(E)$.
-Set $\{E_i\}_{i \in I'}$ consists of contexts that correspond to occurrences of $x$ in $\varphi$ and in every context $E_i$.
-Since every variable occurs at most once in $D_i(\sigma)$, this set is finite.
-Set $\{E_i\}_{i \in I}$ consists of contexts from $\{E_i\}_{i \in I'}$ except for $E$.
-In particular, if $\{E_i\}_{i \in I'}$ consists of a single context (which is often the case in practice), then \axref{c3} looks exactly as \axref{a3}.
-
-Now, we define partial contextual terms as pairs of contextual terms and contextual formulas.
-As before, we define equivalence relations on partial contextual terms and contextual formulas.
-Partial contextual terms $t$ and $t'$ of sort $(p,0)$ are equivalent if and only if $FV(t) = FV(t')$ and sequents $\sststile{}{}\ \vdash t \cong t'$ are derivable.
-Contextual formulas $\varphi$ and $\psi$ are equivalent if and only if $FV(\varphi) = FV(\psi)$ and sequents $\varphi \ssststile{}{} \psi$ are derivable.
-
-Let $f$ be a function such that, for every function symbol
-$\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to p$ of $\mathbb{T}$, $f(\sigma)$ is a partial contextual term of $\mathbb{T}'$ of sort $(p,0)$
-such that $FV(f(\sigma)) = \{ x_1, \ldots x_k \}$, where $x_i : (p,n_i)$ and, for every predicate symbol $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$,
-$f(R)$ is a contextual formula of $\mathbb{T}'$ with the same free variables as above.
-Then $f$ can be extended in the obvious way to a function on terms, formulas, and contexts.
-Morphisms of contextual theories $\mathbb{T}$ and $\mathbb{T}'$ are equivalence classes of functions $f$ as above which preserve axioms and such that the following sequents are derivable:
-\begin{align*}
-\vdash f(\sigma)\!\downarrow\ & \sststile{}{} f(D_i(\sigma)) \vdash x_i\!\downarrow \\
-\vdash f(R) & \sststile{}{} f(D_i(R)) \vdash x_i\!\downarrow
-\end{align*}
-Compositions of morphisms are defined in the obvious way.
-
-\begin{lem}
-Morphisms of theories preserve substitutions and theorems.
-\end{lem}
-\begin{proof}
-First, note that morphisms preserve liftings.
-For every term $t$, $f(t\!\uparrow^i_j) = f(t)\!\uparrow^i_j$.
-If $t = v_k$ or $t = x$, then this is obvious, and if $t = \sigma(t_1, \ldots, t_k)$,
-then this follows from the fact that $f(\sigma)$ is a closed term and for every closed term $t'$, $t'\!\uparrow^i_j = t'$.
-This implies that $f(x[t/x]) = f(x)[f(t)/x]$, and now it is easy to prove by induction that $f$ preserves substitutions.
-
-It is easy to see that morphisms preserve all inference rules of the logic except for \axref{c3}.
-To show that morphisms nevertheless preserve theorem, we define another inference rule:
-\begin{center}
-\AxiomC{$\bigwedge_{i \in I} E = E_i \land \varphi \sststile{}{} \psi$}
-\RightLabel{\axlabel{c3'}}
-\UnaryInfC{$\bigwedge_{i \in I} E = E_i[t/x] \land \varphi[t/x] \sststile{}{} \psi[t/x]$}
-\DisplayProof
-\end{center}
-
-It is easy to see that \axref{c3'} implies \axref{c3}.
-To see that the converse is also true, we need to prove that for every contexts $E_1$ and $E_2$ which correspond to some occurrences of a variable $x$ in a formula $\varphi$,
-sequent $\varphi \sststile{}{} E_1 = E_2$ is derivable.
-First, note that for every term $t$ and every context $E$ corresponding to an occurrence of a variable $x$ in $t$,
-we have a derivable sequent $\Gamma \vdash t\!\downarrow\ \sststile{}{} E \vdash x\!\downarrow$.
-It follows that analogous sequent is derivable for every formula $\varphi$: $\varphi \sststile{}{} E \vdash x\!\downarrow$.
-Now, \axref{c6} implies the required property.
-
-Since \axref{c3} and \axref{c3'} are equivalent, to complete the proof we just need to note that
-if a sequent $\varphi \sststile{}{} \psi$ is derivable in the logic with \axref{c3'} instead of \axref{c3},
-then $f(\varphi) \sststile{}{} f(\psi)$ is derivable in the logic with \axref{c3}.
-\end{proof}
-
-We can use the traditional notation and write $\Gamma \vdash a : A$ and $\Gamma \vdash a \deq a' : A$
-for $\Gamma \vdash ty(a) \deq A$ and $(\Gamma \vdash a \deq a') \land (\Gamma \vdash a : A)$ respectively.
-We also write
-\medskip
-\begin{center}
-\AxiomC{$\varphi_1$}
-\AxiomC{$\ldots$}
-\AxiomC{$\varphi_n$}
-\TrinaryInfC{$\psi$}
-\DisplayProof
-\qquad
-\AxiomC{$\varphi_1$}
-\AxiomC{$\ldots$}
-\AxiomC{$\varphi_n$}
-\doubleLine
-\TrinaryInfC{$\psi$}
-\DisplayProof
-\end{center}
-for $\varphi_1 \land \ldots \land \varphi_n \sststile{}{} \psi$ and $\varphi_1 \land \ldots \land \varphi_n \ssststile{}{} \psi$ respectively.
-
-A \emph{$\mathbb{T}_0$-theory} is a contextual theory with a distinguished function symbol $ty : (tm,0) \to ty$ such that the following sequents are derivable:
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash a\!\downarrow$}
-\doubleLine
-\UnaryInfC{$\Gamma \vdash ty(a)\!\downarrow$}
-\DisplayProof
-\qquad
-\AxiomC{$A_1, \ldots A_n \vdash ctx$}
-\UnaryInfC{$A_1, \ldots A_n \vdash v_i : A_{n-i}$}
-\DisplayProof
-\end{center}
-A \emph{$\mathbb{T}_1$-theory} is a $\mathbb{T}_0$-theory with two distinguished function symbols $-[-] : (p,1) \times (tm,0) \to p$ such that the following sequents are derivable:
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, ty(a) \vdash b\!\downarrow$}
-\doubleLine
-\UnaryInfC{$\Gamma \vdash b[a]\!\downarrow$}
-\DisplayProof
-\qquad
-\AxiomC{$\Gamma, ty(a) \vdash b\!\downarrow$}
-\UnaryInfC{$\Gamma \vdash ty(b[a]) \deq ty(b)[a]$}
-\DisplayProof
-\qquad
-\AxiomC{$\Gamma \vdash a_j\!\downarrow$, $0 \leq j \leq i$}
-\UnaryInfC{$\Gamma \vdash v_i[a_0] \ldots [a_i] \deq a_i$}
-\DisplayProof
-\end{center}
-Morphisms of $\mathbb{T}_0$-theories are morphisms of underlying theories which preserve $ty$
-and morphisms of $\mathbb{T}_1$-theories are morphisms of underlying $\mathbb{T}_0$-theories which preserve $-[-]$.
-
-A \emph{regular} contextual theory is a $\mathbb{T}_1$-theory $\mathbb{T}$ such that,
-for every function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to p$ and
-every predicate symbol $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$, the following sequents are derivable:
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, A \vdash \sigma(x_1, \ldots x_k)\!\downarrow$}
-\AxiomC{$\Gamma \vdash a : A$}
-\BinaryInfC{$\Gamma \vdash \sigma(x_1, \ldots x_k)[a] \deq \sigma(x_1[v_0] \ldots [v_{n_1-1}][a], \ldots x_k[v_0] \ldots [v_{n_k-1}][a])$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma, A \vdash R(x_1, \ldots x_k)$}
-\AxiomC{$\Gamma \vdash a : A$}
-\BinaryInfC{$\Gamma \vdash R(x_1[v_0] \ldots [v_{n_1-1}][a], \ldots x_k[v_0] \ldots [v_{n_k-1}][a])$}
-\DisplayProof
-\end{center}
-
-\begin{remark}
-This is only one half of the regularity axioms.
-The other half states that the weakening operations commute with function and predicate symbols.
-This property is already incorporated in the definition of contextual theories.
-Thus we cannot work with non-regular stable theories in this syntax.
-If we want to do so, we just need to make weakening operations explicit.
-\end{remark}
-
-\begin{remark}[named]
-It is possible to use ordinary named representation for contextual theories.
-That is we can use binding instead of de Bruijn indices.
-The translation between two representations is straightforward.
-We give several examples of theories described in terms of the named syntax in the next subsection.
-\end{remark}
-
-For every $\mathbb{T}_1$-theory $\mathbb{T}$, we define ordinary theory $C(\mathbb{T})$ under $\mathbb{T}_1$.
-The set of function symbols of $C(\mathbb{T})$ consists of symbols
-\[ \sigma_n : (ctx,n) \times (p_1,n+n_1) \times \ldots \times (p_k,n+n_k)\to (p,n) \]
-for every $n \in \mathbb{N}$ and every $\sigma \in \mathcal{F}_0$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to p$ together with function symbols of $\mathbb{T}_1$.
-Similarly, the set of predicate symbols of $C(\mathbb{T})$ consists of symbols
-\[ R_n : (ctx,n) \times (p_1,n+n_1) \times \ldots \times (p_k,n+n_k) \]
-for every $n \in \mathbb{N}$ and every $R \in \mathcal{P}_0$, $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$.
-
-Now, let us define a function $C : Term_{C(\mathbb{T})}(V)_{(ctx,n)} \times CTerm_\mathbb{T}(V)_{(p,n)} \to PTerm_{C(\mathbb{T})}(V)_{(p,n)}$ as follows:
-\begin{align*}
-C(\Gamma, v_i) & = v_{n,i}(\Gamma) \\
-C(\Gamma, x) & = x|_{ctx(x) = \Gamma} \\
-C(\Gamma, \sigma(t_1, \ldots t_k)) & = \sigma_n(\Gamma, t_1', \ldots t_k')
-\end{align*}
-where $t_i' = C(C(\ldots C(\Gamma, A_1) \ldots, A_{n_i})[t_1'/x_1, \ldots t_{i-1}'/x_{i-1}], t_i)$ and $(A_1, \ldots A_{n_i}) = D_i(\sigma)$.
-Since relation $\prec$ is well-founded, this definition is correct.
-
-Function $C : Term_{C(\mathbb{T})}(V)_{(ctx,n)} \times CForm_\mathbb{T}(V)_n \to Form_{C(\mathbb{T})}(V)$ is defined similarly:
-\begin{align*}
-C(\Gamma, a \deq a') & = (C(\Gamma, a) = C(\Gamma, a')) \\
-C(\Gamma, R(t_1, \ldots t_k)) & = R_n(\Gamma, t_1', \ldots t_k')
-\end{align*}
-where $t_i' = C(C(\Gamma, D_i(R)[t_1/x_1, \ldots t_{i-1}/x_{i-1}]), t_i)$.
-
-For every context $\Gamma$, we define a term $C(\Gamma)$ of $C(\mathbb{T})$ of sort $(ctx,|\Gamma|)$.
-If $\Gamma$ is empty, then let $C(\Gamma)$ be equal to $*$.
-If $\Gamma = \Gamma', A$, then let $C(\Gamma)$ be equal to $C(C(\Gamma'), A)$.
-For every atomic formula $\Gamma \vdash \varphi$ of $\mathbb{T}$. we define an atomic formula $C(\Gamma \vdash \varphi)$ of $C(\mathbb{T})$ as $C(C(\Gamma), \varphi)$.
-Now, it is easy to define $C$ on formulas and sequents.
-
-Let $\overline{\mathcal{A}}$ be the set of sequents of the form
-\[ \Gamma \vdash \land \bigwedge_{1 \leq i \leq n} \Gamma, \Gamma_i \vdash \varphi_i \sststile{}{} \bigwedge_{1 \leq i \leq k} \Gamma, \Delta_i \vdash \psi_i \]
-for every axiom $\bigwedge_{1 \leq i \leq n} \Gamma_i \vdash \varphi_i \sststile{}{} \bigwedge_{1 \leq i \leq k} \Delta_i \vdash \psi_i$
-of $\mathbb{T}$ and every sequence $\Gamma$ of variables.
-The set of axioms of $C(\mathbb{T})$ consists of axioms of $\mathbb{T}_1$, regularity axioms, axiom $C(S)$ for every axiom $S \in \overline{\mathcal{A}}$, and the following axioms:
-\begin{align*}
-\sigma_n(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} ctx(\sigma_n(\Gamma, x_1, \ldots x_k)) = \Gamma \\
-\sigma_n(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} ctx(x_i) = C(\Gamma, D_i(\sigma)) \\
-R_n(\Gamma, x_1, \ldots x_k) & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} ctx(x_i) = C(\Gamma, D_i(R)) \\
-& \sststile{}{\Gamma, B, a} subst_{p,n,1}(\Gamma, B, a) \cong (-[-])_n(\Gamma, B, a)
-\end{align*}
-
-For every contextual theory $\mathbb{T}$, we can define a function $\alpha : L(C(\mathbb{T})) \to C(\mathbb{T})$ as follows:
-\begin{align*}
-\alpha(L(\sigma_n)(\Gamma, \Delta, x_1, \ldots x_k)) & = \sigma_{n+1}(\Delta, x_1, \ldots x_k)|_{ft^n(\Delta) = \Gamma} \\
-\alpha(L(R_n)(\Gamma, \Delta, x_1, \ldots x_k)) & = R_{n+1}(\Delta, x_1, \ldots x_k)|_{ft^n(\Delta) = \Gamma}
-\end{align*}
-It is easy to see that $\alpha$ preserves axioms, so $\mathbb{T}$ is a regular theory.
-
-For every morphism $f : \mathbb{T} \to \mathbb{T}'$ of contextual theories, we can define a stable morphism $C(f) : C(\mathbb{T}) \to C(\mathbb{T}')$.
-For every function or predicate symbol $\sigma$, we define $C(f)(\sigma_n(\Gamma, x_1, \ldots x_k))$ as $C(\Gamma, f(\sigma(x_1, \ldots x_k)))$.
-
-\begin{prop}
-Function $C$ determines a bijection between the set of morphism between stable theories $\mathbb{T}$ and $\mathbb{T}'$ and the set of stable morphisms between theories $C(\mathbb{T})$ and $C(\mathbb{T}')$.
-Moreover, $C$ preserves compositions and identity morphisms.
-Thus $C$ is a fully faithful functor from the category of regular contextual $\mathbb{T}_1$-theories to the category of regular algebraic dependent type theories.
-\end{prop}
-\begin{proof}
-First, let us prove that $C$ preserves substitution in a weak sense.
-Let $t$ be a contextual term, and let $x$ be a variable.
-Then, for every occurrence of $x$ in $t$, we can define a context $\Delta$ such that $\Gamma \vdash t\!\downarrow\ \sststile{}{} ctx(x) = \Delta$.
-It is easy to see that if $x \in FV(t)$, $\Gamma$ is a term such that $x \notin FV(\Gamma)$, then the following sequent is derivable:
-\[ \bigwedge_{i \in I} \Delta = \Delta_i[s/x] \sststile{}{V} C(\Gamma, t[s/x]) \cong C(\Gamma, t)[C(\Delta,s)/x], \label{eq:C-subst} \tag{*} \]
-where $\{ \Delta_i \}_{i \in I}$ is the set of contexts corresponding to all occurrences of $x$ in $t$.
-
-Now, let us prove that $C$ preserves theorems.
-Rules \axref{b1}-\axref{b2} are mapped to rules of the same form.
-Rule \axref{c2} is mapped to the following rule:
-\[ x = y \land ctx(x) = C(\Gamma) \land ctx(y) = C(\Gamma) \land C(\varphi) \sststile{}{\Gamma, x, y} C(\varphi)[y/x] \land ctx(y) = \Delta, \]
-where $\Delta$ is a context corresponding to an occurrence of $x$ in $\varphi$.
-Since $C(\varphi)$ implies $ctx(x) = \Delta$ and $ctx(x) = ctx(y)$, this sequent follows from \axref{a2}.
-
-Rule \axref{c3} is mapped to the following rule:
-\medskip
-\begin{center}
-\AxiomC{$C(\varphi) \sststile{}{V,x} C(\psi)$}
-\UnaryInfC{$\bigwedge_{i \in I} C(\Delta) = C(\Delta_i[t/x]) \land C(\varphi[t/x]) \sststile{}{V,V'} C(\psi[t/x])$}
-\DisplayProof
-\end{center}
-To prove that this rule is admissible, consider the rule analogous to \axref{c3'},
-but where the set $\{ E_i \}_{i \in I}$ of contexts contains contexts corresponding to all occurrences of $x$ in $\psi$.
-The same argument that we used to prove that \axref{c3'} is equivalent to \axref{c3} can be used to prove that the modified version of \axref{c3'} and \axref{c3} are equivalent.
-Thus we may assume that the set $\{ E_i \}_{i \in I}$ in the rule above also contains contexts corresponding to occurrences of $x$ in $\psi$.
-Now, \eqref{eq:C-subst} implies that this rule is derivable.
-
-It is easy to see that rules \axref{c4}-\axref{c6} are also preserved.
-The fact that $C$ preserve \axref{c7} follows from the stability.
-We just need to prove that for every $\Gamma$ and $\varphi$, sequents $\alpha(L(A,C(C(\Gamma),\varphi))) \ssststile{}{A,V} C(C(A,\Gamma),\varphi)$ are derivable.
-To do this, it is enough to prove that for every $\Gamma$ and $t$, sequents $\sststile{}{A,V} \alpha(L(A,C(C(\Gamma),t))) \cong C(C(A,\Gamma),t)$ are derivable,
-which is easy to do by induction on $t$.
-
-Thus $C$ preserves theorems.
-It follows that $C$ is well-defined.
-It is obvious that $C$ preserves identity morphisms.
-To prove that it preserves compositions, it is enough to show that sequent $\sststile{}{V} C(f)(C(\Gamma,t)) \cong C(\Gamma, f(t))$ is derivable.
-But this follows from \eqref{eq:C-subst} and the fact that sequents $\vdash f(\sigma)\!\downarrow\ \sststile{}{} f(D_i(\sigma)) \vdash x_i\!\downarrow$
-and $\vdash f(R) \sststile{}{} f(D_i(R)) \vdash x_i\!\downarrow$ are derivable.
-
-Let us prove that $C$ is surjective and injective.
-First, we need to define functions $F : Term_{C(\mathbb{T})}(V)_{(p,n)} \to PCTerm_\mathbb{T}(F(V))_{(p,n)}$ and $G : Term_{C(\mathbb{T})}(V)_{(ctx,n)} \to PCtx(F(V))_n$,
-where $F(V)$ is the union of $V$ and the set of variables $x^i : (ty,i)$ for every $x : (p,n)$ in $V$, $p \in \{ty,tm\}$ and $0 \leq i < n$.
-They are defined recursively:
-\begin{align*}
-F(x) & = x \\
-F(\sigma_n(\Gamma, t_1, \ldots t_k)) & = \sigma(F(t_1), \ldots F(t_k))|_{G(\Gamma) \vdash ctx \land \bigwedge_{1 \leq i \leq k} \varphi_i} \\
-F(v_{n,i}(\Gamma)) & = v_i|_{G(\Gamma) \vdash ctx} \\
-F(subst(\Gamma, b, t_1, \ldots t_k)) & = F(b)[F(t_1)] \ldots [F(t_k)]|_{G(\Gamma) \vdash ctx \land \bigwedge_{1 \leq i \leq k} \varphi_i} \\
-F(ty_n(t)) & = ty(F(t)) \\
-F(ft^k(ctx(x))) & = x^{n-k-1} \\
-F(ft^k(ctx(\sigma_n(\Gamma, t_1, \ldots t_k)))) & = F(ft^k(\Gamma))|_{\bigwedge_{1 \leq i \leq k} \varphi_i} \\
-G(t) & = G(ft(t)), F(t)
-\end{align*}
-where $\varphi_i$ equals to $G(ctx(t_i)) = G(\Gamma), D_i(\sigma)[F(t_1)/x_1, \ldots F(t_{i-1})/x_{i-1}]$.
-
-Note that $F$ preserves compositions in the sense that the following sequent is derivable:
-\[ \Gamma \vdash F(t[s/x]) \cong F(t)[F(s)/x]|_{\bigwedge_{i \in I} \Gamma, E_i[s/x] = \Gamma, G(ctx(s))}, \]
-where $\{ E_i \}_{i \in I}$ is the set of contexts corresponding to all occurrences of $x$ in $F(t)$.
-It follows that $F$ preserves inference rules.
-
-Now, let us prove that $C$ is surjective.
-If $f : C(\mathbb{T}) \to C(\mathbb{T}')$ is a stable morphism, then we define a contextual morphism $g : \mathbb{T} \to \mathbb{T}'$ as follows:
-\[ g(\sigma(\ldots, (x_i^0, \ldots x_i^{n_i-1}).\,x_i, \ldots)) = F(f(\sigma_0(\emptyCtx, x_1, \ldots x_k)))|_{\bigwedge_{1 \leq i \leq k} x_i^0, \ldots x_i^{n_i-1} \vdash x_i \downarrow} \]
-To prove that $C(g) = f$, it is enough to show that $C(g)(\sigma_0) = f(\sigma_0)$ for every function and predicate symbol $\sigma$ since $f$ and $C(g)$ are stable.
-Unfolding the definitions, we can see that we just need to show that, for every term $t$, the following sequents are derivable:
-% \[ \sststile{}{x_1, \ldots x_k} C(\Gamma, F(t))[ft^{n_i-1-j}(ctx(x_i))/x_i^j] \cong t|_{ctx(t) = \Gamma} \]
-\begin{align*}
-& \sststile{}{x_1, \ldots x_k} C(C(G(ctx(t))), F_p(t))[ft^{n_i-1-j}(ctx(x_i))/x_i^j] \cong t \\
-& \sststile{}{x_1, \ldots x_k} C(G(t))[ft^{n_i-1-j}(ctx(x_i))/x_i^j] \cong t
-\end{align*}
-This is easy to prove by induction.
-
-Finally, let us prove that $C$ is injective.
-We will show that if $C(f)$ and $C(g)$ agree on function symbols, then so do $f$ and $g$.
-Analogous statement for relation symbols is proved similarly.
-
-It is easy to see that $F$ preserves inference rules.
-It follows that $F$ preserves theorems in the sense that if $\varphi \sststile{}{x_1, \ldots x_k} \psi$ is a theorem,
-then $\bigwedge_{1 \leq i \leq k} x_i^0, \ldots x_i^{n_i-1} \vdash x_i\!\downarrow \land F(\varphi) \sststile{}{} F(\psi)$ is also a theorem, where $F$ is defined as follows:
-\begin{align*}
-F(t = t') & = G(ctx(t)) \vdash F(t) \deq F(t') \land G(ctx(t)) = G(ctx(t')) \\
-F(R_n(\Gamma, t_1, \ldots t_k)) & = \Gamma' \vdash R(\ldots, G(ctx(t_i))_{\geq n}.\,F(t_i), \ldots)|_{\bigwedge_{1 \leq i \leq k} \Gamma' = G(ctx(t_i))_{<n}},
-\end{align*}
-where $\Gamma' = F(\Gamma)$.
-If $f,g : \mathbb{T} \to \mathbb{T}'$ are morphisms of contextual theories such that $\sststile{}{V} C(f)(\sigma_0(\emptyCtx, x_1, \ldots x_k)) \cong C(g)(\sigma_0(\emptyCtx, x_1, \ldots x_k))$ is derivable, then
-\[ \bigwedge_{1 \leq i \leq k} \varphi_i \sststile{}{}\ \vdash F(C(f)(\sigma_0(\emptyCtx, x_1, \ldots x_k))) \cong F(C(g)(\sigma_0(\emptyCtx, x_1, \ldots x_k))) \]
-is also derivable, where $\varphi_i = x_i^0, \ldots x_i^{n_i-1} \vdash x_i\!\downarrow$.
-Thus we only need to prove that, for every context $\Gamma$ and every contextual term $t$ with free variables in $\{ x_1, \ldots x_k \}$, the following sequent is derivable:
-\[ \bigwedge_{1 \leq i \leq k} \varphi_i \sststile{}{} \Gamma \vdash t \cong F(C(C(\Gamma),t)) \]
-If $t$ is a variable, then this follows from \axref{c6}.
-If $t$ is of the form $\sigma(t_1, \ldots t_k)$, then this follows from the inductive hypothesis.
-\end{proof}
-
-\subsection{Contextual theories}
+The only problem is that we cannot infer the first argument to the top-level function symbol.
+To fix this we introduce the following standard notation: $\Gamma \vdash t$, which stands for $\sigma(\Gamma, t_1, \ldots t_k$ if $t = \sigma(t_1, \ldots t_k)$
+and for $x|_{ctx(x) = \Gamma}$ if $t = x$.
+We also use this notation in formulas: $\Gamma \vdash t \equiv t'$ stands for $(\Gamma \vdash t) = (\Gamma \vdash t')$.
+We also write $\Gamma \vdash A\ type$ for $\Gamma \vdash A\!\downarrow$ if $A : (ty,n)$ and $\Gamma \vdash a : A$ for $ty(\Gamma \vdash a) = (\Gamma \vdash A)$.
 
 \section{Examples}
 
@@ -1754,10 +1376,8 @@ Now, let us describe a few examples of algebraic dependent type theories with su
 We implicitly assume that all of these theories contain function symbols and axioms of $\mathbb{T}_1$.
 If we take their stabilization and regularization, then we get theories corresponding to usual constructions of the type theory.
 Also, to simplify the notation, we use the following agreement.
-For every function symbol $\sigma$, there exists a (unique) rule either of the form
-$\varphi \sststile{}{} \Gamma \vdash \sigma(x_1, \ldots x_k)$ or $\varphi \sststile{}{} \Gamma \vdash \sigma(x_1, \ldots x_k) : A$.
-Moreover, for every $i$, the set of contexts that correspond to occurrences of $x_i$ in $\varphi$ consists of a unique context.
-Then we define $D_i(\sigma)$ to be this context.
+For every sequent of the form $\varphi \sststile{}{} \Gamma \vdash A\ type$, there is also sequent $\Gamma \vdash A\ type \sststile{}{} \varphi$
+and, for every sequent of the form $\varphi \sststile{}{} \Gamma \vdash a : A$, there is also sequent $\Gamma \vdash a\!\downarrow\ \sststile{}{} \varphi$.
 
 \begin{example}
 The theory of unit types with eta rules has function symbols $\top : ty$ and $unit : tm$ and the following axioms:
@@ -2041,7 +1661,7 @@ If $x_m$ is the $j$-th variable in $U(s_i)$, then define $D_m(\sigma_U)$ as foll
 Theory $U(\mathbb{T})$ has the following axioms:
 \medskip
 \begin{center}
-\AxiomC{$\vdash ctx$}
+\AxiomC{}
 \UnaryInfC{$\vdash U\ type$}
 \DisplayProof
 \qquad
