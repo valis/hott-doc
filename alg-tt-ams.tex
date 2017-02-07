@@ -1364,6 +1364,7 @@ A \emph{contextual theory} is a prestable theory $\mathbb{T}$ such that the foll
 \item There exists a set of function symbols $\mathcal{F}_0$ such that the set of funtion symbols of $\mathbb{T}$
 consists of symbols $\sigma_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m)$
 for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \in \mathcal{F}_0$ and $m \in \mathbb{N}$.
+Moreover, if $\sigma : s_1 \times \ldots \times s_k \to s \in \mathcal{F}_0$, then $s \neq (ctx,0)$.
 \item There exists a set of predicate symbols $\mathcal{P}_0$ such that the set of predicate symbols of $\mathbb{T}$
 consists of symbols $R_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m)$
 for every $R : (p_1,n_1) \times \ldots \times (p_k,n_k) \in \mathcal{P}_0$ and $m \in \mathbb{N}$.
@@ -1390,36 +1391,88 @@ and for $x|_{ctx(x) = \Gamma}$ if $t = x$.
 We also use this notation in formulas: $\Gamma \vdash t \equiv t'$ stands for $(\Gamma \vdash t) = (\Gamma \vdash t')$.
 We also write $\Gamma \vdash A\ type$ for $\Gamma \vdash A\!\downarrow$ if $A : (ty,n)$ and $\Gamma \vdash a : A$ for $ty(\Gamma \vdash a) = (\Gamma \vdash A)$.
 
-% TODO: Implicit weakening
-
-The following lemma shows that we can always replace a prestable theory with a contextual one.
-
-\begin{lem}
-Every prestable theory is isomorphic to a prestable contextual theory.
-\end{lem}
-\begin{proof}
-Let $\mathbb{T}$ be a prestable theory with $\mathcal{F}_0$ and $\mathcal{P}_0$ as the sets of function and predicate symbols.
-% TODO: Finish the proof
-\end{proof}
+Since we can always infer the index $m$ for every function symbol $\sigma_m$ if we know its sort, we usually omit this index.
+Moreover, we often need to insert the weakening operations $wk^{m,0}_{p,n}$.
+Since often such operations are applied to variables (if the theory is regular, then every term is equivalent to a term in which this property holds),
+we also usually omit them in this case.
+That is, if $X$ is a variable of a sort $(p,n)$, then instead of $wk^{m,0}_{p,n}(X)$, we usually simply write $X$.
+Using these conventions, every term of sort $(p,n)$ is also a term of sort $(p,n')$ for every $n' > n$.
 
 In practice, we often define prestable theories in the contextual form.
 To do this, we just need to specify sets $\mathcal{F}_0$ and $\mathcal{P}_0$ and the set of axioms.
 It is also easy to define a morphism of contextual theories since we only need to define it on symbols from $\mathcal{F}_0$ and $\mathcal{P}_0$.
 Then it uniquely extends to a morphism of prestable theories.
 
-\section{Examples}
+The following lemma shows that we can always replace a prestable theory with a contextual one.
 
-% TODO: Fix examples
+\begin{lem}[stable-con]
+Every prestable theory is isomorphic to a contextual theory.
+\end{lem}
+\begin{proof}
+Let $\mathbb{T}$ be a prestable theory with $\mathcal{F}_0$ and $\mathcal{P}_0$ as the sets of function and predicate symbols.
+First, note that we may assume that for every $\sigma : s_1 \times \ldots \times s_k \to s$ in $\mathcal{F}_0$, $s \neq (ctx,0)$.
+Indeed, we can always replace such a function symbol with a predicate symbol $R_\sigma : s_1 \times \ldots \times s_k$.
+
+Second, note that for every term $t \in Term_{\mathcal{F}_0}(V)_{(p,n)}$ and every $m \in \mathbb{N}$, we can construct the following partial term:
+\[ \alpha L(ft^{m-1}(\Gamma), \alpha L(ft^{m-2}(\Gamma), \ldots \alpha L(\Gamma, t))) \]
+in $PTerm_{\mathbb{T}}(L^m(V) \amalg \{ \Gamma : (ctx,m) \})_{(p,n+m)}$, which we denote by $\alpha^m(\Gamma, t)$.
+Analogously, we can define for every formula $\varphi \in Form_{\mathbb{T}}(V)$ and every $m \in \mathbb{N}$,
+a formula $\alpha^m(\Gamma, \varphi) \in Form_{\mathbb{T}}(L^m(V) \amalg \{ \Gamma : (ctx,m) \})$.
+
+Let $\mathbb{T}'$ be a contextual theory defined from the sets $\mathcal{F}_0$ and $\mathcal{P}_0$.
+Note that every term (formula, sequent) of $\mathbb{T}$ is naturally a term (formula, sequent) of $\mathbb{T}'$.
+Axioms of $\mathbb{T}'$ is the axioms of $\mathbb{T}$ together with the following axioms:
+\begin{align*}
+& \sststile{}{\Gamma, x_1, \ldots x_k} \alpha^m(\Gamma, \sigma(x_1, \ldots x_k)) \cong \sigma_m(\Gamma, x_1, \ldots x_k) \\
+\alpha^m(\Gamma, R(x_1, \ldots x_k)) & \ssststile{}{\Gamma, x_1, \ldots x_k} R_m(\Gamma, x_1, \ldots x_k)
+\end{align*}
+for every function symbol $\sigma$ and every predicate symbol $R$.
+
+There is an obvious map $\mathbb{T} \to \mathbb{T}'$ and we can define a map $\mathcal{T}' \to \mathcal{T}$
+which sends $\sigma_m(\Gamma, x_1, \ldots x_k)$ to $\alpha^m(\Gamma, \sigma(x_1, \ldots x_k))$ and
+$R_m(\Gamma, x_1, \ldots x_k)$ to $\alpha^m(\Gamma, R(x_1, \ldots x_k))$.
+These maps are inverses of each other by construction.
+\end{proof}
+
+If a prestable theory is regular, then we can prove even more:
+\begin{lem}[regular-con]
+Every regular theory is isomorphic to a contextual theory in which every function symbol in $\mathcal{F}_0$ has a signature of the form
+\[ \sigma : s_1 \times \ldots \times s_k \to (p,0), \]
+where $p \in \{ ty,tm \}$.
+\end{lem}
+\begin{proof}
+Let $\mathbb{T}$ be a regular theory.
+By \rlem{stable-con}, we may assume that $\mathbb{T}$ is contextual.
+Then we define theory $\mathbb{T}'$ which has the same predicate symbols as $\mathbb{T}$.
+For every $\sigma : s_1 \times \ldots \times s_k \to (p,n)$ in $\mathcal{F}_0$, we add the following function symbol to $\mathbb{T}'$:
+\[ \sigma' : s_1 \times \ldots \times s_k \times (tm,0) \times \ldots \times (tm,0) \to (p,0). \]
+Then we define $f(\sigma(x_1, \ldots x_k))$ as $\sigma'(x_1, \ldots x_k, v_{n-1}, \ldots v_0)$.
+For every predicate symbol $R$, we define $f(R(x_1, \ldots x_k))$ as $R(x_1, \ldots x_k)$.
+For every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$, we add axiom $f(\varphi) \sststile{}{V} f(\psi)$ to $\mathbb{T}'$.
+Then $f$ is a morphism of theories $f : \mathbb{T} \to \mathbb{T}'$.
+
+Moreover, there is a morphism $g : \mathbb{T}' \to \mathbb{T}$, which is defined as follows:
+\begin{align*}
+g(\sigma'(x_1, \ldots x_k, y_1, \ldots y_n)) & = subst(\sigma(x_1, \ldots x_k), y_1, \ldots y_n) \\
+g(R(x_1, \ldots x_k)) & = R(x_1, \ldots x_k)
+\end{align*}
+Since $\mathbb{T}$ is regular, $f$ and $g$ are inverses of each other.
+\end{proof}
+
+When we say that a regular theory is contextual (or presented in a contextual form), then we assume that it has a form as described in the previous lemma.
+
+\section{Examples}
 
 Now, let us describe a few examples of algebraic dependent type theories with substitution.
 We implicitly assume that all of these theories contain function symbols and axioms of $\mathbb{T}_1$.
 If we take their stabilization and regularization, then we get theories corresponding to usual constructions of the type theory.
+Every theory is presented in the contextual form.
 Also, to simplify the notation, we use the following agreement.
 For every sequent of the form $\varphi \sststile{}{} \Gamma \vdash A\ type$, there is also sequent $\Gamma \vdash A\ type \sststile{}{} \varphi$
 and, for every sequent of the form $\varphi \sststile{}{} \Gamma \vdash a : A$, there is also sequent $\Gamma \vdash a\!\downarrow\ \sststile{}{} \varphi$.
 
 \begin{example}
-The theory of unit types with eta rules has function symbols $\top : ty$ and $unit : tm$ and the following axioms:
+The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and $unit : (tm,0)$ and the following axioms:
 \medskip
 \begin{center}
 \AxiomC{}
@@ -1437,7 +1490,7 @@ The theory of unit types with eta rules has function symbols $\top : ty$ and $un
 \end{example}
 
 \begin{example}
-The theory of unit types without eta rules has function symbols $\top : ty$, $unit : tm$ and $\top\text{-}elim : (ty,1) \times (tm,0) \times (tm,0) \to tm$.
+The theory of unit types without eta rules has function symbols $\top : (ty,0)$, $unit : (tm,0)$ and $\top\text{-}elim : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)$.
 The axioms for $\top$ and $unit$ are the same, and the axioms for $\top\text{-}elim$ are
 \medskip
 \begin{center}
@@ -1460,10 +1513,10 @@ The axioms for $\top$ and $unit$ are the same, and the axioms for $\top\text{-}e
 \begin{example}[sigma-eta]
 The theory of $\Sigma$ types with eta rules has function symbols
 \begin{align*}
-\Sigma & : (ty,0) \times (ty,1) \to ty \\
-pair & : (ty,1) \times (tm,0) \times (tm,0) \to tm \\
-proj_1 & : (ty,0) \times (ty,1) \times (tm,0) \to tm \\
-proj_2 & : (ty,0) \times (ty,1) \times (tm,0) \to tm
+\Sigma & : (ty,0) \times (ty,1) \to (ty,0) \\
+pair & : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \\
+proj_1 & : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0) \\
+proj_2 & : (ty,0) \times (ty,1) \times (tm,0) \to (tm,0)
 \end{align*}
 and the following axioms:
 \medskip
@@ -1519,9 +1572,9 @@ and the following axioms:
 \begin{example}[sigma-no-eta]
 The theory of $\Sigma$ types without eta rules has the following function symbols:
 \begin{align*}
-\Sigma & : (ty,0) \times (ty,1) \to ty \\
-pair & : (ty,1) \times (tm,0) \times (tm,0) \to tm \\
-\Sigma\text{-}elim & : (ty,0) \times (ty,1) \times (ty,1) \times (tm,2) \times (tm,0) \to tm
+\Sigma & : (ty,0) \times (ty,1) \to (ty,0) \\
+pair & : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \\
+\Sigma\text{-}elim & : (ty,0) \times (ty,1) \times (ty,1) \times (tm,2) \times (tm,0) \to (tm,0)
 \end{align*}
 The axioms for $\Sigma$ and $pair$ are the same, and the axioms for $\Sigma\text{-}elim$ are
 \medskip
@@ -1556,9 +1609,9 @@ The axioms for $\Sigma$ and $pair$ are the same, and the axioms for $\Sigma\text
 \begin{example}[pi-eta]
 The theory of $\Pi$ types with eta rules has function symbols
 \begin{align*}
-\Pi & : (ty,0) \times (ty,1) \to ty \\
-\lambda & : (ty,0) \times (tm,1) \to tm \\
-app & : (ty,1) \times (tm,0) \times (tm,0) \to tm
+\Pi & : (ty,0) \times (ty,1) \to (ty,0) \\
+\lambda & : (ty,0) \times (tm,1) \to (tm,0) \\
+app & : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0)
 \end{align*}
 and the following axioms:
 \medskip
@@ -1596,9 +1649,9 @@ and the following axioms:
 \begin{example}[Id]
 The theory of identity types has function symbols
 \begin{align*}
-Id & : (ty,0) \times (tm,0) \times (tm,0) \to ty \\
-refl & : (ty,0) \times (tm,0) \to tm \\
-J & : (ty,0) \times (ty,3) \times (tm,1) \times (tm,0) \times (tm,0) \times (tm,0) \to tm
+Id & : (ty,0) \times (tm,0) \times (tm,0) \to (ty,0) \\
+refl & : (ty,0) \times (tm,0) \to (tm,0) \\
+J & : (ty,0) \times (ty,3) \times (tm,1) \times (tm,0) \times (tm,0) \times (tm,0) \to (tm,0)
 \end{align*}
 and the following inference rules:
 \medskip
@@ -1638,9 +1691,9 @@ where $D' = D[v_0, v_0, refl(A, v_0)]$.
 \begin{example}[Id-simpl]
 We can define a theory which is isomorphic to the previous one, but terms of this theory contain less redundant information.
 \begin{align*}
-Id & : (tm,0) \times (tm,0) \to ty \\
-refl & : (tm,0) \to tm \\
-J & : (ty,3) \times (tm,1) \times (tm,0) \times (tm,0) \times (tm,0) \to tm
+Id & : (tm,0) \times (tm,0) \to (ty,0) \\
+refl & : (tm,0) \to (tm,0) \\
+J & : (ty,3) \times (tm,1) \times (tm,0) \times (tm,0) \times (tm,0) \to (tm,0)
 \end{align*}
 Then the axioms should look like this:
 \medskip
@@ -1676,18 +1729,19 @@ where $A = ty(a)$.
 \end{example}
 
 \begin{example}
-We define an endofunctor $U$ on the category of regular contextual theories.
-For every such theory $\mathbb{T}$, theory $U(\mathbb{T})$ has the same symbols as $\mathbb{T}$, but we also add a universe which is closed under all function symbols of $\mathbb{T}$.
+We define an endofunctor $U$ on the category of regular theories.
+For every such theory $\mathbb{T}$, theory $U(\mathbb{T})$ has the same symbols as $\mathbb{T}$,
+but it also has a universe which is closed under all function symbols of $\mathbb{T}$.
 
 Let $\mathbb{T}$ be a regular contextual theory.
 Then $U(\mathbb{T})$ has the same predicate symbols as $\mathbb{T}$ and the following function symbols:
 \begin{align*}
-U & : ty \\
-El & : (tm,0) \to ty \\
-\sigma & : s_1 \times \ldots \times s_k \to p \\
-\sigma_U & : U(s_1) \times \ldots \times U(s_k) \to tm
+U & : (ty,0) \\
+El & : (tm,0) \to (ty,0) \\
+\sigma & : s_1 \times \ldots \times s_k \to (p,n) \\
+\sigma_U & : U(s_1) \times \ldots \times U(s_k) \to (tm,n)
 \end{align*}
-for every function symbol $\sigma : s_1 \times \ldots \times s_k \to p$ of $\mathbb{T}$,
+for every function symbol $\sigma : s_1 \times \ldots \times s_k \to (p,n)$ of $\mathbb{T}$,
 where $U(ty,n_i) = (tm,0) \times \ldots \times (tm,n_i)$ and $U(tm,n_i) = U(ty,n_i) \times (tm,n_i)$.
 If $x_m$ is the $j$-th variable in $U(s_i)$, then define $D_m(\sigma_U)$ as follows:
 \[ D_m(\sigma_U) =
