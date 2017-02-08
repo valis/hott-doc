@@ -844,6 +844,7 @@ We also prove that the category of models of this theory is equivalent to the ca
 We will use this theory later to define algebraic dependent type theories.
 
 \subsection{Definition of $\substTh$}
+\label{sec:T1-def}
 
 Let $\mathcal{C} = \{ ctx, tm \} \times \mathbb{N}$ be the set of sorts.
 We will write $(ty,n)$ for $(ctx,n+1)$.
@@ -1282,6 +1283,93 @@ The inclusion functors $\St_{\mathcal{S}_0} \to \PSt_{\mathcal{S}_0}$ and $\cSt_
 which are defined as the functors that add the required stability axioms.
 We call these left adjoints \emph{the stabilization functors}.
 
+The definition of prestable theories has a disadvantage that terms contain a lot of redundant information.
+For example, when we describe a term we need to repeat the context in which it is defined several times.
+The following notion allows us to omit this redundant information as we discuss below.
+
+\begin{defn}
+A \emph{contextual theory} is a prestable theory $\mathbb{T}$ such that the following conditions hold:
+\begin{enumerate}
+\item There exists a set of function symbols $\mathcal{F}_0$ such that the set of funtion symbols of $\mathbb{T}$ is a subset of
+$\mathcal{F}_\infty$, which consists of symbols $\sigma_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m)$
+for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \in \mathcal{F}_0$ and $m \in \mathbb{N}$.
+Moreover, if $\sigma : s_1 \times \ldots \times s_k \to s \in \mathcal{F}_0$, then $s \neq (ctx,0)$.
+\item There exists a set of predicate symbols $\mathcal{P}_0$ such that the set of predicate symbols of $\mathbb{T}$ is a subset of
+$\mathcal{P}_\infty$, which consists of symbols $R_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m)$
+for every $R : (p_1,n_1) \times \ldots \times (p_k,n_k) \in \mathcal{P}_0$ and $m \in \mathbb{N}$.
+\item $\alpha_\mathbb{T} : L(\mathbb{T}) \to \mathbb{T}$ is defined as follows:
+\begin{align*}
+\alpha_\mathbb{T}(L(\sigma_m)(\Gamma, \Delta, x_1, \ldots x_k)) & = \sigma_{m+1}(\Delta, x_1, \ldots x_k)|_{ctx^{n+m}(\Delta) = \Gamma} \\
+\alpha_\mathbb{T}(L(R_m)(\Gamma, \Delta, x_1, \ldots x_k)) & = R_{m+1}(\Delta, x_1, \ldots x_k) \land ctx^{n+m}(\Delta) = \Gamma
+\end{align*}
+\end{enumerate}
+\end{defn}
+
+Since we can always infer the index $m$ for every function symbol $\sigma_m$ if we know its sort, we usually omit this index.
+We also often can omit first arguments to function symbols in a contextual theories since they usually can be inferred.
+For every function symbol $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and every $1 \leq i \leq k$,
+we usually have an (essentially unique) theorem of the following form:
+\[ \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx(x_i) = \Delta_i, \]
+where $FV(\Delta_i) \subseteq \{ \Gamma, x_1, \ldots x_{i-1} \}$.
+Then if we have an expression of the form $\sigma(\Gamma, \sigma_1(t^1_1, \ldots t^1_{m_1}), \ldots \sigma_k(t^k_1, \ldots t^k_{m_k}))$,
+where the first arguments to functions $\sigma_i$ are omitted, then we can infer them as follows: $\sigma(\Gamma, t_1', \ldots t_k')$, where
+\[ t_i' = \sigma_i(\Delta_i[t_1'/x_1, \ldots t_{i-1}'/x_{i-1}], t^i_1, \ldots t^i_{m_i}). \]
+
+The only problem is that we cannot infer the first argument to the top-level function symbol.
+To fix this we introduce the following standard notation: $\Gamma \vdash t$, which stands for $\sigma(\Gamma, t_1, \ldots t_k)$ if $t = \sigma(t_1, \ldots t_k)$
+and for $x|_{ctx(x) = \Gamma}$ if $t = x$.
+Of course, if some arguments are omitted in $\Gamma$, then we need to know its context too in order to infer them.
+Thus, we may write $A_1, \ldots A_n \vdash t$ which stands for $(\ldots ((* \vdash A_1) \vdash A_2) \ldots \vdash A_n) \vdash t$.
+We also use this notation in formulas: $\Gamma \vdash t \equiv t'$ stands for $(\Gamma \vdash t) = (\Gamma \vdash t')$
+and $\Gamma \vdash R(t_1, \ldots t_k)$ stands for $R(\Gamma, (\Gamma \vdash t_1), \ldots (\Gamma \vdash t_k))$.
+We also write $\Gamma \vdash A\ type$ for $\Gamma \vdash A\!\downarrow$ if $A : (ty,n)$ and $\Gamma \vdash a : A$ for $ty(\Gamma \vdash a) = (\Gamma \vdash A)$.
+
+The following lemma shows that we can always replace a prestable theory with a contextual one.
+
+\begin{lem}[stable-con]
+Every prestable theory is isomorphic to a contextual theory in which the sets of function and predicate symbols equal to $\mathcal{F}_\infty$ and $\mathcal{P}_\infty$.
+\end{lem}
+\begin{proof}
+Let $\mathbb{T}$ be a prestable theory with $\mathcal{F}_0$ and $\mathcal{P}_0$ as the sets of function and predicate symbols.
+First, note that we may assume that for every $\sigma : s_1 \times \ldots \times s_k \to s$ in $\mathcal{F}_0$, $s \neq (ctx,0)$.
+Indeed, we can always replace such a function symbol with a predicate symbol $R_\sigma : s_1 \times \ldots \times s_k$.
+
+Second, note that for every term $t \in Term_{\mathcal{F}_0}(V)_{(p,n)}$ and every $m \in \mathbb{N}$, we can construct the following partial term:
+\[ \alpha L(ft^{m-1}(\Gamma), \alpha L(ft^{m-2}(\Gamma), \ldots \alpha L(\Gamma, t))) \]
+in $PTerm_{\mathbb{T}}(L^m(V) \amalg \{ \Gamma : (ctx,m) \})_{(p,n+m)}$, which we denote by $\alpha^m(\Gamma, t)$.
+Analogously, we can define for every formula $\varphi \in Form_{\mathbb{T}}(V)$ and every $m \in \mathbb{N}$,
+a formula $\alpha^m(\Gamma, \varphi) \in Form_{\mathbb{T}}(L^m(V) \amalg \{ \Gamma : (ctx,m) \})$.
+
+Let $\mathbb{T}'$ be a contextual theory defined from the sets $\mathcal{F}_0$ and $\mathcal{P}_0$.
+Note that every term (formula, sequent) of $\mathbb{T}$ is naturally a term (formula, sequent) of $\mathbb{T}'$.
+Axioms of $\mathbb{T}'$ is the axioms of $\mathbb{T}$ together with the following axioms:
+\begin{align*}
+& \sststile{}{\Gamma, x_1, \ldots x_k} \alpha^m(\Gamma, \sigma(x_1, \ldots x_k)) \cong \sigma_m(\Gamma, x_1, \ldots x_k) \\
+\alpha^m(\Gamma, R(x_1, \ldots x_k)) & \ssststile{}{\Gamma, x_1, \ldots x_k} R_m(\Gamma, x_1, \ldots x_k)
+\end{align*}
+for every function symbol $\sigma$ and every predicate symbol $R$.
+
+There is an obvious map $\mathbb{T} \to \mathbb{T}'$ and we can define a map $\mathcal{T}' \to \mathcal{T}$
+which sends $\sigma_m(\Gamma, x_1, \ldots x_k)$ to $\alpha^m(\Gamma, \sigma(x_1, \ldots x_k))$ and
+$R_m(\Gamma, x_1, \ldots x_k)$ to $\alpha^m(\Gamma, R(x_1, \ldots x_k))$.
+These maps are inverses of each other by construction.
+\end{proof}
+
+Contextual theories constructed in the previous lemma are not convenient in practice, but usually theories are defined in a contextual form.
+It is easy to define such theory: we just need to specify sets $\mathcal{F}_0$ and $\mathcal{P}_0$ and the set of axioms
+(usually, the sets of function and predicate symbols equal to $\mathcal{F}_\infty$ and $\mathcal{P}_\infty$).
+It is also easy to define a morphism of contextual theories since we only need to define it on symbols from $\mathcal{F}_0$ and $\mathcal{P}_0$.
+Then it uniquely extends to a morphism of prestable theories.
+
+Theory $\substTh$ is not contextual, but there is an isomorphic theory which is almost as convenient as $\substTh$.
+It has the same function symbols as $\substTh$ except for $subst_{p,n,k}$.
+Instead, it has the following additional function symbols:
+\begin{align*}
+wk^{m,l}_{p,n} : (ctx,n+m) \times (p,n+l) \to (p,n+m+l) \\
+psubst_{p,n,k} : (ctx,n) \times (p,n+k) \times (tm,n)^k \to (p,n).
+\end{align*}
+The first function is the weakening operation, and the second is the ``partial substitution'', which we discuss in subsection~\ref{sec:T1-def}.
+
 \subsection{Algebraic dependent type theories}
 
 Algebraic dependent type theories are prestable theories under $\substTh$ in which substitution commutes with all function symbols.
@@ -1289,20 +1377,20 @@ To define such theories, we need to define weakening first.
 For every $p \in \{ty,tm\}$, the operations of weakening $wk^{m,l}_{p,n} : (ctx,n+m) \times (p,n+l) \to (p,n+m+l)$ are defined as follows:
 \begin{align*}
 wk^{m,0}_{p,n}(\Gamma,a) & = subst_{p,n+m,n}(\Gamma, a, v_{n+m-1}, \ldots v_m) \\
-wk^{m,l+1}_{p,n}(\Gamma,a) & = subst_{p,n+m+l,n+l}(\Gamma', a, v_{n+m+l+1}, \ldots v_{m+l+1}, v_l, \ldots v_0),
+wk^{m,l+1}_{p,n}(\Gamma,a) & = subst_{p,n+m+l+1,n+l+1}(\Gamma', a, v_{n+m+l}, \ldots v_{m+l+1}, v_l, \ldots v_0),
 \end{align*}
-where $\Gamma' = wk^{m,l}_{p,ty}(\Gamma,ctx(a))$.
+where $\Gamma' = wk^{m,l}_{ty,n}(\Gamma,ctx(a))$.
 We also define $wk^{m,l}_{ctx,n} : (ctx,n+m) \times (ctx,n+l) \to (ctx,n+m+l)$ as follows:
 \begin{align*}
 wk^{m,0}_{ctx,n}(\Gamma,a) & = \Gamma \\
-wk^{m,l+1}_{ctx,n}(\Gamma,a) & = wk^{m,l}_{ty,n}(\Gamma,a)
+wk^{m,l+1}_{ctx,n}(\Gamma,a) & = wk^{m,l}_{ty,n}(\Gamma,a).
 \end{align*}
 
 Now, we need to introduce a new derived operation.
 For every $m,n,k \in \mathbb{N}$ and $p \in \{ ctx, ty, tm \}$, we define $subst^m_{p,n,k} : (ctx,n) \times (p,k+m) \times (tm,n)^k \to (p,n+m)$.
 First, let $subst^0_{ctx,n,k}(B, A, a_1, \ldots a_k) = B$ and $subst^{m+1}_{ctx,n,k} = subst^m_{ty,n,k}$.
 If $p \in \{ ty, tm \}$, then let $subst^m_{p,n,k}(B, a, a_1, \ldots a_k)$ be equal to
-\[ subst_{p,n+m,k+m}(B', a, wk^m_{tm,n}(a_1), \ldots wk^m_{tm,n}(a_k), v_{m-1}, \ldots v_0) \]
+\[ subst_{p,n+m,k+m}(B', a, wk^m_{tm,n}(a_1), \ldots wk^m_{tm,n}(a_k), v_{m-1}, \ldots v_0), \]
 where $B' = subst^m_{ctx,n,k}(B, ctx_{k+m}(a), a_1, \ldots a_k)$.
 
 For every prestable theory $\mathbb{T}$, every $m \in \mathbb{N}$, and every function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
@@ -1341,81 +1429,11 @@ For example, when we describe a term we need to repeat the context in which it i
 Also, we need explicitly specify when we use weakening.
 In this subsection, we define contextual theories which we use to address this issues.
 
-\begin{defn}
-A \emph{contextual theory} is a prestable theory $\mathbb{T}$ such that the following conditions hold:
-\begin{enumerate}
-\item There exists a set of function symbols $\mathcal{F}_0$ such that the set of funtion symbols of $\mathbb{T}$
-consists of symbols $\sigma_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m)$
-for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \in \mathcal{F}_0$ and $m \in \mathbb{N}$.
-Moreover, if $\sigma : s_1 \times \ldots \times s_k \to s \in \mathcal{F}_0$, then $s \neq (ctx,0)$.
-\item There exists a set of predicate symbols $\mathcal{P}_0$ such that the set of predicate symbols of $\mathbb{T}$
-consists of symbols $R_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m)$
-for every $R : (p_1,n_1) \times \ldots \times (p_k,n_k) \in \mathcal{P}_0$ and $m \in \mathbb{N}$.
-\item $\alpha_\mathbb{T} : L(\mathbb{T}) \to \mathbb{T}$ is defined as follows:
-\begin{align*}
-\alpha_\mathbb{T}(L(\sigma_m)(\Gamma, \Delta, x_1, \ldots x_k)) & = \sigma_{m+1}(\Delta, x_1, \ldots x_k)|_{ctx^{n+m}(\Delta) = \Gamma} \\
-\alpha_\mathbb{T}(L(R_m)(\Gamma, \Delta, x_1, \ldots x_k)) & = R_{m+1}(\Delta, x_1, \ldots x_k) \land ctx^{n+m}(\Delta) = \Gamma
-\end{align*}
-\end{enumerate}
-\end{defn}
-
-We often omit first arguments to function symbols in a contextual theories since they usually can be inferred.
-For every function symbol $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and every $1 \leq i \leq k$,
-we usually have an (essentially unique) theorem of the following form:
-\[ \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx(x_i) = \Delta_i, \]
-where $FV(\Delta_i) \subseteq \{ \Gamma, x_1, \ldots x_{i-1} \}$.
-Then if we have an expression of the form $\sigma(\Gamma, \sigma_1(t^1_1, \ldots t^1_{m_1}), \ldots \sigma_k(t^k_1, \ldots t^k_{m_k}))$,
-where the first arguments to functions $\sigma_i$ are omitted, then we can infer them as follows: $\sigma(\Gamma, t_1', \ldots t_k')$, where
-\[ t_i' = \sigma_i(\Delta_i[t_1'/x_1, \ldots t_{i-1}'/x_{i-1}], t^i_1, \ldots t^i_{m_i}). \]
-
-The only problem is that we cannot infer the first argument to the top-level function symbol.
-To fix this we introduce the following standard notation: $\Gamma \vdash t$, which stands for $\sigma(\Gamma, t_1, \ldots t_k$ if $t = \sigma(t_1, \ldots t_k)$
-and for $x|_{ctx(x) = \Gamma}$ if $t = x$.
-We also use this notation in formulas: $\Gamma \vdash t \equiv t'$ stands for $(\Gamma \vdash t) = (\Gamma \vdash t')$.
-We also write $\Gamma \vdash A\ type$ for $\Gamma \vdash A\!\downarrow$ if $A : (ty,n)$ and $\Gamma \vdash a : A$ for $ty(\Gamma \vdash a) = (\Gamma \vdash A)$.
-
-Since we can always infer the index $m$ for every function symbol $\sigma_m$ if we know its sort, we usually omit this index.
 Moreover, we often need to insert the weakening operations $wk^{m,0}_{p,n}$.
 Since often such operations are applied to variables (if the theory is regular, then every term is equivalent to a term in which this property holds),
 we also usually omit them in this case.
 That is, if $X$ is a variable of a sort $(p,n)$, then instead of $wk^{m,0}_{p,n}(X)$, we usually simply write $X$.
 Using these conventions, every term of sort $(p,n)$ is also a term of sort $(p,n')$ for every $n' > n$.
-
-In practice, we often define prestable theories in the contextual form.
-To do this, we just need to specify sets $\mathcal{F}_0$ and $\mathcal{P}_0$ and the set of axioms.
-It is also easy to define a morphism of contextual theories since we only need to define it on symbols from $\mathcal{F}_0$ and $\mathcal{P}_0$.
-Then it uniquely extends to a morphism of prestable theories.
-
-The following lemma shows that we can always replace a prestable theory with a contextual one.
-
-\begin{lem}[stable-con]
-Every prestable theory is isomorphic to a contextual theory.
-\end{lem}
-\begin{proof}
-Let $\mathbb{T}$ be a prestable theory with $\mathcal{F}_0$ and $\mathcal{P}_0$ as the sets of function and predicate symbols.
-First, note that we may assume that for every $\sigma : s_1 \times \ldots \times s_k \to s$ in $\mathcal{F}_0$, $s \neq (ctx,0)$.
-Indeed, we can always replace such a function symbol with a predicate symbol $R_\sigma : s_1 \times \ldots \times s_k$.
-
-Second, note that for every term $t \in Term_{\mathcal{F}_0}(V)_{(p,n)}$ and every $m \in \mathbb{N}$, we can construct the following partial term:
-\[ \alpha L(ft^{m-1}(\Gamma), \alpha L(ft^{m-2}(\Gamma), \ldots \alpha L(\Gamma, t))) \]
-in $PTerm_{\mathbb{T}}(L^m(V) \amalg \{ \Gamma : (ctx,m) \})_{(p,n+m)}$, which we denote by $\alpha^m(\Gamma, t)$.
-Analogously, we can define for every formula $\varphi \in Form_{\mathbb{T}}(V)$ and every $m \in \mathbb{N}$,
-a formula $\alpha^m(\Gamma, \varphi) \in Form_{\mathbb{T}}(L^m(V) \amalg \{ \Gamma : (ctx,m) \})$.
-
-Let $\mathbb{T}'$ be a contextual theory defined from the sets $\mathcal{F}_0$ and $\mathcal{P}_0$.
-Note that every term (formula, sequent) of $\mathbb{T}$ is naturally a term (formula, sequent) of $\mathbb{T}'$.
-Axioms of $\mathbb{T}'$ is the axioms of $\mathbb{T}$ together with the following axioms:
-\begin{align*}
-& \sststile{}{\Gamma, x_1, \ldots x_k} \alpha^m(\Gamma, \sigma(x_1, \ldots x_k)) \cong \sigma_m(\Gamma, x_1, \ldots x_k) \\
-\alpha^m(\Gamma, R(x_1, \ldots x_k)) & \ssststile{}{\Gamma, x_1, \ldots x_k} R_m(\Gamma, x_1, \ldots x_k)
-\end{align*}
-for every function symbol $\sigma$ and every predicate symbol $R$.
-
-There is an obvious map $\mathbb{T} \to \mathbb{T}'$ and we can define a map $\mathcal{T}' \to \mathcal{T}$
-which sends $\sigma_m(\Gamma, x_1, \ldots x_k)$ to $\alpha^m(\Gamma, \sigma(x_1, \ldots x_k))$ and
-$R_m(\Gamma, x_1, \ldots x_k)$ to $\alpha^m(\Gamma, R(x_1, \ldots x_k))$.
-These maps are inverses of each other by construction.
-\end{proof}
 
 If a prestable theory is regular, then we can prove even more:
 \begin{lem}[regular-con]
