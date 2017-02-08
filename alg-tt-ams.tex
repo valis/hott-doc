@@ -116,6 +116,7 @@
 \newcommand{\PMnd}{\cat{PMnd}}
 \newcommand{\ccat}{\cat{CCat}}
 \newcommand{\algtt}{\cat{TT}}
+\newcommand{\substTh}{\mathbb{S}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
 \newcommand{\Th}{\cat{Th}}
@@ -207,16 +208,19 @@ A weaker notion of equivalence of theories is Morita equivalence.
 Two theories are Morita equivalent if there is a Quillen equivalence between the categories of models of these theories.
 We will not consider this notion in this paper.
 
-One of the key features of type theories is the use of variable bindings in terms.
-Such bindings are represented by de Bruijn indices in our approach.
-If we want to use ordinary representation of terms with named bindings, then we need to put some additional structure on out theories.
-We call theories with such structure \emph{stable}.
-This additional structure allows us to use all constructions of the theory in every context and guarantees that they commute with substitutions.
+Usually, we can use all constructions of a type theory in every context.
+We consider an additional structure on theories which allows us to do this.
+We call theories with this additional structure \emph{prestable}.
+Then, an algebraic dependent type theory is a prestable theory with substitutions which commute with every operation in the theory.
+We also consider \emph{stable} theories in which all axioms are stable under context extensions.
+If we think of models of a prestable theory as some sort of category with some additional structure,
+then the prestable structure allows us to pass to slices of this category.
+Then a prestable theory is stable if not only the category itself but also every slice category has this additional structure.
 
 The paper is organized as follows.
 In section 2, we define the category of partial Horn theories and discuss its properties.
-In section 3, we define algebraic dependent type theories in terms of partial Horn theories and prove that the category of models of the initial theory with substitution is equivalent to the category of contextual categories.
-In section 4, we define the concept of stable theories, which formalizes the idea that every construction in a type theory can be lifted to a larger context.
+In section 3, we define an example of partial Horn theory and prove that the category of its models is equivalent to the category of contextual categories.
+In section 4, we define algebraic type theories and describe a simplified version of the syntax that can be used with these theories.
 In section 5, we give a few standard examples of algebraic dependent type theories.
 
 \section{Partial Horn theories}
@@ -832,35 +836,19 @@ It is easy to see that $i(\mathbb{T}')$ is isomorphic to $\mathbb{T}$.
 Thus $i$ is essentially surjective on objects.
 \end{proof}
 
-\section{Algebraic dependent type theories}
+\section{Theory of Substitutions}
 \label{sec:T1}
 
-In this section we define algebraic dependent type theories and theories with substitution, describe two partial Horn theories $\mathbb{T}_0$, $\mathbb{T}_1$
-    in terms of which algebraic dependent type theories are defined, and prove that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
+In this section we define an example of partial Horn theories $\substTh$, which we call the theory of substitutions.
+We also prove that the category of models of this theory is equivalent to the category of contextual categories
+We will use this theory later to define algebraic dependent type theories.
 
-\subsection{Algebraic dependent type theories}
+\subsection{Definition of $\substTh$}
 
 Let $\mathcal{C} = \{ ctx, tm \} \times \mathbb{N}$ be the set of sorts.
 We will write $(ty,n)$ for $(ctx,n+1)$.
 Sort $(tm,n)$ represents terms in contexts of length $n$, sort $(ctx,n)$ represents contexts of length $n$, and sort $(ty,n)$ represents types in contexts of length $n$.
 
-We define $\mathbb{T}_0 \in \ThC$ as the theory with the set of function symbols $ft_n : (ty,n) \to (ctx,n)$, $ty_n : (tm,n) \to (ty,n)$ and axioms asserting that $(ctx,0)$ is trivial.
-Let $ft^i_n : (ctx,n+i) \to (ctx,n)$ be the following derived operation:
-\begin{align*}
-ft^0_n(A) & = A \\
-ft^{i+1}_n(A) & = ft^i_n(ft_{n+i}(A))
-\end{align*}
-Let $ctx_{p,n} : (p,n) \to (ctx,n)$ be defined as follows: $ctx_{ty,n}(t) = ft_n(t)$ and $ctx_{tm,n}(t) = ft_n(ty_n(t))$.
-
-Now, we can define the notion of algebraic dependent type theories.
-
-\begin{defn}
-An \emph{algebraic dependent type theory} is a theory $\mathbb{T} \in \ThC$ together with a morphism $\mathbb{T}_0 \to \mathbb{T}$.
-The category $\algtt^0$ of algebraic dependent type theories is the under category $\mathbb{T}_0/\ThC$.
-\end{defn}
-
-Often (algebraic) type theories involve substitution operations.
-So we describe a theory of substitution, which we call $\mathbb{T}_1$.
 There are two ways to define substitution: either to substitute the whole context (full substitution) or only a part of it (partial substitution).
 Using ordinary type theoretic syntax the full substitution can be described by the following inference rule:
 \begin{center}
@@ -880,12 +868,22 @@ The partial substitution is described by the following inference rule:
 \medskip
 The partial substitution was used in \cite{b-systems}, but we will use the full version since it is stronger.
 To make these operations equivalent, we need to add another operation to the partial substitution, and even more axioms.
-Thus our approach seems to be slightly simpler.
+Thus our approach seems to be somewhat more convenient.
 
-The set of function symbols of $\mathbb{T}_1$ consists of the symbols of $\mathbb{T}_0$ and the following symbols:
+The set of function symbols of $\substTh$ consists of the following symbols:
 \begin{align*}
+ft_n          & : (ty,n) \to (ctx,n) \\
+ty_n          & : (tm,n) \to (ty,n) \\
 v_{n,i}       & : (ctx,n) \to (tm,n) \text{, } 0 \leq i < n \\
 subst_{p,n,k} & : (ctx,n) \times (p,k) \times (tm,n)^k \to (p,n) \text{, } p \in \{ tm, ty \}
+\end{align*}
+
+Let $ft^i_n : (ctx,n+i) \to (ctx,n)$ and $ctx_{p,n} : (p,n) \to (ctx,n)$ be the following derived operations:
+\begin{align*}
+ft^0_n(A) & = A \\
+ft^{i+1}_n(A) & = ft^i_n(ft_{n+i}(A)) \\
+ctx_{ty,n}(t) & = ft_n(t) \\
+ctx_{tm,n}(t) & = ft_n(ty_n(t))
 \end{align*}
 
 Auxiliary predicates $Hom_{n,k} : (ctx,n) \times (ctx,k) \times (tm,n)^k$ are defined as follows: $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if
@@ -894,7 +892,7 @@ The idea is that a tuple of terms should represent a morphism in a contextual ca
 So $Hom_{n,k}(B, A, a_1, \ldots a_k)$ holds if and only if $(a_1, \ldots a_k)$ is a morphism with domain $A$ and codomain $B$.
 Note that if $Hom_{n,k}(B, A, a_1, \ldots a_k)$, then $ft_n(ty_n(a_i)) = B$.
 
-The set of axioms of $\mathbb{T}_1$ consists of the axioms of $\mathbb{T}_0$ and the axioms we list below.
+The set of axioms of $\substTh$ consists of the axioms asserting that $(ctx,0)$ is trivial and the axioms we list below.
 The following axioms describe when functions are defined:
 \begin{align}
 \label{ax:def-var}
@@ -929,16 +927,11 @@ The last axiom say that substitution must be ``associative'':
 & subst_{p,n,m}(C, a, subst_{tm,n,k}(C, a_1, b_1, \ldots b_k), \ldots subst_{tm,n,k}(C, a_m, b_1, \ldots b_k))
 \end{align}
 
-\begin{defn}
-An \emph{algebraic dependent type theory with substitution} is a theory $\mathbb{T} \in \ThC$ together with a morphism $\mathbb{T}_1 \to \mathbb{T}$.
-The category $\algtt^1$ of algebraic dependent type theories with substitution is the under category $\mathbb{T}_1/\ThC$.
-\end{defn}
+\subsection{Models of $\substTh$}
 
-\subsection{Models of $\mathbb{T}_1$}
-
-Here we will show that the category of models of $\mathbb{T}_1$ is equivalent to the category of contextual categories.
-First, we construct a functor $F : \Mod{\mathbb{T}_1} \to \ccat$.
-Let $M$ be a model of $\mathbb{T}_1$.
+Here we show that the category of models of $\substTh$ is equivalent to the category of contextual categories.
+First, we construct a functor $F : \Mod{\substTh} \to \ccat$.
+Let $M$ be a model of $\substTh$.
 Then the set of objects of level $n$ of $F(M)$ is $M(ctx,n)$.
 For each $A \in M(ctx,n)$, $B \in M(ctx,k)$ morphisms from $A$ to $B$ are tuples $(a_1, \ldots a_k)$ such that $a_i \in M(tm,n)$ and $Hom_{n,k}(A, B, a_1, \ldots a_k)$.
 
@@ -1022,15 +1015,15 @@ Thus $q(f \circ g, A) = q(f,A) \circ q(g,A[f])$.
 This completes the construction of contextual category $F(M)$.
 
 \begin{prop}[T1-CCat]
-$F$ is functorial, and functor $F : \Mod{\mathbb{T}_1} \to \ccat$ is an equivalence of categories.
+$F$ is functorial, and functor $F : \Mod{\substTh} \to \ccat$ is an equivalence of categories.
 \end{prop}
 \begin{proof}
-Given a map of $\mathbb{T}_1$ models $\alpha : M \to N$, we define a map of contextual categories $F(\alpha) : F(M) \to F(N)$.
+Given a map of $\substTh$ models $\alpha : M \to N$, we define a map of contextual categories $F(\alpha) : F(M) \to F(N)$.
 $F(\alpha)$ is already defined on objects.
 Let $f = (a_1, \ldots a_k) \in Hom_{n,k}(B,A)$.
 We define $F(\alpha)(f)$ as $(\alpha(a_1), \ldots \alpha(a_k)) \in Hom_{n,k}(\alpha(B), \alpha(A))$.
-$F(\alpha)$ preserves identity morphisms, compositions, $f^*(A)$, and $q(f,A)$ since all of these operations are defined in terms of $\mathbb{T}_1$ operations.
-Clearly, $F$ preserves identity maps and compositions of maps of $\mathbb{T}_1$ models.
+$F(\alpha)$ preserves identity morphisms, compositions, $f^*(A)$, and $q(f,A)$ since all of these operations are defined in terms of $\substTh$ operations.
+Clearly, $F$ preserves identity maps and compositions of maps of $\substTh$ models.
 Thus $F$ is a functor.
 
 First, note that if $a \in M(tm,k)$ and $\alpha : M \to N$, then $F(\alpha)(\varphi(a)) = \varphi(\alpha(a))$.
@@ -1043,7 +1036,7 @@ F(\alpha)(v_{k,k-1}(ctx_{tm,k}(a)), \ldots v_{k,0}(ctx_{tm,k}(a)), a) & = \\
 \end{align*}
 
 Now, we prove that $F$ is faithful.
-Let $\alpha,\beta : M \to N$ be a pair of maps of $\mathbb{T}_1$ models such that $F(\alpha) = F(\beta)$.
+Let $\alpha,\beta : M \to N$ be a pair of maps of $\substTh$ models such that $F(\alpha) = F(\beta)$.
 Then $\alpha$ and $\beta$ coincide on contexts.
 Given $a \in M(tm,n)$ we have the following equation: $\alpha(a) = \varphi^{-1}(F(\alpha)(\varphi(a))) = \varphi^{-1}(F(\beta)(\varphi(a))) = \beta(a)$.
 
@@ -1063,7 +1056,7 @@ Thus we only need to prove that $F(\beta)(\varphi(a_k)) = \alpha(\varphi(a_k))$.
 But $F(\beta)(\varphi(a_k)) = \varphi(\beta(a_k)) = \varphi(\varphi^{-1}(\alpha(\varphi(a_k)))) = \alpha(\varphi(a_k))$.
 
 Finally, we prove that $F$ is essentially surjective on objects.
-Given contextual category $C$ we define $\mathbb{T}_1$ model $M$.
+Given contextual category $C$ we define $\substTh$ model $M$.
 Let $M(ctx,n)$ be equal to $Ob_n(C)$ and $M(tm,n)$ be the set of pairs of objects $A \in Ob_{n+1}(C)$ and sections of $p_A : A \to ft_n(A)$.
 Let $ty_n$ be the obvious projection.
 We will usually identify $a \in M(tm,n)$ with the section $ctx_{tm,n}(a) \to ty_n(a)$.
@@ -1150,7 +1143,7 @@ q(\alpha(a_1[f], \ldots a_{k-1}[f]), A) \circ a_k[f] & = \\
 \end{align*}
 
 Now axiom \eqref{ax:subst-subst} follows from the facts that $\alpha$ preserves compositions and $(f \circ g)^*(A) = f^*(g^*(A))$.
-This completes the construction of $\mathbb{T}_1$ model $M$ from a contextual category $C$.
+This completes the construction of $\substTh$ model $M$ from a contextual category $C$.
 To finish the proof we need to show that $F(M)$ is isomorphic to $C$.
 The isomorphism is given by bijection $\alpha$.
 We already saw that $\alpha$ preserves the structure of contextual categories.
@@ -1158,19 +1151,18 @@ Thus $\alpha$ is a morphism of contextual categories, and it is easy to see that
 Hence $\alpha$ is isomorphism and $F$ is an equivalence.
 \end{proof}
 
-Let $u : \mathbb{T}_1 \to \mathbb{T}$ be an algebraic dependent type theory with substitution.
+Let $u : \substTh \to \mathbb{T}$ be an algebraic dependent type theory with substitution.
 Then it follows from \rprop{func-mod} and \rprop{T1-CCat} that models of $\mathbb{T}$ are contextual categories with additional structure,
-    where $u^* : \Mod{\mathbb{T}} \to \Mod{\mathbb{T}_1}$ is the forgetful functor.
+    where $u^* : \Mod{\mathbb{T}} \to \Mod{\substTh}$ is the forgetful functor.
 
-\section{Stable theories}
+\section{Algebraic Dependent Type Theories}
 
-In this section we consider algebraic dependent type theories with additional structure which we call \emph{stable}.
-We also define category $\algtt^1_{st}$ of stable algebraic dependent type theories with substitutions and its full subcategory $\algtt_{reg}$ of regular theories.
+In this section we consider partial Horn theories with additional structure which we call \emph{stable}.
+We also define the category $\algtt$ of algebraic dependent type theories.
 
 \subsection{Stable theories}
 
-Usually in type theories all of the function symbols are available in every context.
-We call such theories \emph{stable}.
+First, let us define prestable theories.
 Let $\mathcal{S}_0$ be a set of (non-dependent) sorts.
 Then we define the corresponding set $\mathcal{S}$ of dependent sorts as $\mathcal{S}_0 \times \mathbb{N}$.
 Suppose that $\mathcal{S}_0$ contains a distinguished sort $ctx$.
@@ -1183,7 +1175,7 @@ ctx_{p,n} & : (p,n) \to (ctx,n) \text{ for every } p \in \mathcal{S}_0
 and axioms of $\mathbb{T}_{(ctx,0)}$ as defined in section~\ref{sec:prop} together with the following axiom:
 \[ \sststile{}{x} ctx_{ctx,n}(x) = x \]
 
-To define stable theories, we need to introduce a few auxiliary constructions.
+To define prestable theories, we need to introduce a few auxiliary constructions.
 First, we define a function $L : \mathcal{C} \to \mathcal{C}$ as follows:
 \begin{align*}
 L(ctx,n) & = L(ctx,n+1) \\
@@ -1276,30 +1268,23 @@ for every function symbol $\sigma$, every predicate symbol $R$, and every axiom 
 The category of $c$-stable theories is denoted by $\cSt_{\mathcal{S}_0}$.
 \end{defn}
 
-Theories $\mathbb{T}_0$ and $\mathbb{T}_1$ are stable.
-Indeed, we can define maps $\alpha_0 : L(\mathbb{T}_0) \to \mathbb{T}_0$ and $\alpha_1 : L(\mathbb{T}_1) \to \mathbb{T}_1$ as follows:
+The theory of substitutions is stable.
+Indeed, we can define maps $\alpha : L(\substTh) \to \substTh$ as follows:
 \begin{align*}
-\alpha_0(L(ty_n)(\Gamma,a)) & = ty_{n+1}(a)|_{ft^n(ctx_{tm,n+1}(a)) = \Gamma} \\
-\alpha_1(L(v_{n,i})(\Gamma,\Delta)) & = v_{n+1,i}(\Delta)|_{ft^n(\Delta) = \Gamma}
+\alpha(L(ty_n)(\Gamma,a)) & = ty_{n+1}(a)|_{ft^n(ctx_{tm,n+1}(a)) = \Gamma} \\
+\alpha(L(v_{n,i})(\Gamma,\Delta)) & = v_{n+1,i}(\Delta)|_{ft^n(\Delta) = \Gamma}
 \end{align*}
-and $\alpha_1(L(subst_{p,n,k})(\Gamma, \Delta, B, a_1, \ldots a_k))$ is defined as
+and $\alpha(L(subst_{p,n,k})(\Gamma, \Delta, B, a_1, \ldots a_k))$ is defined as
 \[ subst_{p,n+1,k+1}(\Delta, B, v_{n+1,n}(\Delta), a_1, \ldots a_k)|_{ft^n(\Delta) = \Gamma} \]
-
-\begin{defn}
-A \emph{stable algebraic dependent type theory} is a stable theory under $(\mathbb{T}_0,\alpha_0)$.
-The category $(\mathbb{T}_0,\alpha_0)/\St_{\{ctx,tm\}}$ will be denoted by $\algtt^0_{st}$.
-A \emph{stable algebraic dependent type theory with substitution} is a stable algebraic dependent type theory under $(\mathbb{T}_1,\alpha_1)$.
-The category $(\mathbb{T}_1,\alpha_1)/\St_{\{ctx,tm\}}$ will be denoted by $\algtt^1_{st}$.
-\end{defn}
 
 The categories of stable and $c$-stable theories are cocomplete.
 The inclusion functors $\St_{\mathcal{S}_0} \to \PSt_{\mathcal{S}_0}$ and $\cSt_{\mathcal{S}_0} \to \PSt_{\mathcal{S}_0}$ have left adjoints,
 which are defined as the functors that add the required stability axioms.
-In particular, we have the following stabilization functors: $st^0 : \algtt^0 \to \algtt^0_{st}$ and $st^1 : \algtt^1 \to \algtt^1_{st}$.
+We call these left adjoints \emph{the stabilization functors}.
 
-\subsection{Regular theories}
+\subsection{Algebraic dependent type theories}
 
-Regular theories are prestable theories in which substitution commutes with all function symbols.
+Algebraic dependent type theories are prestable theories under $\substTh$ in which substitution commutes with all function symbols.
 To define such theories, we need to define weakening first.
 For every $p \in \{ty,tm\}$, the operations of weakening $wk^{m,l}_{p,n} : (ctx,n+m) \times (p,n+l) \to (p,n+m+l)$ are defined as follows:
 \begin{align*}
@@ -1313,7 +1298,7 @@ wk^{m,0}_{ctx,n}(\Gamma,a) & = \Gamma \\
 wk^{m,l+1}_{ctx,n}(\Gamma,a) & = wk^{m,l}_{ty,n}(\Gamma,a)
 \end{align*}
 
-To define regular theories, we need to introduce a new derived operation.
+Now, we need to introduce a new derived operation.
 For every $m,n,k \in \mathbb{N}$ and $p \in \{ ctx, ty, tm \}$, we define $subst^m_{p,n,k} : (ctx,n) \times (p,k+m) \times (tm,n)^k \to (p,n+m)$.
 First, let $subst^0_{ctx,n,k}(B, A, a_1, \ldots a_k) = B$ and $subst^{m+1}_{ctx,n,k} = subst^m_{ty,n,k}$.
 If $p \in \{ ty, tm \}$, then let $subst^m_{p,n,k}(B, a, a_1, \ldots a_k)$ be equal to
@@ -1333,7 +1318,7 @@ R_{m+1}(\Gamma, x_1, \ldots x_k) & = \alpha(L(ft^m(\Gamma), R_m(\Gamma, x_1, \ld
 \end{align*}
 
 \begin{defn}
-A prestable algebraic dependent type theory with substitution is \emph{regular} if,
+A prestable theory under $\substTh$ is an \emph{algebraic dependent type theory} if,
 for every $\sigma \in \mathcal{F}$, $\sigma : (p_1,q_1) \times \ldots \times (p_k,q_k) \to (p,q)$
 and every $R \in \mathcal{P}$, $R : (p_1,q_1) \times \ldots \times (p_k,q_k)$, the following sequents are derivable in it:
 \begin{align*}
@@ -1343,13 +1328,11 @@ R_m(\Delta, b_1, \ldots b_k)\!\downarrow \land \varphi & \sststile{}{V} R_n(\Gam
 where $\varphi = \bigwedge_{1 \leq i \leq m} ty(a_i) = subst(\Gamma, ft^{m-i}(\Delta), a_1, \ldots a_{i-1})$, $V = \{ \Gamma$, $\Delta$, $b_1, \ldots b_k$, $a_1, \ldots a_m \}$,
 and $b_i' = subst^{q_i}_{p_i,n,m}(\Gamma, b_i, a_1, \ldots a_m)$.
 
-We call these sequents \emph{the regularity axioms}.
-The full subcategory of $\algtt^1_{st}$ on regular theories will be denoted by $\algtt^1_{reg}$.
+The category of algebraic dependent type theories will be denoted by $\algtt$.
 \end{defn}
 
-The construction of colimits in \rprop{th-cocomplete} implies that $\algtt^1_{reg}$ is closed under colimits in $\algtt^1_{st}$.
-The inclusion functor $\algtt^1_{reg} \to \algtt^1_{st}$ has a left adjoint $reg : \algtt^1_{st} \to \algtt^1_{reg}$,
-which is defined as follows: $reg(\mathbb{T}) = \mathbb{T} \cup \mathcal{R}$, where $\mathcal{R}$ is the set of regularity axioms.
+The construction of colimits in \rprop{th-cocomplete} implies that $\algtt$ is closed under colimits in $\substTh/\PSt_\mathcal{C}$.
+The inclusion functor $\algtt \to \substTh/\PSt_\mathcal{C}$ has a left adjoint $\substTh/\PSt_\mathcal{C} \to \algtt$, which simply adds the required axioms.
 
 \subsection{Contextual theories}
 
@@ -1464,8 +1447,8 @@ When we say that a regular theory is contextual (or presented in a contextual fo
 \section{Examples}
 
 Now, let us describe a few examples of algebraic dependent type theories with substitution.
-We implicitly assume that all of these theories contain function symbols and axioms of $\mathbb{T}_1$.
-If we take their stabilization and regularization, then we get theories corresponding to usual constructions of the type theory.
+We implicitly assume that all of these theories contain function symbols and axioms of $\substTh$.
+If we take their stabilization, then we get theories corresponding to usual constructions of the type theory.
 Every theory is presented in the contextual form.
 Also, to simplify the notation, we use the following agreement.
 For every sequent of the form $\varphi \sststile{}{} \Gamma \vdash A\ type$, there is also sequent $\Gamma \vdash A\ type \sststile{}{} \varphi$
@@ -1729,11 +1712,11 @@ where $A = ty(a)$.
 \end{example}
 
 \begin{example}
-We define an endofunctor $U$ on the category of regular theories.
+We define an endofunctor $U$ on the category of algebraic dependent type theories.
 For every such theory $\mathbb{T}$, theory $U(\mathbb{T})$ has the same symbols as $\mathbb{T}$,
 but it also has a universe which is closed under all function symbols of $\mathbb{T}$.
 
-Let $\mathbb{T}$ be a regular contextual theory.
+Let $\mathbb{T}$ be an algebraic dependent type theory in a contextual form.
 Then $U(\mathbb{T})$ has the same predicate symbols as $\mathbb{T}$ and the following function symbols:
 \begin{align*}
 U & : (ty,0) \\
