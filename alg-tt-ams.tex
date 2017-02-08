@@ -1283,12 +1283,15 @@ The inclusion functors $\St_{\mathcal{S}_0} \to \PSt_{\mathcal{S}_0}$ and $\cSt_
 which are defined as the functors that add the required stability axioms.
 We call these left adjoints \emph{the stabilization functors}.
 
+\subsection{Contextual Theories}
+
 The definition of prestable theories has a disadvantage that terms contain a lot of redundant information.
 For example, when we describe a term we need to repeat the context in which it is defined several times.
 The following notion allows us to omit this redundant information as we discuss below.
 
 \begin{defn}
-A \emph{contextual theory} is a prestable theory $\mathbb{T}$ such that the following conditions hold:
+Let $\mathbb{T}_0$ be a prestable theory.
+A \emph{contextual theory under $\mathbb{T}_0$} is a prestable theory $\mathbb{T}$ such that the following conditions hold:
 \begin{enumerate}
 \item There exists a set of function symbols $\mathcal{F}_0$ such that the set of funtion symbols of $\mathbb{T}$ is a subset of
 $\mathcal{F}_\infty$, which consists of symbols $\sigma_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m)$
@@ -1306,23 +1309,26 @@ for every $R : (p_1,n_1) \times \ldots \times (p_k,n_k) \in \mathcal{P}_0$ and $
 \end{defn}
 
 Since we can always infer the index $m$ for every function symbol $\sigma_m$ if we know its sort, we usually omit this index.
-We also often can omit first arguments to function symbols in a contextual theories since they usually can be inferred.
-For every function symbol $\sigma : (ctx,n) \times (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and every $1 \leq i \leq k$,
-we usually have an (essentially unique) theorem of the following form:
-\[ \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} ctx(x_i) = \Delta_i, \]
-where $FV(\Delta_i) \subseteq \{ \Gamma, x_1, \ldots x_{i-1} \}$.
-Then if we have an expression of the form $\sigma(\Gamma, \sigma_1(t^1_1, \ldots t^1_{m_1}), \ldots \sigma_k(t^k_1, \ldots t^k_{m_k}))$,
-where the first arguments to functions $\sigma_i$ are omitted, then we can infer them as follows: $\sigma(\Gamma, t_1', \ldots t_k')$, where
-\[ t_i' = \sigma_i(\Delta_i[t_1'/x_1, \ldots t_{i-1}'/x_{i-1}], t^i_1, \ldots t^i_{m_i}). \]
-
-The only problem is that we cannot infer the first argument to the top-level function symbol.
-To fix this we introduce the following standard notation: $\Gamma \vdash t$, which stands for $\sigma(\Gamma, t_1, \ldots t_k)$ if $t = \sigma(t_1, \ldots t_k)$
-and for $x|_{ctx(x) = \Gamma}$ if $t = x$.
+To specify the omitted argument, we use the following syntax: $\Gamma \vdash t$,
+which stands for $\sigma(\Gamma, t_1, \ldots t_k)$ if $t = \sigma(t_1, \ldots t_k)$ and for $x|_{ctx(x) = \Gamma}$ if $t = x$.
 Of course, if some arguments are omitted in $\Gamma$, then we need to know its context too in order to infer them.
-Thus, we may write $A_1, \ldots A_n \vdash t$ which stands for $(\ldots ((* \vdash A_1) \vdash A_2) \ldots \vdash A_n) \vdash t$.
+Thus, we may write $A_1, \ldots A_n \vdash t$ which stands for $(\ldots ((\emptyCtx \vdash A_1) \vdash A_2) \ldots \vdash A_n) \vdash t$.
 We also use this notation in formulas: $\Gamma \vdash t \equiv t'$ stands for $(\Gamma \vdash t) = (\Gamma \vdash t')$
 and $\Gamma \vdash R(t_1, \ldots t_k)$ stands for $R(\Gamma, (\Gamma \vdash t_1), \ldots (\Gamma \vdash t_k))$.
 We also write $\Gamma \vdash A\ type$ for $\Gamma \vdash A\!\downarrow$ if $A : (ty,n)$ and $\Gamma \vdash a : A$ for $ty(\Gamma \vdash a) = (\Gamma \vdash A)$.
+
+Finally, we use the following syntax:
+\[ \sigma(A^1_1, \ldots A^1_{n_1}.\ b_1, \ldots A^k, \ldots A^k_{n_k}.\ b_k) \]
+for a term of sort $(p,m+n)$ in a contextual theory, where $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
+$b_i$ is a term of sort $(p_i,m+n_i)$, and $A^i_j$ is a term of sort $(ty,m+j-1)$.
+Term $\Gamma \vdash \sigma(A^1_1, \ldots A^1_{n_1}.\ b_1, \ldots A^k, \ldots A^k_{n_k}.\ b_k)$ stands for
+\[ \sigma_m(\Gamma, (\Gamma, A^1_1, \ldots A^1_{n_1} \vdash b_1), \ldots (\Gamma, A^k_1, \ldots A^k_{n_k} \vdash b_k)). \]
+Of course, if some $b_i$ is a variable, then we can omit $A^i_1, \ldots A^i_{n_i}$.
+We also can omit this context if there is a theorem of the following form: 
+\[ E \vdash \sigma_m(x_1, \ldots x_k)\!\downarrow\ \sststile{}{E, x_1, \ldots x_k} E \vdash ctx(x_i) \equiv \Delta \]
+for some $\Delta$ such that $x_i \notin FV(\Delta)$.
+Then $A^i_1, \ldots A^i_{n_i}$ must be equal to $((\Gamma \vdash ft^{n_i-1}(\Delta)), \ldots (\Gamma \vdash \Delta))[\rho]$,
+where $\rho(E) = \Gamma$ and $\rho(x_j) = (\Gamma, A^j_1, \ldots A^j_{n_j} \vdash b_j)$.
 
 The following lemma shows that we can always replace a prestable theory with a contextual one.
 
@@ -1366,7 +1372,7 @@ It has the same function symbols as $\substTh$ except for $subst_{p,n,k}$.
 Instead, it has the following additional function symbols:
 \begin{align*}
 wk^{m,l}_{p,n} : (ctx,n+m) \times (p,n+l) \to (p,n+m+l) \\
-psubst_{p,n,k} : (ctx,n) \times (p,n+k) \times (tm,n)^k \to (p,n).
+psubst_{p,n,k} : (ctx,n) \times (p,n+k) \times (tm,n)^k \to (p,n)
 \end{align*}
 The first function is the weakening operation, and the second is the ``partial substitution'', which we discuss in subsection~\ref{sec:T1-def}.
 
