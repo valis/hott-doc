@@ -1,0 +1,673 @@
+\documentclass[reqno]{amsart}
+
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{turnstile}
+\usepackage{etex}
+\usepackage{todonotes}
+
+\hypersetup{colorlinks=true,linkcolor=blue}
+
+\renewcommand{\turnstile}[6][s]
+    {\ifthenelse{\equal{#1}{d}}
+        {\sbox{\first}{$\displaystyle{#4}$}
+        \sbox{\second}{$\displaystyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{t}}
+        {\sbox{\first}{$\textstyle{#4}$}
+        \sbox{\second}{$\textstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{s}}
+        {\sbox{\first}{$\scriptstyle{#4}$}
+        \sbox{\second}{$\scriptstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{ss}}
+        {\sbox{\first}{$\scriptscriptstyle{#4}$}
+        \sbox{\second}{$\scriptscriptstyle{#5}$}}{}
+    \setlength{\dashthickness}{0.111ex}
+    \setlength{\ddashthickness}{0.35ex}
+    \setlength{\leasturnstilewidth}{2em}
+    \setlength{\extrawidth}{0.2em}
+    \ifthenelse{%
+      \equal{#3}{n}}{\setlength{\tinyverdistance}{0ex}}{}
+    \ifthenelse{%
+      \equal{#3}{s}}{\setlength{\tinyverdistance}{0.5\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{d}}{\setlength{\tinyverdistance}{0.5\ddashthickness}
+        \addtolength{\tinyverdistance}{\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{t}}{\setlength{\tinyverdistance}{1.5\dashthickness}
+        \addtolength{\tinyverdistance}{\ddashthickness}}{}
+        \setlength{\verdistance}{0.4ex}
+        \settoheight{\lengthvar}{\usebox{\first}}
+        \setlength{\raisedown}{-\lengthvar}
+        \addtolength{\raisedown}{-\tinyverdistance}
+        \addtolength{\raisedown}{-\verdistance}
+        \settodepth{\raiseup}{\usebox{\second}}
+        \addtolength{\raiseup}{\tinyverdistance}
+        \addtolength{\raiseup}{\verdistance}
+        \setlength{\lift}{0.8ex}
+        \settowidth{\firstwidth}{\usebox{\first}}
+        \settowidth{\secondwidth}{\usebox{\second}}
+        \ifthenelse{\lengthtest{\firstwidth = 0ex}
+            \and
+            \lengthtest{\secondwidth = 0ex}}
+                {\setlength{\turnstilewidth}{\leasturnstilewidth}}
+                {\setlength{\turnstilewidth}{2\extrawidth}
+        \ifthenelse{\lengthtest{\firstwidth < \secondwidth}}
+            {\addtolength{\turnstilewidth}{\secondwidth}}
+            {\addtolength{\turnstilewidth}{\firstwidth}}}
+        \ifthenelse{\lengthtest{\turnstilewidth < \leasturnstilewidth}}{\setlength{\turnstilewidth}{\leasturnstilewidth}}{}
+    \setlength{\turnstileheight}{1.5ex}
+    \sbox{\turnstilebox}
+    {\raisebox{\lift}{\ensuremath{
+        \makever{#2}{\dashthickness}{\turnstileheight}{\ddashthickness}
+        \makehor{#3}{\dashthickness}{\turnstilewidth}{\ddashthickness}
+        \hspace{-\turnstilewidth}
+        \raisebox{\raisedown}
+        {\makebox[\turnstilewidth]{\usebox{\first}}}
+            \hspace{-\turnstilewidth}
+            \raisebox{\raiseup}
+            {\makebox[\turnstilewidth]{\usebox{\second}}}
+        \makever{#6}{\dashthickness}{\turnstileheight}{\ddashthickness}}}}
+        \mathrel{\usebox{\turnstilebox}}}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname n#2\endcsname[1]{\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{theorem}{Theorem}
+\newref{lem}{lemma}{Lemma}
+\newref{prop}{proposition}{Proposition}
+\newref{cor}{corollary}{Corollary}
+\newref{cond}{condition}{Condition}
+
+\theoremstyle{definition}
+\newref{defn}{definition}{Definition}
+\newref{example}{example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{remark}{Remark}
+
+\newcommand{\deq}{\equiv}
+\newcommand{\repl}{:=}
+\newcommand{\idtype}{\rightsquigarrow}
+
+\newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\C}{\cat{C}}
+\newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
+\newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
+\newcommand{\Th}{\cat{Th}}
+\newcommand{\algtt}{\cat{TT}}
+\newcommand{\ThC}{\Th_{\mathcal{C}}}
+\newcommand{\emptyCtx}{\mathbf{1}}
+\newcommand{\nf}{\mathrm{nf}}
+\newcommand{\red}{\Rightarrow}
+
+\newcommand{\we}{\mathcal{W}}
+\newcommand{\fib}{\mathcal{Fib}}
+\newcommand{\cof}{\mathcal{Cof}}
+\newcommand{\I}{\mathrm{I}}
+\newcommand{\J}{\mathrm{J}}
+\newcommand{\class}[2]{#1\text{-}\mathrm{#2}}
+\newcommand{\Iinj}[1][\I]{\class{#1}{inj}}
+\newcommand{\Icell}[1][\I]{\class{#1}{cell}}
+\newcommand{\Icof}[1][\I]{\class{#1}{cof}}
+\newcommand{\Jinj}[1][]{\Iinj[\J#1]}
+\newcommand{\Jcell}[1][]{\Icell[\J#1]}
+\newcommand{\Jcof}[1][]{\Icof[\J#1]}
+\newcommand{\cyli}{i}
+
+\numberwithin{figure}{section}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\title{Weak equivalences between algebraic dependent type theories}
+
+\author{Valery Isaev}
+
+\begin{abstract}
+\end{abstract}
+
+\maketitle
+
+ \makeatletter
+    \providecommand\@dotsep{5}
+  \makeatother
+  \listoftodos\relax
+
+\section{Introduction}
+
+The category of algebraic dependent type theories was defined in \cite{alg-tt}.
+
+\section{Model structure}
+
+In this section we define a model structure on the category of algebraic dependent type theories with anough structure.
+
+\subsection{Categories of theories}
+
+It was shown in \cite{PHL} that partial Horn theories are equivalent to essentially algebraic theories.
+It follows that categories of models of these theories are locally presentable.
+In this subsection we will prove that different categories of theories are also locally finitely presentable.
+
+We will consider the category $B/\Th_\mathcal{S}$ of theories under some theory $B$.
+Every object of this category is isomorphic to an object of the form
+$((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}_0 \amalg \mathcal{P}), \mathcal{A}_0 \amalg \mathcal{A})$,
+where $\mathcal{F}_0$, $\mathcal{P}_0$ and $\mathcal{A}_0$ are the sets of function and predicate symbols and axioms of $B$ respectively,
+and a map from $B$ is defined in the obvious way.
+Indeed, if $f : B \to T$ is a theory under $B$, then we can just add function and predicate symbols and axioms of $B$
+together with the following axioms for every function symbol $\sigma$ and every predicate symbol $R$ of $B$:
+\begin{align*}
+& \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k) \cong f(\sigma(x_1, \ldots x_k)) \\
+& R(x_1, \ldots x_k) \ssststile{}{x_1, \ldots x_k} f(R(x_1, \ldots x_k))
+\end{align*}
+Clearly, this theory under $B$ is isomorphic to $T$.
+We will denote the full subcategory of $B/\Th_\mathcal{S}$ on theories of this form by $\Th_B$.
+Since inclusion $\Th_B \to B/\Th_\mathcal{S}$ is an equivalence of categories, we will often use $\Th_B$ instead of $B/\Th_\mathcal{S}$.
+
+Now, we give an explicit construction of coproducts and coequalizers in the category $\Th_B$,
+which is similar to the one described in \cite{alg-tt} for the category $\Th_\mathcal{S}$ of theories.
+If $\{ T_i = ((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}_i, \mathcal{P}_0 \amalg \mathcal{P}_i), \mathcal{A}_0 \amalg \mathcal{A}_i) \}_{i \in I}$
+is a set of theories in $\Th_B$, then we can define their coproduct as
+$((\mathcal{S}, \mathcal{F}_0 \amalg \coprod_{i \in I} \mathcal{F}_i, \mathcal{P}_0 \amalg \coprod_{i \in I} \mathcal{P}_i), \mathcal{A}_0 \amalg \coprod_{i \in I} \mathcal{A}_i)$.
+If $T = ((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}_0 \amalg \mathcal{P}), \mathcal{A}_0 \amalg \mathcal{A})$
+and $f,g : T \to T'$ is a pair of maps of theories in $\Th_B$, then their coequalizer can be defined as $T'$ together with the following axioms for every $\sigma \in \mathcal{F}$ and $R \in \mathcal{P}$:
+\begin{align*}
+& \sststile{}{x_1, \ldots x_k} f(\sigma(x_1, \ldots x_k)) \cong g(\sigma(x_1, \ldots x_k)) \\
+& f(R(x_1, \ldots x_k)) \ssststile{}{x_1, \ldots x_k} g(R(x_1, \ldots x_k))
+\end{align*}
+
+If $T : I \to \Th_B$ is a diagram of theoriesm then $colim_{i \in I} T_i$ can be constructed as a coequalizer of the coproduct $\coprod_{i \in I} T_i$ as usual.
+Thus we can assume that the sets of function and predicate symbols of $colim_{i \in I} T_i$ (that are not symbols of $B$) are disjoint unions of the corresponding sets of $T_i$.
+The axioms of $colim_{i \in I} T_i$ are axioms of $T_i$ together with axioms of the form $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n) \cong f(\sigma(x_1, \ldots x_n))$
+and $R(x_1, \ldots x_n) \ssststile{}{x_1, \ldots x_n} f(R(x_1, \ldots x_n))$ for every morphism $f : T_i \to T_j$
+in the diagram and every function symbol $\sigma$ and predicate symbol $R$ of $T_i$ which are not symbols of $B$.
+
+Let $\lambda$ be a regular cardinal.
+We will say that a theory $T = ((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}_0 \amalg \mathcal{P}), \mathcal{A}_0 \amalg \mathcal{A})$
+in $\Th_B$ is \emph{$\lambda$-small} if cardinalities of sets $\mathcal{F}$, $\mathcal{P}$ and $\mathcal{A}$ are less than $\lambda$.
+We will say that $T$ is \emph{finite} if it is $\aleph_0$-small.
+
+\begin{prop}
+Category $\Th_B$ is locally finitely presentable.
+An object of this category is $\lambda$-presentable if and only if it is isomorphic to a $\lambda$-small object.
+\end{prop}
+\begin{proof}
+First, let us prove that every $\lambda$-small object is $\lambda$-presentable.
+Let $colim_{i \in I} T_i$ be a directed colimit of theories in $\Th_B$.
+Every term and every formula of a theory is constructed from a finite number of function and predicate symbols.
+Thus for every formula of $colim_{i \in I} T_i$ there exists a theory $T_i$ such that this formula belongs to $T_i$.
+The same is true for terms and partial terms.
+
+Every derivation of a theorem $\varphi \sststile{}{V} \psi$ is constructed from a finite number of function symbols, predicate symbols and axioms.
+Thus for every theorem $\varphi \sststile{}{V} \psi$ of $colim_{i \in I} T_i$ there exists a theory $T_i$ such that $\varphi \sststile{}{V} \psi$ is a theorem of $T_i$.
+Note that the additional axioms of $colim_{i \in I} T_i$ that was added for every $f : T_i \to T_j$ are always true in $T_j$.
+
+Let $h : T \to colim_{i \in I} T_i$ be a morphism from a $\lambda$-small theory $T$ to a directed colimit of theories $\{ T_i \}_{i \in I}$.
+Since $T$ is $\lambda$-small, there exists a theory $T_i$ such that for every function symbol $\sigma$, predicate symbol $R$ and axiom $\varphi \sststile{}{V} \psi$ of $T$,
+partial terms $h(\sigma(x_1, \ldots x_n))$ and formulae $h(R(x_1, \ldots x_n))$ belong to $T_i$, and $h(\varphi) \sststile{}{V} h(\psi)$ is a theorem of $T$.
+Thus $h$ factors through $T_i$.
+
+Let $h_1,h_2 : T \to T_i$ be morphisms such that $g_i \circ h_1 = g_i \circ h_2$, where $g_i : T_i \to colim_{i \in I} T_i$.
+Then for every function symbol $\sigma$ of $T$, $\sststile{}{x_1, \ldots x_n} h_1(\sigma(x_1, \ldots x_n)) \cong h_2(\sigma(x_1, \ldots x_n))$ is a theorem of $colim_{i \in I} T_i$.
+But we already know that there exists a theory $T_j$ such that $i \leq j$ and this sequent is a theorem of $T_j$.
+The same is true for every predicate symbol of $T$.
+It follows that $f \circ h_1 = f \circ h_2$, where $f : T_i \to T_j$.
+
+Now, let us prove that $\Th_B$ is locally finitely presentable.
+We only need to show that every theory in $\Th_B$ is a colimit of its finite subtheories.
+Let $T$ be a theory, and let $\{ f_i : T_i \to T' \}_{i \in I}$ be a cocone over the diagram of finite subtheories of $T$.
+For every function or predicate symbol $p$ of $T$ which is not a symbol of $B$, there is a finite subtheory $T_p$ of $T$ which contains symbols and axioms of $B$ and one additional symbol $p$ and no other axiom.
+A morphism $h$ of cocones $T$ and $T'$ must commute with morphisms from $T_p$.
+Thus it must be defined as $h(p(x_1, \ldots x_n)) = f_p(p(x_1, \ldots x_n))$; hence it is unique.
+To prove that this defines a morphism, we need to show that $h$ preserves axioms of $T$.
+But every axiom involes only a finite number of symbols of $T$.
+Hence there exists a subtheory $T_i$ of $T$ which consists of these symbols and this axiom.
+Since $f_i$ is a morphism of theories, this axiom also holds in $T'$.
+
+Finally, let us prove that every $\lambda$-presentable theory $T$ in $\Th_B$ is isomorphic to a $\lambda$-small theory.
+Consider the identity map $id_T : T \to T$.
+Since $T$ is a colimit of its finite subtheories, $id_T$ factors through some finite subtheory $T'$ of $T$.
+Thus we have maps $f : T \to T'$ and $g : T' \to T$ such that $g \circ f = id_T$.
+Since $T$ is a coequalizer of $f \circ g$ and $id_{T'}$, it is isomorphic to the coequalizer of $f \circ g$ and $id_{T'}$ as constructed above, which is a finite theory.
+\end{proof}
+
+Since categories $\algtt^0$ and $\algtt^1$ are of the form $T/\Th_\mathcal{S}$, this proposition applies to them.
+We can prove that the same facts hold for contextual theories:
+
+\begin{cor}
+Category $B/\algtt^0_{con}$ is locally finitely presentable.
+An object of this category is $\lambda$-presentable if and only if it is isomorphic to a $\lambda$-small object.
+\end{cor}
+\begin{proof}
+Now, we will prove that category $B/\algtt^0_{con}$ is also locally finitely presentable for every $B$.
+Note that $B/\algtt^0_{con}$ is a full subcategory of $\Th_B$ and is closed under colimits.
+It follows that if an object of $B/\algtt^0_{con}$ is $\lambda$-presentable in $\Th_B$, then it is also $\lambda$-presentable in $B/\algtt^0_{con}$.
+It is easy to see that every contextual theory under $B$ is a colimit of its finite contextual subtheories under $B$.
+Thus $B/\algtt^0_{con}$ is locally finitely presentable and an object of this category is $\lambda$-presentable if and only if it is isomorphic to a $\lambda$-small theory.
+The last statement is proved by the same argument as in the case of $\Th_B$.
+In particular, this implies that $\algtt^0_{con}$ and $\algtt^1_{con}$ are locally finitely presentable.
+\end{proof}
+
+Since categories $\algtt^0_{con}$ and $\algtt^1_{con}$ are of the form $B/\algtt^0_{con}$, this corollary applies to them.
+Now we consider categories of stable and regular theories.
+Category $\algtt^0_{st}$ of stable algebraic dependent type theories was defined in \cite{alg-tt} as the category of algebras for a functor $L : \algtt^0_{con} \to \algtt^0_{con}$.
+Here we will use slightly different (but equivalent) definition.
+
+\begin{cor}
+Categories $\algtt^0_{st}$, $\algtt^1_{st}$ and $\algtt^1_{reg}$ are locally finitely presentable.
+\end{cor}
+\begin{proof}
+Category $\algtt^1_{reg}$ is a reflective subcategory of $\algtt^1_{st}$ and is closed under colimits.
+Hence it is also locally finitely presentable.
+\todo{Finish the proof}
+\end{proof}
+
+\subsection{Model structure}
+
+Let $T_I = coe_1 + \sigma + Path + wUA$.
+In this section we define a model structure on category $T_I/\algtt^1_{reg}$.
+To construct this model structure, we need to recall a few definitions from \cite{f-model-structures}.
+A reflexive cylinder object $C_U(V)$ for a map $i : U \to V$ is any factorization of $[id_V,id_V] : V \amalg_U V \to V$.
+Maps $f,g : V \to X$ are homotopic relative to a cylinder object $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, if there exists a map $h : C_U(V) \to X$
+such that $h \circ \cyli_0 = f$ and $h \circ \cyli_1 = g$.
+In this case we will write $f \sim_i g$.
+We say that a map $f : X \to Y$ has RLP up to $\sim_i$ with respect to $i : U \to V$ if for every commutative square of the form
+\[ \xymatrix{ U \ar[r]^u \ar@{}[dr]|(.7){\sim_i} \ar[d]_i & X \ar[d]^f \\
+              V \ar[r]_v \ar@{-->}[ur]^g                  & Y,
+            } \]
+there is a dotted arrow $g : V \to X$ such that $g \circ i = u$ and $(f \circ g) \sim_i v$.
+
+We will also need the following theorem from \cite{f-model-structures}:
+\begin{thm}[model-structures]
+Let $\C$ be a complete and cocomplete category, and let $\I$ be a set of maps of $\C$
+such that the domains and the codomains of maps in $\I$ are cofibrant and small relative to $\Icell$.
+For every $i : U \to V \in \I$, choose a reflexive relative cylinder object $C_U(V)$
+such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V) \in \Icof$.
+Let $\J_\I = \{\ \cyli_0 : V \to C_U(V)\ |\ i : U \to V \in \I \ \}$, and
+let $\we_\I$ be the set of maps which have RLP up to $\sim_i$ with respect to every $i \in \I$.
+
+Suppose that for every object $X$ which either domain or codomain of a map in $\I$,
+there exists a cylinder object $C(X)$ such that the following conditions hold:
+\begin{enumerate}
+\item For every $i : U \to V \in \I$, there exists a morphism of cylinder objects $(i,C(i)) : C(U) \to C(V)$.
+\item There exists a map $s : C(X) \to C(X)$ such that $s \circ i_0 = i_1$, $s \circ i_1 = i_0$, and $C(i) \circ s = s \circ C(i)$.
+\item These cylinder objects satisfy homotopy extension property. That is,
+if $i : U \to V \in \cof$, $u : U \to X$ and $v : V \to X$ are maps, and $h : C(U) \to X$ is a homotopy between $v \circ i$ and $u$,
+then there exists a map $v' : V \to X$ and a homotopy $h' : C(V) \to X$ between $v$ and $v'$ such that $h = h' \circ C(i)$.
+\item Maps in $\Jcell[_\I]$ have RLP up to $\sim^*$ (reflexive transitive closure of $\sim$) with respect to domains of maps in $\I$.
+\item For every $i : U \to V \in \I$, we have a lift $p$ in the following diagram:
+\[ \xymatrix{ V \amalg_U V \ar[r]^-f \ar[d]_{[\cyli_0,\cyli_1]} & T \\
+              C_U(V) \ar@{-->}[ur]_p
+            } \]
+where $T = C_U(V) \amalg_{(V \amalg_U V)} (C(V) \amalg_{C(U)} C(V))$ is the pushout of maps $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$
+and $\cyli_0 \amalg_{\cyli_0} \cyli_0 : V \amalg_U V \to C(V) \amalg_{C(U)} C(V)$,
+and $f : V \amalg_U V \to T$ is the composite $V \amalg_U V \xrightarrow{\cyli_1 \amalg_{\cyli_1} \cyli_1} C(V) \amalg_{C(U)} C(V) \to T$.
+\end{enumerate}
+Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a set of generating cofibrations,
+$\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of weak equivalences.
+\end{thm}
+Here $\sim^*$ denotes the reflexive transitive closure of the relation of left homotopy with respect to $C(X)$.
+
+Let $e : \{ ctx, ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ctx) = ctx$, $e(ty) = ctx$, $e(tm) = ty$.
+Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ctx}(\Gamma) = \Gamma$ $d_{ty}(A) = ft(A)$, $d_{tm}(a) = ty(a)$.
+For every sequence $s_1, \ldots s_k, s$ of sorts such that $s = (p,n)$ for some $p \in \{ ty, tm \}$ and $n \in \mathbb{N}$,
+let $U_{s_1, \ldots s_k, s}$ be the theory under $T_I$ with one predicate symbol $P : s_1 \times \ldots \times s_k$
+and one function symbol $A : s_1 \times \ldots \times s_k \to (e(p),n)$ and one axiom:
+\[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} A(x_1, \ldots x_k)\!\downarrow \]
+Let $V_{s_1, \ldots s_k, s}$ be the theory under $U_{s_1, \ldots s_k, s}$ with one additional function symbol $a : s_1 \times \ldots \times s_k \to s$ and two axioms:
+\begin{align*}
+P(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \\
+a(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} d_p(a(x_1, \ldots x_k)) = A(x_1, \ldots x_k)
+\end{align*}
+Let $i_{s_1, \ldots s_k, s} : U_{s_1, \ldots s_k} \to V_{s_1, \ldots s_k, s}$ be the inclusion of the subtheory.
+Let $\I$ be the set of morphisms of the form $i_{s_1, \ldots s_k, s}$.
+
+For every $i : U \to V \in \I$, we need to define a relative cylinder object $C_U(V)$.
+Let $C_{U_{s_1, \ldots s_k, (tm,n)}}(V_{s_1, \ldots s_k, s})$ be the theory with one predicate symbol $P : s_1 \times \ldots \times s_k$,
+four function symbols:
+\begin{align*}
+A & : s_1 \times \ldots \times s_k \to (ty,n) \\
+a & : s_1 \times \ldots \times s_k \to (tm,n) \\
+a' & : s_1 \times \ldots \times s_k \to (tm,n) \\
+h & : s_1 \times \ldots \times s_k \to (tm,n+1)
+\end{align*}
+and the following axioms:
+\begin{align*}
+P(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \land\ a'(x_1, \ldots x_k)\!\downarrow \\
+a(x_1, \ldots x_k)\!\downarrow \land\ a'(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ctx^n(h(x_1, \ldots x_k)) = I \\
+a(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ty(a(x_1, \ldots x_k)) = A(x_1, \ldots x_k) \\
+a'(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ty(a'(x_1, \ldots x_k)) = A(x_1, \ldots x_k) \\
+h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ty(h(x_1, \ldots x_k)) = A(x_1, \ldots x_k)\!\uparrow \\
+h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} left^*(h(x_1, \ldots x_k)) = a(x_1, \ldots x_k) \\
+h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} right^*(h(x_1, \ldots x_k)) = a'(x_1, \ldots x_k)
+\end{align*}
+Maps $\cyli_0,\cyli_1 : V_{s_1, \ldots s_k, (tm,n)} \to C_{U_{s_1, \ldots s_k, (p,n)}}(V_{s_1, \ldots s_k, (p,n)})$ are defined as follows:
+$\cyli_0(a) = a$, $\cyli_1(a) = a'$, and $\cyli_0(x) = \cyli_1(x) = x$ for every other symbol $x$.
+
+We also define theory $V'_{s_1, \ldots s_k, s}$ as $V_{s_1, \ldots s_k, s}$ together with the following axiom:
+\[ a(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} P(x_1, \ldots x_k) \]
+
+There are obvious morphisms $U_{s_1, \ldots s_k, s} \to V_{s_1, \ldots s_k, s}$.
+Let $\I$ be the set of these morphisms for every sequence $s_1, \ldots s_k, s$.
+Let $\I'$ be the set of morphisms of the form $j \circ i$, where $i \in \I$ and $j$ is the inclusion $V_{s_1, \ldots s_k, s} \to V'_{s_1, \ldots s_k, s}$.
+Note that every map in $\I'$ is a pushout of a map in $\I$:
+\[ \xymatrix{ U_{s_1, \ldots s_k, s} \ar[r]^f \ar[d] & U_{s_1, \ldots s_k, s} \ar[d] \\
+              V_{s_1, \ldots s_k, s} \ar[r]_g & \po V'_{s_1, \ldots s_k, s}
+            } \]
+where $f(P) = P$, $f(A) = A|_P$, $g(P) = P$, $g(A) = A|_P$ and $g(a) = a$.
+It follows that $\Icof[\I'] \subseteq \Icof$.
+
+\section{Weak equivalences of theories}
+
+In this section we define several notions of weak equivalence of algebraic dependent type theories.
+
+Recall that an algebraic dependent type theory $T$ consists of a set $\mathcal{F}$ of function symbols, a set $\mathcal{P}$ of predicate symbols and a set of axioms.
+The set of sorts $\mathcal{S}$ is defined as $\{ ctx, tm \} \times \mathbb{N}$.
+We also write $(ty,n)$ for $(ctx,n+1)$.
+Every function symbol $\sigma \in \mathcal{F}$ is equipped with a signature $\sigma : s_1 \times \ldots \times s_k \to s$ where $s_1, \ldots s_k, s \in \mathcal{S}$.
+Every predicate symbol $R \in \mathcal{P}$ is equipped with a signature $R : s_1 \times \ldots \times s_k$ where $s_1, \ldots s_k \in \mathcal{S}$.
+The set $Term_T(V)_s$ of terms of sort $s$ with variable in $V$ is defined inductively from $\mathcal{F}$ as usual.
+An atomic formula with variables in $V$ is an expression either of the form $t_1 = t_2$  where $t_i \in Term_T(V)_s$ or of the form $R(t_1, \ldots t_k)$ where $t_i \in Term_T(V)_{s_i}$.
+A formula with variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulas.
+An axiom is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are formulas with variables in $V$.
+We will write $\varphi \sststile{T}{V} \psi$ to denote the fact that sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$.
+The set of derivation rules is described in \cite{PHL} and \cite{alg-tt}.
+
+Let $T$ be a theory with the interval type (that is, $T$ is equipped with a morphism from theory $I$, which was defined in \cite{alg-models}).
+Let $X$ be a model of $T$.
+A \emph{homotopy} between elements $a,a' \in X_{(p,n)}$ is an element $h \in X_{(p,n+1)}$ such that $ctx^n(h) = I$, $left^*(h) = a$, and $right^*(h) = a'$.
+We will say that $h$ is a \emph{relative homotopy} if $e_p(h) = I \times e_p(a)$, where $e_p : (p,n) \to (d_p,n)$, $d_{tm} = ty$, $e_{tm} = ty$, $d_{ty} = ctx$ and $e_{ty} = ft$.
+
+If $T$ is a theory with identity types, then we also can define a notion of relative homotopy.
+Let $X$ be a model of $T$.
+A relative homotopy between terms $a,a' \in X_{(tm,n)}$ is a term $h \in X_{(tm,n)}$ such that $ty(h) = Id(a,a')$.
+A relative homotopy between types $A,A' \in X_{(ty,n)}$ is a tuple $(f,g,p,g',p')$, where $f,g,p,g',p' \in X_{(tm,n+1)}$
+such that
+\begin{align*}
+x : A & \vdash f : A' \\
+y : A' & \vdash g : A \\
+x : A & \vdash p : Id(g[y \mapsto f], x) \\
+y : A' & \vdash g' : A \\
+y : A' & \vdash p' : Id(f[x \mapsto g], y)
+\end{align*}
+If a theory has both identity types and the interval type, then these two notions of relative homotopy may differ,
+but if it also has path types and the weak univalence axiom, then they coincide (see \cite{alg-models}).
+
+We will assume that our theories have either identity types or the interval type so that a notion of relative homotopy is defined.
+A morphism of models $f : X \to Y$ is \emph{weak equivalence} if it satisfies the following conditions:
+\begin{enumerate}
+\item For every $A \in X_{(ty,n)}$ and $a \in Y_{(tm,n)}$ such that $ty(a) = f(A)$,
+there is a term $a' \in X_{(tm,n)}$ such that $ty(a') = A$ and $f(a')$ is relatively homotopic to $a$.
+In this case we will say that $f$ is \emph{essentially surjective on terms}.
+\item For every $\Gamma \in X_{(ctx,n)}$ and $A \in Y_{(ty,n)}$ such that $ft(A) = f(\Gamma)$,
+there is a type $A' \in X_{(ty,n)}$ such that $ft(A') = \Gamma$ and $f(A')$ is relatively homotopic to $A$.
+In this case we will say that $f$ is \emph{essentially surjective on types}.
+\end{enumerate}
+
+\begin{defn}
+A \emph{Morita equivalence} between theories $T_1$ and $T_2$ is a morphism $f : T_1 \to T_2$ such that for every model $X$ of $T_1$,
+the unit $\eta_X : X \to f^*(f_!(X))$ of the adjunction $f_! \dashv f^*$ is a weak equivalence.
+\end{defn}
+
+Suppose that there is a model structure (or a left semi-model structure) on the category of models of a theory $T$
+with the class of weak equivalence as defined above and such that all objects are fibrant.
+It was shown in \cite{alg-models} that theories under $coe_1 + \sigma + Path + wUA$ satisfy this condition.
+Also, it was shown in \cite{kap-lum-model}, that the categories of models of particular theories with identity types carry left semi-model structure.
+The following simple proposition characterizes Morita equivalences between such theories in terms of the model stucture.
+
+\begin{prop}
+Let $T_1$ and $T_2$ be theories with a model structure satisfying condtions described above, and let $f : T_1 \to T_2$ be a morphism.
+Then $f_! \dashv f^*$ is a Quillen adjunction.
+It is a Quillen equivalence if and only if $f$ is a Morita equivalence.
+\end{prop}
+\begin{proof}
+Since $f_!$ is a left adjoint, it preserves object defined by generators and relations.
+Since the set of generating cofibration $\I$ and the set of generating trivial cofibration $\J_\I$
+are both defined in terms of generators and relations, this implies that $f_!$ preserves them.
+Hence $f_! \dashv f^*$ is a Quillen adjunction.
+The second part of the proposition follows from corollary~3.9 of \cite{f-model-structures}.
+\end{proof}
+
+Morita equivalences is the weakest notion of equivalences for theories that we will consider.
+Stronger notions are defined in the same way as weak equivalences for models.
+To do this we need a notion of (relative) homotopy between morphisms of theories.
+
+The following propositions gives a useful characterization of Morita equivalences:
+
+\begin{prop}[mor-eq]
+Let $f : T_1 \to T_2$ be a morphism of theories under $I$.
+Then $f$ is a Morita equivalence if and only if for every set $V$, every formula $\varphi \in Form_{T_1}(V)$,
+every term $A \in Term_{T_1}(V)_{(d_p,n)}$, and every term $a \in Term_{T_2}(V)_{(p,n)}$ such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$,
+there exist terms $a' \in Term_{T_1}(V)_{(p,n)}$ and $h \in Term_{T_2}(V)_{(p,n+1)}$, which satisfy the following conditions:
+\begin{enumerate}
+\item \label{it:mcf} $\varphi \sststile{}{V} e_p(a') = A$,
+\item \label{it:mcs} $f(\varphi) \sststile{}{V} e_p(h) = I \times f(A)$,
+\item \label{it:mct} $f(\varphi) \sststile{}{V} left^*(h) = f(a')$,
+\item \label{it:mcl} $f(\varphi) \sststile{}{V} right^*(h) = a$.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+First, we need to introduce an auxiliary construction.
+Let $T$ be a theory, let $V$ be a set of variables, and let $\mathcal{A}$ be a set formulas of $T$ with variables in $V$.
+Then we define $Syn(T,V,\mathcal{A})$ as $Syn(T \cup \{ O_x : s\ |\ s \in V_s \} \cup \mathrm{sp}(\mathcal{A}))$,
+where $\mathrm{sp}(\mathcal{A})$ consists of formulas of the form $\sststile{}{} O_x\!\downarrow$ for every $x \in V$
+and formulas of $\mathcal{A}$ in which every variable $x$ is replaced with $O_x$.
+If $f : T_1 \to T_2$ is a morphism of theories, then it is easy to see that $f_!(Syn(T_1,V,\mathcal{A})) = Syn(T_2,V,f(\mathcal{A}))$.
+
+Let us prove the ``only if'' direction.
+Note that elements of $Syn(T_1, V, \{\,\sststile{}{}~\varphi\,\})$ correspond to terms $t$ of $T_1$ with variables in $V$ such that $\varphi \sststile{T_1}{V} t\!\downarrow$.
+Moreover, two terms $t_1$ and $t_2$ map to the same element under this correspondence if and only if $\varphi \sststile{T_1}{V} t_1 = t_2$.
+Analogous statement holds for $Syn(T_2, V, \{\,\sststile{}{}~f(\varphi)\,\})$.
+Using this correspondence, the required conditions immediately follow from the fact that
+map $Syn(T_1, V, \{\,\sststile{}{}~\varphi\,\}) \to f^*(Syn(T_2, V, \{\,\sststile{}{}~f(\varphi)\,\}))$ is a weak equivalence.
+
+Now, let us prove the ``if'' direction.
+Let $M$ be a model of $T_1$.
+Note that $M = Syn(T_1, U(M), \mathcal{A})$, where $\mathcal{A}$ is the set of axioms of $Lang(M)$.
+Let $A \in M_{(d_p,n)}$ and $a \in f^*(f_!(M))$ be elements such that $e_p(a) = A$.
+Since $f_!(M) = Syn(T_2, U(M), f(\mathcal{A}))$, $a$ is a closed term of $T_2$.
+There is a finite subset $\mathcal{A}_0$ of $\mathcal{A}$ such that $\sststile{T_2 \cup \mathrm{sp}(\mathcal{A}_0)}{} e_p(a) = A$.
+Let $\varphi$ be the conjunction of $\mathcal{A}_0$, and let $b$ and $B$ be $a$ and $A$ respectively in which every constant $O_x$ is replaced with variable $x$.
+Then $\varphi \sststile{T_2}{U(M)} e_p(b) = B$.
+By assumption, there exist terms $b' \in Term_{T_1}(U(M))_{(p,n)}$ and $h \in Term_{T_2}(U(M))_{(p,n+1)}$ which satisfy conditions \eqref{it:mcf} -- \eqref{it:mcl}.
+These terms correspond under $\mathrm{sp}$ to elements of $M$ and $f^*(f_!(M))$ respectively.
+These conditions imply that $b'$ is the required lifting and $h$ is the required homotopy.
+\end{proof}
+
+This proposition implies that Morita equivalences can be characterized in terms of a lifting property.
+Let $\I$ be the set of the following morphisms of theories:
+For every predicate symbol $P : s_1 \times \ldots \times s_k$ and every function symbols $A : s_1 \times \ldots \times s_k \to (d_p,n)$ and $a : s_1 \times \ldots \times s_k \to (p,n)$,
+let $i_{P,A,a}$ be the following morphism of theories:
+\[ \{ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} A(x_1, \ldots x_k)\!\downarrow \} \to \{ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \}, \]
+where $i_{P,A,a}(A) = e_p(a)$.
+We can define a relative cylinder object for $i_{P,A,a}$ as
+\[ \{ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} e_p(h(x_1, \ldots x_k)) = I \times A(x_1, \ldots x_k) \}, \]
+where $h : s_1 \times \ldots \times s_k \to (p,n+1)$.
+Then the previous proposition immediately implies the following corollary:
+
+\begin{cor}
+A morphism of theories is a Morita equivalence if and only if it has RLP up to $\sim_i$ with respect to every $i \in \I$.
+\end{cor}
+
+If we want to prove that a morphism $f : T_1 \to T_2$ is a Morita equivalence, we can try to use the same idea as in the proof of \cite[Lemma~3.7]{alg-models}.
+We define functions $g : Term_{T_2}(V)_{(p,n)} \to Term_{T_1}(V)_{(p,n)}$ and $h : Term_{T_2}(V)_{(p,n)} \to Term_{T_2}(V)_{(p,n+1)}$.
+To show that $g(a)$ and $h(a)$ satisfy conditions of \rprop{mor-eq}, we need to prove several properties of $g$ and $h$,
+one of which is that they must preserve axioms of $T_2$.
+The problem with this construction is that they might not preserve all axioms.
+Often we have some axioms that express reduction rules.
+If $g$ and $h$ do not preserve these axioms, then we can try to fix this problem by first applying a normalization function.
+Such function usually does not preserve substitutions and thus does not define morphisms of theories.
+We call such functions \emph{pseudomorphisms}:
+
+\begin{defn}
+Let $T_1$ and $T_2$ be a pair of theories and let $k$ be a natural number.
+Then a \emph{pseudomorphism} $f$ between $T_1$ and $T_2$ of degree $k$ is a pair of maps $f : Term_{T_1}(V)_{(p,n)} \to PTerm_{T_2}(V)_{(p,n+k)}$ and
+$f : Form_{T_1}(V) \to Form_{T_2}(V)$ such that sequents $f(\varphi \land \psi) \ssststile{}{V} f(\varphi) \land f(\psi)$,
+$f(t = t') \ssststile{}{V} f(t) = f(t')$ and $\sststile{}{V} f(e_p(t)) \simeq e_p(f(t))$ are derivable in $T_2$.
+
+There is a preorder on the set of pseudomorphisms of some fixed degree $k$.
+We will write $f \leq f'$ if for every term $t$ and every formula $\varphi$,
+sequents $f(t)\!\downarrow\ \sststile{}{V} f(t) = f'(t)$ and $f(\varphi) \sststile{}{V} f'(\varphi)$ are derivable.
+We will say that pseudomorphisms $f$ and $f'$ are equivalent if and only if $f \leq f'$ and $f' \leq f$.
+\end{defn}
+
+\begin{example}
+If $f : T_1 \to T_2$ and $g : T_2 \to T_3$ are pseudomorphisms of degrees $k$ and $m$ respectively, then there is an obvious pseudomorphism $g \circ f : T_1 \to T_3$ of degree $k+m$.
+\end{example}
+
+\begin{example}
+For every theory $T$ and every natural number $k$, there is a pseudomorphism $I^k : T \to T$ of degree $k$ which is defined as follows.
+For every term $t$, $I^k(t) = I^k \times t$.
+For every formula $\varphi$, $I^k(\varphi) = \varphi$.
+In particular, there is the identity pseudomorphism $id_T = I^0$.
+\end{example}
+
+\begin{example}
+Morphisms of theories are equivalence classes of pairs of functions on terms and formulas which satisfy some conditions.
+We will call such pairs \emph{premorphisms} of theories.
+Every premorphism determines a pseudomorphism of degree 0.
+Every morphism determines an equivalence class of pseudomorphisms.
+\end{example}
+
+The following lemma describes a way to prove that a morphism of theories is a Morita equivalence using pseudomorphisms:
+
+\begin{lem}[equiv-lem]
+Let $f : T_1 \to T_2$ be a premorphism of theories under $I$.
+Suppose that there are a pseudomorphism $g : T_2 \to T_1$ of degrere 0 and a pseudomorphism $h : T_2 \to T_2$ of degree 1 which satisfy the following conditions:
+\begin{enumerate}
+\item $g$ and $h$ preserve theorems of the form $f(\varphi) \sststile{}{V} \psi$.
+\item $id_{T_1} \leq g \circ f$,
+\item $I \circ f \leq h \circ f$,
+\item For every term $t$, sequents
+\begin{align*}
+t\!\downarrow \land\ h(t)\!\downarrow\ & \sststile{}{V} left^*(h(t)) = f(g(t)) \\
+t\!\downarrow \land\ h(t)\!\downarrow\ & \sststile{}{V} right^*(h(t)) = t
+\end{align*}
+are derivable in $T_2$.
+\end{enumerate}
+Then the morphism determined by $f$ is a Morita equivalence.
+\end{lem}
+\begin{proof}
+Let $a$ and $A$ be terms of $T_2$ and let $\varphi$ be a formula of $T_1$ such that $\varphi \sststile{T_1}{V} A\!\downarrow$ and $f(\varphi) \sststile{T_2}{V} e_p(a) = f(A)$.
+Let $a' = g(a)$ and $h' = h(a)$.
+Then $\varphi \sststile{T_1}{V} g(f(\varphi))$ and $g(f(\varphi)) \sststile{T_1}{V} g(e_p(a)) = g(f(A))$.
+It follows that $\varphi \sststile{T_1}{V} e_p(a') = A$.
+Analogously, $f(\varphi) \sststile{T_2}{V} h(f(\varphi))$ and $h(f(\varphi)) \sststile{T_2}{V} h(e_p(a)) = h(f(A))$.
+Hence $f(\varphi) \sststile{T_2}{V} e_p(h') = I \times f(A)$.
+The last condition implies that $f(\varphi) \sststile{T_2}{V} left^*(h') = f(a')$ and $f(\varphi) \sststile{T_2}{V} right^*(h') = a$.
+\end{proof}
+
+\section{Examples of Morita equivalences}
+
+In this section we will describe a few examples of Morita equivalences.
+In general, it might be difficult to prove that a morphism $f : T_1 \to T_2$ is a Morita equivalence since it might not have an inverse.
+In this case we will use \rlem{equiv-lem}.
+Even then it might be difficult to construct required pseudomorphisms directly.
+In this case we can construct another theory which is a combination of $T_1$ and $T_2$, construct several Morita equivalences between them,
+and then prove that $f$ is a Morita equivalence using 2-out-of-3 property.
+
+Often theories $T_1$ and $T_2$ are parts of other theories $T_1'$ and $T_2'$.
+Sometimes a Morita equivalence $f : T_1 \to T_2$ induces a Morita equivalence $T_1' \to T_2'$.
+We cannot prove this in general, but often instead of proving that $f$ is a Morita equivalence we can prove that for every map $T \to T'$,
+the induced map $T_1 \amalg_T T' \to T_2 \amalg_T T'$ is a Morita equivalence.
+All examples of Morita equivalences in this section will be given in this general form.
+
+\subsection{Normalization}
+
+To be able to apply \rlem{equiv-lem}, we need to construct a normalization function on terms.
+
+\subsection{Strict associativity}
+
+Consider theory $T_0 = Id_-$.
+Let $T_a$ be a theory under $T_0$ with the following additional function symbol:
+\[ conc : (tm,n) \times (tm,n) \times (tm,n) \times (tm,n) \times (tm,n) \to (tm,n) \]
+We will usually left implicit the first three arguments of $conc$.
+Theory $T_a$ has the following axiom:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : a_1 \idtype a_2$}
+\AxiomC{$\Gamma \vdash q : a_2 \idtype a_3$}
+\BinaryInfC{$\Gamma \vdash conc(p,q) : a_1 \idtype a_3$}
+\DisplayProof
+\end{center}
+where $a_1$, $a_2$ and $a_3$ have the same type $A$.
+That is, this rule has additional premises $\Gamma \vdash a_i : A$, but we left them implicit.
+We will often left implicit some premises if they can be derived from other premises.
+
+The rest of the axioms of $T_a$ is listed below.
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : a_1 \idtype a_2$}
+\UnaryInfC{$\Gamma \vdash conc(p,refl(a_2)) \equiv p : a_1 \idtype a_2$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : a_1 \idtype a_2$}
+\UnaryInfC{$\Gamma \vdash conc(refl(a_1),p) \equiv p : a_1 \idtype a_2$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash p : a_1 \idtype a_2$}
+\AxiomC{$\Gamma \vdash q : a_2 \idtype a_3$}
+\AxiomC{$\Gamma \vdash r : a_3 \idtype a_4$}
+\TrinaryInfC{$\Gamma \vdash cong(conc(p,q),r) \equiv conc(p,cong(q,r)) : a_1 \idtype a_4$}
+\DisplayProof
+\end{center}
+
+Thus $T_a$ is a theory with a strictly associative concatination function for paths.
+Moreover, $refl$ is a strict identity for $conc$.
+We are going to prove that $f : T_0 \amalg_T T' \to T_a \amalg_T T'$ is a Morita equivalence.
+We can define a pseudomorphism $g' : T_a \amalg_T T' \to T_0 \amalg_T T'$ so that $g'$ preserves substitutions and variables,
+for every term $t$ of $T_0 \amalg_T T'$, $g'(f(t)) = t$, and $g'(conc)$ is any concatination function.
+This pseudomorphism does not preserves the last three axioms of $T_a$, and thus it is not a morphism.
+To fix this problem, we need to apply a normalization function first.
+
+First, we define a reduction relation $\red$ on terms as the minimal reflexive and transitive relation
+which is closed under substitution and contains a set of rules which are listed below.
+These rules are simply (some of) the axioms of $T_a$ in which we choose a direction of reduction.
+\begin{align*}
+ctx(\sigma(\Gamma, a_1, \ldots a_k)) & \red \Gamma \\
+ty(subst(\Gamma, a, a_1, \ldots a_k)) & \red subst(\Gamma, ty(a), a_1, \ldots a_k) \\
+ty(v_{n,i}(\Gamma)) & \red subst(\Gamma, ft^i_{n-i}(\Gamma), c_{n-1}, \ldots c_{i+1}) \\
+subst(\Gamma, v_i(A), a_1, \ldots a_k) & \red a_{k-i} \\
+subst(\Gamma, a, v_{n-1}(A_n), \ldots v_0(A_0)) & \red a \\
+subst(\Gamma, subst(\Delta, a, a_1, \ldots a_m), b_1, \ldots b_k) & \red subst(\Gamma, a, a_1' \ldots a_k') \\
+conc(p,refl(a_2)) & \red p \\
+conc(refl(a_1),p) & \red p \\
+conc(conc(p,q),r) & \red conc(p,conc(q,r))
+\end{align*}
+where the first rule is defined for every function symbol $\sigma$,
+in the third rule, $c_i$ is $v_{n,i}(\Gamma)$,
+and in the sixth rule, $a_i'$ is $subst(\Gamma, a_i, b_1, \ldots b_k)$.
+
+It is easy to show that these reduction rules define a confluent and terminating rewriting system using standard techniques as described, for example, in \cite{Terese}.
+We define a pseudomorphism $\nf : T_a \to T_a$ as follows:
+
+\subsection{$\Sigma$ types}
+
+\subsection{Unit types}
+
+\subsection{$Id$ types and $coe$}
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
