@@ -10,7 +10,6 @@
 \usepackage{bussproofs}
 \usepackage{turnstile}
 \usepackage{etex}
-\usepackage{todonotes}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
 
@@ -108,6 +107,8 @@
 \newcommand{\PAlg}[1]{#1\text{-}\cat{PAlg}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\Th}{\cat{Th}}
+\newcommand{\St}{\cat{St}}
+\newcommand{\PSt}{\cat{PSt}}
 \newcommand{\algtt}{\cat{TT}}
 \newcommand{\ThC}{\Th_{\mathcal{C}}}
 \newcommand{\emptyCtx}{\mathbf{1}}
@@ -144,11 +145,6 @@
 
 \maketitle
 
- \makeatletter
-    \providecommand\@dotsep{5}
-  \makeatother
-  \listoftodos\relax
-
 \section{Introduction}
 
 The category of algebraic dependent type theories was defined in \cite{alg-tt}.
@@ -163,35 +159,25 @@ It was shown in \cite{PHL} that partial Horn theories are equivalent to essentia
 It follows that categories of models of these theories are locally presentable.
 In this subsection we will prove that different categories of theories are also locally finitely presentable.
 
-We will consider the category $B/\Th_\mathcal{S}$ of theories under some theory $B$.
-Every object of this category is isomorphic to an object of the form
-$((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}_0 \amalg \mathcal{P}), \mathcal{A}_0 \amalg \mathcal{A})$,
-where $\mathcal{F}_0$, $\mathcal{P}_0$ and $\mathcal{A}_0$ are the sets of function and predicate symbols and axioms of $B$ respectively,
-and a map from $B$ is defined in the obvious way.
-Indeed, if $f : B \to T$ is a theory under $B$, then we can just add function and predicate symbols and axioms of $B$
-together with the following axioms for every function symbol $\sigma$ and every predicate symbol $R$ of $B$:
-\begin{align*}
-& \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k) \cong f(\sigma(x_1, \ldots x_k)) \\
-& R(x_1, \ldots x_k) \ssststile{}{x_1, \ldots x_k} f(R(x_1, \ldots x_k))
-\end{align*}
-Clearly, this theory under $B$ is isomorphic to $T$.
-We will denote the full subcategory of $B/\Th_\mathcal{S}$ on theories of this form by $\Th_B$.
-Since inclusion $\Th_B \to B/\Th_\mathcal{S}$ is an equivalence of categories, we will often use $\Th_B$ instead of $B/\Th_\mathcal{S}$.
+We will consider a prestable theory $T$ under some prestable theory $B$.
+It was shown in \cite[Lemma~4.4]{alg-tt} that every such theory is isomorphic to a theory which has $\mathcal{F}_B \amalg (\mathcal{F}_0 \times \mathbb{N})$,
+$\mathcal{P}_B \amalg (\mathcal{P}_0 \times \mathbb{N})$ and $\mathcal{A}_B \amalg \mathcal{A}_0$ as the sets of function and predicate symbols and the set of axioms respectively,
+where $\mathcal{F}_0$, $\mathcal{P}_0$, and $\mathcal{A}_0$ are some sets and $\mathcal{F}_B$, $\mathcal{P}_B$, and $\mathcal{A}_B$ are the corresponding sets of $B$.
+Elements of $\mathcal{F}_0$, $\mathcal{P}_0$ and $\mathcal{A}_0$ are called basic function symbols, basic predicate symbols, and basic axioms.
 
-Now, we give an explicit construction of coproducts and coequalizers in the category $\Th_B$,
-which is similar to the one described in \cite{alg-tt} for the category $\Th_\mathcal{S}$ of theories.
-If $\{ T_i = ((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}_i, \mathcal{P}_0 \amalg \mathcal{P}_i), \mathcal{A}_0 \amalg \mathcal{A}_i) \}_{i \in I}$
-is a set of theories in $\Th_B$, then we can define their coproduct as
-$((\mathcal{S}, \mathcal{F}_0 \amalg \coprod_{i \in I} \mathcal{F}_i, \mathcal{P}_0 \amalg \coprod_{i \in I} \mathcal{P}_i), \mathcal{A}_0 \amalg \coprod_{i \in I} \mathcal{A}_i)$.
-If $T = ((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}, \mathcal{P}_0 \amalg \mathcal{P}), \mathcal{A}_0 \amalg \mathcal{A})$
-and $f,g : T \to T'$ is a pair of maps of theories in $\Th_B$, then their coequalizer can be defined as $T'$ together with the following axioms for every $\sigma \in \mathcal{F}$ and $R \in \mathcal{P}$:
+Now, we give an explicit construction of coproducts and coequalizers in the category $B/\PSt_{\mathcal{S}_0}$ of prestable theories under $B$,
+which is similar to the one described in \cite[Proposition~2.12]{alg-tt} for the category of theories.
+If $\{ T_i \}_{i \in I}$ is a set of theories under $B$, then the basic function and predicate symbols
+and axioms of $\coprod_{i \in I} T_i$ are the disjoint union of corresponding sets of $T_i$.
+If $f,g : T \to T'$ is a pair of maps of theories under $B$, then their coequalizer can be defined as
+$T'$ together with the following axioms for every basic function symbol $\sigma$ and every basic predicate symbol $R$ of $T$:
 \begin{align*}
 & \sststile{}{x_1, \ldots x_k} f(\sigma(x_1, \ldots x_k)) \cong g(\sigma(x_1, \ldots x_k)) \\
 & f(R(x_1, \ldots x_k)) \ssststile{}{x_1, \ldots x_k} g(R(x_1, \ldots x_k))
 \end{align*}
 
-If $T : I \to \Th_B$ is a diagram of theoriesm then $colim_{i \in I} T_i$ can be constructed as a coequalizer of the coproduct $\coprod_{i \in I} T_i$ as usual.
-Thus we can assume that the sets of function and predicate symbols of $colim_{i \in I} T_i$ (that are not symbols of $B$) are disjoint unions of the corresponding sets of $T_i$.
+The colimit of a diagram $T : I \to B/\PSt_{\mathcal{S}_0}$ can be described as the coequalizer of the coproduct $\coprod_{i \in I} T_i$ as usual.
+Thus we can assume that the sets of basic function and predicate symbols of $colim_{i \in I} T_i$ are disjoint unions of the corresponding sets of $T_i$.
 The axioms of $colim_{i \in I} T_i$ are axioms of $T_i$ together with axioms of the form $\sststile{}{x_1, \ldots x_n} \sigma(x_1, \ldots x_n) \cong f(\sigma(x_1, \ldots x_n))$
 and $R(x_1, \ldots x_n) \ssststile{}{x_1, \ldots x_n} f(R(x_1, \ldots x_n))$ for every morphism $f : T_i \to T_j$
 in the diagram and every function symbol $\sigma$ and predicate symbol $R$ of $T_i$ which are not symbols of $B$.
@@ -202,12 +188,12 @@ in $\Th_B$ is \emph{$\lambda$-small} if cardinalities of sets $\mathcal{F}$, $\m
 We will say that $T$ is \emph{finite} if it is $\aleph_0$-small.
 
 \begin{prop}
-Category $\Th_B$ is locally finitely presentable.
+The category of prestable theories under a prestable theory $B$ is locally finitely presentable.
 An object of this category is $\lambda$-presentable if and only if it is isomorphic to a $\lambda$-small object.
 \end{prop}
 \begin{proof}
 First, let us prove that every $\lambda$-small object is $\lambda$-presentable.
-Let $colim_{i \in I} T_i$ be a directed colimit of theories in $\Th_B$.
+Let $colim_{i \in I} T_i$ be a directed colimit of theories in $B/\PSt_{\mathcal{S}_0}$.
 Every term and every formula of a theory is constructed from a finite number of function and predicate symbols.
 Thus for every formula of $colim_{i \in I} T_i$ there exists a theory $T_i$ such that this formula belongs to $T_i$.
 The same is true for terms and partial terms.
@@ -216,7 +202,7 @@ Every derivation of a theorem $\varphi \sststile{}{V} \psi$ is constructed from 
 Thus for every theorem $\varphi \sststile{}{V} \psi$ of $colim_{i \in I} T_i$ there exists a theory $T_i$ such that $\varphi \sststile{}{V} \psi$ is a theorem of $T_i$.
 Note that the additional axioms of $colim_{i \in I} T_i$ that was added for every $f : T_i \to T_j$ are always true in $T_j$.
 
-Let $h : T \to colim_{i \in I} T_i$ be a morphism from a $\lambda$-small theory $T$ to a directed colimit of theories $\{ T_i \}_{i \in I}$.
+Let $h : T \to colim_{i \in I} T_i$ be a morphism from a $\lambda$-small theory $T$ to a $\lambda$-directed colimit of theories $\{ T_i \}_{i \in I}$.
 Since $T$ is $\lambda$-small, there exists a theory $T_i$ such that for every function symbol $\sigma$, predicate symbol $R$ and axiom $\varphi \sststile{}{V} \psi$ of $T$,
 partial terms $h(\sigma(x_1, \ldots x_n))$ and formulae $h(R(x_1, \ldots x_n))$ belong to $T_i$, and $h(\varphi) \sststile{}{V} h(\psi)$ is a theorem of $T$.
 Thus $h$ factors through $T_i$.
@@ -227,10 +213,11 @@ But we already know that there exists a theory $T_j$ such that $i \leq j$ and th
 The same is true for every predicate symbol of $T$.
 It follows that $f \circ h_1 = f \circ h_2$, where $f : T_i \to T_j$.
 
-Now, let us prove that $\Th_B$ is locally finitely presentable.
-We only need to show that every theory in $\Th_B$ is a colimit of its finite subtheories.
-Let $T$ be a theory, and let $\{ f_i : T_i \to T' \}_{i \in I}$ be a cocone over the diagram of finite subtheories of $T$.
-For every function or predicate symbol $p$ of $T$ which is not a symbol of $B$, there is a finite subtheory $T_p$ of $T$ which contains symbols and axioms of $B$ and one additional symbol $p$ and no other axiom.
+Now, let us prove that $B/\PSt_{\mathcal{S}_0}$ is locally finitely presentable.
+We only need to show that every theory in $B/\PSt_{\mathcal{S}_0}$ is a $\lambda$-directed colimit of its $\lambda$-small subtheories.
+Let $T$ be a theory, and let $\{ f_i : T_i \to T' \}_{i \in I}$ be a cocone over the diagram of $\lambda$-small subtheories of $T$.
+For every basic function or predicate symbol $p$ of $T$,
+there is a finite subtheory $T_p$ of $T$ which contains symbols and axioms of $B$ and one additional symbol $p$ and no other axiom.
 A morphism $h$ of cocones $T$ and $T'$ must commute with morphisms from $T_p$.
 Thus it must be defined as $h(p(x_1, \ldots x_n)) = f_p(p(x_1, \ldots x_n))$; hence it is unique.
 To prove that this defines a morphism, we need to show that $h$ preserves axioms of $T$.
@@ -238,42 +225,19 @@ But every axiom involes only a finite number of symbols of $T$.
 Hence there exists a subtheory $T_i$ of $T$ which consists of these symbols and this axiom.
 Since $f_i$ is a morphism of theories, this axiom also holds in $T'$.
 
-Finally, let us prove that every $\lambda$-presentable theory $T$ in $\Th_B$ is isomorphic to a $\lambda$-small theory.
+Finally, let us prove that every $\lambda$-presentable theory $T$ in $B/\PSt_{\mathcal{S}_0}$ is isomorphic to a $\lambda$-small theory.
 Consider the identity map $id_T : T \to T$.
-Since $T$ is a colimit of its finite subtheories, $id_T$ factors through some finite subtheory $T'$ of $T$.
+Since $T$ is a $\lambda$-directed colimit of its $\lambda$-small subtheories, $id_T$ factors through some $\lambda$-small subtheory $T'$ of $T$.
 Thus we have maps $f : T \to T'$ and $g : T' \to T$ such that $g \circ f = id_T$.
-Since $T$ is a coequalizer of $f \circ g$ and $id_{T'}$, it is isomorphic to the coequalizer of $f \circ g$ and $id_{T'}$ as constructed above, which is a finite theory.
+Since $T$ is a coequalizer of $f \circ g$ and $id_{T'}$, it is isomorphic to the coequalizer of $f \circ g$ and $id_{T'}$ as constructed above, which is a $\lambda$-small theory.
 \end{proof}
 
-Since categories $\algtt^0$ and $\algtt^1$ are of the form $T/\Th_\mathcal{S}$, this proposition applies to them.
-We can prove that the same facts hold for contextual theories:
-
 \begin{cor}
-Category $B/\algtt^0_{con}$ is locally finitely presentable.
-An object of this category is $\lambda$-presentable if and only if it is isomorphic to a $\lambda$-small object.
+The categories of stable and $c$-stable theories and categories of (stable, $c$-stable) algebraic dependent type theories are all locally finitely presentable.
 \end{cor}
 \begin{proof}
-Now, we will prove that category $B/\algtt^0_{con}$ is also locally finitely presentable for every $B$.
-Note that $B/\algtt^0_{con}$ is a full subcategory of $\Th_B$ and is closed under colimits.
-It follows that if an object of $B/\algtt^0_{con}$ is $\lambda$-presentable in $\Th_B$, then it is also $\lambda$-presentable in $B/\algtt^0_{con}$.
-It is easy to see that every contextual theory under $B$ is a colimit of its finite contextual subtheories under $B$.
-Thus $B/\algtt^0_{con}$ is locally finitely presentable and an object of this category is $\lambda$-presentable if and only if it is isomorphic to a $\lambda$-small theory.
-The last statement is proved by the same argument as in the case of $\Th_B$.
-In particular, this implies that $\algtt^0_{con}$ and $\algtt^1_{con}$ are locally finitely presentable.
-\end{proof}
-
-Since categories $\algtt^0_{con}$ and $\algtt^1_{con}$ are of the form $B/\algtt^0_{con}$, this corollary applies to them.
-Now we consider categories of stable and regular theories.
-Category $\algtt^0_{st}$ of stable algebraic dependent type theories was defined in \cite{alg-tt} as the category of algebras for a functor $L : \algtt^0_{con} \to \algtt^0_{con}$.
-Here we will use slightly different (but equivalent) definition.
-
-\begin{cor}
-Categories $\algtt^0_{st}$, $\algtt^1_{st}$ and $\algtt^1_{reg}$ are locally finitely presentable.
-\end{cor}
-\begin{proof}
-Category $\algtt^1_{reg}$ is a reflective subcategory of $\algtt^1_{st}$ and is closed under colimits.
-Hence it is also locally finitely presentable.
-\todo{Finish the proof}
+Each of this categories is a full reflective subcategory of the category of prestable theories closed under all colimits.
+It follows from the previous propostion that they are locally finitely presentable.
 \end{proof}
 
 \subsection{Model structure}
