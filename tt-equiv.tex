@@ -244,6 +244,7 @@ It follows from the previous propostion that they are locally finitely presentab
 
 Let $T_I = coe_1 + \sigma + Path + wUA$ be the theory defined in \cite{alg-models}.
 In this subsection we define a model structure on the category $T_I/\algtt$ of algebraic dependent type theories under $T_I$.
+
 To construct this model structure, we need to recall a few definitions from \cite{f-model-structures}.
 A reflexive cylinder object $C_U(V)$ for a map $i : U \to V$ is any factorization of $[id_V,id_V] : V \amalg_U V \to V$.
 Maps $f,g : V \to X$ are homotopic relative to a cylinder object $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, if there exists a map $h : C_U(V) \to X$
@@ -254,6 +255,11 @@ We say that a map $f : X \to Y$ has RLP up to $\sim_i$ with respect to $i : U \t
               V \ar[r]_v \ar@{-->}[ur]^g                  & Y,
             } \]
 there is a dotted arrow $g : V \to X$ such that $g \circ i = u$ and $(f \circ g) \sim_i v$.
+
+A cylinder object for an object $X$ is any object $C(X)$ together with maps $\cyli_0,\cyli_1 : X \to C(X)$.
+We do not require $[\cyli_0,\cyli_1] : X \amalg X \to C(X)$ to be a cofibration.
+Also, we do not require $\cyli_0$ and $\cyli_0$ to be weak equivalences.
+A morphism of cylinder objects $C(U)$ and $C(V)$ is a pair of maps $i : U \to V$ and $C(i) : C(U) \to C(V)$ which commute with $\cyli_0$ and $\cyli_1$.
 
 We will also need the following theorem from \cite{f-model-structures}:
 \begin{thm}[model-structures]
@@ -286,54 +292,48 @@ $\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of 
 \end{thm}
 Here $\sim^*$ denotes the reflexive transitive closure of the relation of left homotopy with respect to $C(X)$.
 
-For every sequence $s_1, \ldots s_k, s$ of sorts such that $s = (p,n)$ for some $p \in \{ ty, tm \}$ and $n \in \mathbb{N}$,
-let $\{ P \sststile{}{} A\!\downarrow \}$ be the theory under $T_I$ with one predicate symbol $P : s_1 \times \ldots \times s_k$
-and one function symbol $A : s_1 \times \ldots \times s_k \to (d_p,n)$ (where $d_{ty} = ctx$ and $d_{tm} = ty$) and one axiom:
+For every sequence $s_1, \ldots s_k, s$ of sorts, let $\{ P \sststile{}{} A\!\downarrow \}$ be the theory under $T_I$
+with one predicate symbol $P : s_1 \times \ldots \times s_k$, one function symbol $A : s_1 \times \ldots \times s_k \to s$, and one axiom:
 \[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} A(x_1, \ldots x_k)\!\downarrow \]
-If $a : s_1 \times \ldots \times s_k \to s$, then let $\{ P \sststile{}{} a\!\downarrow \}$ be the theory under with one predicate symbol $P$, one function symbol $a$, and one axiom:
-\[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \]
+Let $\{ P \}$ be a theory with one predicate symbol $P : s_1 \times \ldots \times s_k$ and no axioms.
 
-Let $\I_f$ be the set of morphisms of the form $\{ P \sststile{}{} A\!\downarrow \} \to \{ P \sststile{}{} a\!\downarrow \}$ which send $P$ to $P$ and $A$ to $e_p(a)$.
-Let $\I_p$ be the set of morphisms of the form $0 \to \{ P \}$, where $\{ P \}$ is a theory with one predicate symbol $P : s_1 \times \ldots \times s_k$ and no axioms.
-The set of generating cofibrations $\I$ is the union of $\I_f$ and $\I_p$.
+Let $\I_{ty}$ be the set of morphisms of the form
+\[ \{ P \} \to \{ P \sststile{}{} A\!\downarrow \}, \]
+where $A : s_1 \times \ldots \times s_k \to (ty,0)$.
+Let $\I_{tm}$ be the set of morphisms of the form
+\[ \{ P \sststile{}{} A\!\downarrow \} \to \{ P \sststile{}{} a\!\downarrow \}, \]
+where $A : s_1 \times \ldots \times s_k \to (ty,0)$, $a : s_1 \times \ldots \times s_k \to (tm,0)$, and $A$ maps to $ty(a)$.
+Let $\I_{pr}$ be the set of morphisms of the form $0 \to \{ P \}$.
+The set of generating cofibrations $\I$ is the union of $\I_{ty}$, $\I_{tm}$, and $\I_{pr}$.
 
 For every $i : U \to V \in \I$, we need to define a relative cylinder object $C_U(V)$.
-First, let $C(\{ P \}) = \{ P \} \amalg \{ P \}$.
+First, let $C_0(\{ P \}) = \{ P \} \amalg \{ P \}$.
 Thus any two maps from $\{ P \}$ are homotopic.
-
-Let $C_{U_{s_1, \ldots s_k, (tm,n)}}(V_{s_1, \ldots s_k, s})$ be the theory with one predicate symbol $P : s_1 \times \ldots \times s_k$,
-four function symbols:
+Let $C_{\{ P \sststile{}{} A \downarrow \}}(\{ P \sststile{}{} a\!\downarrow \})$ be the theory with one predicate symbol $P : s_1 \times \ldots \times s_k$,
+three function symbols $a, a', h : s_1 \times \ldots \times s_k \to (tm,0)$, and the following axioms:
 \begin{align*}
-A & : s_1 \times \ldots \times s_k \to (ty,n) \\
-a & : s_1 \times \ldots \times s_k \to (tm,n) \\
-a' & : s_1 \times \ldots \times s_k \to (tm,n) \\
-h & : s_1 \times \ldots \times s_k \to (tm,n+1)
+& P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} ty(a(x_1, \ldots x_k)) = ty(a'(x_1, \ldots x_k)) \\
+& a(x_1, \ldots x_k)\!\downarrow \land\ a'(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} h(x_1, \ldots x_k)\!\downarrow \\
+& h(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} ty(h(x_1, \ldots x_k)) = Id(a(x_1, \ldots x_k), a'(x_1, \ldots x_k))
 \end{align*}
-and the following axioms:
+Map $s : C_{\{ P \sststile{}{} A \downarrow \}}(\{ P \sststile{}{} a\!\downarrow \}) \to \{ P \sststile{}{} a\!\downarrow \}$ is defined as follows:
+$s(P) = P$, $s(a) = a$, $s(a') = a$, and $s(h) = refl(a)$.
+
+Let $C_{\{ P \}}(\{ P \sststile{}{} A\!\downarrow \})$ be the theory with one predicate symbol $P : s_1 \times \ldots \times s_k$, the following function symbols:
 \begin{align*}
-P(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \land\ a'(x_1, \ldots x_k)\!\downarrow \\
-a(x_1, \ldots x_k)\!\downarrow \land\ a'(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ctx^n(h(x_1, \ldots x_k)) = I \\
-a(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ty(a(x_1, \ldots x_k)) = A(x_1, \ldots x_k) \\
-a'(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ty(a'(x_1, \ldots x_k)) = A(x_1, \ldots x_k) \\
-h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} ty(h(x_1, \ldots x_k)) = A(x_1, \ldots x_k)\!\uparrow \\
-h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} left^*(h(x_1, \ldots x_k)) = a(x_1, \ldots x_k) \\
-h(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} right^*(h(x_1, \ldots x_k)) = a'(x_1, \ldots x_k)
+A, A' & : s_1 \times \ldots \times s_k \to (ty,0) \\
+f, g, g', p, q & : s_1 \times \ldots \times s_k \to (tm,1),
 \end{align*}
-Maps $\cyli_0,\cyli_1 : V_{s_1, \ldots s_k, (tm,n)} \to C_{U_{s_1, \ldots s_k, (p,n)}}(V_{s_1, \ldots s_k, (p,n)})$ are defined as follows:
-$\cyli_0(a) = a$, $\cyli_1(a) = a'$, and $\cyli_0(x) = \cyli_1(x) = x$ for every other symbol $x$.
-
-We also define theory $V'_{s_1, \ldots s_k, s}$ as $V_{s_1, \ldots s_k, s}$ together with the following axiom:
-\[ a(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} P(x_1, \ldots x_k) \]
-
-There are obvious morphisms $U_{s_1, \ldots s_k, s} \to V_{s_1, \ldots s_k, s}$.
-Let $\I$ be the set of these morphisms for every sequence $s_1, \ldots s_k, s$.
-Let $\I'$ be the set of morphisms of the form $j \circ i$, where $i \in \I$ and $j$ is the inclusion $V_{s_1, \ldots s_k, s} \to V'_{s_1, \ldots s_k, s}$.
-Note that every map in $\I'$ is a pushout of a map in $\I$:
-\[ \xymatrix{ U_{s_1, \ldots s_k, s} \ar[r]^f \ar[d] & U_{s_1, \ldots s_k, s} \ar[d] \\
-              V_{s_1, \ldots s_k, s} \ar[r]_g & \po V'_{s_1, \ldots s_k, s}
-            } \]
-where $f(P) = P$, $f(A) = A|_P$, $g(P) = P$, $g(A) = A|_P$ and $g(a) = a$.
-It follows that $\Icof[\I'] \subseteq \Icof$.
+and the following axioms (we omit variables in arguments to simplify the notation):
+\begin{align*}
+P & \sststile{}{x_1, \ldots x_k} A = A' \\
+A\!\downarrow \land\ A'\!\downarrow & \sststile{}{x_1, \ldots x_k} f\!\downarrow \land g\!\downarrow \land g'\!\downarrow \land p\!\downarrow \land q\!\downarrow \\
+f\!\downarrow \land g\!\downarrow \land g'\!\downarrow \land p\!\downarrow \land q\!\downarrow & \sststile{}{x_1, \ldots x_k} (x : A \vdash f : A') \land (y : A' \vdash g : A) \land (y : A' \vdash g' : A) \\
+f\!\downarrow \land g\!\downarrow \land g'\!\downarrow \land p\!\downarrow \land q\!\downarrow & \sststile{}{x_1, \ldots x_k} x : A \vdash p : Id(g[y \mapsto f], x) \\
+f\!\downarrow \land g\!\downarrow \land g'\!\downarrow \land p\!\downarrow \land q\!\downarrow & \sststile{}{x_1, \ldots x_k} y : A' \vdash q : Id(f[x \mapsto g], y)
+\end{align*}
+Map $s : C_{\{ P \}}(\{ P \sststile{}{} A\!\downarrow \}) \to \{ P \sststile{}{} A\!\downarrow \}$ is defined as follows:
+$s(P) = P$, $s(A) = A$, $s(A') = A$, $s(f) = v_0$, $s(g) = v_0$, $s(g') = v_0$, $s(p) = refl(v_0)$, and $s(q) = refl(v_0)$.
 
 \section{Weak equivalences of theories}
 
