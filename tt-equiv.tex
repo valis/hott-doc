@@ -116,8 +116,8 @@
 \newcommand{\red}{\Rightarrow}
 
 \newcommand{\we}{\mathcal{W}}
-\newcommand{\fib}{\mathcal{Fib}}
-\newcommand{\cof}{\mathcal{Cof}}
+\newcommand{\fib}{\mathcal{F}}
+\newcommand{\cof}{\mathcal{C}}
 \newcommand{\I}{\mathrm{I}}
 \newcommand{\J}{\mathrm{J}}
 \newcommand{\class}[2]{#1\text{-}\mathrm{#2}}
@@ -242,8 +242,8 @@ It follows from the previous propostion that they are locally finitely presentab
 
 \subsection{Model structure}
 
-Let $T_I = coe_1 + \sigma + Path + wUA$.
-In this section we define a model structure on category $T_I/\algtt^1_{reg}$.
+Let $T_I = coe_1 + \sigma + Path + wUA$ be the theory defined in \cite{alg-models}.
+In this subsection we define a model structure on the category $T_I/\algtt$ of algebraic dependent type theories under $T_I$.
 To construct this model structure, we need to recall a few definitions from \cite{f-model-structures}.
 A reflexive cylinder object $C_U(V)$ for a map $i : U \to V$ is any factorization of $[id_V,id_V] : V \amalg_U V \to V$.
 Maps $f,g : V \to X$ are homotopic relative to a cylinder object $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, if there exists a map $h : C_U(V) \to X$
@@ -272,7 +272,7 @@ there exists a cylinder object $C(X)$ such that the following conditions hold:
 \item These cylinder objects satisfy homotopy extension property. That is,
 if $i : U \to V \in \cof$, $u : U \to X$ and $v : V \to X$ are maps, and $h : C(U) \to X$ is a homotopy between $v \circ i$ and $u$,
 then there exists a map $v' : V \to X$ and a homotopy $h' : C(V) \to X$ between $v$ and $v'$ such that $h = h' \circ C(i)$.
-\item Maps in $\Jcell[_\I]$ have RLP up to $\sim^*$ (reflexive transitive closure of $\sim$) with respect to domains of maps in $\I$.
+\item Maps in $\Jcell[_\I]$ have RLP up to $\sim^*$ with respect to domains of maps in $\I$.
 \item For every $i : U \to V \in \I$, we have a lift $p$ in the following diagram:
 \[ \xymatrix{ V \amalg_U V \ar[r]^-f \ar[d]_{[\cyli_0,\cyli_1]} & T \\
               C_U(V) \ar@{-->}[ur]_p
@@ -286,21 +286,21 @@ $\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of 
 \end{thm}
 Here $\sim^*$ denotes the reflexive transitive closure of the relation of left homotopy with respect to $C(X)$.
 
-Let $e : \{ ctx, ty, tm \} \to \{ ctx, ty \}$ be the function defined as $e(ctx) = ctx$, $e(ty) = ctx$, $e(tm) = ty$.
-Also we define $d_p : (p,n) \to (e(p),n)$ as $d_{ctx}(\Gamma) = \Gamma$ $d_{ty}(A) = ft(A)$, $d_{tm}(a) = ty(a)$.
 For every sequence $s_1, \ldots s_k, s$ of sorts such that $s = (p,n)$ for some $p \in \{ ty, tm \}$ and $n \in \mathbb{N}$,
-let $U_{s_1, \ldots s_k, s}$ be the theory under $T_I$ with one predicate symbol $P : s_1 \times \ldots \times s_k$
-and one function symbol $A : s_1 \times \ldots \times s_k \to (e(p),n)$ and one axiom:
+let $\{ P \sststile{}{} A\!\downarrow \}$ be the theory under $T_I$ with one predicate symbol $P : s_1 \times \ldots \times s_k$
+and one function symbol $A : s_1 \times \ldots \times s_k \to (d_p,n)$ (where $d_{ty} = ctx$ and $d_{tm} = ty$) and one axiom:
 \[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} A(x_1, \ldots x_k)\!\downarrow \]
-Let $V_{s_1, \ldots s_k, s}$ be the theory under $U_{s_1, \ldots s_k, s}$ with one additional function symbol $a : s_1 \times \ldots \times s_k \to s$ and two axioms:
-\begin{align*}
-P(x_1, \ldots x_k) & \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \\
-a(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} d_p(a(x_1, \ldots x_k)) = A(x_1, \ldots x_k)
-\end{align*}
-Let $i_{s_1, \ldots s_k, s} : U_{s_1, \ldots s_k} \to V_{s_1, \ldots s_k, s}$ be the inclusion of the subtheory.
-Let $\I$ be the set of morphisms of the form $i_{s_1, \ldots s_k, s}$.
+If $a : s_1 \times \ldots \times s_k \to s$, then let $\{ P \sststile{}{} a\!\downarrow \}$ be the theory under with one predicate symbol $P$, one function symbol $a$, and one axiom:
+\[ P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} a(x_1, \ldots x_k)\!\downarrow \]
+
+Let $\I_f$ be the set of morphisms of the form $\{ P \sststile{}{} A\!\downarrow \} \to \{ P \sststile{}{} a\!\downarrow \}$ which send $P$ to $P$ and $A$ to $e_p(a)$.
+Let $\I_p$ be the set of morphisms of the form $0 \to \{ P \}$, where $\{ P \}$ is a theory with one predicate symbol $P : s_1 \times \ldots \times s_k$ and no axioms.
+The set of generating cofibrations $\I$ is the union of $\I_f$ and $\I_p$.
 
 For every $i : U \to V \in \I$, we need to define a relative cylinder object $C_U(V)$.
+First, let $C(\{ P \}) = \{ P \} \amalg \{ P \}$.
+Thus any two maps from $\{ P \}$ are homotopic.
+
 Let $C_{U_{s_1, \ldots s_k, (tm,n)}}(V_{s_1, \ldots s_k, s})$ be the theory with one predicate symbol $P : s_1 \times \ldots \times s_k$,
 four function symbols:
 \begin{align*}
