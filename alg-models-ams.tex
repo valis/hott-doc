@@ -105,7 +105,7 @@
 \newcommand{\C}{\cat{C}}
 \newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 \newcommand{\Th}{\cat{Th}}
-\newcommand{\emptyCtx}{\mathbf{1}}
+\newcommand{\emptyCtx}{*}
 
 \newcommand{\we}{\mathcal{W}}
 \newcommand{\I}{\mathrm{I}}
@@ -1277,15 +1277,15 @@ where $u$ is the map $F(\{\,\Gamma \vdash A\ type\,\}) \to X$.
 For every set of variables $V$ and every term $t \in Term_{T'}(V)_{(p,n)}$,
 we construct a term $h(t) \in Term_{T'}(L(V))_{(p,n+1)}$, where $L(V) = \{\,x : (p,k+1)\ |\ (x : (p,k)) \in V\,\}$.
 \begin{align*}
-h(x) & = x \text{, if } x \in Var \\
+h(x) & = x \text{, if } x \in V \\
 h(O_a) & = I \times O_a \\
 h(\emptyCtx) & = I \\
 h(ft(t')) & = ft(h(t')) \\
 h(ty(t')) & = ty(h(t')) \\
-h(\sigma(t_1, \ldots t_k)) & = I \times ctx(t) \vdash \sigma_1(h(t_1), \ldots h(t_k)) \\
-h(H) & = I \times ctx(t) \vdash subst(H, v_k, \ldots v_1, sq(v_{k+1}, v_0))
+h(\sigma(t_1, \ldots t_k)) & = \alpha(L(\sigma))(I, h(t_1), \ldots h(t_k)) \\
+h(H) & = subst(I \times ctx(H), H, v_k, \ldots v_1, sq(v_{k+1}, v_0))
 \end{align*}
-where $\sigma_1$ is the lift of $\sigma$ which is obtained from the stability of $T$.
+where $\alpha : L(T) \to T$ is the stability map of $T$.
 
 For every formula $\varphi \in Form_{T'}(V)$, we can define formula $h(\varphi) \in Form_{T'}(L(V))$ as follows:
 \begin{align*}
@@ -1294,7 +1294,7 @@ h(R(t_1, \ldots t_k)) & = R_1(h(t_1), \ldots h(t_k)) \\
 h(\varphi_1 \land \ldots \land \varphi_n) & = h(\varphi_1) \land \ldots \land h(\varphi_n)
 \end{align*}
 It is easy to see that $h$ is stable under substitution.
-Thus to prove that for every theorem $\varphi \sststile{}{V} \psi$ of $T'$, $h(\varphi) \sststile{}{L(V)} h(\psi)$
+Thus to prove that for every theorem $\varphi \sststile{}{V} \psi$ of $T'$, $h(\varphi) \land \bigwedge_{x \in L(V)} ctx^n(x) = I \sststile{}{L(V)} h(\psi)$
 is also a theorem of $T'$, it is enough to show that this is the case for axioms.
 If a formula $\varphi$ does not mention $H$, then $h(\varphi)$ coincides with the lifting of $\varphi$.
 Hence if a sequent $\varphi \sststile{}{V} \psi$ does not use $H$, then $h(\varphi) \sststile{}{L(V)} h(\psi)$ is a theorem by stability.
