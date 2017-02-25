@@ -198,6 +198,7 @@ These definitions of weak equivalences and the set of generating cofibrations ap
 A \emph{Morita equivalence} between theories $T_1$ and $T_2$ is a morphism $f : T_1 \to T_2$ such that for every cofibrant model $X$ of $T_1$,
 the unit $\eta_X : X \to f^*(f_!(X))$ of the adjunction $f_! \dashv f^*$ is a weak equivalence.
 We will say that $f$ is a \emph{strong Morita equivalence} if $\eta_X$ is a weak equivalence for every $X$.
+We will say that $f$ is a \emph{syntactic equivalence} if $\eta_X$ is a weak equivalence when $X$ is the initial model.
 \end{defn}
 
 Suppose that there is a model structure (or a left semi-model structure) on the category of models of a theory $T$
@@ -227,11 +228,13 @@ such that sequent $\varphi \sststile{}{V} ty(h) = Id(a,a')$ is derivable in $T$.
 A \emph{relative homotopy} between types $A,A' \in Term_T(V)_{(ty,n)}$ with respect to $\varphi$ is a tuple $f,g,p,g',p' \in Term_T(V)_{(tm,n+1)}$
 such that sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$, where $\psi$ is the conjunction of formulas that appear in the definition of a relative homotopy for models.
 
-\begin{prop}[str-morita-char]
-Let $f : T_1 \to T_2$ be a morphism of theories with identity types.
-Then $f$ is a strong Morita equivalence if and only if for every set $V$, every formula $\varphi \in Form_{T_1}(V)$,
-every term $A \in Term_{T_1}(V)_{(d_p,n)}$, and every term $a \in Term_{T_2}(V)_{(p,n)}$ such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$,
+Let $V$ be a set of variables and let $\varphi$ be a formula with free variables in $V$.
+We will say that a morphism $f : T_1 \to T_2$ of theories with identity types has the weak lifting property with respect to $V,\varphi$ if
+for every term $A \in Term_{T_1}(V)_{(d_p,n)}$ and every term $a \in Term_{T_2}(V)_{(p,n)}$ such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$,
 there exists a term $a' \in Term_{T_1}(V)_{(p,n)}$ such that $f(a')$ is relatively homotopic to $a$ with respect to $\varphi$.
+
+\begin{prop}[str-morita-char]
+A morphism $f : T_1 \to T_2$ between theories with identity types is a strong Morita equivalence if and only if it has the weak lifting property with respect to every $V,\varphi$.
 \end{prop}
 \begin{proof}
 First, we need to introduce an auxiliary construction.
@@ -268,13 +271,14 @@ An analogous characterization holds for Morita equivalences:
 
 \begin{prop}[morita-char]
 A morphism $f : T_1 \to T_2$ between theories with identity types is a Morita equivalence if and only if 
-the condition described in the previous proposition holds for every formula $\varphi \in Form_{T_1}(\{ x_1, \ldots x_k \})$ that satisfy the following condition:
-$\varphi = \varphi_1 \land \ldots \land \varphi_k$, $\varphi_i$ equals to $e_p(x_i) = t_i$, where $t_i$ is a term of $T_1$ with free variables in $\{ x_1, \ldots x_{i-1} \}$,
-and for every $1 \leq i \leq k$, sequent $\varphi_1 \land \ldots \land \varphi_{i-1} \sststile{}{x_1, \ldots x_{i-1}} t_i\!\downarrow$ is derivable in $T_1$.
+it has the weak lifting property with respect to every $V = \{ x_1, \ldots x_k \}$
+and every $\varphi$ of the form $\varphi_1 \land \ldots \land \varphi_k$, where $\varphi_i$ equals to $e_p(x_i) = t_i$,
+where $t_i$ is a term of $T_1$ with free variables in $\{ x_1, \ldots x_{i-1} \}$ such that for every $1 \leq i \leq k$,
+sequent $\varphi_1 \land \ldots \land \varphi_{i-1} \sststile{}{x_1, \ldots x_{i-1}} t_i\!\downarrow$ is derivable in $T_1$.
 \end{prop}
 \begin{proof}
 Suppose that $f$ is a Morita equivalence.
-To prove that this condition holds, we just need to show that model $M = Syn(T_1, \{ x_1, \ldots x_k \}, \{\,\sststile{}{}~\varphi\,\})$
+To prove that $f$ has the weak lifting property, we just need to show that model $M = Syn(T_1, \{ x_1, \ldots x_k \}, \{\,\sststile{}{}~\varphi\,\})$
 constructed in the previous proposition is cofibrant.
 Note that for every $1 \leq i \leq k$, we have the following pushout square:
 \[ \xymatrix{ F(\{ A : (d_p,n) \}) \ar[d] \ar[r] &     Syn(T_1, \{ x_1, \ldots x_{i-1} \}, \{\,\sststile{}{} \varphi_1 \land \ldots \land \varphi_{i-1} \,\}) \ar[d] \\
@@ -284,10 +288,8 @@ where the top arrow maps $A$ to $t_i$ and the bottome arrow maps $a$ to $x_i$.
 This shows that $M$ is a relative $\I$-cell complex.
 
 Now, let us prove the converse.
-We just need to show that if $M$ is a cofibrant model of $T_1$, then we can chose formula $\varphi$
+We just need to show that if $M$ is a cofibrant model of $T_1$, then we can choose formula $\varphi$
 in the second part of the proof of the previous proposition so that it satisfies the conditions of this proposition.
-Let $\varphi$ be the formula constructed in the previous proposition.
-We will show that it can be replaced by an equivalent formula satisfying these conditions.
 
 Since every cofibrant object is a retract of a relative $\I$-cell complex and Morita equivalences are closed under retracts, we may assume that $M$ is a relative $\I$-cell complex.
 Moreover, we may assume that there are subsets $\{S_i\}_{i \in \mathbb{N}}$ of elements of $M$ such that we have the following pushout diagrams:
@@ -300,6 +302,15 @@ Note that $M_i$ is isomorphic to $Syn(T_1, \bigcup_{1 \leq j \leq i} S_j, \mathc
 where $\mathcal{A}_i$ consists of formulas of the form $e_p(x) = t$, where $x \in S_i$ and $t \in Term_{T_1}(\bigcup_{1 \leq j < i} S_j)$ corresponds to the image of $A_x$ in $M_{i-1}$.
 Thus, $M$ is isomorphic to $Syn(T_1, \bigcup_{i \in \mathbb{N}} S_i, \bigcup_{i \in \mathbb{N}} \mathcal{A}_i)$.
 Now, if we choose a finite subset of $\bigcup_{i \in \mathbb{N}} \mathcal{A}_i$ as before, then the conjunction of this subset satisfies the required conditions.
+\end{proof}
+
+Finally, an analogous characterization for syntactic equivalences is obvious:
+
+\begin{prop}[syn-equiv-char]
+A morphism $f : T_1 \to T_2$ between theories with identity types is a syntactic equivalence if and only if it has the weak lifting property with respect to $\varnothing,\top$.
+\end{prop}
+\begin{proof}
+This is obvious since elements of the initial model of $T_1$ are closed terms $t$ of $T_1$ such that $\sststile{}{} t\!\downarrow$ is derivable.
 \end{proof}
 
 \begin{comment}
@@ -398,6 +409,7 @@ It follows that categories of models of these theories are locally presentable.
 In this subsection we will prove that different categories of theories are also locally finitely presentable.
 
 We will consider a prestable theory $T$ under some prestable theory $B$.
+Recall that a prestable theory is a theory $T$ with a map $\alpha : L(T) \to T$, where $L$ is a functor defined in \cite{alg-tt}.
 It was shown in \cite[Lemma~4.4]{alg-tt} that every such theory is isomorphic to a theory which has $\mathcal{F}_B \amalg (\mathcal{F}_0 \times \mathbb{N})$,
 $\mathcal{P}_B \amalg (\mathcal{P}_0 \times \mathbb{N})$ and $\mathcal{A}_B \amalg \mathcal{A}_0$ as the sets of function and predicate symbols and the set of axioms, respectively,
 where $\mathcal{F}_0$, $\mathcal{P}_0$, and $\mathcal{A}_0$ are some sets and $\mathcal{F}_B$, $\mathcal{P}_B$, and $\mathcal{A}_B$ are the corresponding sets of $B$.
@@ -526,15 +538,25 @@ and axioms making $(f,g,g',p,q)$ into a relative homotopy between $\sigma$ and $
 Maps $\cyli_0,\cyli_1 : T_{l,(tm,n)} \to C_{T_{l,(ty,n)}}(T_{l,(tm,n)})$ and their retraction
 $s : C_{T_{l,(ty,n)}}(T_{l,(tm,n)}) \to T_{l,(tm,n)}$ are defined in the obvious way.
 
-\begin{lem}
+\begin{lem}[jcell-morita]
 Let $f : X \to Y$ be a pushout of $\cyli_0 : T_{l,(tm,n)} \to C_{T_{l,(ty,n)}}(T_{l,(tm,n)})$
 and let $g : Y \to X$ be the retraction of $f$ which is the pushout of $s$.
-Then for every formula $\varphi$ of $X$ and every term $t$ of $Y$,
-if $f(\varphi) \sststile{}{V} t\!\downarrow$, then $t$ and $f(g(t))$ are relatively homotopic with respect to $f(\varphi)$.
+Let $\varphi$ be a formula of $X$ such that for every predicate symbol $R$ occurring in $\varphi$,
+sequent $R(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} \alpha(L(R))(I, I \times x_1, \ldots I \times x_k)$ is derivable in $X$.
+
+Then for every term $t$ of $Y$ such that $f(\varphi) \sststile{}{V} t\!\downarrow$, terms $t$ and $f(g(t))$ are relatively homotopic with respect to $f(\varphi)$.
 \end{lem}
 \begin{proof}
 This lemma is analogous to \cite[Lemma~3.7]{alg-models}.
-We define a function $h : Term_Y(V)_{(p,n)} \to Term_Y(V)_{(p,n+1)}$ such that $h(t)$ gives us a relative homotopy between $t$ and $f(g(t))$.
+We defined there a function $h : Term_Y(V)_{(p,n)} \to Term_Y(L(V))_{(p,n+1)}$ such that $h$ preserves theorems in the sense that
+if $\chi \sststile{}{V} \psi$ is a theorem of $Y$, then $h(\chi) \land \bigwedge_{x \in L(V)} ctx^n(x) = I \sststile{}{L(V)} h(\psi)$ is also a theorem.
+Note that $h(f(\varphi)) = \alpha(L(f(\varphi)))$ since $f(\varphi)$ contains only symbols of $X$.
+The condition we put on $\varphi$ implies that sequent $f(\varphi) \sststile{}{V} h(f(\varphi))[\rho]$ is derivable, where $\rho(x) = I \times x$.
+Thus we have the following theorem: $f(\varphi) \sststile{}{V} h(t)[\rho]\!\downarrow$.
+
+Moreover, we have theorems $h(t)[\rho]\!\downarrow\ \sststile{}{V} h(t)[\rho][left] = f(g(t))$ and $h(t)[\rho]\!\downarrow\ \sststile{}{V} h(t)[\rho][right] = t$
+(here, $[\rho]$ is an operation of substitution on terms and $[left]$ and $[right]$ are derived function symbols in the theory; we are sorry for this clash of the notation).
+Thus $h(t)[\rho]$ gives us the required homotopy between $t$ and $f(g(t))$.
 \end{proof}
 
 \begin{thm}
@@ -547,11 +569,39 @@ By \rprop{morita-quillen}, Morita equivalences between theories under $T_I$ sati
 Since the codomains of maps in $\I$ are finite, Morita equivalences are closed under transfinite compositions.
 Thus by \rthm{model-structure}, we just need to prove that pushouts of maps
 $\cyli_0 : T_{l,(p,n)} \to C_{T_{l,(d_p,n)}}(T_{l,(p,n)})$ are Morita equivalences.
-Actually, we can prove that they are strong Morita equivalences.
-Let $\varphi$ be a formula and let $A$ be a term of $T_{l,(p,n)}$ such that $\varphi \sststile{}{V} A\!\downarrow$.
+Let $\varphi$ be a formula which does not contain any predicate symbols and let $A$ be a term of $T_{l,(p,n)}$ such that $\varphi \sststile{}{V} A\!\downarrow$.
 Let $a$ be a term of $C_{T_{l,(d_p,n)}}(T_{l,(p,n)})$ such that $\cyli_0(\varphi) \sststile{}{V} e_p(a) = \cyli_0(A)$.
-If we define $a'$ as $s(a)$, then $\varphi \sststile{}{V} e_p(a') = A$ and the fact that $\cyli_0(a')$ and $a$ are relatively homotopic follows from the previous lemma.
+If we define $a'$ as $s(a)$, then $\varphi \sststile{}{V} e_p(a') = A$ and the fact that $\cyli_0(a')$ and $a$ are relatively homotopic follows from \rlem{jcell-morita}.
 \end{proof}
+
+\Rlem{jcell-morita} implies that trivial cofibrations satisfying a mild additional condition are strong Morita equivalences:
+
+\begin{prop}
+Let $f : T_1 \to T_2$ be a trivial cofibration such that for every predicate symbol $R$ of $T_1$,
+sequent $R(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} \alpha(L(R))(I, I \times x_1, \ldots I \times x_k)$ is derivable.
+Then $f$ is a strong Morita equivalence.
+\end{prop}
+\begin{proof}
+Since trivial cofibrations are retracts of maps in $\Jcell[_\I]$ and strong Morita equivalences are closed under retracts,
+we just need to prove that maps in $\Jcell[_\I]$ are strong Morita equivalences.
+Since strong Morita equivalences are closed under transfinite compositions, we just need to prove this for maps $f$ which are pushouts of maps in $\Jcell[_\I]$.
+Moreover, since maps in $\Jcell[_\I]$ do not change the set of predicate symbols,
+we may assume that the domain and the codomain of $f$ satisfy the same condition on the predicate symbols as $T_1$.
+Now, \rlem{jcell-morita} implies that such maps are strong Morita equivalences.
+\end{proof}
+
+There is another model structure on the category of $I$-stable theories under $T_I$ which has syntactic equivalences as weak equivalences.
+Recall that for every theory $T$, we have a left adjoint functor $Lang_T : \Mod{T} \to T/\algtt$ with a right adjoint $Syn_T : T/\algtt \to \Mod{T}$.
+Note that a map $f : T_1 \to T_2$ of theories under $T_I$ is a syntactic equivalence if and only if $Syn_{T_I}(f)$ is a weak equivalence of models.
+Thus we can transfer the model structure on $\Mod{T_I}$ to a model structure on $T_I/\algtt$.
+To do this, we need to prove that $Lang_{T_I}$ maps trivial cofibrations to syntactic equivalences.
+But we already proved that it actually maps them to Morita equivalences.
+
+Adjunction $Lang_{T_I} \dashv Syn_{T_I}$ is a Quillen equivalence between the model structure on $\Mod{T_I}$ and the syntactic model structure on $T_I/\algtt$.
+To prove this, we just need to show that the unit of the adjunction is a weak equivalence.
+But it is actually an isomorphism since $Lang_{T_I}$ is full and faithful.
+Finally, note that the identity functor on $T_I/\algtt$ is a left Quillen functor from the syntactic model structure to the Morita model structure
+since it preserves generating cofibrations and generating trivial cofibrations.
 
 \section{Examples of Morita equivalences}
 
