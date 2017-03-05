@@ -410,7 +410,8 @@ In this subsection we will prove that different categories of theories are also 
 
 We will consider a prestable theory $T$ under some prestable theory $B$.
 Recall that a prestable theory is a theory $T$ with a map $\alpha : L(T) \to T$, where $L$ is a functor defined in \cite{alg-tt}.
-It was shown in \cite[Lemma~4.4]{alg-tt} that every such theory is isomorphic to a theory which has $\mathcal{F}_B \amalg (\mathcal{F}_0 \times \mathbb{N})$,
+It was shown in \cite[Lemma~4.4]{alg-tt} that every such theory is isomorphic to a contextual theory,
+that is a theory which has $\mathcal{F}_B \amalg (\mathcal{F}_0 \times \mathbb{N})$,
 $\mathcal{P}_B \amalg (\mathcal{P}_0 \times \mathbb{N})$ and $\mathcal{A}_B \amalg \mathcal{A}_0$ as the sets of function and predicate symbols and the set of axioms, respectively,
 where $\mathcal{F}_0$, $\mathcal{P}_0$, and $\mathcal{A}_0$ are some sets and $\mathcal{F}_B$, $\mathcal{P}_B$, and $\mathcal{A}_B$ are the corresponding sets of $B$.
 Elements of $\mathcal{F}_0$, $\mathcal{P}_0$ and $\mathcal{A}_0$ are called basic function symbols, basic predicate symbols, and basic axioms.
@@ -437,7 +438,7 @@ We will say that a theory $T = ((\mathcal{S}, \mathcal{F}_0 \amalg \mathcal{F}, 
 in $\Th_B$ is \emph{$\lambda$-small} if cardinalities of sets $\mathcal{F}$, $\mathcal{P}$ and $\mathcal{A}$ are less than $\lambda$.
 We will say that $T$ is \emph{finite} if it is $\aleph_0$-small.
 
-\begin{prop}
+\begin{prop}[theories-presentable]
 The category of prestable theories under a prestable theory $B$ is locally finitely presentable.
 An object of this category is $\lambda$-presentable if and only if it is isomorphic to a $\lambda$-small object.
 \end{prop}
@@ -520,7 +521,7 @@ Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a
 $\J_\I$ as a set of generating trivial cofibrations, and $\we_\I$ as a class of weak equivalences.
 \end{thm}
 
-For every sequence $(p_1,n_1), \ldots (p_{k+1},n_{k+1})$ of sorts, let $T_{(p_1,n_1), \ldots (p_{k+1},n_{k+1})}$ be the theory under $T_I$
+For every sequence $(p_1,n_1), \ldots (p_{k+1},n_{k+1})$ of sorts, let $T_{(p_1,n_1), \ldots (p_{k+1},n_{k+1})}$ be the theory under the theory of identity types
 with function symbols $\sigma_i : (p_1,n_1) \times \ldots \times (p_{i-1},n_{i-1}) \to (d_{p_i},n_i)$ for every $1 \leq i \leq k$,
 $\sigma_{k+1} : (p_1,n_1) \times \ldots \times (p_i,n_i) \to (p_{k+1},n_{k+1})$,
 and axioms $\varphi_1 \land \ldots \land \varphi_i \sststile{}{x_1, \ldots x_i} \sigma_{i+1}(x_1, \ldots x_i)\!\downarrow$ for every $1 \leq i \leq k$,
@@ -539,7 +540,7 @@ Maps $\cyli_0,\cyli_1 : T_{l,(tm,n)} \to C_{T_{l,(ty,n)}}(T_{l,(tm,n)})$ and the
 $s : C_{T_{l,(ty,n)}}(T_{l,(tm,n)}) \to T_{l,(tm,n)}$ are defined in the obvious way.
 
 \begin{lem}[jcell-morita]
-Let $f : X \to Y$ be a pushout of $\cyli_0 : T_{l,(tm,n)} \to C_{T_{l,(ty,n)}}(T_{l,(tm,n)})$
+Let $f : X \to Y$ be a pushout of $\cyli_0 : T_{l,(tm,n)} \to C_{T_{l,(ty,n)}}(T_{l,(tm,n)})$ (in the category of $I$-stable theories)
 and let $g : Y \to X$ be the retraction of $f$ which is the pushout of $s$.
 Let $\varphi$ be a formula of $X$ such that for every predicate symbol $R$ occurring in $\varphi$,
 sequent $R(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} \alpha(L(R))(I, I \times x_1, \ldots I \times x_k)$ is derivable in $X$.
@@ -559,19 +560,33 @@ Moreover, we have theorems $h(t)[\rho]\!\downarrow\ \sststile{}{V} h(t)[\rho][le
 Thus $h(t)[\rho]$ gives us the required homotopy between $t$ and $f(g(t))$.
 \end{proof}
 
-\begin{thm}
-There is a model structure on the category of $I$-stable algebraic dependent type theories under $T_I$
-with $\I$ as the set of generating cofibrations, Morita equivalences as weak equivalences, and in which all objects are fibrant.
+For every theory $T$ under the theory of identity types $T_{Id}$,
+let $\I_T$ be the set of maps in $T/\algtt$ of the form $i \amalg_{id_{T_{Id}}} id_T : U \amalg_{T_{Id}} T \to V \amalg_{T_{Id}} T$ for every $i : U \to V$ in $\I$.
+Analogously, we define a relative cylinder object for $i \amalg_{id_{T_{Id}}} id_T$ as $C_U(V) \amalg_{T_{Id}} T$.
+
+\begin{thm}[theories-model-structure]
+Let $T$ be an $I$-stable algebraic dependent type theory with identity types such that Morita equivalences between theories under $T$ satisfy the 2-out-of-3 property.
+Then there exists a model structure on the category of $I$-stable algebraic dependent type theories under $T$
+with $\I_T$ as the set of generating cofibrations, Morita equivalences as weak equivalences, and in which all objects are fibrant.
 \end{thm}
 \begin{proof}
-Note that the set $\we_\I$ consists of Morita equivalences.
-By \rprop{morita-quillen}, Morita equivalences between theories under $T_I$ satisfy the 2-out-of-3 property since Quillen equivalences do.
+Note that the set $\we_{\I_T}$ consists of Morita equivalences.
 Since the codomains of maps in $\I$ are finite, Morita equivalences are closed under transfinite compositions.
 Thus by \rthm{model-structure}, we just need to prove that pushouts of maps
-$\cyli_0 : T_{l,(p,n)} \to C_{T_{l,(d_p,n)}}(T_{l,(p,n)})$ are Morita equivalences.
-Let $\varphi$ be a formula which does not contain any predicate symbols and let $A$ be a term of $T_{l,(p,n)}$ such that $\varphi \sststile{}{V} A\!\downarrow$.
-Let $a$ be a term of $C_{T_{l,(d_p,n)}}(T_{l,(p,n)})$ such that $\cyli_0(\varphi) \sststile{}{V} e_p(a) = \cyli_0(A)$.
-If we define $a'$ as $s(a)$, then $\varphi \sststile{}{V} e_p(a') = A$ and the fact that $\cyli_0(a')$ and $a$ are relatively homotopic follows from \rlem{jcell-morita}.
+$\cyli_0 \amalg id_T : T_{l,(p,n)} \amalg T \to C_{T_{l,(d_p,n)}}(T_{l,(p,n)}) \amalg T$ are Morita equivalences.
+These pushouts are just pushouts of $\cyli_0$ in $\algtt$.
+Let $f : X \to Y$ be a pushout of $\cyli_0$ and let $g : Y \to X$ be its retract.
+Let $\varphi$ be a formula of $X$ which does not contain any predicate symbols and let $A$ be a term of $X$ such that $\varphi \sststile{}{V} A\!\downarrow$.
+Let $a$ be a term of $Y$ such that $f(\varphi) \sststile{}{V} e_p(a) = f(A)$.
+If we define $a'$ as $g(a)$, then $\varphi \sststile{}{V} e_p(a') = A$ and the fact that $f(a')$ and $a$ are relatively homotopic follows from \rlem{jcell-morita}.
+\end{proof}
+
+\begin{cor}
+There is a model structure on the category of $I$-stable algebraic dependent type theories under $T_I$
+with $\I_{T_I}$ as the set of generating cofibrations, Morita equivalences as weak equivalences, and in which all objects are fibrant.
+\end{cor}
+\begin{proof}
+By \rprop{morita-quillen}, Morita equivalences between theories under $T_I$ satisfy the 2-out-of-3 property since Quillen equivalences do.
 \end{proof}
 
 \Rlem{jcell-morita} implies that trivial cofibrations satisfying a mild additional condition are strong Morita equivalences:
@@ -590,7 +605,54 @@ we may assume that the domain and the codomain of $f$ satisfy the same condition
 Now, \rlem{jcell-morita} implies that such maps are strong Morita equivalences.
 \end{proof}
 
-There is another model structure on the category of $I$-stable theories under $T_I$ which has syntactic equivalences as weak equivalences.
+Note that the domains and the codomains of maps in $\I$ do not have any predicate symbols.
+Thus cofibrant objects also do not have them (to be precise, they are isomorphic to theories without predicate symbols).
+So it seems rather pointless to have predicate symbols at this point.
+We can consider the full subcategory $\algtt_f$ of $\algtt$ on theories without predicate symbols
+(and without function symbols of the form $\sigma : s_1 \times \ldots \times s_k \to (ctx,0)$).
+\Rprop{theories-presentable} still holds for $\algtt_f$, so this category is locally finitely presentable.
+There is a model structure on $\algtt_f$ in which the classes of cofibrations, fibrations, and weak equivalences
+are the intersections of the corresponding classes in $\algtt$ with the class of morphisms of $\algtt_f$.
+This model category has the same sets of generating cofibrations and generating trivial cofibrations as $\algtt$.
+
+\begin{prop}
+The inclusion functor $i : \algtt_f \to \algtt$ has a right adjoint and this adjunction is a Quillen equivalence.
+\end{prop}
+\begin{proof}
+We will say that a theory $T$ \emph{has enough function symbols} if for every partial term $t$ of sort $s$ with free variables $x_1 : s_1$, \ldots $x_k : s_k$,
+there is a function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ such that sequent $\sststile{}{x_1, \ldots x_k} t \simeq \sigma(x_1, \ldots x_k)$ is derivable.
+Note that every theory $T$ is isomorphic to a theory $T'$ with enough function symbols.
+Indeed, function symbols of $T'$ are just terms of the original theory and
+axioms of $T'$ are axioms of $T$ together with axioms that say that the new terms are equivalent to the old ones.
+
+Thus we may restrict and corestrict functor $i : \algtt_f \to \algtt$ to the full subcategories of $\algtt_f$ and $\algtt$ on theories with enough function symbols.
+We will denote this functor by $i' : \algtt'_f \to \algtt'$.
+Now, it is easy to describe a right adjoint to $i'$.
+For every theory $T \in \algtt'$, let $r'(T)$ be the theory with the same function symbols as $T$, no predicate symbols,
+and with the set of axioms which consists of all theorems of $T$ which do not involve predicate symbols.
+Then $r'$ is a functor $\algtt' \to \algtt'_f$.
+It is easy to see that $r'$ is right adjoint to $i'$.
+
+Functor $i' : \algtt'_f \to \algtt'$ preserves and reflects cofibrations and weak equivalences by definition.
+Thus to prove that $i' \dashv r'$ is a Quillen equivalence, we just need to show that the counit $\epsilon_T : i'(r'(T)) \to T$ is a Morita equivalence.
+But this is obvious since $i'(r'(T))$ and $T$ have the same sets of terms and theorems (which do not involve predicate symbols).
+\end{proof}
+
+Now, let us return to the original problem of the absence of predicate symbols in cofibrant objects.
+Instead of forbidding predicate symbols completely, we can enlarge the class of cofibrations to include predicate symbols.
+For every sequence of sorts $s_1, \ldots s_k$, let $P_{s_1, \ldots s_k}$ be the theory with one predicate symbol $R : s_1 \times \ldots \times s_k$.
+Let $\I^P$ be the union of $\I$ and maps of the form $0 \to P_{s_1, \ldots s_k}$.
+A relative cylinder object for a map $0 \to P_{s_1, \ldots s_k}$ is just $P_{s_1, \ldots s_k} \amalg P_{s_1, \ldots s_k}$.
+Thus any two maps $P_{s_1, \ldots s_k} \to X$ are homotopic.
+This implies that $\we_{\I^P} = \we_\I$.
+If $T$ is a theory with identity types, then the set $\I^P_T$ is defined analogously to $\I_T$.
+If $T$ satisfies the conditions of \rthm{theories-model-structure}, then
+to prove that there is a model structure on $T/\algtt$ with $\I^P_T$ as a set of generating cofibrations,
+we just need to show that pushouts of maps $P_{s_1, \ldots s_k} \to P_{s_1, \ldots s_k} \amalg P_{s_1, \ldots s_k}$ are Morita equivalences.
+But this is obvious since the domain and the codomain of such a pushout have the same sets of terms and axioms.
+Of course, the identity functor determine a Quillen equivalence between these to model structures on $T/\algtt$.
+
+Finally, let us discuss another model structure on the category of $I$-stable theories under $T_I$, which has syntactic equivalences as weak equivalences.
 Recall that for every theory $T$, we have a left adjoint functor $Lang_T : \Mod{T} \to T/\algtt$ with a right adjoint $Syn_T : T/\algtt \to \Mod{T}$.
 Note that a map $f : T_1 \to T_2$ of theories under $T_I$ is a syntactic equivalence if and only if $Syn_{T_I}(f)$ is a weak equivalence of models.
 Thus we can transfer the model structure on $\Mod{T_I}$ to a model structure on $T_I/\algtt$.
@@ -602,6 +664,55 @@ To prove this, we just need to show that the unit of the adjunction is a weak eq
 But it is actually an isomorphism since $Lang_{T_I}$ is full and faithful.
 Finally, note that the identity functor on $T_I/\algtt$ is a left Quillen functor from the syntactic model structure to the Morita model structure
 since it preserves generating cofibrations and generating trivial cofibrations.
+
+\section{Properties of Morita equivalences}
+
+In this section we prove several closure properties of Morita equivalences.
+If $f : T_1 \to T_2$ is a Morita equivalence and $T$ is a theory, then $f \amalg T : T_1 \amalg T \to T_2 \amalg T$ might not be a Morita equivalence.
+Our first objective is to give sufficient conditions on $f$ and $T$ for this to be true.
+If $T_1$, $T_2$, and $T_3$ are cofibrant, then this is true, but theories that occur in practice are not cofibrant.
+We describe a class of objects which we call confluent so that every cofibrant object is confluent and theories occurring in practice are confluent.
+
+We will say that a map $f : T_1 \to T_2$ is a \emph{confluent extension} if it factors as a relative $\I$-cell complex $g : T_1 \to T$
+followed by a map $h : T \to T_2$ satisfying the following properties:
+
+Let $T_1 = (\mathcal{F}_1, \mathcal{P}_1, \mathcal{A}_1)$ be a theory and
+let $T_2 = (\mathcal{F}_1 \amalg \mathcal{F}_2, \mathcal{P}_1 \amalg \mathcal{P}_2, \mathcal{A}_1 \amalg \mathcal{A}_2)$ be an extension of $T_1$.
+We will say that this extension is \emph{confluent} if the following conditions hold:
+\begin{itemize}
+\item There is a subtheory $T$ of $T_2$, which contains $T_1$ and all function symbols of $T_2$, and such that the inclusion $T_1 \to T$ is a relative $\I$-cell complex.
+\item 
+\end{itemize}
+We will say that an arbitrary morphism of theories has well-defined function symbols if it is isomorphic to an inclusion $B \to T$ which has this property.
+
+Let $T = (\mathcal{F}_B \amalg (\mathcal{F}_0 \times \mathbb{N}), \mathcal{P}_B \amalg (\mathcal{P}_0 \times \mathbb{N}), \mathcal{A}_B \amalg \mathcal{A}_0)$
+be a contextual theory under $B$.
+We will say that map $B \to T$ \emph{has well-defined function symbols} if there is a well-founded relation $\prec$ on $\mathcal{F}_0$
+such that for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ in $\mathcal{F}_0$,
+there are terms $t_1, \ldots t_k$ of $T_2$ such that the following sequent is derivable:
+\[ \sigma(x_1, \ldots x_k)\!\downarrow\ \ssststile{}{x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = t_i \]
+and every function symbol from $\mathcal{F}_0$ that appears in some $t_i$ is less than $\sigma$.
+
+We will say that a map of theories \emph{has well-defined function symbols} if it is isomorphic to a map $f : T_1 \to T_2$
+such that there is a well-founded relation on the set of function symbols of $T_2$ such that for every function symbol
+$\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ of $T_2$,
+either there is a term $t$ of $T_1$ such that $\sststile{}{x_1, \ldots x_k} f(t) \cong \sigma(x_1, \ldots x_k)$ or
+there are terms $t_1, \ldots t_k$ of $T_2$ such that every function symbol in every $t_i$ is less than $\sigma$ and the following sequent is derivable:
+\[ \sigma(x_1, \ldots x_k)\!\downarrow\ \ssststile{}{x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = t_i. \]
+We will say that an object of $T_0/\algtt$ has well-defined function symbols if it has this property considered as a map $T_0 \to T$.
+
+Every cofibration has well-defined function symbols.
+If $g \circ f$ has well-defined function symbols, then so does $g$.
+In particular, if the codomain of a map has well-defined function symbols, then so does the map itself.
+Objects of $T_0/\algtt$ with well-defined function symbols are closed under quotients.
+This implies that most of the theories that are used in practice have well-defined symbols.
+
+\begin{prop}
+Let $f : T_1 \to T_2$ be a morphism with well-defined function symbols.
+Then $f$ has the weak lifting property with respect to $V,\varphi$ if and only if
+for every term $A \in Term_{T_1}(V)_{(d_p,n)}$ and every function symbol $\sigma$ of $T_2$ such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$,
+there exists a term $a' \in Term_{T_1}(V)_{(p,n)}$ such that $f(a')$ is relatively homotopic to $a$ with respect to $\varphi$.
+\end{prop}
 
 \section{Examples of Morita equivalences}
 
