@@ -440,7 +440,7 @@ Repeating this argument we can conclude that
 By \axref{a3} we conclude that the required sequent is derivable.
 \end{proof}
 
-Now we define a functor $PT : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of partial terms.
+Now we define a functor $PT : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of restricted terms.
 We let $PT(V)_s$ to be the set of expressions $t|_\varphi$ where $t \in T(V)_s$ and $\varphi \in Form_\mathcal{P}(V)$.
 If $\varphi = \top$, then we will write $t|_\varphi$ simply as $t$.
 If $p \in PT(V)_s$, $p = t|_\varphi$ and $\psi \in Form_\mathcal{P}(V)$, then we will write $p|_\psi$ for $t|_{\varphi \land \psi}$.
@@ -458,7 +458,7 @@ t|_\varphi\!\downarrow & \Longleftrightarrow t\!\downarrow\!\land \varphi \\
 \chi \sststile{}{V} t|_\varphi \cong s|_\psi & \Longleftrightarrow \chi \land t|_\varphi\!\downarrow\,\sststile{}{V} t = s \land \psi \text{ and } \chi \land s|_\psi\!\downarrow\,\sststile{}{V} t = s \land \varphi
 \end{align*}
 
-Now we define substitution functions for partial terms.
+Now we define substitution functions for restricted terms.
 For every $\rho : V \to PT(V')$, $t \in T(V)_s$ and $\varphi \in Form_\mathcal{P}(V)$,
 we define $t[\rho] \in PT(V')_s$, $\varphi[\rho] \in Form_\mathcal{P}(V')$ and $t_\varphi[\rho] \in PT(V')_s$ as follows:
 \begin{align*}
@@ -509,7 +509,7 @@ f(a = b) & = f(a) = f(b) \\
 f(R(a_1, \ldots a_k)) & = \beta(R)[x_i \mapsto f(a_i)] \\
 f(\varphi_1 \land \ldots \land \varphi_n) & = f(\varphi_1) \land \ldots \land f(\varphi_n)
 \end{align*}
-We also can define $f$ on partial terms:
+We also can define $f$ on restricted terms:
 \[ f(t|_\varphi) = f(t)|_{f(\varphi)} \]
 It is easy to see that $f$ preserves substitution.
 Thus to prove that $f$ extends to a morphism of theories, we only need to show that it preserves theorems of $\mathbb{T}$.
@@ -542,8 +542,8 @@ Thus $f = f'$.
 \end{proof}
 
 Note that if $T$ is the standard monad $Term_\mathcal{F}$, then to define a morphism of monads $T \to T'$,
-    it is enough to specify for every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$,
-    a partial term $\alpha(\sigma) \in T'(\{ x_1 : s_1, \ldots x_k : s_k \})$ such that $FV(\alpha(\sigma)) = \{ x_1, \ldots x_k \}$.
+it is enough to specify for every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$,
+a restricted term $\alpha(\sigma) \in T'(\{ x_1 : s_1, \ldots x_k : s_k \})$ such that $FV(\alpha(\sigma)) = \{ x_1, \ldots x_k \}$.
 Then there is a unique morphism of monads $f : T \to T'$ such that $f(\sigma(x_1, \ldots x_k)) = \alpha(\sigma)$.
 
 Now, let us define a category $\Th_\mathcal{S}$ of standard partial Horn theories.
@@ -714,7 +714,7 @@ if $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}_2$, then $\va
 \begin{proof}
 First, let us prove the ``if'' part.
 Let $g,h : \mathbb{T} \to \mathbb{T}_1$ be a pair of morphisms such that $f \circ g = f \circ h$.
-If $t \in PTerm_\Sigma(V)_s$, then $\sststile{}{V} f(g(t)) \cong f(h(t))$; hence $\sststile{}{V} g(t) \cong h(t)$.
+If $t \in RTerm_\Sigma(V)_s$, then $\sststile{}{V} f(g(t)) \cong f(h(t))$; hence $\sststile{}{V} g(t) \cong h(t)$.
 If $\varphi \in Form_\mathcal{P}(V)$, then $f(g(\varphi)) \ssststile{}{V} f(h(\varphi))$; hence $g(\varphi) \ssststile{}{V} h(\varphi)$.
 Thus $g = h$.
 
@@ -750,9 +750,9 @@ Ret(\varphi) & = \top \text{, otherwise}
 \end{align*}
 For an arbitrary Horn formula $\varphi$ we define $Ret(\varphi)$ as follows:
 \[ Ret(\varphi_1 \land \ldots \land \varphi_n) = Ret(\varphi_1) \land \ldots \land Ret(\varphi_n) \]
-For every partial term $t|_\varphi$, let $Ret(t|_\varphi) = Ret(t)|_{Ret(\varphi)}$.
+For every restricted term $t|_\varphi$, let $Ret(t|_\varphi) = Ret(t)|_{Ret(\varphi)}$.
 If $S$ is sequent $\varphi \sststile{}{V} \psi$ in the signature of $\mathbb{T}$,
-    then we define sequent $Ret(S)$ in the signature of $\mathbb{T}'$ as $Ret(\varphi) \sststile{}{V \cup FV(Ret(\varphi)) \cup FV(Ret(\psi))} Ret(\psi)$.
+then we define sequent $Ret(S)$ in the signature of $\mathbb{T}'$ as $Ret(\varphi) \sststile{}{V \cup FV(Ret(\varphi)) \cup FV(Ret(\psi))} Ret(\psi)$.
 
 \begin{lem}[subtheory]
 Let $\mathbb{T}'$ be a subtheory of $\mathbb{T}$.
@@ -807,7 +807,7 @@ Thus $i$ is faithful.
 Let $\alpha : i(\mathbb{T}_1) \to i(\mathbb{T}_2)$ be a morphism.
 For every $t \in T_1(V)_s$, let $\beta(t) = Ret(\alpha(t))$ and, for every $\varphi \in F_1(V)$, let $\beta(\varphi) = Ret(\alpha(\varphi))$.
 Since $Ret$ preserves substitution, $\land$ and $\top$, this defines a morphism $\beta : \mathbb{T}_1 \to \mathbb{T}_2$.
-Since $s_0$ is trivial in $i(\mathbb{T}_2)$, $Ret(t) = t$ and $Ret(\varphi) = \varphi$ for every partial term $t$ and every formula $\varphi$.
+Since $s_0$ is trivial in $i(\mathbb{T}_2)$, $Ret(t) = t$ and $Ret(\varphi) = \varphi$ for every restricted term $t$ and every formula $\varphi$.
 Thus $i(\beta) = \alpha$; hence $i$ is full.
 
 Let $\mathbb{T} \in \Th_{\mathcal{S} \amalg \{ s_0 \}}$ be a theory with trivial $s_0$.
@@ -871,6 +871,7 @@ Thus our approach seems to be somewhat more convenient.
 
 The set of function symbols of $\substTh$ consists of the following symbols:
 \begin{align*}
+\emptyCtx     & : (ctx,0) \\
 ft_n          & : (ty,n) \to (ctx,n) \\
 ty_n          & : (tm,n) \to (ty,n) \\
 v_{n,i}       & : (ctx,n) \to (tm,n) \text{, } 0 \leq i < n \\
@@ -1185,7 +1186,7 @@ For every set $\mathcal{F}$ of function symbols, we define another set $L(\mathc
 If $\sigma : s_1 \times \ldots \times s_k \to s$, then $L(\sigma) : (ctx,1) \times L(s_1) \times \ldots \times L(s_k) \to L(s)$.
 For every set of variables $V$ we define a set $L(V)$ which contains a variable $x$ of sort $L(s)$ for every variable $x$ of sort $s$ in $V$.
 For every terms $\Gamma \in Term_{L(\mathcal{F})}(L(V))_{(ctx,1)}$ and $t \in Term_{\mathcal{F}}(V)_{(p,n)}$,
-we define a partial term $L(\Gamma,t) \in PTerm_{L(\mathcal{F})}(L(V))_{(p,n+1)}$ as follows:
+we define a restricted term $L(\Gamma,t) \in RTerm_{L(\mathcal{F})}(L(V))_{(p,n+1)}$ as follows:
 \begin{align*}
 L(\Gamma, x) & = x|_{L(ctx_{p,n})(\Gamma, x) \downarrow} \\
 L(\Gamma, \sigma(t_1, \ldots t_k)) & = L(\sigma)(\Gamma, L(\Gamma, t_1), \ldots L(\Gamma, t_k))
@@ -1364,9 +1365,9 @@ Let $\mathbb{T}$ be a prestable theory together with a map $f : \mathbb{T}_b \to
 First, note that we may assume that for every $\sigma : s_1 \times \ldots \times s_k \to s$ in $\mathcal{F}_0$, $s \neq (ctx,0)$.
 Indeed, we can always replace such a function symbol with a predicate symbol $R_\sigma : s_1 \times \ldots \times s_k$.
 
-Second, note that for every term $t \in Term_{\mathcal{F}_0}(V)_{(p,n)}$ and every $m \in \mathbb{N}$, we can construct the following partial term:
+Second, note that for every term $t \in Term_{\mathcal{F}_0}(V)_{(p,n)}$ and every $m \in \mathbb{N}$, we can construct the following restricted term:
 \[ \alpha L(ft^{m-1}(\Gamma), \alpha L(ft^{m-2}(\Gamma), \ldots \alpha L(\Gamma, t))) \]
-in $PTerm_{\mathbb{T}}(L^m(V) \amalg \{ \Gamma : (ctx,m) \})_{(p,n+m)}$, which we denote by $\Gamma \times t$.
+in $RTerm_{\mathbb{T}}(L^m(V) \amalg \{ \Gamma : (ctx,m) \})_{(p,n+m)}$, which we denote by $\Gamma \times t$.
 Analogously, we can define for every formula $\varphi \in Form_{\mathbb{T}}(V)$ and every $m \in \mathbb{N}$,
 a formula $\Gamma \times \varphi \in Form_{\mathbb{T}}(L^m(V) \amalg \{ \Gamma : (ctx,m) \})$.
 
