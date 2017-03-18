@@ -226,142 +226,41 @@ In section 4, we define algebraic type theories, describe a simplified version o
 
 There are several equivalent ways of defining essentially algebraic theories (\cite{LPC}, \cite{GAT}, \cite{PHL}, \cite[D 1.3.4]{elephant}).
 We use approach introduced in \cite{PHL} under the name of partial Horn theories since it is the most convenient one.
-We define morphisms of partial Horn theories in terms of morphisms of monads and left modules over them.
-In this section we review necessary for our development parts of the theory of monads, left modules over them and partial Horn theories.
-We also define algebraic dependent type theories as certain partial Horn theories.
+There is a structure of a category on partial Horn theories.
+A \emph{generalized morphism} between theories $\mathbb{T}$ and $\mathbb{T}'$ is a model of $\mathbb{T}$ in $\mathcal{C}_{\mathbb{T}'}$,
+where $\mathcal{C}_{\mathbb{T}'}$ is the classifying category for $\mathbb{T}'$.
+We will work with theories that have some fixed set of sorts.
+Thus we need a notion of morphisms which preserve sorts.
+Of course, we could restrict the notion of a generalized morphism, but there is another definition of morphisms, which is more explicit.
 
-\subsection{Monads and left modules over them}
+Let us recall the basic definitions from \cite{PHL}.
+A many sorted first-order signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ consists of a set $\mathcal{S}$ of sorts,
+a set $\mathcal{F}$ of function symbols and a set $\mathcal{P}$ of predicate symbols.
+Each function symbol $\sigma$ is equipped with a signature of the form $\sigma : s_1 \times \ldots \times s_k \to s$, where $s_1$, \ldots $s_k$, $s$ are sorts.
+Each predicate symbol $R$ is equipped with a signature of the form $R : s_1 \times \ldots \times s_k$.
 
-We recall definitions of monads and left modules over a monad.
-For our purposes the following definitions (see \cite{manes-algebraic-theories}) will be more convenient than the ordinary ones.
-\begin{defn}
-A \emph{monad} $(T,\eta,(-)^*)$ on a category $\C$ consists of a function $T : Ob(\C) \to Ob(\C)$,
-a function $\eta$ that to each $A \in Ob(\C)$ assign a morphism $\eta_A : A \to T(A)$,
-and a function that to each $A,B \in Ob(\C)$ assigns a function $(-)^* : Hom_\C(A,T(B)) \to Hom_\C(T(A),T(B))$, satisfying the following conditions:
-\begin{itemize}
-\item $\eta_A^* = id_{T(A)}$.
-\item For every $\rho : A \to T(B)$, $\rho^* \circ \eta_A = \rho$.
-\item For every $\rho : A \to T(B)$, $\sigma : B \to T(C)$, $\sigma^* \circ \rho^* = (\sigma^* \circ \rho)^*$.
-\end{itemize}
+An atomic formula is an expression either of the form $t_1 = t_2$ or of the form $R(t_1, \ldots t_n)$,
+where $R$ is a predicate symbol and $t_1$, \ldots $t_n$ are terms.
+We abbriviate $t = t$ to $t\!\downarrow$.
+A Horn formula is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$, where $\varphi_1$, \ldots $\varphi_n$ are atomic formulas.
+A sequent is an expression of the form $\varphi \sststile{}{x_1, \ldots x_n} \psi$, where $x_1$, \ldots $x_n$ are variables
+and $\varphi$ and $\psi$ are Horn formulas such that $FV(\varphi) \cup FV(\psi) \subseteq \{ x_1, \ldots x_n \}$.
+A \emph{partial Horn theory} consists of a signature and a set of Horn sequents in this signature.
 
-A \emph{left module} $(M,(-)^\circ)$ over a monad $(T,\eta,(-)^*)$ with values in a category $\D$ consists of a function $M : Ob(\C) \to Ob(\D)$
-and a function that to each $A,B \in Ob(\C)$ assigns a function $(-)^\circ : Hom_\C(A,T(B)) \to Hom_\D(M(A),M(B))$, satisfying the following conditions:
-\begin{itemize}
-\item $\eta_A^\circ = id_{M(A)}$.
-\item For every $\rho : A \to T(B)$, $\sigma : B \to T(C)$, $\sigma^\circ \circ \rho^\circ = (\sigma^* \circ \rho)^\circ$.
-\end{itemize}
-\end{defn}
-These data and axioms imply that $T$ and $M$ are functorial: if $f : A \to B$, then we can define $T(f)$ as $(\eta_B \circ f)^*$ and $M(f)$ as $(\eta_B \circ f)^\circ$.
-Moreover, $\eta$, $(-)^*$ and $(-)^\circ$ are natural.
+Let $V$ be an $\mathcal{S}$-set.
+Then the $\mathcal{S}$-set of terms of $\mathbb{T}$ with free variables in $V$ will be denoted by $Term_\mathbb{T}(V)$.
+The set of fomulas of $\mathbb{T}$ with free variables in $V$ will be denoted by $Form_\mathbb{T}(V)$.
 
-\begin{defn}
-A morphism of monads $(T,\eta,(-)^*)$ and $(T',\eta',(-)^{*'})$ on $\C$ is a function $\alpha$ that to each $A \in Ob(\C)$ assigns a morphism $\alpha_A : T(A) \to T'(A)$,
-satisfying the following conditions:
-\begin{itemize}
-\item $\alpha_A \circ \eta_A = \eta'_A$.
-\item For every $\rho : A \to T(B)$, $\alpha_B \circ \rho^* = (\alpha_B \circ \rho)^{*'} \circ \alpha_A$.
-\end{itemize}
+An $\mathcal{S}$-set $M$ is a collection of sets $\{ M_s \}_{s \in \mathcal{S}}$.
+An interpretation $M$ of a signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ is an $\mathcal{S}$-set $M$
+together with a collection of \emph{partial} functions $M(\sigma) : M_{s_1} \times \ldots \times M_{s_k} \to M_s$
+for every function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ of $\mathbb{T}$
+and relations $M(R) \subseteq M_{s_1} \times \ldots \times M_{s_k}$ for every predicate symbol $R : s_1 \times \ldots \times s_k$.
+A model of a partial Horn theory $\mathbb{T}$ is an interpretation of the underlying signature such that the axioms of $\mathbb{T}$ hold in this interpretation.
+The category of models of $\mathbb{T}$ will be denoted by $\Mod{\mathbb{T}}$.
 
-Let $(M,(-)^\circ)$ and $(M',(-)^{\circ'})$ be left modules with values in $\D$ over monads $(T,\eta,(-)^*)$ and $(T',\eta',(-)^{*'})$ respectively.
-A morphism between them is a pair of functions $(\alpha,\beta)$, where $\alpha$ is a morphism of monads $T$ and $T'$,
-and $\beta$ assigns to each $A \in Ob(\C)$ a morphism $\beta_A : M(A) \to M'(A)$,
-such that, for every $\rho : A \to T(B)$, $\beta_B \circ \rho^\circ = (\alpha_B \circ \rho)^{\circ'} \circ \beta_A$.
-\end{defn}
-These data and axioms imply that $\alpha$ and $\beta$ are natural.
-
-Let $\mathcal{S}$ be a set of sorts, and let $(T,\eta,(-)^*)$ be a monad on the category of $\mathcal{S}$-sets.
-We think of elements of $T(V)_s$ as terms of sort $s$ with free variables in $V$.
-Given $t \in T(V)_s$ and $\rho : V \to T(V')$, we will write $t[\rho] \in T(V')_s$ for $\rho^*(t)$.
-Let $(F,(-)^\circ)$ be a left module over $T$ with values in $\Set$.
-We think of elements of $F(V)$ as formulas with free variables in $V$.
-Given $\varphi \in F(V)$ and $\rho : V \to T(V')$, we will write $\varphi[\rho] \in F(V')$ for $\rho^\circ(\varphi)$.
-
-Let $T : \Set^\mathcal{S} \to \Set^\mathcal{S}$ be a monad.
-Then \emph{a free variables structure} on $T$ is a function $FV$ that to each $t \in T(V)_s$ assigns a subset of $V$, that is $FV(t) \subseteq V$, called the set of free variables of $t$.
-This function must satisfy the following conditions:
-\begin{align*}
-FV(\eta(x)) & = x \\
-FV(t[\rho]) & = \bigcup_{x \in FV(t)} FV(\rho(x))
-\end{align*}
-
-Let $F : \Set^\mathcal{S} \to \Set$ be a left module over $T$.
-Then \emph{a free variables structure} on $F$ is a function $FV$ that to each $\varphi \in F(V)$ assigns a subset of $V$, that is $FV(\varphi)$, called the set of free variables of $\varphi$.
-This function must satisfy the following condition:
-\[ FV(\varphi[\rho]) = \bigcup_{x \in FV(\varphi)} FV(\rho(x)) \]
-
-\emph{A module of formulas} over $T$ is a left module $F$ over $T$ together with a function
-    $\land : F(V) \times F(V) \to F(V)$ and a constant $\top \in F(V)$ for every $V \in \Set^\mathcal{S}$, satisfying the following conditions:
-\begin{itemize}
-\item For every $\rho : V \to T(V')$, $\top[\rho] = \top$.
-\item For every $\rho : V \to T(V')$, $(\varphi \land \psi)[\rho] = \varphi[\rho] \land \psi[\rho]$.
-\end{itemize}
-
-For every monad $T$ on $\Set^\mathcal{S}$ we define a left module $E$ with values in $\Set$.
-For every $V \in \Set^\mathcal{S}$, let $E(V)$ be the set of triples $(s,t,t')$, where $s \in \mathcal{S}$, and $t,t' \in T(V)_s$.
-For every $\rho : V \to T(V')$ and $(s,t,t') \in E(V)$, we let $(s,t,t')[\rho] = (s,t[\rho],t'[\rho])$.
-We think of $(s,t,t')$ as a formula asserting the equality of terms $t$ and $t'$.
-We write $t =_s t'$ (or simply $t = t'$) for $(s,t,t')$.
-\emph{A module of formulas with equality} over $T$ is a module $F$ of formulas over $T$ together with a morphism $e : E \to F$.
-
-\begin{defn}[mon-pres]
-A \emph{monadic presentation of a partial Horn theory} is a triple $(T,F,\mu)$, where
-    $T : \Set^\mathcal{S} \to \Set^\mathcal{S}$ is a finitary monad with a free variables structure,
-    $F : \Set^\mathcal{S} \to \Set$ is a finitary module of formulas with equality and a free variables structure, and
-    $\mu_V : T(V) \times F(V) \to T(V)$ is a function such that the following conditions hold:
-\begin{itemize}
-\item For every $\rho : V \to T(V')$, $\mu_V(t,\varphi)[\rho] = \mu_{V'}(t[\rho],\varphi[\rho])$.
-\item $\mu_V(t, \top) = t$.
-\item $\mu_V(t, \varphi \land \psi) = \mu_V(\mu_V(t, \varphi), \psi)$.
-\end{itemize}
-A morphism of triples $(T,F,\mu)$ and $(T',F',\mu')$ is a morphism $f$ of left modules $(T,F)$ and $(T',F')$ such that $f$ preserves free variables, equality, $\top$, $\land$ and $\mu$.
-The category of monadic presentations of partial Horn theories with $\mathcal{S}$ as the set of sorts is denoted by $\PMnd_\mathcal{S}$.
-\end{defn}
-
-\subsection{The category of partial Horn theories}
-\label{sec:PHT-rules}
-
-Let $\mathcal{S}$ be a set of sorts, $T : \Set^\mathcal{S} \to \Set^\mathcal{S}$ a monad with a free variables structure,
-    and $\mathcal{P}$ a set of predicate symbols together with a function that to each $R \in \mathcal{P}$
-    assigns its signature $R : s_1 \times \ldots \times s_n$, where $s_1, \ldots s_n \in \mathcal{S}$.
-
-Let $\mathcal{F}$ be a set of function symbols together with a function that to each $\sigma \in \mathcal{F}$ assigns its signature $\sigma : s_1 \times \ldots \times s_n \to s$, where $s_1, \ldots s_n, s \in \mathcal{S}$.
-Then we can define an example of a monad over $\Set^\mathcal{S}$.
-For each $V \in \Set^\mathcal{S}$ we can define a set $Term_\mathcal{F}(V)_s$ of terms of sort $s$ inductively:
-\begin{itemize}
-\item If $x \in V_s$, then $x \in Term_\mathcal{F}(V)_s$.
-\item If $\sigma : s_1 \times \ldots \times s_n \to s$ and $t_i \in Term_\mathcal{F}(V)_{s_i}$, then $\sigma(t_1, \ldots t_n) \in Term_\mathcal{F}(V)_s$.
-\end{itemize}
-If $\rho : V \to Term_\mathcal{F}(V')$, then substitution is defined as follows:
-\begin{align*}
-x[\rho] & = \rho(x) \\
-\sigma(a_1, \ldots a_k)[\rho] & = \sigma(a_1[\rho], \ldots a_k[\rho])
-\end{align*}
-Thus $Term_\mathcal{F} : \Set^\mathcal{S} \to \Set^\mathcal{S}$ is a monad, which we call the standard monad (over $\mathcal{F}$).
-
-An \emph{atomic formula} with free variables in $V$ is an expression either of the form $t_1 =_s t_2$ (we will usually omit $s$ in the notation),
-    where $s \in \mathcal{S}$ and $t_1, t_2 \in T(V)_s$, or of the form $R(t_1, \ldots t_n)$, where $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$ and $t_i \in T(V)_{s_i}$.
-A \emph{Horn formula} (over $\mathcal{P}$) with free variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulas.
-If $n = 0$, then we write such a formula as $\top$.
-The set of Horn formulas with free variables in $V$ is denoted by $Form_\mathcal{P}(V)$.
-If $\varphi \in Form_\mathcal{P}(V)$ and $\rho : V \to T(V')$, then we will write $\varphi[\rho]$ for a formula defined as follows:
-\begin{align*}
-(t = t')[\rho] & = (t[\rho] = t'[\rho]) \\
-R(t_1, \ldots t_k)[\rho] & = R(t_1[\rho], \ldots t_k[\rho]) \\
-(\varphi_1 \land \ldots \land \varphi_n)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho]
-\end{align*}
-Thus $Form_\mathcal{P}$ is a left module over $T$.
-Moreover, a free variables structure on $Form_\mathcal{P}$ is defined as follows:
-\begin{align*}
-FV(t = t') & = FV(t) \cup FV(t') \\
-FV(R(t_1, \ldots t_k)) & = FV(t_1) \cup \ldots \cup FV(t_k) \\
-FV(\varphi_1 \land \ldots \land \varphi_n) & = FV(\varphi_1) \cup \ldots \cup FV(\varphi_n)
-\end{align*}
-
-A \emph{Horn sequent} is an expression of the form $\varphi \sststile{}{V} \psi$, where $\varphi$ and $\psi$ are Horn formulas with free variables in $V$.
-We will often write $\varphi_1, \ldots \varphi_n \sststile{}{V} \psi_1, \ldots \psi_k$ instead of $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi_1 \land \ldots \land \psi_k$.
-A \emph{partial Horn theory} is a set of Horn sequents.
 The rules of \emph{partial Horn logic} are listed below.
-If $\mathcal{A}$ is a partial Horn theory, then a \emph{theorem} of $\mathcal{A}$ is a sequent derivable from $\mathcal{A}$ in this logic.
+A \emph{theorem} of a partial Horn theory $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
 \begin{center}
 $\varphi \sststile{}{V} \varphi$ \axlabel{b1}
 \qquad
@@ -397,15 +296,13 @@ $x = y \land \varphi \sststile{}{V,x,y} \varphi[y/x]$ \axlabel{a2}
 \medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \psi$}
-\RightLabel{, $x \in FV(\varphi)$, $t \in T(V')$ \axlabel{a3}}
+\RightLabel{, $x \in FV(\varphi)$ \axlabel{a3}}
 \UnaryInfC{$\varphi[t/x] \sststile{}{V,V'} \psi[t/x]$}
 \DisplayProof
 \end{center}
 \medskip
-Here, $t/x$ denotes a function $\rho : V \to T(V \cup V')$ such that $\rho(x) = t$ and $\rho(y) = y$ if $y \neq x$.
 
-Note that this set of rules is a generalization of the one described in \cite{PHL}.
-If $T$ is the standard monad $Term_\mathcal{F}$, then these rules are equivalent to the rules from \cite{PHL}.
+Note that this set of rules is equivalent to the one described in \cite{PHL}.
 In particular, the following sequents are derivable if $x \in FV(t)$:
 \begin{align*}
 R(t_1, \ldots t_k) & \sststile{}{V} t_i = t_i \axtag{a4} \\
@@ -413,425 +310,96 @@ t_1 = t_2 & \sststile{}{V} t_i = t_i \axtag{a4'} \\
 t[t'/x]\!\downarrow & \sststile{}{V} t' = t' \axtag{a5}
 \end{align*}
 
-We will need the following lemmas from \cite{PHL}:
-\begin{lem}[cong-a]
-For every $u_i,v_i \in T(V)_{s_i}$ and $t \in T(\{ x_1 : s_1, \ldots x_n : s_n\})_s$,
-sequents $u_1 = v_1 \land \ldots \land u_n = v_n \sststile{}{V} t[x_i \mapsto u_i] \cong t[x_i \mapsto v_i]$ are theorems of any theory.
-\end{lem}
-
-\begin{lem}
-Sequent $y = x \land \varphi[y/x] \sststile{}{V} \varphi$ is a theorem of any theory.
-\end{lem}
-
-Using the previous lemma we prove the following fact:
-
-\begin{lem}[cong-b]
-For every $u_i,v_i \in T(V)_{s_i}$ and $\varphi \in Form_\mathcal{P}(\{ x_1 : s_1, \ldots x_n : s_n\})$,
-sequent $u_1 = v_1 \land \ldots \land u_n = v_n \land \varphi[x_i \mapsto u_i] \sststile{}{V} \varphi[x_i \mapsto v_i]$ is a theorem of any theory.
-\end{lem}
-\begin{proof}
-By the previous lemma we have $y_n = x_n \land \varphi[y_n/x_n] \sststile{}{x_1 : s_1, \ldots x_n : s_n, y_n : s_n} \varphi$ is provable.
-If we take $\varphi$ to be equal to $y_n = x_n \land \varphi[y_n/x_n]$, then we get sequent
-$y_{n-1} = x_{n-1} \land y_n = x_n \land \varphi[y_n/x_n,y_{n-1}/x_{n-1}] \sststile{}{x_1 : s_1, \ldots x_n : s_n, y_{n-1} : s_{n-1}, y_n : s_n} y_n = x_n \land \varphi[y_n/x_n]$.
-By \axref{b2} we get sequent
-\[ y_{n-1} = x_{n-1} \land y_n = x_n \land \varphi[y_n/x_n,y_{n-1}/x_{n-1}] \sststile{}{x_1 : s_1, \ldots x_n : s_n, y_{n-1} : s_{n-1}, y_n : s_n} \varphi. \]
-Repeating this argument we can conclude that
-\[ y_1 = x_1 \land \ldots \land y_n = x_n \land \varphi[y_1/x_1, \ldots y_n/x_n] \sststile{}{x_1 : s_1, \ldots x_n : s_n, y_1 : s_1, y_n : s_n} \varphi. \]
-By \axref{a3} we conclude that the required sequent is derivable.
-\end{proof}
-
-Now we define a functor $PT : \Set^\mathcal{S} \to \Set^\mathcal{S}$ of restricted terms.
-We let $PT(V)_s$ to be the set of expressions $t|_\varphi$ where $t \in T(V)_s$ and $\varphi \in Form_\mathcal{P}(V)$.
-If $\varphi = \top$, then we will write $t|_\varphi$ simply as $t$.
-If $p \in PT(V)_s$, $p = t|_\varphi$ and $\psi \in Form_\mathcal{P}(V)$, then we will write $p|_\psi$ for $t|_{\varphi \land \psi}$.
-
 We will use the following abbreviations:
 \begin{align*}
-t\!\downarrow & \Longleftrightarrow t = t \\
-\varphi \sststile{}{V} t \leftrightharpoons s & \Longleftrightarrow \varphi \land t\!\downarrow \land s\!\downarrow\,\sststile{}{V} t = s \\
 \varphi \sststile{}{V} t \cong s & \Longleftrightarrow \varphi \land t\!\downarrow\,\sststile{}{V} t = s \text{ and } \varphi \land s\!\downarrow\,\sststile{}{V} t = s \\
-\varphi \ssststile{}{V} \psi & \Longleftrightarrow \varphi \sststile{}{V} \psi \text{ and } \psi \sststile{}{V} \varphi \\
+\varphi \ssststile{}{V} \psi & \Longleftrightarrow \varphi \sststile{}{V} \psi \text{ and } \psi \sststile{}{V} \varphi
+\end{align*}
+
+Let $\mathbb{T}$ be a partial Horn theory.
+A \emph{restricted term} of $\mathbb{T}$ is a term $t$ together with a formula $\varphi$.
+We denote such a restricted term by $t|_\varphi$.
+The $\mathcal{S}$-set of restricted terms with free variables in $V$ will be denoted by $RTerm_\mathbb{T}(V)$.
+We will use the following abbreviations:
+\begin{align*}
 R(t_1|_{\varphi_1}, \ldots t_k|_{\varphi_k}) & \Longleftrightarrow R(t_1, \ldots t_k) \land \varphi_1 \land \ldots \land \varphi_k \\
 t|_\varphi = s|_\psi & \Longleftrightarrow t = s \land \varphi \land \psi \\
 t|_\varphi\!\downarrow & \Longleftrightarrow t\!\downarrow\!\land \varphi \\
-\chi \sststile{}{V} t|_\varphi \leftrightharpoons s|_\psi & \Longleftrightarrow \chi \land t|_\varphi\!\downarrow, s|_\psi\!\downarrow\,\sststile{}{V} t = s \\
 \chi \sststile{}{V} t|_\varphi \cong s|_\psi & \Longleftrightarrow \chi \land t|_\varphi\!\downarrow\,\sststile{}{V} t = s \land \psi \text{ and } \chi \land s|_\psi\!\downarrow\,\sststile{}{V} t = s \land \varphi
 \end{align*}
+We will say that formulas $\varphi$ and $\psi$ are equivalent if the following sequents are derivable:
+\[ \varphi \ssststile{}{FV(\varphi) \cup FV(\psi)} \psi \]
+We will say that restricted terms $t$ and $t'$ are equivalent if the following sequents are derivable:
+\[ \sststile{}{FV(t) \cup FV(t')} t \cong t' \]
 
-Now we define substitution functions for restricted terms.
-For every $\rho : V \to PT(V')$, $t \in T(V)_s$ and $\varphi \in Form_\mathcal{P}(V)$,
-we define $t[\rho] \in PT(V')_s$, $\varphi[\rho] \in Form_\mathcal{P}(V')$ and $t_\varphi[\rho] \in PT(V')_s$ as follows:
-\begin{align*}
-t[\rho] & = t[\rho_1]|_{\bigcup_{x \in FV(t)} \rho_2(x)} \\
-R(t_1, \ldots t_k)[\rho] & = R(t_1[\rho], \ldots t_k[\rho]) \\
-(\varphi_1 \land \ldots \land \varphi_n)[\rho] & = \varphi_1[\rho] \land \ldots \land \varphi_n[\rho] \\
-t|_\varphi[\rho] & = t[\rho]|_{\varphi[\rho]}
-\end{align*}
-where if $\rho(x) = t|_\varphi$, then $\rho_1(x) = t$ and $\rho_2(x) = \varphi$.
-Free variables of $t|_\varphi$ is defined as follows: $FV(t|_\varphi) = FV(t) \cup FV(\varphi)$.
+Let $\mathbb{T}$ and $\mathbb{T}'$ be partial Horn theories with the same set of sorts $\mathcal{S}$.
+We define morphisms of theories $\mathbb{T}$ and $\mathbb{T}'$ as equivalence classes of certain functions.
+Such a function $f$, for every function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ of $\mathbb{T}$,
+defines a restricted term $f(\sigma)$ of $\mathbb{T}'$ of sort $s$ such that $FV(f(\sigma)) = \{ x_1 : s_1, \ldots x_k : s_k \}$
+and, for every predicate symbol $P : s_1 \times \ldots \times s_k$, defines a formula $f(P)$ of $\mathbb{T}'$ such that $FV(f(P)) = \{ x_1 : s_1, \ldots x_k : s_k \}$.
+We will say that two such functions $f$ and $f'$ are equivalent if,
+for every predicate symbol $P : s_1 \times \ldots \times s_k$ of $\mathbb{T}$, the formulas $f(P)$ and $f'(P)$ are equivalent
+and, for every function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ of $\mathbb{T}$, the terms $f(\sigma)$ and $f'(\sigma)$ are also equivalent.
 
-Note that $PT$ is not a monad in general since this substitution does not satisfy axioms.
-To fix this we introduce an equivalence relation on sets $PT(V)_s$ and $Form_\mathcal{P}(V)$.
-Let $\mathbb{T}$ be a partial Horn theory.
-For every $t, t' \in PT(V)_s$, $t \sim t'$ if and only if $FV(t) = FV(t')$ and $\sststile{}{V} t \cong t'$ is a theorem of $\mathbb{T}$.
-For every $\varphi, \psi \in Form_\mathcal{P}(V)$, $\varphi \sim \psi$ if and only if $FV(\varphi) = FV(\psi)$ and $\varphi \ssststile{}{V} \psi$ is a theorem of $\mathbb{T}$.
-Then let $P(V)_s = PT(V)_s/\!\!\sim$ and $F(V) = Form_\mathcal{P}(V)/\!\!\sim$.
-For every $x \in V_s$, $\eta_V(x)$ is the equivalence class of $x|_\top$.
-Substitution functions respect equivalence relations, and it is easy to see that they define a structure of a monad and of a left module over it on $T$ and $F$.
-For every $t,t' \in T(V)_s$, $e(s,t,t')$ is the equivalence class of $t = t'$.
-For every $t \in T(V)_s$ and $\varphi \in F(V)$, let $\mu_V(t,\varphi) = t|_\varphi$.
-It is easy to see that $(P,F,\mu)$ satisfies axioms of monadic presentations.
-We will call it the monadic presentation of partial Horn theory $\mathbb{T}$ and denote by $P(\mathbb{T})$.
+The identity morphisms are defined in the obvious way.
+To define the composition of morphisms, we need to extend the definition of a function $f : \mathbb{T} \to \mathbb{T}'$ to terms and formulas.
+Let $t$ be a term of $\mathbb{T}$ of sort $s$.
+Then we define a restricted term $f(t)$ of $\mathbb{T}'$ by induction on $t$.
+If $t = x$ is a variable, then let $f(t) = x$.
+If $t = \sigma(t_1, \ldots t_k)$, $f(\sigma) = t'|_\varphi$ and $f(t_i) = t'_i|_{\varphi_i}$,
+then let $f(t) = t'[t'_1/x_1, \ldots t'_k/x_k]|_{\varphi[t'_1/x_1, \ldots t'_k/x_k] \land \varphi_1 \land \ldots \land \varphi_k}$.
 
-The category of partial Horn theories over $\mathcal{S}$ has tuples $(T,\mathcal{P},\mathcal{A})$ as objects,
-    where $T$ is a finitary monad with a free variables structure, $\mathcal{P}$ is a set of predicate symbols and $\mathcal{A}$ is a set of axioms.
-Morphisms of partial Horn theories $\mathbb{T}$ and $\mathbb{T}'$ are morphisms of their monadic presentations.
-The category of partial Horn theories over $\mathcal{S}$ is denoted by $\Th^T_\mathcal{S}$.
+Let $\varphi$ be a formula of $\mathbb{T}$.
+Then we define a formula $f(\varphi)$ of $\mathbb{T}'$.
+If $\varphi$ equals to $t_1 = t_2$ and $f(t_i)$ equals to $t'_i|_{\varphi_i}$, then we define $f(\varphi)$ as $t'_1 = t'_2 \land \varphi_1 \land \varphi_2$.
+If $\varphi = R(t_1, \ldots t_k)$, $f(R) = \varphi'$ and $f(t_i) = t'_i|_{\varphi_i}$,
+then we define $f(\varphi)$ as $\varphi'[t'_1/x_1, \ldots t'_k/x_k] \land \varphi_1 \land \ldots \land \varphi_k$.
+For every restricted term $t|_\varphi$ of $\mathbb{T}$, we define $f(t|_\varphi)$ as $f(t)|_{f(\varphi)}$.
 
-\begin{prop}[mor-def]
-Let $\mathbb{T} = (T,\mathcal{P},\mathcal{A})$ and $\mathbb{T}' = (T',\mathcal{P}',\mathcal{A}')$ be partial Horn theories,
-    and let $P(\mathbb{T}) = (P,F,\mu)$ and $P(\mathbb{T}') = (P',F',\mu')$ be their monadic presentations.
-To construct a morphism of these theories, it is enough to specify the following data:
-\begin{itemize}
-\item A morphism of monads $\alpha : T \to P'$ that preserves free variables.
-\item For every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_k$,
-    a formula $\beta(R) \in F'(\{ x_1 : s_1, \ldots x_k : s_k \})$ such that $FV(\beta(R)) = \{ x_1, \ldots x_k \}$.
-\end{itemize}
-Then there is a morphism of left modules $f : (T,Form_\mathcal{P}) \to (T',F')$
-    such that $f(\sigma(x_1, \ldots x_k)) = \alpha(\sigma)$ and $f(R(x_1, \ldots x_k)) = \beta(R)$.
-If $f$ preserves axioms of $\mathbb{T}$, then it extends to a morphism of theories.
-Moreover, there is at most one morphism with these properties.
-\end{prop}
-\begin{proof}
-Morphism $f$ is already defined on terms, and we can define it on formulas as follows:
-\begin{align*}
-f(a = b) & = f(a) = f(b) \\
-f(R(a_1, \ldots a_k)) & = \beta(R)[x_i \mapsto f(a_i)] \\
-f(\varphi_1 \land \ldots \land \varphi_n) & = f(\varphi_1) \land \ldots \land f(\varphi_n)
-\end{align*}
-We also can define $f$ on restricted terms:
-\[ f(t|_\varphi) = f(t)|_{f(\varphi)} \]
-It is easy to see that $f$ preserves substitution.
-Thus to prove that $f$ extends to a morphism of theories, we only need to show that it preserves theorems of $\mathbb{T}$.
-By assumption, it preserves axioms, thus we only need to check that application of $f$ preserves inference rules.
-This is obvious for \axref{b1}-\axref{b6} and \axref{a1}.
-For \axref{a2} and \axref{a3} it follows from the facts that $f(\varphi[t/x]) = f(\varphi)[f(t)/x]$ and $FV(f(\varphi)) = FV(\varphi)$.
+Now, we can define the composition of $f : \mathbb{T} \to \mathbb{T}'$ and $g : \mathbb{T}' \to \mathbb{T}''$
+as follows: $(g \circ f)(S) = g(f(S))$ for every symbol $S$ of $\mathbb{T}$.
+It is easy to see that this definition respect the equivalence of morphisms.
 
-Now, let us prove that $f$ is unique.
-Let $f$ and $f'$ be morphisms of theories such that $f(t) = f'(t)$ for every $t \in T(V)_s$, and
-    $f(R(x_1, \ldots x_k)) = f'(R(x_1, \ldots x_k))$ for every $R \in \mathcal{P}$.
-Then we prove that $f = f'$.
-
-Let us prove that $f(\varphi) = f'(\varphi)$ for every $\varphi \in Form_\mathcal{P}(V)$.
-It is enough to prove this for atomic formulas $\varphi$.
-If $\varphi$ equals to $t = t'$, then $f(\varphi)$ equals to $f(t) = f(t')$ and $f'(\varphi)$ equals to $f'(t) = f'(t')$.
-We know that $\sststile{}{V} f(t) \cong f'(t)$ and $\sststile{}{V} f(t') \cong f'(t')$.
-Thus by transitivity and symmetry we can conclude that $f(t) = f(t)' \sststile{}{V} f'(t) = f'(t')$.
-
-If $\varphi = R(t_1, \ldots t_k)$, then $f(\varphi) = f(R(x_1, \ldots x_k))[x_i \mapsto f(t_i)]$
-    and $f'(\varphi) = f'(R(x_1, \ldots x_k))[x_i \mapsto f'(t_i)]$.
-We know that $f(R(x_1, \ldots x_k)) \sststile{}{x_1, \ldots x_k}$ \linebreak $f'(R(x_1, \ldots x_k))$.
-Since $FV(f(R(x_1, \ldots x_k))) = \{ x_1, \ldots x_k \}$, by \axref{a3} we can conclude that $f(\varphi) \sststile{}{V} f'(R(x_1, \ldots x_k))[x_i \mapsto f(t_i)]$.
-Since $f'(R(x_1, \ldots x_k))[x_i \mapsto f(t_i)] \sststile{}{V} f(t_i)\!\downarrow$, \rlem{cong-b} implies that
-    $f'(R(x_1, \ldots x_k))[x_i \mapsto f(t_i)] \sststile{}{V} f'(\varphi)$.
-By \axref{b2} we conclude that $f(\varphi) \sststile{}{V} f'(\varphi)$.
-The same argument shows that $f'(\varphi) \sststile{}{V} f(\varphi)$.
-
-Finally, it is easy to see that $f(t) = f'(t)$ for every $t \in PT(V)_s$.
-Thus $f = f'$.
-\end{proof}
-
-Note that if $T$ is the standard monad $Term_\mathcal{F}$, then to define a morphism of monads $T \to T'$,
-it is enough to specify for every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_k \to s$,
-a restricted term $\alpha(\sigma) \in T'(\{ x_1 : s_1, \ldots x_k : s_k \})$ such that $FV(\alpha(\sigma)) = \{ x_1, \ldots x_k \}$.
-Then there is a unique morphism of monads $f : T \to T'$ such that $f(\sigma(x_1, \ldots x_k)) = \alpha(\sigma)$.
-
-Now, let us define a category $\Th_\mathcal{S}$ of standard partial Horn theories.
-Its objects are tuples $((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$, where $\mathcal{F}$ is a set of function symbols,
-    $\mathcal{P}$ is a set of relation symbols, and $\mathcal{A}$ is a set of axioms over $(Term_\mathcal{F},Form_\mathcal{P})$.
-Morphisms of standard partial Horn theories are morphisms of corresponding partial Horn theories.
-Thus $\Th_\mathcal{S}$ is (equivalent to) a full subcategory of $\Th^T_\mathcal{S}$.
-
-\subsection{Models of partial Horn theories}
-
-Given a monad $T : \Set^\mathcal{S} \to \Set^\mathcal{S}$, we define a category of its partial algebras.
-A \emph{partial algebra} over $T$ is a pair $(A,\alpha)$, where $A$ is an $\mathcal{S}$-set and $\alpha_V : Hom_{\PSet^\mathcal{S}}(V,A) \to Hom_{\PSet^\mathcal{S}}(T(V),A)$,
-    where $\PSet$ is the category of sets and partial functions between them.
-This pair must satisfy the following conditions:
-\begin{itemize}
-\item For every partial function $f : V \to A$, $\alpha_V(f) \circ \eta_V = f$.
-\item For every total function $\rho : V \to T(V')$ and every partial function $f : V' \to A$, $\alpha_V(\alpha_{V'}(f) \circ \rho) = \alpha_{V'}(f) \circ \rho^*$.
-\end{itemize}
-A morphism of partial algebras $(A,\alpha)$ and $(A',\alpha')$ is a total morphism $h : A \to A'$ of $\mathcal{S}$-sets
-    such that, for every partial function $f : V \to A$ and every $t \in T(V)_s$, if $\alpha_V(f)(t)$ is defined,
-    then $\alpha'_V(h \circ f)(t)$ is also defined and $h(\alpha_V(f)(t)) = \alpha'_V(h \circ f)(t)$.
-
-\begin{lem}[par-alg-str]
-If $Term_\mathcal{F}$ is the standard monad, then categories of partial algebras over $Term_\mathcal{F}$
-    and partial structures for signature $(\mathcal{S},\mathcal{F},\varnothing)$ as defined in \cite{PHL} are isomorphic.
-\end{lem}
-\begin{proof}
-A partial structure for signature $(\mathcal{S},\mathcal{F},\varnothing)$ is an $\mathcal{S}$-set $A$ together with a collection of partial functions
-    $A(\sigma) : A_{s_1} \times \ldots \times A_{s_n} \to A_s$ for every $\sigma \in \mathcal{F}$, $\sigma : s_1 \times \ldots \times s_n \to s$.
-Given such partial structure, we define a partial algebra $F(A)$ over $Term_\mathcal{F}$ as $(A,\alpha)$, where $\alpha$ is defined as follows:
-\begin{align*}
-\alpha_V(f)(x) & = f(x) \\
-\alpha_V(f)(\sigma(t_1, \ldots t_n)) & = A(\sigma)(\alpha_V(f)(t_1), \ldots \alpha_V(f)(t_n))
-\end{align*}
-For every morphism $h : A \to A'$ of partial structures, let $F(h) = h$.
-
-For every partial algebra $(A,\alpha)$, we define a partial structure $G(A,\alpha)$.
-Let $G(A,\alpha) = A$ and $G(A,\alpha)(\sigma)(a_1, \ldots a_n) = \alpha_{x_1, \ldots x_n}(x_i \mapsto a_i)(\sigma(x_1, \ldots x_n))$.
-For every morphism $h : (A,\alpha) \to (A',\alpha')$ of partial algebras, let $G(h) = h$.
-It is easy to see that functors $F$ and $G$ determine isomorphisms of categories.
-\end{proof}
-
-If $F : \Set^\mathcal{S} \to \Set$ is a left module of formulas over $T$, then we define a category of its partial algebras.
-A \emph{partial algebra} over $(T,F)$ is a partial algebra $(A,\alpha)$ over $T$ together with a function $\beta_V : Hom_{\PSet^\mathcal{S}}(V,A) \to Hom_\Set(F(V),\Omega)$,
-    where $\Omega = \{ \top, \bot \}$ is the set of truth-values.
-This function must satisfy the following conditions:
-\begin{itemize}
-\item For every total function $\rho : V \to T(V')$ and every partial function $f : V' \to A$, $\beta_V(\alpha_{V'}(f) \circ \rho) = \beta_{V'}(f) \circ \rho^\circ$.
-\item For every partial function $f : V \to A$, $\beta_V(f)(\top) = \top$.
-\item For every partial function $f : V \to A$, $\beta_V(f)(\varphi \land \psi) = \beta_V(f)(\varphi) \land \beta_V(f)(\psi)$,
-    where $P \land Q = \top$ if and only if $P = \top$ and $Q = \top$.
-\end{itemize}
-A morphism of partial algebras $(A,\alpha,\beta)$ and $(A',\alpha',\beta')$ is a morphism $h$ of partial algebras $(A,\alpha)$ and $(A',\alpha')$
-    such that, for every partial function $f : V \to A$ and every $\varphi \in F(V)$, if $\beta_V(f)(\varphi) = \top$, then $\beta'_V(h \circ f)(\varphi) = \top$.
-
-We define a function $\epsilon_V : Hom_{\PSet^\mathcal{S}}(V,A) \to Hom_\Set(E(V),\Omega)$ for the left module $E$ of equality.
-Let $\epsilon_V(e(s,t,t')) = \top$ if and only if $\alpha_V(f)(t)$ and $\alpha_V(f)(t')$ are defined and equal.
-If $F$ is a left module of formulas with equality over $T$, then we say that a partial algebra $(A,\alpha,\beta)$ is standard
-    if, for every partial function $f : V \to A$, $e_V \circ \beta_V(f) = \epsilon_V(f)$, where $e_V : E(V) \to F(V)$.
-
-\begin{lem}[par-alg-pred]
-If $Term_\mathcal{F}$ is the standard monad and $Form_\mathcal{P}$ is the left module of Horn formulas,
-    then categories of partial algebras over $(Term_\mathcal{F},Form_\mathcal{P})$ and partial structures for signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ are isomorphic.
-\end{lem}
-\begin{proof}
-A partial structure for signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ is a partial structure $A$ for signature $(\mathcal{S},\mathcal{F},\varnothing)$
-    together with a relation $A(R) \subseteq A_{s_1} \times \ldots \times A_{s_n}$ for every $R \in \mathcal{P}$, $R : s_1 \times \ldots \times s_n$.
-Given such partial structure, we define a partial algebra $F(A)$ over $(Term_\mathcal{F},Form_\mathcal{P})$ as $(A,\alpha,\beta)$,
-    where $(A,\alpha)$ is the partial algebra defined in \rlem{par-alg-str}, and $\beta$ defined as follows:
-\begin{align*}
-\beta_V(f)(t =_s t') & = \epsilon_V(e(s,t,t')) \\
-\beta_V(f)(R(t_1, \ldots t_n)) & = \top \text{ if and only if } (\alpha_V(f)(t_1), \ldots \alpha_V(f)(t_n)) \in A(R) \\
-\beta_V(f)(\varphi_1 \land \ldots \land \varphi_n) & = \beta_V(f)(\varphi_1) \land \ldots \land \beta_V(f)(\varphi_n)
-\end{align*}
-For every morphism $h : A \to A'$ of partial structures, let $F(h) = h$.
-
-For every partial algebra $(A,\alpha,\beta)$, we define a partial structure $G(A,\alpha,\beta)$.
-We already defined interpretation of function symbols in \rlem{par-alg-str}.
-For every $R \in \mathcal{P}$, let $G(A,\alpha,\beta)(R) = \{ (a_1, \ldots a_n)\ |\ \beta_{x_1, \ldots x_n}(x_i \mapsto a_i)(R(x_1, \ldots x_n)) = \top \}$.
-For every morphism $h : (A,\alpha,\beta) \to (A',\alpha',\beta')$ of partial algebras, let $G(h) = h$.
-It is easy to see that functors $F$ and $G$ determine isomorphisms of categories.
-\end{proof}
-
-If $(T,F,\mu)$ is a monadic presentation, then we define a category of its partial algebras as a full subcategory of partial algebras over $(T,F)$.
-A partial algebra $(A,\alpha,\beta)$ over $(T,F)$ is a partial algebra over $(T,F,\mu)$ if, for every partial function $f : V \to A$,
-    every $t \in T(V)_s$ and every $\varphi \in F(V)$, $\alpha_V(f)(\mu_V(t,\varphi))$ is defined if and only if $\alpha_V(f)(t)$ is defined and $\beta_V(f)(\varphi) = \top$,
-    and $\alpha_V(f)(\mu_V(t,\varphi))$ equals to $\alpha_V(f)(t)$ when it is defined.
-The category of partial algebras over $(T,F,\mu)$ will be denoted by $\PAlg{(T,F,\mu)}$.
-
-\begin{lem}
-If $Term_\mathcal{F}$ is the standard monad and $\mathbb{T} = (Term_\mathcal{F},\mathcal{P},\mathcal{A})$ is a partial Horn theory,
-    then categories of partial algebras over $P(\mathbb{T})$ and models of $\mathbb{T}$ as defined in \cite{PHL} are isomorphic.
-\end{lem}
-\begin{proof}
-Using \rlem{par-alg-pred}, models of $\mathbb{T}$ can be described as partial algebras $(A,\alpha',\beta')$ over $(Term_\mathcal{F},Form_\mathcal{P})$
-    such that, for every derivable sequent $\varphi \ssststile{}{V} \psi$ of $\mathbb{T}$ and every partial function $f : V \to A$, $\beta'_V(f)(\varphi) = \beta'_V(f)(\psi)$.
-
-Let $(A,\alpha,\beta)$ be a partial algebra over $P(\mathbb{T})$.
-Then we define a partial algebra $F(A,\alpha,\beta)$ over $(Term_\mathcal{F},Form_\mathcal{P})$.
-Let $F(A,\alpha,\beta) = (A,\alpha',\beta')$, where $\alpha'_V(f)(t) = \alpha_V(f)([t|_\top]_\sim)$ and $\beta'_V(f)(\varphi) = \alpha_V(f)([\varphi]_\sim)$,
-    where $[t|_\top]_\sim$ and $[\varphi]_\sim$ are equivalence classes of $t_\top$ and $\varphi$ in $P(V)$ and $F(V)$ respectively.
-Then $F(A,\alpha,\beta)$ is a model of $\mathbb{T}$.
-Indeed, if $\varphi \ssststile{}{V} \psi$ is a theorem of $\mathbb{T}$, then $\varphi' \ssststile{}{V} \psi'$
-    is also a theorem of $\mathbb{T}$, where $\varphi' = \varphi \land x_1 \land \ldots \land x_n$, $\psi' = \psi \land y_1 \land \ldots \land y_k$,
-    $x_1, \ldots x_n$ is the set of free variables of $\psi$, and $y_1, \ldots y_k$ is the set of free variables of $\varphi$.
-It follows that $[\varphi']_\sim = [\psi']_\sim$; hence $\beta'_V(f)(\varphi') = \beta'_V(f)(\varphi')$.
-But $\beta'_V(f)(\varphi) = \beta'_V(f)(\varphi')$ and $\beta'_V(f)(\psi) = \beta'_V(f)(\psi')$; hence $F(A,\alpha,\beta)$ is a model of $\mathbb{T}$.
-If $h$ is a morphism of partial algebras over $P(\mathbb{T})$, then let $F(h) = h$.
-
-Let $(A,\alpha',\beta')$ be a model of $\mathbb{T}$.
-Then we define a partial algebra $G(A,\alpha',\beta')$ over $P(\mathbb{T})$.
-Let $G(A,\alpha',\beta') = (A,\alpha,\beta)$, where $\beta_V(f)([\varphi]_\sim) = \beta'_V(f)(\varphi)$, and $\alpha_V(f)([t|_\varphi]_\sim)$ is defined
-    if and only if $\alpha'_V(f)(t)$ is defined and $\beta'_V(f)(\varphi) = \top$, and in this case $\alpha_V(f)([t|_\varphi]_\sim) = \alpha'_V(f)(t)$.
-These definitions do not depend on the choice of a representative of the equivalence classes.
-Indeed, if $\varphi \sim \psi$, then $\varphi \ssststile{}{V} \psi$ is a theorem of $\mathbb{T}$,
-    and in this case $\beta'_V(f)(\varphi) = \beta'_V(f)(\psi)$ since $A$ is a model of $\mathbb{T}$.
-The same argument shows that the definition of $\alpha$ does not depend on the choice of a representative of $[t|_\varphi]_\sim$.
-If $h$ is a morphism of models, then let $G(h) = h$.
-It is easy to see that functors $F$ and $G$ determine isomorphisms of categories.
-\end{proof}
-
-Finally, we prove a proposition which shows that if $\mathbb{T}'$ is a partial Horn theory under $\mathbb{T}$,
-    then we can think of models of $\mathbb{T}'$ as models of $\mathbb{T}$ with additional structure.
-
-\begin{prop}[func-mod]
-For every morphism of monadic presentations $f : (P,F,\mu) \to (P',F',\mu')$, there is a faithful functor $f^* : \PAlg{(P',F',\mu')} \to \PAlg{(P,F,\mu)}$
-    such that $id_{(P,F,\mu)}^*$ is the identity functor and $(g \circ f)^* = f^* \circ g^*$.
-\end{prop}
-\begin{proof}
-If $(A,\alpha,\beta)$ is a partial algebra over $(P',F',\mu')$, then let $f^*(A,\alpha,\beta) = (A, e \mapsto \alpha_V(e) \circ f_V, e \mapsto \beta_V(e) \circ f_V)$.
-If $h : (A,\alpha,\beta) \to (A',\alpha',\beta')$ is a morphism of partial algebras, then let $f^*(h) = h$.
-It is easy to see that these definitions satisfy all required conditions.
-\end{proof}
-
-\subsection{Properties of the category of theories}
-\label{sec:prop}
-
-Now we prove a few properties of the category of theories.
-We begin with a proof of the existence of colimits.
+It is obvious that, for every morphism $f : \mathbb{T} \to \mathbb{T}'$ of theories, we have $f \circ id_\mathbb{T} = id_{\mathbb{T}'} \circ f = f$.
+Note that for every morphisms $f : \mathbb{T} \to \mathbb{T}'$ and $g : \mathbb{T}' \to \mathbb{T}''$ and every term $t$,
+the restricted terms $g(f(t))$ and $(g \circ f)(t)$ are equivalent.
+This is easy to do by induction on $t$.
+Similarly, for every formula $\varphi$ of $\mathbb{T}$, the formulas $g(f(\varphi))$ and $(g \circ f)(\varphi)$ are equivalent.
+It follows that the composition is associative.
+The category of partial Horn theory with $\mathcal{S}$ as the set of sorts will be denoted by $\Th_\mathcal{S}$.
+Its objects are tuples $(\mathcal{F},\mathcal{P},\mathcal{A})$, where $\mathcal{F}$ is a set of function symbols,
+$\mathcal{P}$ is a set of predicate symbols, and $\mathcal{A}$ is a set of axioms.
 
 \begin{prop}[th-cocomplete]
-Category $\Th_\mathcal{S}$ is cocomplete.
+The category $\Th_\mathcal{S}$ is cocomplete.
 \end{prop}
 \begin{proof}
-First, let $\{ \mathbb{T}_i \}_{i \in S} = \{ ((\mathcal{S},\mathcal{F}_i,\mathcal{P}_i),\mathcal{A}_i) \}_{i \in S}$ be a set of theories.
-Then we can define its coproduct $\coprod\limits_{i \in S} \mathbb{T}_i$ as the theory with $\coprod\limits_{i \in S} \mathcal{F}_i$ as the set of function symbols and $\coprod\limits_{i \in S} \mathcal{A}_i$ as the set of axioms.
+First, let $\{ \mathbb{T}_i \}_{i \in S} = \{ (\mathcal{F}_i,\mathcal{P}_i,\mathcal{A}_i) \}_{i \in S}$ be a set of theories.
+Then we can define its coproduct $\coprod\limits_{i \in S} \mathbb{T}_i$ as the theory
+$(\coprod\limits_{i \in S} \mathcal{F}_i, \coprod\limits_{i \in S} \mathcal{P}_i, \coprod\limits_{i \in S} \mathcal{A}_i)$.
 Morphisms $f_i : \mathbb{T}_i \to \coprod\limits_{i \in S} \mathbb{T}_i$ are defined in the obvious way.
-If $g_i : \mathbb{T}_i \to X$ is a collection of morphisms, then \rprop{mor-def} implies that there is a unique morphism $g : \coprod\limits_{i \in S} \mathbb{T}_i \to X$
-    satisfying $g(\sigma(x_1, \ldots x_n)) = g_i(\sigma(x_1, \ldots x_n))$ and $f(R(x_1, \ldots x_n)) = f_i(R(x_1, \ldots x_n))$
-    for every $\sigma \in \mathcal{F}_i$ and $R \in \mathcal{P}_i$.
+It is easy to see that the universal property of coproducts holds.
 
 Now, let $f,g : \mathbb{T}_1 \to \mathbb{T}_2$ be a pair of morphisms of theories.
 Then we can define their coequalizer $\mathbb{T}$ as the theory with the same set of function and predicate symbols as $\mathbb{T}_2$ and the set of axioms which consists of the axioms of $\mathbb{T}_2$
 together with $\sststile{}{x_1, \ldots x_n} f(\sigma(x_1, \ldots x_n)) \cong g(\sigma(x_1, \ldots x_n))$ for each function symbols $\sigma$ of $\mathbb{T}_1$
 and $f(R(x_1, \ldots x_n)) \ssststile{}{x_1, \ldots x_n} g(R(x_1, \ldots x_n))$ for each predicate symbols $R$ of $\mathbb{T}_1$.
-Then we can define $e : \mathbb{T}_2 \to \mathbb{T}$ as identity function on terms and formulas.
-By \rprop{mor-def}, $e \circ f = e \circ g$.
+Then we can define $e : \mathbb{T}_2 \to \mathbb{T}$ as the identity function on terms and formulas.
+By construction, we have $e \circ f = e \circ g$.
 If $h : \mathbb{T}_2 \to X$ is such that $h \circ f = h \circ g$, then it extends to a morphism $\mathbb{T} \to X$ since additional axioms are preserved by the assumption on $h$.
 This extension is unique since $e$ is an epimorphism.
 \end{proof}
 
-Now we give a characterization of monomorphisms.
-
-\begin{prop}[mono]
-A morphism of theories $f : \mathbb{T}_1 \to \mathbb{T}_2$ is a monomorphism if and only if, for every sequent $\varphi \sststile{}{V} \psi$ of $\mathbb{T}_1$,
-if $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}_2$, then $\varphi \sststile{}{V} \psi$ is a theorem of $\mathbb{T}_1$.
+\begin{prop}[func-mod]
+For every morphism of theories $f : \mathbb{T} \to \mathbb{T}'$, there is a faithful functor $f^* : \Mod{T'} \to \Mod{T}$
+such that $id_\mathbb{T}^*$ is the identity functor and $(g \circ f)^* = f^* \circ g^*$.
 \end{prop}
 \begin{proof}
-First, let us prove the ``if'' part.
-Let $g,h : \mathbb{T} \to \mathbb{T}_1$ be a pair of morphisms such that $f \circ g = f \circ h$.
-If $t \in RTerm_\Sigma(V)_s$, then $\sststile{}{V} f(g(t)) \cong f(h(t))$; hence $\sststile{}{V} g(t) \cong h(t)$.
-If $\varphi \in Form_\mathcal{P}(V)$, then $f(g(\varphi)) \ssststile{}{V} f(h(\varphi))$; hence $g(\varphi) \ssststile{}{V} h(\varphi)$.
-Thus $g = h$.
-
-Now, let us prove the ``only if'' part.
-Suppose that $f$ is a monomorphism.
-Let $\varphi \sststile{}{V} \psi$ be a sequent of $\mathbb{T}_1$ such that $f(\varphi) \sststile{}{V} f(\psi)$ is a theorem of $\mathbb{T}_2$.
-Let $\mathbb{T}$ be a theory which consists of a single predicate symbol $R : s_1 \times \ldots \times s_n \times s'_1 \times \ldots \times s'_k$
-where $s_1, \ldots s_n$ are sorts of variables in $FV(\varphi)$ and $s'_1, \ldots s'_k$ are sorts of variables in $FV(\psi)$.
-Let $g : \mathbb{T} \to \mathbb{T}_1$ be a morphism defined by $g(R(x_1, \ldots x_n, y_1, \ldots y_k)) = \varphi \land y_1\!\downarrow \land \ldots \land y_k\!\downarrow$ and
-let $h : \mathbb{T} \to \mathbb{T}_1$ be a morphism defined by $h(R(x_1, \ldots x_n, y_1, \ldots y_k)) = \varphi \land \psi$.
-By \rprop{mor-def}, $f \circ g = f \circ h$, hence $g = h$ which implies that $\varphi \sststile{}{V} \psi$.
-\end{proof}
-
-Let $\mathbb{T} = ((\mathcal{S},\mathcal{F},\mathcal{P}),\mathcal{A})$ and $\mathbb{T}' = ((\mathcal{S}',\mathcal{F}',\mathcal{P}'),\mathcal{A}')$ be a pair of theories.
-Then we say that $\mathbb{T}'$ is a \emph{subtheory} of $\mathbb{T}$ if $\mathcal{S}' \subseteq \mathcal{S}$, $\mathcal{F}' \subseteq \mathcal{F}$, $\mathcal{P}' \subseteq \mathcal{P}$ and $\mathcal{A}' \subseteq \mathcal{A}$.
-If $\mathbb{T}'$ is a subtheory of a theory $\mathbb{T}$, then we often need to know when a theorem of $\mathbb{T}$ is a theorem of $\mathbb{T}'$.
-The lemma below gives us a simple criterion for this.
-First, we need to introduce a bit of notation.
-Let $t$ is a term over the signature of $\mathbb{T}$ such that there is no subterm of a sort that does not belong to $\mathcal{S}'$.
-Then we define a term $Ret(t)$ over the signature of $\mathbb{T}'$ as follows:
-\begin{align*}
-Ret(x) & = x \\
-Ret(\sigma(t_1, \ldots t_n)) & = \sigma(Ret(t_1), \ldots Ret(t_n)) \text{, if $\sigma \in \mathcal{F}'$} \\
-Ret(\sigma(t_1, \ldots t_n)) & = x_s \text{, if $\sigma \notin \mathcal{F}'$ and $\sigma : s_1 \times \ldots \times s_n \to s$}
-\end{align*}
-where $x_s$ is a variable of sort $s$ that is not a free variable of $t$.
-
-If $\varphi$ is an atomic formula over the signature of $\mathbb{T}$, then we define a formula $Ret(\varphi)$ over the signature of $\mathbb{T}'$ as follows:
-\begin{align*}
-Ret(t = t') & = (Ret(t) = Ret(t')) \text{, if $Ret(t)$ and $Ret(t')$ are defined} \\
-Ret(R(t_1, \ldots t_n)) & = R(Ret(t_1), \ldots Ret(t_n)) \text{, if $Ret(t_i)$ is defined for every $i$} \\
-Ret(\varphi) & = \top \text{, otherwise}
-\end{align*}
-For an arbitrary Horn formula $\varphi$ we define $Ret(\varphi)$ as follows:
-\[ Ret(\varphi_1 \land \ldots \land \varphi_n) = Ret(\varphi_1) \land \ldots \land Ret(\varphi_n) \]
-For every restricted term $t|_\varphi$, let $Ret(t|_\varphi) = Ret(t)|_{Ret(\varphi)}$.
-If $S$ is sequent $\varphi \sststile{}{V} \psi$ in the signature of $\mathbb{T}$,
-then we define sequent $Ret(S)$ in the signature of $\mathbb{T}'$ as $Ret(\varphi) \sststile{}{V \cup FV(Ret(\varphi)) \cup FV(Ret(\psi))} Ret(\psi)$.
-
-\begin{lem}[subtheory]
-Let $\mathbb{T}'$ be a subtheory of $\mathbb{T}$.
-Suppose that, for every axiom $S$ of $\mathbb{T}$, $Ret(S)$ is a theorem of $\mathbb{T}'$.
-Then if a sequent in the signature of $\mathbb{T}'$ is provable in $\mathbb{T}$, then it is also provable in $\mathbb{T}'$.
-\end{lem}
-\begin{proof}
-If $S$ is a sequent in the signature of $\mathbb{T}'$, then $Ret(S) = S$.
-Thus we only need to prove that if $S$ is a theorem of $\mathbb{T}$, then $Ret(S)$ is a theorem of $\mathbb{T}'$.
-For axioms this is true by assumption.
-We need to check that $Ret(-)$ preserves inference rules.
-This is clearly true for rules \axref{b1}-\axref{b6} and \axref{a1}.
-
-Let us consider rule \axref{a2}.
-Let $S$ equals $x = y \land \varphi \sststile{}{x:s,y:s,V} \varphi[y/x]$.
-Note that $Ret(\varphi[y/x])$ is defined if and only if $Ret(\varphi)$ is defined, and in this case $Ret(\varphi[y/x]) = Ret(\varphi)[y/x]$.
-Thus $Ret(S)$ is either of the form $x = y \land Ret(\varphi) \sststile{}{x:s,y:s,V,FV(Ret(\varphi))} Ret(\varphi)[y/x]$,
-or of the form $x = y \sststile{}{x:s,y:s,V} \top$, or of the form $\top \sststile{}{x:s,y:s,V} \top$.
-In all of these cases $Ret(S)$ is a theorem of $\mathbb{T}'$.
-
-Finally, let us consider rule \axref{a3}.
-To prove that it preserves the required property, it is enough to show that $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$ if and only if $\varphi[t/x]$ is.
-If $x \notin FV(\varphi)$, then $\varphi = \varphi[t/x]$.
-Suppose that $x \in FV(\varphi)$ and $\varphi$ is a formula of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
-If $x$ has sort $s$, then $s \in \mathcal{S}'$.
-We need to show that a term of sort $s$ is a term of $(\mathcal{S}',\mathcal{F}',\mathcal{P}')$.
-But this follows from the assumption on the set of function symbols.
-\end{proof}
-
-Sometimes it is convenient to have a sort which consists of a single element.
-Let $\mathcal{S}$ be a set of sorts and let $s_0$ be a sort in $\mathcal{S}$.
-Then we define a theory $\mathbb{T}_{s_0}$ which consists of a single function symbol $\emptyCtx : s_0$
-    and two axioms: $\sststile{}{} \emptyCtx\!\downarrow$ and $\sststile{}{x} x = \emptyCtx$.
-Then, for every theory $\mathbb{T} \in \Th_\mathcal{S}$, there is at most one morphism from $\mathbb{T}_{s_0}$ to $\mathbb{T}$.
-If such morphism exists, we will say that $s_0$ is \emph{trivial} in $\mathbb{T}$.
-Thus $\mathbb{T}_{s_0}/\Th_\mathcal{S}$ is (equivalent to) a full subcategory of $\Th_\mathcal{S}$.
-
-As an application of the previous results we will prove that adding a trivial sort does not change the category of theories.
-Every theory $\mathbb{T} \in \Th_\mathcal{S}$ is naturally a theory in $\Th_{\mathcal{S} \amalg \{ s_0 \}}$.
-Thus we have a functor $i : \Th_\mathcal{S} \to \mathbb{T}_{s_0}/\Th_{\mathcal{S} \amalg \{ s_0 \}}$ such that $i(\mathbb{T}) = \mathbb{T} \amalg \mathbb{T}_{s_0}$.
-\begin{prop}[triv-sort]
-Functor $i : \Th_\mathcal{S} \to \mathbb{T}_{s_0}/\Th_{\mathcal{S} \amalg \{ s_0 \}}$ is an equivalence of categories.
-\end{prop}
-\begin{proof}
-Let $\mathbb{T}_1,\mathbb{T}_2 \in \Th_\mathcal{S}$ be theories with $P(\mathbb{T}_i) = (T_i,F_i,\mu_i)$, $i = 1,2$.
-Let $\alpha,\beta : \mathbb{T}_1 \to \mathbb{T}_2$ be morphisms such that $i(\alpha) = i(\beta)$.
-Then, for every $t \in T_1$, sequent $\sststile{}{V} i(\alpha)(t) \cong i(\beta)(t)$ is a theorem of $i(\mathbb{T}_2)$.
-Since $\mathbb{T}_2$ is (isomorphic to) a subtheory of $i(\mathbb{T}_2)$, by \rlem{subtheory}, sequent $\sststile{}{V} \alpha(t) \cong \beta(t)$ is a theorem of $\mathbb{T}_2$.
-Analogously, we can show that $\alpha(\varphi) \ssststile{}{V} \beta(\varphi)$ is a theorem of $\mathbb{T}_2$ for every $\varphi \in F_1$.
-Thus $i$ is faithful.
-
-Let $\alpha : i(\mathbb{T}_1) \to i(\mathbb{T}_2)$ be a morphism.
-For every $t \in T_1(V)_s$, let $\beta(t) = Ret(\alpha(t))$ and, for every $\varphi \in F_1(V)$, let $\beta(\varphi) = Ret(\alpha(\varphi))$.
-Since $Ret$ preserves substitution, $\land$ and $\top$, this defines a morphism $\beta : \mathbb{T}_1 \to \mathbb{T}_2$.
-Since $s_0$ is trivial in $i(\mathbb{T}_2)$, $Ret(t) = t$ and $Ret(\varphi) = \varphi$ for every restricted term $t$ and every formula $\varphi$.
-Thus $i(\beta) = \alpha$; hence $i$ is full.
-
-Let $\mathbb{T} \in \Th_{\mathcal{S} \amalg \{ s_0 \}}$ be a theory with trivial $s_0$.
-Then we define a theory $\mathbb{T}' \in \Th_\mathcal{S}$.
-It has a predicate symbol $R : s'_1 \times \ldots \times s'_n$ for every predicate symbol $R : s_1 \times \ldots \times s_n$ of $\mathbb{T}$,
-    where $s'_1, \ldots s'_n$ is the subsequence of $s_1, \ldots s_n$ consisting of sorts from $\mathcal{S}$.
-It has a function symbol $\sigma : s'_1 \times \ldots \times s'_n \to s$ for every function symbol
-    $\sigma : s_1 \times \ldots \times s_n \to s$ of $\mathbb{T}$ such that $s \in \mathcal{S}$.
-Also, for every function symbol $\sigma : s_1 \times \ldots \times s_n \to s_0$ of $\mathbb{T}$,
-    there is a predicate symbol $R_\sigma : s_1' \times \ldots \times s'_n$ in $\mathbb{T}'$.
-
-For every term $t$ of $\mathbb{T}$ of a sort from $\mathcal{S}$, we can define a term $r(t)$ of $\mathbb{T}'$.
-Term $r(t)$ is obtained from $t$ by omitting subterms of sort $s_0$.
-For every formula $\varphi$ of $\mathbb{T}$, we can define a formula $r(\varphi)$ of $\mathbb{T}'$:
-\begin{align*}
-r(t =_{s_0} t') & = \top \\
-r(t =_s t') & = (r(t) =_s r(t')) \\
-r(R(t_1, \ldots t_n)) & = R(r(t'_1), \ldots r(t'_n)) \\
-r(\varphi_1 \land \ldots \land \varphi_n) & = r(\varphi_1) \land \ldots \land r(\varphi_n)
-\end{align*}
-where $t'_1, \ldots t'_n$ is the subsequence of $t_1, \ldots t_n$ consisting of the terms of sorts from $\mathcal{S}$.
-Axioms of $\mathbb{T}'$ are sequents of the form $r(\varphi) \sststile{}{FV(r(\varphi)) \cup FV(r(\psi))} r(\psi)$ for every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$.
-It is easy to see that $i(\mathbb{T}')$ is isomorphic to $\mathbb{T}$.
-Thus $i$ is essentially surjective on objects.
+If $M$ is a model of $\mathbb{T}'$, then $f^*(M)$ equals to $M$ as an $\mathcal{S}$-set.
+For every symbol $S$ of $\mathbb{T}'$, we define $f^*(M)(S)$ as $M(f(S))$.
+Then every morphism of models $M$ and $N$ of $\mathbb{T}'$ is also a morphism of $f^*(M)$ and $f^*(N)$.
+These definitions determine a faithful functor $f^* : \Mod{T'} \to \Mod{T}$.
+It is easy to see that these functors satisfy the required conditions.
 \end{proof}
 
 \section{Theory of substitutions}
@@ -904,11 +472,11 @@ Hom_{n,k}(B, ctx_{p,k}(a), a_1, \ldots a_k)  & \ssststile{}{B, a, a_i}  subst_{p
 The following axioms describe the ``typing'' of the constructions we have:
 \begin{align}
 \label{ax:type-var}
-& \sststile{}{A}         ty_n(v_{n,i}(A)) = subst_{ty,n,n-i-1}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i+1}(A)) \\
+& \sststile{}{A} ty_n(v_{n,i}(A)) = subst_{ty,n,n-i-1}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i+1}(A)) \\
 \label{ax:type-subst-ty}
-& \sststile{}{B, A, a_i} ft_n(subst_{ty,n,k}(B, A, a_1, \ldots a_k)) \leftrightharpoons B \\
+& Hom_{n,k}(B, ft_k(A), a_1, \ldots a_k) \sststile{}{B, A, a_i} ft_n(subst_{ty,n,k}(B, A, a_1, \ldots a_k)) = B \\
 \label{ax:type-subst-tm}
-& \sststile{}{B, a, a_i} ty_n(subst_{tm,n,k}(B, a, a_1, \ldots a_k)) \leftrightharpoons subst_{ty,n,k}(B, ty_k(a), a_1, \ldots a_k)
+& \sststile{}{B, a, a_i} ty_n(subst_{tm,n,k}(B, a, a_1, \ldots a_k)) \cong subst_{ty,n,k}(B, ty_k(a), a_1, \ldots a_k)
 \end{align}
 
 The following axioms prescribe how $subst_{p,n,k}$ must be defined on indices ($v_{n,i}$):
@@ -932,21 +500,21 @@ The last axiom say that substitution must be ``associative'':
 Here we show that the category of models of $\substTh$ is equivalent to the category of contextual categories.
 First, we construct a functor $F : \Mod{\substTh} \to \ccat$.
 Let $M$ be a model of $\substTh$.
-Then the set of objects of level $n$ of $F(M)$ is $M(ctx,n)$.
-For each $A \in M(ctx,n)$, $B \in M(ctx,k)$ morphisms from $A$ to $B$ are tuples $(a_1, \ldots a_k)$ such that $a_i \in M(tm,n)$ and $Hom_{n,k}(A, B, a_1, \ldots a_k)$.
+Then the set of objects of level $n$ of $F(M)$ is $M_{(ctx,n)}$.
+For each $A \in M_{(ctx,n)}$, $B \in M_{(ctx,k)}$ morphisms from $A$ to $B$ are tuples $(a_1, \ldots a_k)$ such that $a_i \in M_{(tm,n)}$ and $Hom_{n,k}(A, B, a_1, \ldots a_k)$.
 
 For each $0 \leq i \leq n$ axiom~\eqref{ax:type-var} implies
 \[ \sststile{}{A} Hom_{n,n-i}(A, ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i}(A)). \]
-For each $A \in M(ctx,n)$ we define $id_A : A \to A$ as tuple
+For each $A \in M_{(ctx,n)}$ we define $id_A : A \to A$ as tuple
 \[ (v_{n,n-1}(A), \ldots v_{n,0}(A)) \]
 and $p_A : A \to ft(A)$ as tuple
 \[ (v_{n,n-1}(A), \ldots v_{n,1}(A)). \]
 
 Now, we introduce some notation.
-If $B \in M(ctx,n)$, $a \in M(p,k)$, and $f = (a_1, \ldots a_k) : B \to ctx_{p,k}(a)$ is a morphism, then we define $a[f] \in M(p,n)$ as $subst_{p,n,k}(B, a, a_1, \ldots a_k)$.
+If $B \in M_{(ctx,n)}$, $a \in M_{(p,k)}$, and $f = (a_1, \ldots a_k) : B \to ctx_{p,k}(a)$ is a morphism, then we define $a[f] \in M_{(p,n)}$ as $subst_{p,n,k}(B, a, a_1, \ldots a_k)$.
 By axiom \eqref{ax:def-subst} this construction is total.
 
-If $A \in M(ctx,n)$, $B \in M(ctx,k)$, $C \in M(ctx,m)$, $f : A \to B$, and $(c_1, \ldots c_m) : B \to C$,
+If $A \in M_{(ctx,n)}$, $B \in M_{(ctx,k)}$, $C \in M_{(ctx,m)}$, $f : A \to B$, and $(c_1, \ldots c_m) : B \to C$,
     then we define composition $(c_1, \ldots c_m) \circ f$ as $(c_1[f], \ldots c_m[f])$.
 The following sequence of equations shows that $(c_1, \ldots c_m) \circ f : A \to C$.
 \begin{align*}
@@ -967,9 +535,9 @@ a[g][f] & = a[g \circ f] \\
 
 Associativity of the composition follows from axiom~\eqref{ax:subst-subst}, and the fact that $id$ is identity for it follows from axioms \eqref{ax:subst-var} and \eqref{ax:var-subst}.
 
-For every $A \in M(ty,k)$ there is a bijection $\varphi$ between the set of $a \in M(tm,k)$ such that $ty_k(a) = A$
+For every $A \in M_{(ty,k)}$ there is a bijection $\varphi$ between the set of $a \in M_{(tm,k)}$ such that $ty_k(a) = A$
     and the set of morphisms $f : ft_k(A) \to A$ such that $p_A \circ f = id_{ft_k(A)}$.
-For every such $a \in M(tm,k)$ we define $\varphi(a)$ as
+For every such $a \in M_{(tm,k)}$ we define $\varphi(a)$ as
 \[ (v_{k,k-1}(ft_k(A)), \ldots v_{k,0}(ft_k(A)), a). \]
 Note that if $(a_1, \ldots a_{k+1}) : B \to A$ is a morphism, then axiom~\eqref{ax:var-subst} implies that $p_A \circ (a_1, \ldots a_{k+1})$ equals to $(a_1, \ldots a_k)$.
 Thus $\varphi(a)$ is a section of $p_A$.
@@ -978,7 +546,7 @@ Let $f : ft_k(A) \to A$ be a section of $p_A$; then first $k$ components of $f$ 
 So if $a$ is the last component of $f$, then $\varphi(a)$ equals to $f$.
 Hence $\varphi$ is bijective.
 
-If $A \in M(ty,k)$, $B \in M(ctx,n)$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$, then we define $f^*(A)$ as $A[f] = subst_{ty,n,k}(B, A, a_1, \ldots a_k)$.
+If $A \in M_{(ty,k)}$, $B \in M_{(ctx,n)}$, and $f = (a_1, \ldots a_k) : B \to ft_k(A)$, then we define $f^*(A)$ as $A[f] = subst_{ty,n,k}(B, A, a_1, \ldots a_k)$.
 Map $q(f,B)$ defined as the tuple with $i$-th component equals to
 \[ \left\{
   \begin{array}{lr}
@@ -1026,7 +594,7 @@ $F(\alpha)$ preserves identity morphisms, compositions, $f^*(A)$, and $q(f,A)$ s
 Clearly, $F$ preserves identity maps and compositions of maps of $\substTh$ models.
 Thus $F$ is a functor.
 
-First, note that if $a \in M(tm,k)$ and $\alpha : M \to N$, then $F(\alpha)(\varphi(a)) = \varphi(\alpha(a))$.
+First, note that if $a \in M_{(tm,k)}$ and $\alpha : M \to N$, then $F(\alpha)(\varphi(a)) = \varphi(\alpha(a))$.
 Indeed, consider the following sequence of equations:
 \begin{align*}
 F(\alpha)(\varphi(a)) & = \\
@@ -1038,14 +606,14 @@ F(\alpha)(v_{k,k-1}(ctx_{tm,k}(a)), \ldots v_{k,0}(ctx_{tm,k}(a)), a) & = \\
 Now, we prove that $F$ is faithful.
 Let $\alpha,\beta : M \to N$ be a pair of maps of $\substTh$ models such that $F(\alpha) = F(\beta)$.
 Then $\alpha$ and $\beta$ coincide on contexts.
-Given $a \in M(tm,n)$ we have the following equation: $\alpha(a) = \varphi^{-1}(F(\alpha)(\varphi(a))) = \varphi^{-1}(F(\beta)(\varphi(a))) = \beta(a)$.
+Given $a \in M_{(tm,n)}$ we have the following equation: $\alpha(a) = \varphi^{-1}(F(\alpha)(\varphi(a))) = \varphi^{-1}(F(\beta)(\varphi(a))) = \beta(a)$.
 
 Now, we prove that $F$ is full.
 Let $\alpha : F(M) \to F(N)$ be a map of contextual categories.
 Then we need to define $\beta : M \to N$ such that $F(\beta) = \alpha$.
-If $A \in M(ctx,n)$, then we let $\beta(A) = \alpha(A)$.
+If $A \in M_{(ctx,n)}$, then we let $\beta(A) = \alpha(A)$.
 Note that if $f : ft_n(A) \to A$ is a section of $p_A$, then $\alpha(f)$ is a section of $\alpha(A)$.
-If $a \in M(tm,n)$, then we let $\beta(a) = \varphi^{-1}(\alpha(\varphi(a)))$.
+If $a \in M_{(tm,n)}$, then we let $\beta(a) = \varphi^{-1}(\alpha(\varphi(a)))$.
 
 Maps $F(\beta)$ and $\alpha$ agree on contexts.
 We prove by induction on $k$ that they coincide on morphisms $f = (a_1, \ldots a_k) \in M(Hom_{n,k})(B,A)$.
@@ -1057,12 +625,12 @@ But $F(\beta)(\varphi(a_k)) = \varphi(\beta(a_k)) = \varphi(\varphi^{-1}(\alpha(
 
 Finally, we prove that $F$ is essentially surjective on objects.
 Given contextual category $C$ we define $\substTh$ model $M$.
-Let $M(ctx,n)$ be equal to $Ob_n(C)$ and $M(tm,n)$ be the set of pairs of objects $A \in Ob_{n+1}(C)$ and sections of $p_A : A \to ft_n(A)$.
+Let $M_{(ctx,n)}$ be equal to $Ob_n(C)$ and $M_{(tm,n)}$ be the set of pairs of objects $A \in Ob_{n+1}(C)$ and sections of $p_A : A \to ft_n(A)$.
 Let $ty_n$ be the obvious projection.
-We will usually identify $a \in M(tm,n)$ with the section $ctx_{tm,n}(a) \to ty_n(a)$.
+We will usually identify $a \in M_{(tm,n)}$ with the section $ctx_{tm,n}(a) \to ty_n(a)$.
 
 For each $n,k \in \mathbb{N}$ we define partial function
-\[ subst_{ty,n,k} : M(ctx,n) \times M(ty,k) \times M(tm,n)^k \to M(ty,n) \]
+\[ subst_{ty,n,k} : M_{(ctx,n)} \times M_{(ty,k)} \times M_{(tm,n)}^k \to M_{(ty,n)} \]
 such that $ft_n(subst_{ty,n,k}(B, A, a_1, \ldots a_k)) = B$.
 We also define morphism
 \[ q_{n,k} \in Hom_{n+1,k}(subst_{ty,n,k}(B, A, a_1, \ldots a_k), A) \]
@@ -1094,8 +662,8 @@ By induction hypothesis these sections are just sections of $p_{subst_{ty,n,k}(B
 This gives us a bijection between $Hom^M_{n,k+1}(B,A)$ and $Hom_{n,k+1}(B,A)$, namely $\alpha(a_1, \ldots a_{k+1}) = q(\alpha(a_1, \ldots a_k), A) \circ a_{k+1}$.
 Then the required equations hold by definition.
 
-Now we define total functions $v_{n,i} : M(ctx,n) \to M(tm,n)$.
-Let $v_{n,i}(A) = (p^{i+1}(A)^*(ft^i_{n-i}(A)), s_{p^i_A})$.
+Now, we define total functions $v_{n,i} : M_{(ctx,n)} \to M_{(tm,n)}$.
+Let $v_{n,i}(A)$ be equal to $(p^{i+1}(A)^*(ft^i_{n-i}(A)), s_{p^i_A})$.
 \[ \xymatrix{ p^{i+1}(A)^*(ft^i_{n-i}(A)) \ar[r] \ar[d] \pb & ft^i_{n-i}(A) \ar[d]^{p_{ft^i_{n-i}(A)}} \\
               A \ar[r]_{p^{i+1}(A)} \ar@/^1pc/[u]^{s_{p^i_A}} \ar[ur]_{p^i_A} & ft^{i+1}_{n-i-1}(A)
             } \]
@@ -1110,7 +678,7 @@ ty_n(v_{n,i}(A)) & .
 \end{align*}
 Axiom~\eqref{ax:subst-var} follows from the facts that $\alpha(v_{n,n-1}(ft_n(A)), \ldots v_{n,0}(ft_n(A))) = id_{ft_n(A)}$ and $id_{ft_n(A)}^*(A) = A$.
 
-Now we define partial functions $subst_{tm,n,k} : M(ctx,n) \times M(tm,k) \times M(tm,n)^k \to M(tm,n)$.
+Now, we define partial functions $subst_{tm,n,k} : M_{(ctx,n)} \times M_{(tm,k)} \times M_{(tm,n)}^k \to M_{(tm,n)}$.
 Function $subst_{tm,n,k}(B, a, a_1, \ldots a_k)$ is defined whenever \[ Hom_{n,k}(B, ctx_{tm,k}(a), a_1, \ldots a_k) \] holds.
 In this case we let $subst_{tm,n,k}(B, a, a_1, \ldots a_k) = a[\alpha(a_1, \ldots a_k)]$ where $a[f] = s_{a \circ f}$.
 Axioms \eqref{ax:def-subst} and \eqref{ax:type-subst-tm} hold by definition.
@@ -1129,7 +697,7 @@ s_{\alpha(a_1, \ldots a_{k-i})} & = \\
 a_{k-i} & .
 \end{align*}
 
-Now we prove that $\alpha$ preserves compositions.
+Now, we prove that $\alpha$ preserves compositions.
 To do this we need to show that $\alpha(a_1, \ldots a_k) \circ f = \alpha(a_1[f], \ldots a_k[f])$.
 We do this by induction on $k$.
 For $k = 0$ it is trivial and for $k > 0$ we have the following sequence of equations:
@@ -1142,7 +710,7 @@ q(\alpha(a_1[f], \ldots a_{k-1}[f]), A) \circ a_k[f] & = \\
 \alpha(a_1[f], \ldots a_k[f]) & .
 \end{align*}
 
-Now axiom \eqref{ax:subst-subst} follows from the facts that $\alpha$ preserves compositions and $(f \circ g)^*(A) = f^*(g^*(A))$.
+Now, axiom \eqref{ax:subst-subst} follows from the facts that $\alpha$ preserves compositions and $(f \circ g)^*(A) = f^*(g^*(A))$.
 This completes the construction of $\substTh$ model $M$ from a contextual category $C$.
 To finish the proof we need to show that $F(M)$ is isomorphic to $C$.
 The isomorphism is given by bijection $\alpha$.
@@ -1172,8 +740,12 @@ Let $\mathbb{T}_{\mathcal{S}_0}$ be a theory with the following function symbols
 ft_n & : (ctx,n+1) \to (ctx,n) \\
 ctx_{p,n} & : (p,n) \to (ctx,n) \text{ for every } p \in \mathcal{S}_0
 \end{align*}
-and axioms of $\mathbb{T}_{(ctx,0)}$ as defined in section~\ref{sec:prop} together with the following axiom:
-\[ \sststile{}{x} ctx_{ctx,n}(x) = x \]
+and the following axioms:
+\begin{align*}
+& \sststile{}{} \emptyCtx\!\downarrow \\
+& \sststile{}{x} x = \emptyCtx \\
+& \sststile{}{x} ctx_{ctx,n}(x) = x
+\end{align*}
 
 To define prestable theories, we need to introduce a few auxiliary constructions.
 First, we define a function $L : \mathcal{C} \to \mathcal{C}$ as follows:
@@ -1345,7 +917,7 @@ Finally, we use the following syntax:
 \[ \sigma(A^1_1, \ldots A^1_{n_1}.\ b_1, \ldots A^k_1, \ldots A^k_{n_k}.\ b_k) \]
 for a term of sort $(p,m+n)$ in a contextual theory, where $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$,
 $b_i$ is a term of sort $(p_i,m+n_i)$, and $A^i_j$ is a term of sort $(ty,m+j-1)$.
-Term $\Gamma \vdash \sigma(A^1_1, \ldots A^1_{n_1}.\ b_1, \ldots A^k, \ldots A^k_{n_k}.\ b_k)$ stands for
+The expression $\Gamma \vdash \sigma(A^1_1, \ldots A^1_{n_1}.\ b_1, \ldots A^k, \ldots A^k_{n_k}.\ b_k)$ stands for
 \[ \sigma_m(\Gamma, (\Gamma, A^1_1, \ldots A^1_{n_1} \vdash b_1), \ldots (\Gamma, A^k_1, \ldots A^k_{n_k} \vdash b_k)). \]
 Of course, if some $b_i$ is a variable, then we can omit $A^i_1, \ldots A^i_{n_i}$.
 We also can omit this context if there is a theorem of the following form: 
@@ -1383,7 +955,7 @@ P_0(\emptyCtx, x_1, \ldots x_k) & \ssststile{}{x_1, \ldots x_k} f(P(x_1, \ldots 
 for every function symbol $\tau$ and predicate symbol $P$ of $\mathbb{T}_b$ and every $\sigma \in \mathcal{F}_0$ and $R \in \mathcal{P}_0$.
 
 There is an obvious map $\mathbb{T} \to \mathbb{T}'$ and we can define a map $\mathbb{T}' \to \mathbb{T}$
-which sends $\sigma_m(\Gamma, x_1, \ldots x_k)$ to $\Gamma \times \sigma_0(\emptyCtx, x_1, \ldots x_k)$,
+which maps $\sigma_m(\Gamma, x_1, \ldots x_k)$ to $\Gamma \times \sigma_0(\emptyCtx, x_1, \ldots x_k)$,
 $R_m(\Gamma, x_1, \ldots x_k)$ to $\Gamma \times R_0(\emptyCtx, x_1, \ldots x_k)$,
 $\tau_0(\Gamma, x_1, \ldots x_k)$ to $f(\tau(x_1, \ldots x_k))|_{\Gamma\downarrow}$, and $P_0(\Gamma, x_1, \ldots x_k)$ to $f(P(x_1, \ldots x_k))|_{\Gamma\downarrow}$.
 Axioms guarantee that these maps are inverses of each other.
