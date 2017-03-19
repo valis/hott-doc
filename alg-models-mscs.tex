@@ -393,6 +393,26 @@ where $b_i' = subst_{p,m+n_i,n+n_i}(b_i, wk^{n_i}_m(a_1), \ldots wk^{n_i}_m(a_n)
 where $wk^{n_i}_m$ are the weakening operations defined as follows:
 \[ wk^{n_i}_m(a) = subst_{tm,m+n_i,m}(a, v_{m+n_i-1}, \ldots v_{n_i}). \]
 
+A \emph{restricted term} of a theory $\mathbb{T}$ is a term $t$ together with a formula $\varphi$.
+We denote such a restricted term by $t|_\varphi$.
+If we think of terms as representations for partial functions,
+then we can think of a restricted term $t|_\varphi$ as a restriction of the partial function represented by $t$ to a subset of its domain.
+Let us definit the substitution function for restricted terms.
+If $x \in FV(t|_\varphi)$ and $x \in FV(\psi)$, then it is defined as follows:
+\begin{align*}
+t|_\varphi[t'|_{\varphi'}/x] & = t[t'/x]|_{\varphi[t'/x] \land \varphi'} \\
+\psi[t'|_{\varphi'}/x] & = \psi[t'/x] \land \varphi'
+\end{align*}
+
+An \emph{interpretation} of a theory $\mathbb{T}$ in a theory $\mathbb{T}'$ is a function $f$ such that the following conditions hold:
+\begin{enumerate}
+\item For every function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ of $\mathbb{T}$,
+the function $f$ defines a restricted term $f(\sigma)$ of $\mathbb{T}'$ of sort $s$ such that $FV(f(\sigma)) = \{ x_1 : s_1, \ldots x_k : s_k \}$.
+\item For every predicate symbol $P : s_1 \times \ldots \times s_k$,
+the function $f$ defines a formula $f(P)$ of $\mathbb{T}'$ such that $FV(f(P)) = \{ x_1 : s_1, \ldots x_k : s_k \}$.
+\item For every axiom $\varphi \sststile{}{V} \psi$ of $\mathbb{T}$, the sequent $f(\varphi) \sststile{}{V} f(\psi)$ is derivable in $\mathbb{T}'$.
+\end{enumerate}
+
 \section{Theories with an interval type}
 \label{sec:HoTT-I}
 
@@ -691,7 +711,7 @@ We can summarize the relationship between different theories in the following di
 where $\coe'_\alpha = \coe_\alpha + \HPath$ and each arrow $T \to T'$ represents an interpretation of $T$ in $T'$.
 
 Interpretations $\Id_- \to \Id$ and $\coe'_1 \to \coe'_2$ are obvious.
-Let us construct vertical arrows.
+Let us construct the vertical arrows.
 Define $refl$ and $J$ as follows:
 \begin{align*}
 refl(a) & = path(ty(a), a) \\
@@ -1242,7 +1262,7 @@ and every $R \in \mathcal{P}$ such that $(a_1, \ldots a_k) \in M(R)$.
 To construct a model structure on $\Mod{T}$, we need to recall a few definitions from \cite{f-model-structures}.
 A reflexive path object $P(X)$ for an object $X$ is any factorization of the diagonal $X \to X \times X$.
 A reflexive cylinder object $C_U(V)$ for a map $i : U \to V$ is any factorization of $[id_V,id_V] : V \amalg_U V \to V$.
-Maps $f,g : V \to X$ are homotopic relative to a cylinder object $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, if there exists a map $h : C_U(V) \to X$
+The maps $f,g : V \to X$ are homotopic relative to a cylinder object $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$, if there exists a map $h : C_U(V) \to X$
 such that $h \circ \cyli_0 = f$ and $h \circ \cyli_1 = g$.
 In this case we will write $f \sim_i g$.
 We say that a map $f : X \to Y$ has RLP up to $\sim_i$ with respect to $i : U \to V$ if for every commutative square of the form
@@ -1319,7 +1339,7 @@ If $a \in P(X)_{(p,n)}$ is such that $x : I, \Gamma \vdash a$, then define $s(a)
 
 Now, let us prove some of the conditions of \rthm{model-structures}.
 \begin{lem}[Jtm]
-Maps $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_{\I_{tm}}$.
+The map $\langle p_0, p_1 \rangle : P(X) \to X \times X$ have RLP with respect to $\J_{\I_{tm}}$.
 \end{lem}
 \begin{proof}
 We are given a type $x : I, \Delta \vdash A\ type$ and terms $x : I, \Delta \vdash f_1 : A$, $\Delta[x \repl left], y : I \vdash f_0 : A[x \repl left]$ and $\Delta[x \repl right], y : I \vdash f_2 : A[x \repl right]$,
@@ -1396,7 +1416,7 @@ Let $Y = X \amalg_{F(\{ \Gamma \vdash A\ type \})} C_{(ty,n)}$ and $Y' = X \amal
 Then there exist maps $v : Y \to Y'$ and $v' : Y' \to Y$ such that $v' \circ v \sim^r id_Y$.
 \end{lem}
 \begin{proof}
-Maps $\varphi$ and $\psi$ that were defined in subsection~\ref{sec:univalence} induce maps $C_{(ty,n)} \to C'_{(ty,n)}$ and $C'_{(ty,n)} \to C_{(ty,n)}$, which induce maps $v$ and $v'$.
+The maps $\varphi$ and $\psi$ that were defined in subsection~\ref{sec:univalence} induce maps $C_{(ty,n)} \to C'_{(ty,n)}$ and $C'_{(ty,n)} \to C_{(ty,n)}$, which induce maps $v$ and $v'$.
 We can define a homotopy $h' : Y \to P(Y)$ between $v' \circ v$ and $id_Y$ as follows.
 For every $x \in X_{(p,k)}$ such that $\Gamma \vdash x$, let $h'(x) = (i : I, \Gamma \vdash x)$.
 For every symbol $x$ of $\Eq$, let $h'(x) = (i : I, \Delta \vdash subst(h(x), v_{n-1}, \ldots v_0, v_n))$, where $h$ is a homotopy constructed in \rlem{UA}.
