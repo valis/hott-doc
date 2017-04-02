@@ -9,6 +9,7 @@
 \usepackage[all]{xy}
 \usepackage{ifthen}
 \usepackage{xargs}
+\usepackage{upgreek}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
 
@@ -32,15 +33,15 @@
 }{\end{h#2}}
 }
 
-\newref[section]{thm}{theorem}{Theorem}
-\newref{lem}{lemma}{Lemma}
-\newref{prop}{proposition}{Proposition}
-\newref{cor}{corollary}{Corollary}
-\newref{rem}{remark}{Remark}
-\newref{exmp}{example}{Example}
+\newref[section]{thm}{Theorem}{Theorem}
+\newref{lem}{Lemma}{Lemma}
+\newref{prop}{Proposition}{Proposition}
+\newref{cor}{Corollary}{Corollary}
+\newref{rem}{Remark}{Remark}
+\newref{exmp}{Example}{Example}
 
 \theoremstyle{definition}
-\newref{defn}{definition}{Definition}
+\newref{defn}{Definition}{Definition}
 
 \newcommand{\we}{\mathcal{W}}
 \newcommand{\fib}{\mathcal{F}}
@@ -58,7 +59,7 @@
 \newcommand{\Jinj}[1][]{\Iinj[\J#1]}
 \newcommand{\Jcell}[1][]{\Icell[\J#1]}
 \newcommand{\Jcof}[1][]{\Icof[\J#1]}
-\newcommand{\cyli}{i}
+\newcommand{\cyli}{\upgamma}
 
 \newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
 \newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
@@ -71,22 +72,30 @@
 In this paper, we study properties of maps between fibrant objects in model categories.
 We give a characterization of weak equivalences between fibrant object.
 If every object of a model category is fibrant, then we give a simple description of a set of generating cofibrations.
-We show that to construct such model structure it is enough to check some relatively simple conditions.
+We show that to construct such a model structure it is enough to check some relatively simple conditions.
 \end{abstract}
 
 \section{Introduction}
 
-Model categories, introduced in \cite{quillen}, are an important tool in homotopy theory.
+The framework of model categories, introduced in \cite{quillen}, is an important tool in homotopy theory.
 In this paper, we study properties of maps between fibrant objects.
-We will show that weak equivalence between fibrant objects have a simple characterization in terms of generating cofibrations (\rprop{min-we}).
+We will show that weak equivalence between fibrant objects have a simple characterization in terms of generating cofibrations (\rprop{min-we}),
+which is similar to the characterization described in \cite{vogt-we}.
 In particular, if every object of a model category is fibrant, then we get a complete characterization of weak equivalences.
-Using this characterization, we will show that to construct a model structure in which all objects are fibrant,
-it is enough to verify some (relatively) simple conditions (\rthm{main}, \rprop{main-path}, \rprop{main-cyl}).
+We will prove several properties of model categories using this characterization.
+
+For example, we will show that a right Quillen functor $U : \D \to \C$ reflects weak equivalence between fibrant objects if and only if
+$F(\cof)$ generates the class of cofibrations of $\D$ in a certain sense, where $F$ is a left adjoint to $U$ and $\cof$ is the class of cofibrations of $\C$.
+This proposition is useful since this condition on right Quillen functors appears in the characterization of Quillen equivalences. 
+
+If we fix the class of cofibrations, then the class of weak equivalences for which there exists model structure in which all objects are fibrant is unique if it exists,
+so this raises a natural question: when does such a model structure exists?
+We prove several necessary and sufficient conditions for this to be true.
 Examples of applications of these constructions are model structures on strict $\omega$-categories (which was constructed in \cite{folk}) and topological spaces.
 Examples of new model structures constructed by means of results of this paper will be given in \cite{alg-models}.
 
-If we fix the class of cofibrations, then the class of weak equivalences which defines such model structure is unique if it exists.
-These class of weak equivalences is the minimum possible among model structures with this class of cofibrations.
+If a model structure in which all objects are fibrant exists, then the class of weak equivalences of this model structure
+is the smallest class of weak equivalences among model structures with this class of cofibrations.
 Thus a model category in which all objects are fibrant is left-determinant (as defined in \cite{left-det}).
 But the converse is not true.
 For example, the category of simplicial sets (as well as every Grothendieck topos \cite{cisinski})
@@ -101,26 +110,63 @@ Thus the class of model structures in which all objects are fibrant is much narr
 On the other hand model categories in which all objects are fibrant have properties not shared by left-determinant ones.
 Often a set of generating trivial cofibrations is defined using cardinality bounds on domains and codomains of maps,
 which does not give us a useful description of generating trivial cofibrations.
-But if all objects are fibrant, then we can give a simple explicit construction of a set of generating trivial cofibrations (see \rcor{min-cof-gen}).
+But if all objects are fibrant, then we can give a simple explicit construction of a set of generating trivial cofibrations (see \rprop{min-cof-gen}).
 Also, as we already noted, model categories in which all objects are fibrant have a simple characterization of weak equivalences in terms of generating cofibrations.
 
-In section 2, we recall definitions and basic properties of weak factorization systems and model categories.
+Let us discuss the main obstacles that we face when we try to construct such model structure in which all objects are fibrant.
+Since we have an explicit characterization of weak equivalences in terms of cofibrations,
+we just need to check that the classes of weak equivalences, cofibrations and fibrations satisfy the required conditions.
+The first problem is to prove that this class of weak equivalences satisfies the 2-out-of-3 property.
+The most difficult part is to show that if $f : X \to Y$ and $g : Y \to Z$ are maps such that $f$ and $g \circ f$ are weak equivalences, then $g$ is also a weak equivalence.
+For example, it is one of the main obstacles in \cite{folk} and \cite{alg-models}.
+
+\Rthm{main} implies that if we can prove the 2-out-of-3 property for weak equivalences,
+then to construct the model structure, we just need to prove that the maps in $\Jcell[_\I]$ are weak equivalences,
+where $\J_\I$ is the set of generating cofibrations defined in section~\ref{sec:exist}.
+A similar problem occurs when we try to construct a transferred model structure.
+If $F : \C \to \D$ is a left adjoint functor and $\C$ is a cofibrantly generated model category, then to construct a model structure on $\D$,
+we just need to prove that maps in $\Icell[F(\J)]$ are weak equivalences, where $\J$ is a set of generating cofibrations of $\C$.
+This condition holds if we can construct functorial path objects for fibrant objects.
+Similar result holds in our case too (\rcor{main-path}).
+Also, analogous result holds if we there are cylinder objects instead of path objects (\rcor{main-cyl}).
+
+Our main result gives a necessary and sufficient condition for the existence of a model structure that satisfies some conditions.
+Thus we may compare our theorem to other analogous criterion that exist in the literature.
+We already mentioned the transferred model structures.
+Another such result is proved in \cite{olschok}, which generalizes a theorem of Cisinski proved in \cite{cisinski}.
+First of all, the results of Olschok applies to model categories in which all objects are cofibrant and our results applies to model categories in which all objects are fibrant.
+Since there are not many model categories in which both of these conditions hold, the two results rarely can be applied to construct the same model structure.
+The results of Olschok use Jeff Smith's theorem, and hence applies only to locally presentable categories.
+Our results applies to all bicomplete categories and give a model structure with explicitly described set of generating trivial cofibrations.
+Finally, the class of weak equivalences is completely determined by the class of cofibrations in our setting,
+and the theorems of Olschok give some freedom in choosing the class of weak equivalences.
+
+The paper is organized as follows.
+In section 2, we recall basic properties of model categories and establish the notation that we use in this paper.
 In section 3, we prove several results that are related to fibrant objects, fibrations and trivial cofibrations between them.
+First of all, we give a characterization of weak equivalences between fibrant objects.
+Then we prove that if the fibrant objects are determined by a set $S$ of trivial cofibrations,
+then trivial cofibrations and fibrations with fibrant codomains are determined by a set of generating cofibrations which is explicitly defined in terms of $S$.
+Finally, we prove a necessary and sufficient condition for a right Quillen functor to reflect weak equivalences between fibrant objects.
 In section 4, we demonstrate a method of constructing model structures in which all objects are fibrant.
+We prove several necessary and sufficient conditions for such a model structure to exist.
 
 \section{Preliminaries}
+\label{sec:preliminaries}
 
-In this section, we will introduce a few definitions that we will need later.
-We will also recall the definition and basic properties of model categories and prove a slightly generalized versions of some standard lemmas.
-
-\subsection{Homotopy relation}
+In this section, we recall several standard definition and properties related to model categories.
+Most of the propositions are either standard or a variation of such propositions and will be given either without a proof or with a short proof.
+The definition that we use are also mostly standard.
+We want to apply these definitions in categories without model structure, so we need a slightly more general definitions of cylinder and path objects.
 
 Let $\C$ be a category and let $V$ be an object of $\C$.
-Then we a \emph{cylinder object} for $V$ is an object $C(V)$ together with maps $\cyli_0,\cyli_1 : V \to C(V)$.
+Then a \emph{cylinder object} for $V$ is an object $C(V)$ together with maps $\cyli_0,\cyli_1 : V \to C(V)$.
 If $i : U \to V$ is a morphism of $\C$, then a \emph{relative cylinder object} for $\C$
 is a cylinder object $(C_U(V),\cyli_0,\cyli_1)$ for $V$ such that $\cyli_0 \circ i = \cyli_1 \circ i$.
 If $\C$ has the initial object $0$, then a relative cylinder object for $0 \to V$ is just a cylinder object for $V$.
 A morphism of cylinder objects $C(V_1)$ and $C(V_2)$ is a pair of maps $f : V_1 \to V_2$ and $C(f) : C(V_1) \to C(V_2)$ which commute with $\cyli_0$ and $\cyli_1$.
+Note that we do not require that there exists a map $s : C(V) \to V$ such that $s \circ \cyli_0 = s \circ \cyli_1 = id_V$.
+We also do not require maps $\cyli_0,\cyli_1$ to be weak equivalences in any sense.
 
 A \emph{(left) homotopy} (with respect to $C(V)$) between maps $f,g : V \to X$ is a map $h : C(V) \to X$ such that $h \circ \cyli_0 = f$ and $h \circ \cyli_1 = g$.
 Maps are \emph{homotopic} if there is a homotopy between them.
@@ -128,16 +174,32 @@ Maps are \emph{homotopic relative to $i : U \to V$} (with respect to $C_U(V)$) i
 Note that maps are homotopic relative to $i$ only if $i \circ f = i \circ g$.
 If maps $f$ and $g$ are homotopic, then we write $f \sim g$, and if they are homotopic relative to $i$, then we write $f \sim_i g$.
 
+Note that $\sim$ is reflexive if and only if there exists a map $s : C_U(V) \to V$ such that $s \circ \cyli_0 = s \circ \cyli_1 = id_V$.
+In this case we will say that $C_U(V)$ is \emph{reflexive}.
+Relation $\sim^r$ is reflexive if and only if there exists a map $t : X \to P(X)$ such that $p_0 \circ t = p_1 \circ t = id_X$.
+In this case we will say that $P(X)$ is \emph{reflexive}.
+If $P(X)$ is reflexive, then we say that a right homotopy $h : V \to P(X)$ between $f,g : V \to X$
+is \emph{constant on $i : U \to V$} if $h \circ i = t \circ f \circ i$.
+In this case, we write $f \sim^r_i g$ and say that $f$ and $g$ are \emph{homotopic relative to $i$}.
+
+Let $\C$ be a category and let $X$ be an object of $\C$.
+A \emph{path object} for $X$ is an object $P(X)$ together with maps $p_0,p_1 : P(X) \to X$.
+A \emph{(right) homotopy} between morphisms $f,g : V \to X$ is a map
+$h : V \to P(X)$ such that $p_0 \circ h = f$ and $p_1 \circ h = g$.
+We say that $f$ and $g$ are right homotopic and write $f \sim^r g$
+if there exists a right homotopy $h : V \to P(X)$ between them.
+A morphism of path objects $P(X)$ and $P(Y)$ is a pair of maps $f : X \to Y$ and $P(f) : P(X) \to P(Y)$ which commute with $p_0$ and $p_1$.
+
 Let $V,Y$ be objects of a category $\C$ and $R$ some relation on the set $\C(V,Y)$.
 Given two morphisms $f : U \to V$ and $g : X \to Y$, we say that $f$ \emph{has the left lifting property (LLP) up to $R$} with respect to $g$,
 and $g$ \emph{has the right lifting property (RLP) up to $R$} with respect to $f$ if for every commutative square of the form
 \[ \xymatrix{ U \ar[r]^u \ar@{}[dr]|(.7){R} \ar[d]_f & X \ar[d]^g \\
               V \ar[r]_v \ar@{-->}[ur]^h             & Y,
             } \]
-there is a dotted arrow $h : V \to X$ such that $h \circ f = u$ and $(g \circ h) R v$.
+there is a dotted arrow $h : V \to X$ such that $h \circ f = u$ and $(g \circ h)\,R\,v$.
 We say a map $f$ has the right lifting property up to $R$ with respect to
 an object $V$ if it has this property with respect to the map $0 \to V$.
-Given a morphism $f$ and a set of morphisms $\I$, $f$ has the left (right) lifting property up to $R$
+Given a morphism $f$ and a set of morphisms $\I$, the map $f$ has the left (right) lifting property up to $R$
 with respect to $\I$ if it has this property with respect to all morphisms in $\I$.
 Note that a map has the right (left) lifting property if it has this property up to the equality relation.
 Often, we need to talk about maps which have RLP up to $\sim_i$ with respect to some map $i$.
@@ -160,69 +222,25 @@ We list a few elementary properties of pure morphisms in the following propositi
 \end{enumerate}
 \end{prop}
 
-Let $\C$ be a category and let $X$ be an object of $\C$.
-A \emph{path object} for $X$ is an object $P(X)$ together with maps $p_0,p_1 : P(X) \to X$.
-A \emph{(right) homotopy} between morphisms $f,g : V \to X$ is a map
-$h : V \to P(X)$ such that $p_0 \circ h = f$ and $p_1 \circ h = g$.
-We say that $f$ and $g$ are right homotopic and write $f \sim^r g$
-if there exists a right homotopy $h : V \to P(X)$ between them.
-A morphism of path objects $P(X)$ and $P(Y)$ is a pair of maps $f : X \to Y$ and $P(f) : P(X) \to P(Y)$ which commute with $p_0$ and $p_1$.
-
-Note that $\sim$ is reflexive if and only if there exists a map $s : C_U(V) \to V$ such that $s \circ \cyli_0 = s \circ \cyli_1 = id_V$.
-In this case we will say that $C_U(V)$ is \emph{reflexive}.
-Relation $\sim^r$ is reflexive if and only if there exists a map $t : X \to P(X)$ such that $p_0 \circ t = p_1 \circ t = id_X$.
-In this case we will say that $P(X)$ is \emph{reflexive}.
-If $P(X)$ is reflexive, then we say that a right homotopy $h : V \to P(X)$ between $f,g : V \to X$
-is \emph{constant on $i : U \to V$} if $h \circ i = t \circ f \circ i$.
-In this case, we write $f \sim^r_i g$ and say that $f$ and $g$ are \emph{homotopic relative to $i$}.
-
-\subsection{Model categories}
-
 Model categories were introduced in \cite{quillen}.
 For an introduction to the theory of model categories see \cite{hirschhorn,hovey}.
-
-\begin{defn} A weak factorization system on a category $\C$ is a pair $(\mathcal{L},\mathcal{R})$
-of full subcategories of the category $\C^\to$ of arrows of $\C$ such that
-\begin{itemize}
-\item Every morphism factors into a map in $\mathcal{L}$ followed by a map in $\mathcal{R}$.
-\item $\mathcal{L}$ is the class of maps that have LLP with respect to $\mathcal{R}$.
-\item $\mathcal{R}$ is the class of maps that have RLP with respect to $\mathcal{L}$.
-\end{itemize}
-\end{defn}
-
-\begin{defn}
-A \emph{model structure} on a category $\C$ is a choice of three classes of morphisms $\fib$, $\cof$, and $\we$,
-called \emph{fibrations}, \emph{cofibrations}, and \emph{weak equivalences} respectively, satisfying the following axioms:
-\begin{itemize}
-\item $\we$ has 2-out-of-3 property, that is given composable morphisms $f,g$,
-    if two out of three morphisms $f$, $g$, $g \circ f$ are in $\we$, so is the third.
-\item $(\cof, \fib \cap \we)$ and $(\cof \cap \we, \fib)$ are weak factorization systems.
-\end{itemize}
-A \emph{model category} is a complete and cocomplete category equipped with a model structure.
-\end{defn}
-
-A map is called a \emph{trivial fibration} if it belongs to $\fib \cap \we$,
-and it is called a \emph{trivial cofibration} if it belongs to $\cof \cap \we$.
-An object $X$ is called \emph{fibrant} if the morphism $X \to 1$ to the terminal object is a fibration,
-and it is called \emph{cofibrant} if the morphism $0 \to X$ from the initial object is a cofibration.
+We will denote the sets of cofibrations, fibrations and weak equivalences of a model category by $\cof$, $\fib$, and $\we$, respectively.
 
 Let $\C$ be a model category.
-Then we can define a relative cylinder object $C_U(V)$ for every $i : U \to V$.
-Let $[\cyli_0,\cyli_1] : V \amalg_U V \to C(V)$, $s : C(V) \to V$ be a factorization of $[id_V,id_V] : V \amalg_U V \to V$ into a cofibration and a trivial fibration.
-The homotopy relation corresponding to this cylinder object is always reflexive and symmetric.
-
-Every object $X$ in a model category $\C$ has a reflexive path object which is defined as a factorization of the diagonal $\langle id_X, id_X \rangle : X \to X \times X$.
+Then there is a reflexive relative cylinder object $C_U(V)$ for every map $i : U \to V$ of $\C$.
+There is also a reflexive path object $P(X)$ for every object $X$ of $\C$.
 The following proposition is standard:
 \begin{prop}[path-cyl]
 If $i : U \to V$ is a cofibration and $X$ is a fibrant object, then maps $f,g : V \to X$ are left homotopic relative to $i$ if and only if they are right homotopic relative to $i$.
 This homotopy relation is an equivalence relation.
 \end{prop}
 
+The definitions of a deformation retract and a strong deformation retract are standard.
 A map $f : X \to Y$ is \emph{an inclusion of a deformation retract} if there is
 a map $g : Y \to X$ such that $g \circ f = id_X$ and $f \circ g \sim id_Y$.
 A map $f : X \to Y$ is \emph{an inclusion of a strong deformation retract} if the homotopy is relative to $f$.
 
-The following lemmas generalize standard properties of model categories.
+The following lemmas are slight generalizations of standard properties of model categories.
 
 \begin{lem}[hom-ext][Homotopy extension property]
 Let $\C$ be a category, and let $i : U \to V$ be a morphism of $\C$.
@@ -273,20 +291,7 @@ Every relative $\I$-cell complex belongs to $\Icof$.
 
 We say that a set $\I$ of maps of a cocomplete category $\C$ \emph{permits the small object argument}
 if the domains of maps in $\I$ are small relative to $\Icell$.
-
-\begin{prop}[][The small object argument]
-Let $\C$ be a cocomplete category and $\I$ a set of maps of $\C$ that permits the small object argument.
-Then $(\Icell,\Iinj)$ is a weak factorization system.
-\end{prop}
-
-\begin{defn}
-Let $\C$ be a category with a model structure. Then this model category is
-\emph{cofibrantly generated} if there are sets $\I$ and $\J$ of maps of $\C$ such
-that they permit the small object argument, $\fib = \Jinj$, and $\fib \cap \we = \Iinj$.
-
-Elements of $\I$ are called \emph{generating cofibrations},
-and elements of $\J$ are called \emph{generating trivial cofibrations}.
-\end{defn}
+The following proposition is standard and appears in this form in \cite{hovey}.
 
 \begin{prop}[model-cat]
 Suppose that $\C$ is a complete and cocomplete category, $\we$ is a class of morphisms of $\C$, and $\I$, $\J$ are sets of morphisms of $\C$.
@@ -294,7 +299,7 @@ Then $\C$ is a cofibrantly generated model category with $\I$ as the set of gene
 $\J$ as the set of generating trivial cofibrations, and $\we$ as the class of weak equivalences if and only if the following conditions are satisfied:
 \begin{description}
 \item[(A1)] $\I$ and $\J$ permit the small object argument.
-\item[(A2)] $\we$ has 2-out-of-3 property and is closed under retracts.
+\item[(A2)] $\we$ has the 2-out-of-3 property and is closed under retracts.
 \item[(A3)] $\Iinj \subseteq \we$.
 \item[(A4)] $\Jcell \subseteq \we \cap \Icof$.
 \item[(A5)] Either $\Jinj \cap \we \subseteq \Iinj$ or $\Icof \cap \we \subseteq \Jcof$.
@@ -306,67 +311,22 @@ $\J$ as the set of generating trivial cofibrations, and $\we$ as the class of we
 In this section, we will prove various properties of model categories that are related to fibrant objects.
 In particular, we will give a characterization of weak equivalences between fibrant objects.
 
-\subsection{Generating trivial cofibrations}
-
-First, let us show how to construct a set of generating trivial cofibrations from a set of generating cofibrations satisfying some mild hypotheses,
-assuming that every object in a model category is fibrant.
-Let $\C$ be a category and $\I$ a class of maps of $\C$ together with a relative cylinder object $C_U(V)$ for every $i : U \to V$ in $\I$.
-Let us denote by $\J_\I$ the class of maps $\cyli_0 : V \to C_U(V)$ for each $U \to V \in \I$.
-
-\begin{prop}[triv-fib-iinj]
-Let $\C$ be a category, and let $\I$ be a class of maps of $\C$.
-If $f : X \to Y \in \Jinj[_\I]$ has RLP up to relative homotopy with respect to $\I$, then $f \in \Iinj$.
-\end{prop}
-\begin{proof}
-Suppose we have a commutative square as below.
-We need to find a lift $V \to X$ such that both triangles commute.
-\[ \xymatrix{ U \ar[d]_{i \in \I} \ar[r] \ar@{}[dr]|(.7){\sim} & X \ar[d]^f \\
-              V \ar[r]_v \ar@{-->}[ur]^g                       & Y
-            } \]
-By assumption, we have a lift $g : V \to X$ together with
-a homotopy $h : C_U(V) \to Y$ between $f \circ g$ and $v$.
-Since $f$ has RLP with respect to $\cyli_0$, we have a lift $h' : C_U(V) \to X$ in the following diagram:
-\[ \xymatrix{ V \ar[r]^g \ar[d]_{\cyli_0}         & X \ar[d]^f \\
-              C_U(V) \ar[r]^-h \ar@{-->}[ur]^{h'} & Y.
-            } \]
-Then $h' \circ \cyli_1$ is a required lift in the original square.
-\end{proof}
-
-\begin{cor}[min-cof-gen]
-Let $\C$ be an model category in which every object is fibrant.
-Suppose that the class of cofibrations is generated by a set $\I$ such that
-the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
-Then the model structure is cofibrantly generated with $\J_\I$ as a set of generating trivial cofibrations.
-\end{cor}
-\begin{proof}
-This follows from the previous proposition and \rprop{model-cat}.
-\end{proof}
-
 \subsection{Weak equivalences between fibrant objects}
 
 The following propositions give useful characterizations of trivial
 cofibrations and weak equivalences between fibrant objects.
+The characterization for weak equivalences is similar to the one described in \cite{vogt-we}.
 
 \begin{prop}[min-triv-cof]
 Let $\C$ be a model category.
-Any inclusion of a strong deformation retract $f$ is a weak equivalence.
-If $f$ is a cofibration between fibrant objects, then the converse is true.
+A cofibration between fibrant objects is a weak equivalence if and only if it is an inclusion of a strong deformation retract.
 \end{prop}
 
 This characterization of trivial cofibrations is probably well-known.
 Similar propositions are proved in \cite{hirschhorn}, but we could not find a reference for this property, so we include a proof for the sake of convenience.
 
 \begin{proof}
-First, let us show that any inclusion of a strong deformation retract $f : X \to Y$ is a weak equivalence.
-Factor $f$ into a trivial cofibration $i : X \to Z$ followed by a fibration $p : Z \to Y$.
-Let $g : Y \to X$ be a retraction of $f$ and let $h : C_X(Y) \to Y$ be a homotopy between $f \circ g$ and $id_Y$.
-Consider the following diagram:
-\[ \xymatrix{ Y \ar[r]^{i \circ g} \ar[d]_{\cyli_0} & Z \ar[d]^p \\
-              C_X(Y) \ar[r]_-h \ar@{-->}[ur]^{h'}   & Y.
-            } \]
-Since $\cyli_0 : Y \to C_X(Y)$ is a trivial cofibration, we have a lift $h' : C_X(Y) \to Z$.
-Then $h' \circ \cyli_1 \circ f = i$ and $p \circ h' \circ \cyli_1 = id_Y$, thus $f$ is a retract of $i$, hence a weak equivalence.
-
+Every inclusion of a deformation retract becomes an isomorphism in the homotopy category and every such map is a weak equivalence.
 To prove the converse, let us show that every weak equivalence with fibrant domain is pure with respect to cofibrations.
 This follows from the fact that every weak equivalence can be factored into a trivial cofibrant and a trivial fibration.
 Every trivial fibration is pure with respect to cofibrations, and every trivial cofibration with fibrant domain is a split monomorphism,
@@ -374,7 +334,7 @@ hence it is pure with respect to any map.
 
 Now, let $f : X \to Y$ be a trivial cofibration between fibrant objects.
 Since $X$ is fibrant, $f$ has a retraction $g : Y \to X$.
-By 2-out-of-3 property, $g$ is a weak equivalence.
+By the 2-out-of-3 property, $g$ is a weak equivalence.
 Since $Y$ is fibrant, $g$ is pure with respect to cofibrations.
 Consider the following diagram:
 \[ \xymatrix{ Y \amalg_X Y \ar[rr]^-{[f \circ g, id_Y]} \ar[d]_{[\cyli_0,\cyli_1]} & & Y \ar[d]^g \\
@@ -434,6 +394,31 @@ Finally, note that $h_2$ is a relative homotopy between $g \circ f \circ v_x = p
 It follows that $p_1 \circ h^n_1 = g \circ v_y$ and $p_1 \circ h^n_3 = v$ are also relatively homotopic.
 \end{proof}
 
+If $\I$ is a class of maps of a category $\C$, then let us denote by $\J_\I$ the class of maps $\cyli_0 : V \to C_U(V)$ for each $U \to V \in \I$.
+We will show that if $\I$ generates the class of cofibrations of a model category in which all objects are fibrant,
+then a map is a weak equivalence if and only if it has RLP up to relative homotopy with respect to $\I$.
+Thus the following proposition implies that if a map of such a model category is a weak equivalence and belongs to $\Jinj_[\I]$, then it is a trivial fibration.
+This implies that $\J_\I$ can be used as a set of generating trivial cofibrations if it permits the small object argument (see \rprop{min-cof-gen}).
+
+\begin{prop}[triv-fib-iinj]
+Let $\C$ be a category, and let $\I$ be a class of maps of $\C$.
+If $f : X \to Y \in \Jinj[_\I]$ has RLP up to relative homotopy with respect to $\I$, then $f \in \Iinj$.
+\end{prop}
+\begin{proof}
+Suppose we have a commutative square as below.
+We need to find a lift $V \to X$ such that both triangles commute.
+\[ \xymatrix{ U \ar[d]_{i \in \I} \ar[r] \ar@{}[dr]|(.7){\sim} & X \ar[d]^f \\
+              V \ar[r]_v \ar@{-->}[ur]^g                       & Y
+            } \]
+By assumption, we have a lift $g : V \to X$ together with
+a homotopy $h : C_U(V) \to Y$ between $f \circ g$ and $v$.
+Since $f$ has RLP with respect to $\cyli_0$, we have a lift $h' : C_U(V) \to X$ in the following diagram:
+\[ \xymatrix{ V \ar[r]^g \ar[d]_{\cyli_0}         & X \ar[d]^f \\
+              C_U(V) \ar[r]^-h \ar@{-->}[ur]^{h'} & Y.
+            } \]
+Then $h' \circ \cyli_1$ is a required lift in the original square.
+\end{proof}
+
 Now we can give a characterization of weak equivalences between fibrant objects.
 
 \begin{prop}[min-we]
@@ -465,20 +450,48 @@ For every morphism $u : U \to Z$ we can define a lift $u' : U \to Y$ as $g' \cir
 Then $h \circ u$ is a homotopy between $f' \circ u'$ and $u$.
 
 Since $Z$ and $Y$ are fibrant, conditions of \rlem{we-bot} are satisfied.
-Hence $g$ has RLP up to relative homotopy with respect to $\I$.
+Hence, $g$ has RLP up to relative homotopy with respect to $\I$.
 Since $\J_\I$ consists of trivial cofibrations, by \rprop{triv-fib-iinj}, $g$ is a trivial fibration.
-Thus $f$ is a weak equivalence by 2-out-of-3 property.
+Thus $f$ is a weak equivalence by the 2-out-of-3 property.
 \end{proof}
 
-Often the class of cofibrations is generated by much smaller class $\I$.
+Often the class of cofibrations is generated by a much smaller class $\I$.
 Thus the last condition in the previous proposition gives us a useful characterization of weak equivalences between fibrant objects which is easy to verify in practice.
 In particular, if every object in a model category is fibrant, then this proposition gives us a complete characterization of weak equivalences, which we will use in the next section.
+The equivalence $1 \Leftrightarrow 3$ is well-known for topological spaces.
+A variation of this proposition is proved in \cite{vogt-we},
+where a map between fibrant objects is proved to be a weak equivalence if and only if it satisfies a slightly stronger version of the second condition of $\rprop{min-we}$.
+
+Let $\C$ be a model category in which every object is fibrant.
+If $\C$ has a set of generating cofibrations $\I$ which satisfies a mild additional hypothesis, then using the characterization of weak equivalence that we gave in \rprop{min-we},
+we can construct a set of generating trivial cofibrations for this model structure.
+This shows that the model category is cofibrantly generated in this case,
+and the set of generating trivial cofibrations has a simple explicit description in terms of generating cofibrations.
+
+\begin{prop}[min-cof-gen]
+Let $\C$ be a model category in which every object is fibrant.
+Suppose that the class of cofibrations is generated by a set $\I$ such that
+the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
+Then the model structure is cofibrantly generated with $\J_\I$ as a set of generating trivial cofibrations.
+\end{prop}
+\begin{proof}
+Let us check the conditions of \rprop{model-cat}:
+\begin{description}
+\item[(A1)] Since the domains of maps in $\J_\I$ are the codomains of maps in $\I$, the classes $\I$ and $\J_\I$ permit the small object argument by assumption.
+\item[(A2)] The class of weak equivalences is closed under retracts and satisfies 2-out-of-3 since $\C$ is a model category.
+\item[(A3)] Since $\I$ is a set of generating cofibrations, every map in $\Iinj$ is a weak equivalence.
+\item[(A4)] A map $\cyli_0 : V \to C_U(V)$ in $\J_\I$ is the composition of maps $V \to V \amalg_U V \to C_U(V)$,
+where the first map is a pushout of a cofibration $U \to V$ and the second map is a cofibration by definition.
+Moreover, $C_U(V) \to V$ is a weak equivalence; hence, $\cyli_0$ is also a weak equivalence by 2-out-of-3.
+\item[(A5)] By \rprop{triv-fib-iinj} and \rprop{min-we}, if $f \in \Jinj[_\I] \cap \we$, then $f \in \Iinj$.
+\end{description}
+\end{proof}
 
 \subsection{Trivial cofibrations and fibrations with fibrant codomains}
 
-If not every object of a model category is fibrant, then sometimes we can characterize fibrant object as those which have
+If some of the objects of a model category are not fibrant, then sometimes we can characterize fibrant object as those which have
 RLP with respect to some set of trivial cofibrations $S$ which is considerably smaller than a set of generating cofibrations.
-For example, Joyal model structure on simplicial sets has weak Kan complexes as fibrant objects,
+For example, the Joyal model structure on simplicial sets has weak Kan complexes as fibrant objects,
 which are simplicial sets that have RLP with respect to inner horns.
 But inner horns do not generate the whole class of trivial cofibrations.
 
@@ -501,7 +514,7 @@ Factor $f$ into a map $g : X \to Y \in \Icell[(\J_\I \cup S)]$ followed by a map
 \[ \xymatrix{ X \ar[r]^g \ar[d]_f & Y \ar[d]^h \\
               Z \ar@{=}[r] \ar@{-->}[ur] & Z
             } \]
-By 2-out-of-3 property, $h$ is a weak equivalence.
+By the 2-out-of-3 property, $h$ is a weak equivalence.
 Since it is a weak equivalence between fibrant objects, by \rprop{min-we}, it has RLP up to relative homotopy with respect to $\I$.
 By \rprop{triv-fib-iinj}, $f \in \Iinj$.
 Hence, we have a lift $Z \to Y$ as shown in the diagram above.
@@ -517,11 +530,6 @@ Factor $v$ into a map $V \to Z \in \Icell[S]$ followed by a map $Z \to Y \in \Ii
 Since $Z$ is fibrant and $U \to Z$ is a trivial cofibration, we have a lift $Z \to X$ in the diagram above.
 Thus $f$ has RLP with respect to $i$.
 \end{proof}
-
-We can try to use the previous proposition to characterize all trivial cofibrations and fibrations.
-For example, if every map in $\Iinj[(\J_\I \cup S)]$ is a pullback of a map in $\Iinj[(\J_\I \cup S)]$ with fibrant codomain,
-then $\J_\I \cup S$ generates the whole class of trivial cofibrations.
-But we do not know any general situation when this property holds.
 
 \subsection{Quillen equivalences}
 
@@ -543,6 +551,7 @@ We will call elements of $\Icof_h$ \emph{weak $\I$-cofibrations}.
 As usual, we have the following properties: $\I \subseteq \Icof_h$, $\Iinj[\Icof_h]_h = \Iinj_h$, $\Icof[\Icof_h]_h = \Icof_h$, $\Iinj \subseteq \Iinj_h$,
 and if $\I \subseteq \J$, then $\Jinj_h \subseteq \Iinj_h$ and $\Icof_h \subseteq \Jcof_h$.
 \Rprop{min-we} implies that $\Iinj[\cof]_h = \we$ and if $\Icof = \cof$, then $\Iinj_h = \we$ and $\Icof_h = \cof$.
+The following lemma is analogous to \cite[Lemma~2.1.8]{hovey}:
 
 \begin{lem}
 Let $U : \D \to \C$ be a right Quillen functor with left adjoint $F : \C \to \D$.
@@ -571,11 +580,11 @@ Thus $F(f) \in \Icof[F\I]_h$.
 
 Now, we can prove the characterization of Quillen equivalences.
 Sometimes this condition is easier to verify.
-For example, if a set of generating cofibration of $\D$ is defined as $F(\I)$ for some set $\I$ of generating cofibrations of $\C$, then this condition holds immediately.
+For example, if $\Icof[F(\cof_\C)]$ constains cofibrations of $\D$, then this condition holds immediately.
 
 \begin{prop}
-Let $U : \D \to \C$ be a right Quillen functor with left adjoint $F : \C \to \D$.
-Then $U$ reflects weak equivalences if and only if $\cof_\D \subseteq \Icof[F(\cof_\C)]_h$.
+Let $U : \D \to \C$ be a right Quillen functor with a left adjoint $F : \C \to \D$.
+Then $U$ reflects weak equivalences between fibrant objects if and only if $\cof_\D \subseteq \Icof[F(\cof_\C)]_h$.
 \end{prop}
 \begin{proof}
 Let $f : X \to Y$ be a map of $\D$ such that $X$ and $Y$ are fibrant.
@@ -586,13 +595,13 @@ But this follows from the facts that $\we_\D = \Iinj[\cof_\D]_h$ and $\Icof[\cof
 \end{proof}
 
 \begin{cor}
-A Quillen adjunction $F \dashv U$ is a Quillen equivalence if and only if the map $X \to URF(X)$ is a weak equivalence of every cofibrant $X$ and $\cof_\D \subseteq \Icof[F(\cof_\C)]_h$.
+A Quillen adjunction $F \dashv U$ is a Quillen equivalence if and only if the map $X \to URF(X)$ is a weak equivalence for every cofibrant $X$ and $\cof_\D \subseteq \Icof[F(\cof_\C)]_h$.
 \end{cor}
 
 Just as ordinary cofibrations, the class of weak cofibrations is closed under retracts as we will see in the proposition below.
 But it is also closed under weaker notion of retracts that we now introduce.
 Let $f : X \to Y$ and $g : Z \to W$ be maps of some model category.
-Then we say that $f$ is a retract of $g$ in a weak sense if there exists the following diagram:
+Then we say that $f$ is a weak retract of $g$ if there exists the following diagram:
 \[ \xymatrix{ X \ar[r] \ar[d]_f & Z \ar[r] \ar[d]_g & X \ar[d] \\
               Y \ar[r]          & W \ar[r]          & Y'
             } \]
@@ -601,7 +610,7 @@ where the composition of the top row is the identity morphism and the compositio
 We do not know whether the class of weak cofibrations is always closed under transfinite compositions, but we can prove that it is closed under pushouts and compositions:
 
 \begin{prop}
-The class of weak $\I$-cofibrations is closed under pushouts, compositions and retracts in a weak sense.
+The class of weak $\I$-cofibrations is closed under pushouts, compositions and weak retracts.
 \end{prop}
 \begin{proof}
 Suppose $i : U \to V$ is a weak $\I$-cofibration.
@@ -627,7 +636,7 @@ Since $i$ has LLP up to $\sim_i$ with respect to $f$, there exist a map $v : V \
 By the homotopy extension property, there exist a map $w' : W \to Y$ such that $w' \circ j = f \circ v$ and a homotopy $h' : W \to P(Y)$ between $w$ and $w'$ constant on $j \circ i$.
 Since $j$ has LLP up to $\sim_j$ with respect to $f$, there exist a map $w'' : W \to X$ such that $f \circ w''$ is relatively homotopic to $w$.
 
-Finally, let us prove that $\I$-cofibrations are closed under retract in a weak sense.
+Finally, let us prove that $\I$-cofibrations are closed under weak retracts.
 Suppose that $i : U \to V$ is a retract of a weak $\I$-cofibration $f : X \to Y$.
 Then there exist maps $V \to Y$ and $Y \to V'$ such that $V \to Y \to V'$ is a trivial cofibration.
 Let $g : Z \to W \in \Iinj_h$, $u : U \to Z$, and $v : V \to W$ be maps such that $v \circ i = g \circ u$.
@@ -643,7 +652,7 @@ Then $V \to Y \to Z$ is the required lift in the original square.
 We can also prove the following standard proposition:
 
 \begin{prop}
-If the class $\I$ is a set that admits the small object argument, then every weak $\I$-cofibration is a retract in a weak sense of a relative $\I$-cell complex.
+If the class $\I$ is a set that admits the small object argument, then every weak $\I$-cofibration is a weak retract of a relative $\I$-cell complex.
 \end{prop}
 \begin{proof}
 Let $f : X \to Y$ be an $\I$-cofibration.
@@ -653,19 +662,20 @@ Since $Z \to R(Y)$ is a weak equivalence between fibrant objects, we have a lift
 \[ \xymatrix{ X \ar[r] \ar[d]_f             & Z \ar[d] \\
               Y \ar[r]_{r_Y} \ar@{-->}[ur]  & R(Y)
             } \]
-Thus $f$ is a retract in a weak sense of $X \to Z$.
+Thus $f$ is a weak retract of $X \to Z$.
 \end{proof}
 
 \section{Existence of model structures}
+\label{sec:exist}
 
 In this section, we will give necessary and sufficient conditions for the existence of a model structure in which all objects are fibrant.
 Throughout this section let $\C$ be a fixed complete and cocomplete category and $\I$ a set of maps of $\C$
 such that the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
-For every $i : U \to V \in \I$, choose a reflexive relative cylinder object $C_U(V)$
-such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V) \in \Icof$.
+Suppose that for every map $i : U \to V$ in $\I$, there exists a reflexive relative cylinder object $C_U(V)$ such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V) \in \Icof$.
+Note that such a cylinder object always exists by the small object argument, but sometimes we can choose another object which is more convenient to work with.
+
 Let $\J_\I = \{\ \cyli_0 : V \to C_U(V)\ |\ i : U \to V \in \I \ \}$, and
 let $\we_\I$ be the set of maps which have RLP up to relative homotopy with respect to $\I$.
-
 We will consider the following conditions:
 \begin{align}
 & \text{For every composable $f \in \Jcell[_\I]$ and $g$, if $g \circ f \in \we_\I$, then $g \in \we_\I$} \label{cond:main} \tag{*} \\
@@ -689,14 +699,16 @@ By assumption, $g \in \we_\I$.
 By \rprop{triv-fib-iinj}, $g \in \Iinj$.
 
 Maps in $\Iinj$ are pure with respect to cofibrations.
-Maps in $\Jcell[_\I]$ are split monomorphisms; thus they are pure with respect to all maps.
-Hence every weak equivalence is pure with respect to cofibrations.
+Maps in $\Jcell[_\I]$ are split monomorphisms.
+Indeed, the map $\cyli_0 : V \to C_U(V)$ has a retraction by assumption and split monomorphisms are closed under pushouts and transfinite compositions.
+Thus maps in $\Jcell[_\I]$ are pure with respect to all maps.
+Hence, every weak equivalence is pure with respect to cofibrations.
 Since every weak equivalence factors into a map in $\Jcell[_\I]$ followed by a map in $\Iinj$,
 to prove that every weak equivalence has RLP up to $\sim_i$ with respect to every cofibration $i : U \to V$,
 it is enough to show that every map in $\Jcell[_\I]$ has this property.
 Let $f : X \to Y$ be a map in $\Jcell[_\I]$.
 It has a retraction $g : Y \to X$ which is a weak equivalence by condition~\eqref{cond:main}.
-Hence $g$ is pure.
+Hence, $g$ is pure.
 Let $u : U \to X$ and $v : V \to Y$ be maps such that the obvious square commutes.
 Consider the following diagram:
 \[ \xymatrix{ V \amalg_U V \ar[rr]^-{[f \circ g \circ v, v]} \ar[d]_{[\cyli_0,\cyli_1]} & & Y \ar[d]^g \\
@@ -721,7 +733,7 @@ Since $g$ is pure with respect to cofibrations, we have a lift $h' : C_U(V) \to 
 
 Now, let us show that every $f : X \to Y \in \Jcell[_\I]$ is a weak equivalence.
 Let $g : Y \to X$ be a retraction of $f$.
-By assumption, $g$ is a weak equivalence.
+Since $g \circ f = id_X$, the retraction $g$ is a weak equivalence by \eqref{cond:main}.
 By \eqref{it:we-top}, $f$ is a weak equivalence too.
 
 Finally, let us prove that weak equivalences are closed under compositions.
@@ -743,28 +755,31 @@ Then $[h_0,h_1] \circ h$ is a homotopy between $f$ and $f''$.
 \end{proof}
 
 \begin{thm}[main]
-There exists a model structure on $\C$ with $\Icof$ as the class of cofibrations and $\Jcof[_\I]$ as the class of trivial cofibrations
+Let $\C$ be a bicomplete category, and let $\I$ be a set of maps of $\C$ such that the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
+Suppose that for every map $i : U \to V$ in $\I$, there exists a reflexive relative cylinder object $C_U(V)$ such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V) \in \Icof$.
+
+Then there exists a model structure on $\C$ with $\Icof$ as the class of cofibrations and $\Jcof[_\I]$ as the class of trivial cofibrations
 if and only if condition~\eqref{cond:strong-main} holds.
 \end{thm}
 \begin{proof}
-First, suppose that such model structure on $\C$ exists.
+First, suppose that such a model structure on $\C$ exists.
 Then every object is fibrant and $C_U(V)$ is a correct cylinder object.
 By \rprop{min-we}, $\we_\I$ is the class of weak equivalences.
-Hence condition~\eqref{cond:strong-main} holds.
+Hence, condition~\eqref{cond:strong-main} holds.
 
 Now, suppose that condition~\eqref{cond:strong-main} holds.
 Let us verify the conditions of \rprop{model-cat}:
 \begin{description}
-\item[(A1)] This holds by assumption.
+\item[(A1)] Since the domains of maps in $\J_\I$ are the codomains of maps in $\I$, the classes $\I$ and $\J_\I$ permit the small object argument by assumption.
 \item[(A2)] The closure of $\we_\I$ under retracts is obvious.
-One part of 2-out-of-3 property holds by assumption, other two parts follow from \rlem{main}.
-\item[(A3)] This is true since $C_U(V)$ is reflexive.
-\item[(A4)] This holds by \rlem{main}.
-\item[(A5)] This holds by \rprop{triv-fib-iinj}.
+One part of the 2-out-of-3 property holds by assumption and the other two parts follow from \rlem{main}.
+\item[(A3)] Since $C_U(V)$ is reflexive, if a map has RLP with respect to every map in $\I$, it also has RLP up to relative homotopy with respect to these maps.
+\item[(A4)] Maps in $\J_\I$ are cofibrations by definition. Maps in $\Jcell[_\I]$ are weak equivalences by \rlem{main}.
+\item[(A5)] \Rprop{triv-fib-iinj} implies that if a map is a weak equivalence and has RLP with respect to $\Jinj[_\I]$, then it has RLP with respect to $\I$.
 \end{description}
 \end{proof}
 
-If maps in $\I$ satisfy some mild assumptions, then we can simplify the condition in \rthm{main}:
+If maps in $\I$ satisfy some mild additional assumptions, then we can simplify the condition in \rthm{main}:
 \begin{prop}[main]
 Suppose that the domains of maps in $\I$ are cofibrant.
 Then conditions \eqref{cond:main} and \eqref{cond:strong-main} are equivalent.
@@ -790,6 +805,7 @@ There are a few ways to do this, but the idea is the same:
 we need to assume that there exists some notion of homotopy on sets of maps which satisfies some conditions.
 There are two standard ways to do this: using path and cylinder objects.
 Now, we present this constructions.
+Note that we use very weak notions of path and cylinder objects (see section~\ref{sec:preliminaries}).
 
 \begin{prop}[main-path]
 Condition~\eqref{cond:main} holds if and only if for every object $X$,
@@ -818,6 +834,12 @@ Now, for every $u : U \to Y$, we can define a lift $u' = g \circ u : U \to X$ an
 Thus $f$ has RLP up to $\sim^r$ with respect to any object.
 \end{proof}
 
+\begin{cor}[main-path]
+Let $\C$ be a category that satisfies the conditions of \rthm{main}.
+Then there exists a model structure on $\C$ with $\Icof$ as the class of cofibrations and $\Jcof[_\I]$ as the class of trivial cofibrations
+if and only if there exist path objects that satisfy the conditions of \rprop{main-path}.
+\end{cor}
+
 \begin{exmp}
 An example of a model category defined in this way is a folk model structure on the category of $\omega$-categories which was constructed in \cite{folk}.
 The conditions of \rprop{main-path} follow from the results of \cite{folk}, but some of them are not needed for this proposition.
@@ -827,7 +849,11 @@ Thus the construction of this model structure can be somewhat simplified using t
 Instead of path objects, we could try to use cylinder objects to verify condition~\eqref{cond:main}.
 The advantage of this approach is that we do not need to define a cylinder object for every object of the category,
 only for objects that are domains and codomains of generating cofibrations.
-The disadvantage is that we still need to verify that maps in $\Jcell$ has RLP up to $\sim$ with respect to domains of generating cofibrations.
+The disadvantage is that we still need to verify that maps in $\Jcell$ has RLP up to $\sim$ with respect to the domains of generating cofibrations.
+
+Recall that a cylinder object for an object $X$ is any object $C(X)$ together with maps $\cyli_0,\cyli_1 : X \to C(X)$.
+We do not require $C(X)$ to be a proper cylinder object.
+That is, maps $X \to C(X)$ may not be weak equivalences and a map $C(X) \to X$ may not exist at all.
 
 \begin{prop}[main-cyl]
 Condition~\eqref{cond:main} holds if and only if for every object $X$ which is either the domain or the codomain of a map in $\I$,
@@ -838,7 +864,7 @@ there exists a cylinder object $C(X)$ such that the following conditions hold:
 \item These cylinder objects satisfy homotopy extension property. That is,
 if $i : U \to V \in \cof$, $u : U \to X$ and $v : V \to X$ are maps, and $h : C(U) \to X$ is a homotopy between $v \circ i$ and $u$,
 then there exists a map $v' : V \to X$ and a homotopy $h' : C(V) \to X$ between $v$ and $v'$ such that $h = h' \circ C(i)$.
-\item Maps in $\Jcell[_\I]$ have RLP up to $\sim^*$ with respect to domains of maps in $\I$.
+\item Maps in $\Jcell[_\I]$ have RLP up to $\sim^*$ with respect to the domains of maps in $\I$.
 \item For every $i : U \to V \in \I$, we have a lift $p$ in the following diagram:
 \[ \xymatrix{ V \amalg_U V \ar[r]^-f \ar[d]_{[\cyli_0,\cyli_1]} & T \\
               C_U(V) \ar@{-->}[ur]_p
@@ -877,6 +903,12 @@ Finally, note that $h_2$ is an extension of $[g \circ f \circ v_x, v_z] = [h^1_1
 It follows that we have an extension of $[h^n_1, h^n_3 \circ s] \circ (\cyli_1 \amalg_{\cyli_1} \cyli_1) = [g \circ v_y, v]$,
 which defines a relative homotopy between $g \circ v_y$ and $v$.
 \end{proof}
+
+\begin{cor}[main-cyl]
+Let $\C$ be a category that satisfies the conditions of \rthm{main}.
+Then there exists a model structure on $\C$ with $\Icof$ as the class of cofibrations and $\Jcof[_\I]$ as the class of trivial cofibrations
+if and only if there exist cylinder objects that satisfy the conditions of \rprop{main-cyl}.
+\end{cor}
 
 \begin{exmp}
 An example of a model category defined in this way is the usual model structure on topological spaces.
@@ -918,6 +950,16 @@ Daniel~G. Quillen, \emph{Homotopical algebra}, Lecture Notes in Mathematics,
 J.~Rosick{\'y} and W.~Tholen, \emph{Left-determined model categories and
   universal homotopy theories}, Transactions of the American Mathematical
   Society \textbf{355} (2003), 3611--3623.
+
+\bibitem{vogt-we}
+R.~M. Vogt, \emph{{The HELP-Lemma And Its Converse In Quillen Model
+  Categories}},  (2010), \href {http://arxiv.org/abs/1004.5249}
+  {\path{arXiv:1004.5249}}.
+
+\bibitem{olschok}
+Marc Olschok, \emph{Left determined model structures for locally presentable
+  categories}, Applied Categorical Structures \textbf{19} (2011), no.~6,
+  901--938.
 
 \end{references*}
 
