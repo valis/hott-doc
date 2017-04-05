@@ -218,7 +218,7 @@ In this system the right hand side of all sequents is an atomic formula.
 \begin{center}
 \AxiomC{}
 \RightLabel{\axlabel{nv}}
-\UnaryInfC{$\varphi \sststile{}{V,x} x\!\downarrow$}
+\UnaryInfC{$\varphi \sststile{}{V} x\!\downarrow$}
 \DisplayProof
 \qquad
 \AxiomC{$\varphi \sststile{}{V} a = b$}
@@ -253,36 +253,28 @@ In this system the right hand side of all sequents is an atomic formula.
 \end{center}
 where $R$ is a predicate symbol of the theory and $\sigma$ is its function symbol.
 
-Finally, for every axiom $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k} \chi_1 \land \ldots \land \chi_m$ and for all terms $t_1 : s_1$, \ldots $t_k : s_k$
-such that $t_i = x_i$ if $x_i \notin FV(\psi_1 \land \ldots \land \psi_n)$, we have the following rules for all $1 \leq j \leq m$:
-\medskip
+Finally, for every axiom $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k} \chi_1 \land \ldots \land \chi_m$
+and for all terms $t_1 : s_1$, \ldots $t_k : s_k$, we have the following rules for all $1 \leq j \leq m$:
+\smallskip
 \begin{center}
-\AxiomC{$\varphi \sststile{}{V} \psi_1[t_1/x_1, \ldots t_k/x_k]$ \qquad \ldots \qquad $\Gamma \sststile{}{V} \psi_n[t_1/x_1, \ldots t_k/x_k]$}
+\AxiomC{$\varphi \sststile{}{V} t_i\!\downarrow$, $1 \leq i \leq k$}
+\AxiomC{$\varphi \sststile{}{V} \psi_i[t_1/x_1, \ldots t_k/x_k]$, $1 \leq i \leq n$}
 \RightLabel{\axlabel{na}}
-\UnaryInfC{$\varphi \sststile{}{V} \chi_j[t_1/x_1, \ldots t_k/x_k]$}
+\BinaryInfC{$\varphi \sststile{}{V} \chi_j[t_1/x_1, \ldots t_k/x_k]$}
 \DisplayProof
 \end{center}
-\medskip
 
 \begin{prop}
 A sequent $\varphi \sststile{}{V} \psi_1 \land \ldots \land \psi_n$ is derivable in the system of rules \axref{b1}-\axref{b6}, \axref{a1}-\axref{a3} if and only if
 sequents $\varphi \sststile{}{V} \psi_1$, \ldots $\varphi \sststile{}{V} \psi_n$ are derivable in the natural deduction system.
 \end{prop}
 \begin{proof}
-Let us first prove the ``if'' part.
-The rule \axref{nv} follows from \axref{a1}, \axref{b3}, and \axref{b2}.
-The rule \axref{ns} follows from \axref{a2}, \axref{a3}, and \axref{b2}.
-The rule \axref{nh} follows from \axref{b1}, \axref{b4}, and \axref{b5}.
-The rule \axref{nl} follows from \axref{a2}, \axref{a3}, and \axref{b6}.
-The rules \axref{np} and \axref{nf} follow from \axref{a3}, \axref{a1}, \axref{b2}, and \axref{b3}.
-The rule \axref{na} follows from \axref{a3}, \axref{b6}, \axref{b2}, and the axioms.
-
-Now, let us prove the ``only if'' part.
-The rules \axref{b1}, \axref{b4}, and \axref{b5} follow from \axref{nh}.
-The rules \axref{b3} and \axref{b6} hold trivially.
-The rule \axref{a1} follows from \axref{nv}.
-The rule \axref{a2} follows from \axref{nl} and \axref{nh}.
-Every axiom is derivable from \axref{na}.
+It is easy to prove the ``if'' part.
+Conversely, the rules \axref{b1}, \axref{b4}, and \axref{b5} follow from \axref{nh},
+the rules \axref{b3} and \axref{b6} hold trivially,
+the rule \axref{a1} follows from \axref{nv},
+the rule \axref{a2} follows from \axref{nl} and \axref{nh},
+and every axiom is derivable from \axref{na}.
 
 To prove the rule \axref{b2}, we just need to show that if sequents $\varphi \sststile{}{V} \psi_1$, \ldots $\varphi \sststile{}{V} \psi_n$,
 and $\psi_1 \land \ldots \land \psi_n \sststile{}{V} \chi$ are derivable in the natural deduction, then $\varphi \sststile{}{V} \chi$ is also derivable.
@@ -801,13 +793,47 @@ But it is actually an isomorphism since $Lang_T$ is full and faithful.
 
 \section{Structure of a cofibration category}
 
-One problem of the model structure that we secribe in the previous section is that
+The model structure that we secribe in the previous section has a problem:
 naturally occurring examples of algebraic dependent type theories are not cofibrant in this model structure.
 In this section we define a full subcategory of theories which are cofibrant in some sense.
 This class of cofibrant theories is not related to cofibrant theories in the model structure of the previous section.
 Thus we define the structure of a cofibration category on such cofibrant theories and
 prove that this cofibration category is equivalent to the cofibration category of cofibrant objects of the model structure.
 Most of algebraic dependent type theories that occur in practice are cofibrant in our new sense.
+
+Let $S_{s_1, \ldots s_k, s}$ be the theory with one predicate symbol $P : s_1 \times \ldots \times s_k$, one function symbol $\sigma : s_1 \times \ldots \times s_k \to s$,
+and one axiom $P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$.
+Let $\I^S$ be the set of maps of the form $S_{l,(d_p,n)} \to S_{l,(p,n)}$, where $l = s_1, \ldots s_k$ is any sequence of sorts and $\sigma$ maps to $e_p(\sigma)$.
+Let $\I^{SP}$ be the union of $\I^S$ and maps of the form $0 \to P_{s_1, \ldots s_k}$.
+Note that $\I \subseteq \I^S$ and $\I^P \subseteq \I^{SP}$.
+Also note that a map has RLP up to relative homotopy with respect to $\I^S$ (or, equivalently, $\I^{SP}$) if and only if it is a strong Morita equivalence.
+
+A map is a relative $\I^{SP}$-cell complex if and only if it is isomorphic to an inclusion of a subtheory $(\mathcal{F},\mathcal{P},\mathcal{A}) \to (\mathcal{F} \amalg \mathcal{F}', \mathcal{P} \amalg \mathcal{P}', \mathcal{A} \amalg \mathcal{A}')$
+such that there is a well-ordering on the set $\mathcal{F}'$ and $\mathcal{A}' = \{ S(\sigma)\ |\ \sigma \in \mathcal{F}' \}$,
+where $S(\sigma)$ is a sequent of the form $\varphi \sststile{}{x_1, \ldots x_k} e_p(\sigma(x_1, \ldots x_k)) = A$,
+where $\varphi$ is a formula and $A$ is a term such that every function symbol that appears in either $\varphi$ or $A$ is less than $\sigma$.
+We call such an inclusion a \emph{presented relative $\I^{SP}$-cell complex}.
+
+\begin{lem}
+Let $f : T \to T'$ be a presented relative $\I^{SP}$-cell complex, where $T = (\mathcal{F},\mathcal{P},\mathcal{A})$ and $T' = (\mathcal{F} \amalg \mathcal{F}', \mathcal{P} \amalg \mathcal{P}', \mathcal{A} \amalg \mathcal{A}')$.
+Let $t$ be a term of $T'$ of the form $\sigma(t_1, \ldots t_k)$, where $\sigma \in \mathcal{F}'$.
+Then, for every formulas $\varphi$ and $\psi$ of $T$, if the sequent $f(\varphi)[t/x] \sststile{}{V} f(\psi)[t/x]$ is derivable,
+then the sequent $f(\varphi)[t'/x] \sststile{}{V} f(\psi)[t'/x]$ is also derivable for every term $t'$ such that the sequent $f(\varphi) \sststile{}{V} e_p(t) = e_p(t')$ is derivable.
+\end{lem}
+\begin{proof}
+We prove this by induction on $\sigma$.
+For a fixed $t$, we proceed by induction on the derivation of $f(\varphi) \sststile{}{V} f(\psi)[t/x]$ in the natural deduction system.
+Let us consider the rules \axref{nl} and \axref{na} since the rest are easy to prove.
+First, 
+\AxiomC{$f(\varphi) \sststile{}{V} a = b$}
+\AxiomC{$f(\varphi) \sststile{}{V} \psi'[a/x]$}
+\BinaryInfC{$f(\varphi) \sststile{}{V} \psi'[b/x]$}
+\DisplayProof
+
+\AxiomC{$f(\varphi) \sststile{}{V} \psi_1[t_1/x_1, \ldots t_k/x_k]$ \qquad \ldots \qquad $\Gamma \sststile{}{V} \psi_n[t_1/x_1, \ldots t_k/x_k]$}
+\UnaryInfC{$f(\varphi) \sststile{}{V} \chi_j[t_1/x_1, \ldots t_k/x_k]$}
+\DisplayProof
+\end{proof}
 
 Let $T'_{s_1, \ldots s_{k+1}}$ be equal to $T_{s_1, \ldots s_{k+1}}$ together with axiom
 $\sigma_{k+1}(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \varphi_1 \land \ldots \land \varphi_k$.
