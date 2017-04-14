@@ -767,13 +767,18 @@ Thus this adjunction is a Quillen equivalence.
 
 Now, let us return to the original problem of the absence of predicate symbols in cofibrant objects.
 Instead of forbidding predicate symbols completely, we can enlarge the class of cofibrations to include predicate symbols.
-For every sequence of sorts $s_1, \ldots s_k$, let $P_{s_1, \ldots s_k}$ be the theory under $T_I$ with one additional predicate symbol $R : s_1 \times \ldots \times s_k$.
-Let $\I^P$ be the union of $\I$ and maps of the form $0 \to P_{s_1, \ldots s_k}$.
-A relative cylinder object for a map $0 \to P_{s_1, \ldots s_k}$ is just $P_{s_1, \ldots s_k} \amalg P_{s_1, \ldots s_k}$.
-Thus any two maps $P_{s_1, \ldots s_k} \to X$ are homotopic.
+For every sequence of sorts $s_1, \ldots s_k$, let $P^1_{s_1, \ldots s_k}$ be the theory under $T_I$ with one additional predicate symbol $P : s_1 \times \ldots \times s_k$.
+Also, we define the following theories:
+\begin{align*}
+P^2_{s_1, \ldots s_k} & = P^1_{s_1, \ldots s_k} \cup \{ Q : s_1 \times \ldots \times s_k, P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} Q(x_1, \ldots x_k) \} \\
+P^3_{s_1, \ldots s_k} & = P^2_{s_1, \ldots s_k} \cup \{ R : s_1 \times \ldots \times s_k, Q(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} R(x_1, \ldots x_k) \}
+\end{align*}
+Let $\I^P$ be the union of $\I$ and maps of the form $P^1_l \to P^2_l$, $P \mapsto Q$ and $P^2_l \to P^3_l$, $P \mapsto P$, $Q \mapsto R$, where $l$ is any sequence of sorts.
+We define a relative cylinder object for the map $P^\alpha_l \to P^{\alpha+1}_l$ as $P^{\alpha+1}_l \amalg_{P^\alpha_l} P^{\alpha+1}_l$, where $\alpha \in \{ 1, 2\}$.
+Thus any two maps $P^{\alpha+1}_l \to X$ are homotopic.
 This implies that $\we_{\I^P} = \we_\I$.
 To prove that there is a model structure on $T_I/\algtt$ with $\I^P$ as a set of generating cofibrations,
-we just need to show that pushouts of maps $P_{s_1, \ldots s_k} \to P_{s_1, \ldots s_k} \amalg P_{s_1, \ldots s_k}$ are Morita equivalences.
+we just need to show that pushouts of maps $P^{\alpha+1}_l \to P^{\alpha+1}_l \amalg_{P^\alpha_l} P^{\alpha+1}_l$ are Morita equivalences.
 But this is obvious since the domain and the codomain of such a pushout have the same sets of terms and axioms.
 Of course, the identity functor determine a Quillen equivalence between the two model structures on $T_I/\algtt$.
 
@@ -804,25 +809,72 @@ Most of algebraic dependent type theories that occur in practice are cofibrant i
 Let $S_{s_1, \ldots s_k, s}$ be the theory with one predicate symbol $P : s_1 \times \ldots \times s_k$, one function symbol $\sigma : s_1 \times \ldots \times s_k \to s$,
 and one axiom $P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$.
 Let $\I^S$ be the set of maps of the form $S_{l,(d_p,n)} \to S_{l,(p,n)}$, where $l = s_1, \ldots s_k$ is any sequence of sorts and $\sigma$ maps to $e_p(\sigma)$.
-Let $\I^{SP}$ be the union of $\I^S$ and maps of the form $0 \to P_{s_1, \ldots s_k}$.
-Note that $\I \subseteq \I^S$ and $\I^P \subseteq \I^{SP}$.
+Let $\I^{SP}$ be the union of $\I^S$ and maps of the form $P^\alpha_l \to P^{\alpha+1}_l$ as defined at the end of the previous section.
+Note that $\Icof \subseteq \Icof[I^S]$ and $\Icof[I^P] \subseteq \Icof[I^{SP}]$.
 Also note that a map has RLP up to relative homotopy with respect to $\I^S$ (or, equivalently, $\I^{SP}$) if and only if it is a strong Morita equivalence.
 
 A map is a relative $\I^{SP}$-cell complex if and only if it is isomorphic to an inclusion of a subtheory $(\mathcal{F},\mathcal{P},\mathcal{A}) \to (\mathcal{F} \amalg \mathcal{F}', \mathcal{P} \amalg \mathcal{P}', \mathcal{A} \amalg \mathcal{A}')$
 such that there is a well-ordering on the set $\mathcal{F}'$ and $\mathcal{A}' = \{ S(\sigma)\ |\ \sigma \in \mathcal{F}' \}$,
-where $S(\sigma)$ is a sequent of the form $\varphi \sststile{}{x_1, \ldots x_k} e_p(\sigma(x_1, \ldots x_k)) = A$,
-where $\varphi$ is a formula and $A$ is a term such that every function symbol that appears in either $\varphi$ or $A$ is less than $\sigma$.
+where $S(\sigma)$ is a sequent of the form $\varphi \sststile{}{x_1, \ldots x_k} e_p(\sigma(x_1, \ldots x_k)) = A$
+such that the sequent $\varphi \sststile{}{x_1, \ldots x_k} A$ is derivable in the subtheory of $(\mathcal{F} \amalg \mathcal{F}', \mathcal{P} \amalg \mathcal{P}', \mathcal{A} \amalg \mathcal{A}')$ which consists of function symbols less than $\sigma$.
+In particular, $\varphi$ and $A$ contain only such function symbols.
 We call such an inclusion a \emph{presented relative $\I^{SP}$-cell complex}.
 
 \begin{lem}
 Let $f : T \to T'$ be a presented relative $\I^{SP}$-cell complex, where $T = (\mathcal{F},\mathcal{P},\mathcal{A})$ and $T' = (\mathcal{F} \amalg \mathcal{F}', \mathcal{P} \amalg \mathcal{P}', \mathcal{A} \amalg \mathcal{A}')$.
-Let $t$ be a term of $T'$ of the form $\sigma(t_1, \ldots t_k)$, where $\sigma \in \mathcal{F}'$.
-Then, for every formulas $\varphi$ and $\psi$ of $T$, if the sequent $f(\varphi)[t/x] \sststile{}{V} f(\psi)[t/x]$ is derivable,
-then the sequent $f(\varphi)[t'/x] \sststile{}{V} f(\psi)[t'/x]$ is also derivable for every term $t'$ such that the sequent $f(\varphi) \sststile{}{V} e_p(t) = e_p(t')$ is derivable.
+Let $\varphi$ be a formula of $T$, and let $\psi$ be a formula of $T'$.
+If a sequent $f(\varphi) \sststile{}{V} \psi$ is derivable, then there exists a derivation of this sequent in the natural deduction system
+in which the rule \axref{nf} is applied only to function symbols in $\mathcal{F}$.
+\end{lem}
+\begin{proof}
+First, let us prove the following fact.
+If $t = \sigma(t_1, \ldots t_k)$ is a subterm of $\psi$, $\sigma \in \mathcal{F}'$, and there is a derivation of $f(\varphi) \sststile{}{V} \psi$ in which the rule \axref{nf} is applied only to function symbols in $\mathcal{F}$,
+then there is a derivation satisfying the same property for the sequent $f(\varphi) \sststile{}{V} t_i\!\downarrow$ for every $1 \leq i \leq k$.
+Note that we may assume that axioms in $\mathcal{A}'$ are of the form $\varphi \land A\!\downarrow \sststile{}{x_1, \ldots x_k} e_p(\sigma(x_1, \ldots x_k)) = A$
+since this axiom is equivalent to the one we described before.
+We prove this fact by induction on a derivation of $f(\varphi) \sststile{}{V} \psi$.
+The only nontrivial cases are \axref{nl} and \axref{na}.
+Let us first consider \axref{nl}:
+\begin{center}
+\AxiomC{$f(\varphi) \sststile{}{V} a = b$}
+\AxiomC{$f(\varphi) \sststile{}{V} \chi[a/x]$}
+\BinaryInfC{$f(\varphi) \sststile{}{V} \chi[b/x]$}
+\DisplayProof
+\end{center}
+If $t$ is a subterm of $b$, then the conclusion follows immediately from induction hypothesis.
+Otherwise, there is a term $t' = \sigma(t_1', \ldots t_k')$ such that $t = t'[b/x]$.
+Induction hypothesis implies that $f(\varphi) \sststile{}{V} t_i'[a/x]\!\downarrow$ is derivable.
+By \axref{nl}, the sequent $f(\varphi) \sststile{}{V} t_i'[b/x]\!\downarrow$ is also derivable.
+
+Now, let us consider the rule \axref{na}.
+If the corresponding axiom belongs to $\mathcal{A}$,
+then $t$ is a subterm of $r_i$ for some $i$.
+Hence, the conclusion holds by induction hypothesis.
+If the axiom belongs to $\mathcal{A}'$, then the conclusion of the rule looks like this: $e_p(\tau(r_1, \ldots r_m)) = A$.
+Note that terms $r_1$, \ldots $r_m$, $A$ appear in the premises of the rule.
+Thus, if $t$ is a subterm of one of these terms, then we are done.
+Otherwise, $t = \tau(r_1, \ldots r_m)$.
+Then $t_i = r_i$ and the sequent $f(\varphi) \sststile{}{V} t_i\!\downarrow$ is one of the premises of the rule.
+
+Finally, we can finish the proof of the lemma by induction on a derivation of the sequent $f(\varphi) \sststile{}{V} \psi$.
+The only nontrivial case is \axref{nf}.
+In this case, we can apply the fact that we just proved.
+\end{proof}
+
+If $\mathcal{F}$ is a set of function symbols, then we will say that a term $t$ is an $\mathcal{F}$-term if $t = \sigma(t_1, \ldots t_k)$ for some terms $t_1$, \ldots $t_k$
+and some function symbol $\sigma$ which belongs to $\mathcal{F}$.
+
+\begin{lem}
+Let $f : T \to T'$ be a presented relative $\I^{SP}$-cell complex, where $T = (\mathcal{F},\mathcal{P},\mathcal{A})$ and $T' = (\mathcal{F} \amalg \mathcal{F}', \mathcal{P} \amalg \mathcal{P}', \mathcal{A} \amalg \mathcal{A}')$.
+Let $\varphi$ and $\psi$ be formulas of $T$, and let $t_1$, \ldots $t_n$ be $\mathcal{F}'$-terms.
+If the sequent $f(\varphi)[t/x] \sststile{}{V} f(\psi)[t_1/x_1, \ldots t_n/x_n]$ is derivable,
+then the sequent $f(\varphi)[t_1'/x_1, \ldots t_n'/x_n] \sststile{}{V} f(\psi)[t'/x]$ is also derivable
+for every terms $t_1'$, \ldots $t_n'$ such that the sequents $f(\varphi) \sststile{}{V} e_p(t_i) = e_p(t_i')$ are derivable for every $1 \leq i \leq n$.
 \end{lem}
 \begin{proof}
 We prove this by induction on $\sigma$.
-For a fixed $t$, we proceed by induction on the derivation of $f(\varphi) \sststile{}{V} f(\psi)[t/x]$ in the natural deduction system.
+For a fixed $t$, we proceed by induction on a derivation of $f(\varphi) \sststile{}{V} f(\psi)[t/x]$ in the natural deduction system.
+By the previous lemma, we may assume that the rule \axref{nf} is applied only to function symbols in $\mathcal{F}$.
 Let us consider the rules \axref{nl} and \axref{na} since the rest are easy to prove.
 First, 
 \AxiomC{$f(\varphi) \sststile{}{V} a = b$}
