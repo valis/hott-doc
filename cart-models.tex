@@ -102,6 +102,7 @@
 \newcommand{\deq}{\equiv}
 \newcommand{\repl}{:=}
 \newcommand{\idtype}{\rightsquigarrow}
+\newcommand{\Id}{\mathrm{Id}}
 
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\C}{\cat{C}}
@@ -454,6 +455,68 @@ The second condition can be reformulated as follows: for every closed type $A$ o
 there exists an equivalence $p' : A \to B'$ in $X$ such that $f(p') = p$.
 But this follows from the fact that $f$ has RLP with respect to $\J_{\I_{ty}}$.
 \end{proof}
+
+\section{Simplicial localization of a model}
+
+Every model $M$ of a theory $T$ with $\Id$-types and $\Sigma$-types has the underlying fibration category $C(M)$ (see \cite{tt-fibr-cat}).
+In particular, $C(M)$ is a category with weak equivalences.
+In this section we prove that the homotopy coherent nerve of the simplicial localization of $C(M)$ is
+categorically equivalent to the quasicategory $N(M)$ constructed in the previous section.
+We will use the following notation in this section: functors $N : \Cat \to \sSet$ is the ordinary nerve functor,
+$N_\Delta : \Cat_\Delta \to \sSet$ is the homotopy coherent nerve functor defined in \cite{lurie-topos},
+and $N_T : \Mod{T} \to \sSet$ is the nerve functor constructed in the previous section.
+
+For every model $M$ of a theory with $\Id$-types, we define a simplicial category $L(M)$ which is weakly equivalent to $L^H C(M)$,
+the usual hammock localization of $C(M)$, defined in \cite{Dwyer1980}.
+First, let us define a $\Cat$-enriched category $L_C(M)$.
+Its objects are contexts of $M$, that is elements of $\coprod_{n \in \mathbb{N}} M_{(ctx,n)}$.
+If $\Gamma$ and $\Delta$ are contexts of $M$, then objects of $Hom(\Gamma,\Delta)$ are spans of the following form:
+\[ \xymatrix{        & \Gamma' \ar[ld] \ar[rd] & \\
+              \Gamma &                         & \Delta
+            } \]
+where the right map is any context morphism and the left map is a trivial fibration, that is, $\Gamma' = (\Gamma, x_1 : A_1, \ldots x_n : A_n)$
+and the map $\Gamma' \to \Gamma$ is a weak equivalence in $C(M)$.
+We will denote such a span by $(\Gamma',p,f)$, where $p : \Gamma' \to \Gamma$ and $f : \Gamma' \to \Delta$.
+
+Morphisms between two such spans $(\Gamma_1,p_1,f_1)$ and $(\Gamma_2,p_2,f_2)$ are maps $g : E_1 \to E_2$ such that $p_2 \circ g = p_1$ and $f_2 \circ g = f_1$.
+The identity morphisms and compositions are defined in the obvious way.
+This construction of $Hom(\Gamma,\Delta)$ appears in \cite{cis10b} and \cite{Nikolaus2015}.
+The canonical inclusion $N(Hom(\Gamma,\Delta)) \to L^H C(M)(\Gamma,\Delta)$ is a weak equivalence.
+This is proved in \cite[Proposition~3.23]{cis10b} and \cite[Theorem~3.61]{Nikolaus2015}.
+
+This construction of $L_C(M)$ works for any fibration category, but gives us only a bicategory.
+If $M$ is a model of a type theory, then we can show that it is actually a strict 2-category.
+The identity morphism is $(\Gamma,id_\Gamma,id_\Gamma)$.
+The composition $\circ : Hom(\Delta,E) \times Hom(\Gamma,\Delta) \to Hom(\Gamma,E)$ is defined as follows:
+if $(\Gamma',p_1,f_1)$ is an object of $Hom(\Gamma,\Delta)$ and $(\Delta',p_2,f_2)$ is an object of $Hom(\Delta,E)$,
+then let $(\Delta',p_2,f_2) \circ (\Gamma,p_1,f_1)$ be the following pullback:
+\[ \xymatrix{        &                                     & f_1^*(\Delta') \ar[dl] \ar[dr] &                                     & \\
+                     & \Gamma' \ar[dl]_{p_1} \ar[dr]^{f_1} &                                & \Delta' \ar[dl]_{p_2} \ar[dr]^{f_2} & \\
+              \Gamma &                                     & \Delta                         &                                     & E
+            } \]
+The composition is defined in the obvious way on morphisms.
+Since pullbacks in models of type theories are strictly associative, this composition functor is also associative.
+Analogously, the identity morphism is a strict unit for the composition.
+
+Let $L(M)$ be the simplicial category obtained from $L_C(M)$ by appyling the nerve functor to $Hom$-categories.
+Then there is a functor $L^H C(M) \to L(M)$.
+This functor is defined as the identity function on objects.
+If $\Gamma$ and $\Delta$ are two objects, then 0-simplices of $L^H C(M)(\Gamma,\Delta)$ are reduced diagrams of the form
+$\Gamma \xleftarrow{p_1} \Gamma_1' \xrightarrow{f_1} \Gamma_2 \xleftarrow{p_2} \ldots \xrightarrow{f_{n-1}} \Gamma_n \xleftarrow{p_n} \Gamma_n' \xrightarrow{f_n} \Delta$,
+where $p_i$ are trivial fibrations.
+Such a diagram is reduced if all the maps in it are not identity morphisms except possibly $p_1$ and $f_n$.
+For every such diagram, we define an object of $Hom(\Gamma,\Delta)$ as $(\Gamma_n',p_n,f_n) \circ \ldots \circ (\Gamma_1',p_1,f_1)$.
+Morphisms of such diagrams are 1-simplices of $L^H C(M)(\Gamma,\Delta)$.
+Every such morphism induces a morphism in $Hom(\Gamma,\Delta)$ between the corresponding objects.
+Finally, $n$-simplices of $L^H C(M)(\Gamma,\Delta)$ are sequences of such morphisms of length $n$.
+Every such sequence induces a sequence of morphisms in $Hom(\Gamma,\Delta)$.
+Since such sequences correspond to simplices in $L(M)$, we obtain a map $L^H C(M)(\Gamma,\Delta) \to L(M)(\Gamma,\Delta)$.
+It is easy to see that this defines a functor $L^H C(M) \to L(M)$.
+
+The functor $L^H C(M) \to L(M)$ acts as the identity function on objects and, for every pair of objects $\Gamma$ and $\Delta$,
+the map $L^H C(M)(\Gamma,\Delta) \to L(M)(\Gamma,\Delta)$ is a retraction of the canonical inclusion $L(M)(\Gamma,\Delta) \to L^H C(M)(\Gamma,\Delta)$.
+In particular, it is a weak equivalence.
+It follows that the functor $L^H C(M) \to L(M)$ is a weak equivalence of simplicial categories.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
