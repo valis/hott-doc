@@ -465,6 +465,32 @@ Then for every model $M$ of $T$ and every $A \in M_{(ty,0)}$, we can define anot
 Let $(M/A)_{(p,n)} = \{ x \in M_{(p,n+1)}\ |\ ft^n(x) = A \}$.
 Since $T$ is stable, the structure of a model of $T$ on $M$ induces this structure on $M/A$.
 In this section we construct a categorical equivalence $p : N(M/A) \to N(M)/A$ between the nerve of $M/A$ and the slice quasicategory of $N(M)$ over $A$.
+We also prove that $N(M)$ has finite limits.
+We begin with terminal objects.
+A type $C \in M_{(ty,n)}$ is a \emph{proposition} if there is a term $\Gamma, x : C, y : C \vdash p : x \idtype y$.
+It is \emph{contractible} if it is a proposition and there is a term $\Gamma \vdash c : C$.
+
+\begin{prop}[contr-terminal]
+Let $M$ be a model of a dependent type theory.
+Then $C \in M_{(ty,0)}$ is a contractible type of $M$ if and only if $C$ is a terminal object of $N(M)$.
+Moreover, if $C$ is contractible, then, for every type $A$, the weakening of $C$ is a terminal object of $N(M/A)$.
+\end{prop}
+\begin{proof}
+An object $C$ of $N(M)$ is terminal if and only if every map $f : \partial \Delta^n \to N(M)$ such that $f|_{\Delta^{\{n\}}} = C$ extends to a map $\Delta^n \to N(M)$.
+This is true if and only if every map $f : \partial \square^n \to M$ such that $f(B) = C$ extends to a map $\square^n \to M$.
+Thus, if $C$ is a terminal object of $N(M)$, then we have a term $x : I \vdash b : C$ and hence a term $\vdash c : C$.
+Moreover, we have a term $x : C \vdash p : x \idtype c$, which implies that $C$ is contractible.
+
+Conversely, assume that $C \in M_{(ty,n)}$ is a proposition.
+Then a standard argument implies that the type $\Gamma, x : C, y : C \vdash x \idtype y$ is also a proposition.
+Since $Path(x.\,A,a_1,a_2)$ is equivalent to a type of the form $a_1' \idtype a_2$,
+this implies types of the form $Path(x_n.\, \ldots Path(x_1.\,C,c_1,c_1'), \ldots, c_n, c_n')$ are inhabited.
+An element of such a type determines an extension of a map $\partial \square^n \to M$ determined by terms $c_1,c_1', \ldots c_n,c_n'$.
+Thus, every such map has an extension to a map $\square^n \to M$.
+
+Finally, if $C$ is contractible, then its weakening is contractible type.
+Hence, it is a terminal object of $N(M/A)$.
+\end{proof}
 
 Let $C$ be a quasicategory, and let $A \in C_{[0]}$ be an object of $C$.
 Then $C/A$ is the quasicategory defined as follows: $(C/A)_{[n]} = \{ x \in C_{[n+1]}\ |\ x|_{\Delta^{\{n+1\}}} = A \}$.
@@ -477,7 +503,7 @@ These functions must satisfy relations described in the previous section.
 Let $(O,H)$ be an element of $N(M/A)_{[n]}$.
 Then $O_i \in M_{(ty,1)}$ is such that $z : A \vdash O_i\ type$ and $H_J$ can be identified with an element of $M_{(tm,k)}$ such that $z : A, x : O_{j_1}, x_{j_2} : I, \ldots x_{j_{k-1}} : I \vdash H_J : O_{j_k}$.
 To define an element $p(O,H) \in (N(M)/A)_{[n]}$, we need to specify functions $O'$ and $H'$ as described above.
-Let $O'_{n+1}$ be equal to $x : A \vdash x : A$, and let $O'_i$ be equal to $x : \Sigma(z : A)\,O_i \vdash \pi_1(x) : A$.
+Let $O'_{n+1}$ be equal to $A$, and let $O'_i$ be equal to $\Sigma(z : A)\,O_i$.
 If $J = \{ j_1 < \ldots < j_k \}$ and $j_k \leq n$, then we define $H'_J$ as follows:
 \[ x : \Sigma (z : A)\,O_{j_1}, x_{j_2} : I, \ldots x_{j_{k-1}} : I \vdash (\pi_1(x), H_J[z \repl \pi_1(x), x \repl \pi_2(x)]) : \Sigma (z : A)\,O_{j_k} \]
 If $J = \{ j_1 < \ldots < j_k \}$ and $j_k = n+1$, then we define $H'_J$ as follows:
@@ -485,8 +511,9 @@ If $J = \{ j_1 < \ldots < j_k \}$ and $j_k = n+1$, then we define $H'_J$ as foll
 It is easy to see that $p$ respects face maps and, since the theory has eta rules for $\Sigma$-types, $p$ respects degeneracy maps too.
 Thus, we defined a map $p : N(M/A) \to N(M)/A$.
 
-\begin{prop}
-The map $p : N(M/A) \to N(M)/A$ is a categorical equivalence.
+\begin{prop}[slice-stability]
+Let $M$ be a model of a stable theory.
+Then, for every $A \in M_{(ty,0)}$, the map $p : N(M/A) \to N(M)/A$ is a categorical equivalence.
 \end{prop}
 \begin{proof}
 Since $N(M/A)$ and $N(M)/A$ are quasicategories, \cite[Proposition~3.5]{f-model-structures} implies that to prove that $p$ is a categorical equivalence,
@@ -535,107 +562,20 @@ That is if we can prove that, for every model $M$ of a stable theory, the quasic
 then this property holds for every slice quasicategory $N(M)/A$.
 For example, if we can prove that $N(M)$ has all finite products, then it also has all finite limits.
 
+Let $C$ be a quasicategory, and let $A$ and $B$ be objects of $C$.
+Then we define $C/A,B$ as the slice category $C/p$, where $p : \partial \Delta^1 \to C$ is the map determined by $A$ and $B$.
+The set $(C/A,B)_{[n]}$ consists of pairs of simplices $x,y \in C_{[n+1]}$ such that
+$x|_{\Delta^{\{n+1\}}} = A$, $y|_{\Delta^{\{n+1\}}} = B$, and $x|_{\Delta^{\{0, \ldots n\}}} = y|_{\Delta^{\{0, \ldots n\}}}$.
+Then a product of $A$ and $B$ is a terminal object of $C/A,B$.
+
 \begin{prop}
 For every model $M$ of a stable theory with $\Sigma$-types with eta rules, the quasicategory $N(M)$ is finitely complete.
 \end{prop}
 \begin{proof}
-We just need to prove that $N(M)$ has all finite products.
+By \rprop{slice-stability}, we just need to prove that $N(M)$ has all finite products.
+By \rprop{contr-terminal}, $N(M)$ has a terminal object since the interval is contractible.
+To prove that $N(M)$ has binary products, note that $N(M)/A,B$ is isomorphic to $N(M)/(A \times B)$ and the latter has a terminal object.
 \end{proof}
-
-\section{Simplicial categories corresponding to a model}
-
-In this section we construct two simplicial categories $C_R(M)$ and $L(M)$ corresponding to a model $M$ of a dependent type theory $T$.
-We prove that they are equivalent to each other and to the simplicial localization of $M$ as a category with weak equivalences.
-We will use the following notation in this section: $N : \Cat \to \sSet$ is the ordinary nerve functor,
-$N_\Delta : \Cat_\Delta \to \sSet$ and $\mathfrak{C}_\Delta : \sSet \to \Cat_\Delta$ are the homotopy coherent nerve functor and its left adjoint defined in \cite{lurie-topos},
-and $N_T : \Mod{T} \to \sSet$ and $\mathfrak{C}_T : \sSet \to \Mod{T}$ are the nerve functor and its left adjoint constructed in section~\ref{sec:nerve}.
-
-\subsection{Space of right morphisms}
-
-For every quasicategory $C$ and every pair of objects $X$ and $Y$ of $C$, there is a Kan complex $Hom^R_C(X,Y)$ of right morphisms from $X$ to $Y$.
-The set $Hom^R_C(X,Y)_{[n]}$ is defined as the set of simplices $s \in C_{[n+1]}$ such that $s|_{\Delta^{\{n+1\}}} = Y$ and $s|_{\Delta^{\{0, \ldots n\}}}$ is a constant simplex at $X$.
-The fact that this simplicial set is a Kan complex is proved in \cite[Proposition~1.2.2.3]{lurie-topos}.
-
-If $C$ is an arbitrary quasicategory, then there is no natural composition map $Hom^R_C(Y,Z) \times Hom^R_C(X,Y) \to Hom^R_C(X,Z)$.
-But if $C = N_T(M)$, then there is such a map and it is associative and unital.
-Let $(O^1,H^1) \in N_T(M)_{[n+1]}$ and $(O^2,H^2) \in N_T(M)_{[n+1]}$ be functions that represent simplices in $Hom^R_{N_T(M)}(Y,Z)$ and $Hom^R_{N_T(M)}(X,Y)$, respectively.
-Then we define functions $(O,H) \in N_T(M)_{[n+1]}$ representing a simplex in $Hom^R_{N_T(M)}(X,Z)$.
-There is a unique way to define $O$: $O_{n+1} = Z$ and $O_i = X$ for every $0 \leq i \leq n$.
-For every $J = \{ j_1 < \ldots < j_k \} \subseteq [n+1]$, let $x : X, x_{j_2} : I, \ldots x_{j_{k-1}} : I \vdash H_J : Z$ be the term defined as $H^1_J[y \repl H^2_J]$.
-It is easy to see that relation~\eqref{rel:right} holds.
-Let us verify relation~\eqref{rel:left}:
-\begin{align*}
-H_{J \cup \{j\}}[x_j \repl left] & = \\
-H^1_{J \cup \{j\}}[x_j \repl left][y \repl H^2_{J \cup \{j\}}[x_j \repl left]] & = \\
-H^1_{\{j < \ldots < j_k\}}[x \repl H^1_{\{j_1 < \ldots < j\}}][y \repl H^2_{\{j < \ldots j_k\}}[x \repl H^2_{\{j_1 < \ldots < j\}}]] & = \\
-H^1_{\{j < \ldots < j_k\}}[y \repl H^2_{\{j < \ldots j_k\}}] & = \\
-H^1_{\{j < \ldots < j_k\}}[y \repl H^2_{\{j < \ldots < j_k\}}][x \repl H^1_{\{j_1 < \ldots j\}}[y \repl H^2_{\{j_1 < \ldots j\}}]] & = \\
-H_{\{j < \ldots < j_k\}}[x \repl H_{\{j_1 < \ldots j\}}] & ,
-\end{align*}
-where $H^1_{\{j_1 < \ldots < j\}} = y$ and $H^2_{\{j_1 < \ldots < j\}} = x$ by assumption that $H^i$ represent simplices that are constant on the left face.
-It is easy to see that $H$ also satisfies this assumption and that this function respects the face and degeneracy maps.
-Thus, we have defined a map of simplicial sets $Hom^R_{N_T(M)}(Y,Z) \times Hom^R_{N_T(M)}(X,Y) \to Hom^R_{N_T(M)}(X,Z)$.
-The fact that it is associative and unital follows from the fact that these properties hold for the substitution operation.
-
-Thus, we have a fibrant simplicial category, which we denote by $C_R(M)$.
-
-\subsection{Simplicial localization of a model}
-
-Every model $M$ of a theory $T$ with $\Id$-types and $\Sigma$-types has the underlying fibration category $C(M)$ (see \cite{tt-fibr-cat}).
-In particular, $C(M)$ is a category with weak equivalences.
-In this section we prove that the homotopy coherent nerve of the simplicial localization of $C(M)$ is categorically equivalent to the quasicategory $N_T(M)$.
-
-For every model $M$ of a theory with $\Id$-types, we define a simplicial category $L(M)$ which is weakly equivalent to $L^H C(M)$,
-the usual hammock localization of $C(M)$, defined in \cite{Dwyer1980}.
-First, let us define a $\Cat$-enriched category $L_C(M)$.
-Its objects are contexts of $M$, that is elements of $\coprod_{n \in \mathbb{N}} M_{(ctx,n)}$.
-If $\Gamma$ and $\Delta$ are contexts of $M$, then objects of $Hom(\Gamma,\Delta)$ are spans of the following form:
-\[ \xymatrix{        & \Gamma' \ar[ld] \ar[rd] & \\
-              \Gamma &                         & \Delta
-            } \]
-where the right map is any context morphism and the left map is a trivial fibration, that is, $\Gamma' = (\Gamma, x_1 : A_1, \ldots x_n : A_n)$
-and the map $\Gamma' \to \Gamma$ is a weak equivalence in $C(M)$.
-We will denote such a span by $(\Gamma',p,f)$, where $p : \Gamma' \to \Gamma$ and $f : \Gamma' \to \Delta$.
-
-Morphisms between two such spans $(\Gamma_1,p_1,f_1)$ and $(\Gamma_2,p_2,f_2)$ are maps $g : E_1 \to E_2$ such that $p_2 \circ g = p_1$ and $f_2 \circ g = f_1$.
-The identity morphisms and compositions are defined in the obvious way.
-This construction of $Hom(\Gamma,\Delta)$ appears in \cite{cis10b} and \cite{Nikolaus2015}.
-The canonical inclusion $N(Hom(\Gamma,\Delta)) \to L^H C(M)(\Gamma,\Delta)$ is a weak equivalence.
-This is proved in \cite[Proposition~3.23]{cis10b} and \cite[Theorem~3.61]{Nikolaus2015}.
-
-This construction of $L_C(M)$ works for any fibration category, but gives us only a bicategory.
-If $M$ is a model of a type theory, then we can show that it is actually a strict 2-category.
-The identity morphism is $(\Gamma,id_\Gamma,id_\Gamma)$.
-The composition $\circ : Hom(\Delta,E) \times Hom(\Gamma,\Delta) \to Hom(\Gamma,E)$ is defined as follows:
-if $(\Gamma',p_1,f_1)$ is an object of $Hom(\Gamma,\Delta)$ and $(\Delta',p_2,f_2)$ is an object of $Hom(\Delta,E)$,
-then let $(\Delta',p_2,f_2) \circ (\Gamma,p_1,f_1)$ be the following pullback:
-\[ \xymatrix{        &                                     & f_1^*(\Delta') \ar[dl] \ar[dr] &                                     & \\
-                     & \Gamma' \ar[dl]_{p_1} \ar[dr]^{f_1} &                                & \Delta' \ar[dl]_{p_2} \ar[dr]^{f_2} & \\
-              \Gamma &                                     & \Delta                         &                                     & E
-            } \]
-The composition is defined in the obvious way on morphisms.
-Since pullbacks in models of type theories are strictly associative, this composition functor is also associative.
-Analogously, the identity morphism is a strict unit for the composition.
-
-Let $L(M)$ be the simplicial category obtained from $L_C(M)$ by appyling the nerve functor to $Hom$-categories.
-Then there is a functor $L^H C(M) \to L(M)$.
-This functor is defined as the identity function on objects.
-If $\Gamma$ and $\Delta$ are two objects, then 0-simplices of $L^H C(M)(\Gamma,\Delta)$ are reduced diagrams of the form
-$\Gamma \xleftarrow{p_1} \Gamma_1' \xrightarrow{f_1} \Gamma_2 \xleftarrow{p_2} \ldots \xrightarrow{f_{n-1}} \Gamma_n \xleftarrow{p_n} \Gamma_n' \xrightarrow{f_n} \Delta$,
-where $p_i$ are trivial fibrations.
-Such a diagram is reduced if all the maps in it are not identity morphisms except possibly $p_1$ and $f_n$.
-For every such diagram, we define an object of $Hom(\Gamma,\Delta)$ as $(\Gamma_n',p_n,f_n) \circ \ldots \circ (\Gamma_1',p_1,f_1)$.
-Morphisms of such diagrams are 1-simplices of $L^H C(M)(\Gamma,\Delta)$.
-Every such morphism induces a morphism in $Hom(\Gamma,\Delta)$ between the corresponding objects.
-Finally, $n$-simplices of $L^H C(M)(\Gamma,\Delta)$ are sequences of such morphisms of length $n$.
-Every such sequence induces a sequence of morphisms in $Hom(\Gamma,\Delta)$.
-Since such sequences correspond to simplices in $L(M)$, we obtain a map $L^H C(M)(\Gamma,\Delta) \to L(M)(\Gamma,\Delta)$.
-It is easy to see that this defines a functor $L^H C(M) \to L(M)$.
-
-The functor $L^H C(M) \to L(M)$ acts as the identity function on objects and, for every pair of objects $\Gamma$ and $\Delta$,
-the map $L^H C(M)(\Gamma,\Delta) \to L(M)(\Gamma,\Delta)$ is a retraction of the canonical inclusion $L(M)(\Gamma,\Delta) \to L^H C(M)(\Gamma,\Delta)$.
-In particular, it is a weak equivalence.
-It follows that the functor $L^H C(M) \to L(M)$ is a weak equivalence of simplicial categories.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
