@@ -805,3 +805,102 @@ The functor $L^H C(M) \to L(M)$ acts as the identity function on objects and, fo
 the map $L^H C(M)(\Gamma,\Delta) \to L(M)(\Gamma,\Delta)$ is a retraction of the canonical inclusion $L(M)(\Gamma,\Delta) \to L^H C(M)(\Gamma,\Delta)$.
 In particular, it is a weak equivalence.
 It follows that the functor $L^H C(M) \to L(M)$ is a weak equivalence of simplicial categories.
+
+% 5. Кусок про симплициальные теории типов.
+
+\section{Simplicial type theories}
+
+In this section we define regular theory $T_\Delta$ under $coe_1$.
+We prove that for every theory $T$ under $B$, the categories of models of $T$ and $T \amalg_{coe_1} T_\Delta$ are Quillen equivalent.
+The advantage of theories under $T_\Delta$ is that there is a forgetful functor from the category of models of simplicial type theories to the category of simplicial categories.
+
+Theory $T_\Delta$ is a regular theory with the following function symbols:
+\begin{align*}
+\Delta^n & : (ty,0) \text{, for every } n \geq 0 \\
+\Delta^1_l & : (tm,0) \\
+\Delta^1_r & : (tm,0) \\
+\cmap{f} & : (tm,0) \to (tm,0) \text{, for every map $f$ in $\Delta$} \\
+fill^n_i & : (ty,1) \times (tm,1)^n \times (tm,0) \to (tm,0) \text{, for every } n \geq 1 \text{, } 0 \leq i \leq n
+\end{align*}
+
+Theory $T_\Delta$ has the following typing axioms:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\RightLabel{, for every $n \geq 1$}
+\UnaryInfC{$\Gamma \vdash \Delta^n\ type$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \Delta^1_l : \Delta^1$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \Delta^1_r : \Delta^1$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : \Delta^m$}
+\RightLabel{, for every $f : \Delta^m \to \Delta^n$}
+\UnaryInfC{$\Gamma \vdash \cmap{f}(a) : \Delta^n$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma, x : \Delta^n \vdash A\ type$
+\noLine
+\UnaryInf$\fCenter \Gamma, y : \Delta^{n-1} \vdash a_j : A[x \repl \cmap{\delta^n_j}(y)] \text{, for every } 0 \leq j \leq n, j \neq i$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash d : \Delta^n$
+\noLine
+\UnaryInf$\fCenter S^n_i$
+\RightLabel{, for every $0 \leq i \leq n$}
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \Gamma \vdash fill^n_i(x. A, y.a_0, \ldots y.a_{\hat{i}}, \ldots y.a_n, d) : A[x \repl d]$
+\DisplayProof
+\end{center}
+\medskip
+where $S^n_i$ consists of equations $\Gamma, z : \Delta^{n-2} \vdash a_j[y \repl \cmap{\delta^{n-1}_{k-1}}(z)] \deq a_k[y \repl \cmap{\delta^{n-1}_j}(z)]$
+for every $0 \leq j < k \leq n$ such that $j \neq i$ and $k \neq i$.
+
+The theory also has the following equality axioms:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : \Delta^n$}
+\UnaryInfC{$\Gamma \vdash \cmap{id}(a) \deq a : \Delta^n$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : \Delta^m$}
+\RightLabel{, $f : \Delta^m \to \Delta^n$, $f' : \Delta^n \to \Delta^k$}
+\UnaryInfC{$\Gamma \vdash \cmap{f'}(\cmap{f}(a)) \deq \cmap{f' \circ f}(a) : \Delta^k$}
+\DisplayProof
+\end{center}
+\medskip
+
+Finally, for every $0 \leq i \leq n$ and $f : \Delta^m \to \Delta^n$ which factors through inclusion $\Lambda^n_i \to \Delta^n$, we have the following axiom:
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma, x : \Delta^n \vdash A\ type$
+\noLine
+\UnaryInf$\fCenter \Gamma, y : \Delta^{n-1} \vdash a_j : A[x \repl \cmap{\delta^n_j}(y)] \text{, for every } 0 \leq j \leq n, j \neq i$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash d : \Delta^m$
+\noLine
+\UnaryInf$\fCenter S^n_i$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \Gamma \vdash fill^n_i(x.A, y.a_0, \ldots y.a_{\hat{i}}, \ldots y.a_n, \cmap{f}(d)) \deq a_k[y \repl \cmap{f'}(d)] : A[x \repl \cmap{f}(d)]$
+\DisplayProof
+\end{center}
+where $k$ and $f'$ are such that $k \neq i$, $f = \delta^n_k \circ f'$, and $k$ is the minimal such number.
+
+There is a morphism of theories $F : I \to T_\Delta$, which is defined as follows: $F(I) = \Delta^1$, $F(left) = \Delta^1_l$, and $F(right) = \Delta^1_r$.
+This morphism has a retraction $G : T_\Delta \to I$, which is defined as follows: $G(\Delta^n) = I$, $G(\Delta^1_l) = left$, $G(\Delta^1_r) = right$, $G(\cmap{f})(a) = a$,
+and $G(fill^n_i)(x.A, a_0, \ldots a_{i-1}, a_{i+1}, \ldots a_n, d) = a_k[y \repl d]$, where $k = 0$ if $i > 0$ and $k = 1$ if $i = 0$.
