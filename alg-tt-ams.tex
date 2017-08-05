@@ -124,6 +124,7 @@
 \newcommand{\cSt}[1][c]{#1\text{-}\St}
 \newcommand{\emptyCtx}{*}
 \newcommand{\ThC}{\Th_{\mathcal{C}}}
+\newcommand{\type}{\mathrm{type}}
 
 \numberwithin{figure}{section}
 
@@ -428,17 +429,17 @@ Sort $(tm,n)$ represents terms in contexts of length $n$, sort $(ctx,n)$ represe
 There are two ways to define substitution: either to substitute the whole context (full substitution) or only a part of it (partial substitution).
 Using ordinary type theoretic syntax the full substitution can be described by the following inference rule:
 \begin{center}
-\AxiomC{$A_1, \ldots A_n \vdash A\ type$}
+\AxiomC{$A_1, \ldots A_n \vdash A\ \type$}
 \AxiomC{$\Gamma \vdash a_1 : A_1[]$ \quad \ldots \quad $\Gamma \vdash a_n : A_n[a_1, \ldots a_{n-1}]$}
-\BinaryInfC{$\Gamma \vdash A[a_1, \ldots a_n]\ type$}
+\BinaryInfC{$\Gamma \vdash A[a_1, \ldots a_n]\ \type$}
 \DisplayProof
 \end{center}
 \medskip
 The partial substitution is described by the following inference rule:
 \begin{center}
-\AxiomC{$\Gamma, A_1, \ldots A_n \vdash A\ type$}
+\AxiomC{$\Gamma, A_1, \ldots A_n \vdash A\ \type$}
 \AxiomC{$\Gamma \vdash a_1 : A_1$ \quad \ldots \quad $\Gamma \vdash a_n : A_n[a_1, \ldots a_{n-1}]$}
-\BinaryInfC{$\Gamma \vdash A[a_1, \ldots a_n]\ type$}
+\BinaryInfC{$\Gamma \vdash A[a_1, \ldots a_n]\ \type$}
 \DisplayProof
 \end{center}
 \medskip
@@ -867,6 +868,7 @@ and for every symbol of $\mathbb{T}_b$, it is defined in the same way as in $\ma
 \end{defn}
 
 Since we can always infer the index $m$ for every function symbol $\sigma_m$ if we know its sort, we usually omit this index.
+We often omit the first argument of function symbols $\sigma_m$.
 To specify the omitted argument, we use the following syntax: $\Gamma \vdash t$,
 which stands for $\sigma(\Gamma, t_1, \ldots t_k)$ if $t = \sigma(t_1, \ldots t_k)$ and for $x|_{ctx(x) = \Gamma}$ if $t = x$.
 Of course, if some arguments are omitted in $\Gamma$, then we need to know its context too in order to infer them.
@@ -874,7 +876,7 @@ Thus, we may write $A_1, \ldots A_n \vdash t$ which stands for $(\ldots ((\empty
 We also use this notation in formulas: $\Gamma \vdash t \equiv t'$ stands for $(\Gamma \vdash t) = (\Gamma \vdash t')$
 and $\Gamma \vdash R(t_1, \ldots t_k)$ stands for $R(\Gamma, (\Gamma \vdash t_1), \ldots (\Gamma \vdash t_k))$.
 
-Also, we use the standard notation: $\Gamma \vdash A\ type$ stands for $\Gamma \vdash A\!\downarrow$ if $A : (ty,n)$ and $\Gamma \vdash a : A$ stands for $ty(\Gamma \vdash a) = (\Gamma \vdash A)$.
+Also, we use the standard notation: $\Gamma \vdash A\ \type$ stands for $\Gamma \vdash A\!\downarrow$ if $A : (ty,n)$ and $\Gamma \vdash a : A$ stands for $ty(\Gamma \vdash a) = (\Gamma \vdash A)$.
 Sequents $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi$ and $\varphi_1 \land \ldots \land \varphi_n \ssststile{}{V} \psi$ are written as
 \medskip
 \begin{center}
@@ -1060,7 +1062,7 @@ Now, let us describe a few examples of algebraic dependent type theories with su
 If we take their stabilization, then we get theories corresponding to usual constructions of the type theory.
 Every theory is presented in the contextual form.
 Also, to simplify the notation, we use the following agreement.
-For every sequent of the form $\varphi \sststile{}{} \Gamma \vdash A\ type$, there is also sequent $\Gamma \vdash A\ type \sststile{}{} \varphi$
+For every sequent of the form $\varphi \sststile{}{} \Gamma \vdash A\ \type$, there is also sequent $\Gamma \vdash A\ \type \sststile{}{} \varphi$
 and, for every sequent of the form $\varphi \sststile{}{} \Gamma \vdash a : A$, there is also sequent $\Gamma \vdash a\!\downarrow\ \sststile{}{} \varphi$.
 
 \begin{example}
@@ -1068,7 +1070,7 @@ The theory of unit types with eta rules has function symbols $\top : (ty,0)$ and
 \medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$\vdash \top\ type$}
+\UnaryInfC{$\vdash \top\ \type$}
 \DisplayProof
 \quad
 \AxiomC{}
@@ -1086,7 +1088,7 @@ The theory of unit types without eta rules has function symbols $\top : (ty,0)$,
 The axioms for $\top$ and $unit$ are the same, and the axioms for $\top\text{-}elim$ are
 \medskip
 \begin{center}
-\AxiomC{$x : \top \vdash D\ type$}
+\AxiomC{$x : \top \vdash D\ \type$}
 \AxiomC{$\vdash d : D[x \mapsto unit]$}
 \AxiomC{$\vdash t : \top$}
 \TrinaryInfC{$\vdash \top\text{-}elim(x.\,D, d, t) : D[x \mapsto t]$}
@@ -1095,7 +1097,7 @@ The axioms for $\top$ and $unit$ are the same, and the axioms for $\top\text{-}e
 
 \medskip
 \begin{center}
-\AxiomC{$x : \top \vdash D\ type$}
+\AxiomC{$x : \top \vdash D\ \type$}
 \AxiomC{$\vdash d : D[x \mapsto unit]$}
 \BinaryInfC{$\vdash \top\text{-}elim(x.\,D, d, unit) \deq d$}
 \DisplayProof
@@ -1114,7 +1116,7 @@ and the following axioms:
 \medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$\vdash \Sigma(x.\,B)\ type$}
+\UnaryInfC{$\vdash \Sigma(x.\,B)\ \type$}
 \DisplayProof
 \quad
 \AxiomC{$\vdash b : B[x \mapsto a]$}
@@ -1162,7 +1164,7 @@ pair & : (ty,1) \times (tm,0) \times (tm,0) \to (tm,0) \\
 The axioms for $\Sigma$ and $pair$ are the same, and the axioms for $\Sigma\text{-}elim$ are
 \medskip
 \begin{center}
-\AxiomC{$z : \Sigma(x.\,B) \vdash D\ type$}
+\AxiomC{$z : \Sigma(x.\,B) \vdash D\ \type$}
 \AxiomC{$x : ft(B), y : B \vdash d : D'$}
 \AxiomC{$\vdash p : \Sigma(x.\,B)$}
 \TrinaryInfC{$\vdash \Sigma\text{-}elim(z.\,D, x y.\,d, p) : D[z \mapsto p]$}
@@ -1172,7 +1174,7 @@ The axioms for $\Sigma$ and $pair$ are the same, and the axioms for $\Sigma\text
 \medskip
 \begin{center}
 \def\extraVskip{1pt}
-\AxiomC{$z : \Sigma(x.\,B) \vdash D\ type$}
+\AxiomC{$z : \Sigma(x.\,B) \vdash D\ \type$}
 \AxiomC{$x : ft(B), y : B \vdash d : D'$}
 \AxiomC{$\vdash b : B[x \mapsto a]$}
 \TrinaryInfC{$\vdash \Sigma\text{-}elim(z.\,D, x y.\,d, pair(x.\,B, a, b)) \deq d[x \mapsto a, y \mapsto b]$}
@@ -1193,7 +1195,7 @@ and the following axioms:
 \medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$\vdash \Pi(x.\,B)\ type$}
+\UnaryInfC{$\vdash \Pi(x.\,B)\ \type$}
 \DisplayProof
 \quad
 \AxiomC{}
@@ -1232,7 +1234,7 @@ and the following inference rules:
 \medskip
 \begin{center}
 \AxiomC{$\vdash ty(a) \deq ty(a')$}
-\UnaryInfC{$\vdash Id(a, a')\ type$}
+\UnaryInfC{$\vdash Id(a, a')\ \type$}
 \DisplayProof
 \quad
 \AxiomC{}
@@ -1242,7 +1244,7 @@ and the following inference rules:
 
 \medskip
 \begin{center}
-\AxiomC{$x : A, y : A, z : Id(x, y) \vdash D\ type$}
+\AxiomC{$x : A, y : A, z : Id(x, y) \vdash D\ \type$}
 \AxiomC{$x : A \vdash d : D'$}
 \AxiomC{$\vdash p : Id(a, a')$}
 \TrinaryInfC{$\vdash J(x y z.\,D, x.\,d, a, a', p) : D[x \mapsto a, y \mapsto a', z \mapsto p]$}
@@ -1251,7 +1253,7 @@ and the following inference rules:
 
 \medskip
 \begin{center}
-\AxiomC{$x : A, y : A, z : Id(x, y) \vdash D\ type$}
+\AxiomC{$x : A, y : A, z : Id(x, y) \vdash D\ \type$}
 \AxiomC{$x : A \vdash d : D'$}
 \BinaryInfC{$\vdash J(x y z.\,D, x.\,d, a, a, refl(a)) \deq d[x \mapsto a]$}
 \DisplayProof
@@ -1280,12 +1282,12 @@ Theory $U(\mathbb{T})$ has the following axioms:
 \medskip
 \begin{center}
 \AxiomC{}
-\UnaryInfC{$\vdash U\ type$}
+\UnaryInfC{$\vdash U\ \type$}
 \DisplayProof
 \qquad
 \AxiomC{$\vdash a : U$}
 \doubleLine
-\UnaryInfC{$\vdash El(a)\ type$}
+\UnaryInfC{$\vdash El(a)\ \type$}
 \DisplayProof
 \end{center}
 \medskip

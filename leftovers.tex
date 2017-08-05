@@ -918,3 +918,58 @@ Since weak equivalences satisfy 2-out-of-3 and $\eta_X : X \to f^* f_!(X)$ is a 
 a map $g : X \to Y$ is a weak equivalence if and only if $f_!(g)$ is a weak equivalence.
 Since $f_!$ preserves colimits and trivial cofibrations, the result follows from Jeff Smith's theorem.
 \end{proof}
+
+% 7. Более привычный синтаксис для алгебраических теорий типов.
+
+We will give several proves by induction on a derivation of a sequent $\Gamma \vdash A \deq A'$ later in the paper.
+Now, we describe another inference system in which it is easier to give such proofs.
+The main problem with the system that we described is that it uses terms which contain a lot of redundant information.
+The system that we are going to describe is also closer to the usual presentation of type theories.
+
+Let $T$ be a contextual algebraic dependent type theory.
+If we want to omit contexts in terms, then function symbols $ft$ and $ty$ do not make sense.
+We can always infer the context of a term, but not its type, so we need an additional assumption on the theory.
+We assume that, for every function symbol $\sigma : s_1 \times \ldots \times s_k \to (tm,n)$ of $T$,
+there exists a term $\sigma_{ty}$ such that $ty$ does not appear in $\sigma_{ty}$ and the sequent $\sststile{}{x_1, \ldots x_k} ty(\sigma(x_1, \ldots x_k)) \cong \sigma_{ty}$ is derivable.
+This is not a serious restriction since every theory is isomorphic to a theory with this property.
+Indeed, we can just add a new function symbol $\sigma_{ty} : s_1 \times \ldots \times s_k \to (ty,n)$
+and a new axiom $\sststile{}{x_1, \ldots x_k} ty(\sigma(x_1, \ldots x_k)) \cong \sigma_{ty}(x_1, \ldots x_k)$ for each function symbol $\sigma$ as above.
+
+Let $\mathcal{C} = \{ ctx, tm \} \times \mathbb{N}$ be the set of sorts of $T$.
+Let $Var$ be a set of variables and let $V$ be a $\mathcal{C}$-set of metavariables.
+Then $Term^C_T(V)$ is the $\{ ty, tm \}$-set of (classes of $\alpha$-equivalence of) metaterms constructed inductively as follows:
+\begin{enumerate}
+\item If $x$ is a variable, then $x$ is a metaterm of sort $tm$.
+\item If $z$ is a metavariable of sort $(tm,n)$ and $a_1, \ldots a_n$ are metaterms of sort $tm$, then $z[a_1, \ldots a_n]$ is a metaterm of sort $tm$.
+\item If $z$ is a metavariable of sort $(p,n)$, $1 \leq m \leq n$, and $a_1, \ldots a_m$ are metaterms of sort $tm$, then $ft^{n-m}(e_p(z))[a_1, \ldots a_m]$ is a metaterm of sort $p$.
+\item If $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ is a basic function symbol of $T$, $\{ A^j_i \}_{1 \leq i \leq k, 1 \leq j \leq n_i}$ are metaterm of sort $ty$,
+$\{ x^j_i \}_{1 \leq i \leq k, 1 \leq j \leq n_i}$ are variables, and $b_1 : p_1, \ldots b_k : p_k$ are metaterms of the specified sorts,
+then the following expression is a metaterm of sort $p$:
+\[ \sigma((x^1_1 : A^1_1), \ldots (x^{n_1}_1 : A^{n_1}_1).\,b_1, \ldots ((x^1_k : A^1_k), \ldots (x^{n_k}_k : A^{n_k}_k).\,b_k) \]
+\end{enumerate}
+We will call metaterm of sort $ty$ \emph{types} and metaterms of sort $tm$ \emph{terms}.
+We will sometimes omit metaterms in the expression $z[a_1, \ldots a_n]$.
+In this case, the omitted metaterms are variables and it should be clear from the context the order of the variables (usually, this is just the order in which they appear in the context).
+For example, the expression $\sigma(x y.\,A, z.\,A[x \repl z, y \repl z])$ is a shorthand for $\sigma(x y.\,A[x,y], z.\,A[x,y][x \repl z, y \repl z])$ (which equals to $\sigma(x y.\,A[x,y], z.\,A[z,z])$).
+
+The set $FV(t)$ of free variable of a metaterm $t$ is defined as follows:
+\begin{align*}
+& FV(x) = \{ x \} \\
+& FV(z[a_1, \ldots a_n]) = \bigcup_{1 \leq i \leq n} FV(a_i) \\
+& FV(ft^{n-m}(e_p(z))[a_1, \ldots a_m]) = \bigcup_{1 \leq i \leq m} FV(a_i) \\
+& FV(\sigma((x^1_1 : A^1_1), \ldots (x^{n_1}_1 : A^{n_1}_1).\,b_1, \ldots ((x^1_k : A^1_k), \ldots (x^{n_k}_k : A^{n_k}_k).\,b_k)) = \\
+& \bigcup_{1 \leq i \leq k} (FV(b_i) \setminus \{ x^1_i, \ldots x^{n_i}_i \}) \cup (\bigcup_{1 \leq j \leq i} FV(A^j_i) \setminus \{ x^1_i, \ldots x^{j-1}_i \})
+\end{align*}
+The relation of $\alpha$-equivalence and the operation of substitution on metaterms are defined as usual.
+
+A \emph{context} is an expression of the form $x_1 : A_1, \ldots x_n : A_n$, where $x_1, \ldots x_n$ are variables and $A_1, \ldots A_n$ are types such that $FV(A_i) \subseteq \{ x_1, \ldots x_{i-1} \}$.
+We will say that a metaterm $t$ is \emph{appropriate} for a context $x_1 : A_1, \ldots x_n : A_n$ if $FV(t) \subseteq \{ x_1, \ldots x_n \}$.
+A \emph{judgement} is an expression of one of the following forms:
+\begin{align*}
+\Gamma & \vdash A\ \type \\
+\Gamma & \vdash a : A \\
+\Gamma & \vdash A \deq A' \\
+\Gamma & \vdash a \deq a' : A
+\end{align*}
+where $\Gamma$ is a context, $A$ and $A'$ are types appropriate for $\Gamma$, and $a$ and $a'$ are terms appropriate for $\Gamma$.
+A \emph{formula} is a finite conjunction of judgements.
