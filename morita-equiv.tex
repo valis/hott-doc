@@ -371,6 +371,7 @@ Let $V$ be a set of variables and let $\varphi$ be a formula with free variables
 We will say that a morphism $f : T_1 \to T_2$ of theories with identity types has the weak lifting property with respect to $V,\varphi$ if
 for every term $A \in Term_{T_1}(V)_{(d_p,n)}$ and every term $a \in Term_{T_2}(V)_{(p,n)}$ such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$,
 there exists a term $a' \in Term_{T_1}(V)_{(p,n)}$ such that $f(a')$ is relatively homotopic to $a$ with respect to $\varphi$.
+We will say that $f$ has the lifting property with respect to $V,\varphi$ if $f(a')$ is not only homotopic to $a$, but also equals it.
 
 \begin{prop}[str-morita-char]
 A morphism $f : T_1 \to T_2$ between theories with identity types is a strong Morita equivalence if and only if it has the weak lifting property with respect to every pair $V,\varphi$.
@@ -401,12 +402,12 @@ Since $f_!(M) = Syn(T_2, U(M), f(\mathcal{A}))$, $a$ is a closed term of $T_2$.
 There is a finite subset $\mathcal{A}_0$ of $\mathcal{A}$ such that $\sststile{T_2 \cup \mathrm{sp}(\mathcal{A}_0)}{} e_p(a) = A$.
 Let $\varphi$ be the conjunction of $\mathcal{A}_0$, and let $b$ and $B$ be $a$ and $A$, respectively, in which every constant $O_x$ is replaced with variable $x$.
 Then $\varphi \sststile{T_2}{U(M)} e_p(b) = B$.
-By assumption, there exist a term $b' \in Term_{T_1}(U(M))_{(p,n)}$ and a homotopy $h$ between $f(b)$ and $b'$.
+By assumption, there exist a term $b' \in Term_{T_1}(U(M))_{(p,n)}$ and a relative homotopy $h$ between $f(b)$ and $b'$.
 These terms correspond under $\mathrm{sp}$ to elements of $M$ and $f^*(f_!(M))$, respectively.
 These conditions imply that $b'$ is the required lifting and $h$ is the required homotopy.
 \end{proof}
 
-An analogous characterization holds for Morita equivalences:
+Analogous characterizations hold for Morita and syntacric equivalences:
 
 \begin{prop}[morita-char]
 A morphism $f : T_1 \to T_2$ between theories with identity types is a Morita equivalence if and only if 
@@ -442,8 +443,6 @@ where $\mathcal{A}_i$ consists of formulas of the form $e_p(x) = t$, where $x \i
 Thus, $M$ is isomorphic to $Syn(T_1, \bigcup_{i \in \mathbb{N}} S_i, \bigcup_{i \in \mathbb{N}} \mathcal{A}_i)$.
 Now, if we choose a finite subset of $\bigcup_{i \in \mathbb{N}} \mathcal{A}_i$ as before, then the conjunction of this subset satisfies the required conditions.
 \end{proof}
-
-Finally, an analogous characterization for syntactic equivalences is obvious:
 
 \begin{prop}[syn-equiv-char]
 A morphism $f : T_1 \to T_2$ between theories with identity types is a syntactic equivalence if and only if it has the weak lifting property with respect to $\varnothing,\top$.
@@ -647,6 +646,7 @@ We say that a map $f : X \to Y$ has RLP up to $\sim_i$ with respect to $i : U \t
               V \ar[r]_v \ar@{-->}[ur]^g                  & Y,
             } \]
 there is a dotted arrow $g : V \to X$ such that $g \circ i = u$ and $(f \circ g) \sim_i v$.
+We will say that a map has RLP up to relative homotopy with respect to a set $\I$ of maps if it has RLP up to $\sim_i$ with respecto to every $i \in \I$.
 
 We will also need the following theorem from \cite{f-model-structures}:
 \begin{thm}[model-structure]
@@ -655,7 +655,7 @@ such that the domains and the codomains of maps in $\I$ are small relative to $\
 For every $i : U \to V \in \I$, choose a reflexive relative cylinder object $C_U(V)$
 such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V) \in \Icof$.
 Let $\J_\I = \{\ \cyli_0 : V \to C_U(V)\ |\ i : U \to V \in \I \ \}$, and
-let $\we_\I$ be the set of maps which have RLP up to $\sim_i$ with respect to every $i \in \I$.
+let $\we_\I$ be the set of maps which have RLP up to relative homotopy with respect to $\I$.
 
 Suppose that for all composable $f \in \Jcell[_\I] \cup \we_\I$ and $g$, if $g \circ f \in \we_\I$, then $g \in \we_\I$.
 Then there exists a cofibrantly generated model structure on $\C$ with $\I$ as a set of generating cofibrations,
@@ -669,6 +669,7 @@ and axioms $\varphi_1 \land \ldots \land \varphi_i \sststile{}{x_1, \ldots x_i} 
 where $\varphi_j$ equals to $e_{p_j}(x_j) = \sigma_j(x_1, \ldots x_{j-1})$.
 Let $\I$ be the set of maps of the form $T_{l, (d_p,n)} \to T_{l, (p,n)}$, where $l = s_1, \ldots s_k$ is any sequence of sorts,
 $\sigma_i$ maps to $\sigma_i$ for every $1 \leq i \leq k$, and $\sigma_{k+1}$ maps to $e_p(\sigma_{k+1})$.
+Let $\I_S \subseteq \I$ be the subset which consists of the maps $T_{l, (d_p,n)} \to T_{l, (p,n)}$ such that $l$ is empty.
 
 For every map in $\I$, we need to define a relative cylinder object for it.
 Let $C_{T_{l,(ty,n)}}(T_{l,(tm,n)})$ be the theory with the same symbols and axioms as $T_l$,
@@ -679,6 +680,12 @@ seven additional function symbols $\sigma,\sigma' : s_1 \times \ldots \times s_k
 and axioms making $(f,g,g',p,q)$ into a relative homotopy between $\sigma$ and $\sigma'$ with respect to $\varphi_1 \land \ldots \land \varphi_k$.
 Maps $\cyli_0,\cyli_1 : T_{l,(tm,n)} \to C_{T_{l,(ty,n)}}(T_{l,(tm,n)})$ and their retraction
 $s : C_{T_{l,(ty,n)}}(T_{l,(tm,n)}) \to T_{l,(tm,n)}$ are defined in the obvious way.
+
+\begin{remark}[triv-fib-lift]
+By \rprop{morita-char}, a map has RLP up to relative homotopy with respect to $\I$ if and only if it is a Morita equivalence.
+An analogous proof shows that a map has RLP with respect to $\I$ if and only if it has the lifting property with respect to the set of pairs described in \rprop{morita-char}.
+Similarly, \rprop{syn-equiv-char} implies that a map has RLP (up to relative homotopy) with respect to $\I_S$ if and only if it has the (weak) lifting property with respect to the pair $\varnothing,\top$.
+\end{remark}
 
 \begin{lem}[jcell-morita]
 Let $f : X \to Y$ be a pushout of $\cyli_0 : T_{l,(tm,n)} \to C_{T_{l,(ty,n)}}(T_{l,(tm,n)})$ (in the category of $I$-stable theories under $T_I$)
@@ -704,6 +711,7 @@ Thus $h(t)[\rho]$ gives us the required homotopy between $t$ and $f(g(t))$.
 \begin{thm}[theories-model-structure]
 There exists a model structure on the category of $I$-stable algebraic dependent type theories under $T_I$
 with $\I$ as the set of generating cofibrations, Morita equivalences as weak equivalences, and in which all objects are fibrant.
+We call it \emph{the Morita model structure}.
 \end{thm}
 \begin{proof}
 Note that the set $\we_\I$ consists of Morita equivalences.
@@ -783,7 +791,9 @@ we just need to show that pushouts of maps $P^{\alpha+1}_l \to P^{\alpha+1}_l \a
 But this is obvious since the domain and the codomain of such a pushout have the same sets of terms and axioms.
 Of course, the identity functor determine a Quillen equivalence between the two model structures on $T_I/\algtt$.
 
-Finally, let us discuss another model structure on the category of $I$-stable theories under $T_I$, which has syntactic equivalences as weak equivalences.
+Finally, let us discuss another model structure on the category of $I$-stable theories under $T_I$, which we call \emph{the syntactic model structure}.
+The weak equivalences of this model structure are syntactic equivalences, $\I_S$ is a set of generating cofibrations, and every object is fibrant in this model structure.
+
 Recall that for every theory $T$, we have a left adjoint functor $Lang_T : \Mod{T} \to T/\algtt$ with a right adjoint $Syn_T : T/\algtt \to \Mod{T}$.
 Note that a map $f : T_1 \to T_2$ of theories under $T_I$ is a syntactic equivalence if and only if $Syn_{T_I}(f)$ is a weak equivalence of models.
 Thus we can transfer the model structure on $\Mod{T_I}$ to a model structure on $T_I/\algtt$.
@@ -799,32 +809,48 @@ But it is actually an isomorphism since $Lang_T$ is full and faithful.
 
 \section{Quotients of cofibrant theories}
 
-In this section we consider theories which are quotients of cofibrant theories.
-We will give another characterization for Morita equivalences between such theories.
+TODO
+% In this section we consider theories which are quotients of cofibrant theories.
+% We will give another characterization for Morita equivalences between such theories.
 
-\begin{lem}[lift-corr]
-Let $V$ be a set of variables and let $\varphi$ be a formula with free variables in $V$.
-Suppose that, for every pair of terms $A$ and $B$ of $T_1$ of sort $(ty,n)$ such that
-$\varphi \sststile{T_1}{} A\!\downarrow \land\ B\!\downarrow$ and $f(\varphi) \sststile{T_2}{} f(A) = f(B)$, there exists a term $H$ of sort $(ty,n+1)$
-such that $\varphi \sststile{T_1}{} left^*(H) = A \land right^*(H) = B$ and $f(H)$ is homotopic to the constant homotopy on $f(A)$.
+\begin{comment}
+Let $T$ be a theory with identity types and let $\varphi$ be a formula of $T$.
+A \emph{homotopy} between contexts $x_1 : A_1, \ldots x_n : A_n$ and $y_1 : B_1, \ldots a_n : B_n$ with respect to $\varphi$ is a sequence of relative homotopies $H_1,\ldots H_n$,
+where $H_i = (f_i,g_i,p_i,g'_i,p'_i)$ is a relative homotopy between $x_1 : A_1, \ldots x_{i-1} : A_{i-1} \vdash A_i$ and $x_1 : A_1, \ldots x_{i-1} : A_{i-1} \vdash B_i[y_1 \repl f_1, \ldots y_{i-1} \repl f_{i-1}]$.
+If $a : (p,n)$ and $B : (d_p,n)$ are terms and $H$ is a homotopy between $e_p(a)$ and $B$, then it is easy to construct a term $coe(H,a) : (p,n)$ such that $e_p(coe(H,a)) = B$.
+Moreover, if $H$ is a constant homotopy, then $coe(H,a) = a$.
+\end{comment}
 
-If $a$ and $A$ are terms of $T_1$ such that 
+\begin{lem}
+Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
+Let $f : T_1 \to T_2$ be a morphism of theories such that the following conditions hold:
+\begin{enumerate}
+\item \label{it:char-fun} For every function symbol $\sigma$ of $T_2$, there exist terms $A_1$, \ldots $A_k$, $t$ of $T_1$ such that $FV(A_i) = \{ x_1, \ldots x_{i-1} \}$ and the following sequents are derivable:
+\begin{align*}
+\bigwedge_{1 \leq i < k} e_{p_i}(x_i) = A_i & \sststile{}{x_1, \ldots x_k} t\!\downarrow \\
+\sigma(x_1, \ldots x_k)\!\downarrow & \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k) = f(t) \land \bigwedge_{1 \leq i < k} e_{p_i}(x_i) = f(A_i)
+\end{align*}
+% \item \label{it:char-type} For every pair of terms $A$ and $B$ of $T_1$ of sort $(ty,n)$ such that
+% $\varphi \sststile{T_1}{V} A\!\downarrow \land B\!\downarrow$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
+% there exists a homotopy $H$ between $A$ and $B$ such that $f(H)$ equals (resp., homotopic to) the constant homotopy on $f(A)$.
+\item \label{it:char-type} For every pair of terms $a$ and $B$ of $T_1$ such that $\varphi \sststile{}{V} a\!\downarrow \land B\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(f(a)) = f(B)$,
+there exists a term $b$ such that $\varphi \sststile{}{V} e_p(b) = B$ and $f(\varphi) \sststile{}{V} f(a) = f(b)$.
+\end{enumerate}
+Then $f$ has the lifting property with respect to $V,\varphi$.
 \end{lem}
 \begin{proof}
-The ``only if'' direction follows from \rprop{morita-char}.
-Let us prove the converse.
-\end{proof}
+Let $A$ and $a$ be terms such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$.
+Then we construct the required lifting by induction on $a$.
+% If $a = x$ is a variable, then temrs $e_p(x)$ and $A$ satisfy the conditions of \eqref{it:char-type}.
+% Thus there exists a homotopy $H$ between $e_p(x)$ and $A$ such that $f(H)$ is the constant homotopy on $e_p(x)$.
+% Then $coe(H,x)$ is the required lifting.
+If $a = x$ is a variable, then \eqref{it:char-type} implies that that the required lifting exists.
 
-\begin{prop}
-Let $V$ be a set of variables and let $\varphi$ be a formula with free variables in $V$.
-A morphism $f : T_1 \to T_2$ between quotients of cofibrant theories with identity types has the weak lifting property with respect to $V,\varphi$ if and only if,
-for every pair of terms $A$ and $B$ of $T_1$ of sort $(ty,n)$ such that
-$\varphi \sststile{T_1}{} A\!\downarrow \land\ B\!\downarrow$ and $f(\varphi) \sststile{T_2}{} f(A) = f(B)$, there exists a term $H$ of sort $(ty,n+1)$
-such that $\varphi \sststile{T_1}{} left^*(H) = A \land right^*(H) = B$ and $f(H)$ is homotopic to the constant homotopy on $f(A)$.
-\end{prop}
-\begin{proof}
-The ``only if'' direction follows from \rprop{morita-char}.
-Let us prove the converse.
+Now, suppose that $a = \sigma(a_1, \ldots a_k)$.
+Let $A_1$, \ldots $A_k$, $t$ be terms as described in \eqref{it:char-fun}.
+By induction hypothesis, there exist terms $a_1'$, \ldots $a_k'$ such that $\varphi \sststile{}{V} e_{p_i}(a_i') = A_i[x_1 \repl a_1', \ldots x_{i-1} \repl a_{i-1}']$ and $f(\varphi) \sststile{}{V} f(a_i') = a_i$.
+% First, let us show that, for every term $a$ of $T_2$ such that $f(\varphi) \sststile{}{V} a\!\downarrow$,
+% there exists a term $a'$ of $T_1$ such that $\varphi \sststile{}{V} a'\!\downarrow$ and $f(\varphi) \sststile{}{V} a = f(a')$.
 \end{proof}
 
 \section{Structure of a cofibration category}
