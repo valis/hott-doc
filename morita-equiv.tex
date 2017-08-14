@@ -838,17 +838,12 @@ Let $f : T_1 \to T_2$ be a morphism of theories such that the following conditio
 \sigma(x_1, \ldots x_k)\!\downarrow & \sststile{T_2}{x_1, \ldots x_k} \bigwedge_{1 \leq i < k} e_{p_i}(x_i) = f(A_i)
 \end{align*}
 Moreover, $\sigma(x_1, \ldots x_k)$ and $f(t)$ are relatively homotopic with respect to $\sigma(x_1, \ldots x_k)\!\downarrow$.
-\item \label{it:char-type} For every pair of terms $A$ and $B$ of $T_1$ of sort $(ty,n)$ such that
-$\varphi \sststile{T_1}{V} ft(A) = ft(B)$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
-there exists a term $b$ such that $\varphi \sststile{T_1}{V} A \vdash b : B$ and $f(b)$ is homotopic to $v_0(f(A))$ with respect to $f(\varphi)$.
+\item \label{it:char-type} For all terms $A$, $B$, and $a$ of $T_1$ such that $\varphi \sststile{T_1}{V} e_p(a) = A$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
+there exists a term $b$ such that $\varphi \sststile{T_1}{V} e_p(b) = B$ and $f(b)$ is relatively homotopic to $f(a)$ with respect to $f(\varphi)$.
 \end{enumerate}
 Then $f$ has the weak lifting property with respect to $V,\varphi$.
 \end{lem}
 \begin{proof}
-First, let us prove that \eqref{it:char-type} implies the following fact, which will be denoted by (2').
-For all terms $A$, $B$, and $a$ of $T_1$ such that $\varphi \sststile{T_1}{V} e_p(a) = A$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
-there exists a term $b$ such that $\varphi \sststile{T_1}{V} e_p(b) = B$ and $f(b)$ is homotopic to $f(a)$ with respect to $f(\varphi)$.
-
 Let $A$ and $a$ be terms such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$.
 Then we construct the required lifting by induction on $a$.
 % If $a = x$ is a variable, then temrs $e_p(x)$ and $A$ satisfy the conditions of \eqref{it:char-type}.
@@ -863,6 +858,52 @@ Let $a' = t[x_1 \repl a_1', \ldots x_k \repl a_k']$.
 Since $\varphi \sststile{}{V} a'\!\downarrow$ and $f(\varphi) \sststile{}{V} f(a') = f(a)$, \eqref{it:char-type} implies that there exists the required lifting.
 % First, let us show that, for every term $a$ of $T_2$ such that $f(\varphi) \sststile{}{V} a\!\downarrow$,
 % there exists a term $a'$ of $T_1$ such that $\varphi \sststile{}{V} a'\!\downarrow$ and $f(\varphi) \sststile{}{V} a = f(a')$.
+\end{proof}
+
+\begin{lem}
+Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
+Let $f : T_1 \to T_2$ be a morphism of theories such that the following conditions hold:
+\begin{enumerate}
+\item \label{it:char-fun} For every basic function symbol $\sigma$ of $T_2$, there exist terms $A_1$, \ldots $A_k$, $t$ of $T_1$ such that $FV(A_i) = \{ x_1, \ldots x_{i-1} \}$ and the following sequents are derivable:
+\begin{align*}
+\bigwedge_{1 \leq i < k} e_{p_i}(x_i) = A_i & \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow \\
+\sigma(x_1, \ldots x_k)\!\downarrow & \sststile{T_2}{x_1, \ldots x_k} f(t) = \sigma(x_1, \ldots x_k) \land \bigwedge_{1 \leq i < k} e_{p_i}(x_i) = f(A_i)
+\end{align*}
+\item \label{it:char-type} For every pair of terms $A$ and $B$ of $T_1$ of sort $(ty,n)$ such that
+$\varphi \sststile{T_1}{V} ft(A) = ft(B)$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
+there exists a term $b$ such that $\varphi \sststile{T_1}{V} A \vdash b : B$ and $f(b)$ equals to $v_0(f(A))$.
+\end{enumerate}
+Then $f$ has the lifting property with respect to $V,\varphi$.
+\end{lem}
+\begin{proof}
+First, note that if $\Gamma$ and $\Delta$ are context such that $\varphi \sststile{T_1}{V} \Gamma\!\downarrow \land \Delta\!\downarrow$ and $f(\varphi) \sststile{T_2}{V} f(\Gamma) = f(\Delta)$,
+then there is a morphism of context $d : \Gamma \to \Delta$ such that $f(d)$ is the identity morphism.
+We prove this by induction on the length of contexts.
+There is a unique morphism between empty contexts.
+If contexts are not empty, then we have a morphism $d : ft(\Gamma) \to ft(\Delta)$ by induction hypothesis.
+Since $f(d^*(\Delta))$ equals to $f(\Gamma)$, we have a term $\Gamma \vdash b : d^*(\Delta)$ such that $f(b)$ equals to $v_0(f(\Gamma))$ by \eqref{it:char-type}.
+Thus, $d,b$ is the required morphism of contexts $\Gamma$ and $\Delta$.
+
+Let us prove that \eqref{it:char-type} implies the following fact, which will be denoted by (2').
+For all terms $A$, $B$, and $a$ of $T_1$ such that $\varphi \sststile{T_1}{V} e_p(a) = A$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
+there exists a term $b$ such that $\varphi \sststile{T_1}{V} e_p(b) = B$ and $f(\varphi) \sststile{T_2}{V} f(a) = f(b)$.
+We have a morphism $d : A \to B$ such that $f(d)$ equals to the identity morphism.
+if $p = ty$, then we can define $b$ as $d^*(a)$.
+if $p = tm$, then let $B = d^*(ty(a))$.
+Since $f(B) = f(ty(a))$, we have a term $ty(a) \vdash b' : B$ such that $f(b')$ equals to $v_0(f(B))$ by \eqref{it:char-type}.
+Then we can define $b$ as $b'[d^*(a)]$.
+This complete the proof of (2').
+
+Let $A$ and $a$ be terms such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$.
+Then we construct the required lifting by induction on $a$.
+If $a = x$ is a variable, then (2') implies that that the required lifting exists.
+
+Now, suppose that $a = \sigma(a_1, \ldots a_k)$.
+The same proof as in the previous lemma shows that condition \eqref{it:char-fun} holds for all function symbols.
+Let $A_1$, \ldots $A_k$, $t$ be terms as described in \eqref{it:char-fun}.
+By induction hypothesis, there exist terms $a_1'$, \ldots $a_k'$ such that $\varphi \sststile{}{V} e_{p_i}(a_i') = A_i[x_1 \repl a_1', \ldots x_{i-1} \repl a_{i-1}']$ and $f(\varphi) \sststile{}{V} f(a_i') = a_i$.
+Let $a' = t[x_1 \repl a_1', \ldots x_k \repl a_k']$.
+Since $\varphi \sststile{}{V} a'\!\downarrow$ and $f(\varphi) \sststile{}{V} f(a') = f(a)$, (2') implies that there exists the required lifting.
 \end{proof}
 
 \section{Structure of a cofibration category}
