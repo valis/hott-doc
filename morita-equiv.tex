@@ -809,102 +809,81 @@ Then the adjunction $Lang_T \dashv Syn_T$ is a Quillen equivalence between the m
 To prove this, we just need to show that the unit of the adjunction is a weak equivalence.
 But it is actually an isomorphism since $Lang_T$ is full and faithful.
 
-\section{Quotients of cofibrant theories}
+\section{Examples of Morita equivalences}
 
-TODO
-% In this section we consider theories which are quotients of cofibrant theories.
-% We will give another characterization for Morita equivalences between such theories.
+In this section we prove several useful lemmas that characterize (strong) Morta equivalences and syntactic equivalences.
+Since all of these notations are defined in terms of weak lifting properties, we will prove general results about them.
+We will construct several examples of Morita equivalences using these lemmas.
 
-\begin{comment}
-Let $T$ be a theory with identity types and let $\varphi$ be a formula of $T$.
-A \emph{homotopy} between contexts $x_1 : A_1, \ldots x_n : A_n$ and $y_1 : B_1, \ldots a_n : B_n$ with respect to $\varphi$ is a sequence of relative homotopies $H_1,\ldots H_n$,
-where $H_i = (f_i,g_i,p_i,g'_i,p'_i)$ is a relative homotopy between $x_1 : A_1, \ldots x_{i-1} : A_{i-1} \vdash A_i$ and $x_1 : A_1, \ldots x_{i-1} : A_{i-1} \vdash B_i[y_1 \repl f_1, \ldots y_{i-1} \repl f_{i-1}]$.
-If $a : (p,n)$ and $B : (d_p,n)$ are terms and $H$ is a homotopy between $e_p(a)$ and $B$, then it is easy to construct a term $coe(H,a) : (p,n)$ such that $e_p(coe(H,a)) = B$.
-Moreover, if $H$ is a constant homotopy, then $coe(H,a) = a$.
-\end{comment}
+\subsection{Characterization of lifting properties}
 
-By \cite[Lemma~4.6]{alg-tt}, every theory is isomorphic to a contextual theory in which every basic function symbol has a signature of the form
-\[ \sigma : s_1 \times \ldots \times s_k \to (p,0), \]
-where $p \in \{ ty, tm \}$.
-Thus we can assume that all theories have this form without loss of generality.
+We begin with lifting properties since they are easier to handle than weak lifting properties.
+If we think about a map that has the weak lifting property with respect to a pair $V,\varphi$ as a weak equivalence,
+then a map having the lifting property with respect to this pair can be thought of as a trivial fibration.
 
-\begin{lem}
+\begin{lem}[eq-char]
 Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
 Let $f : T_1 \to T_2$ be a morphism of theories such that the following conditions hold:
 \begin{enumerate}
-\item \label{it:char-fun} For every basic function symbol $\sigma$ of $T_2$, there exist terms $A_1$, \ldots $A_k$, $t$ of $T_1$ such that $FV(A_i) = \{ x_1, \ldots x_{i-1} \}$ and the following sequents are derivable:
+\item \label{it:char-fun} For every function symbol $\sigma$ of $T_2$, there exist terms $A_1$, \ldots $A_k$, $t$ of $T_1$ such that $FV(A_i) = \{ x_1, \ldots x_{i-1} \}$ and the following sequents are derivable:
 \begin{align*}
-\bigwedge_{1 \leq i < k} e_{p_i}(x_i) = A_i & \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow \\
-\sigma(x_1, \ldots x_k)\!\downarrow & \sststile{T_2}{x_1, \ldots x_k} \bigwedge_{1 \leq i < k} e_{p_i}(x_i) = f(A_i)
+\bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i & \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow \\
+\sigma(x_1, \ldots x_k)\!\downarrow & \sststile{T_2}{x_1, \ldots x_k} f(t) = \sigma(x_1, \ldots x_k) \land \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = f(A_i)
 \end{align*}
-Moreover, $\sigma(x_1, \ldots x_k)$ and $f(t)$ are relatively homotopic with respect to $\sigma(x_1, \ldots x_k)\!\downarrow$.
 \item \label{it:char-type} For all terms $A$, $B$, and $a$ of $T_1$ such that $\varphi \sststile{T_1}{V} e_p(a) = A$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
-there exists a term $b$ such that $\varphi \sststile{T_1}{V} e_p(b) = B$ and $f(b)$ is relatively homotopic to $f(a)$ with respect to $f(\varphi)$.
+there exists a term $b$ such that $\varphi \sststile{T_1}{V} e_p(b) = B$ and $f(b)$ equals to $f(a)$.
 \end{enumerate}
-Then $f$ has the weak lifting property with respect to $V,\varphi$.
+Then $f$ has the lifting property with respect to $V,\varphi$.
 \end{lem}
 \begin{proof}
 Let $A$ and $a$ be terms such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$.
 Then we construct the required lifting by induction on $a$.
-% If $a = x$ is a variable, then temrs $e_p(x)$ and $A$ satisfy the conditions of \eqref{it:char-type}.
-% Thus there exists a homotopy $H$ between $e_p(x)$ and $A$ such that $f(H)$ is the constant homotopy on $e_p(x)$.
-% Then $coe(H,x)$ is the required lifting.
-If $a = x$ is a variable, then \eqref{it:char-type} implies that that the required lifting exists.
+If $a = x$ is a variable, then (2') implies that that the required lifting exists.
 
 Now, suppose that $a = \sigma(a_1, \ldots a_k)$.
 Let $A_1$, \ldots $A_k$, $t$ be terms as described in \eqref{it:char-fun}.
 By induction hypothesis, there exist terms $a_1'$, \ldots $a_k'$ such that $\varphi \sststile{}{V} e_{p_i}(a_i') = A_i[x_1 \repl a_1', \ldots x_{i-1} \repl a_{i-1}']$ and $f(\varphi) \sststile{}{V} f(a_i') = a_i$.
 Let $a' = t[x_1 \repl a_1', \ldots x_k \repl a_k']$.
 Since $\varphi \sststile{}{V} a'\!\downarrow$ and $f(\varphi) \sststile{}{V} f(a') = f(a)$, \eqref{it:char-type} implies that there exists the required lifting.
-% First, let us show that, for every term $a$ of $T_2$ such that $f(\varphi) \sststile{}{V} a\!\downarrow$,
-% there exists a term $a'$ of $T_1$ such that $\varphi \sststile{}{V} a'\!\downarrow$ and $f(\varphi) \sststile{}{V} a = f(a')$.
 \end{proof}
+
+\begin{remark}
+If $T_2$ is a stable contextual theory, then it is enough to check the first condition of the previous lemma for basic function symbols.
+It is easy to see that this implies the general case.
+\end{remark}
+
+It is often easy to prove the first condition of \rlem{eq-char}, so the main problem is verifying the second one.
+The following lemma shows that it follows from a simpler condition.
 
 \begin{lem}
 Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
-Let $f : T_1 \to T_2$ be a morphism of theories such that the following conditions hold:
-\begin{enumerate}
-\item \label{it:char-fun} For every basic function symbol $\sigma$ of $T_2$, there exist terms $A_1$, \ldots $A_k$, $t$ of $T_1$ such that $FV(A_i) = \{ x_1, \ldots x_{i-1} \}$ and the following sequents are derivable:
-\begin{align*}
-\bigwedge_{1 \leq i < k} e_{p_i}(x_i) = A_i & \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow \\
-\sigma(x_1, \ldots x_k)\!\downarrow & \sststile{T_2}{x_1, \ldots x_k} f(t) = \sigma(x_1, \ldots x_k) \land \bigwedge_{1 \leq i < k} e_{p_i}(x_i) = f(A_i)
-\end{align*}
-\item \label{it:char-type} For every pair of terms $A$ and $B$ of $T_1$ of sort $(ty,n)$ such that
+Let $f : T_1 \to T_2$ be a morphism of theories such that the following condition holds.
+For every pair of terms $A$ and $B$ of $T_1$ of sort $(ty,n)$ such that
 $\varphi \sststile{T_1}{V} ft(A) = ft(B)$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
 there exists a term $b$ such that $\varphi \sststile{T_1}{V} A \vdash b : B$ and $f(b)$ equals to $v_0(f(A))$.
-\end{enumerate}
-Then $f$ has the lifting property with respect to $V,\varphi$.
+Then the second condition of \rlem{eq-char} holds.
 \end{lem}
 \begin{proof}
-First, note that if $\Gamma$ and $\Delta$ are context such that $\varphi \sststile{T_1}{V} \Gamma\!\downarrow \land \Delta\!\downarrow$ and $f(\varphi) \sststile{T_2}{V} f(\Gamma) = f(\Delta)$,
+First, note that if $\Gamma$ and $\Delta$ are context such that $\varphi \sststile{T_1}{V} \Gamma\!\!\downarrow\!\land\:\Delta\!\!\downarrow$ and $f(\varphi) \sststile{T_2}{V} f(\Gamma) = f(\Delta)$,
 then there is a morphism of context $d : \Gamma \to \Delta$ such that $f(d)$ is the identity morphism.
 We prove this by induction on the length of contexts.
 There is a unique morphism between empty contexts.
 If contexts are not empty, then we have a morphism $d : ft(\Gamma) \to ft(\Delta)$ by induction hypothesis.
-Since $f(d^*(\Delta))$ equals to $f(\Gamma)$, we have a term $\Gamma \vdash b : d^*(\Delta)$ such that $f(b)$ equals to $v_0(f(\Gamma))$ by \eqref{it:char-type}.
+Since $f(d^*(\Delta))$ equals to $f(\Gamma)$, we have a term $\Gamma \vdash b : d^*(\Delta)$ such that $f(b)$ equals to $v_0(f(\Gamma))$ by assumption.
 Thus, $d,b$ is the required morphism of contexts $\Gamma$ and $\Delta$.
 
-Let us prove that \eqref{it:char-type} implies the following fact, which will be denoted by (2').
 For all terms $A$, $B$, and $a$ of $T_1$ such that $\varphi \sststile{T_1}{V} e_p(a) = A$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
 there exists a term $b$ such that $\varphi \sststile{T_1}{V} e_p(b) = B$ and $f(\varphi) \sststile{T_2}{V} f(a) = f(b)$.
 We have a morphism $d : A \to B$ such that $f(d)$ equals to the identity morphism.
 if $p = ty$, then we can define $b$ as $d^*(a)$.
 if $p = tm$, then let $B = d^*(ty(a))$.
-Since $f(B) = f(ty(a))$, we have a term $ty(a) \vdash b' : B$ such that $f(b')$ equals to $v_0(f(B))$ by \eqref{it:char-type}.
+Since $f(B) = f(ty(a))$, we have a term $ty(a) \vdash b' : B$ such that $f(b')$ equals to $v_0(f(B))$ by assumption.
 Then we can define $b$ as $b'[d^*(a)]$.
-This complete the proof of (2').
-
-Let $A$ and $a$ be terms such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$.
-Then we construct the required lifting by induction on $a$.
-If $a = x$ is a variable, then (2') implies that that the required lifting exists.
-
-Now, suppose that $a = \sigma(a_1, \ldots a_k)$.
-The same proof as in the previous lemma shows that condition \eqref{it:char-fun} holds for all function symbols.
-Let $A_1$, \ldots $A_k$, $t$ be terms as described in \eqref{it:char-fun}.
-By induction hypothesis, there exist terms $a_1'$, \ldots $a_k'$ such that $\varphi \sststile{}{V} e_{p_i}(a_i') = A_i[x_1 \repl a_1', \ldots x_{i-1} \repl a_{i-1}']$ and $f(\varphi) \sststile{}{V} f(a_i') = a_i$.
-Let $a' = t[x_1 \repl a_1', \ldots x_k \repl a_k']$.
-Since $\varphi \sststile{}{V} a'\!\downarrow$ and $f(\varphi) \sststile{}{V} f(a') = f(a)$, (2') implies that there exists the required lifting.
 \end{proof}
+
+\subsection{Characterization of weak lifting properties}
+
+\subsection{Applications}
 
 \section{Structure of a cofibration category}
 
