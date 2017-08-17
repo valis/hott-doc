@@ -375,8 +375,14 @@ for every term $A \in Term_{T_1}(V)_{(d_p,n)}$ and every term $a \in Term_{T_2}(
 there exists a term $a' \in Term_{T_1}(V)_{(p,n)}$ such that $f(a')$ is relatively homotopic to $a$ with respect to $\varphi$.
 We will say that $f$ has the lifting property with respect to $V,\varphi$ if $f(a')$ is not only homotopic to $a$, but also equals it.
 
+If $P$ is a set of pairs of the form $V,\varphi$, then we will say that a map has the (weak) lifting property with respect to $P$ if it has this property with respect to every element of $P$.
+We define $P_0$ as the singleton set $\{ \varnothing,\top \}$, $P_S$ as the set of all pairs, and $P_M$ as the set of pairs $V,\varphi$ such that $V = \{ x_1, \ldots x_k \}$
+and $\varphi = \varphi_1 \land \ldots \land \varphi_k$, where $\varphi_i$ equals to $e_p(x_i) = t_i$,
+where $t_i$ is a term of $T_1$ with free variables in $\{ x_1, \ldots x_{i-1} \}$ such that for every $1 \leq i \leq k$,
+sequent $\varphi_1 \land \ldots \land \varphi_{i-1} \sststile{}{x_1, \ldots x_{i-1}} t_i\!\downarrow$ is derivable in $T_1$.
+
 \begin{prop}[str-morita-char]
-A morphism $f : T_1 \to T_2$ between theories with identity types is a strong Morita equivalence if and only if it has the weak lifting property with respect to every pair $V,\varphi$.
+A morphism $f : T_1 \to T_2$ between theories with identity types is a strong Morita equivalence if and only if it has the weak lifting property with respect to $P_S$.
 \end{prop}
 \begin{proof}
 First, we need to introduce an auxiliary construction.
@@ -412,11 +418,7 @@ These conditions imply that $b'$ is the required lifting and $h$ is the required
 Analogous characterizations hold for Morita and syntacric equivalences:
 
 \begin{prop}[morita-char]
-A morphism $f : T_1 \to T_2$ between theories with identity types is a Morita equivalence if and only if 
-it has the weak lifting property with respect to every $V = \{ x_1, \ldots x_k \}$
-and every $\varphi$ of the form $\varphi_1 \land \ldots \land \varphi_k$, where $\varphi_i$ equals to $e_p(x_i) = t_i$,
-where $t_i$ is a term of $T_1$ with free variables in $\{ x_1, \ldots x_{i-1} \}$ such that for every $1 \leq i \leq k$,
-sequent $\varphi_1 \land \ldots \land \varphi_{i-1} \sststile{}{x_1, \ldots x_{i-1}} t_i\!\downarrow$ is derivable in $T_1$.
+A morphism $f : T_1 \to T_2$ between theories with identity types is a Morita equivalence if and only if it has the weak lifting property with respect to $P_M$.
 \end{prop}
 \begin{proof}
 Suppose that $f$ is a Morita equivalence.
@@ -447,7 +449,7 @@ Now, if we choose a finite subset of $\bigcup_{i \in \mathbb{N}} \mathcal{A}_i$ 
 \end{proof}
 
 \begin{prop}[syn-equiv-char]
-A morphism $f : T_1 \to T_2$ between theories with identity types is a syntactic equivalence if and only if it has the weak lifting property with respect to $\varnothing,\top$.
+A morphism $f : T_1 \to T_2$ between theories with identity types is a syntactic equivalence if and only if it has the weak lifting property with respect to $P_0$.
 \end{prop}
 \begin{proof}
 This is obvious since elements of the initial model of $T_1$ are closed terms $t$ of $T_1$ such that $\sststile{}{} t\!\downarrow$ is derivable.
@@ -671,7 +673,7 @@ and axioms $\varphi_1 \land \ldots \land \varphi_i \sststile{}{x_1, \ldots x_i} 
 where $\varphi_j$ equals to $e_{p_j}(x_j) = \sigma_j(x_1, \ldots x_{j-1})$.
 Let $\I$ be the set of maps of the form $T_{l, (d_p,n)} \to T_{l, (p,n)}$, where $l = s_1, \ldots s_k$ is any sequence of sorts,
 $\sigma_i$ maps to $\sigma_i$ for every $1 \leq i \leq k$, and $\sigma_{k+1}$ maps to $e_p(\sigma_{k+1})$.
-Let $\I_S \subseteq \I$ be the subset which consists of the maps $T_{l, (d_p,n)} \to T_{l, (p,n)}$ such that $l$ is empty.
+Let $\I_0 \subseteq \I$ be the subset which consists of the maps $T_{l, (d_p,n)} \to T_{l, (p,n)}$ such that $l$ is empty.
 
 For every map in $\I$, we need to define a relative cylinder object for it.
 Let $C_{T_{l,(ty,n)}}(T_{l,(tm,n)})$ be the theory with the same symbols and axioms as $T_l$,
@@ -685,8 +687,7 @@ $s : C_{T_{l,(ty,n)}}(T_{l,(tm,n)}) \to T_{l,(tm,n)}$ are defined in the obvious
 
 \begin{remark}[triv-fib-lift]
 By \rprop{morita-char}, a map has RLP up to relative homotopy with respect to $\I$ if and only if it is a Morita equivalence.
-An analogous proof shows that a map has RLP with respect to $\I$ if and only if it has the lifting property with respect to the set of pairs described in \rprop{morita-char}.
-Similarly, \rprop{syn-equiv-char} implies that a map has RLP (up to relative homotopy) with respect to $\I_S$ if and only if it has the (weak) lifting property with respect to the pair $\varnothing,\top$.
+Similarly, \rprop{syn-equiv-char} implies that a map has RLP up to relative homotopy with respect to $\I_0$ if and only if it is a syntactic equivalence.
 \end{remark}
 
 \begin{lem}[jcell-morita]
@@ -794,7 +795,7 @@ But this is obvious since the domain and the codomain of such a pushout have the
 Of course, the identity functor determine a Quillen equivalence between the two model structures on $T_I/\algtt$.
 
 Finally, let us discuss another model structure on the category of $I$-stable theories under $T_I$, which we call \emph{the syntactic model structure}.
-The weak equivalences of this model structure are syntactic equivalences, $\I_S$ is a set of generating cofibrations, and every object is fibrant in this model structure.
+The weak equivalences of this model structure are syntactic equivalences, $\I_0$ is a set of generating cofibrations, and every object is fibrant in this model structure.
 
 Recall that for every theory $T$, we have a left adjoint functor $Lang_T : \Mod{T} \to T/\algtt$ with a right adjoint $Syn_T : T/\algtt \to \Mod{T}$.
 Note that a map $f : T_1 \to T_2$ of theories under $T_I$ is a syntactic equivalence if and only if $Syn_{T_I}(f)$ is a weak equivalence of models.
@@ -825,8 +826,9 @@ then a map having the lifting property with respect to this pair can be thought 
 Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
 Let $f : T_1 \to T_2$ be a morphism of theories such that the following conditions hold:
 \begin{enumerate}
-\item \label{it:char-fun} For every function symbol $\sigma$ of $T_2$, there exist terms $A_1$, \ldots $A_k$, $t$ of $T_1$ such that $FV(A_i) = \{ x_1, \ldots x_{i-1} \}$ and the following sequents are derivable:
+\item \label{it:char-fun} For every function symbol $\sigma$ of $T_2$, there exist terms $A_1$, \ldots $A_k$, $t$ of $T_1$ such that $FV(A_i) \subseteq \{ x_1, \ldots x_{i-1} \}$ and the following sequents are derivable:
 \begin{align*}
+\bigwedge_{1 \leq i < j} e_{p_i}(x_i) = A_i & \sststile{T_1}{x_1, \ldots x_{j-1}} A_j\!\downarrow \text{ for every } 1 \leq j \leq k \\
 \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i & \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow \\
 \sigma(x_1, \ldots x_k)\!\downarrow & \sststile{T_2}{x_1, \ldots x_k} f(t) = \sigma(x_1, \ldots x_k) \land \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = f(A_i)
 \end{align*}
@@ -838,7 +840,7 @@ Then $f$ has the lifting property with respect to $V,\varphi$.
 \begin{proof}
 Let $A$ and $a$ be terms such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$.
 Then we construct the required lifting by induction on $a$.
-If $a = x$ is a variable, then (2') implies that that the required lifting exists.
+If $a = x$ is a variable, then \eqref{it:char-type} implies that that the required lifting exists.
 
 Now, suppose that $a = \sigma(a_1, \ldots a_k)$.
 Let $A_1$, \ldots $A_k$, $t$ be terms as described in \eqref{it:char-fun}.
@@ -852,10 +854,10 @@ If $T_2$ is a stable contextual theory, then it is enough to check the first con
 It is easy to see that this implies the general case.
 \end{remark}
 
-It is often easy to prove the first condition of \rlem{eq-char}, so the main problem is verifying the second one.
-The following lemma shows that it follows from a simpler condition.
+Now, we want to simplify conditions of \rlem{eq-char}.
+It is easy to do this for the second one:
 
-\begin{lem}
+\begin{lem}[char-type]
 Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
 Let $f : T_1 \to T_2$ be a morphism of theories such that the following condition holds.
 For every pair of terms $A$ and $B$ of $T_1$ of sort $(ty,n)$ such that
@@ -879,6 +881,62 @@ if $p = ty$, then we can define $b$ as $d^*(a)$.
 if $p = tm$, then let $B = d^*(ty(a))$.
 Since $f(B) = f(ty(a))$, we have a term $ty(a) \vdash b' : B$ such that $f(b')$ equals to $v_0(f(B))$ by assumption.
 Then we can define $b$ as $b'[d^*(a)]$.
+\end{proof}
+
+If we want to simplify the first condition of \rlem{eq-char}, then we need certain assumptions on the theory $T_2$.
+We will say that a theory \emph{has well-defined function symbols} if (it is isomorphic to a theory such that) there exists a well-founded relation on the set of function symbols such that,
+for every function symbol $\sigma$, either $\sigma$ equals to one of the function symbols $ty_n$, $ft_n$ or there exist terms $A_1$, \ldots $A_k$ satisfying the following conditions:
+\begin{enumerate}
+\item All function symbols that occur in $A_1$, \ldots $A_k$ are less than $\sigma$.
+\item $FV(A_i) \subseteq \{ x_1, \ldots x_{i-1} \}$ for every $1 \leq i \leq k$.
+\item The following sequents are derivable:
+\begin{align*}
+\bigwedge_{1 \leq i < j} e_{p_i}(x_i) = A_i & \sststile{}{x_1, \ldots x_{j-1}} A_j\!\downarrow \text{ for every } 1 \leq j \leq k \\
+\bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i & \ssststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow
+\end{align*}
+\end{enumerate}
+We will say that terms $A_1$, \ldots $A_k$ \emph{define} the function symbol $\sigma$.
+
+This condition is easy to check and most of the theories that occur in practice satisfy it.
+An example of a theory that does not satisfy it appeared in \cite{alg-models}: it is the theory of filler operations.
+The rest of the theories that appear in \cite{alg-models} and also all of the theories in this paper and in \cite{alg-tt} have well-defined function symbols.
+
+\begin{lem}[char-fun]
+Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
+Let $f : T_1 \to T_2$ be a morphism of theories such that $T_2$ has well-defined function symbols.
+Suppose that the second condition of \rlem{eq-char} holds and, for every function symbol $\sigma$ of $T_2$, either the first condition of \rlem{eq-char} holds for $\sigma$ or,
+for every pair $\{ x_1, \ldots x_k \},\psi$ in $P_M$, if $f(\psi) \sststile{T_2}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ is derivable, then there exists a term $t$ of $T_1$ such that the following sequents are derivable:
+\begin{align*}
+\psi & \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow \\
+f(\psi) & \sststile{T_1}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k) = f(t)
+\end{align*}
+Then the first condition of \rlem{eq-char} holds.
+\end{lem}
+\begin{proof}
+First, note that if the first condition of \rlem{eq-char} holds for some subset of function symbols of $T_2$, then we still can lift terms constructed from function symbols from this subset.
+The proof of this fact is the same as the proof of \rlem{eq-char}.
+We also note that symbols $ty_n$ and $ft_n$ satisfy the first condition of \rlem{eq-char}, so we may assume that they are less than every other symbol.
+
+Now, we can proceed by well-founded induction on $\sigma$.
+If the first condition of \rlem{eq-char} holds for $\sigma$, then we are done.
+Otherwise, let $A_1$, \ldots $A_k$ be terms that define $\sigma$.
+By induction hypothesis, there exist lifts $A_1'$, \ldots $A_k'$ of these terms (we first lift $ft^{n_i}(e_{p_i}(A_i))$, then $ft^{n_i-1}(e_{p_i}(A_i))$, and so on; finally, we can lift $A_i$).
+If we let $\psi = (\bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i')$, then $f(\psi) \sststile{T_2}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$.
+Thus, by assumption, we have a term $t$ such that $\psi \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow$ and $f(\psi) \sststile{T_2}{x_1, \ldots x_k} f(t) = \sigma(x_1, \ldots x_k)$.
+Since $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{T_2}{x_1, \ldots x_k} f(\psi)$, we are done.
+\end{proof}
+
+\begin{prop}
+Let $P$ be a set such that $P_M \subseteq P \subseteq P_S$.
+If $f : T_1 \to T_2$ is a morphism of theories such that $T_2$ has well-defined function symbols, then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:eq-fib} $f$ has the lifting property with respect to $P$.
+\item \label{it:cond-fib} Conditions of \rlem{char-type} and \rlem{char-fun} hold for all pairs in $P$.
+\item \label{it:lem-fib} Both conditions of \rlem{eq-char} hold for all pairs in $P$.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+This follows from \rlem{eq-char}, \rlem{char-type}, and \rlem{char-fun}.
 \end{proof}
 
 \subsection{Characterization of weak lifting properties}
