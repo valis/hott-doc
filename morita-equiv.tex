@@ -544,9 +544,6 @@ Note that \cite[Proposition~3.3]{kap-lum-model} implies that, for all theories w
 Thus, the first condition of the previous lemma is often true.
 We believe that this might be true more generally for all theories with only identity types, but the proofs become much harder without $\Sigma$-types.
 
-We will show that if a theory $T$ is nice enough, then the map $T \to T + \coeT_1 + \sigma + \PathT + \wUA$ is a Morita equivalence.
-Since the latter theory is always good, this implies that every such theory $T$ is semi-good.
-
 Finally, let us prove an analogous lemma for strong Morita equivalences:
 
 \begin{lem}
@@ -838,13 +835,13 @@ Then the adjunction $\Lang_T \dashv \Syn_T$ is a Quillen equivalence between the
 To prove this, we just need to show that the unit of the adjunction is a weak equivalence.
 But it is actually an isomorphism since $\Lang_T$ is full and faithful.
 
-\section{Examples of Morita equivalences}
+\section{Confluent theories}
 
-In this section we prove several useful lemmas that characterize trivial fibrations in various model structures that we considered in previous section.
+In this section we define confluent theories, which have a useful property that Morita equivalences between them satisfy several closure properties.
+We also prove several useful lemmas that characterize trivial fibrations in various model structures that we considered in previous section.
 Since all of these notations are defined in terms of lifting properties, we will prove general results about them.
 Indeed, if we think about a map that has the weak lifting property with respect to a pair $V,\varphi$ as a weak equivalence,
 then a map having the lifting property with respect to this pair can be thought of as a trivial fibration.
-We will construct several examples of Morita equivalences using these lemmas.
 
 \subsection{Characterization of lifting properties}
 
@@ -929,30 +926,24 @@ This condition is easy to check and most of the theories that occur in practice 
 An example of a theory that does not satisfy it appeared in \cite{alg-models}: it is the theory of filler operations.
 The rest of the theories that appear in \cite{alg-models} and also all of the theories in this paper and in \cite{alg-tt} have well-defined function symbols.
 
-\begin{prop}[eq-comp-char-fib]
-Let $P$ be a set such that $P_M \subseteq P \subseteq P_S$.
-If $f : T_1 \to T_2$ is a morphism of theories such that $T_2$ has well-defined function symbols, then the following conditions are equivalent:
-\begin{enumerate}
-\item \label{it:lem-fib} Conditions of \rlem{eq-char-fib} hold for all pairs in $P$.
-\item \label{it:eq-fib} $f$ has the lifting property with respect to $P$.
-\item \label{it:cond-fib} The second condition of \rlem{eq-char-fib} holds for all pairs in $P$ and, for every function symbol $\sigma$ of $T_2$, either the first condition of \rlem{eq-char-fib} holds for $\sigma$ or,
+\begin{lem}[eq-comp-char-fib]
+Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
+Let $f : T_1 \to T_2$ be a morphism of theories such that $T_2$ has well-defined function symbols.
+Suppose that the second condition of \rlem{eq-char-fib} holds.
+Moreover, suppo that, for every function symbol $\sigma$ of $T_2$, either the first condition of \rlem{eq-char-fib} holds for $\sigma$ or,
 for every pair $\{ x_1, \ldots x_k \},\psi$ in $P_M$, if $f(\psi) \sststile{T_2}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ is derivable, then there exists a term $t$ of $T_1$ such that the following sequents are derivable:
 \begin{align*}
 \psi & \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow \\
 f(\psi) & \sststile{T_2}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k) = f(t)
 \end{align*}
-\end{enumerate}
-\end{prop}
+Then the first condition of \rlem{eq-char-fib} holds.
+\end{lem}
 \begin{proof}
-The implication \eqref{it:lem-fib} $\implies$ \eqref{it:eq-fib} follows from \rlem{eq-char-fib}.
-The implication \eqref{it:eq-fib} $\implies$ \eqref{it:cond-fib} is obvious since conditions in \eqref{it:cond-fib} are just special cases of the lifting property.
-Let us prove the remaining implication.
-
 First, note that if the first condition of \rlem{eq-char-fib} holds for some subset of function symbols of $T_2$, then we still can lift terms constructed from function symbols from this subset.
 The proof of this fact is the same as the proof of \rlem{eq-char-fib}.
 We also note that symbols $ty_n$ and $ft_n$ satisfy the first condition of \rlem{eq-char-fib}, so we may assume that they are less than every other symbol.
 
-Now, we can prove by well-founded induction on $\sigma$ that the first condition of \rlem{eq-char-fib} holds.
+nOw, we can prove by well-founded induction on $\sigma$ that the first condition of \rlem{eq-char-fib} holds.
 If it holds for $\sigma$, then we are done.
 Otherwise, let $A_1$, \ldots $A_k$ be terms that define $\sigma$.
 By induction hypothesis, there exist lifts $A_1'$, \ldots $A_k'$ of these terms (we first lift $ft^{n_i}(e_{p_i}(A_i))$, then $ft^{n_i-1}(e_{p_i}(A_i))$, and so on; finally, we can lift $A_i$).
@@ -961,9 +952,68 @@ Thus, by assumption, we have a term $t$ such that $\psi \sststile{T_1}{x_1, \ldo
 Since $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{T_2}{x_1, \ldots x_k} f(\psi)$, we are done.
 \end{proof}
 
-\subsection{Characterization of weak lifting properties}
+Finally, we can show that the conditions of the previous lemmas are often not only sufficient, but also necessary:
 
-\Rlem{eq-char-fib} has the straightforward analog:
+\begin{prop}[eq-comp-char-fib]
+Let $P$ be a set such that $P_M \subseteq P \subseteq P_S$.
+If $f : T_1 \to T_2$ is a morphism of theories such that $T_2$ has well-defined function symbols, then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:lem-fib-sec} The first condition of \rlem{eq-char-fib} and conditions of \rlem{char-type-fib} hold for all pairs in $P$.
+\item \label{it:lem-fib} Both conditions of \rlem{eq-char-fib} hold for all pairs in $P$.
+\item \label{it:eq-fib} $f$ has the lifting property with respect to $P$.
+\item \label{it:cond-fib} Conditions of \rlem{eq-comp-char-fib} hold for all pairs in $P$.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+The implication \eqref{it:lem-fib-sec} $\implies$ \eqref{it:lem-fib} follows from \rlem{char-type-fib}.
+The implication \eqref{it:lem-fib} $\implies$ \eqref{it:eq-fib} follows from \rlem{eq-char-fib}.
+The implication \eqref{it:eq-fib} $\implies$ \eqref{it:cond-fib} is obvious since conditions in \eqref{it:cond-fib} are just special cases of the lifting property.
+Finally, \eqref{it:cond-fib} implies \eqref{it:lem-fib} by \rlem{eq-comp-char-fib}, and conditions of \rlem{char-type-fib} are a special case of the lifting property, hence they follow from \eqref{it:eq-fib}.
+\end{proof}
+
+\subsection{Confluent theories}
+
+Often axioms of a type theory are defined in terms of a reduction relation, which satisfies some additional properties such as confluence and strong normalization.
+It turns out that the confluence condition is also useful in our context.
+Let $T$ be a theory and let $R$ be a binary relation on the set of terms of $T$.
+Let $\Rightarrow_R$ be the relation defined as follows: if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]]$ for all $c$, $x_1$, \ldots $x_k$, and $t_1$, \ldots $t_k$.
+Let $\Rightarrow_R^*$ be the reflextive transitive closure of $\Rightarrow_R$.
+
+If $R$ is a relation on the set of terms of a theory $T$, then we define an extension of $T$, which we denote by $(T,R)$.
+It has the same function and predicate symbols as $T$.
+The axioms of $(T,R)$ are the axioms of $T$ together with the axiom $t\!\downarrow\ \sststile{}{} t = s$ for every pair of terms $t$ and $s$ such that $R(t,s)$.
+
+\begin{defn}
+We will say that a relation $R$ on the set of terms of a theory $T$ is \emph{confluent} if the following conditions hold:
+\begin{enumerate}
+\item For every pair of terms $t$ and $s$, if $R(t,s)$, then $FV(s) \subseteq FV(t)$.
+\item For every pair of terms $t$ and $s$ such that $R(t,s)$, there is at most one occurence of each variable in $t$.
+\item If $t \Rightarrow_R^* t_1$ and $t \Rightarrow_R^* t_2$, then there exist terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_R^* s_1$, $t_2 \Rightarrow_R^* s_2$ and $\sststile{T}{} s_1 \cong s_2$.
+\end{enumerate}
+
+We will say that a map of theories is \emph{confluent} if it isomorphic to a composition $T \to T' \to (T',R)$ for some (presented) relative $\Icell$ complex $T \to T'$ and some confluent relation $R$ on $T'$ such that,
+for every pair of terms $t$ and $s$, if $R(t,s)$, then $t$ consists of new function symbols that were added to $T'$.
+
+We will say that a theory $T$ is \emph{confluent} if the map $0 \to T$ is confluent.
+\end{defn}
+
+TODO: Prove that confluent theories are conservative.
+
+TODO: Prove that confluent maps are closed under transfinite compositions.
+
+TODO: To construct the structure of a cofibration category, it is enough to prove that trivial fibrations between confluent theories are preserved by pushouts along confluent maps. The first condition is easy since we can forget about additional axioms of the confluent map. The second condition follows from the general construction of lifting equivalences.
+
+% maybe work with more general congruent theories?
+
+% trivial fibrations are closed under pushouts along weak cofibrations, in particular weak equivalences are closed under coproducts
+% a structure of a cofibrations category on a large class of theories
+% the universe functor preserves trivial fibrations and hence weak equivalences
+% equivalence between the model structure and the structure of a cofibration category.
+
+\section{Examples of Morita equivalences}
+
+In this section we construct several examples of Morita equivalences using lemmas from previous sections.
+First, let us prove an analog of \rlem{eq-char-fib} for weak lifting properties:
 
 \begin{lem}[eq-char-eq]
 Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
@@ -985,23 +1035,34 @@ Then $f$ has the weak lifting property with respect to $V,\varphi$.
 The proof of this lemma is essentially the same as the proof of \rlem{eq-char-fib}.
 \end{proof}
 
-The analog of \rlem{char-type-fib} is harder to establish:
-
-\begin{lem}[char-type-eq]
-Let $f : T_1 \to T_2$ be a morphism of theories and let $V,\varphi$ be a pair in $P_M$ such that the following condition holds.
-For every pair of terms $A$ and $B$ of $T_1$ of sort $(ty,n)$ such that
-$\varphi \sststile{T_1}{V} ft(A) = ft(B)$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
-there exists a term $b$ such that $\varphi \sststile{T_1}{V} A \vdash b : B$ and $f(b)$ is homotopic to $v_0(f(A))$.
-Then the second condition of \rlem{eq-char-eq} holds.
-\end{lem}
-
-\subsection{Applications}
+We do not have an analog of \rprop{eq-comp-char-fib}, so this lemma is not always applicable, but it is still useful for constructing particular examples of Morita equivalences.
 
 % properness of the model categories of models
-% trivial fibrations are closed under pushouts along weak cofibrations, in particular weak equivalences are closed under coproducts
-% a structure of a cofibrations category on a large class of theories
-% the universe functor preserves trivial fibrations and hence weak equivalences
-% T -> T + I + Path + coe is a Morita equivalence
+
+\begin{prop}
+Let $T$ be a confluent theory under $\coeT_1 + \sigma + \PathT + \wUA$ with well-defined function symbols.
+Then the category of models of $T$ is proper model category
+\end{prop}
+\begin{proof}
+Since all objects of $\Mod{T}$ are fibrant, this category is right proper.
+To prove that it is left proper, we just need to prove that trivial fibrations are closed under the operation of attaching a single term or type.
+To be more precise, we need to prove that for every trivial fibration $f : X \to Y$ in $\Mod{T}$ and every map $F(\{ A : (d_p,n) \}) \to X$,
+the following pushout of $f$ is also a trivial fibration:
+\[ \xymatrix{ X \ar[r] \ar[d]_f &     X \amalg_{F(\{ A : (d_p,n) \})} F(\{ e_p(a) = A \}) \ar[d] \\
+              Y \ar[r]          & \po Y \amalg_{F(\{ A : (d_p,n) \})} F(\{ e_p(a) = A \})
+            } \]
+
+Since $\Lang$ is a left adjoint, we have the following pushout square:
+\[ \xymatrix{ \Lang(X) \ar[r] \ar[d]_\Lang(f) &     \Lang(X) \amalg_{\{ A : (d_p,n) \}} \{ e_p(a) = A \} \ar[d] \\
+              \Lang(Y) \ar[r]                 & \po \Lang(Y) \amalg_{\{ A : (d_p,n) \}} \{ e_p(a) = A \}
+            } \]
+A map $g$ of models is a trivial fibration if and only if $\Lang(g)$ has the lifting property with respect to $P_0$.
+Thus it is enough to show that conditions of \rlem{eq-char-fib} hold for this pushout of $\Lang(f)$.
+The first condition is easy to prove.
+If $\sigma$ is a function symbol of $T$ or $\sigma = a$, then we can lift it to itself.
+If $\sigma = O_y$ for some $y \in Y$, then we can lift it to $O_x$, where $x \in X$ is a lift of $y$
+\end{proof}
+
 % adding terms of contractible types (maybe with some judgemental rules) is a Morita equivalence (in particular, squeeze)
 % strictly associative concatenation of paths is a Morita equivalence
 % strictly commutative concatenation of 2-paths is not a Morita equivalence
@@ -1010,7 +1071,7 @@ Then the second condition of \rlem{eq-char-eq} holds.
 % cofibrant replacement of theories (in particular, Id_- for Id, also Sigma and other simple theories)
 % equivalence between theories in which function symbols are well-defined and in which they are not
 
-% pulling the (semi-) model structure along Morita equivalences
+% T -> T + coe_1 + \sigma + Path + wUA is a Morita equivalence
 
 \section{Structure of a cofibration category}
 
