@@ -866,9 +866,9 @@ the sequent $\varphi \sststile{}{V} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is 
 The \emph{minimal} theory with simple axioms corresponding to such theory is its subtheory with axioms $\mathcal{A}_d \cup \mathcal{A}_e$.
 Finally, we will say that a theory \emph{has simple axioms} if it is (isomorphic to) a subtheory of a maximal theory containing the minimal subtheory.
 
-\begin{lem}
-Let $T$ be a theory with simple axioms and let $(\varphi,V)$ be a pair in $P_M$.
-If a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$, then it is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
+\begin{lem}[der-simple-closed]
+Let $T$ be a theory with simple axioms.
+If a sequent $\sststile{}{} \psi$ is derivable in $T$, then it is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
 \end{lem}
 \begin{proof}
 First, let us prove the following fact.
@@ -902,7 +902,7 @@ Otherwise, $\tau(s_1, \ldots s_n) = \sigma(t_1, \ldots t_k)$ and the required pr
 This inference rule for axioms from $\mathcal{A}_e$ follows from the assumption that we put on these axioms.
 The rest of the inference rules are trivial.
 
-Now, we can prove the special case of the lemma when $\varphi = \top$ and $V = \varnothing$.
+Now, we can prove the lemma.
 We proceed by induction on the inference of $\sststile{}{} \psi$.
 The most cases follows immediately from the induction hypothesis.
 The only nontrivial case is the inference rule for axioms from $\mathcal{A}'_d$:
@@ -916,22 +916,35 @@ The only nontrivial case is the inference rule for axioms from $\mathcal{A}'_d$:
 \end{center}
 By the induction hypothesis, the sequent $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$
 and the fact that we just proved implies that $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is also derivable from these axioms.
+\end{proof}
 
-Finally, we can prove the general case of the lemma.
-Let $\varphi = \varphi_1 \land \ldots \land \varphi_n$ be a formula such that $\varphi_i$ equals to $e_{p_i}(x_i) = A_i$, where $A_i$ is a term such that $\varphi_1 \land \ldots \land \varphi_{i-1} \sststile{}{x_1, \ldots x_{i-1}} A_i\!\downarrow$.
-Then, for each $0 \leq i \leq n$, we define a theory $T_i$ as $T \cup \{ \sststile{}{} c_j\!\downarrow |\ 1 \leq j \leq i \} \cup \{ \varphi_j[c_1/x_1, \ldots c_j/x_j]\ |\ 1 \leq j \leq i \}$.
-By \rlem{mcf}, a sequent $\varphi \sststile{}{x_1, \ldots x_n} \psi$ is derivable in $T$ if and only if the sequent $\sststile{}{} \psi[c_1/x_1, \ldots c_n/x_n]$ is derivable in $T_n$.
-Thus we just need to prove that $T_n$ has simple axioms.
-We prove by induction on $i$ that all theories $T_i$ have simple axioms.
+\begin{lem}[morita-simple]
+Let $T$ be a theory with simple axioms and let $(\varphi_1 \land \ldots \land \varphi_n, V)$ be a pair in $P_M$.
+Then the theory $T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ also has simple axioms.
+\end{lem}
+\begin{proof}
+If $\varphi_i$ equals to $e_{p_i}(x_i) = A_i$, then, for each $0 \leq i \leq n$, we define a theory $T_i$ as $T \cup \{ \sststile{}{} c_j\!\downarrow |\ 1 \leq j \leq i \} \cup \{ \varphi_j[c_1/x_1, \ldots c_j/x_j]\ |\ 1 \leq j \leq i \}$.
+Since $T_n = T$, we just need to prove that all theories $T_i$ have simple axioms.
+We proceed by induction on $i$.
 Since $T_0 = T$, the case $i = 0$ holds by assumptions on $T$.
 Assume that $T_i$ has simple axioms.
 To prove that $T_{i+1}$ also has simples axioms, we need to show that, for every subterm $\sigma(t_1, \ldots t_k)$ of $A_{i+1}[c_1/x_1, \ldots c_i/x_i]$,
 the sequent $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
 Since the sequent $\sststile{}{} A_{i+1}[c_1/x_1, \ldots c_i/x_i]$ is derivable in $T_i$, the sequents $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ and $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ are also derivable in it.
-Since $T_i$ has simple axioms, it follows that $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$ in $T_i$ and hence in $T_{i+1}$.
+Since $T_i$ has simple axioms, \rlem{der-simple-closed} implies that $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$ in $T_i$ and hence in $T_{i+1}$.
 \end{proof}
 
-The previous lemma implies that the maps between theories with simple axioms corresponding to inclusions of subtheories are Morita equivalences.
+\begin{prop}[der-simple]
+Let $T$ be a theory with simple axioms and let $(\varphi,V)$ be a pair in $P_M$.
+If a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$, then it is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
+\end{prop}
+\begin{proof}
+\Rlem{mcf} implies that $\sststile{}{} \psi[c_1/x_1, \ldots c_n/x_n]$ is derivable in $T \cup \mathcal{A}'$, where $\mathcal{A}' = \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$.
+By \rlem{morita-simple} and \rlem{der-simple-closed}, this sequent is derivable from $\mathcal{A}_d \cup \mathcal{A}_e \cup \mathcal{A}'$.
+\Rlem{mcf} implies that $\varphi \sststile{}{V} \psi$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
+\end{proof}
+
+The previous proposition implies that the maps between theories with simple axioms corresponding to inclusions of subtheories are Morita equivalences.
 This shows that if we are interested in a theory with simple axioms, then we can work with either minimal or maximal theory corresponding to it instead.
 In general, we prefer to work with the latter, but sometimes it is convenient to switch to the former as we will see in later sections.
 
@@ -1096,41 +1109,82 @@ Finally, \eqref{it:cond-fib} implies \eqref{it:lem-fib} by \rlem{eq-comp-char-fi
 In this subsection we define confluent theories and prove their properties.
 First, we need to prove a simple lemma about general theories:
 
-\begin{lem}
-Let $(T,R)$ be a simple type theory.
-If $\varphi \sststile{}{V} t = s$ is derivable, then there exist terms $t_1, \ldots t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$, $t_i = c[a/x]$ and $t_{i+1} = c[b/x]$
-for some terms $a$, $b$, and $c$ such that one of the following conditions hold:
+\begin{lem}[der-eq]
+If a sequent $\varphi \sststile{}{V} t = s$ is derivable in a theory $T$, then there exist terms $t_1, \ldots t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$, $t_i = c[a/x]$ and $t_{i+1} = c[b/x]$
+for some terms $a$, $b$, and $c$ such that there is a unique occurrence of the variable $x$ in $c$ and one of the following conditions hold:
 \begin{enumerate}
-\item The sequent $\varphi \sststile{}{V} e_p(a) = e_p(b)$ is derivable and there exist terms $a'$, $b'$, $d_1$, \ldots $d_m$
-such that $a = a'[d_1/x_1, \ldots d_m/x_m]$, $b = b'[d_1/x_1, \ldots d_m/x_m]$, and either $R(a',b')$ or $R(b',a')$.
+\item There exists an application of \axref{na} in which the premise is derivable and the conclusion is either $\varphi \sststile{}{V} a = b$ or $\varphi \sststile{}{V} b = a$.
 \item $\varphi = \varphi_1 \land \ldots \land \varphi_k$ and there exists $j$ such that $\varphi_j$ equals to either $a = b$ or $b = a$.
 \end{enumerate}
-% Let $(T,R)$ be a simple type theory.
-% Let $\varphi$ be a formula of $T$, let $V$ be a set of variables, and let $A$ be a term of $T$.
-% We denote by $T_{\varphi,V,A}$ the set of terms $a$ of $T$ such that the sequent $\varphi \sststile{}{V} e_p(a) = A$ is derivable.
-% The restriction of $R$ to $T_{\varphi,V,A}$ is denoted by $R_{\varphi,V,A}$.
-% Then the restriction of the relation $\varphi \sststile{}{V} - = -$ to $T_{\varphi,V,A}$ is the smallest congruence containing $R_{\varphi,V,A}$.
 \end{lem}
 \begin{proof}
-% If $R_{\varphi,V,A}(a,a')$, then the sequents $\varphi \sststile{}{V} e_p(a) = A$ and $\varphi \sststile{}{V} e_p(a') = A$ are deirable.
-% Hence the sequent $\varphi \sststile{}{V} e_p(a) = e_p(a')$ is also derivable.
-% Since $R(a,a')$, it follows that the sequent $\varphi \sststile{}{V} a = a'$ is also derivable.
-% Thus, the relation $\varphi \sststile{}{V} - = -$ contains $R_{\varphi,V,A}$.
-% Also, if $a \in T_{\varphi,V,A}$, then $\varphi \sststile{}{V} e_p(a) = A$ and hence $\varphi \sststile{}{V} a\!\downarrow$.
-% Thus, the relation $\varphi \sststile{}{V} - = -$ is reflexive and the rules of the logic imply that it is a congruence.
-% 
-% Conversely, ?
+We prove this by induction on the derivation of $\varphi \sststile{}{V} t = s$.
+The rules \axref{nv}, \axref{np}, and \axref{nf} are obvious.
+The rules \axref{nh} and \axref{na} follow immediately from assumptions.
+We can take $t_1 = a = t$, $t_2 = b = s$, and $c = x$.
+Let us consider the rule \axref{ns}.
+If $t_1$, \ldots $t_n$ is a sequence for $\varphi \sststile{}{V} s = t$, then we can take the sequence $t_n$, \ldots $t_1$ for $\varphi \sststile{}{V} t = s$.
+
+Finally, let us consider the rule \axref{nl}:
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} p = q$}
+\AxiomC{$\varphi \sststile{}{V} t'[p/y] = s'[q/y]$}
+\RightLabel{\axref{nl}}
+\BinaryInfC{$\varphi \sststile{}{V} t'[q/y] = s'[q/y]$}
+\DisplayProof
+\end{center}
+Note that we may assume that there is a unique occurrence of the variable $y$ in $\psi$ since the general rule follows from this special case.
+Let $t_1$, \ldots $t_n$ be a sequence for $\varphi \sststile{}{V} p = q$ and let $s_1$, \ldots $s_m$ be a sequence for $\varphi \sststile{}{V} t'[p/y] = s'[p/y]$.
+Then $t'[t_n/y]$, \ldots $t'[t_1/y] = s_1$, \ldots $s_m = s'[t_1/y]$, \ldots $s'[t_n/y]$ is a sequence for $\varphi \sststile{}{V} t'[q/y] = s'[q/y]$.
 \end{proof}
 
-Recall that a relation $R$ is confluent if $R^*(t,s_1)$ and $R^*(t,s_2)$ implies that there exists $s$ such that $R^*(s_1,s)$ and $R^*(s_2,s)$, where $R^*$ is the reflexive transitive closure of $R$.
-Now, we can define confluent theories and prove their main property:
+Let $R$ be a binary relation on the set of terms of some theory.
+Then we define the relation $\Rightarrow_R$ on the same set as follows:
+if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]]$ for all $c$, $x_1$, \ldots $x_k$, and $t_1$, \ldots $t_k$.
+Recall that $R$ is confluent if $t \Rightarrow_R^* s_1$ and $t \Rightarrow_R^* s_2$ implies that there exists $s$ such that
+$s_1 \Rightarrow_R^* s$ and $s_2 \Rightarrow_R^* s$, where $\Rightarrow_R^*$ is the reflexive transitive closure of $\Rightarrow_R$.
+Now, we can define confluent theories:
 
 \begin{defn}
 A \emph{confluent} type theory is a type theory $T$ with simple axioms together with a confluent relation $R$ on the set of terms of $T$
-such that $\mathcal{A}_e = \{ t\!\downarrow\ \sststile{}{FV(t) \cup FV(s)} t = s\ |\ R(t,s) \}$.
+such that $\mathcal{A}_e = \{ t\!\downarrow\ \sststile{}{FV(t)} t = s\ |\ R(t,s) \}$ and if $R(t,s)$, then the following conditions hold:
+\begin{enumerate}
+\item $FV(s) \subseteq FV(t)$.
+\item $t$ is not a variable.
+\item If $e_p(t')$ is a subterm of either $t$ or $s$ (TODO: insted we may assume that R is left-liner, which we might need anyway), then $t'$ is not a variable.
+\end{enumerate}
 \end{defn}
 
-The main property of simple theories is proved in the following lemma:
+\begin{lem}[morita-conf]
+Let $(T_0,R_0)$ be a confluent theory and let $(\varphi_1 \land \ldots \land \varphi_n, V)$ be a pair in $P_M$.
+Then $T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ is also confluent.
+\end{lem}
+\begin{proof}
+By \rlem{morita-simple}, $T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ has simple axioms.
+Let $R_1 = \{ (e_{p_i}(c_i), A_i[c_1/x_1, \ldots c_{i-1}/x_{i-1}])\ |\ 1 \leq i \leq n \}$.
+To prove that $R_0 \cup R_1$ is confluent, it is enough to show that $t \Rightarrow_{R_0} s_1$ and $t \Rightarrow_{R_1} s_2$ implies that there exists $s$ such that $s_1 \Rightarrow_{R_1}^* s$ and $s_2 \Rightarrow_{R_0} s$.
+TODO
+\end{proof}
+
+The main property of confluent theories is proved in the following proposition:
+
+\begin{prop}
+Let $T$ be a confluent theory and let $(\varphi,V)$ be a pair in $P_M$.
+If a sequent $\varphi \sststile{}{V} t = s$ is derivable in $T$, then there exists a term $r$ such that $t_1 \Rightarrow_R^* r$ and $t_2 \Rightarrow_R^* r$.
+\end{prop}
+\begin{proof}
+First, let us assume that $\varphi = \top$ and $V = \varnothing$.
+Then, by \rlem{der-eq} and \rprop{der-simple}, there exists a sequence $t_1$, \ldots $t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$, either $t_i \Rightarrow_R t_{i+1}$ or $t_{i+1} \Rightarrow_R t_i$.
+TODO
+\end{proof}
+
+We can define a relative version of confluent theories:
+
+\begin{defn}
+Let $(T,R)$ be a confluent theory.
+Then a \emph{confluent extension} of $(T,R)$ is a confluent theory $(T',R')$ such that $T \subseteq T'$, $R \subseteq R'$, and if $R'(t,s)$, then either $t \Rightarrow_R^* s$ or $t$ is not a term of $T$.
+A \emph{confluent morphism} is a morphism of theories that isomorphic to the inclusion $(T,R) \to (T',R')$ of some confluent theory $(T,R)$ into some confluent extension $(T',R')$.
+\end{defn}
 
 \begin{comment}
 Often axioms of a type theory are defined in terms of a reduction relation, which satisfies some additional properties such as confluence and strong normalization.
@@ -1148,7 +1202,7 @@ We will say that a relation $R$ on the set of terms of a theory $T$ is \emph{con
 \begin{enumerate}
 \item If $R(t,s)$, then $FV(s) \subseteq FV(t)$.
 \item If $R(t,s)$, then $t$ is not a variable.
-\item If $R(t,s)$, then there is at most one occurence of each variable in $t$.
+\item If $R(t,s)$, then there is at most one occurrence of each variable in $t$.
 \item If $t \Rightarrow_R^* t_1$ and $t \Rightarrow_R^* t_2$, then there exist terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_R^* s_1$, $t_2 \Rightarrow_R^* s_2$ and $\sststile{T}{V} s_1 \cong s_2$.
 \end{enumerate}
 
