@@ -321,6 +321,17 @@ The rule \axref{ne2} follows from \axref{nl} if we take $\psi(x) = (x = b)$.
 The rule \axref{ne1} follows from \axref{ne2} and \axref{ns}.
 \end{proof}
 
+We will need the following lemma later:
+
+\begin{lem}[mcf]
+A sequent $\varphi \sststile{}{x_1, \ldots x_n} \psi$ is provable in a theory $T$ if and only if
+the sequent $\sststile{}{} \psi[c_1/x_1, \ldots c_n/x_n]$ is provable in the theory $T \cup \{ \sststile{}{} c_i\!\downarrow\ |\ 1 \leq i \leq n \} \cup \{ \varphi[c_1/x_1, \ldots c_n/x_n] \}$,
+where $c_1$, \ldots $c_n$ are fresh constants.
+\end{lem}
+\begin{proof}
+This follows from \cite[Theorem~10, Theorem~11]{PHL}.
+\end{proof}
+
 \subsection{Model categories of models of type theories}
 
 To define Morita equivalences between two theories $T_1$ and $T_2$, they must have some additional structure.
@@ -835,31 +846,94 @@ Then the adjunction $\Lang_T \dashv \Syn_T$ is a Quillen equivalence between the
 To prove this, we just need to show that the unit of the adjunction is a weak equivalence.
 But it is actually an isomorphism since $\Lang_T$ is full and faithful.
 
-\section{Theories with simple axioms}
+\section{Confluent theories}
 
-The axioms of type theories that occur in practice often can be divided in two parts: the first part determines when function symbols are defined and the second part introduces some equivalence relation on terms.
-In this section we study such theories.
+The axioms of type theories that occur in practice often can be divided in two parts: the first part determines when function symbols are defined and the second part is defined in terms of some reduction relation,
+which often satisfies some additional properties such as confluence.
+In this section we define confluent theories as theories in this form.
+We also prove that Morita equivalences between them are easier to construct.
 
 \subsection{Theories with simple axioms}
 
-We will say that a theory \emph{has simple axioms} if it is isomorphic to a theory in which the set of axioms consists of three disjoint parts $\mathcal{A}_d$, $\mathcal{A}'_d$, and $\mathcal{A}_e$ such that the following conditions hold:
+We will say that a theory is a \emph{maximal} theory with simple axioms if it is isomorphic to a theory in which the set of axioms consists of three disjoint parts $\mathcal{A}_d$, $\mathcal{A}'_d$, and $\mathcal{A}_e$ such that the following conditions hold:
 \begin{enumerate}
-\item The set $\mathcal{A}_d$ consists of axioms of the form $\varphi \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$.
-For every $\sigma$, there is exactly one axiom of this form.
+\item The set $\mathcal{A}_d$ consists of axioms of the form $\varphi \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ and, for every $\sigma$, there is exactly one axiom of this form.
 We will denote the left hand side of this axiom by $\varphi_\sigma$.
-\item The set $\mathcal{A}'_d$ is a subset of the set of axioms of the form $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \varphi_\sigma$.
-\item For every axiom $\varphi \sststile{}{V} \psi$ in $\mathcal{A}_e$ and every subterm $t$ of the formula $\psi$, the sequent $\varphi \sststile{}{V} t\!\downarrow$ is derivable from $\mathcal{A}_d \cup \mathcal{A}'_d$.
+\item The set $\mathcal{A}'_d$ consists of sequents of the form $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \varphi_\sigma$.
+\item For every axiom $\varphi \sststile{}{V} \psi$ in $\mathcal{A}_e$ and every subterm $\sigma(t_1, \ldots t_k)$ of the formula $\psi$,
+the sequent $\varphi \sststile{}{V} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
 \end{enumerate}
-We will say that a theory with simple axioms is \emph{minimal} if $\mathcal{A}'_d$ is empty.
-We will say that a theory with simple axioms is \emph{maximal} if $\mathcal{A}'_d$ contains all of the axioms of the form $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \varphi_\sigma$.
+The \emph{minimal} theory with simple axioms corresponding to such theory is its subtheory with axioms $\mathcal{A}_d \cup \mathcal{A}_e$.
+Finally, we will say that a theory \emph{has simple axioms} if it is (isomorphic to) a subtheory of a maximal theory containing the minimal subtheory.
 
 \begin{lem}
-Let $T$ be a theory with simple axioms.
+Let $T$ be a theory with simple axioms and let $(\varphi,V)$ be a pair in $P_M$.
 If a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$, then it is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
 \end{lem}
 \begin{proof}
-TODO
+First, let us prove the following fact.
+If a sequent $\sststile{}{} \psi$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$ and a term $\sigma(t_1, \ldots t_k)$ is a subterm of $\psi$,
+then the sequent $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
+We prove this by induction on the derivation of $\sststile{}{} \psi$ in the natural deduction system.
+Let us consider the case \axref{nl}:
+\begin{center}
+\AxiomC{$\sststile{}{} a = b$}
+\AxiomC{$\sststile{}{} \psi[a/x]$}
+\RightLabel{\axref{nl}}
+\BinaryInfC{$\sststile{}{} \psi[b/x]$}
+\DisplayProof
+\end{center}
+If $\sigma(t_1, \ldots t_k)$ is a subterm of $b$, then the required property follows from the induction hypothesis for $\sststile{}{} a = b$.
+Otherwise, $\sigma$ belongs to $\psi$ and there exist terms $t_1'$, \ldots $t_k'$ and a formula $\psi'$ such that $t_i = t_i'[b/x]$, $\psi = \psi'[\sigma(t_1', \ldots t_k')/x]$, and $x \notin FV(\psi')$.
+Induction hypothesis implies that the sequent \[ \sststile{}{} \varphi_\sigma[t_1'[a/x]/x_1, \ldots t_k'[a/x]/x_k] \] is derivable.
+Since the sequent $\sststile{}{} a = b$ is derivable, this implies that the required sequent $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is also derivable.
+
+Let us consider the inference rule for axioms from $\mathcal{A}_d$:
+\smallskip
+\begin{center}
+\AxiomC{$\sststile{}{} s_i\!\downarrow$, $1 \leq i \leq n$}
+\AxiomC{$\sststile{}{} \varphi_\tau[s_1/y_1, \ldots s_n/y_n]$}
+\RightLabel{\axref{na}}
+\BinaryInfC{$\sststile{}{} \tau(s_1, \ldots s_n)\!\downarrow$}
+\DisplayProof
+\end{center}
+If $\sigma(t_1, \ldots t_k)$ is a subterm of $s_i$ for some $i$, then the required property follows from the induction hypothesis for $\sststile{}{} s_i\!\downarrow$.
+Otherwise, $\tau(s_1, \ldots s_n) = \sigma(t_1, \ldots t_k)$ and the required property is obvious.
+This inference rule for axioms from $\mathcal{A}_e$ follows from the assumption that we put on these axioms.
+The rest of the inference rules are trivial.
+
+Now, we can prove the special case of the lemma when $\varphi = \top$ and $V = \varnothing$.
+We proceed by induction on the inference of $\sststile{}{} \psi$.
+The most cases follows immediately from the induction hypothesis.
+The only nontrivial case is the inference rule for axioms from $\mathcal{A}'_d$:
+\smallskip
+\begin{center}
+\AxiomC{$\sststile{}{} t_i\!\downarrow$, $1 \leq i \leq k$}
+\AxiomC{$\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$}
+\RightLabel{\axlabel{na}}
+\BinaryInfC{$\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$}
+\DisplayProof
+\end{center}
+By the induction hypothesis, the sequent $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$
+and the fact that we just proved implies that $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is also derivable from these axioms.
+
+Finally, we can prove the general case of the lemma.
+Let $\varphi = \varphi_1 \land \ldots \land \varphi_n$ be a formula such that $\varphi_i$ equals to $e_{p_i}(x_i) = A_i$, where $A_i$ is a term such that $\varphi_1 \land \ldots \land \varphi_{i-1} \sststile{}{x_1, \ldots x_{i-1}} A_i\!\downarrow$.
+Then, for each $0 \leq i \leq n$, we define a theory $T_i$ as $T \cup \{ \sststile{}{} c_j\!\downarrow |\ 1 \leq j \leq i \} \cup \{ \varphi_j[c_1/x_1, \ldots c_j/x_j]\ |\ 1 \leq j \leq i \}$.
+By \rlem{mcf}, a sequent $\varphi \sststile{}{x_1, \ldots x_n} \psi$ is derivable in $T$ if and only if the sequent $\sststile{}{} \psi[c_1/x_1, \ldots c_n/x_n]$ is derivable in $T_n$.
+Thus we just need to prove that $T_n$ has simple axioms.
+We prove by induction on $i$ that all theories $T_i$ have simple axioms.
+Since $T_0 = T$, the case $i = 0$ holds by assumptions on $T$.
+Assume that $T_i$ has simple axioms.
+To prove that $T_{i+1}$ also has simples axioms, we need to show that, for every subterm $\sigma(t_1, \ldots t_k)$ of $A_{i+1}[c_1/x_1, \ldots c_i/x_i]$,
+the sequent $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
+Since the sequent $\sststile{}{} A_{i+1}[c_1/x_1, \ldots c_i/x_i]$ is derivable in $T_i$, the sequents $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ and $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ are also derivable in it.
+Since $T_i$ has simple axioms, it follows that $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$ in $T_i$ and hence in $T_{i+1}$.
 \end{proof}
+
+The previous lemma implies that the maps between theories with simple axioms corresponding to inclusions of subtheories are Morita equivalences.
+This shows that if we are interested in a theory with simple axioms, then we can work with either minimal or maximal theory corresponding to it instead.
+In general, we prefer to work with the latter, but sometimes it is convenient to switch to the former as we will see in later sections.
 
 \subsection{Good quotients of cell complexes}
 
@@ -885,16 +959,12 @@ The identity functor is a Quillen equivalence between this model structure and t
 Now, we can define the notion of good quotients of $\I$-cell and $\I'$-cell complexes.
 TODO
 
-\section{Confluent theories}
+\subsection{Characterization of lifting properties}
 
-In this section we define confluent theories, which have a useful property that Morita equivalences between them satisfy several closure properties.
-We also prove several useful lemmas that characterize trivial fibrations in various model structures that we considered in previous section.
+In this subsection we prove several useful lemmas that characterize trivial fibrations in various model structures that we considered in previous section.
 Since all of these notations are defined in terms of lifting properties, we will prove general results about them.
 Indeed, if we think about a map that has the weak lifting property with respect to a pair $V,\varphi$ as a weak equivalence,
 then a map having the lifting property with respect to this pair can be thought of as a trivial fibration.
-
-\subsection{Characterization of lifting properties}
-
 We begin with a simple lemma:
 
 \begin{lem}[eq-char-fib]
@@ -1023,19 +1093,8 @@ Finally, \eqref{it:cond-fib} implies \eqref{it:lem-fib} by \rlem{eq-comp-char-fi
 
 \subsection{Confluent theories}
 
-TODO
-% If a type theory has well-defined function symbols, then often it can be described in a simple way.
-% We can divide its axioms in two parts: the first part defines function symbols as described in the previous subsection and the second part introduces some equivalence relation on terms.
-% Moreover, this equivalence relation is often defined in terms of a reduction relation.
-
-\begin{defn}
-A \emph{simple} type theory is a type theory $T$ with well-defined function symbols together with a relation $R$ on the set of terms of $T$
-such that the set of axioms of $T$ consists of axioms that define its function symbols and axioms of the form
-\[ e_p(t) = e_p(s) \sststile{}{FV(t) \cup FV(s)} t = s \]
-for every $t$ and $s$ such that $R(t,s)$.
-\end{defn}
-
-The main property of simple theories is proved in the following lemma:
+In this subsection we define confluent theories and prove their properties.
+First, we need to prove a simple lemma about general theories:
 
 \begin{lem}
 Let $(T,R)$ be a simple type theory.
@@ -1063,12 +1122,22 @@ such that $a = a'[d_1/x_1, \ldots d_m/x_m]$, $b = b'[d_1/x_1, \ldots d_m/x_m]$, 
 % Conversely, ?
 \end{proof}
 
+Recall that a relation $R$ is confluent if $R^*(t,s_1)$ and $R^*(t,s_2)$ implies that there exists $s$ such that $R^*(s_1,s)$ and $R^*(s_2,s)$, where $R^*$ is the reflexive transitive closure of $R$.
+Now, we can define confluent theories and prove their main property:
+
+\begin{defn}
+A \emph{confluent} type theory is a type theory $T$ with simple axioms together with a confluent relation $R$ on the set of terms of $T$
+such that $\mathcal{A}_e = \{ t\!\downarrow\ \sststile{}{FV(t) \cup FV(s)} t = s\ |\ R(t,s) \}$.
+\end{defn}
+
+The main property of simple theories is proved in the following lemma:
+
 \begin{comment}
 Often axioms of a type theory are defined in terms of a reduction relation, which satisfies some additional properties such as confluence and strong normalization.
 It turns out that the confluence condition is also useful in our context.
 Let $T$ be a theory and let $R$ be a binary relation on the set of terms of $T$.
 Let $\Rightarrow_R$ be the relation defined as follows: if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]]$ for all $c$, $x_1$, \ldots $x_k$, and $t_1$, \ldots $t_k$.
-Let $\Rightarrow_R^*$ be the reflextive transitive closure of $\Rightarrow_R$.
+Let $\Rightarrow_R^*$ be the reflexive transitive closure of $\Rightarrow_R$.
 
 If $R$ is a relation on the set of terms of a theory $T$, then we define an extension of $T$, which we denote by $(T,R)$.
 It has the same function and predicate symbols as $T$.
