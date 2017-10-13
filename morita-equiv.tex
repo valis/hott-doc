@@ -1143,6 +1143,8 @@ Then we define the relation $\Rightarrow_R$ on the same set as follows:
 if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]]$ for all $c$, $x_1$, \ldots $x_k$, and $t_1$, \ldots $t_k$.
 Recall that $R$ is confluent if $t \Rightarrow_R^* s_1$ and $t \Rightarrow_R^* s_2$ implies that there exists $s$ such that
 $s_1 \Rightarrow_R^* s$ and $s_2 \Rightarrow_R^* s$, where $\Rightarrow_R^*$ is the reflexive transitive closure of $\Rightarrow_R$.
+If $\Rightarrow_1$ and $\Rightarrow_2$ are some relations, then we will write $\Rightarrow_1 \Rightarrow_2$ for the following relation:
+$t \Rightarrow_1 \Rightarrow_2 t'$ if and only if there is a term $s$ such that $t \Rightarrow_1 s$ and $s \Rightarrow_2 t'$.
 Now, we can define confluent theories:
 
 \begin{defn}
@@ -1151,9 +1153,30 @@ such that $\mathcal{A}_e = \{ t\!\downarrow\ \sststile{}{FV(t)} t = s\ |\ R(t,s)
 \begin{enumerate}
 \item $FV(s) \subseteq FV(t)$.
 \item $t$ is not a variable.
-\item If $e_p(t')$ is a subterm of either $t$ or $s$ (TODO: insted we may assume that R is left-liner, which we might need anyway), then $t'$ is not a variable.
+\item If $e_p(t')$ is a subterm of $t$, then $t'$ is not a variable.
 \end{enumerate}
 \end{defn}
+
+The confluence property is usually defined for a term rewriting system, which is simply a set of function symbols together with a relation on the set of terms.
+For a general introduction to term rewriting systems we refer the reader to \cite{Terese,klop-trs}.
+Since many type theories are constructed as coproducts of simple basic theories, it is natural to ask whether coproducts preserve the confluence property.
+If the confluence property is stable under the union in some class of theories, then we say that it is \emph{modular} for this class.
+It was shown by Toyama in \cite{toyama} (see also \cite{klop-confluence,oostrom-confluence}) that the confluence is modular for disjoint theories.
+There are many generalizations of this results for theories that may share particular kind of function symbols (see for instance \cite{ohlebusch-confluence,ohlebusch-composable,middeldorp-completeness}).
+None of these results apply in our context since type theories can share arbitrary function symbols (actually, they always share $ft$, $ty$, $v_i$, and $\subst$, which already violates the assumptions of these results).
+But we still can prove some simple general results about modularity of confluence for type theories as shown in the following lemmas:
+
+\begin{lem}
+Let $R_0$ and $R_1$ be two confluent term rewriting systems with the same set of terms such that the following conditions hold:
+\begin{enumerate}
+\item $R_1$ is stongly normalizable, that is every sequence of reductions $t_1 \Rightarrow_{R_1} t_2 \Rightarrow_{R_1} t_3 \Rightarrow_{R_1} \ldots$ is finite.
+\item If $t \Rightarrow_{R_0}^* t_1$ and $t \Rightarrow_{R_1} t_2$, then there is a term $s$ such that $t_1 \Rightarrow_{R_1} s$ and $t_2 \Rightarrow_{R_1}^* \Rightarrow_{R_0}^* \Rightarrow_{R_1}^* s$.
+\end{enumerate}
+Then the union of $R_0$ and $R_1$ is confluent.
+\end{lem}
+\begin{proof}
+TODO
+\end{proof}
 
 \begin{lem}[morita-conf]
 Let $(T_0,R_0)$ be a confluent theory and let $(\varphi_1 \land \ldots \land \varphi_n, V)$ be a pair in $P_M$.
