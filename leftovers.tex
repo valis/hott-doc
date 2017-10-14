@@ -959,3 +959,56 @@ A \emph{judgement} is an expression of one of the following forms:
 \end{align*}
 where $\Gamma$ is a context, $A$ and $A'$ are types appropriate for $\Gamma$, and $a$ and $a'$ are terms appropriate for $\Gamma$.
 A \emph{formula} is a finite conjunction of judgements.
+
+% 7. Общая лемма про объединения конфлюэнтных теорий.
+
+\begin{lem}
+Let $R_0$ and $R_1$ be two confluent term rewriting systems with the same set of terms such that the following conditions hold:
+\begin{enumerate}
+\item $R_1$ is stongly normalizable, that is every sequence of reductions $t_1 \Rightarrow_{R_1} t_2 \Rightarrow_{R_1} t_3 \Rightarrow_{R_1} \ldots$ is finite.
+\item \label{it:red-comm} If $t \Rightarrow_{R_0}^* t_1$ and $t \Rightarrow_{R_1} t_2$, then there is a term $s$ such that $t_1 \Rightarrow_{R_1} s$ and $t_2 \Rightarrow_{R_1}^* \Rightarrow_{R_0}^* \Rightarrow_{R_1}^* s$.
+\end{enumerate}
+Then the union of $R_0$ and $R_1$ is confluent.
+\end{lem}
+\begin{proof}
+For every triple of terms $t$, $t_1$, and $t_2$ together with two sequences of reductions $s_1$ and $s_2$ of the forms $t \Rightarrow_{R_0 \cup R_1}^* t_1$ and $t \Rightarrow_{R_0 \cup R_1}^* t_2$, respectively,
+we define a size of quintuple $(t,t_1,t_2,s_1,s_2)$ as the pair $(l(s_1)+l(s_2),|t|)$, where $l(s)$ is the number of nontrivial blocks of the form $\Rightarrow_{R_0}^*$ separated by nontrivial blocks of the form $\Rightarrow_{R_1}^*$ in the sequence $s$
+and $|t|$ is the maximum length of a reduction sequence of the form $\Rightarrow_{R_1}^*$ starting from the term $t$ (this is a well-defined function since $R_1$ is strongly normalizable).
+The set of such pairs is ordered lexicographically.
+We prove by induction on the size of $(t,t_1,t_2,s_1,s_2)$ that there exists term $t'$ together with sequences $s_1'$ and $s_2'$ of the forms
+$t_2 \Rightarrow_{R_0 \cup R_1}^* t'$ and $t_1 \Rightarrow_{R_0 \cup R_1}^* t'$, respectively, such that $l(s_i') \leq l(s_i)$:
+\[ \xymatrix@=1em{                                 & \ar[ld]_{l(s_1)} t \ar[rd]^{l(s_2)} &                                 \\
+                   t_1 \ar@{-->}[rd]_{\leq l(s_2)} &                                     & t_2 \ar@{-->}[ld]^{\leq l(s_1)} \\
+                                                   & t'                                  &
+            } \]
+
+If either of the sequences $s_1$ or $s_2$ is empty, then the result is obvious.
+If the first nontrivial blocks in $s_1$ and $s_2$ are $\Rightarrow_{R_0}^*$, then we have the following reductions (we write the value of $l$ on the arrows):
+\[ \xymatrix@=1em{                            &                                                & \ar[ld]_1 t \ar[rd]^1          &                                                &                            \\
+                                              & t_1' \ar[ld]_{l(s_1)-1} \ar@{-->}[rd]_{\leq 1} &                                & t_2' \ar@{-->}[ld]^{\leq 1} \ar[rd]^{l(s_2)-1} &                            \\
+                   t_1 \ar@{-->}[rd]_{\leq 1} &                                                & t' \ar@{-->}[ld] \ar@{-->}[rd] &                                                & t_2 \ar@{-->}[ld]^{\leq 1} \\
+                                              & t_1'' \ar@{-->}[rd]_{\leq l(s_2)-1}            &                                & t_2'' \ar@{-->}[ld]^{\leq l(s_1)-1}            &                            \\
+                                              &                                                & t''                            &                                                &
+            } \]
+A term $t'$ exists since $R_0$ is confluent and terms $t_1''$, $t_2''$, and $t''$ exist by the induction hypothesis since the sum of lengths of corresponding reduction sequences is less than $l(s_1) + l(s_2)$.
+
+If the first nontrivial blocks in $s_1$ and $s_2$ are $\Rightarrow_{R_1}^*$, then we have the following reductions:
+\[ \xymatrix@=1em{                     &                                       & \ar[ld]_0 t \ar[rd]^0          &                                       &                     \\
+                                       & t_1' \ar[ld]_{l(s_1)} \ar@{-->}[rd]_0 &                                & t_2' \ar@{-->}[ld]^0 \ar[rd]^{l(s_2)} &                     \\
+                   t_1 \ar@{-->}[rd]_0 &                                       & t' \ar@{-->}[ld] \ar@{-->}[rd] &                                       & t_2 \ar@{-->}[ld]^0 \\
+                                       & t_1'' \ar@{-->}[rd]_{\leq l(s_2)}     &                                & t_2'' \ar@{-->}[ld]^{\leq l(s_1)}     &                     \\
+                                       &                                       & t''                            &                                       &
+            } \]
+A term $t'$ exists since $R_0$ is confluent and terms $t_1''$, $t_2''$, and $t''$ exist by the induction hypothesis since the sum of lengths
+of corresponding reduction sequences is less than or equal to $l(s_1) + l(s_2)$ and $|t_1'| < |t|$, $|t_2'| < |t|$, and $|t'| \leq |t_1'|$.
+
+Finally, if the first nontrivial block in $s_1$ is $\Rightarrow_{R_0}^*$ and the first nontrivial block in $s_2$ is $\Rightarrow_{R_1}^*$, then we have the following reductions:
+\[ \xymatrix@=1em{                     &                                         & \ar[ld]_1 t \ar[rd]^0          &                                              &                            \\
+                                       & t_1' \ar[ld]_{l(s_1)-1} \ar@{-->}[rd]_0 &                                & t_2' \ar@{-->}[ld]^{\leq 1} \ar[rd]^{l(s_2)} &                            \\
+                   t_1 \ar@{-->}[rd]_0 &                                         & t' \ar@{-->}[ld] \ar@{-->}[rd] &                                              & t_2 \ar@{-->}[ld]^{\leq 1} \\
+                                       & t_1'' \ar@{-->}[rd]_{\leq l(s_2)}       &                                & t_2'' \ar@{-->}[ld]^{\leq l(s_1)-1}          &                            \\
+                                       &                                         & t''                            &                                              &
+            } \]
+A term $t'$ exists by assumption~\eqref{it:red-comm} and terms $t_1''$, $t_2''$, and $t''$ exist by the induction hypothesis since the sum of lengths of reduction sequences starting from $t_1'$ (and also $t'$) is less than $l(s_1) + l(s_2)$,
+the sum of lengths of reduction sequences starting from $t_2'$ is less than or equal to $l(s_1) + l(s_2)$, and $|t_2'| < |t|$.
+\end{proof}

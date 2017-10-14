@@ -946,11 +946,10 @@ By \rlem{morita-simple} and \rlem{der-simple-closed}, this sequent is derivable 
 
 The previous proposition implies that the maps between theories with simple axioms corresponding to inclusions of subtheories are Morita equivalences.
 This shows that if we are interested in a theory with simple axioms, then we can work with either minimal or maximal theory corresponding to it instead.
-In general, we prefer to work with the latter, but sometimes it is convenient to switch to the former as we will see in later sections.
+In general, we prefer to work with the latter, but sometimes it is convenient to switch to the former.
 
-\subsection{Good quotients of cell complexes}
-
-We define another set of generating cofibrations $\I'$ and prove that good quotients of $\I'$-cell complexes are closely related to good quotients of $\I$-cell complexes.
+Note that relative $\I$-cell complexes are minimal theories with simples axioms.
+We can define another set $\I'$ of generating cofibrations such that relative $\I'$-cell complexes are maximal theories with simples axioms.
 Recall that $T_{(p_1,n_1), \ldots (p_{k+1},n_{k+1})}$ is the theory with function symbols $\sigma_i : (p_1,n_1) \times \ldots \times (p_{i-1},n_{i-1}) \to (d_{p_i},n_i)$ for every $1 \leq i \leq k$,
 $\sigma_{k+1} : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p_{k+1},n_{k+1})$, and axioms $\varphi_1 \land \ldots \land \varphi_i \sststile{}{x_1, \ldots x_i} \sigma_{i+1}(x_1, \ldots x_i)\!\downarrow$ for every $1 \leq i \leq k$,
 where $\varphi_j$ equals to $e_{p_j}(x_j) = \sigma_j(x_1, \ldots x_{j-1})$.
@@ -969,12 +968,143 @@ Hence a map has the weak lifting property with respect to $\I$ if and only if it
 It follows that there is another model structure on the category $T_I/\algtt$ in which all objects are fibrant, weak equivalences are Morita equivalences, and cofibrations are $\I'$-cofibrations.
 The identity functor is a Quillen equivalence between this model structure and the model structure that we constructed in the previous section.
 
-Now, we can define the notion of good quotients of $\I$-cell and $\I'$-cell complexes.
-TODO
+\subsection{Confluent theories}
 
-\subsection{Characterization of lifting properties}
+In this subsection we define confluent theories and prove their properties.
+First, we need to prove a simple lemma about general theories:
 
-In this subsection we prove several useful lemmas that characterize trivial fibrations in various model structures that we considered in previous section.
+\begin{lem}[der-eq]
+If a sequent $\varphi \sststile{}{V} t = s$ is derivable in a theory $T$, then there exist terms $t_1, \ldots t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$, $t_i = c[a/x]$ and $t_{i+1} = c[b/x]$
+for some terms $a$, $b$, and $c$ such that there is a unique occurrence of the variable $x$ in $c$ and one of the following conditions hold:
+\begin{enumerate}
+\item There exists an application of \axref{na} in which the premise is derivable and the conclusion is either $\varphi \sststile{}{V} a = b$ or $\varphi \sststile{}{V} b = a$.
+\item $\varphi = \varphi_1 \land \ldots \land \varphi_k$ and there exists $j$ such that $\varphi_j$ equals to either $a = b$ or $b = a$.
+\end{enumerate}
+\end{lem}
+\begin{proof}
+We prove this by induction on the derivation of $\varphi \sststile{}{V} t = s$.
+The rules \axref{nv}, \axref{np}, and \axref{nf} are obvious.
+The rules \axref{nh} and \axref{na} follow immediately from assumptions.
+We can take $t_1 = a = t$, $t_2 = b = s$, and $c = x$.
+Let us consider the rule \axref{ns}.
+If $t_1$, \ldots $t_n$ is a sequence for $\varphi \sststile{}{V} s = t$, then we can take the sequence $t_n$, \ldots $t_1$ for $\varphi \sststile{}{V} t = s$.
+
+Finally, let us consider the rule \axref{nl}:
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} p = q$}
+\AxiomC{$\varphi \sststile{}{V} t'[p/y] = s'[q/y]$}
+\RightLabel{\axref{nl}}
+\BinaryInfC{$\varphi \sststile{}{V} t'[q/y] = s'[q/y]$}
+\DisplayProof
+\end{center}
+Note that we may assume that there is a unique occurrence of the variable $y$ in $\psi$ since the general rule follows from this special case.
+Let $t_1$, \ldots $t_n$ be a sequence for $\varphi \sststile{}{V} p = q$ and let $s_1$, \ldots $s_m$ be a sequence for $\varphi \sststile{}{V} t'[p/y] = s'[p/y]$.
+Then $t'[t_n/y]$, \ldots $t'[t_1/y] = s_1$, \ldots $s_m = s'[t_1/y]$, \ldots $s'[t_n/y]$ is a sequence for $\varphi \sststile{}{V} t'[q/y] = s'[q/y]$.
+\end{proof}
+
+A \emph{term rewriting system} is a binary relation $R$ on the set of terms of some theory such that the following conditions hold:
+\begin{enumerate}
+\item If $R(t,s)$, then $FV(s) \subseteq FV(t)$.
+\item If $R(t,s)$, then $t$ is not a variable.
+\end{enumerate}
+For a general introduction to term rewriting systems we refer the reader to \cite{Terese,klop-trs}.
+If $R$ is a term rewriting system, then we define the relation $\Rightarrow_R$ on the set of terms as follows:
+if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]]$ for all $c$, $x_1$, \ldots $x_k$, and $t_1$, \ldots $t_k$.
+
+A term rewriting system $R$ is \emph{confluent} if $t \Rightarrow_R^* s_1$ and $t \Rightarrow_R^* s_2$ implies that there exists $s$ such that
+$s_1 \Rightarrow_R^* s$ and $s_2 \Rightarrow_R^* s$, where $\Rightarrow_R^*$ is the reflexive transitive closure of $\Rightarrow_R$.
+If $\Rightarrow_1$ and $\Rightarrow_2$ are some relations, then we will write $\Rightarrow_1 \Rightarrow_2$ for the following relation:
+$t \Rightarrow_1 \Rightarrow_2 t'$ if and only if there is a term $s$ such that $t \Rightarrow_1 s$ and $s \Rightarrow_2 t'$.
+Now, we can define confluent theories:
+
+\begin{defn}
+A \emph{confluent} type theory is a type theory $T_0$ with simple axioms together a term rewriting system $R_0$ such that $\mathcal{A}_e = \{ t\!\downarrow\ \sststile{}{FV(t)} t = s\ |\ R_0(t,s) \}$
+and, for every pair $(\varphi_1 \land \ldots \land \varphi_n, V)$ in $P_M$, the term rewriting system $R_1$ defined below is confluent.
+The underlying theory of $R_1$ is $T_1 = T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$.
+If $\varphi_i$ equals to $e_{p_i}(x_i) = A_i$, then we define $R_1$ as $R_0 \cup \{ (e_{p_i}(c_i), A_i[c_1/x_1, \ldots c_{i-1}/x_{i-1}])\ |\ 1 \leq i \leq n \}$.
+\end{defn}
+
+Since many type theories are constructed as coproducts of simple basic theories, it is natural to ask whether coproducts preserve the confluence property.
+If the confluence property is stable under the union in some class of theories, then we say that it is \emph{modular} for this class.
+It was shown by Toyama in \cite{toyama} (see also \cite{klop-confluence,oostrom-confluence}) that the confluence is modular for disjoint theories.
+There are many generalizations of this results for theories that may share particular kind of function symbols (see for instance \cite{ohlebusch-confluence,ohlebusch-composable,middeldorp-completeness}).
+None of these results apply in our context since type theories can share arbitrary function symbols (actually, they always share $ft$, $ty$, $v_i$, and $\subst$, which already violates the assumptions of these results).
+But we still can prove some simple general results about modularity of confluence for type theories.
+For example, the following lemma shows that to prove that $(T_0,R_0)$ is confluent, it is often enough to show that $R_0$ is confluent.
+
+\begin{lem}[morita-conf]
+Let $(T_0,R_0)$ be a theory with a confluent term rewriting system on.
+Suppose that the following conditions hold:
+\begin{enumerate}
+\item \label{it:lhs-cond} For every $t$ and $s$ such that $R_0(t,s)$, if $t$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
+\item Either $R_0$ is left-linear or, for every $t$ and $s$ such that $R_0(t,s)$, if $s$ contains a subterm of the form $e_p(s')$, then $s'$ is not a variable.
+\end{enumerate}
+Then $(T_0,R_0)$ is confluent.
+\end{lem}
+\begin{proof}
+First, let us assume that $R_0$ is left-linear (that is, if $R_0(t,s)$, then there is at most one occurrence of each variable in $t$).
+Then we can show that $t \Rightarrow_{R_0} t_1$ and $t \Rightarrow_{R_1} t_2$ implies that there exists $t'$ such that $t_1 \Rightarrow_{R_1}^* t'$ and $t_2 \Rightarrow_{R_0} t'$, which implies that $R_0 \cup R_1$ is confluent.
+If the redexes of these reductions are independent, then the claim is obvious.
+The redex of $t \Rightarrow_{R_0} t_1$ cannot be inside the redex of $t \Rightarrow_{R_1} t_2$.
+This means that the redex of $t \Rightarrow_{R_1} t_2$ must be inside of $t \Rightarrow_{R_0} t_1$.
+Moreover, \eqref{it:lhs-cond} implies that these redexes do not intersect.
+This means that $t_2$ contains the same $R_0$-redex, so it $\Rightarrow_{R_0}$-reduces to some term $t'$.
+The term $t_1$ may contain several copies of the $R_1$-redex, so it $\Rightarrow_{R_1}^*$-reduces to $t'$.
+
+Now, let us assume that if $R_0(t,s)$ and $s$ contains a subterm of the form $e_p(s')$, then $s'$ is not a variable.
+This condition implies that $R_0$-reductions preserve $R_1$-normal forms (a term $t$ is in the $R_1$-normal form if there is no term $t'$ such that $t \Rightarrow_{R_1} t'$).
+We will write $t \Rightarrow_{R_1}^{nf} t'$ if $t \Rightarrow_{R_1}^* t'$ and $t'$ is in the normal form.
+Let us prove that $t \Rightarrow_{R_0} t_1$ and $t \Rightarrow_{R_1}^{nf} t_2$ implies that there exists $t'$ such that $t_1 \Rightarrow_{R_1}^{nf} t'$ and $t_2 \Rightarrow_{R_0} t'$.
+Since $t \Rightarrow_{R_1}^{nf} t_2$ reduces all $R_1$-redexes to normal forms, if $t$ contains some equal subterms, then they will also be equal in $t_2$.
+So $t_2$ contains the same $R_0$-redex as $t$ and $\Rightarrow_{R_0}$-reduces to a term $t'$.
+Since $\Rightarrow_{R_0}$-reductions preserve $R_1$-normal forms, $t'$ is in the normal form, so $t_1 \Rightarrow_{R_1}^{nf} t'$.
+
+The term rewriting system $R_1$ is not only confluent, but also strongly normalizable, that is, for every $t$, there is a unique $t'$ such that $t \Rightarrow_{R_1}^{nf} t'$.
+We already proved that $t \Rightarrow_{R_0} t_1$ and $t \Rightarrow_{R_1}^{nf} t_2$ implies that there exists $t'$ such that $t_1 \Rightarrow_{R_1}^{nf} t'$ and $t_2 \Rightarrow_{R_0} t'$.
+This implies that the same property holds if we replace $\Rightarrow_{R_0}$ with $\Rightarrow_{R_0}^*$.
+Finally, note that the strong normalization property implies that if $t \Rightarrow_{R_0} t_1$ and $t \Rightarrow_{R_1}^* t_2$, then there exists $t'$ such that $t_1 \Rightarrow_{R_1}^{nf} t'$ and $t_2 \Rightarrow_{R_1}^{nf} \Rightarrow_{R_0} t'$.
+It is easy to see that this implies that $R_0 \cup R_1$ is confluent.
+\end{proof}
+
+\begin{remark}
+The first condition of the previous lemma is necessary, but we do not know whether this is true for the second condition.
+\end{remark}
+
+The main property of confluent theories is proved in the following proposition:
+
+\begin{prop}[conf-main]
+Let $(T_0,R_0)$ be a confluent theory and let $(\varphi,V)$ be a pair in $P_M$.
+If a sequent $\varphi \sststile{}{V} t = s$ is derivable in $T_0$, then there exists a term $r$ of $T_1$ such that $t[c_1/x_1, \ldots c_n/x_n] \Rightarrow_{R_1}^* r$ and $s[c_1/x_1, \ldots c_n/x_n] \Rightarrow_{R_1}^* r$.
+\end{prop}
+\begin{proof}
+By \rlem{mcf}, the sequent $\sststile{}{} t' = s'$ is derivable in $T_1$, where $t' = t[c_1/x_1, \ldots c_n/x_n]$ and $s' = s[c_1/x_1, \ldots c_n/x_n]$.
+By \rlem{der-eq} and \rprop{der-simple}, there exists a sequence $t_1$, \ldots $t_n$ such that $t' = t_1$, $s' = t_n$, and, for every $1 \leq i < n$, either $t_i \Rightarrow_{R_1} t_{i+1}$ or $t_{i+1} \Rightarrow_{R_1} t_i$.
+Since $R_1$ is confluent, this implies that $t' \Rightarrow_{R_1}^* r$ and $s' \Rightarrow_{R_1}^* r$.
+\end{proof}
+
+We can define a relative version of confluent theories:
+
+\begin{defn}
+A \emph{confluent extension} of a theory $T$ is a confluent theory $(T',R')$ such that $T \subseteq T'$ and, for every term $t$ of $T$ and every term $s$ of $T'$ such that $R'(t,s)$,
+the term $s$ also belongs to $T$ and $t\!\downarrow\ \sststile{}{FV(t)} t = s$ is derivable in $T$.
+A \emph{confluent morphism} is a morphism of theories that isomorphic to the inclusion of some theory into its confluent extension.
+\end{defn}
+
+The following proposition shows that confluent maps are conservative in a certain sense:
+
+\begin{prop}
+Let $f : T \to T'$ be a confluent map and let $(\varphi,V)$ be a pair in $P_M$.
+If $f(\varphi) \sststile{T'}{V} f(t) = f(s)$, then $\varphi \sststile{T}{V} t = s$.
+\end{prop}
+\begin{proof}
+By \rlem{mcf}, we may assume that $\varphi = \top$ and $V = \varnothing$.
+By \rprop{conf-main}, there exists a term $r$ such that $f(t) \Rightarrow_{R_1}^* r$ and $f(s) \Rightarrow_{R_1}^* r$.
+Since both terms $f(t)$ and $f(s)$ belong to $T$, all of the reduction rules used in these sequences are derivable in $T$ by the definition of a confluent extension.
+\end{proof}
+
+\section{Characterization of lifting properties}
+
+In this section we prove several useful lemmas that characterize trivial fibrations in various model structures that we considered in previous section.
 Since all of these notations are defined in terms of lifting properties, we will prove general results about them.
 Indeed, if we think about a map that has the weak lifting property with respect to a pair $V,\varphi$ as a weak equivalence,
 then a map having the lifting property with respect to this pair can be thought of as a trivial fibration.
@@ -1104,176 +1234,7 @@ The implication \eqref{it:eq-fib} $\implies$ \eqref{it:cond-fib} is obvious sinc
 Finally, \eqref{it:cond-fib} implies \eqref{it:lem-fib} by \rlem{eq-comp-char-fib}, and conditions of \rlem{char-type-fib} are a special case of the lifting property, hence they follow from \eqref{it:eq-fib}.
 \end{proof}
 
-\subsection{Confluent theories}
-
-In this subsection we define confluent theories and prove their properties.
-First, we need to prove a simple lemma about general theories:
-
-\begin{lem}[der-eq]
-If a sequent $\varphi \sststile{}{V} t = s$ is derivable in a theory $T$, then there exist terms $t_1, \ldots t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$, $t_i = c[a/x]$ and $t_{i+1} = c[b/x]$
-for some terms $a$, $b$, and $c$ such that there is a unique occurrence of the variable $x$ in $c$ and one of the following conditions hold:
-\begin{enumerate}
-\item There exists an application of \axref{na} in which the premise is derivable and the conclusion is either $\varphi \sststile{}{V} a = b$ or $\varphi \sststile{}{V} b = a$.
-\item $\varphi = \varphi_1 \land \ldots \land \varphi_k$ and there exists $j$ such that $\varphi_j$ equals to either $a = b$ or $b = a$.
-\end{enumerate}
-\end{lem}
-\begin{proof}
-We prove this by induction on the derivation of $\varphi \sststile{}{V} t = s$.
-The rules \axref{nv}, \axref{np}, and \axref{nf} are obvious.
-The rules \axref{nh} and \axref{na} follow immediately from assumptions.
-We can take $t_1 = a = t$, $t_2 = b = s$, and $c = x$.
-Let us consider the rule \axref{ns}.
-If $t_1$, \ldots $t_n$ is a sequence for $\varphi \sststile{}{V} s = t$, then we can take the sequence $t_n$, \ldots $t_1$ for $\varphi \sststile{}{V} t = s$.
-
-Finally, let us consider the rule \axref{nl}:
-\begin{center}
-\AxiomC{$\varphi \sststile{}{V} p = q$}
-\AxiomC{$\varphi \sststile{}{V} t'[p/y] = s'[q/y]$}
-\RightLabel{\axref{nl}}
-\BinaryInfC{$\varphi \sststile{}{V} t'[q/y] = s'[q/y]$}
-\DisplayProof
-\end{center}
-Note that we may assume that there is a unique occurrence of the variable $y$ in $\psi$ since the general rule follows from this special case.
-Let $t_1$, \ldots $t_n$ be a sequence for $\varphi \sststile{}{V} p = q$ and let $s_1$, \ldots $s_m$ be a sequence for $\varphi \sststile{}{V} t'[p/y] = s'[p/y]$.
-Then $t'[t_n/y]$, \ldots $t'[t_1/y] = s_1$, \ldots $s_m = s'[t_1/y]$, \ldots $s'[t_n/y]$ is a sequence for $\varphi \sststile{}{V} t'[q/y] = s'[q/y]$.
-\end{proof}
-
-Let $R$ be a binary relation on the set of terms of some theory.
-Then we define the relation $\Rightarrow_R$ on the same set as follows:
-if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]]$ for all $c$, $x_1$, \ldots $x_k$, and $t_1$, \ldots $t_k$.
-Recall that $R$ is confluent if $t \Rightarrow_R^* s_1$ and $t \Rightarrow_R^* s_2$ implies that there exists $s$ such that
-$s_1 \Rightarrow_R^* s$ and $s_2 \Rightarrow_R^* s$, where $\Rightarrow_R^*$ is the reflexive transitive closure of $\Rightarrow_R$.
-If $\Rightarrow_1$ and $\Rightarrow_2$ are some relations, then we will write $\Rightarrow_1 \Rightarrow_2$ for the following relation:
-$t \Rightarrow_1 \Rightarrow_2 t'$ if and only if there is a term $s$ such that $t \Rightarrow_1 s$ and $s \Rightarrow_2 t'$.
-Now, we can define confluent theories:
-
-\begin{defn}
-A \emph{confluent} type theory is a type theory $T$ with simple axioms together with a confluent relation $R$ on the set of terms of $T$
-such that $\mathcal{A}_e = \{ t\!\downarrow\ \sststile{}{FV(t)} t = s\ |\ R(t,s) \}$ and if $R(t,s)$, then the following conditions hold:
-\begin{enumerate}
-\item $FV(s) \subseteq FV(t)$.
-\item $t$ is not a variable.
-\item If $e_p(t')$ is a subterm of $t$, then $t'$ is not a variable.
-\end{enumerate}
-\end{defn}
-
-The confluence property is usually defined for a term rewriting system, which is simply a set of function symbols together with a relation on the set of terms.
-For a general introduction to term rewriting systems we refer the reader to \cite{Terese,klop-trs}.
-Since many type theories are constructed as coproducts of simple basic theories, it is natural to ask whether coproducts preserve the confluence property.
-If the confluence property is stable under the union in some class of theories, then we say that it is \emph{modular} for this class.
-It was shown by Toyama in \cite{toyama} (see also \cite{klop-confluence,oostrom-confluence}) that the confluence is modular for disjoint theories.
-There are many generalizations of this results for theories that may share particular kind of function symbols (see for instance \cite{ohlebusch-confluence,ohlebusch-composable,middeldorp-completeness}).
-None of these results apply in our context since type theories can share arbitrary function symbols (actually, they always share $ft$, $ty$, $v_i$, and $\subst$, which already violates the assumptions of these results).
-But we still can prove some simple general results about modularity of confluence for type theories as shown in the following lemmas:
-
-\begin{lem}
-Let $R_0$ and $R_1$ be two confluent term rewriting systems with the same set of terms such that the following conditions hold:
-\begin{enumerate}
-\item $R_1$ is stongly normalizable, that is every sequence of reductions $t_1 \Rightarrow_{R_1} t_2 \Rightarrow_{R_1} t_3 \Rightarrow_{R_1} \ldots$ is finite.
-\item If $t \Rightarrow_{R_0}^* t_1$ and $t \Rightarrow_{R_1} t_2$, then there is a term $s$ such that $t_1 \Rightarrow_{R_1} s$ and $t_2 \Rightarrow_{R_1}^* \Rightarrow_{R_0}^* \Rightarrow_{R_1}^* s$.
-\end{enumerate}
-Then the union of $R_0$ and $R_1$ is confluent.
-\end{lem}
-\begin{proof}
-TODO
-\end{proof}
-
-\begin{lem}[morita-conf]
-Let $(T_0,R_0)$ be a confluent theory and let $(\varphi_1 \land \ldots \land \varphi_n, V)$ be a pair in $P_M$.
-Then $T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ is also confluent.
-\end{lem}
-\begin{proof}
-By \rlem{morita-simple}, $T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ has simple axioms.
-Let $R_1 = \{ (e_{p_i}(c_i), A_i[c_1/x_1, \ldots c_{i-1}/x_{i-1}])\ |\ 1 \leq i \leq n \}$.
-To prove that $R_0 \cup R_1$ is confluent, it is enough to show that $t \Rightarrow_{R_0} s_1$ and $t \Rightarrow_{R_1} s_2$ implies that there exists $s$ such that $s_1 \Rightarrow_{R_1}^* s$ and $s_2 \Rightarrow_{R_0} s$.
-TODO
-\end{proof}
-
-The main property of confluent theories is proved in the following proposition:
-
-\begin{prop}
-Let $T$ be a confluent theory and let $(\varphi,V)$ be a pair in $P_M$.
-If a sequent $\varphi \sststile{}{V} t = s$ is derivable in $T$, then there exists a term $r$ such that $t_1 \Rightarrow_R^* r$ and $t_2 \Rightarrow_R^* r$.
-\end{prop}
-\begin{proof}
-First, let us assume that $\varphi = \top$ and $V = \varnothing$.
-Then, by \rlem{der-eq} and \rprop{der-simple}, there exists a sequence $t_1$, \ldots $t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$, either $t_i \Rightarrow_R t_{i+1}$ or $t_{i+1} \Rightarrow_R t_i$.
-TODO
-\end{proof}
-
-We can define a relative version of confluent theories:
-
-\begin{defn}
-Let $(T,R)$ be a confluent theory.
-Then a \emph{confluent extension} of $(T,R)$ is a confluent theory $(T',R')$ such that $T \subseteq T'$, $R \subseteq R'$, and if $R'(t,s)$, then either $t \Rightarrow_R^* s$ or $t$ is not a term of $T$.
-A \emph{confluent morphism} is a morphism of theories that isomorphic to the inclusion $(T,R) \to (T',R')$ of some confluent theory $(T,R)$ into some confluent extension $(T',R')$.
-\end{defn}
-
-\begin{comment}
-Often axioms of a type theory are defined in terms of a reduction relation, which satisfies some additional properties such as confluence and strong normalization.
-It turns out that the confluence condition is also useful in our context.
-Let $T$ be a theory and let $R$ be a binary relation on the set of terms of $T$.
-Let $\Rightarrow_R$ be the relation defined as follows: if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]]$ for all $c$, $x_1$, \ldots $x_k$, and $t_1$, \ldots $t_k$.
-Let $\Rightarrow_R^*$ be the reflexive transitive closure of $\Rightarrow_R$.
-
-If $R$ is a relation on the set of terms of a theory $T$, then we define an extension of $T$, which we denote by $(T,R)$.
-It has the same function and predicate symbols as $T$.
-The axioms of $(T,R)$ are the axioms of $T$ together with the axiom $t\!\downarrow\ \sststile{}{V} t = s$ for every pair of terms $t$ and $s$ such that $R(t,s)$.
-
-\begin{defn}
-We will say that a relation $R$ on the set of terms of a theory $T$ is \emph{confluent} if the following conditions hold:
-\begin{enumerate}
-\item If $R(t,s)$, then $FV(s) \subseteq FV(t)$.
-\item If $R(t,s)$, then $t$ is not a variable.
-\item If $R(t,s)$, then there is at most one occurrence of each variable in $t$.
-\item If $t \Rightarrow_R^* t_1$ and $t \Rightarrow_R^* t_2$, then there exist terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_R^* s_1$, $t_2 \Rightarrow_R^* s_2$ and $\sststile{T}{V} s_1 \cong s_2$.
-\end{enumerate}
-
-We will say that a map of theories is \emph{confluent} if it isomorphic to a composite of the form $T \to T' \to (T',R)$ such that the following conditions hold:
-\begin{enumerate}
-\item The theory $T$ is a subtheory of $T'$ and the map $T \to T'$ is the obvious inclusion.
-\item The map $T \to T'$ is a relative $\Icell$ complex.
-\item The relation $R$ is confluent.
-\item If $R(t,s)$, then $t$ consists of function symbols that do not belong to $T$.
-\item If $R(t,s)$, then $t\!\downarrow\ \sststile{T'}{V} s\!\downarrow$.
-\item If $R(t,s)$, then $t\!\downarrow\ \sststile{(T',R)}{V} e_p(t) = e_p(s)$.
-\end{enumerate}
-
-We will say that a theory $T$ is \emph{confluent} if the map $0 \to T$ is confluent.
-\end{defn}
-
-\begin{lem}
-Let $T \to T' \to (T',R)$ be a confluent map.
-If sequents $\varphi \sststile{(T',R)}{V} t_1 = t_2$ and $\varphi \sststile{T'}{V} t_1\!\downarrow \land\ t_2\!\downarrow$ are derivable,
-then there exists a term $s$ such that $t_1 \Rightarrow_{R'}^* s$ and $t_2 \Rightarrow_{R'}^* s$, where $R'$ is the union of $R$ and the relation $\varphi \sststile{T'}{V} - = -$.
-\end{lem}
-\begin{proof}
-TODO
-\end{proof}
-
-\begin{lem}
-If $f : T \to (T',R)$ is a confluent map and $f(\varphi) \sststile{(T',R)}{V} f(\psi)$, then $\varphi \sststile{T}{V} \psi$.
-\end{lem}
-\begin{proof}
-TODO
-\end{proof}
-\end{comment}
-
-TODO: Prove that confluent maps are closed under transfinite compositions.
-
-TODO: To construct the structure of a cofibration category, it is enough to prove that trivial fibrations between confluent theories are preserved by pushouts along confluent maps. The first condition is easy since we can forget about additional axioms of the confluent map. The second condition follows from the general construction of lifting equivalences.
-
-% maybe work with more general congruent theories?
-
-% trivial fibrations are closed under pushouts along weak cofibrations, in particular weak equivalences are closed under coproducts
-% a structure of a cofibrations category on a large class of theories
-% the universe functor preserves trivial fibrations and hence weak equivalences
-% equivalence between the model structure and the structure of a cofibration category.
-
-\section{Examples of Morita equivalences}
-
-In this section we construct several examples of Morita equivalences using lemmas from previous sections.
-First, let us prove an analog of \rlem{eq-char-fib} for weak lifting properties:
+Let us also prove an analog of \rlem{eq-char-fib} for weak lifting properties:
 
 \begin{lem}[eq-char-eq]
 Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
@@ -1297,7 +1258,13 @@ The proof of this lemma is essentially the same as the proof of \rlem{eq-char-fi
 
 We do not have an analog of \rprop{eq-comp-char-fib}, so this lemma is not always applicable, but it is still useful for constructing particular examples of Morita equivalences.
 
-% properness of the model categories of models
+\section{Examples of Morita equivalences}
+
+In this section we construct several examples of Morita equivalences.
+
+\subsection{Properness of the model categories of models}
+
+Let us show that the model category of models of a confluent theory is proper:
 
 \begin{prop}
 Let $T$ be a confluent theory under $\coeT_1 + \sigma + \PathT + \wUA$ with well-defined function symbols.
@@ -1321,7 +1288,18 @@ Thus it is enough to show that conditions of \rlem{eq-char-fib} hold for this pu
 The first condition is easy to prove.
 If $\sigma$ is a function symbol of $T$ or $\sigma = a$, then we can lift it to itself.
 If $\sigma = O_y$ for some $y \in Y$, then we can lift it to $O_x$, where $x \in X$ is a lift of $y$
+
+TODO
 \end{proof}
+
+% confluent maps are closed under transfinite compositions.
+
+% to construct the structure of a cofibration category, it is enough to prove that trivial fibrations between confluent theories are preserved by pushouts along confluent maps. The first condition is easy since we can forget about additional axioms of the confluent map. The second condition follows from the general construction of lifting equivalences.
+
+% trivial fibrations are closed under pushouts along weak cofibrations, in particular weak equivalences are closed under coproducts
+% a structure of a cofibrations category on a large class of theories
+% the universe functor preserves trivial fibrations and hence weak equivalences
+% equivalence between the model structure and the structure of a cofibration category.
 
 % adding terms of contractible types (maybe with some judgemental rules) is a Morita equivalence (in particular, squeeze)
 % strictly associative concatenation of paths is a Morita equivalence
@@ -1331,252 +1309,10 @@ If $\sigma = O_y$ for some $y \in Y$, then we can lift it to $O_x$, where $x \in
 % cofibrant replacement of theories (in particular, Id_- for Id, also Sigma and other simple theories)
 % equivalence between theories in which function symbols are well-defined and in which they are not
 
+% Coproducts of theories
+% The universe functor preserves Morita equivalences
+
 % T -> T + coe_1 + \sigma + Path + wUA is a Morita equivalence
-
-\section{Structure of a cofibration category}
-
-The model structure that we secribe in the previous section has a problem:
-naturally occurring examples of algebraic dependent type theories are not cofibrant in this model structure.
-In this section we define a full subcategory of theories which are cofibrant in some sense.
-This class of cofibrant theories is not related to cofibrant theories in the model structure of the previous section.
-Thus we define the structure of a cofibration category on such cofibrant theories and
-prove that this cofibration category is equivalent to the cofibration category of cofibrant objects of the model structure.
-Most of algebraic dependent type theories that occur in practice are cofibrant in our new sense.
-
-Let $S_{s_1, \ldots s_k, s}$ be the theory with one predicate symbol $P : s_1 \times \ldots \times s_k$, one function symbol $\sigma : s_1 \times \ldots \times s_k \to s$,
-and one axiom $P(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$.
-Let $\I^S$ be the set of maps of the form $S_{l,(d_p,n)} \to S_{l,(p,n)}$, where $l = s_1, \ldots s_k$ is any sequence of sorts and $\sigma$ maps to $e_p(\sigma)$.
-Let $\I^{SP}$ be the union of $\I^S$ and maps of the form $P^\alpha_l \to P^{\alpha+1}_l$ as defined at the end of the previous section.
-Note that $\Icof \subseteq \Icof[I^S]$ and $\Icof[I^P] \subseteq \Icof[I^{SP}]$.
-Also note that a map has RLP up to relative homotopy with respect to $\I^S$ (or, equivalently, $\I^{SP}$) if and only if it is a strong Morita equivalence.
-
-A map is a relative $\I^{SP}$-cell complex if and only if it is isomorphic to an inclusion of a subtheory $(\mathcal{F},\mathcal{P},\mathcal{A}) \to (\mathcal{F} \amalg \mathcal{F}', \mathcal{P} \amalg \mathcal{P}', \mathcal{A} \amalg \mathcal{A}')$
-such that there is a well-ordering on the set $\mathcal{F}'$ and $\mathcal{A}' = \{ S(\sigma)\ |\ \sigma \in \mathcal{F}' \}$,
-where $S(\sigma)$ is a sequent of the form $\varphi \sststile{}{x_1, \ldots x_k} e_p(\sigma(x_1, \ldots x_k)) = A$
-such that the sequent $\varphi \sststile{}{x_1, \ldots x_k} A$ is derivable in the subtheory of $(\mathcal{F} \amalg \mathcal{F}', \mathcal{P} \amalg \mathcal{P}', \mathcal{A} \amalg \mathcal{A}')$ which consists of function symbols less than $\sigma$.
-In particular, $\varphi$ and $A$ contain only such function symbols.
-We call such an inclusion a \emph{presented relative $\I^{SP}$-cell complex}.
-
-We will say that a map $f : T \to T'$ is a \emph{conservative extension} if a sequent $S$ of $T$ is derivable whenever $f(S)$ is derivable.
-
-\begin{prop}
-Let $f : T \to T'$ be a conservative extension such that $T'$ is a quotient of a relative $\I^P$-cell complex.
-Then $f$ is a Morita equivalence if and only if, for every function symbol $\sigma$ of $T'$, there is a term $t$ of $T$ such that $f(t)$
-\end{prop}
-
-\begin{lem}
-Let $f : T \to T'$ be a presented relative $\I^{SP}$-cell complex, where $T = (\mathcal{F},\mathcal{P},\mathcal{A})$ and $T' = (\mathcal{F} \amalg \mathcal{F}', \mathcal{P} \amalg \mathcal{P}', \mathcal{A} \amalg \mathcal{A}')$.
-Let $\varphi$ be a formula of $T$, and let $\psi$ be a formula of $T'$.
-If a sequent $f(\varphi) \sststile{}{V} \psi$ is derivable, then there exists a derivation of this sequent in the natural deduction system
-in which the rule \axref{nf} is applied only to function symbols in $\mathcal{F}$.
-\end{lem}
-\begin{proof}
-First, let us prove the following fact.
-If $t = \sigma(t_1, \ldots t_k)$ is a subterm of $\psi$, $\sigma \in \mathcal{F}'$, and there is a derivation of $f(\varphi) \sststile{}{V} \psi$ in which the rule \axref{nf} is applied only to function symbols in $\mathcal{F}$,
-then there is a derivation satisfying the same property for the sequent $f(\varphi) \sststile{}{V} t_i\!\downarrow$ for every $1 \leq i \leq k$.
-Note that we may assume that axioms in $\mathcal{A}'$ are of the form $\varphi \land A\!\downarrow \sststile{}{x_1, \ldots x_k} e_p(\sigma(x_1, \ldots x_k)) = A$
-since this axiom is equivalent to the one we described before.
-We prove this fact by induction on a derivation of $f(\varphi) \sststile{}{V} \psi$.
-The only nontrivial cases are \axref{nl} and \axref{na}.
-Let us first consider \axref{nl}:
-\begin{center}
-\AxiomC{$f(\varphi) \sststile{}{V} a = b$}
-\AxiomC{$f(\varphi) \sststile{}{V} \chi[a/x]$}
-\BinaryInfC{$f(\varphi) \sststile{}{V} \chi[b/x]$}
-\DisplayProof
-\end{center}
-If $t$ is a subterm of $b$, then the conclusion follows immediately from induction hypothesis.
-Otherwise, there is a term $t' = \sigma(t_1', \ldots t_k')$ such that $t = t'[b/x]$.
-Induction hypothesis implies that $f(\varphi) \sststile{}{V} t_i'[a/x]\!\downarrow$ is derivable.
-By \axref{nl}, the sequent $f(\varphi) \sststile{}{V} t_i'[b/x]\!\downarrow$ is also derivable.
-
-Now, let us consider the rule \axref{na}.
-If the corresponding axiom belongs to $\mathcal{A}$,
-then $t$ is a subterm of $r_i$ for some $i$.
-Hence, the conclusion holds by induction hypothesis.
-If the axiom belongs to $\mathcal{A}'$, then the conclusion of the rule looks like this: $e_p(\tau(r_1, \ldots r_m)) = A$.
-Note that terms $r_1$, \ldots $r_m$, $A$ appear in the premises of the rule.
-Thus, if $t$ is a subterm of one of these terms, then we are done.
-Otherwise, $t = \tau(r_1, \ldots r_m)$.
-Then $t_i = r_i$ and the sequent $f(\varphi) \sststile{}{V} t_i\!\downarrow$ is one of the premises of the rule.
-
-Finally, we can finish the proof of the lemma by induction on a derivation of the sequent $f(\varphi) \sststile{}{V} \psi$.
-The only nontrivial case is \axref{nf}.
-In this case, we can apply the fact that we just proved.
-\end{proof}
-
-If $\mathcal{F}$ is a set of function symbols, then we will say that a term $t$ is an $\mathcal{F}$-term if $t = \sigma(t_1, \ldots t_k)$ for some terms $t_1$, \ldots $t_k$
-and some function symbol $\sigma$ which belongs to $\mathcal{F}$.
-
-\begin{lem}
-Let $f : T \to T'$ be a presented relative $\I^{SP}$-cell complex, where $T = (\mathcal{F},\mathcal{P},\mathcal{A})$ and $T' = (\mathcal{F} \amalg \mathcal{F}', \mathcal{P} \amalg \mathcal{P}', \mathcal{A} \amalg \mathcal{A}')$.
-Let $\varphi$ and $\psi$ be formulas of $T$, and let $t_1$, \ldots $t_n$ be $\mathcal{F}'$-terms.
-If the sequent $f(\varphi)[t/x] \sststile{}{V} f(\psi)[t_1/x_1, \ldots t_n/x_n]$ is derivable,
-then the sequent $f(\varphi)[t_1'/x_1, \ldots t_n'/x_n] \sststile{}{V} f(\psi)[t'/x]$ is also derivable
-for every terms $t_1'$, \ldots $t_n'$ such that the sequents $f(\varphi) \sststile{}{V} e_p(t_i) = e_p(t_i')$ are derivable for every $1 \leq i \leq n$.
-\end{lem}
-\begin{proof}
-We prove this by induction on $\sigma$.
-For a fixed $t$, we proceed by induction on a derivation of $f(\varphi) \sststile{}{V} f(\psi)[t/x]$ in the natural deduction system.
-Let us consider the rules \axref{nf}, \axref{nl}, and \axref{na} since the rest are easy to prove.
-First, consider an instance of \axref{nf} rule:
-\begin{center}
-\AxiomC{$\varphi \sststile{}{V} \sigma(r_1, \ldots r_k)\!\downarrow$}
-\UnaryInfC{$\varphi \sststile{}{V} r_i\!\downarrow$}
-\DisplayProof
-\end{center}
-By the previous lemma, we may assume that $\sigma \in \mathcal{F}$.
-In this case, we can apply induction hypothesis to $\sigma(r_1, \ldots r_k)$.
-
-Now, consider the rule \axref{nl}:
-\AxiomC{$f(\varphi) \sststile{}{V} a = b$}
-\AxiomC{$f(\varphi) \sststile{}{V} \chi[a/x]$}
-\BinaryInfC{$f(\varphi) \sststile{}{V} \chi[b/x]$}
-\DisplayProof
-Note that we may assume that $x$ occurs in $\chi$ exactly once since the general form of the rule follows from this special case.
-Then either some $t_i$ contains $b$ as a subterm, or $b$ contains some 
-
-\AxiomC{$f(\varphi) \sststile{}{V} \psi_1[t_1/x_1, \ldots t_k/x_k]$ \qquad \ldots \qquad $\Gamma \sststile{}{V} \psi_n[t_1/x_1, \ldots t_k/x_k]$}
-\UnaryInfC{$f(\varphi) \sststile{}{V} \chi_j[t_1/x_1, \ldots t_k/x_k]$}
-\DisplayProof
-\end{proof}
-
-Let $T'_{s_1, \ldots s_{k+1}}$ be equal to $T_{s_1, \ldots s_{k+1}}$ together with axiom
-$\sigma_{k+1}(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \varphi_1 \land \ldots \land \varphi_k$.
-Let $\I^D$ be the set of maps of the form $T_{l, (d_p,n)} \to T_{l, (p,n)} \to T'_{l, (p,n)}$, where the first map belongs to $\I$ and the second map is the obvious inclusion.
-Then $\I^D \subseteq \Icof$.
-Indeed, $T_{l,s} \to T'_{l,s}$ has a section, which maps $\sigma_{k+1}(x_1, \ldots x_k)$ to $\sigma_{k+1}(x_1, \ldots x_k)|_{\varphi_1 \land \ldots \land \varphi_k}$.
-Thus maps in $\I^D$ are retracts of maps in $\I$.
-Let $\cof_0 = \Icell[I^D]$.
-
-Let $\I^{DP}$ be the union of $\I^D$ and the set of maps of the form $0 \to P_{s_1, \ldots s_k}$.
-Let $\cof_1$ be the class of maps of the form $T \to T' \to T''$, where $T \to T'$ belongs to $\Icell[I^{DP}]$ and
-$T' \to T''$ is a regular epimorphism (equivalently, $T' \to T''$ is isomorphic to a map of the form $T' \to T' \cup \mathcal{A}$ for some set of axioms $\mathcal{A}$).
-A map $f : T_0 \to T$ belongs to $\cof_1$ if and only if there is a theory $T'$ which extends $T_0$ such that $f$ is isomorphic to the inclusion $T_0 \to T'$
-and there is a well-ordering on the set of new function symbols of $T'$ such that for every such function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$
-there exist terms $t_1, \ldots t_{k+1}$ such that $FV(t_i) \subseteq \{ x_1, \ldots x_{i-1} \}$, all function symbols that appear in $t_1, \ldots t_{k+1}$ are less than $\sigma$,
-and the following sequents are derivable:
-\begin{align*}
-\bigwedge_{1 \leq j < i} e_{p_j}(x_j) = t_j & \sststile{}{x_1, \ldots x_{i-1}} t_i\!\downarrow \text{ for every } 1 \leq i \leq k+1 \\
-\sigma(x_1, \ldots x_k)\!\downarrow\ & \ssststile{}{x_1, \ldots x_k} \bigwedge_{1 \leq j \leq k} e_{p_j}(x_j) = t_j \\
-\sigma(x_1, \ldots x_k)\!\downarrow\ & \sststile{}{x_1, \ldots x_k} e_p(\sigma(x_1, \ldots x_k)) = t_{k+1}
-\end{align*}
-The terms $t_1, \ldots t_{k+1}$ will be denoted by $d_1(\sigma), \ldots d_{k+1}(\sigma)$.
-If we work in the category of theories under $T_0$, then we call an object of this category $\cof_1$-\emph{cofibrant} if it belongs to $\cof_1$.
-
-Let $T$ be a $\cof_1$-cofibrant theory with a well-ordering on the set of function symbols as described above.
-Then we define a well-founded relation on the set of terms of $T$.
-A term $t$ is less than $t'$ if $t'$ is not a variable and the greatest function symbol of $t'$ is greater than all function symbols of $t$.
-
-\begin{lem}
-Let $T$ be a $\cof_1$-cofibrant theory such that $T_I$ is a subtheory of $T$.
-Then there exists a well-founded relation $\prec$ on the set of terms of $T$ such that
-for every term $t$ which is not a variable, there exist variables $x_1, \ldots x_n \in FV(t)$ and terms $d_1(t), \ldots d_{n+1}(t)$ such that for every $1 \leq i \leq n+1$,
-we have $FV(d_i) \subseteq \{ x_1, \ldots x_{i-1} \}$ and $d_i \prec t$ and the following sequents are derivable:
-\begin{align*}
-\bigwedge_{1 \leq j < i} e_{p_j}(x_j) = d_j(t) & \sststile{}{x_1, \ldots x_{i-1}} d_i(t)\!\downarrow \text{ for every } 1 \leq i \leq n+1 \\
-t\!\downarrow\ & \ssststile{}{x_1, \ldots x_n} \bigwedge_{1 \leq j \leq n} e_{p_j}(x_j) = d_j(t) \\
-t\!\downarrow\ & \sststile{}{x_1, \ldots x_n} e_p(t) = d_{n+1}(t)
-\end{align*}
-\end{lem}
-\begin{proof}
-If $t$ is not a variable, then let $m(t)$ be the greatest function symbol that appears in $t$ and
-let $n(t)$ be the maximal number of $m(t)$ that appears on the path from the root of $t$ to some leaf.
-That is, $n(x) = 0$ and
-\[ n(\sigma(t_1, \ldots t_k)) = \left\{
-  \begin{array}{lr}
-    max_{1 \leq i \leq k}(n(t_i)) + 1 & \text{ if } \sigma = m(t) \\
-    max_{1 \leq i \leq k}(n(t_i))     & \text{ if } \sigma \neq m(t)
-  \end{array}
-\right. \]
-Now, we can define relation $\prec$.
-For any terms $t$ and $s$, $s \prec t$ if and only if $t$ is not a variable and either $s$ is a variable or $(m(s),n(s))$ is less than $(m(t),n(t))$ in the lexicographical order.
-
-We now proceed by well-founded induction on a term $t$.
-If $t = \sigma(t_1, \ldots t_k)$, then we have the following theorems:
-\begin{align*}
-\bigwedge_{1 \leq j < i} e_{p_j}(t_j) & = d_j(\sigma)[t_1/x_1, \ldots t_{j-1}/x_{j-1}] \sststile{}{V} d_i(\sigma)[t_1/x_1, \ldots t_{i-1}/x_{i-1}]\!\downarrow \\
-t\!\downarrow\ & \ssststile{}{V} \bigwedge_{1 \leq j \leq k} e_{p_j}(t_j) = d_j(\sigma)[t_1/x_1, \ldots t_{j-1}/x_{j-1}] \\
-t\!\downarrow\ & \sststile{}{V} e_p(t) = d_{k+1}(\sigma)[t_1/x_1, \ldots t_k/x_k]
-\end{align*}
-\end{proof}
-
-\begin{lem}
-Let $f : T \to T'$ be a map between $\cof_1$-cofibrant theories.
-Then $f \in \Iinj[\I^D]$ if and only if $f \in \Iinj$.
-\end{lem}
-\begin{proof}
-Since maps in $\I^D$ are retracts of maps in $\I$, every maps in $\Iinj$ belongs to $\Iinj[\I^D]$.
-Conversely, suppose $f \in \Iinj[\I^D]$.
-\end{proof}
-
-\section{Properties of Morita equivalences}
-
-In this section we prove several closure properties of Morita equivalences.
-If $f : T_1 \to T_2$ is a Morita equivalence and $T$ is a theory, then $f \amalg T : T_1 \amalg T \to T_2 \amalg T$ might not be a Morita equivalence.
-Our first objective is to give sufficient conditions on $f$ and $T$ for this to be true.
-If $T_1$, $T_2$, and $T_3$ are cofibrant, then this is true, but theories that occur in practice are not cofibrant.
-We describe a class of objects which we call confluent so that every cofibrant object is confluent and theories occurring in practice are confluent.
-
-We will say that a map $f : T_1 \to T_2$ is a \emph{confluent extension} if it factors as a relative $\I$-cell complex $g : T_1 \to T$
-followed by a map $h : T \to T_2$ satisfying the following properties:
-
-Let $T_1 = (\mathcal{F}_1, \mathcal{P}_1, \mathcal{A}_1)$ be a theory and
-let $T_2 = (\mathcal{F}_1 \amalg \mathcal{F}_2, \mathcal{P}_1 \amalg \mathcal{P}_2, \mathcal{A}_1 \amalg \mathcal{A}_2)$ be an extension of $T_1$.
-We will say that this extension is \emph{confluent} if the following conditions hold:
-\begin{itemize}
-\item There is a subtheory $T$ of $T_2$, which contains $T_1$ and all function symbols of $T_2$, and such that the inclusion $T_1 \to T$ is a relative $\I$-cell complex.
-\item 
-\end{itemize}
-We will say that an arbitrary morphism of theories has well-defined function symbols if it is isomorphic to an inclusion $B \to T$ which has this property.
-
-Let $T = (\mathcal{F}_B \amalg (\mathcal{F}_0 \times \mathbb{N}), \mathcal{P}_B \amalg (\mathcal{P}_0 \times \mathbb{N}), \mathcal{A}_B \amalg \mathcal{A}_0)$
-be a contextual theory under $B$.
-We will say that map $B \to T$ \emph{has well-defined function symbols} if there is a well-founded relation $\prec$ on $\mathcal{F}_0$
-such that for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ in $\mathcal{F}_0$,
-there are terms $t_1, \ldots t_k$ of $T_2$ such that the following sequent is derivable:
-\[ \sigma(x_1, \ldots x_k)\!\downarrow\ \ssststile{}{x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = t_i \]
-and every function symbol from $\mathcal{F}_0$ that appears in some $t_i$ is less than $\sigma$.
-
-We will say that a map of theories \emph{has well-defined function symbols} if it is isomorphic to a map $f : T_1 \to T_2$
-such that there is a well-founded relation on the set of function symbols of $T_2$ such that for every function symbol
-$\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ of $T_2$,
-either there is a term $t$ of $T_1$ such that $\sststile{}{x_1, \ldots x_k} f(t) \cong \sigma(x_1, \ldots x_k)$ or
-there are terms $t_1, \ldots t_k$ of $T_2$ such that every function symbol in every $t_i$ is less than $\sigma$ and the following sequent is derivable:
-\[ \sigma(x_1, \ldots x_k)\!\downarrow\ \ssststile{}{x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = t_i. \]
-We will say that an object of $T_0/\algtt$ has well-defined function symbols if it has this property considered as a map $T_0 \to T$.
-
-Every cofibration has well-defined function symbols.
-If $g \circ f$ has well-defined function symbols, then so does $g$.
-In particular, if the codomain of a map has well-defined function symbols, then so does the map itself.
-Objects of $T_0/\algtt$ with well-defined function symbols are closed under quotients.
-This implies that most of the theories that are used in practice have well-defined symbols.
-
-\begin{prop}
-Let $f : T_1 \to T_2$ be a morphism with well-defined function symbols.
-Then $f$ has the weak lifting property with respect to $V,\varphi$ if and only if
-for every term $A \in \Term_{T_1}(V)_{(d_p,n)}$ and every function symbol $\sigma$ of $T_2$ such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$,
-there exists a term $a' \in \Term_{T_1}(V)_{(p,n)}$ such that $f(a')$ is relatively homotopic to $a$ with respect to $\varphi$.
-\end{prop}
-
-\section{Examples of Morita equivalences}
-
-In this section we will describe a few examples of Morita equivalences.
-In general, it might be difficult to prove that a morphism $f : T_1 \to T_2$ is a Morita equivalence since it might not have an inverse.
-In this case we will use \rlem{equiv-lem}.
-Even then it might be difficult to construct required pseudomorphisms directly.
-In this case we can construct another theory which is a combination of $T_1$ and $T_2$, construct several Morita equivalences between them,
-and then prove that $f$ is a Morita equivalence using 2-out-of-3 property.
-
-Often theories $T_1$ and $T_2$ are parts of other theories $T_1'$ and $T_2'$.
-Sometimes a Morita equivalence $f : T_1 \to T_2$ induces a Morita equivalence $T_1' \to T_2'$.
-We cannot prove this in general, but often instead of proving that $f$ is a Morita equivalence we can prove that for every map $T \to T'$,
-the induced map $T_1 \amalg_T T' \to T_2 \amalg_T T'$ is a Morita equivalence.
-All examples of Morita equivalences in this section will be given in this general form.
-
-\subsection{Normalization}
-
-To be able to apply \rlem{equiv-lem}, we need to construct a normalization function on terms.
 
 \subsection{Strict associativity}
 
@@ -1648,12 +1384,6 @@ and in the sixth rule, $a_i'$ is $\subst(\Gamma, a_i, b_1, \ldots b_k)$.
 
 It is easy to show that these reduction rules define a confluent and terminating rewriting system using standard techniques as described, for example, in \cite{Terese}.
 We define a pseudomorphism $\nf : T_a \to T_a$ as follows:
-
-\subsection{$\Sigma$ types}
-
-\subsection{Unit types}
-
-\subsection{$\Id$-types and $\coe$}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
