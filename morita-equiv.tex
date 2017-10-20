@@ -1007,7 +1007,7 @@ A \emph{term rewriting system} is a binary relation $R$ on the set of terms of s
 \item If $R(t,s)$, then $FV(s) \subseteq FV(t)$.
 \item If $R(t,s)$, then $t$ is not a variable.
 \end{enumerate}
-For a general introduction to term rewriting systems we refer the reader to \cite{Terese,klop-trs}.
+For a general introduction to term rewriting systems we refer the reader to \cite{Terese,klop-trs,ohlebusch-advanced}.
 If $R$ is a term rewriting system, then we define the relation $\Rightarrow_R$ on the set of terms as follows:
 if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]]$ for all $c$, $x_1$, \ldots $x_k$, and $t_1$, \ldots $t_k$.
 
@@ -1019,42 +1019,32 @@ Now, we can define confluent theories:
 
 \begin{defn}
 A \emph{confluent} type theory is a type theory $T_0$ with simple axioms together a term rewriting system $R_0$ such that $\mathcal{A}_e = \{ t\!\downarrow\ \sststile{}{FV(t)} t = s\ |\ R_0(t,s) \}$
-and, for every pair $(\varphi_1 \land \ldots \land \varphi_n, V)$ in $P_M$, the term rewriting system $R_1$ defined below is confluent.
+and, for every pair $(\varphi_1 \land \ldots \land \varphi_n, V)$ in $P_M$, the term rewriting system $R = R_0 \cup R_1$ is confluent, where $R_1$ is defined below.
 The underlying theory of $R_1$ is $T_1 = T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$.
-If $\varphi_i$ equals to $e_{p_i}(x_i) = A_i$, then we define $R_1$ as $R_0 \cup \{ (e_{p_i}(c_i), A_i[c_1/x_1, \ldots c_{i-1}/x_{i-1}])\ |\ 1 \leq i \leq n \}$.
+If $\varphi_i$ equals to $e_{p_i}(x_i) = A_i$, then we define $R_1$ as $\{ (e_{p_i}(c_i), A_i[c_1/x_1, \ldots c_{i-1}/x_{i-1}])\ |\ 1 \leq i \leq n \}$.
 \end{defn}
 
-Since many type theories are constructed as coproducts of simple basic theories, it is natural to ask whether coproducts preserve the confluence property.
-If the confluence property is stable under the union in some class of theories, then we say that it is \emph{modular} for this class.
-It was shown by Toyama in \cite{toyama} (see also \cite{klop-confluence,oostrom-confluence}) that the confluence is modular for disjoint theories.
-There are many generalizations of this results for theories that may share particular kind of function symbols (see for instance \cite{ohlebusch-confluence,ohlebusch-composable,middeldorp-completeness}).
-None of these results apply in our context since type theories can share arbitrary function symbols (actually, they always share $ft$, $ty$, $v_i$, and $\subst$, which already violates the assumptions of these results).
-But we still can prove some simple general results about modularity of confluence for type theories.
-For example, the following lemma shows that to prove that $(T_0,R_0)$ is confluent, it is often enough to show that $R_0$ is confluent.
+The following lemma shows that to prove that $(T_0,R_0)$ is confluent, it is often enough to show that $R_0$ is confluent.
 
 \begin{lem}[morita-conf]
-Let $(T_0,R_0)$ be a theory with a confluent term rewriting system on.
+Let $(T_0,R_0)$ be a theory with a confluent term rewriting system on it.
 Suppose that the following conditions hold:
 \begin{enumerate}
-\item \label{it:lhs-cond} For every $t$ and $s$ such that $R_0(t,s)$, if $t$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
+\item For every $t$ and $s$ such that $R_0(t,s)$, if $t$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
 \item Either $R_0$ is left-linear or, for every $t$ and $s$ such that $R_0(t,s)$, if $s$ contains a subterm of the form $e_p(s')$, then $s'$ is not a variable.
 \end{enumerate}
 Then $(T_0,R_0)$ is confluent.
 \end{lem}
 \begin{proof}
-First, let us assume that $R_0$ is left-linear (that is, if $R_0(t,s)$, then there is at most one occurrence of each variable in $t$).
-Then we can show that $t \Rightarrow_{R_0} t_1$ and $t \Rightarrow_{R_1} t_2$ implies that there exists $t'$ such that $t_1 \Rightarrow_{R_1}^* t'$ and $t_2 \Rightarrow_{R_0} t'$, which implies that $R_0 \cup R_1$ is confluent.
-If the redexes of these reductions are independent, then the claim is obvious.
-The redex of $t \Rightarrow_{R_0} t_1$ cannot be inside the redex of $t \Rightarrow_{R_1} t_2$.
-This means that the redex of $t \Rightarrow_{R_1} t_2$ must be inside of $t \Rightarrow_{R_0} t_1$.
-Moreover, \eqref{it:lhs-cond} implies that these redexes do not intersect.
-This means that $t_2$ contains the same $R_0$-redex, so it $\Rightarrow_{R_0}$-reduces to some term $t'$.
-The term $t_1$ may contain several copies of the $R_1$-redex, so it $\Rightarrow_{R_1}^*$-reduces to $t'$.
+The first condition guarantees that the systems $R_0$ and $R_1$ are orthogonal to each other.
+It was shown in \cite{raoult} (see also \cite[Theorem~8.6.35]{ohlebusch-advanced}) that the union of confluent orthogonal left-linear systems is confluent.
 
-Now, let us assume that if $R_0(t,s)$ and $s$ contains a subterm of the form $e_p(s')$, then $s'$ is not a variable.
+Thus we may assume that if $R_0(t,s)$ and either of $t$ or $s$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
 This condition implies that $R_0$-reductions preserve $R_1$-normal forms (a term $t$ is in the $R_1$-normal form if there is no term $t'$ such that $t \Rightarrow_{R_1} t'$).
 We will write $t \Rightarrow_{R_1}^{nf} t'$ if $t \Rightarrow_{R_1}^* t'$ and $t'$ is in the normal form.
 Let us prove that $t \Rightarrow_{R_0} t_1$ and $t \Rightarrow_{R_1}^{nf} t_2$ implies that there exists $t'$ such that $t_1 \Rightarrow_{R_1}^{nf} t'$ and $t_2 \Rightarrow_{R_0} t'$.
+Since the systems are orthogonal, $R_0$-redexes and $R_1$-redexes do not overlap.
+Thus we may assume that all $R_1$-redexes occur inside the $R_0$-redex.
 Since $t \Rightarrow_{R_1}^{nf} t_2$ reduces all $R_1$-redexes to normal forms, if $t$ contains some equal subterms, then they will also be equal in $t_2$.
 So $t_2$ contains the same $R_0$-redex as $t$ and $\Rightarrow_{R_0}$-reduces to a term $t'$.
 Since $\Rightarrow_{R_0}$-reductions preserve $R_1$-normal forms, $t'$ is in the normal form, so $t_1 \Rightarrow_{R_1}^{nf} t'$.
@@ -1074,12 +1064,12 @@ The main property of confluent theories is proved in the following proposition:
 
 \begin{prop}[conf-main]
 Let $(T_0,R_0)$ be a confluent theory and let $(\varphi,V)$ be a pair in $P_M$.
-If a sequent $\varphi \sststile{}{V} t = s$ is derivable in $T_0$, then there exists a term $r$ of $T_1$ such that $t[c_1/x_1, \ldots c_n/x_n] \Rightarrow_{R_1}^* r$ and $s[c_1/x_1, \ldots c_n/x_n] \Rightarrow_{R_1}^* r$.
+If a sequent $\varphi \sststile{}{V} t = s$ is derivable in $T_0$, then there exists a term $r$ of $T_1$ such that $t[c_1/x_1, \ldots c_n/x_n] \Rightarrow_R^* r$ and $s[c_1/x_1, \ldots c_n/x_n] \Rightarrow_R^* r$.
 \end{prop}
 \begin{proof}
 By \rlem{mcf}, the sequent $\sststile{}{} t' = s'$ is derivable in $T_1$, where $t' = t[c_1/x_1, \ldots c_n/x_n]$ and $s' = s[c_1/x_1, \ldots c_n/x_n]$.
-By \rlem{der-eq} and \rprop{der-simple}, there exists a sequence $t_1$, \ldots $t_n$ such that $t' = t_1$, $s' = t_n$, and, for every $1 \leq i < n$, either $t_i \Rightarrow_{R_1} t_{i+1}$ or $t_{i+1} \Rightarrow_{R_1} t_i$.
-Since $R_1$ is confluent, this implies that $t' \Rightarrow_{R_1}^* r$ and $s' \Rightarrow_{R_1}^* r$.
+By \rlem{der-eq} and \rprop{der-simple}, there exists a sequence $t_1$, \ldots $t_n$ such that $t' = t_1$, $s' = t_n$, and, for every $1 \leq i < n$, either $t_i \Rightarrow_R t_{i+1}$ or $t_{i+1} \Rightarrow_R t_i$.
+Since $R$ is confluent, this implies that $t' \Rightarrow_R^* r$ and $s' \Rightarrow_R^* r$.
 \end{proof}
 
 We can define a relative version of confluent theories:
@@ -1098,7 +1088,7 @@ If $f(\varphi) \sststile{T'}{V} f(t) = f(s)$, then $\varphi \sststile{T}{V} t = 
 \end{prop}
 \begin{proof}
 By \rlem{mcf}, we may assume that $\varphi = \top$ and $V = \varnothing$.
-By \rprop{conf-main}, there exists a term $r$ such that $f(t) \Rightarrow_{R_1}^* r$ and $f(s) \Rightarrow_{R_1}^* r$.
+By \rprop{conf-main}, there exists a term $r$ such that $f(t) \Rightarrow_R^* r$ and $f(s) \Rightarrow_R^* r$.
 Since both terms $f(t)$ and $f(s)$ belong to $T$, all of the reduction rules used in these sequences are derivable in $T$ by the definition of a confluent extension.
 \end{proof}
 
@@ -1258,9 +1248,9 @@ The proof of this lemma is essentially the same as the proof of \rlem{eq-char-fi
 
 We do not have an analog of \rprop{eq-comp-char-fib}, so this lemma is not always applicable, but it is still useful for constructing particular examples of Morita equivalences.
 
-\section{Examples of Morita equivalences}
+\section{Applications}
 
-In this section we construct several examples of Morita equivalences.
+In this section we construct several examples of Morita equivalences and describe other applications of results of this paper.
 
 \subsection{Properness of the model categories of models}
 
@@ -1313,6 +1303,12 @@ TODO
 % The universe functor preserves Morita equivalences
 
 % T -> T + coe_1 + \sigma + Path + wUA is a Morita equivalence
+
+TODO: Modularity.
+Since many type theories are constructed as coproducts of simple basic theories, it is natural to ask whether coproducts preserve the confluence property.
+If the confluence property is stable under the union in some class of theories, then we say that it is \emph{modular} for this class.
+It was shown by Toyama in \cite{toyama} (see also \cite{klop-confluence,oostrom-confluence}) that the confluence is modular for disjoint theories.
+There are many generalizations of this result for theories that may share particular some function symbols (see for instance \cite{ohlebusch-confluence,ohlebusch-composable,middeldorp-completeness}).
 
 \subsection{Strict associativity}
 
