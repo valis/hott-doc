@@ -131,7 +131,11 @@
 \newcommand{\transportT}{\mathrm{transport}}
 
 \newcommand{\Id}{\mathit{Id}}
+\newcommand{\leftI}{\mathit{left}}
+\newcommand{\rightI}{\mathit{right}}
+\newcommand{\pair}{\mathit{pair}}
 \newcommand{\coe}{\mathit{coe}}
+\newcommand{\sq}{\mathit{sq}}
 \newcommand{\conc}{\mathit{conc}}
 \newcommand{\congI}{\mathit{cong}}
 \newcommand{\refl}{\mathit{refl}}
@@ -1252,6 +1256,57 @@ We do not have an analog of \rprop{eq-comp-char-fib}, so this lemma is not alway
 
 In this section we construct several examples of Morita equivalences and describe other applications of results of this paper.
 
+\subsection{Confluent Morita equivalence}
+
+The first class of examples consists of Morita equivalences which are confluent.
+If we have a confluent map $f : T_1 \to T_2$, then the second condition of \rlem{eq-char-eq} is true.
+Thus we just need to check the first condition.
+The conditions of this lemma are sufficient, but not necessary; so it might be the case that the first condition does not hold, but if it does, then it is easy to verify it.
+
+For example, if we have a theory $T$ which contains a contractible type $C$, then we can extend this theory adding any number of terms of the type $C$ and any number of reduction rules on these terms.
+Indeed, we can lift new terms to the center of contraction of $C$.
+Since $C$ is contractible, the new terms are homotopic to the center of contraction; so the first condition of \rlem{eq-char-eq} holds.
+If the resulting theory is confluent, then the second condition also holds and this extension is a Morita equivalence.
+The main point of this example is that we can add new constructions with strict equalities on them.
+For example, we can add a strictly associative binary operator $\sq$ on the interval to obtain a theory that contains the theory of cubical sets with connections:
+\begin{align*}
+\sq(\leftI,j) & \Rightarrow \leftI \\
+\sq(\rightI,j) & \Rightarrow j \\
+\sq(i,\leftI) & \Rightarrow \leftI \\
+\sq(i,\rightI) & \Rightarrow i \\
+\sq(\sq(i,j),k) & \Rightarrow \sq(i,\sq(j,k))
+\end{align*}
+
+Let us give another example of a confluent Morita equivalence.
+If $T$ is a theory with identity types, then we can define an operation of path concatenation which is associative only up to homotopy.
+We can add a new such operation to $T$ with the strict associativity rules:
+\begin{align*}
+\conc(x,y,y,p,\refl(y)) & \Rightarrow p \\
+\conc(x,z,w,\conc(x,y,z,p,q),r) & \Rightarrow \conc(x,y,w,p,\conc(y,z,w,q,r))
+\end{align*}
+If the resulting theory is confluent, then this extension is a Morita equivalence since any to concatenation functions are homotopic.
+
+\subsection{Injectivity of function symbols}
+
+Sometimes we need to prove that some function symbols are injective.
+As an example consider a theory $T$ with $\Sigma$-types with projections that has the following reduction rules:
+\begin{align*}
+\pi_1(B,\pair(B,a,b)) & \Rightarrow a \\
+\pi_2(B,\pair(B,a,b)) & \Rightarrow b
+\end{align*}
+We can define another theory $T'$ that has another set of reduction rules:
+\begin{align*}
+\pi_1(B',\pair(B,a,b)) & \Rightarrow a \\
+\pi_2(B',\pair(B,a,b)) & \Rightarrow b
+\end{align*}
+There is an obvious map $T \to T'$, but there is no map in the other direction since $\Sigma(B) = \Sigma(B')$ does not imply $B = B'$; we need to know that $\Sigma$ is injective in some sence.
+If the theory $T'$ is confluent and there are no reduction rules of the form $\Sigma(t) \Rightarrow s$, then this map is a Morita equivalence.
+To prove this, it is enough to show that every sequent which is derivable in $T'$ is also derivable in $T$.
+To do this, it is enough to show that the reduction rules of $T$ apply whenever the reduction rules of $T'$ do.
+Indeed, both of the rules of $T'$ apply only if $\Sigma(B) = \Sigma(B')$, which implies that there is a term $C$ such that $\Sigma(B) \Rightarrow^* C$ and $\Sigma(B)' \Rightarrow^* C$.
+Since there are no rules of the form $\Sigma(t) \Rightarrow s$, term $C$ must be of the form $\Sigma(B'')$ and both $B$ and $B'$ must reduce to $B''$.
+This implies that $B = B'$, so the rules of $T$ apply.
+
 \subsection{Properness of the model categories of models}
 
 Let us show that the model category of models of a confluent theory is proper:
@@ -1282,104 +1337,19 @@ If $\sigma = O_y$ for some $y \in Y$, then we can lift it to $O_x$, where $x \in
 TODO
 \end{proof}
 
-% confluent maps are closed under transfinite compositions.
-
-% to construct the structure of a cofibration category, it is enough to prove that trivial fibrations between confluent theories are preserved by pushouts along confluent maps. The first condition is easy since we can forget about additional axioms of the confluent map. The second condition follows from the general construction of lifting equivalences.
-
 % trivial fibrations are closed under pushouts along weak cofibrations, in particular weak equivalences are closed under coproducts
-% a structure of a cofibrations category on a large class of theories
 % the universe functor preserves trivial fibrations and hence weak equivalences
-% equivalence between the model structure and the structure of a cofibration category.
-
-% adding terms of contractible types (maybe with some judgemental rules) is a Morita equivalence (in particular, squeeze)
-% strictly associative concatenation of paths is a Morita equivalence
-% strictly commutative concatenation of 2-paths is not a Morita equivalence
-% three different versions of Sigma are Morita equivalent
+% two different versions of Sigma are Morita equivalent (using cylinder objects for theories)
 % arrows and pi types are Morita equivalent
 % cofibrant replacement of theories (in particular, Id_- for Id, also Sigma and other simple theories)
-% equivalence between theories in which function symbols are well-defined and in which they are not
-
-% Coproducts of theories
-% The universe functor preserves Morita equivalences
-
-% T -> T + coe_1 + \sigma + Path + wUA is a Morita equivalence
+% T -> T + wUA is a Morita equivalence
+% ommiting contexts in terms
 
 TODO: Modularity.
 Since many type theories are constructed as coproducts of simple basic theories, it is natural to ask whether coproducts preserve the confluence property.
 If the confluence property is stable under the union in some class of theories, then we say that it is \emph{modular} for this class.
 It was shown by Toyama in \cite{toyama} (see also \cite{klop-confluence,oostrom-confluence}) that the confluence is modular for disjoint theories.
 There are many generalizations of this result for theories that may share particular some function symbols (see for instance \cite{ohlebusch-confluence,ohlebusch-composable,middeldorp-completeness}).
-
-\subsection{Strict associativity}
-
-Consider theory $T_0 = Id_-$.
-Let $T_a$ be a theory under $T_0$ with the following additional function symbol:
-\[ \conc : (tm,n) \times (tm,n) \times (tm,n) \times (tm,n) \times (tm,n) \to (tm,n) \]
-We will usually left implicit the first three arguments of $\conc$.
-Theory $T_a$ has the following axiom:
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash p : \Id(a_1,a_2)$}
-\AxiomC{$\Gamma \vdash q : \Id(a_2,a_3)$}
-\BinaryInfC{$\Gamma \vdash \conc(p,q) : \Id(a_1,a_3)$}
-\DisplayProof
-\end{center}
-where $a_1$, $a_2$ and $a_3$ have the same type $A$.
-That is, this rule has additional premises $\Gamma \vdash a_i : A$, but we left them implicit.
-We will often left implicit some premises if they can be derived from other premises.
-
-The rest of the axioms of $T_a$ is listed below.
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash p : \Id(a_1,a_2)$}
-\UnaryInfC{$\Gamma \vdash \conc(p,\refl(a_2)) \equiv p : \Id(a_1,a_2))$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash p : \Id(a_1,a_2)$}
-\UnaryInfC{$\Gamma \vdash \conc(\refl(a_1),p) \equiv p : \Id(a_1,a_2)$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$\Gamma \vdash p : \Id(a_1,a_2)$}
-\AxiomC{$\Gamma \vdash q : \Id(a_2,a_3)$}
-\AxiomC{$\Gamma \vdash r : \Id(a_3,a_4)$}
-\TrinaryInfC{$\Gamma \vdash \congI(\conc(p,q),r) \equiv \conc(p,\congI(q,r)) : \Id(a_1,a_4)$}
-\DisplayProof
-\end{center}
-
-Thus $T_a$ is a theory with a strictly associative concatination function for paths.
-Moreover, $\refl$ is a strict identity for $\conc$.
-We are going to prove that $f : T_0 \amalg_T T' \to T_a \amalg_T T'$ is a Morita equivalence.
-We can define a pseudomorphism $g' : T_a \amalg_T T' \to T_0 \amalg_T T'$ so that $g'$ preserves substitutions and variables,
-for every term $t$ of $T_0 \amalg_T T'$, $g'(f(t)) = t$, and $g'(\conc)$ is any concatination function.
-This pseudomorphism does not preserves the last three axioms of $T_a$, and thus it is not a morphism.
-To fix this problem, we need to apply a normalization function first.
-
-First, we define a reduction relation $\red$ on terms as the minimal reflexive and transitive relation
-which is closed under substitution and contains a set of rules which are listed below.
-These rules are simply (some of) the axioms of $T_a$ in which we choose a direction of reduction.
-\begin{align*}
-ctx(\sigma(\Gamma, a_1, \ldots a_k)) & \red \Gamma \\
-ty(\subst(\Gamma, a, a_1, \ldots a_k)) & \red \subst(\Gamma, ty(a), a_1, \ldots a_k) \\
-ty(v_{n,i}(\Gamma)) & \red \subst(\Gamma, ft^i_{n-i}(\Gamma), c_{n-1}, \ldots c_{i+1}) \\
-\subst(\Gamma, v_i(A), a_1, \ldots a_k) & \red a_{k-i} \\
-\subst(\Gamma, a, v_{n-1}(A_n), \ldots v_0(A_0)) & \red a \\
-\subst(\Gamma, \subst(\Delta, a, a_1, \ldots a_m), b_1, \ldots b_k) & \red \subst(\Gamma, a, a_1' \ldots a_k') \\
-\conc(p,\refl(a_2)) & \red p \\
-\conc(\refl(a_1),p) & \red p \\
-\conc(\conc(p,q),r) & \red \conc(p,\conc(q,r))
-\end{align*}
-where the first rule is defined for every function symbol $\sigma$,
-in the third rule, $c_i$ is $v_{n,i}(\Gamma)$,
-and in the sixth rule, $a_i'$ is $\subst(\Gamma, a_i, b_1, \ldots b_k)$.
-
-It is easy to show that these reduction rules define a confluent and terminating rewriting system using standard techniques as described, for example, in \cite{Terese}.
-We define a pseudomorphism $\nf : T_a \to T_a$ as follows:
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
