@@ -134,6 +134,7 @@
 \newcommand{\leftI}{\mathit{left}}
 \newcommand{\rightI}{\mathit{right}}
 \newcommand{\pair}{\mathit{pair}}
+\newcommand{\elim}{\mathit{elim}}
 \newcommand{\coe}{\mathit{coe}}
 \newcommand{\app}{\mathit{app}}
 \newcommand{\sq}{\mathit{sq}}
@@ -1040,12 +1041,11 @@ We define $R_1$ as $\{ (e_{p_i}(c_i), A_i[c_1/x_1, \ldots c_{i-1}/x_{i-1}])\ |\ 
 
 This definition requires some explanation.
 A simple situation in which the first condition holds is when $\mathcal{A}_e = \{ t\!\downarrow\ \sststile{}{FV(t)} t = s\ |\ R_0(t,s) \}$, which looks rather natural, but sometimes we need the more general definition.
-For example, consider the following reduction rule (this is a part of the theory of $\Pi$-types):
+For example, consider the following reduction rule:
 \[ \app(B, \lambda(b), a) \Rightarrow_{R_0} b[a] \]
 The left hand side is defined if and only if $\Pi(ty(b)) = \Pi(B) \land ty(a) = ft(B)$, but usually this rule is defined in such a way that it applies only when a stronger condition holds, namely $ty(b) = B \land ty(a) = ft(B)$.
 This formula cannot be arbitrary since we still need to know that it is derivable whenever $t\!\downarrow$ is derivable.
 The first condition of \rdefn{confluent} guarantees that it is always true.
-We will show that the theory of $\Pi$-types is confluent in section~\ref{sec:applications}.
 
 Now, let us discuss the second condition of \rdefn{confluent}.
 We could just require the relation $R_0$ to be confluent, but in this case we can apply \rprop{conf-main} only to sequents of the form $\sststile{}{} t = s$.
@@ -1095,7 +1095,7 @@ Since $t'$ is in the normal form, we have the diagram on the left. This diagram 
                                                     & t'                                                &
             } \]
 
-The term rewriting system $R_1$ is not only confluent, but also strongly normalizable, that is, for every $t$, there is a unique $t'$ such that $t \Rightarrow_{R_1}^{nf} t'$.
+The term rewriting system $R_1$ is not only confluent, but also (weakly) normalizable, that is, for every $t$, there is a term $t'$ such that $t \Rightarrow_{R_1}^{nf} t'$.
 The following diagram finishes the proof:
 \[ \xymatrix@=1em{                                  &                               & \ar[lldd]_{(R_0 \cup R_1)^*} t \ar@{-->}[dd]^{R_1^{nf}} \ar[rrdd]^{(R_0 \cup R_1)^*}  &                               &                               \\
                                                     &                               &                                                                                       &                               &                               \\
@@ -1277,7 +1277,61 @@ Finally, \eqref{it:cond-fib} implies \eqref{it:lem-fib} by \rlem{eq-comp-char-fi
 \label{sec:applications}
 
 In this section we construct several examples of Morita equivalences and describe other applications of results of this paper.
-Since we often need to know that a certain theory is confluent, we first show that some standard theories are confluent.
+
+Let us consider the theory of $\Sigma$-types:
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\vdash \Sigma(A, x.\,B)\ \type$}
+\DisplayProof
+\quad
+\AxiomC{$\vdash b : B[a]$}
+\doubleLine
+\UnaryInfC{$\vdash \pair(A, x.\,B, a, b) : \Sigma(A, x.\,B)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$z : \Sigma(A, x.\,B) \vdash D\ \type$}
+\AxiomC{$x : A, y : B \vdash d : D'$}
+\AxiomC{$\vdash p : \Sigma(A, x.\,B)$}
+\doubleLine
+\TrinaryInfC{$\vdash \Sigma\text{-}\elim(A, B, z.\,D, x y.\,d, p) : D[p]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$z : \Sigma(A,x.\,B) \vdash D\ \type$}
+\AxiomC{$x : A, y : B \vdash d : D'$}
+\AxiomC{$\vdash b : B[a]$}
+\TrinaryInfC{$\vdash \Sigma\text{-}\elim(A, B, z.\,D, x y.\,d, \pair(A, x.\,B, a, b)) \deq d[a,b]$}
+\DisplayProof
+\end{center}
+
+where $D' = D[\pair(A, B, x, y)]$.
+We will denote this theory by $\Sigma$.
+We can modify the last rule as follows:
+\medskip
+\begin{center}
+\AxiomC{$\Sigma\text{-}\elim(A, B, z.\,D, x y.\,d, \pair(A', x.\,B', a, b))\!\downarrow$}
+\UnaryInfC{$\vdash \Sigma\text{-}\elim(A, B, z.\,D, x y.\,d, \pair(A', x.\,B', a, b)) \deq d[a,b]$}
+\DisplayProof
+\end{center}
+The modified theory will be denoted by $\Sigma'$.
+There is an obvious map $\Sigma \to \Sigma'$.
+
+\begin{example}
+Let $T$ be a theory under $\Sigma$ and let $f : T \to T'$ be the pushout of the map $\Sigma \to \Sigma'$.
+If $T'$ is confluent and there is no reduction rules of the form $\Sigma(A, x.\,B) \Rightarrow t$, then $f$ is a Morita equivalence.
+To prove this it is enough to show that, for every $(\varphi,V) \in P_M$, if a sequent $\varphi \sststile{}{V} t = s$ is derivable in $T'$, then it is derivable in $T$.
+% If \varphi \sststile{}{V} t\!\downarrow in T and t => s in T', then t => s in T. We do this by induction on the length of the maximal reduction sequence starting from $t$.
+% This implies:
+% If \varphi \sststile{}{V} t\!\downarrow \land s\!\downarrow in T and \varphi \sststile{}{V} t = s in T', then \varphi \sststile{}{V} t = s in T.
+% We just need to show that if $\varphi \sststile{}{V} t\!\downarrow$ in T', then the same is true in T.
+% We do this by induction on the size of $t$, where the size of $t$ is the maximum among ordinals (natural sum of \omega^{\omega*f(\sigma)} for every \sigma in p, where $f$ is the ordinal corresponding to $\sigma$) for every paths p from the root of $t$ to a leaf.
+\end{example}
 
 % Note that this proposition does not use the condition that we put on formulas $\varphi_{t,s}$, so we can use it to prove that it holds.
 % Let us sketch a proof of this fact for the theory of $\Pi$-types.
@@ -1336,26 +1390,82 @@ Since many type theories are constructed as coproducts of simple basic theories,
 If the confluence property is stable under the union in some class of theories, then we say that it is \emph{modular} for this class.
 It was shown by Toyama in \cite{toyama} (see also \cite{klop-confluence,oostrom-confluence}) that the confluence is modular for disjoint theories.
 There are many generalizations of this result for theories that may share particular some function symbols (see for instance \cite{ohlebusch-confluence,ohlebusch-composable,middeldorp-completeness}).
-
+ 
 \appendix
 
-\section{Examples of theories}
+\section{Properties of theories}
 
-In this appendix we construct several standard examples of type theories and prove that some of them are confluent.
-The theories will be presented in a contextual form (see \cite{alg-tt} for a definition of a contextual theory).
+In this appendix we show that basic properties of algebraic type theories such as confluence and normalization follow from these properties for corresponding ordinary type theories.
+We will work with theories in a contextual form (see \cite{alg-tt} for a definition of a contextual theory).
 If $T$ is a contextual theory, then we have a set of function symbols $\mathcal{F}_0$ such that the set of function symbols of $T$ consists of the following function symbols:
 \[ \sigma_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m) \]
 for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \in \mathcal{F}_0$ and $m \in \mathbb{N}$.
 Moreover, we may assume that $n = 0$ for every $\sigma \in \mathcal{F}_0$.
-Let $\Term_{\mathcal{F}_0}$ be the set of terms constructed from the function symbols in $\mathcal{F}_0$.
+
+Terms of contextual theories are similar to terms of usual type theories, but they still differ from them.
+The first difference is that they have an explicit substitution operation.
+Another difference is that they contain more information than ordinary terms so that the type and the context of a term can be inferred from it.
+We will show that basic properties of the set of terms of a contextual theory (such as confluence and normalization) is related to the properties of ordinary terms.
+
+Let $T$ be a contextual theory and let $\mathcal{F}_0$ be the set of its basic function symbols.
+We want to work with closed terms of $T$, but we still need to prove properties of arbitrary terms.
+This problem can be solved using \rlem{mcf}.
+We extend $T$ with a finite set of constants $\{ c_1, \ldots c_n \}$.
+Then there is a bijection between closed terms of this extension and terms of $T$ with $n$ free variables.
+
+Let $\Term_{\mathcal{F}_0}$ be the set of terms constructed from the function symbols in $\mathcal{F}_0 \cup \{ ty, ft \} \cup \{ c_1, \ldots c_n \}$.
+So, $\Term_{\mathcal{F}_0}$ is the set of terms of $T \cup \{ c_1, \ldots c_n \}$ in which we omit contexts.
 If $t$ is a term of $T$, then we can define a term $U(t) \in \Term_{\mathcal{F}_0}$ in the obvious way:
 \begin{align*}
 U(x) & = x \\
 U(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \sigma(U(t_1), \ldots U(t_k))
 \end{align*}
 
+Let $\Term_T$ be the set of closed defined terms of $T \cup \{ c_1, \ldots c_n \}$, that is the set of terms $t$ such that the sequent $\sststile{}{} t\!\downarrow$ is derivable.
+Let $\Term_T^c$ be the image of $\Term_T$ under $U$.
+If $t \in \Term_T$, then let $C(t)$ be the multiset of terms discarded by $U$.
+That is, $C(t)$ is defined inductively as follows:
+\begin{align*}
+C(x) & = \varnothing \\
+C(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \{ \Gamma \} \cup \bigcup_{1 \leq i \leq k} C(t_i)
+\end{align*}
+
+Let $(T,R)$ be a contextual theory together with a term rewriting system on $\Term_T$ such that,
+for every terms $t$ and $s$ such that $R(t,s)$, the multiset $C(t)$ consists of distinct variables and the multiset $C(s)$ consists of strongly normalizable terms.
+Such a theory satisfies the following properties:
+\begin{enumerate}
+\item \label{it:red-fib} Let $t$ be a term of $T$ such that $U(t) \Rightarrow_R s$ for some term $s$.
+Then there exists a term $s'$ such that $t \Rightarrow_R s'$ and $U(s') = s$.
+This follows from the fact that the same reduction rule that we applied to $U(t)$ also applies to $t$ since there is no additional conditions on $t$ by the assumption on $T$..
+\item \label{it:red-nf} $U$ preserves normal forms. This follows from the previous property.
+\end{enumerate}
+Throught this appendix, let $T$ be a fixed contextual theory satisfying the above assumption.
+This is a very mild assumption that holds for all theories that occur in practice.
+
+Now, we can show that $R$ is normalizing if and only if it becomes normalizing after applying $U$:
+\begin{prop}
+The reduction relation on $\Term_T$ generated by $R$ is strongly normalizing if and only if the same is true for the induced reduction relation on $\Term_T^c$.
+\end{prop}
+\begin{proof}
+If there is an infinite sequence $t_1 \Rightarrow_R t_2 \Rightarrow_R \ldots$ in $\Term_T^c$, then there is a term $t_1'$ such that $U(t_1)$ and \eqref{it:red-fib} implies that there is an infinite sequence of reductions starting with $t_1'$.
+Conversely, suppose that $\Term_T^c$ is strongly normalizing.
+We prove by induction on a term $t_1 \in \Term_T$ that there is no infinite reduction sequences starting with $t_1$.
+Let $t_1 \Rightarrow_R t_2 \Rightarrow_R \ldots$ be such a sequence.
+Note that, for every $i \geq 1$, every $\Gamma \in C(t_i)$ is strongly normalizable.
+Indeed, by the induction hypothesis, this is true for $i = 1$.
+Every term $\Gamma$ in $C(t_{i+1})$ belongs to either $C(t_i)$ or $C(s)$ for some term $s$ such that $R(t,s)$.
+In both cases, $\Gamma$ is strongly normalizable.
+This implies that the sequence $U(t_1) \Rightarrow_R^* U(t_2) \Rightarrow_R^* \ldots$ contains an infinite subsequence of reductions.
+\end{proof}
+
 % We also want to construct a term $F(\Gamma,t) \in \Term_\mathcal{F}(V)_{(p,n)}$ for every pair of terms $\Gamma \in \Term_\mathcal{F}(V)_{(ctx,n)}$ and $t \in \Term_{\mathcal{F}_0}(V)_{(p,n)}$.
 % To do this, we assume that every function symbol $\sigma \in \mathcal{F}_0$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ is equipped 
+
+% We prove by induction on t and s that if t ~ s, then there is a term r such that t => r and s => r.
+% Indeed, we have U(t) => r' <= U(s). Then t => r1 and s => r2 such that U(r1) = U(r2) = r.
+% Now, we just need to show that, for every position in $r$, the corresponding contexts in $r1$ and $r2$ reduce to the same term.
+% We know that they are equivalent since r1 and r2 are.
+% Every context in $r1$ comes from a context in $t$, so we can apply the induction hypothesis.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
