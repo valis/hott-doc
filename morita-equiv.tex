@@ -1025,49 +1025,50 @@ A term rewriting system $R$ is \emph{confluent} if $t \Rightarrow_R^* s_1$ and $
 $s_1 \Rightarrow_R^* s$ and $s_2 \Rightarrow_R^* s$, where $\Rightarrow_R^*$ is the reflexive transitive closure of $\Rightarrow_R$.
 If $\Rightarrow_1$ and $\Rightarrow_2$ are some relations, then we will write $\Rightarrow_1 \Rightarrow_2$ for the following relation:
 $t \Rightarrow_1 \Rightarrow_2 t'$ if and only if there is a term $s$ such that $t \Rightarrow_1 s$ and $s \Rightarrow_2 t'$.
-Now, we can define confluent theories:
+Now, we can define theories with directed axioms:
 
-\begin{defn}[confluent]
-A \emph{confluent} type theory is a type theory $T_0$ with separated axioms together a term rewriting system $R_0$ such that the following conditions hold:
-\begin{enumerate}
-\item $\mathcal{A}_e = \{ \varphi_{t,s} \sststile{}{FV(t)} t = s\ |\ R_0(t,s) \}$, where the formulas $\varphi_{t,s}$ satisfy the following condition.
-For every pair $(\psi,V)$ in $P_M$ and every substitution $\rho$, if $\psi \sststile{T_0}{V} t[\rho]\!\downarrow$, then $\psi \sststile{T_0}{V} \varphi_{t,s}[\rho]$.
-\item For every pair $(\varphi_1 \land \ldots \land \varphi_n, V)$ in $P_M$, the term rewriting system $R = R_0 \cup R_1$ is confluent, where $R_1$ is defined as follows.
-The underlying theory of $R_1$ is $T_1 = T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$.
-Every formula $\varphi_i$ equals to $e_{p_i}(x_i) = A_i$ for some term $A_i$.
-We define $R_1$ as $\{ (e_{p_i}(c_i), A_i[c_1/x_1, \ldots c_{i-1}/x_{i-1}])\ |\ 1 \leq i \leq n \}$.
-\end{enumerate}
+\begin{defn}[directed]
+An algebraic type theory $T$ has \emph{directed axioms} if it has separated axioms and every axiom in $\mathcal{A}_e$ is of the form $\varphi \sststile{}{FV(t)} t = s$ and satisfies the following condition.
+For every pair $(\psi,V)$ in $P_M$ and every substitution $\rho$, if $\psi \sststile{T}{V} t[\rho]\!\downarrow$, then $\psi \sststile{T}{V} \varphi[\rho]$.
+
+Every type theory with directed axioms induces a term rewriting system $R_T$ on its terms: $R_T(t,s)$ is true if and only if there exists an axiom in $\mathcal{A}_e$ of the form $\varphi \sststile{}{FV(t)} t = s$.
 \end{defn}
 
 This definition requires some explanation.
-A simple situation in which the first condition holds is when $\mathcal{A}_e = \{ t\!\downarrow\ \sststile{}{FV(t)} t = s\ |\ R_0(t,s) \}$, which looks rather natural, but sometimes we need the more general definition.
+A simple situation in which its conditions hold is when $\mathcal{A}_e$ consists of axioms of the form $\{ t\!\downarrow\ \sststile{}{FV(t)} t = s\ \}$, which looks rather natural, but sometimes we need the more general definition.
 For example, consider the following reduction rule:
-\[ \app(B, \lambda(b), a) \Rightarrow_{R_0} b[a] \]
+\[ \app(B, \lambda(b), a) \Rightarrow b[a] \]
 The left hand side is defined if and only if $\Pi(ty(b)) = \Pi(B) \land ty(a) = ft(B)$, but usually this rule is defined in such a way that it applies only when a stronger condition holds, namely $ty(b) = B \land ty(a) = ft(B)$.
 This formula cannot be arbitrary since we still need to know that it is derivable whenever $t\!\downarrow$ is derivable.
-The first condition of \rdefn{confluent} guarantees that it is always true.
+The conditions of \rdefn{directed} guarantee that this is always true.
 
-Now, let us discuss the second condition of \rdefn{confluent}.
-We could just require the relation $R_0$ to be confluent, but in this case we can apply \rprop{conf-main} only to sequents of the form $\sststile{}{} t = s$.
-The second condition of \rdefn{confluent} guarantees that the proposition applies to sequents with a more general left hand side.
-Moreover, the stronger condition often follows from the assumption that $R_0$ is confluent:
+\begin{defn}[confluent]
+A \emph{confluent} type theory is a type theory $T_0$ with directed axioms such that, for every pair $(\varphi_1 \land \ldots \land \varphi_n, V)$ in $P_M$,
+the underlying term rewriting system of the theory $T_1 = T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ is confluent.
+\end{defn}
+
+Note that if $T_0$ has directed axioms, then so does $T_1$, but this is not true for the confluence.
+It may be the case that the underlying term rewriting system of $T_0$ is confluent, but $R_{T_1}$ is not,
+and we need the stronger condition since otherwise we can apply \rprop{conf-main} only to sequents of the form $\sststile{}{} t = s$.
+Nevertheless, the confluence of $R_{T_0}$ implies the confluence of $R_{T_1}$ under some mild additional assumptions:
 
 \begin{lem}[morita-conf]
-Let $(T_0,R_0)$ be a theory with a confluent term rewriting system on it.
+Let $T_0$ be a theory with directed axioms such that its underlying term rewriting system $R_0$ is confluent.
 Suppose that the following conditions hold:
 \begin{enumerate}
 \item For every $t$ and $s$ such that $R_0(t,s)$, if $t$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
 \item Either $R_0$ is left-linear or, for every $t$ and $s$ such that $R_0(t,s)$, if $s$ contains a subterm of the form $e_p(s')$, then $s'$ is not a variable.
 \end{enumerate}
-Then $(T_0,R_0)$ is confluent.
+Then $T_0$ is confluent.
 \end{lem}
 \begin{proof}
+Let $R_1 = R_{T_1} \setminus R_0$.
 The first condition guarantees that the systems $R_0$ and $R_1$ are orthogonal to each other.
 It was shown in \cite{raoult} (see also \cite[Theorem~8.6.35]{ohlebusch-advanced}) that the union of confluent orthogonal left-linear systems is confluent.
 
 Thus we may assume that if $R_0(t,s)$ and either of $t$ or $s$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
 This condition implies that $R_0$-reductions preserve $R_1$-normal forms (a term $t$ is in the $R_1$-normal form if there is no term $t'$ such that $t \Rightarrow_{R_1} t'$).
-We will write $t \Rightarrow_{R_1}^{nf} t'$ if $t \Rightarrow_{R_1}^* t'$ and $t'$ is in the normal form.
+We will write $t \Rightarrow_{R_1}^{nf} t'$ if $t \Rightarrow_{R_1}^* t'$ and $t'$ is in a normal form.
 Let us prove that $t \Rightarrow_{R_0} t_1$ and $t \Rightarrow_{R_1}^{nf} t_2$ implies that there exists $t'$ such that $t_1 \Rightarrow_{R_1}^{nf} t'$ and $t_2 \Rightarrow_{R_0} t'$:
 \[ \xymatrix@=1em{                                  & \ar[ld]_{R_0} t \ar[rd]^{R_1^{nf}}    &                           \\
                    t_1' \ar@{-->}[rd]_{R_1^{nf}}    &                                       & t_2' \ar@{-->}[ld]^{R_0}  \\
@@ -1077,14 +1078,14 @@ Since the systems are orthogonal, $R_0$-redexes and $R_1$-redexes do not overlap
 Thus we may assume that all $R_1$-redexes occur inside the $R_0$-redex.
 Since $t \Rightarrow_{R_1}^{nf} t_2$ reduces all $R_1$-redexes to normal forms, if $t$ contains some equal subterms, then they will also be equal in $t_2$.
 So $t_2$ contains the same $R_0$-redex as $t$ and $\Rightarrow_{R_0}$-reduces to a term $t'$.
-Since $\Rightarrow_{R_0}$-reductions preserve $R_1$-normal forms, $t'$ is in the normal form, so $t_1 \Rightarrow_{R_1}^{nf} t'$.
+Since $\Rightarrow_{R_0}$-reductions preserve $R_1$-normal forms, $t'$ is in a normal form, so $t_1 \Rightarrow_{R_1}^{nf} t'$.
 
 It follows that we have the following reduction diagram:
 \[ \xymatrix@=1em{                                  & \ar[ld]_{R_0^*} t \ar[rd]^{R_1^{nf}}  &                               \\
                    t_1' \ar@{-->}[rd]_{R_1^{nf}}    &                                       & t_2' \ar@{-->}[ld]^{R_0^*}    \\
                                                     & t'                                    &
             } \]
-Since $t'$ is in the normal form, we have the diagram on the left. This diagram together with the diagram above implies that we have diagram on the right:
+Since $t'$ is in a normal form, we have the diagram on the left. This diagram together with the diagram above implies that we have diagram on the right:
 \[ \xymatrix@=1em{                                  & \ar[ld]_{R_1^*} t \ar[rd]^{R_1^{nf}}  &                       \\
                    t_1' \ar@{-->}[rd]_{R_1^{nf}}    &                                       & t_2' \ar@{-->}[ld]^=  \\
                                                     & t_2'                                  &
@@ -1112,8 +1113,9 @@ The first condition of the previous lemma is necessary, but we do not know wheth
 The main property of confluent theories is proved in the following proposition:
 
 \begin{prop}[conf-main]
-Let $(T_0,R_0)$ be a confluent theory and let $(\varphi,V)$ be a pair in $P_M$.
-If a sequent $\varphi \sststile{}{V} t = s$ is derivable in $T_0$, then there exists a term $r$ of $T_1$ such that $t[c_1/x_1, \ldots c_n/x_n] \Rightarrow_R^* r$ and $s[c_1/x_1, \ldots c_n/x_n] \Rightarrow_R^* r$.
+Let $T_0$ be a confluent theory and let $(\varphi,V)$ be a pair in $P_M$.
+If a sequent $\varphi \sststile{}{V} t = s$ is derivable in $T_0$, then there exists a term $r$ of $T_1$ such that $t[c_1/x_1, \ldots c_n/x_n] \Rightarrow_R^* r$ and $s[c_1/x_1, \ldots c_n/x_n] \Rightarrow_R^* r$,
+where $T_1$ is the same as in \rdefn{confluent} and $R$ is its underlying term rewriting system.
 \end{prop}
 \begin{proof}
 By \rlem{mcf}, the sequent $\sststile{}{} t' = s'$ is derivable in $T_1$, where $t' = t[c_1/x_1, \ldots c_n/x_n]$ and $s' = s[c_1/x_1, \ldots c_n/x_n]$.
@@ -1124,7 +1126,7 @@ Since $R$ is confluent, this implies that $t' \Rightarrow_R^* r$ and $s' \Righta
 We can define a relative version of confluent theories:
 
 \begin{defn}
-A \emph{confluent extension} of a theory $T$ is a confluent theory $(T',R')$ such that $T \subseteq T'$ and, for every term $t$ of $T$ and every term $s$ of $T'$ such that $R'(t,s)$,
+A \emph{confluent extension} of a theory $T$ is a confluent theory $T'$ such that $T \subseteq T'$ and, for every term $t$ of $T$ and every term $s$ of $T'$ such that $R_{T'}(t,s)$,
 the term $s$ also belongs to $T$ and $t\!\downarrow\ \sststile{}{FV(t)} t = s$ is derivable in $T$.
 A \emph{confluent morphism} is a morphism of theories that isomorphic to the inclusion of some theory into its confluent extension.
 \end{defn}
@@ -1396,7 +1398,7 @@ There are many generalizations of this result for theories that may share partic
 \section{Properties of theories}
 
 In this appendix we show that basic properties of algebraic type theories such as confluence and normalization follow from these properties for corresponding ordinary type theories.
-We will work with theories in a contextual form (see \cite{alg-tt} for a definition of a contextual theory).
+We will work with contextual theories with directed axioms (see \cite{alg-tt} for a definition of a contextual theory).
 If $T$ is a contextual theory, then we have a set of function symbols $\mathcal{F}_0$ such that the set of function symbols of $T$ consists of the following function symbols:
 \[ \sigma_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m) \]
 for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \in \mathcal{F}_0$ and $m \in \mathbb{N}$.
@@ -1407,44 +1409,42 @@ The first difference is that they have an explicit substitution operation.
 Another difference is that they contain more information than ordinary terms so that the type and the context of a term can be inferred from it.
 We will show that basic properties of the set of terms of a contextual theory (such as confluence and normalization) is related to the properties of ordinary terms.
 
-Let $T$ be a contextual theory and let $\mathcal{F}_0$ be the set of its basic function symbols.
-We want to work with closed terms of $T$, but we still need to prove properties of arbitrary terms.
-This problem can be solved using \rlem{mcf}.
-We extend $T$ with a finite set of constants $\{ c_1, \ldots c_n \}$.
-Then there is a bijection between closed terms of this extension and terms of $T$ with $n$ free variables.
-
+Let $T_0$ be a contextual theory and let $\mathcal{F}_0$ be the set of its basic function symbols.
+Let $T_1$ be the extension of $T_0$ defined in \rdefn{confluent} and let $R$ be its underlying term rewriting system.
 Let $\Term_{\mathcal{F}_0}$ be the set of terms constructed from the function symbols in $\mathcal{F}_0 \cup \{ ty, ft \} \cup \{ c_1, \ldots c_n \}$.
-So, $\Term_{\mathcal{F}_0}$ is the set of terms of $T \cup \{ c_1, \ldots c_n \}$ in which we omit contexts.
-If $t$ is a term of $T$, then we can define a term $U(t) \in \Term_{\mathcal{F}_0}$ in the obvious way:
+So, $\Term_{\mathcal{F}_0}$ is the set of terms of $T_1 = T_0 \cup \{ c_1, \ldots c_n \}$ in which we omit contexts.
+If $t$ is a term of $T_1$, then we can define a term $U(t) \in \Term_{\mathcal{F}_0}$ in the obvious way:
 \begin{align*}
 U(x) & = x \\
 U(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \sigma(U(t_1), \ldots U(t_k))
 \end{align*}
 
-Let $\Term_T$ be the set of closed defined terms of $T \cup \{ c_1, \ldots c_n \}$, that is the set of terms $t$ such that the sequent $\sststile{}{} t\!\downarrow$ is derivable.
+Let $\Term_T$ be the set of closed defined terms of $T_1$, that is the set of terms $t$ such that the sequent $\sststile{}{} t\!\downarrow$ is derivable.
 Let $\Term_T^c$ be the image of $\Term_T$ under $U$.
+The reduction relation on $\Term_T$ induces a reduction relation on $\Term_T^c$ in the obvious way.
 If $t \in \Term_T$, then let $C(t)$ be the multiset of terms discarded by $U$.
 That is, $C(t)$ is defined inductively as follows:
 \begin{align*}
 C(x) & = \varnothing \\
 C(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \{ \Gamma \} \cup \bigcup_{1 \leq i \leq k} C(t_i)
 \end{align*}
+There is a natural linear order on the multiset $C(t)$, so we can also think of it as a sequence of terms.
 
-Let $(T,R)$ be a contextual theory together with a term rewriting system on $\Term_T$ such that,
-for every terms $t$ and $s$ such that $R(t,s)$, the multiset $C(t)$ consists of distinct variables and the multiset $C(s)$ consists of strongly normalizable terms.
+Let $T_0$ be a contextual theory with directed axioms such that, for all terms $t$ and $s$ in $\Term_T$ such that $R(t,s)$,
+the multiset $C(t)$ consists of distinct variables and the multiset $C(s)$ consists of strongly normalizable terms.
 Such a theory satisfies the following properties:
 \begin{enumerate}
-\item \label{it:red-fib} Let $t$ be a term of $T$ such that $U(t) \Rightarrow_R s$ for some term $s$.
+\item \label{it:red-fib} Let $t$ be a term in $\Term_T$ such that $U(t) \Rightarrow_R s$ for some term $s$.
 Then there exists a term $s'$ such that $t \Rightarrow_R s'$ and $U(s') = s$.
 This follows from the fact that the same reduction rule that we applied to $U(t)$ also applies to $t$ since there is no additional conditions on $t$ by the assumption on $T$..
 \item \label{it:red-nf} $U$ preserves normal forms. This follows from the previous property.
 \end{enumerate}
-Throught this appendix, let $T$ be a fixed contextual theory satisfying the above assumption.
+Throught this appendix, let $T_0$ be a fixed theory satisfying the above assumption.
 This is a very mild assumption that holds for all theories that occur in practice.
 
 Now, we can show that $R$ is normalizing if and only if it becomes normalizing after applying $U$:
 \begin{prop}
-The reduction relation on $\Term_T$ generated by $R$ is strongly normalizing if and only if the same is true for the induced reduction relation on $\Term_T^c$.
+The reduction relation on $\Term_T$ is strongly normalizing if and only if the same is true for the induced reduction relation on $\Term_T^c$.
 \end{prop}
 \begin{proof}
 If there is an infinite sequence $t_1 \Rightarrow_R t_2 \Rightarrow_R \ldots$ in $\Term_T^c$, then there is a term $t_1'$ such that $U(t_1)$ and \eqref{it:red-fib} implies that there is an infinite sequence of reductions starting with $t_1'$.
@@ -1457,6 +1457,35 @@ Every term $\Gamma$ in $C(t_{i+1})$ belongs to either $C(t_i)$ or $C(s)$ for som
 In both cases, $\Gamma$ is strongly normalizable.
 This implies that the sequence $U(t_1) \Rightarrow_R^* U(t_2) \Rightarrow_R^* \ldots$ contains an infinite subsequence of reductions.
 \end{proof}
+
+It is harder to prove analogous result for confluence and we need an additional assumption for that:
+\begin{prop}
+If the reduction relation on $\Term_T$ is confluent, then the same is true for the induced reduction relation on $\Term_T^c$.
+The converse holds if there is a well-founded relation on the set $\Term_T$ such that each element of $C(s)$ is less than $t$ whenever $t \Rightarrow_R^* s$.
+\end{prop}
+\begin{proof}
+If $\Rightarrow_R$ is confluent on $\Term_T$, then it is easy to show that the same is true for $\Term_T^c$.
+Indeed, if we have a term $t \in \Term_T^c$ such that $t \Rightarrow_R^* t_1$ and $t \Rightarrow_R^* t_2$,
+then there is a term $t' \in \Term_T$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that $t' \Rightarrow_R^* t_1'$, $t' \Rightarrow_R^* t_2'$, $U(t_1') = t_1'$, and $U(t_2') = t_2'$.
+Since $t'$ is confluent, there exists a term $s'$ such that $t_1' \Rightarrow_R^* s'$ and $t_2' \Rightarrow_R^* s'$.
+Hence $U(t_1') \Rightarrow_R^* U(s')$ and $U(t_2') \Rightarrow_R^* U(s')$.
+
+Conversely, let $t_1$ and $t_2$ be equivalent terms in $\Term_T$.
+Note that \rlem{der-separated-closed} and \rlem{der-eq} imply that $t_1$ and $t_2$ are equivalent if and only if there is a zig-zag of reductions between $t_1$ and $t_2$.
+We proceed by induction on $t_1$.
+Since the reduction relation on $\Term_T^c$ is confluent, we have a term $s' \in \Term_T^c$ such that $U(t_1) \Rightarrow_R^* s'$ and $U(t_2) \Rightarrow_R^* s'$.
+By \eqref{it:red-fib}, there are terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_R^* s_1$, $t_2 \Rightarrow_R^* s_2$, and $U(s_1) = U(s_2) = s'$.
+
+TODO
+Let us show that $j$-th elements in sequences $C(s_1)$ and $C(s_2)$ are equivalent for every $j$.
+The first elements of $C(s_i)$ are equivalent to $ctx(s_i)$ and they are equivalent since $s_1$ and $s_2$ are.
+
+The first assumption of this proposition implies that contexts of $s_1$ and $s_2$ are equivalent.
+The second assumption implies that every term in $C(s_1)$ is less than $t_1$, so we can apply the induction hypothesis to conclude that $j$-th terms in $C(s_1)$ and $C(s_2)$ reduce to the same term for every $j$.
+This implies that $s_1$ and $s_2$ also reduce to the same term.
+\end{proof}
+
+% For every term $t = \sigma_m(\Gamma, t_1, \ldots t_k)$ and every $1 \leq i \leq k$, there exists a term $C_i$ such that there is a zig-zag of reductions between $ctx(t_i)$ and $C_i$.
 
 % We also want to construct a term $F(\Gamma,t) \in \Term_\mathcal{F}(V)_{(p,n)}$ for every pair of terms $\Gamma \in \Term_\mathcal{F}(V)_{(ctx,n)}$ and $t \in \Term_{\mathcal{F}_0}(V)_{(p,n)}$.
 % To do this, we assume that every function symbol $\sigma \in \mathcal{F}_0$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ is equipped 
