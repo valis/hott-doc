@@ -870,8 +870,8 @@ We will say that a theory is a \emph{maximal} theory with separated axioms if it
 \item The set $\mathcal{A}_d$ consists of axioms of the form $\varphi \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ and, for every $\sigma$, there is exactly one axiom of this form.
 We will denote the left hand side of this axiom by $\varphi_\sigma$.
 \item The set $\mathcal{A}'_d$ consists of sequents of the form $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \varphi_\sigma$.
-\item For every axiom $\varphi \sststile{}{V} \psi$ in $\mathcal{A}_e$ and every subterm $\sigma(t_1, \ldots t_k)$ of the formula $\psi$,
-the sequent $\varphi \sststile{}{V} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
+\item For every axiom $\varphi \sststile{}{V} \psi$ in $\mathcal{A}_e$, every subterm $\sigma(t_1, \ldots t_k)$ of the formula $\psi$, and every substitution $\rho$,
+if the sequent $\sststile{}{} \varphi[\rho]$ is derivable from the axioms $\mathcal{A}_d \cup \mathcal{A}_e$, then so is the sequent $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k][\rho]$.
 \end{enumerate}
 The \emph{minimal} theory with separated axioms corresponding to such theory is its subtheory with axioms $\mathcal{A}_d \cup \mathcal{A}_e$.
 Finally, we will say that a theory \emph{has separated axioms} if it is (isomorphic to) a subtheory of a maximal theory containing the minimal subtheory.
@@ -914,7 +914,7 @@ The rest of the inference rules are trivial.
 
 Now, we can prove the lemma.
 We proceed by induction on the inference of $\sststile{}{} \psi$.
-The most cases follows immediately from the induction hypothesis.
+Most of the cases follow immediately from the induction hypothesis.
 The only nontrivial case is the inference rule for axioms from $\mathcal{A}'_d$:
 \smallskip
 \begin{center}
@@ -938,7 +938,7 @@ Since $T_n = T$, we just need to prove that all theories $T_i$ have separated ax
 We proceed by induction on $i$.
 Since $T_0 = T$, the case $i = 0$ holds by assumptions on $T$.
 Assume that $T_i$ has separated axioms.
-To prove that $T_{i+1}$ also has simples axioms, we need to show that, for every subterm $\sigma(t_1, \ldots t_k)$ of $A_{i+1}[c_1/x_1, \ldots c_i/x_i]$,
+To prove that $T_{i+1}$ also has separated axioms, we need to show that, for every subterm $\sigma(t_1, \ldots t_k)$ of $A_{i+1}[c_1/x_1, \ldots c_i/x_i]$,
 the sequent $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
 Since the sequent $\sststile{}{} A_{i+1}[c_1/x_1, \ldots c_i/x_i]$ is derivable in $T_i$, the sequents $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ and $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ are also derivable in it.
 Since $T_i$ has separated axioms, \rlem{der-separated-closed} implies that $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$ in $T_i$ and hence in $T_{i+1}$.
@@ -991,6 +991,7 @@ $t \Rightarrow_1 \Rightarrow_2 t'$ if and only if there is a term $s$ such that 
 \item An element $a$ \emph{reduces} to an element $a'$ if $a \Rightarrow^* a'$.
 A \emph{reduction sequence} is a finite or infinite sequence of elements $a_i$ such that $a_0 \Rightarrow a_1 \Rightarrow a_2 \Rightarrow \ldots$.
 \item Two elements $a$ and $b$ are \emph{joinable} if there is an element $c$ such that $a \Rightarrow^* c$ and $b \Rightarrow^* c$.
+We will also say that $a$ and $b$ are joinable under $\Rightarrow$ if the reduction relation is not clear from the context.
 An element $a$ is \emph{confluent} if whenever $a \Rightarrow^* b$ and $a \Rightarrow^* c$ the terms $b$ and $c$ are joinable.
 The system is confluent if every element is confluent.
 Equivalently, the system is confluent if every pair of elements is joinable.
@@ -1018,51 +1019,11 @@ It is often possible to choose a direction for the axioms of a type theory so th
 We also need to put some additional assumptions on the axioms to guarantee that a rule $t \Rightarrow s$ is applicable whenever $t$ is defined.
 
 \begin{defn}[directed]
-An algebraic type theory $T$ has \emph{directed axioms} if the following conditions are satisfied:
-\begin{itemize}
-\item $T$ has separated axioms and every axiom in $\mathcal{A}_e$ is of the form $\varphi \sststile{}{FV(t)} t = s$, where $t,s \in \Term_T$ and $t$ is not a variable.
-\item For every pair $(\psi,V)$ in $P_M$, every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$, and every substitution $\rho$, if $\psi \sststile{T}{V} t[\rho]\!\downarrow$, then $\psi \sststile{T}{V} \varphi[\rho]$.
-\end{itemize}
+An algebraic type theory $T$ has \emph{directed axioms} if it has separated axioms and every axiom in $\mathcal{A}_e$ is of the form $\varphi \sststile{}{FV(t)} t = s$, where $t,s \in \Term_T$ and $t$ is not a variable.
 Every type theory with directed axioms induces a term rewriting system $R_T$ on the set $\Term_T$: $R_T(t,s)$ is true if and only if there exists an axiom in $\mathcal{A}_e$ of the form $\varphi \sststile{}{FV(t)} t = s$.
 \end{defn}
 
-A simple situation when the conditions of \rdefn{directed} hold is when $\mathcal{A}_e$ consists of axioms of the form $\{ t\!\downarrow\ \sststile{}{FV(t)} t = s\ \}$, which looks rather natural, but sometimes we need the more general definition.
-For example, consider the following reduction rule:
-\[ \app(B, \lambda(b), a) \Rightarrow b[a] \]
-The left hand side is defined if and only if $\Pi(ty(b)) = \Pi(B) \land ty(a) = ft(B)$, but usually this rule is defined in such a way that it applies only when a stronger condition holds, namely $ty(b) = B \land ty(a) = ft(B)$.
-This formula cannot be arbitrary since we still need to know that it is derivable whenever $t\!\downarrow$ is derivable.
-The conditions of \rdefn{directed} guarantee that this is always true.
-
-Now, we can define confluent theories:
-
-\begin{defn}[confluent]
-A \emph{confluent} type theory is a type theory $T_0$ with directed axioms such that, for every pair $(\varphi_1 \land \ldots \land \varphi_n, V)$ in $P_M$,
-closed defined terms of the theory $T_1 = T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ are confluent.
-\end{defn}
-
-Note that if $T_0$ has directed axioms, then so does $T_1$, but this is not true for the confluence.
-It may be the case that the underlying term rewriting system of $T_0$ is confluent, but $R_{T_1}$ is not,
-and we need the stronger condition since otherwise we can apply \rprop{conf-main} only to sequents of the form $\sststile{}{} t = s$.
-Nevertheless, the confluence of $R_{T_0}$ implies the confluence of $R_{T_1}$ under some mild additional assumptions:
-
-\begin{lem}[morita-conf]
-Let $T_0$ be a theory with directed axioms and let $T_1$ be a theory as defined in \rdefn{confluent}.
-Suppose that the following conditions hold:
-\begin{itemize}
-\item The underlying term rewriting system $R_0$ of $T_0$ is left-linear.
-\item Every closed defined term of $T_1$ is confluent in the term rewriting system $(\Term_{T_1},R_0)$.
-\item For every $t$ and $s$ such that $R_0(t,s)$, if $t$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
-\end{itemize}
-Then $T_0$ is confluent.
-\end{lem}
-\begin{proof}
-Let $R_1 = R_{T_1} \setminus R_0$.
-The last condition implies that the systems $R_0$ and $R_1$ are orthogonal to each other.
-It was shown in \cite{raoult} (see also \cite[Theorem~8.6.35]{ohlebusch-advanced}) that the union of confluent orthogonal left-linear systems is confluent.
-\end{proof}
-
-The only serious restriction of the previous lemma is the left-linearity of $R_0$.
-We will give another set of conditions that implies that $T_0$ is confluent in appendix~\ref{sec:app-conf}.
+% TODO: blah-blah % Let us prove a technical lemma
 
 \begin{lem}[der-eq]
 If a sequent $\varphi \sststile{}{V} t = s$ is derivable in a theory $T$, then there exist terms $t_1, \ldots t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$, $t_i = c[a/x]$ and $t_{i+1} = c[b/x]$
@@ -1093,20 +1054,54 @@ Let $t_1$, \ldots $t_n$ be a sequence for $\varphi \sststile{}{V} p = q$ and let
 Then $t'[t_n/y]$, \ldots $t'[t_1/y] = s_1$, \ldots $s_m = s'[t_1/y]$, \ldots $s'[t_n/y]$ is a sequence for $\varphi \sststile{}{V} t'[q/y] = s'[q/y]$.
 \end{proof}
 
-The main property of confluent theories is proved in the following proposition:
+% TODO: We didn't define confluent theories yet % The main property of confluent term rewriting systems theories is proved in the following proposition:
 
 \begin{prop}[conf-main]
-Let $T_0$ be a confluent theory and let $(\varphi,V)$ be a pair in $P_M$.
-If a sequent $\varphi \sststile{}{V} t = s$ is derivable in $T_0$, then there exists a term $r$ of $T_1$ such that $t[c_1/x_1, \ldots c_n/x_n] \Rightarrow_R^* r$ and $s[c_1/x_1, \ldots c_n/x_n] \Rightarrow_R^* r$,
-where $T_1$ is the same as in \rlem{morita-conf} and $R$ is its underlying term rewriting system.
+Let $T_0$ be a theory with directed axioms.
+Suppose that closed defined terms of the theory $T_1 = T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ are confluent.
+Let $(\varphi,V)$ be a pair in $P_M$ and let $\varphi \sststile{T_0}{V} t = s$ be a derivable sequent.
+Then there exists a term $r$ of $T_1$ such that $t[c_1/x_1, \ldots c_n/x_n] \Rightarrow_{R_{T_1}}^* r$ and $s[c_1/x_1, \ldots c_n/x_n] \Rightarrow_{R_{T_1}}^* r$.
 \end{prop}
 \begin{proof}
 By \rlem{mcf}, the sequent $\sststile{}{} t' = s'$ is derivable in $T_1$, where $t' = t[c_1/x_1, \ldots c_n/x_n]$ and $s' = s[c_1/x_1, \ldots c_n/x_n]$.
-By \rlem{der-eq} and \rprop{der-separated}, there exists a sequence $t_1$, \ldots $t_n$ such that $t' = t_1$, $s' = t_n$, and, for every $1 \leq i < n$, either $t_i \Rightarrow_R t_{i+1}$ or $t_{i+1} \Rightarrow_R t_i$.
-By \rlem{morita-conf}, this implies that $t' \Rightarrow_R^* r$ and $s' \Rightarrow_R^* r$ for some term $r$.
+By \rlem{der-eq} and \rprop{der-separated}, there exists a sequence $t_1$, \ldots $t_n$ such that $t' = t_1$, $s' = t_n$, and, for every $1 \leq i < n$, either $t_i \Rightarrow_{R_{T_1}} t_{i+1}$ or $t_{i+1} \Rightarrow_{R_{T_1}} t_i$.
+Since $T_0$ is confluent, this implies that $t' \Rightarrow_{R_{T_1}}^* r$ and $s' \Rightarrow_{R_{T_1}}^* r$ for some term $r$.
 \end{proof}
 
-We can define a relative version of confluent theories:
+Note that if $T_0$ has directed axioms, then so does $T_1$, but $R_{T_1}$ may not be confluent even if $R_{T_0}$ is
+and we need the stronger condition since otherwise we can apply \rprop{conf-main} only to sequents of the form $\sststile{}{} t = s$.
+Nevertheless, the confluence of $R_{T_0}$ implies the confluence of $R_{T_1}$ under some mild additional assumptions:
+
+\begin{lem}[morita-conf]
+Let $T_0$ be a theory with directed axioms and let $T_1$ be a theory as defined in \rprop{conf-main}.
+Suppose that the following conditions hold:
+\begin{itemize}
+\item The underlying term rewriting system $R_0$ of $T_0$ is left-linear.
+\item Every closed defined term of $T_1$ is confluent in the term rewriting system $(\Term_{T_1},R_0)$.
+\item For every reduction rule $(t,s) \in R_0$, if $t$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
+\end{itemize}
+Then closed defined terms of $T_1$ are confluent.
+\end{lem}
+\begin{proof}
+Let $R_1 = R_{T_1} \setminus R_0$.
+The last condition implies that the systems $R_0$ and $R_1$ are orthogonal to each other.
+It was shown in \cite{raoult} (see also \cite[Theorem~8.6.35]{ohlebusch-advanced}) that the union of confluent orthogonal left-linear systems is confluent.
+\end{proof}
+
+The only serious restriction of the previous lemma is the left-linearity of $R_0$.
+We will give another set of conditions that implies the same result in appendix~\ref{sec:app-conf} (see \rcor{ya-morita-conf}).
+
+If we want to use \rprop{conf-main}, then we need to know that the reduction rules that were constructed in this proposition are derivable.
+In general, this might be false, so we define confluent theories as theories in which this property holds:
+
+\begin{defn}[confluent]
+A \emph{confluent} type theory is a type theory $T_0$ with directed axioms such that, for every pair $(\psi,V)$ in $P_M$,
+closed defined terms of the theory $T_1$ defined in \rprop{conf-main} are confluent and,
+for every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$ and every substitution $\rho$,
+if $\psi \sststile{T}{V} t[\rho]\!\downarrow$, then $\psi \sststile{T}{V} \varphi[\rho]$.
+\end{defn}
+
+We can also define a relative version of confluent theories:
 
 \begin{defn}
 A \emph{confluent extension} of a theory $T$ is a confluent theory $T'$ such that $T \subseteq T'$ and, for every term $t$ of $T$ and every term $s$ of $T'$ such that $R_{T'}(t,s)$,
@@ -1386,9 +1381,9 @@ The aim of this appendix is to prove the following general lemma about term rewr
 Let $R_0$ and $R_1$ be term rewriting systems on the same theory $T$.
 Let $A$ be a subset of $\Term_T$ closed under $\Rightarrow_{R_0 \cup R_1}$.
 Suppose that $(A,\Rightarrow_{R_0})$ is confluent, $(A,\Rightarrow_{R_1})$ is confluent and weakly normalizable, and
-if $a,b \in A$ are such that $a \Rightarrow_{R_0} b$, then there is a term $c$ such that $a \Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^* c$ and $b \Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^* c$.
+if $a,b \in A$ are such that $a \Rightarrow_{R_0} b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
 Then the system $(A,\Rightarrow_{R_0 \cup R_1})$ is confluent.
-Moreover, if $a,b \in A$ are equivalent, then there is a term $c$ such that $a \Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^* c$ and $b \Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^* c$.
+Moreover, any pair of equivalent elements of $A$ are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
 \end{lem}
 \begin{proof}
 First, note that we have the following diagram:
@@ -1462,45 +1457,44 @@ If $T$ is a contextual theory, then we have a set of function symbols $\mathcal{
 for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \in \mathcal{F}_0$ and $m \in \mathbb{N}$.
 Moreover, we may assume that $n = 0$ for every $\sigma \in \mathcal{F}_0$.
 
-First, we will show that a theory is confluent whenever the subsystem on terms without $ty$ is.
-To do so, we need to put a few natural conditions on $T$.
-We assume that, for every reduction rule $R(t,s)$, the following conditions hold:
-\begin{itemize}
-\item The function symbol $ty$ either does not appear in $t$ or appears only on the top level.
-\item if $s$ has a subterm of the form $ty(s')$, then $s'$ is a variable.
-\end{itemize}
-Moreover, we need to assume that the term rewriting system consisting of the rules of this form is weakly normalizing.
+Let us begin by showing that a term rewriting system is confluent whenever the subsystem on terms without $ty$ is.
+To do this we need to know that reduction rules preserve types.
+This condition is formalized in the following definition:
+\begin{defn}
+Let $T$ be a theory with directed axioms and let $R$ be its underlying term rewriting system.
+We will say that the rules of $R$ \emph{preserve types} if there is a well-founded relation on the set of axioms of $T$ such that,
+for every axiom $\varphi \sststile{}{V} t = s$ in $\mathcal{A}_e$ such that $t$ and $s$ are terms of a sort $(tm,n)$,
+the sequent $\varphi \sststile{}{V} ty(t) = ty(s)$ is derivable from the axioms which are less than $\varphi \sststile{}{V} t = s$.
+\end{defn}
 
-Throught this appendix, let $T_0$ be a fixed contextual theory satsfying these conditions.
+We also need to separate typing reduction rules from ordinary reduction rules:
+\begin{defn}
+Let $T$ be a theory with directed axioms.
+We will say that \emph{typing axioms are separated} if, for every reduction rule $(r,s) \in R_T$,
+the function symbol $ty$ either does not appear in $t$ or appears only on the top level.
+\end{defn}
+
+Now, we can prove that theories satisfying these technical assumptions are confluent.
 
 \begin{prop}
-Let $R_1$ be the set of reduction rules of the form $ty(t) \Rightarrow s$ and let $R_0$ be the rest of reduction rules.
-If the term rewriting system $(\Term_{T \setminus \{ ty \}}, R_0)$ is confluent, then $T$ is also confluent.
+Let $T$ be a theory with directed axioms in which typing axioms are separated and such that its reduction rules preserve types.
+Let $R_0$ be the set of reduction rules in which $ty$ does not appear in the left hand side and let $R_1 = R_T \setminus R_0$.
+Suppose that closed defined terms are weakly normalizing under $R_1$.
+Then every pair of closed defined terms are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$
 \end{prop}
-
-\begin{lem}[ya-morita-conf]
-Let $T_0$ be a confluent theory and let $(\varphi_1 \land \ldots \land \varphi_n, V)$ be a pair in $P_M$.
-Then the theory $T_1 = T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ is also confluent.
-\end{lem}
 \begin{proof}
-Let $R_1 = R_{T_1} \setminus R_0$.
-It is easy to see that $R_1$ is confluent and strongly normalizing.
-The condition on $R_0$ formulated in \rdefn{confluent} implies that $R_0$-reductions preserve $R_1$-normal forms.
-Let us prove that $t \Rightarrow_{R_0} t_1$ and $t \Rightarrow_{R_1}^{nf} t_2$ implies that there exists $t'$ such that $t_1 \Rightarrow_{R_1}^{nf} t'$ and $t_2 \Rightarrow_{R_0} t'$:
-\[ \xymatrix@=1em{                              & \ar[ld]_{R_0} t \ar[rd]^{R_1^{nf}}    &                           \\
-                   t_1 \ar@{-->}[rd]_{R_1^{nf}} &                                       & t_2 \ar@{-->}[ld]^{R_0}   \\
-                                                & t'                                    &
-                 } \]
-Since the systems are orthogonal, $R_0$-redexes and $R_1$-redexes do not overlap.
-Thus we may assume that all $R_1$-redexes occur inside the $R_0$-redex.
-Since $t \Rightarrow_{R_1}^{nf} t_2$ reduces all $R_1$-redexes to normal forms, if $t$ contains some equal subterms, then they will also be equal in $t_2$.
-So $t_2$ contains the same $R_0$-redex as $t$ and $\Rightarrow_{R_0}$-reduces to a term $t'$.
-Since $\Rightarrow_{R_0}$-reductions preserve $R_1$-normal forms, $t'$ is in a normal form, so $t_1 \Rightarrow_{R_1}^{nf} t'$.
-\Rlem{nf-conf} implies that $T_1$ is confluent.
+TODO
 \end{proof}
 
+\begin{cor}[ya-morita-conf]
+Let $T_0$ be a theory with directed axioms and let $T_1$ be a theory as defined in \rprop{conf-main}.
+Suppose that the conditions of the previous proposition hold.
+Moreover, suppose that closed defined terms are weakly normalizable under $R_1 \cup R_{T_1}$.
+Then closed defined terms of $T_1$ are confluent.
+\end{cor}
+
 Let $\mathcal{F}_0$ be the set of basic function symbols of the theory $T_0$.
-Let $T_1$ be the extension of $T_0$ defined in \rdefn{confluent} (for some pair $(\varphi,V) \in P_M$) and let $R$ be its underlying term rewriting system.
+Let $T_1$ be the extension of $T_0$ defined in \rprop{conf-main} (for some pair $(\varphi,V) \in P_M$) and let $R$ be its underlying term rewriting system.
 Let $\Term_{\mathcal{F}_0}$ be the set of terms constructed from the function symbols in $\mathcal{F}_0 \cup \{ ty, ft \} \cup \{ c_1, \ldots c_n \}$.
 So, $\Term_{\mathcal{F}_0}$ is the set of terms of $T_1 = T_0 \cup \{ c_1, \ldots c_n \}$ in which we omit contexts.
 If $t$ is a term of $T_1$, then we can define a term $U(t) \in \Term_{\mathcal{F}_0}$ in the obvious way:
