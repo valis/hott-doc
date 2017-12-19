@@ -419,8 +419,8 @@ If $f : X \to Y \in \Jinj[_\I]$ has RLP up to relative homotopy with respect to 
 \begin{proof}
 Suppose we have a commutative square as below.
 We need to find a lift $V \to X$ such that both triangles commute.
-\[ \xymatrix{ U \ar[d]_{i \in \I} \ar[r] \ar@{}[dr]|(.7){\sim_i} & X \ar[d]^f \\
-              V \ar[r]_v \ar@{-->}[ur]^g                         & Y
+\[ \xymatrix{ U \ar[d]_{i \in \I} \ar[r]^u \ar@{}[dr]|(.7){\sim_i} & X \ar[d]^f \\
+              V \ar[r]_v \ar@{-->}[ur]^g                           & Y
             } \]
 By assumption, we have a lift $g : V \to X$ together with a relative homotopy $h : C_U(V) \to Y$ between $f \circ g$ and $v$.
 Since $f$ has RLP with respect to $\cyli_0$, we have a lift $h' : C_U(V) \to X$ in the following diagram:
@@ -428,6 +428,7 @@ Since $f$ has RLP with respect to $\cyli_0$, we have a lift $h' : C_U(V) \to X$ 
               C_U(V) \ar[r]^-h \ar@{-->}[ur]^{h'} & Y.
             } \]
 Then $h' \circ \cyli_1$ is a required lift in the original square.
+Indeed, the top triangle commutes because $h' \circ \cyli_1 \circ i = h' \circ \cyli_0 \circ i = g \circ i = u$ and the bottom triangle commutes because $f \circ h' \circ \cyli_1 = h \circ \cyli_1 = v$.
 \end{proof}
 
 Now we assume that $\C$ is a model category and $C_U(V)$ is a correct relative cylinder object, that is it is a factorization of the map $[id_V,id_V] : V \amalg_U V \to V$
@@ -446,10 +447,18 @@ Then the following conditions are equivalent:
 \end{prop}
 \begin{proof}
 $(1 \Rightarrow 2)$
+Consider the following commutative square in which $c$ is a cofibration:
+\[ \xymatrix{ U \ar[r] \ar[d]_c & X \ar[d]^f \\
+              V \ar[r]          & Y
+            } \]
+
 Factor $f$ into a trivial cofibration $i : X \to Z$ followed by a trivial fibration $p : Z \to Y$.
-Let $c : U \to V$ be a cofibration and let $u : U \to X$, $v : V \to Y$ be maps such that $f \circ u = v \circ c$.
 Since $c$ is a cofibration and $p$ is a trivial fibration, we have a lift $q : V \to Z$.
 Since $i$ is a trivial cofibration between fibrant objects, by \rprop{min-triv-cof}, it has a retraction $r : Z \to X$ such that $i \circ r \sim_i id_Z$.
+\[ \xymatrix{ U \ar[r] \ar[dd]_c        & X \ar[d]_i \ar@{=}[r] \ar@{}[dr]|(.7){\sim_i} & X \ar[d]^i \\
+                                        & Z \ar[d]_p \ar@{=}[r] \ar@{-->}[ur]^r         & Z          \\
+              V \ar[r] \ar@{-->}[ur]^q  & Y                                             &
+            } \]
 Then $r \circ q$ is a required lift.
 
 $(2 \Rightarrow 3)$ Obvious.
@@ -488,7 +497,7 @@ the domains and the codomains of maps in $\I$ are small relative to $\Icell$.
 Then the model structure is cofibrantly generated.
 \end{prop}
 \begin{proof}
-Let $C_U(V)$ be a reflexive relative cylinder object such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$ is a cofibration and the map $C_U(V) \to V$ is a weak equivalence.
+By the small object argument, there exists a reflexive relative cylinder object $C_U(V)$ such that $[\cyli_0,\cyli_1] : V \amalg_U V \to C_U(V)$ is a cofibration and the map $C_U(V) \to V$ is a trivial fibration.
 We prove that $\J_\I$ is a set of generating trivial cofibrations.
 Let us check the conditions of \rprop{model-cat}:
 \begin{description}
@@ -507,24 +516,29 @@ Moreover, the map $C_U(V) \to V$ is a weak equivalence; hence, $\cyli_0$ is also
 
 \subsection{Trivial cofibrations and fibrations with fibrant codomains}
 
-If some of the objects of a model category are not fibrant, then sometimes we can characterize fibrant object as those which have
-RLP with respect to some set of trivial cofibrations $S$ which is considerably smaller than a set of generating cofibrations.
+If some of the objects of a model category are not fibrant, then sometimes we can characterize fibrant objects as those which have
+the RLP with respect to some set of trivial cofibrations $S$ which is considerably smaller than a set of generating cofibrations.
 For example, the Joyal model structure on simplicial sets has weak Kan complexes as fibrant objects,
 which are simplicial sets that have RLP with respect to inner horns.
 But inner horns do not generate the whole class of trivial cofibrations.
+Another example is the category of marked simplicial sets constructed in \cite[Proposition~3.1.3.7]{lurie-topos}.
+Finally, \cite[Lemma~3.3.11]{hirschhorn} implies that a left Bousfield localization of a model category
+also has an explicit description of a set of maps characterizing fibrant objects provided the original model category has such a description.
 
-A natural candidate for a set of generating trivial cofibrations is $\J_\I \cup S$.
-In general, this set is too small, but it works for trivial cofibrations and fibrations with fibrant codomains.
-For simplicial sets (with Joyal model structure), a stronger version of this result was proved in \cite{lurie-topos} (where it is attributed to Joyal).
+Let $S$ be a set of trivial cofibrations such that an object is fibrant if and only if it has the RLP with respect to $S$.
+We should not expect that there is always a simple explicit description of a set of generating trivial cofibrations in terms of $S$.
+But we can show that the class $\Icof[(\J_\I \cup S)]$ contains all trivial cofibrations with fibrant codomains.
+mOreover, a map with a fibrant codomain is a fibration if and only if it has the RLP with respect to this set.
+For simplicial sets with the Joyal model structure, (a slightly stronger version of) this result was proved in \cite[Corollary~2.4.6.5]{lurie-topos} (where it is attributed to Joyal).
 
 \begin{prop}
 Let $\C$ be a model category.
 Let $\I$ be a set of generating cofibrations, and let $S$ be a set of trivial cofibrations
-such that every object that has RLP with respect to $S$ is fibrant.
+such that every object that has the RLP with respect to $S$ is fibrant.
 Suppose that the domains and the codomains of maps in $\I$ and the domains of maps in $S$ are small relative to $\Icell$.
 
-Then a map with fibrant codomain is a trivial cofibration if and only if it belongs to $\Icof[(\J_\I \cup S)]$.
-A map with fibrant codomain is a fibration if and only if it belongs to $\Iinj[(\J_\I \cup S)]$.
+Then a map with a fibrant codomain is a trivial cofibration if and only if it belongs to $\Icof[(\J_\I \cup S)]$.
+A map with a fibrant codomain is a fibration if and only if it belongs to $\Iinj[(\J_\I \cup S)]$.
 \end{prop}
 \begin{proof}
 Let $f : X \to Z$ be a trivial cofibration such that $Z$ is fibrant.
