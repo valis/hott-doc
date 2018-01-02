@@ -1023,18 +1023,19 @@ An algebraic type theory $T$ has \emph{directed axioms} if it has separated axio
 Every type theory with directed axioms induces a term rewriting system $R_T$ on the set $\Term_T$: $R_T(t,s)$ is true if and only if there exists an axiom in $\mathcal{A}_e$ of the form $\varphi \sststile{}{FV(t)} t = s$.
 \end{defn}
 
-% TODO: blah-blah % Let us prove a technical lemma
+Let us prove a technical lemma first.
 
 \begin{lem}[der-eq]
 If a sequent $\varphi \sststile{}{V} t = s$ is derivable in a theory $T$, then there exist terms $t_1, \ldots t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$, $t_i = c[a/x]$ and $t_{i+1} = c[b/x]$
 for some terms $a$, $b$, and $c$ such that there is a unique occurrence of the variable $x$ in $c$ and one of the following conditions hold:
 \begin{enumerate}
 \item There exists an application of \axref{na} in which the premise is derivable and the conclusion is either $\varphi \sststile{}{V} a = b$ or $\varphi \sststile{}{V} b = a$.
+Moreover, a derivation of $\varphi \sststile{}{V} t = s$ in the natural deduction system contains a derivation of these sequents as a subderivation.
 \item $\varphi = \varphi_1 \land \ldots \land \varphi_k$ and there exists $j$ such that $\varphi_j$ equals to either $a = b$ or $b = a$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
-We prove this by induction on the derivation of $\varphi \sststile{}{V} t = s$.
+We prove this by induction on a derivation of $\varphi \sststile{}{V} t = s$ in the natural deduction system.
 The rules \axref{nv}, \axref{np}, and \axref{nf} are obvious.
 The rules \axref{nh} and \axref{na} follow immediately from assumptions.
 We can take $t_1 = a = t$, $t_2 = b = s$, and $c = x$.
@@ -1054,12 +1055,12 @@ Let $t_1$, \ldots $t_n$ be a sequence for $\varphi \sststile{}{V} p = q$ and let
 Then $t'[t_n/y]$, \ldots $t'[t_1/y] = s_1$, \ldots $s_m = s'[t_1/y]$, \ldots $s'[t_n/y]$ is a sequence for $\varphi \sststile{}{V} t'[q/y] = s'[q/y]$.
 \end{proof}
 
-% TODO: We didn't define confluent theories yet % The main property of confluent term rewriting systems theories is proved in the following proposition:
+The following propositions shows that equivalent terms of a theory with directed axioms are joinable in the underlying term rewriting system:
 
 \begin{prop}[conf-main]
-Let $T_0$ be a theory with directed axioms.
+Let $T_0$ be a theory with directed axioms and let $(\varphi,V)$ be a pair in $P_M$ where $\varphi = \varphi_1 \land \ldots \land \varphi_n$.
 Suppose that closed defined terms of the theory $T_1 = T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ are confluent.
-Let $(\varphi,V)$ be a pair in $P_M$ and let $\varphi \sststile{T_0}{V} t = s$ be a derivable sequent.
+Let $\varphi \sststile{T_0}{V} t = s$ be a derivable sequent.
 Then there exists a term $r$ of $T_1$ such that $t[c_1/x_1, \ldots c_n/x_n] \Rightarrow_{R_{T_1}}^* r$ and $s[c_1/x_1, \ldots c_n/x_n] \Rightarrow_{R_{T_1}}^* r$.
 \end{prop}
 \begin{proof}
@@ -1383,7 +1384,7 @@ Let $A$ be a subset of $\Term_T$ closed under $\Rightarrow_{R_0 \cup R_1}$.
 Suppose that $(A,\Rightarrow_{R_0})$ is confluent, $(A,\Rightarrow_{R_1})$ is confluent and weakly normalizable, and
 if $a,b \in A$ are such that $a \Rightarrow_{R_0} b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
 Then the system $(A,\Rightarrow_{R_0 \cup R_1})$ is confluent.
-Moreover, any pair of equivalent elements of $A$ are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
+Moreover, equivalent elements of $A$ are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
 \end{lem}
 \begin{proof}
 First, note that we have the following diagram:
@@ -1451,49 +1452,110 @@ The first difference is that they have an explicit substitution operation.
 Another difference is that they contain more information than ordinary terms so that the type and the context of a term can be inferred from it.
 In this appendix we prove that it is often possible to show that an algebraic type theory is confluent if corresponding usual type theory is.
 
+Let us begin by showing that a term rewriting system is confluent whenever the subsystem on terms without function symbols $ty$ and $ft$ is.
+To do this we need to know that typing axioms are well-behaved in some sense.
+\begin{defn}
+An axiom is a \emph{typing axiom} if it is of the form
+\[ \varphi \sststile{}{V} e_p(\sigma(x_1, \ldots x_k)) = s \]
+where $\sigma$ is neither $ft$ nor $ty$ and the function symbols $ft$ and $ty$ are applied only to variables in $s$ (if they appear in this term).
+An axiom $\varphi \sststile{}{V} t = s$ is a \emph{pure axiom} if the function symbols $ft$ and $ty$ do not appear in $t$ and $s$.
+We will say that a theory $T$ with directed axioms has \emph{separated typing axioms} if every rule in the underlying term rewriting system of $T$ is either a typing axiom or a pure axiom.
+The sets of typing and pure axioms will be denoted by $\mathcal{A}_t$ and $\mathcal{A}_p$, respectively.
+The sets of reduction rules corresponding to typing and pure axioms will be denoted by $R^t_T$ and $R^p_T$, respectively.
+
+Let $T$ be a theory with separated typing axioms.
+We will say that pure axioms of $T$ \emph{preserve types} if, for every pure axiom $\varphi \sststile{}{V} t = s$ of $T$, the sequent $\varphi \sststile{}{V} e_p(t) = e_p(s)$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_p$.
+\end{defn}
+
+The main property of theories in which pure axioms preserve types is proved in the following lemmas:
+
+\begin{lem}
+Let $T$ be a theory with separated typing axioms.
+Then the term rewriting system $R^t_T$ is strongly normalizing and confluent.
+\end{lem}
+\begin{proof}
+To show that the system is strongly normalizing we define, for each term $t$, an ordinal $|t|$ less than $\varepsilon_0$ such that if $t \Rightarrow_{R^t_T} s$, then $|t| > |s|$:
+\begin{align*}
+|x| & = 0 \\
+|ty(t)| = |ft(t)| & = \omega^{|t|}\\
+|\sigma(t_1, \ldots t_k)| & = |t_1| \oplus \ldots \oplus |t_k| \oplus 1
+\end{align*}
+where $\oplus$ is the natural sum of ordinals.
+
+If $ty(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t} s(ty(t_1), \ldots ty(t_k), t_1, \ldots t_k)$, then we need to show that $|ty(\sigma(t_1, \ldots t_k))| > |s(ty(t_1), \ldots ty(t_k), t_1, \ldots t_k)|$.
+Let $\alpha_i = |t_i|$ and let $\alpha$ be the maximum of $\alpha_1$, \ldots $\alpha_k$.
+Then $|ty(\sigma(t_1, \ldots t_k))| = \omega^{\alpha_1 \oplus \ldots \oplus \alpha_k \oplus 1} \geq \omega^{\alpha + 1}$.
+Note that $ft$ and $ty$ do not occur in the term $s$.
+It follows that
+\begin{align*}
+|s(ty(t_1), \ldots ty(t_k), t_1, \ldots t_k)| & = \omega^{\alpha_1} n_1 \oplus \ldots \oplus \omega^{\alpha_k} n_k \oplus \alpha_1 m_1 \oplus \ldots \oplus \alpha_k m_k \oplus c \\
+                                              & \leq \omega^\alpha n \oplus \alpha m \oplus c
+\end{align*}
+for some natural numbers $n_1$, \ldots $n_k$, $m_1$, \ldots $m_k$, $n$, $m$, and $c$.
+Since $\alpha \leq \omega^\alpha$ and $1 \leq \omega^\alpha$, we have $\omega^\alpha n \oplus \alpha m \oplus c \leq \omega^\alpha (n + m + c) < \omega^{\alpha + 1}$.
+
+By Newman's lemma (see \cite[Lemma~2.2.5]{ohlebusch-advanced} for a proof), to prove that a strongly normalizing system is confluent it is enough to show that it is locally confluent,
+that is if $a \Rightarrow_{R^t_T} b$ and $a \Rightarrow_{R^t_T} c$, then there exists a term $d$ such that $b \Rightarrow_{R^t_T}^* d$ and $c \Rightarrow_{R^t_T}^* d$.
+This is obvious in our case since the rules in $R^t_T$ do not overlap.
+\end{proof}
+
+\begin{lem}
+Let $T$ be a theory with separated typing axioms in which pure rules preserve types.
+If $t$ and $s$ are terms such that the sequent $\sststile{}{} t = s$ is derivable in $T$, then terms $e_p(t)$ and $e_p(s)$ have the same $R_T^t$-normal form.
+\end{lem}
+\begin{proof}
+By \rlem{der-separated-closed}, the sequent $\sststile{}{} t = s$ is derivable from the set of axioms $\mathcal{A}_d \cup \mathcal{A}_e$.
+We proceed by induction on (the size of) such a derivation of $\sststile{}{} t = s$ in the natural deduction system.
+\end{proof}
+
+\begin{lem}
+Let $R_0$, $R_1$, and $R_2$ be term rewriting systems on the same theory $T$.
+Let $A$ be a subset of $\Term_T$ closed under $\Rightarrow_{R_0 \cup R_1}$.
+Suppose that $(A,\Rightarrow_{R_0})$ is confluent, $(A,\Rightarrow_{R_1})$ is confluent and weakly normalizable, and
+if $a,b \in A$ are such that $a \Rightarrow_{R_2} b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
+Then any two elements $a,b \in A$ which are equivalent under $R_2$ (that is, there is a zig-zag of $R_2$-reductions between them) are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
+\end{lem}
+\begin{proof}
+Since being joinable is a symmetric relation, we can assume that $R_2$ is also symmetric.
+Let $a_1$, \ldots, $a_n$ be a sequence such that $(a_i, a_{i+1}) \in R_2$ for every $1 \leq i < n$.
+We prove that $a_1$ and $a_n$ are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$ by induction on $n$.
+If $n = 0$, then this follows from the fact that $(A,\Rightarrow_{R_1})$ is weakly normalizable.
+Suppose $n > 0$.
+We have $a_1 \Rightarrow_{R_1}^{nf} a_1'$, $a_1' \Rightarrow_{R_0}^* c_1$, $a_{n-1} \Rightarrow_{R_1}^{nf} a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* b$ by assumption.
+We have $a_n \Rightarrow_{R_1}^{nf} a_n'$, $a_n' \Rightarrow_{R_0}^* c_2$, $a_{n-1} \Rightarrow_{R_1}^{nf} a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* c$ by the induction hypothesis.
+Since $R_0$ is confluent, $c \Rightarrow_{R_0}^* d$ and $c \Rightarrow_{R_0}^* d$:
+\[ \xymatrix@=1em{  a_1 \ar[rr]^{R_2^*} \ar@{-->}[d]^{R_1^{nf}} &                           & a_{n-1} \ar[rr]^{R_2} \ar@{-->}[d]^{R_1^{nf}}         &                           & a_n \ar@{-->}[d]^{R_1^{nf}}   \\
+                    a_1' \ar@{-->}[rd]_{R_0^*}                  &                           & a_{n-1}' \ar@{-->}[ld]_{R_0^*} \ar@{-->}[rd]^{R_0^*}  &                           & a_n' \ar@{-->}[ld]^{R_0^*}    \\
+                                                                & b \ar@{-->}[rd]_{R_0^*}   &                                                       & c \ar@{-->}[ld]^{R_0^*}   &                               \\
+                                                                &                           & d                                                     &                           &
+                 } \]
+\end{proof}
+
+\begin{prop}
+Let $T$ be a theory with well-defined typing axioms such that its reduction rules preserve types.
+Suppose that closed defined terms in which $ty$ does not occur are confluent under $R^p_T$.
+Then closed defined terms of $T$ are confluent.
+\end{prop}
+\begin{proof}
+TODO % Prove that if terms without ty are confluent, then so are terms with ty.
+\end{proof}
+
+\begin{cor}[ya-morita-conf]
+% TODO: Rewrite these conidtions
+Let $T_0$ be a theory with directed axioms and let $T_1$ be a theory as defined in \rprop{conf-main}.
+Suppose that the conditions of the previous proposition hold for $T_1$.
+Moreover, suppose that closed defined terms are weakly normalizable under $R_{T_1} \setminus R^p_T$.
+Then closed defined terms of $T_1$ are confluent.
+\end{cor}
+\begin{proof}
+TODO
+\end{proof}
+
 We will work with contextual theories with directed axioms (see \cite{alg-tt} for a definition of a contextual theory).
 If $T$ is a contextual theory, then we have a set of function symbols $\mathcal{F}_0$ such that the set of function symbols of $T$ consists of the following function symbols:
 \[ \sigma_m : (ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m) \]
 for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \in \mathcal{F}_0$ and $m \in \mathbb{N}$.
 Moreover, we may assume that $n = 0$ for every $\sigma \in \mathcal{F}_0$.
-
-Let us begin by showing that a term rewriting system is confluent whenever the subsystem on terms without $ty$ is.
-To do this we need to know that reduction rules preserve types.
-This condition is formalized in the following definition:
-\begin{defn}
-Let $T$ be a theory with directed axioms and let $R$ be its underlying term rewriting system.
-We will say that the rules of $R$ \emph{preserve types} if there is a well-founded relation on the set of axioms of $T$ such that,
-for every axiom $\varphi \sststile{}{V} t = s$ in $\mathcal{A}_e$ such that $t$ and $s$ are terms of a sort $(tm,n)$,
-the sequent $\varphi \sststile{}{V} ty(t) = ty(s)$ is derivable from the axioms which are less than $\varphi \sststile{}{V} t = s$.
-\end{defn}
-
-We also need to separate typing reduction rules from ordinary reduction rules:
-\begin{defn}
-Let $T$ be a theory with directed axioms.
-We will say that \emph{typing axioms are separated} if, for every reduction rule $(r,s) \in R_T$,
-the function symbol $ty$ either does not appear in $t$ or appears only on the top level.
-\end{defn}
-
-Now, we can prove that theories satisfying these technical assumptions are confluent.
-
-\begin{prop}
-Let $T$ be a theory with directed axioms in which typing axioms are separated and such that its reduction rules preserve types.
-Let $R_0$ be the set of reduction rules in which $ty$ does not appear in the left hand side and let $R_1 = R_T \setminus R_0$.
-Suppose that closed defined terms are confluent under $R_0$ and confluent and weakly normalizing under $R_1$.
-Then every pair of closed defined terms are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$
-\end{prop}
-\begin{proof}
-TODO
-\end{proof}
-
-\begin{cor}[ya-morita-conf]
-Let $T_0$ be a theory with directed axioms and let $T_1$ be a theory as defined in \rprop{conf-main}.
-Suppose that the conditions of the previous proposition hold.
-Moreover, suppose that closed defined terms are weakly normalizable under $R_1 \cup R_{T_1}$.
-Then closed defined terms of $T_1$ are confluent.
-\end{cor}
-
-% TODO: Prove that if terms without ty are confluent, then so are terms with ty.
 
 Let $\mathcal{F}_0$ be the set of basic function symbols of the theory $T_0$.
 Let $T_1$ be the extension of $T_0$ defined in \rprop{conf-main} (for some pair $(\varphi,V) \in P_M$) and let $R$ be its underlying term rewriting system.
