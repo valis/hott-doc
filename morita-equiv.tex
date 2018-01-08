@@ -859,6 +859,7 @@ To prove this, we just need to show that the unit of the adjunction is a weak eq
 But it is actually an isomorphism since $\Lang_T$ is full and faithful.
 
 \section{Characterization of lifting properties}
+\label{sec:char-lift-prop}
 
 In this section we prove several useful lemmas that characterize trivial fibrations in various model structures that we considered in previous section.
 Since all of these notations are defined in terms of lifting properties, we will prove general results about them.
@@ -1257,6 +1258,263 @@ By \rprop{conf-main}, there exists a term $r$ such that $f(t) \Rightarrow_R^* r$
 Since both terms $f(t)$ and $f(s)$ belong to $T$, all of the reduction rules used in these sequences are derivable in $T$ by the definition of a confluent extension.
 \end{proof}
 
+\section{Comparsion of algebraic and ordinary type theories}
+
+It is well-known that standard examples of type theories (such as theories of identity types, $\Sigma$-types, and $\Pi$-types) are confluent.
+Terms of algebraic type theories are similar to terms of usual type theories, but they still differ from them.
+The first difference is that they have an explicit substitution operation.
+Another difference is that they contain more information than ordinary terms so that the type and the context of a term can be inferred from it.
+In this section we prove that it is often possible to show that an algebraic type theory is confluent if corresponding usual type theory is.
+
+\subsection{Typing axioms}
+
+Let us begin by showing that a term rewriting system is confluent whenever the subsystem on terms without function symbols $\ty$ and $\ft$ is.
+To do this we need to know that typing axioms are well-behaved in some sense.
+\begin{defn}
+An axiom is a \emph{typing axiom} if it is of the form
+\[ \varphi \sststile{}{V} e_p(\sigma(x_1, \ldots x_k)) = s \]
+where $\sigma$ is neither $\ft$ nor $\ty$ and the function symbols $\ft$ and $\ty$ are applied only to variables in $s$ (if they appear in this term).
+An axiom $\varphi \sststile{}{V} t = s$ is a \emph{pure axiom} if the function symbols $\ft$ and $\ty$ do not appear in $t$ and $s$.
+We will say that a theory $T$ with directed axioms has \emph{separated typing axioms} if every rule in the underlying term rewriting system of $T$ is either a typing axiom or a pure axiom.
+The sets of typing and pure axioms will be denoted by $\mathcal{A}_t$ and $\mathcal{A}_p$, respectively.
+The sets of reduction rules corresponding to typing and pure axioms will be denoted by $R^t_T$ and $R^p_T$, respectively.
+
+Let $T$ be a theory with separated typing axioms.
+We will say that pure axioms of $T$ \emph{preserve types} if there is a well-founded relation on the set of pure axioms of $T$ such that,
+for every pure axiom $\varphi \sststile{}{V} t = s$, the sequent $\varphi \sststile{}{V} e_p(t) = e_p(s)$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_p'$,
+where $\mathcal{A}_p'$ is the set of pure axioms which are less than $\varphi \sststile{}{V} t = s$.
+\end{defn}
+
+The main property of theories with separated typing axioms is proved in the following lemma:
+
+\begin{lem}[types-red]
+Let $T$ be a theory with separated typing axioms.
+Then the term rewriting system $R^t_T$ is strongly normalizing and confluent.
+\end{lem}
+\begin{proof}
+To show that the system is strongly normalizing we define, for each term $t$, an ordinal $|t|$ less than $\varepsilon_0$ such that if $t \Rightarrow_{R^t_T} s$, then $|t| > |s|$:
+\begin{align*}
+|x| & = 0 \\
+|\ty(t)| = |\ft(t)| & = \omega^{|t|}\\
+|\sigma(t_1, \ldots t_k)| & = |t_1| \oplus \ldots \oplus |t_k| \oplus 1
+\end{align*}
+where $\oplus$ is the natural sum of ordinals.
+
+If $\ty(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t} s(\ty(t_1), \ldots \ty(t_k), t_1, \ldots t_k)$, then we need to show that $|\ty(\sigma(t_1, \ldots t_k))| > |s(\ty(t_1), \ldots \ty(t_k), t_1, \ldots t_k)|$.
+Let $\alpha_i = |t_i|$ and let $\alpha$ be the maximum of $\alpha_1$, \ldots $\alpha_k$.
+Then $|\ty(\sigma(t_1, \ldots t_k))| = \omega^{\alpha_1 \oplus \ldots \oplus \alpha_k \oplus 1} \geq \omega^{\alpha + 1}$.
+Note that $\ft$ and $\ty$ do not occur in the term $s$.
+It follows that
+\begin{align*}
+|s(\ty(t_1), \ldots \ty(t_k), t_1, \ldots t_k)| & = \omega^{\alpha_1} n_1 \oplus \ldots \oplus \omega^{\alpha_k} n_k \oplus \alpha_1 m_1 \oplus \ldots \oplus \alpha_k m_k \oplus c \\
+                                              & \leq \omega^\alpha n \oplus \alpha m \oplus c
+\end{align*}
+for some natural numbers $n_1$, \ldots $n_k$, $m_1$, \ldots $m_k$, $n$, $m$, and $c$.
+Since $\alpha \leq \omega^\alpha$ and $1 \leq \omega^\alpha$, we have $\omega^\alpha n \oplus \alpha m \oplus c \leq \omega^\alpha (n + m + c) < \omega^{\alpha + 1}$.
+
+By Newman's lemma (see \cite[Lemma~2.2.5]{ohlebusch-advanced} for a proof), to prove that a strongly normalizing system is confluent it is enough to show that it is locally confluent,
+that is if $a \Rightarrow_{R^t_T} b$ and $a \Rightarrow_{R^t_T} c$, then there exists a term $d$ such that $b \Rightarrow_{R^t_T}^* d$ and $c \Rightarrow_{R^t_T}^* d$.
+This is obvious in our case since the rules in $R^t_T$ do not overlap.
+\end{proof}
+
+We will need the following general lemma about term rewriting systems:
+
+\begin{lem}[conf-nf]
+Let $R_0$, $R_1$, and $R_2$ be term rewriting systems on the same theory $T$.
+Let $A$ be a subset of $\Term_T$ such that $(A,\Rightarrow_{R_0})$ is confluent, $(A,\Rightarrow_{R_1})$ is confluent and weakly normalizable
+and if $a,b \in A$ are such that $a \Rightarrow_{R_2} b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
+Then any two elements $a,b \in A$ which are equivalent under $R_2$ (that is, there is a zig-zag of $R_2$-reductions between them) are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
+\end{lem}
+\begin{proof}
+Since being joinable is a symmetric relation, we can assume that $R_2$ is also symmetric.
+Let $a_1$, \ldots, $a_n$ be a sequence such that $(a_i, a_{i+1}) \in R_2$ for every $1 \leq i < n$.
+We prove that $a_1$ and $a_n$ are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$ by induction on $n$.
+If $n = 0$, then this follows from the fact that $(A,\Rightarrow_{R_1})$ is weakly normalizable.
+Suppose $n > 0$.
+We have $a_1 \Rightarrow_{R_1}^{nf} a_1'$, $a_1' \Rightarrow_{R_0}^* c_1$, $a_{n-1} \Rightarrow_{R_1}^{nf} a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* b$ by assumption.
+We have $a_n \Rightarrow_{R_1}^{nf} a_n'$, $a_n' \Rightarrow_{R_0}^* c_2$, $a_{n-1} \Rightarrow_{R_1}^{nf} a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* c$ by the induction hypothesis.
+Since $R_0$ is confluent, $c \Rightarrow_{R_0}^* d$ and $c \Rightarrow_{R_0}^* d$:
+\[ \xymatrix@=1em{  a_1 \ar[rr]^{R_2^*} \ar@{-->}[d]^{R_1^{nf}} &                           & a_{n-1} \ar[rr]^{R_2} \ar@{-->}[d]^{R_1^{nf}}         &                           & a_n \ar@{-->}[d]^{R_1^{nf}}   \\
+                    a_1' \ar@{-->}[rd]_{R_0^*}                  &                           & a_{n-1}' \ar@{-->}[ld]_{R_0^*} \ar@{-->}[rd]^{R_0^*}  &                           & a_n' \ar@{-->}[ld]^{R_0^*}    \\
+                                                                & b \ar@{-->}[rd]_{R_0^*}   &                                                       & c \ar@{-->}[ld]^{R_0^*}   &                               \\
+                                                                &                           & d                                                     &                           &
+                 } \]
+\end{proof}
+
+Now we can prove that the confluence under $R^p_T$ implies the confluence under $R^p_T \cup R^t_T$ for closed defined terms (that is, terms $t$ such that the sequent $\sststile{}{} t\!\downarrow$ is derivable):
+
+\begin{prop}
+Let $T$ be a theory with well-defined typing axioms such that its pure axioms preserve types.
+Suppose that closed defined terms in which $\ty$ does not occur are confluent under $R^p_T$.
+Then closed defined terms of $T$ are confluent (in the underlying term rewriting system of $T$).
+\end{prop}
+\begin{proof}
+If $<$ is a well-founded relation on a set $A$, then we can define a well-founded relation on the set of subset of $A$ as follows.
+A subset $S$ is less than a subset $T$ if and only there is an element $a \in T$ which is greater than every element of $S$.
+It is easy to see that this relation is well-founded.
+
+Let $\psi = \psi_1 \land \ldots \land \psi_n$ be a closed formula such that if $\psi_i$ is of the form $t_1 = t_2$, then the terms $t_1$ and $t_2$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^p}^*$.
+We prove that, for every such formula $\psi$, whenever a sequent $\psi \sststile{}{} t = s$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_p'$ where $\mathcal{A}_p'$ is a subset of $\mathcal{A}_p$
+the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^p}^*$.
+The statement of the proposition then follows if we take $\psi = \top$ and $\mathcal{A}_p' = \mathcal{A}_p$.
+
+We proceed by double induction on the set $\mathcal{A}_p'$ (using the well-founded relation we just described) and (the size of) the derivation of $\psi \sststile{}{} t = s$.
+By \rlem{der-eq}, there is a zig-zag of reductions of the form $a \Rightarrow_{R_2} b$ between $t$ and $s$ where $a \Rightarrow_{R_2} b$ if and only if $a = c[a'[\rho]/x]$, $b = c[b'[\rho]/x]$,
+and either $a' = b'$ is a subformula of $\psi$ or $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_t \cup \mathcal{A}_p'$.
+Moreover, $\psi \sststile{}{} \varphi[\rho]$ is derivale and the size of derivation is less than the size of the derivation of $\psi \sststile{}{} t = s$, so the induction hypothesis applies to $\varphi[\rho]$.
+
+By assumption, closed defined terms in which $\ty$ does not occur are confluent under $R^p_T$.
+It is easy to see that all closed defined terms are confluent under $R^p_T$.
+Moreover, the term rewriting system $R^t_T$ is normalizing and confluent by \rlem{types-red}.
+Thus we can apply \rlem{conf-nf} to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^p}^*$.
+To do this, we need to prove that terms of the form $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$ are joinable assuming that there is an axiom $\varphi \sststile{}{V} a' = b'$ in $\mathcal{A}_t \cup \mathcal{A}_p'$.
+
+If $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_t$, then this is obvious since $c[a'[\rho]/x] \Rightarrow_{R_T^p} c[b'[\rho]/x]$, so they have the same $R_T^t$-normal form.
+Assume that $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_p'$.
+Since reduction rules in $R_T^p$ do not contain function symbols $\ft$ and $\ty$, a reduction rule from $R_T^p$ and a reduction rule from $R_T^t$ can overlap only in a term of the form $e_p(\sigma(t_1, \ldots t_k))$ as follows:
+$e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t} u[t_1/x_1, \ldots t_k/x_k]$ for some term $u$ and $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^p} e_p(v)$ for some term $v$.
+We may assume that $R_T^t$-reductions occur only in such overlappings since other $R_T^t$-redexes occur inside either $c$ or $\rho$, so if we reduce them in $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$
+we will still have a reduction of the form $c'[a'[\rho']/x] \Rightarrow_{R_T^p} c'[b'[\rho']/x]$ for some $c'$ and $\rho'$ such that $c \Rightarrow_{R_T^t}^* c'$ and $\rho \Rightarrow_{R_T^p}^* \rho'$.
+
+Since we reduce exactly one redex, the term $c'$ contains exactly one occurrence of the variable $x$.
+Since $a'$, $b'$, $c'$, and $\rho'$ do not contain $R_T^t$-redexes, such a redex can occur in terms $c'[a'[\rho']/x]$ and $c'[b'[\rho']/x]$ only when $c'$ contains a subterm of the form $e_p(x)$.
+So there is at most one $R_T^t$-redex in these terms.
+If there is no such redex, then we are done since these terms are $R_T^t$-normal forms and are joinable under $\Rightarrow_{R_T^p}^*$ since one of them reduces to the other.
+Otherwise, there is a term $c''$ such that $c'[a'[\rho']/x] = c''[e_p(a'[\rho'])/x]$ and $c'[b'[\rho']/x] = c''[e_p(b'[\rho'])/x]$.
+Since pure axioms of $T$ preserve types, the sequent $\varphi \sststile{}{V} e_p(a') = e_p(b')$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_p''$ for some $\mathcal{A}_p'' < \mathcal{A}_p'$,
+It follows that $\varphi[\rho'] \sststile{}{} c''[e_p(a'[\rho'])/x] = c''[e_p(b'[\rho'])/x]$ is also derivable from this set of axioms.
+Since the formula $\varphi[\rho]$ satisfies the hypothesis of our inductive proof and $\varphi[\rho] \Rightarrow_{R_T^t}^* \varphi[\rho']$, the latter formula also satisfies it.
+Moreover, since $\mathcal{A}_p'' < \mathcal{A}_p'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/x]$ and $c''[e_p(b'[\rho'])/x]$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^p}^*$.
+\end{proof}
+
+\begin{cor}[ya-morita-conf]
+Let $T_0$ be a theory with well-defined typing axioms such that its pure axioms preserve types and let $T_1$ be a theory as defined in \rprop{conf-main}.
+Suppose that closed defined terms of $T_0$ in which $\ty$ does not occur are confluent under $R^p_T$.
+Then closed defined terms of $T_1$ are confluent.
+\end{cor}
+\begin{proof}
+Let us prove that $T_1$ has separated typing axioms.
+Additional axioms of $T_1$ are of the form $\sststile{}{} e_p(c_i) = t_i$ where $c$ is a constant of $T_1$ and $t$ is a term which contains only constants $c_1$, \ldots $c_{i-1}$.
+We can choose terms $t_i$ in such a way that they do not contain the function symbols $\ft$ and $\ty$.
+Indeed, we can normalize $t_i$ by \rlem{types-red} so that these function symbols are applied only to $c_j$ (with $j < i$) and we can replace $e_p(c_j)$ with $t_j$.
+
+Since the only new axioms of $T_1$ are typing axioms, pure axioms of this theory preserve types.
+Thus we can apply the previous proposition to $T_1$.
+\end{proof}
+
+Note that even if we know that the term rewriting system is confluent, it does not imply that closed defined terms are confluent since defined terms may not be closed under reductions.
+But if we know that the conditions of \rdefn{confluent} hold, then this is true:
+\begin{cor}[conf-th]
+Let $T$ be a theory with well-defined typing axioms such that its pure axioms preserve types.
+Suppose that the following conditions hold:
+\begin{itemize}
+\item Closed terms of $T$ in which $\ty$ does not occur are confluent under $R^p_T$.
+\item For every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$ and every substitution $\rho$, if the sequent $\psi \sststile{}{V} t[\rho]\!\downarrow$ is derivable, then so is the sequent $\psi \sststile{}{V} \varphi[\rho]$.
+\end{itemize}
+Then $T$ is confluent.
+\end{cor}
+\begin{proof}
+By \rcor{ya-morita-conf}, we just need to show that closed \emph{defined} terms of $T$ in which $\ty$ does not occur are confluent under $R^p_T$.
+To do so, it is enough to show that defined terms are closed under reduction rules (closed terms are always closed under reduction rules in a theory with directed axioms).
+But this follows from the last assumption of this corollary.
+Indeed, if $a \Rightarrow b$, then there is an axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$, a substitution $\rho$, and a term $c$ such that $x \in FV(c)$, $a = c[t[\rho]/x]$, and $b = c[s[\rho]/x]$.
+We know that $\sststile{T}{} c[t[\rho]/x]\!\downarrow$ which implies $\sststile{T}{} t[\rho]\!\downarrow$ which implies $\sststile{T}{} \varphi[\rho]$ which implies $\sststile{T}{} t[\rho] = s[\rho]$.
+Finally, $\sststile{T}{} c[t[\rho]/x]\!\downarrow$ and $\sststile{T}{} t[\rho] = s[\rho]$ imply that $\sststile{T}{} c[s[\rho]/x]\!\downarrow$.
+\end{proof}
+
+\subsection{Contexts}
+
+In this subsection we will work with contextual theories with directed axioms (see \cite{alg-tt} for a definition of a contextual theory).
+If $T$ is a contextual theory, then we have a set of function symbols $\mathcal{F}_0$ (which we call \emph{basic function symbols}) such that the set of function symbols of $T$ consists of function symbols $\ft_m$, $\ty_m$, and the following function symbols:
+\[ \sigma_m : (\ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m) \]
+for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \in \mathcal{F}_0$ and $m \in \mathbb{N}$.
+Moreover, we may assume that $n = 0$ for every $\sigma \in \mathcal{F}_0$.
+
+Let $\mathcal{F}_0$ be the set of basic function symbols of the theory $T_0$.
+If $t$ is a term of $T$ in which function symbols $\ft_m$ and $\ty_m$ do not occur, then we can define a term $U(t) \in \Term_{\mathcal{F}_0}$ in the obvious way:
+\begin{align*}
+U(x) & = x \\
+U(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \sigma(U(t_1), \ldots U(t_k))
+\end{align*}
+
+Let $\Term_T$ be the set of closed defined terms of $T$ in which $\ty_m$ and $\ft_m$ do not occur.
+Let $\Term_T^c$ be the image of $\Term_T$ under $U$.
+The reduction relation on $\Term_T$ induces a reduction relation on $\Term_T^c$ in the obvious way.
+If $t \in \Term_T$, then let $C(t)$ be the multiset of terms discarded by $U$.
+That is, $C(t)$ is defined inductively as follows:
+\begin{align*}
+C(x) & = \varnothing \\
+C(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \{ \Gamma \} \cup \bigcup_{1 \leq i \leq k} C(t_i)
+\end{align*}
+There is a natural linear order on the multiset $C(t)$, so we can also think of it as a sequence of terms.
+
+\begin{defn}[simp-ctx]
+We will say that a contextual theory $T$ with directed axioms \emph{has simple contexts} if the following conditions hold:
+\begin{enumerate}
+\item For all terms $t$ and $s$ in $\Term_T$ such that $(t,s) \in R_T$, the multiset $C(t)$ consists of distinct variables and the multiset $C(s)$ consists of strongly normalizable terms.
+\item For every basic function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ and every $1 \leq i \leq k$,
+if the sequent $\sststile{}{\Gamma, x_1, \ldots x_k} \sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow$ is derivale,
+then there exists a term $A_{\sigma,i}$ such that $FV(A_{\sigma,i}) \subseteq \{ \Gamma, x_1, \ldots x_{i-1} \}$ and the sequent $\sststile{}{\Gamma, x_1, \ldots x_i} e_{p_i}(x_i) = A_{\sigma,i}$ is derivale.
+\item There is a well-founded relation on the set $\Term_T$ such that each element of $C(s)$ is less than $t$ whenever $t \Rightarrow_R^* s$.
+\end{enumerate}
+\end{defn}
+These conditions are true for all theories that occur in practice.
+The first condition is easy to verify, but the last two require some explanation.
+The second condition might not hold in a reasonable theory, but every theory is isomoprhic to a theory in which it holds.
+For example, we can define a theory of $\Pi$-types in which the application function symbol is defined as follows:
+\[ \ft(\ft(B)) = \Gamma \land \ty(b) = B \land \ty(a) = \ft(B) \sststile{}{\Gamma,B,b,a} \app_m(\Gamma,B,b,a)\!\downarrow \]
+This theory does not satisfy the second condition of \rdefn{simp-ctx}, but it is easy to modify the definition of $\app$ to fix this problem:
+\[ \ft(A) = \Gamma \land \ft(B) = A \land \ty(b) = B \land \ty(a) = A \sststile{}{\Gamma,A,B,b,a} \app_m(\Gamma,A,B,b,a)\!\downarrow \]
+This trick can be applied to any theory to get a theory satisfying the second condition of \rdefn{simp-ctx}.
+
+The third condition of \rdefn{simp-ctx} holds if the underlying term rewriting system of $T$ is strongly normalizing.
+Indeed, we can define a well-founded relation on the set $\Term_T$ as follows: $t_1 > t_2$ if $|t_1| > |t_2|$ where $|t_i|$ is the length of the longest sequence of reductions starting from $t_i$.
+If $t \Rightarrow_R^* s$, then $|t| > |s|$ and if $\Gamma \in C(s)$, then $\Gamma$ is a subterm of $s$, so $|s| \geq |\Gamma|$.
+Many theories that occur in practice are strongly normalizing, but this property is hard to verify, so let us describe another condition on a theory which implies that it has simple contexts.
+
+Let $T$ be a theory such that, for every pair of terms $t$ and $s$ in $\Term_T$ such that $(t,s) \in R_T$, the multiset $C(t)$ consists of distinct variables and $C(s) \subseteq C(t)$.
+Then the first and the third conditions of \rdefn{simp-ctx} hold for $T$.
+The first condition holds for obvious reasons.
+To prove the third condition, we define a well-founded relation on the set $\Term_T$ as follows: $t_1 > t_2$ if the size of $t_1$ is greater than the size of $t_2$.
+If $t \Rightarrow_R^* s$, then it is easy to see that $C(s) \subseteq C(t)$.
+Thus, for every $\Gamma \in C(s)$, the size of $\Gamma$ is less than the size of $t$.
+This condition is easy to verify and it holds for all theories that occur in practice.
+
+A theory with simple contexts satisfies the following properties:
+\begin{enumerate}
+\item \label{it:red-fib} Let $t$ be a term in $\Term_T$ such that $U(t) \Rightarrow_R s$ for some term $s$.
+Then there exists a term $s'$ such that $t \Rightarrow_R s'$ and $U(s') = s$.
+This follows from the fact that the same reduction rule that we applied to $U(t)$ also applies to $t$ since there is no additional conditions on $t$ by the assumption on $T$..
+\item \label{it:red-nf} $U$ preserves normal forms. This follows from the previous property.
+\end{enumerate}
+
+Now we can show that we can omit contexts if they are simple:
+\begin{prop}
+Let $T$ be a theory with simple contexts.
+Then the reduction relation on $\Term_T$ is confluent if and only if corresponding reduction relation on $\Term_T^c$ is confluent.
+\end{prop}
+\begin{proof}
+If $\Rightarrow_R$ is confluent on $\Term_T$, then it is easy to show that the same is true for $\Term_T^c$.
+Indeed, if we have a term $t \in \Term_T^c$ such that $t \Rightarrow_R^* t_1$ and $t \Rightarrow_R^* t_2$,
+then there is a term $t' \in \Term_T$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that $t' \Rightarrow_R^* t_1'$, $t' \Rightarrow_R^* t_2'$, $U(t_1') = t_1'$, and $U(t_2') = t_2'$.
+Since $t'$ is confluent, there exists a term $s'$ such that $t_1' \Rightarrow_R^* s'$ and $t_2' \Rightarrow_R^* s'$.
+Hence $U(t_1') \Rightarrow_R^* U(s')$ and $U(t_2') \Rightarrow_R^* U(s')$.
+
+Conversely, let $t_1$ and $t_2$ be equivalent terms in $\Term_T$.
+Note that \rlem{der-separated-closed} and \rlem{der-eq} imply that $t_1$ and $t_2$ are equivalent if and only if there is a zig-zag of reductions between $t_1$ and $t_2$.
+We proceed by induction on $t_1$.
+Since the reduction relation on $\Term_T^c$ is confluent, we have a term $s' \in \Term_T^c$ such that $U(t_1) \Rightarrow_R^* s'$ and $U(t_2) \Rightarrow_R^* s'$.
+By \eqref{it:red-fib}, there are terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_R^* s_1$, $t_2 \Rightarrow_R^* s_2$, and $U(s_1) = U(s_2) = s'$.
+
+To prove that $s_1$ and $s_2$ are joinable, it is enough to show that sequences $C(s_1)$ and $C(s_2)$ are equal up to equivalence.
+Indeed, if this is true, then we can conclude that $j$-th elements of $C(s_1)$ and $C(s_2)$ are joinable by induction hypothesis for every $j$.
+This implies that $s_1$ and $s_2$ are also joinable.
+The first elements of $C(s_i)$ are equivalent to $\ctx(s_i)$ and they are equivalent since $s_1$ and $s_2$ are.
+The second condition of \rdefn{simp-ctx} implies that other elements of $C(s_i)$ are determined by the first element.
+Indeed, if $\sststile{}{V} \sigma_m(\Delta, t_1, \ldots t_k)\!\downarrow$ is derivable, then $\sststile{}{V} e_{p_i}(t_i) = A_{\sigma,i}[\Delta/\Gamma, t_1/x_1, \ldots t_{i-1}/x_{i-1}]$ is also derivable.
+This implies that $j$-th element of $C(s_i)$ are equivalent for all $j$.
+\end{proof}
+
 \section{Applications}
 \label{sec:applications}
 
@@ -1444,269 +1702,6 @@ Since many type theories are constructed as coproducts of simple basic theories,
 If the confluence property is stable under the union in some class of theories, then we say that it is \emph{modular} for this class.
 It was shown by Toyama in \cite{toyama} (see also \cite{klop-confluence,oostrom-confluence}) that the confluence is modular for disjoint theories.
 There are many generalizations of this result for theories that may share particular some function symbols (see for instance \cite{ohlebusch-confluence,ohlebusch-composable,middeldorp-completeness}).
- 
-\appendix
-
-\section{Comparsion of algebraic and ordinary type theories}
-\label{sec:app-conf}
-
-It is well-known that standard examples of type theories (such as theories of identity types, $\Sigma$-types, and $\Pi$-types) are confluent and strongly normalizing.
-Terms of algebraic type theories are similar to terms of usual type theories, but they still differ from them.
-The first difference is that they have an explicit substitution operation.
-Another difference is that they contain more information than ordinary terms so that the type and the context of a term can be inferred from it.
-In this appendix we prove that it is often possible to show that an algebraic type theory is confluent if corresponding usual type theory is.
-
-Let us begin by showing that a term rewriting system is confluent whenever the subsystem on terms without function symbols $\ty$ and $\ft$ is.
-To do this we need to know that typing axioms are well-behaved in some sense.
-\begin{defn}
-An axiom is a \emph{typing axiom} if it is of the form
-\[ \varphi \sststile{}{V} e_p(\sigma(x_1, \ldots x_k)) = s \]
-where $\sigma$ is neither $\ft$ nor $\ty$ and the function symbols $\ft$ and $\ty$ are applied only to variables in $s$ (if they appear in this term).
-An axiom $\varphi \sststile{}{V} t = s$ is a \emph{pure axiom} if the function symbols $\ft$ and $\ty$ do not appear in $t$ and $s$.
-We will say that a theory $T$ with directed axioms has \emph{separated typing axioms} if every rule in the underlying term rewriting system of $T$ is either a typing axiom or a pure axiom.
-The sets of typing and pure axioms will be denoted by $\mathcal{A}_t$ and $\mathcal{A}_p$, respectively.
-The sets of reduction rules corresponding to typing and pure axioms will be denoted by $R^t_T$ and $R^p_T$, respectively.
-
-Let $T$ be a theory with separated typing axioms.
-We will say that pure axioms of $T$ \emph{preserve types} if there is a well-founded relation on the set of pure axioms of $T$ such that,
-for every pure axiom $\varphi \sststile{}{V} t = s$, the sequent $\varphi \sststile{}{V} e_p(t) = e_p(s)$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_p'$,
-where $\mathcal{A}_p'$ is the set of pure axioms which are less than $\varphi \sststile{}{V} t = s$.
-\end{defn}
-
-The main property of theories with separated typing axioms is proved in the following lemma:
-
-\begin{lem}[types-red]
-Let $T$ be a theory with separated typing axioms.
-Then the term rewriting system $R^t_T$ is strongly normalizing and confluent.
-\end{lem}
-\begin{proof}
-To show that the system is strongly normalizing we define, for each term $t$, an ordinal $|t|$ less than $\varepsilon_0$ such that if $t \Rightarrow_{R^t_T} s$, then $|t| > |s|$:
-\begin{align*}
-|x| & = 0 \\
-|\ty(t)| = |\ft(t)| & = \omega^{|t|}\\
-|\sigma(t_1, \ldots t_k)| & = |t_1| \oplus \ldots \oplus |t_k| \oplus 1
-\end{align*}
-where $\oplus$ is the natural sum of ordinals.
-
-If $\ty(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t} s(\ty(t_1), \ldots \ty(t_k), t_1, \ldots t_k)$, then we need to show that $|\ty(\sigma(t_1, \ldots t_k))| > |s(\ty(t_1), \ldots \ty(t_k), t_1, \ldots t_k)|$.
-Let $\alpha_i = |t_i|$ and let $\alpha$ be the maximum of $\alpha_1$, \ldots $\alpha_k$.
-Then $|\ty(\sigma(t_1, \ldots t_k))| = \omega^{\alpha_1 \oplus \ldots \oplus \alpha_k \oplus 1} \geq \omega^{\alpha + 1}$.
-Note that $\ft$ and $\ty$ do not occur in the term $s$.
-It follows that
-\begin{align*}
-|s(\ty(t_1), \ldots \ty(t_k), t_1, \ldots t_k)| & = \omega^{\alpha_1} n_1 \oplus \ldots \oplus \omega^{\alpha_k} n_k \oplus \alpha_1 m_1 \oplus \ldots \oplus \alpha_k m_k \oplus c \\
-                                              & \leq \omega^\alpha n \oplus \alpha m \oplus c
-\end{align*}
-for some natural numbers $n_1$, \ldots $n_k$, $m_1$, \ldots $m_k$, $n$, $m$, and $c$.
-Since $\alpha \leq \omega^\alpha$ and $1 \leq \omega^\alpha$, we have $\omega^\alpha n \oplus \alpha m \oplus c \leq \omega^\alpha (n + m + c) < \omega^{\alpha + 1}$.
-
-By Newman's lemma (see \cite[Lemma~2.2.5]{ohlebusch-advanced} for a proof), to prove that a strongly normalizing system is confluent it is enough to show that it is locally confluent,
-that is if $a \Rightarrow_{R^t_T} b$ and $a \Rightarrow_{R^t_T} c$, then there exists a term $d$ such that $b \Rightarrow_{R^t_T}^* d$ and $c \Rightarrow_{R^t_T}^* d$.
-This is obvious in our case since the rules in $R^t_T$ do not overlap.
-\end{proof}
-
-We will need the following general lemma about term rewriting systems:
-
-\begin{lem}[conf-nf]
-Let $R_0$, $R_1$, and $R_2$ be term rewriting systems on the same theory $T$.
-Let $A$ be a subset of $\Term_T$ such that $(A,\Rightarrow_{R_0})$ is confluent, $(A,\Rightarrow_{R_1})$ is confluent and weakly normalizable
-and if $a,b \in A$ are such that $a \Rightarrow_{R_2} b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
-Then any two elements $a,b \in A$ which are equivalent under $R_2$ (that is, there is a zig-zag of $R_2$-reductions between them) are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
-\end{lem}
-\begin{proof}
-Since being joinable is a symmetric relation, we can assume that $R_2$ is also symmetric.
-Let $a_1$, \ldots, $a_n$ be a sequence such that $(a_i, a_{i+1}) \in R_2$ for every $1 \leq i < n$.
-We prove that $a_1$ and $a_n$ are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$ by induction on $n$.
-If $n = 0$, then this follows from the fact that $(A,\Rightarrow_{R_1})$ is weakly normalizable.
-Suppose $n > 0$.
-We have $a_1 \Rightarrow_{R_1}^{nf} a_1'$, $a_1' \Rightarrow_{R_0}^* c_1$, $a_{n-1} \Rightarrow_{R_1}^{nf} a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* b$ by assumption.
-We have $a_n \Rightarrow_{R_1}^{nf} a_n'$, $a_n' \Rightarrow_{R_0}^* c_2$, $a_{n-1} \Rightarrow_{R_1}^{nf} a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* c$ by the induction hypothesis.
-Since $R_0$ is confluent, $c \Rightarrow_{R_0}^* d$ and $c \Rightarrow_{R_0}^* d$:
-\[ \xymatrix@=1em{  a_1 \ar[rr]^{R_2^*} \ar@{-->}[d]^{R_1^{nf}} &                           & a_{n-1} \ar[rr]^{R_2} \ar@{-->}[d]^{R_1^{nf}}         &                           & a_n \ar@{-->}[d]^{R_1^{nf}}   \\
-                    a_1' \ar@{-->}[rd]_{R_0^*}                  &                           & a_{n-1}' \ar@{-->}[ld]_{R_0^*} \ar@{-->}[rd]^{R_0^*}  &                           & a_n' \ar@{-->}[ld]^{R_0^*}    \\
-                                                                & b \ar@{-->}[rd]_{R_0^*}   &                                                       & c \ar@{-->}[ld]^{R_0^*}   &                               \\
-                                                                &                           & d                                                     &                           &
-                 } \]
-\end{proof}
-
-Now we can prove that the confluence under $R^p_T$ implies the confluence under $R^p_T \cup R^t_T$:
-
-\begin{prop}
-Let $T$ be a theory with well-defined typing axioms such that its pure axioms preserve types.
-Suppose that closed defined terms in which $\ty$ does not occur are confluent under $R^p_T$.
-Then closed defined terms of $T$ are confluent (in the underlying term rewriting system of $T$).
-\end{prop}
-\begin{proof}
-If $<$ is a well-founded relation on a set $A$, then we can define a well-founded relation on the set of subset of $A$ as follows.
-A subset $S$ is less than a subset $T$ if and only there is an element $a \in T$ which is greater than every element of $S$.
-It is easy to see that this relation is well-founded.
-
-Let $\psi = \psi_1 \land \ldots \land \psi_n$ be a closed formula such that if $\psi_i$ is of the form $t_1 = t_2$, then the terms $t_1$ and $t_2$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^p}^*$.
-We prove that, for every such formula $\psi$, whenever a sequent $\psi \sststile{}{} t = s$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_p'$ where $\mathcal{A}_p'$ is a subset of $\mathcal{A}_p$
-the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^p}^*$.
-The statement of the proposition then follows if we take $\psi = \top$ and $\mathcal{A}_p' = \mathcal{A}_p$.
-
-We proceed by double induction on the set $\mathcal{A}_p'$ (using the well-founded relation we just described) and (the size of) the derivation of $\psi \sststile{}{} t = s$.
-By \rlem{der-eq}, there is a zig-zag of reductions of the form $a \Rightarrow_{R_2} b$ between $t$ and $s$ where $a \Rightarrow_{R_2} b$ if and only if $a = c[a'[\rho]/x]$, $b = c[b'[\rho]/x]$,
-and either $a' = b'$ is a subformula of $\psi$ or $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_t \cup \mathcal{A}_p'$.
-Moreover, $\psi \sststile{}{} \varphi[\rho]$ is derivale and the size of derivation is less than the size of the derivation of $\psi \sststile{}{} t = s$, so the induction hypothesis applies to $\varphi[\rho]$.
-
-By assumption, closed defined terms in which $\ty$ does not occur are confluent under $R^p_T$.
-It is easy to see that all closed defined terms are confluent under $R^p_T$.
-Moreover, the term rewriting system $R^t_T$ is normalizing and confluent by \rlem{types-red}.
-Thus we can apply \rlem{conf-nf} to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^p}^*$.
-To do this, we need to prove that terms of the form $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$ are joinable assuming that there is an axiom $\varphi \sststile{}{V} a' = b'$ in $\mathcal{A}_t \cup \mathcal{A}_p'$.
-
-If $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_t$, then this is obvious since $c[a'[\rho]/x] \Rightarrow_{R_T^p} c[b'[\rho]/x]$, so they have the same $R_T^t$-normal form.
-Assume that $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_p'$.
-Since reduction rules in $R_T^p$ do not contain function symbols $\ft$ and $\ty$, a reduction rule from $R_T^p$ and a reduction rule from $R_T^t$ can overlap only in a term of the form $e_p(\sigma(t_1, \ldots t_k))$ as follows:
-$e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t} u[t_1/x_1, \ldots t_k/x_k]$ for some term $u$ and $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^p} e_p(v)$ for some term $v$.
-We may assume that $R_T^t$-reductions occur only in such overlappings since other $R_T^t$-redexes occur inside either $c$ or $\rho$, so if we reduce them in $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$
-we will still have a reduction of the form $c'[a'[\rho']/x] \Rightarrow_{R_T^p} c'[b'[\rho']/x]$ for some $c'$ and $\rho'$ such that $c \Rightarrow_{R_T^t}^* c'$ and $\rho \Rightarrow_{R_T^p}^* \rho'$.
-
-Since we reduce exactly one redex, the term $c'$ contains exactly one occurrence of the variable $x$.
-Since $a'$, $b'$, $c'$, and $\rho'$ do not contain $R_T^t$-redexes, such a redex can occur in terms $c'[a'[\rho']/x]$ and $c'[b'[\rho']/x]$ only when $c'$ contains a subterm of the form $e_p(x)$.
-So there is at most one $R_T^t$-redex in these terms.
-If there is no such redex, then we are done since these terms are $R_T^t$-normal forms and are joinable under $\Rightarrow_{R_T^p}^*$ since one of them reduces to the other.
-Otherwise, there is a term $c''$ such that $c'[a'[\rho']/x] = c''[e_p(a'[\rho'])/x]$ and $c'[b'[\rho']/x] = c''[e_p(b'[\rho'])/x]$.
-Since pure axioms of $T$ preserve types, the sequent $\varphi \sststile{}{V} e_p(a') = e_p(b')$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_p''$ for some $\mathcal{A}_p'' < \mathcal{A}_p'$,
-It follows that $\varphi[\rho'] \sststile{}{} c''[e_p(a'[\rho'])/x] = c''[e_p(b'[\rho'])/x]$ is also derivable from this set of axioms.
-Since the formula $\varphi[\rho]$ satisfies the hypothesis of our inductive proof and $\varphi[\rho] \Rightarrow_{R_T^t}^* \varphi[\rho']$, the latter formula also satisfies it.
-Moreover, since $\mathcal{A}_p'' < \mathcal{A}_p'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/x]$ and $c''[e_p(b'[\rho'])/x]$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^p}^*$.
-\end{proof}
-
-\begin{cor}[ya-morita-conf]
-Let $T_0$ be a theory with well-defined typing axioms such that its pure axioms preserve types and let $T_1$ be a theory as defined in \rprop{conf-main}.
-Suppose that closed defined terms of $T_0$ in which $\ty$ does not occur are confluent under $R^p_T$.
-Then closed defined terms of $T_1$ are confluent.
-\end{cor}
-\begin{proof}
-Let us prove that $T_1$ has separated typing axioms.
-Additional axioms of $T_1$ are of the form $\sststile{}{} e_p(c_i) = t_i$ where $c$ is a constant of $T_1$ and $t$ is a term which contains only constants $c_1$, \ldots $c_{i-1}$.
-We can choose terms $t_i$ in such a way that they do not contain the function symbols $\ft$ and $\ty$.
-Indeed, we can normalize $t_i$ by \rlem{types-red} so that these function symbols are applied only to $c_j$ (with $j < i$) and we can replace $e_p(c_j)$ with $t_j$.
-
-Since the only new axioms of $T_1$ are typing axioms, pure axioms of this theory preserve types.
-Thus we can apply the previous proposition to $T_1$.
-\end{proof}
-
-Note that even if we know that the term rewriting system is confluent, it does not imply that closed defined terms are confluent since defined terms may not be closed under reductions.
-But if we know that the conditions of \rdefn{confluent} hold, then this is true:
-\begin{cor}[conf-th]
-Let $T$ be a theory with well-defined typing axioms such that its pure axioms preserve types.
-Suppose that the following conditions hold:
-\begin{itemize}
-\item Closed terms of $T$ in which $\ty$ does not occur are confluent under $R^p_T$.
-\item For every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$ and every substitution $\rho$, if the sequent $\psi \sststile{}{V} t[\rho]\!\downarrow$ is derivable, then so is the sequent $\psi \sststile{}{V} \varphi[\rho]$.
-\end{itemize}
-Then $T$ is confluent.
-\end{cor}
-\begin{proof}
-By \rcor{ya-morita-conf}, we just need to show that closed \emph{defined} terms of $T$ in which $\ty$ does not occur are confluent under $R^p_T$.
-To do so, it is enough to show that defined terms are closed under reduction rules (closed terms are always closed under reduction rules in a theory with directed axioms).
-But this follows from the last assumption of this corollary.
-Indeed, if $a \Rightarrow b$, then there is an axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$ and a substitution $\rho$ such that $a = t[\rho]$ and $b = s[\rho]$.
-Since $\sststile{T}{} t[\rho]\!\downarrow$, it follows that $\sststile{T}{} \varphi[\rho]$, so $\sststile{T}{} s[\rho]\!\downarrow$.
-\end{proof}
-
-
-
-We will work with contextual theories with directed axioms (see \cite{alg-tt} for a definition of a contextual theory).
-If $T$ is a contextual theory, then we have a set of function symbols $\mathcal{F}_0$ such that the set of function symbols of $T$ consists of the following function symbols:
-\[ \sigma_m : (\ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m) \]
-for every $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \in \mathcal{F}_0$ and $m \in \mathbb{N}$.
-Moreover, we may assume that $n = 0$ for every $\sigma \in \mathcal{F}_0$.
-
-Let $\mathcal{F}_0$ be the set of basic function symbols of the theory $T_0$.
-Let $T_1$ be the extension of $T_0$ defined in \rprop{conf-main} (for some pair $(\varphi,V) \in P_M$) and let $R$ be its underlying term rewriting system.
-Let $\Term_{\mathcal{F}_0}$ be the set of terms constructed from the function symbols in $\mathcal{F}_0 \cup \{ \ty, \ft \} \cup \{ c_1, \ldots c_n \}$.
-So, $\Term_{\mathcal{F}_0}$ is the set of terms of $T_1 = T_0 \cup \{ c_1, \ldots c_n \}$ in which we omit contexts.
-If $t$ is a term of $T_1$, then we can define a term $U(t) \in \Term_{\mathcal{F}_0}$ in the obvious way:
-\begin{align*}
-U(x) & = x \\
-U(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \sigma(U(t_1), \ldots U(t_k))
-\end{align*}
-
-Let $\Term_T$ be the set of closed defined terms of $T_1$, that is the set of terms $t$ such that the sequent $\sststile{}{} t\!\downarrow$ is derivable.
-Let $\Term_T^c$ be the image of $\Term_T$ under $U$.
-The reduction relation on $\Term_T$ induces a reduction relation on $\Term_T^c$ in the obvious way.
-If $t \in \Term_T$, then let $C(t)$ be the multiset of terms discarded by $U$.
-That is, $C(t)$ is defined inductively as follows:
-\begin{align*}
-C(x) & = \varnothing \\
-C(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \{ \Gamma \} \cup \bigcup_{1 \leq i \leq k} C(t_i)
-\end{align*}
-There is a natural linear order on the multiset $C(t)$, so we can also think of it as a sequence of terms.
-
-Let $T_0$ be a contextual theory with directed axioms such that, for all terms $t$ and $s$ in $\Term_T$ such that $R(t,s)$,
-the multiset $C(t)$ consists of distinct variables and the multiset $C(s)$ consists of strongly normalizable terms.
-Such a theory satisfies the following properties:
-\begin{enumerate}
-\item \label{it:red-fib} Let $t$ be a term in $\Term_T$ such that $U(t) \Rightarrow_R s$ for some term $s$.
-Then there exists a term $s'$ such that $t \Rightarrow_R s'$ and $U(s') = s$.
-This follows from the fact that the same reduction rule that we applied to $U(t)$ also applies to $t$ since there is no additional conditions on $t$ by the assumption on $T$..
-\item \label{it:red-nf} $U$ preserves normal forms. This follows from the previous property.
-\end{enumerate}
-This is a very mild assumption that holds for all theories that occur in practice.
-
-Now, we can show that $R$ is normalizing if and only if it becomes normalizing after applying $U$:
-\begin{prop}
-The reduction relation on $\Term_T$ is strongly normalizing if and only if the same is true for the induced reduction relation on $\Term_T^c$.
-\end{prop}
-\begin{proof}
-If there is an infinite sequence $t_1 \Rightarrow_R t_2 \Rightarrow_R \ldots$ in $\Term_T^c$, then there is a term $t_1'$ such that $U(t_1)$ and \eqref{it:red-fib} implies that there is an infinite sequence of reductions starting with $t_1'$.
-Conversely, suppose that $\Term_T^c$ is strongly normalizing.
-We prove by induction on a term $t_1 \in \Term_T$ that there is no infinite reduction sequences starting with $t_1$.
-Let $t_1 \Rightarrow_R t_2 \Rightarrow_R \ldots$ be such a sequence.
-Note that, for every $i \geq 1$, every $\Gamma \in C(t_i)$ is strongly normalizable.
-Indeed, by the induction hypothesis, this is true for $i = 1$.
-Every term $\Gamma$ in $C(t_{i+1})$ belongs to either $C(t_i)$ or $C(s)$ for some term $s$ such that $R(t,s)$.
-In both cases, $\Gamma$ is strongly normalizable.
-This implies that the sequence $U(t_1) \Rightarrow_R^* U(t_2) \Rightarrow_R^* \ldots$ contains an infinite subsequence of reductions.
-\end{proof}
-
-% 1. Get rid of ft
-% 2. Get rid of contexts
-% 3. Get rid of ty -- ???
-% 4. Get rid of subst
-
-It is harder to prove analogous result for confluence and we need an additional assumption for that:
-\begin{prop}
-If the reduction relation on $\Term_T$ is confluent, then the same is true for the induced reduction relation on $\Term_T^c$.
-The converse holds if there is a well-founded relation on the set $\Term_T$ such that each element of $C(s)$ is less than $t$ whenever $t \Rightarrow_R^* s$.
-\end{prop}
-\begin{proof}
-If $\Rightarrow_R$ is confluent on $\Term_T$, then it is easy to show that the same is true for $\Term_T^c$.
-Indeed, if we have a term $t \in \Term_T^c$ such that $t \Rightarrow_R^* t_1$ and $t \Rightarrow_R^* t_2$,
-then there is a term $t' \in \Term_T$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that $t' \Rightarrow_R^* t_1'$, $t' \Rightarrow_R^* t_2'$, $U(t_1') = t_1'$, and $U(t_2') = t_2'$.
-Since $t'$ is confluent, there exists a term $s'$ such that $t_1' \Rightarrow_R^* s'$ and $t_2' \Rightarrow_R^* s'$.
-Hence $U(t_1') \Rightarrow_R^* U(s')$ and $U(t_2') \Rightarrow_R^* U(s')$.
-
-Conversely, let $t_1$ and $t_2$ be equivalent terms in $\Term_T$.
-Note that \rlem{der-separated-closed} and \rlem{der-eq} imply that $t_1$ and $t_2$ are equivalent if and only if there is a zig-zag of reductions between $t_1$ and $t_2$.
-We proceed by induction on $t_1$.
-Since the reduction relation on $\Term_T^c$ is confluent, we have a term $s' \in \Term_T^c$ such that $U(t_1) \Rightarrow_R^* s'$ and $U(t_2) \Rightarrow_R^* s'$.
-By \eqref{it:red-fib}, there are terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_R^* s_1$, $t_2 \Rightarrow_R^* s_2$, and $U(s_1) = U(s_2) = s'$.
-
-TODO
-Let us show that $j$-th elements in sequences $C(s_1)$ and $C(s_2)$ are equivalent for every $j$.
-The first elements of $C(s_i)$ are equivalent to $\ctx(s_i)$ and they are equivalent since $s_1$ and $s_2$ are.
-
-The first assumption of this proposition implies that contexts of $s_1$ and $s_2$ are equivalent.
-The second assumption implies that every term in $C(s_1)$ is less than $t_1$, so we can apply the induction hypothesis to conclude that $j$-th terms in $C(s_1)$ and $C(s_2)$ reduce to the same term for every $j$.
-This implies that $s_1$ and $s_2$ also reduce to the same term.
-\end{proof}
-
-% For every term $t = \sigma_m(\Gamma, t_1, \ldots t_k)$ and every $1 \leq i \leq k$, there exists a term $C_i$ such that there is a zig-zag of reductions between $\ctx(t_i)$ and $C_i$.
-
-% We also want to construct a term $F(\Gamma,t) \in \Term_\mathcal{F}(V)_{(p,n)}$ for every pair of terms $\Gamma \in \Term_\mathcal{F}(V)_{(\ctx,n)}$ and $t \in \Term_{\mathcal{F}_0}(V)_{(p,n)}$.
-% To do this, we assume that every function symbol $\sigma \in \mathcal{F}_0$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ is equipped 
-
-% We prove by induction on t and s that if t ~ s, then there is a term r such that t => r and s => r.
-% Indeed, we have U(t) => r' <= U(s). Then t => r1 and s => r2 such that U(r1) = U(r2) = r.
-% Now, we just need to show that, for every position in $r$, the corresponding contexts in $r1$ and $r2$ reduce to the same term.
-% We know that they are equivalent since r1 and r2 are.
-% Every context in $r1$ comes from a context in $t$, so we can apply the induction hypothesis.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
