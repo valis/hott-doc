@@ -1133,8 +1133,8 @@ An element $a$ is \emph{confluent} if whenever $a \Rightarrow^* b$ and $a \Right
 The system is confluent if every element is confluent.
 Equivalently, the system is confluent if every pair of elements is joinable.
 \item An element $a$ is a \emph{normal form} if there is no element $a'$ such that $a \Rightarrow a'$.
-We will write $a \Rightarrow^{nf} b$ if $a \Rightarrow^* b$ and $b$ is a normal form.
-We will say that an element $a$ \emph{has a normal form} (or that it is \emph{weakly normalizable}) if $a \Rightarrow^{nf} b$ for some $b$.
+We will write $a \Rightarrow^\nf b$ if $a \Rightarrow^* b$ and $b$ is a normal form.
+We will say that an element $a$ \emph{has a normal form} (or that it is \emph{weakly normalizable}) if $a \Rightarrow^\nf b$ for some $b$.
 The system is \emph{weakly normalizing} if every element has a normal form.
 \item An element $a$ is \emph{strongly normalizable} if there is no infinite reduction sequence sequence starting with $a$.
 The system is \emph{strongly normalizing} if all elements are.
@@ -1291,7 +1291,7 @@ To do this we need to know that typing axioms are well-behaved in some sense.
 An axiom is a \emph{typing axiom} if it is of the form
 \[ \varphi \sststile{}{V} e_p(\sigma(x_1, \ldots x_k)) = s \]
 where $\sigma$ is neither $\ft$ nor $\ty$ and the function symbols $\ft$ and $\ty$ are applied only to variables in $s$ (if they appear in this term).
-An axiom $\varphi \sststile{}{V} t = s$ is a \emph{$\ty$-free (and an $\ft$-free) axiom} if the function symbols $\ft$ and $\ty$ do not appear in $t$ and $s$.
+An axiom $\varphi \sststile{}{V} t = s$ is a \emph{$\ty$-free (and $\ft$-free) axiom} if the function symbols $\ft$ and $\ty$ do not appear in $t$ and $s$.
 We will say that a theory $T$ with directed axioms has \emph{separated typing axioms} if every rule in the underlying term rewriting system of $T$ is either a typing axiom or a $\ty$-free axiom.
 The sets of typing and $\ty$-free axioms will be denoted by $\mathcal{A}_t$ and $\mathcal{A}_{tf}$, respectively.
 The sets of reduction rules corresponding to typing and $\ty$-free axioms will be denoted by $R^t_T$ and $R^{tf}_T$, respectively.
@@ -1339,42 +1339,45 @@ We will need the following general lemma about term rewriting systems:
 \begin{lem}[conf-nf]
 Let $R_0$, $R_1$, and $R_2$ be term rewriting systems on the same theory $T$.
 Let $A$ be a subset of $\Term_T$ such that $(A,\Rightarrow_{R_0})$ is confluent, $(A,\Rightarrow_{R_1})$ is confluent and weakly normalizable
-and if $a,b \in A$ are such that $a \Rightarrow_{R_2} b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
-Then any two elements $a,b \in A$ which are equivalent under $R_2$ (that is, there is a zig-zag of $R_2$-reductions between them) are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$.
+and if $a,b \in A$ are such that $a \Rightarrow_{R_2} b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_{R_1}^\nf \Rightarrow_{R_0}^*$.
+Then any two elements $a,b \in A$ which are equivalent under $R_2$ (that is, there is a zig-zag of $R_2$-reductions between them) are joinable under $\Rightarrow_{R_1}^\nf \Rightarrow_{R_0}^*$.
 \end{lem}
 \begin{proof}
 Since being joinable is a symmetric relation, we can assume that $R_2$ is also symmetric.
 Let $a_1$, \ldots, $a_n$ be a sequence such that $(a_i, a_{i+1}) \in R_2$ for every $1 \leq i < n$.
-We prove that $a_1$ and $a_n$ are joinable under $\Rightarrow_{R_1}^{nf} \Rightarrow_{R_0}^*$ by induction on $n$.
+We prove that $a_1$ and $a_n$ are joinable under $\Rightarrow_{R_1}^\nf \Rightarrow_{R_0}^*$ by induction on $n$.
 If $n = 0$, then this follows from the fact that $(A,\Rightarrow_{R_1})$ is weakly normalizable.
 Suppose $n > 0$.
-We have $a_1 \Rightarrow_{R_1}^{nf} a_1'$, $a_1' \Rightarrow_{R_0}^* c_1$, $a_{n-1} \Rightarrow_{R_1}^{nf} a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* b$ by assumption.
-We have $a_n \Rightarrow_{R_1}^{nf} a_n'$, $a_n' \Rightarrow_{R_0}^* c_2$, $a_{n-1} \Rightarrow_{R_1}^{nf} a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* c$ by the induction hypothesis.
+We have $a_1 \Rightarrow_{R_1}^\nf a_1'$, $a_1' \Rightarrow_{R_0}^* c_1$, $a_{n-1} \Rightarrow_{R_1}^\nf a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* b$ by assumption.
+We have $a_n \Rightarrow_{R_1}^\nf a_n'$, $a_n' \Rightarrow_{R_0}^* c_2$, $a_{n-1} \Rightarrow_{R_1}^\nf a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* c$ by the induction hypothesis.
 Since $R_0$ is confluent, $c \Rightarrow_{R_0}^* d$ and $c \Rightarrow_{R_0}^* d$:
-\[ \xymatrix@=1em{  a_1 \ar[rr]^{R_2^*} \ar@{-->}[d]^{R_1^{nf}} &                           & a_{n-1} \ar[rr]^{R_2} \ar@{-->}[d]^{R_1^{nf}}         &                           & a_n \ar@{-->}[d]^{R_1^{nf}}   \\
+\[ \xymatrix@=1em{  a_1 \ar[rr]^{R_2^*} \ar@{-->}[d]^{R_1^\nf}  &                           & a_{n-1} \ar[rr]^{R_2} \ar@{-->}[d]^{R_1^\nf}          &                           & a_n \ar@{-->}[d]^{R_1^\nf}    \\
                     a_1' \ar@{-->}[rd]_{R_0^*}                  &                           & a_{n-1}' \ar@{-->}[ld]_{R_0^*} \ar@{-->}[rd]^{R_0^*}  &                           & a_n' \ar@{-->}[ld]^{R_0^*}    \\
                                                                 & b \ar@{-->}[rd]_{R_0^*}   &                                                       & c \ar@{-->}[ld]^{R_0^*}   &                               \\
                                                                 &                           & d                                                     &                           &
                  } \]
 \end{proof}
 
-We will say that a closed term $t$ is \emph{defined} if the sequent $\sststile{}{} t\!\downarrow$ is derivable.
-Let $\Term_T^t$ be the set of closed defined terms in which function symbols $\ty$ and $\ft$ do not occur.
-Now we can prove that the confluence under $R^{tf}_T$ implies the confluence under $R^{tf}_T \cup R^t_T$ for closed defined terms.
+We will say that a term $t$ is \emph{defined} with respect to a pair $(\varphi,V) \in P_M$ if the sequent $\varphi \sststile{}{V} t\!\downarrow$ is derivable.
+Let $\Term_{T,\varphi}^d$ be the set of defined terms with respect to some pair $(\varphi,FV(\varphi))$.
+Let $\Term_{T,\varphi}^t$ be the subset of $\Term_{T,\varphi}^d$ consisting of terms in which function symbols $\ty$ and $\ft$ do not occur.
+Now we can prove that the confluence under $R^{tf}_T$ implies the confluence under $R^{tf}_T \cup R^t_T$.
 
 \begin{prop}
-Let $T$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types.
-Suppose that terms in $\Term_T^t$ are confluent under $R^{tf}_T$.
-Then closed defined terms of $T$ are confluent (in the underlying term rewriting system of $T$).
+Let $T$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types and let $(\varphi,V)$ be a pair in $P_M$.
+Suppose that the abstract reduction system $(\Term_{T,\varphi}^t,\Rightarrow_{R^{tf}_T})$ is confluent.
+Then the abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R^{tf}_T \cup R^t_T})$ is also confluent.
 \end{prop}
 \begin{proof}
+TODO
+
 If $<$ is a well-founded relation on a set $A$, then we can define a well-founded relation on the set of subset of $A$ as follows.
 A subset $S$ is less than a subset $T$ if and only there is an element $a \in T$ which is greater than every element of $S$.
 It is easy to see that this relation is well-founded.
 
-Let $\psi = \psi_1 \land \ldots \land \psi_n$ be a closed formula such that if $\psi_i$ is of the form $t_1 = t_2$, then the terms $t_1$ and $t_2$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^{tf}}^*$.
+Let $\psi = \psi_1 \land \ldots \land \psi_n$ be a closed formula such that if $\psi_i$ is of the form $t_1 = t_2$, then the terms $t_1$ and $t_2$ are joinable under $\Rightarrow_{R_T^t}^\nf \Rightarrow_{R_T^{tf}}^*$.
 We prove that, for every such formula $\psi$, whenever a sequent $\psi \sststile{}{} t = s$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}'$ where $\mathcal{A}_{tf}'$ is a subset of $\mathcal{A}_{tf}$
-the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^{tf}}^*$.
+the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^\nf \Rightarrow_{R_T^{tf}}^*$.
 The statement of the proposition then follows if we take $\psi = \top$ and $\mathcal{A}_{tf}' = \mathcal{A}_{tf}$.
 
 We proceed by double induction on the set $\mathcal{A}_{tf}'$ (using the well-founded relation we just described) and (the size of) the derivation of $\psi \sststile{}{} t = s$.
@@ -1382,10 +1385,10 @@ By \rlem{der-eq}, there is a zig-zag of reductions of the form $a \Rightarrow_{R
 and either $a' = b'$ is a subformula of $\psi$ or $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_t \cup \mathcal{A}_{tf}'$.
 Moreover, $\psi \sststile{}{} \varphi[\rho]$ is derivale and the size of derivation is less than the size of the derivation of $\psi \sststile{}{} t = s$, so the induction hypothesis applies to $\varphi[\rho]$.
 
-By assumption, closed defined terms in which $\ty$ and $\ft$ do not occur are confluent under $R^{tf}_T$.
-It is easy to see that all closed defined terms are confluent under $R^{tf}_T$.
+By assumption, defined terms in which $\ty$ and $\ft$ do not occur are confluent under $R^{tf}_T$.
+It is easy to see that all defined terms are confluent under $R^{tf}_T$.
 Moreover, the term rewriting system $R^t_T$ is normalizing and confluent by \rlem{types-red}.
-Thus we can apply \rlem{conf-nf} to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^{tf}}^*$.
+Thus we can apply \rlem{conf-nf} to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^\nf \Rightarrow_{R_T^{tf}}^*$.
 To do this, we need to prove that terms of the form $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$ are joinable assuming that there is an axiom $\varphi \sststile{}{V} a' = b'$ in $\mathcal{A}_t \cup \mathcal{A}_{tf}'$.
 
 If $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_t$, then this is obvious since $c[a'[\rho]/x] \Rightarrow_{R_T^{tf}} c[b'[\rho]/x]$, so they have the same $R_T^t$-normal form.
@@ -1403,39 +1406,36 @@ Otherwise, there is a term $c''$ such that $c'[a'[\rho']/x] = c''[e_p(a'[\rho'])
 Since $\ty$-free axioms of $T$ preserve types, the sequent $\varphi \sststile{}{V} e_p(a') = e_p(b')$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}''$ for some $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$,
 It follows that $\varphi[\rho'] \sststile{}{} c''[e_p(a'[\rho'])/x] = c''[e_p(b'[\rho'])/x]$ is also derivable from this set of axioms.
 Since the formula $\varphi[\rho]$ satisfies the hypothesis of our inductive proof and $\varphi[\rho] \Rightarrow_{R_T^t}^* \varphi[\rho']$, the latter formula also satisfies it.
-Moreover, since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/x]$ and $c''[e_p(b'[\rho'])/x]$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^{tf}}^*$.
+Moreover, since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/x]$ and $c''[e_p(b'[\rho'])/x]$ are joinable under $\Rightarrow_{R_T^t}^\nf \Rightarrow_{R_T^{tf}}^*$.
 \end{proof}
 
 \begin{cor}[ya-morita-conf]
 Let $T_0$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types and let $T_1$ be a theory as defined in \rprop{conf-main}.
-Suppose that terms in $\Term_{T_0}^t$ are confluent under $R^{tf}_{T_0}$.
+Suppose that the abstract reduction system $(\Term_{T_0,\varphi}^t,\Rightarrow_{R^{tf}_{T_0}})$ is confluent for every $\varphi$.
 Then closed defined terms of $T_1$ are confluent.
 \end{cor}
 \begin{proof}
-Let us prove that $T_1$ has separated typing axioms.
-Additional axioms of $T_1$ are of the form $\sststile{}{} e_p(c_i) = t_i$ where $c$ is a constant of $T_1$ and $t$ is a term which contains only constants $c_1$, \ldots $c_{i-1}$.
-We can choose terms $t_i$ in such a way that they do not contain the function symbols $\ft$ and $\ty$.
-Indeed, we can normalize $t_i$ by \rlem{types-red} so that these function symbols are applied only to $c_j$ (with $j < i$) and we can replace $e_p(c_j)$ with $t_j$.
-
-Since the only new axioms of $T_1$ are typing axioms, $\ty$-free axioms of this theory preserve types.
-Thus we can apply the previous proposition to $T_1$.
+The theory $T_1$ has separated typing axioms and the only new axioms of $T_1$ are typing axioms, so $\ty$-free axioms of $T_1$ preserve types.
+Note that there is an isomorphism between abstract reduction systems $(\Term_{T_0,\varphi}^t,\Rightarrow_{R^{tf}_{T_0}})$ and $(\Term_{T_1,\top},\Rightarrow_{R^{tf}_{T_1}})$.
+Thus we can apply the previous proposition to $T_1$ with $\varphi = \top$.
 \end{proof}
 
-Note that even if we know that the term rewriting system is confluent, it does not imply that closed defined terms are confluent since defined terms may not be closed under reductions.
+Note that even if we know that the term rewriting system is confluent, it does not imply that defined terms are confluent since they may not be closed under reductions.
 But if we know that the conditions of \rdefn{confluent} hold, then this is true:
 \begin{cor}[conf-th]
 Let $T$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types.
 Suppose that the following conditions hold:
 \begin{itemize}
-\item Terms in $\Term_T^t$ are confluent under $R^{tf}_T$.
-\item For every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$ and every substitution $\rho$, if the sequent $\psi \sststile{}{V} t[\rho]\!\downarrow$ is derivable, then so is the sequent $\psi \sststile{}{V} \varphi[\rho]$.
+\item The abstract reduction system $(\Term_{T,\varphi}^t,\Rightarrow_{R^{tf}_T})$ is confluent for every $\varphi$.
+\item For every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$, every pair $(\psi,V) \in P_M$, and every substitution $\rho$,
+if the sequent $\psi \sststile{}{V} t[\rho]\!\downarrow$ is derivable, then so is the sequent $\psi \sststile{}{V} \varphi[\rho]$.
 \end{itemize}
 Then $T$ is confluent.
 \end{cor}
 \begin{proof}
-By \rcor{ya-morita-conf}, we just need to show that closed \emph{defined} terms of $T$ in which $\ty$ does not occur are confluent under $R^{tf}_T$.
-To do so, it is enough to show that defined terms are closed under reduction rules (closed terms are always closed under reduction rules in a theory with directed axioms).
-But this follows from the last assumption of this corollary.
+By \rcor{ya-morita-conf}, we just need to show that defined terms of $T$ in which $\ty$ does not occur are confluent under $R^{tf}_T$.
+To do so, it is enough to show that defined terms are closed under reduction rules.
+But this follows from the second assumption of this corollary.
 Indeed, if $a \Rightarrow b$, then there is an axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$, a substitution $\rho$, and a term $c$ such that $x \in FV(c)$, $a = c[t[\rho]/x]$, and $b = c[s[\rho]/x]$.
 We know that $\sststile{T}{} c[t[\rho]/x]\!\downarrow$ which implies $\sststile{T}{} t[\rho]\!\downarrow$ which implies $\sststile{T}{} \varphi[\rho]$ which implies $\sststile{T}{} t[\rho] = s[\rho]$.
 Finally, $\sststile{T}{} c[t[\rho]/x]\!\downarrow$ and $\sststile{T}{} t[\rho] = s[\rho]$ imply that $\sststile{T}{} c[s[\rho]/x]\!\downarrow$.
@@ -1466,7 +1466,13 @@ Corresponding reduction rules look like this:
 \subst_{p,n,k}(C, \subst_{p,k,m}(B, a, a_1, \ldots a_m), b_1, \ldots b_k) & \Rightarrow \subst_{p,n,m}(C, a, a_1', \ldots a_m')
 \end{align*}
 where $a_i' = \subst_{\tm,n,k}(C, a_i, b_1, \ldots b_k)$, $b_i' = \subst^{n_1}_{p_1,n,m}(\Gamma, b_i, a_1, \ldots a_m)$,
-and function symbols $\subst^k_{p,n,m}$ are defined in \cite[Subsection~4.3]{alg-tt}.
+and function symbols $\subst^k_{p,n,m} : (ctx,n) \times (p,m+k) \times (tm,n)^m \to (p,n+k)$ are defined by induction on $k$.
+Let $\subst^{-1}_{\ty,n,m}(\Gamma, A, a_1, \ldots a_m) = \Gamma$.
+If $k \geq 0$, then let $\subst^k_{p,n,m}(\Gamma, a, a_1, \ldots a_m)$ be equal to
+\[ \subst_{p,n+k,m+k}(\Gamma', a, \wk^k_{\tm,n}(\Gamma',a_1), \ldots \wk^k_{\tm,n}(\Gamma',a_m), v_{k-1}(\Gamma'), \ldots v_0(\Gamma')), \]
+where $\Gamma' = \subst^{k-1}_{\ty,n,m}(\Gamma, \ctx_{m+k}(a), a_1, \ldots a_m)$ and
+\[ \wk^k_{p,n}(\Gamma,a) = \subst_{p,n+k,n}(\Gamma, a, v_{n+k-1}(\Gamma), \ldots v_k(\Gamma)). \]
+
 To show that we can eliminate function symbols $\subst_{p,n,m}$, we need to assume that reduction rules are well-behaved in some sense with respect to substitutions.
 For example, we can assume that the only reduction rules in which function symbols $\subst_{p,n,m}$ occur on the left are the ones listed above.
 But there is an example of a theory which we want to consider and which does not satisfy this condition.
@@ -1483,17 +1489,6 @@ This problem can be fixed, but let us consider the simple situation first.
 % We can fix this problem by adding more axioms:
 % \[ \ty(a) = A \land \ty(i) = I \sststile{}{a,i} \coe_1(A, a, i) = a \]
 % where $A$ is a closed term such that there is a closed term $A'$ such that w
-
-\begin{defn}
-Let $T$ be a theory with separated typing axioms.
-We will say that axioms of $T$ are \emph{well-behaved with respect to substitution} if the rules listed above are the only rules
-in which function symbols $\subst_{p,n,k}$ appear on the left hand side.
-\end{defn}
-
-If $T$ is a theory in which axioms are well-behaved with respecto to substitution, then we will call a $\ty$-free axiom
-in which $\subst_{p,n,k}$ occur on the left hand side \emph{substitution axioms} and the rest of the $\ty$-free axioms will be called \emph{$\subst$-free axioms}.
-The sets of substitution and $\subst$-free axioms will be denoted by $\mathcal{A}_s$ and $\mathcal{A}_{sf}$, respectively.
-The sets of reduction rules corresponding to substitution and $\subst$-free axioms will be denoted by $R^s_T$ and $R^{sf}_T$, respectively.
 
 Let $T$ be a theory with separated typing axioms.
 A $\ty$-free axiom of $T$ is called a \emph{substitution axiom} if it is one of the axioms for $\subst_{p,n,k}$ listed above.
@@ -1513,14 +1508,14 @@ TODO
 Let $\Term_T^s$ be the set of closed defined terms in which function symbols $\ty_m$, $\ft_m$, and $\subst_{p,n,k}$ do not occur.
 
 \begin{prop}[subst-elim]
-Let $T$ be a theory in which axioms are well-behaved with respect to substitution.
+Let $T$ be a theory with separated substitution axioms.
 Then the reduction relation $R^{tf}_T$ on $\Term_T^t$ is confluent if and only if the reduction relation $R^{sf}_T$ on $\Term_T^s$ is confluent.
 \end{prop}
 \begin{proof}
 Since $\Term_T^s$ is a subset of $\Term_T$ which is closed under reductions, the ``only if'' direction is obvious.
 The converse follows from \rlem{conf-nf}.
 By \rlem{subst-red}, $R_T^s$ is strongly normalizing and confluent, so we just need to check that if $t \Rightarrow_{R_T^{sf}} s$,
-then the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^s}^{nf} \Rightarrow_{R_T^{sf}}^*$.
+then the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^s}^\nf \Rightarrow_{R_T^{sf}}^*$.
 TODO
 \end{proof}
 
