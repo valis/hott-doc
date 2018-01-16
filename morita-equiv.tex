@@ -1267,6 +1267,22 @@ The first difference is that they have an explicit substitution operation.
 Another difference is that they contain more information than ordinary terms so that the type and the context of a term can be inferred from it.
 In this section we prove that it is often possible to show that an algebraic type theory is confluent if corresponding usual type theory is.
 
+More precisely, for every contextual theory $T$, we will define a set $\Term_T^c$ which can be described informally as the set of closed defined terms
+in which function symbols $\ty_m$, $\ft_m$, and $\subst_{p,n,k}$ do not occur and in which we omit contexts in function symbols.
+The precise definition will be given in subsection~\ref{sec:contexts}.
+This set corresponds to the set of terms of an ordinary type theory.
+Then we can prove the following theorem:
+
+\begin{thm}[conf-comp]
+Let $T$ be a contextual type theory with separated typing axioms, separated substitution axioms, and simple contexts in which $\ty$-free axioms preserve types.
+Suppose that the induced reduction relation on $\Term_T^c$ is confluent and, for every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$ and every substitution $\rho$,
+if the sequent $\psi \sststile{}{V} t[\rho]\!\downarrow$ is derivable, then so is the sequent $\psi \sststile{}{V} \varphi[\rho]$.
+Then $T$ is confluent.
+\end{thm}
+
+The technical assumptions that we put on the theory will be defined in this section.
+The theorem itself follows from \rcor{conf-th}, \rprop{subst-elim}, and \rprop{ctx-elim}.
+
 \subsection{Typing axioms}
 
 Let us begin by showing that a term rewriting system is confluent whenever the subsystem on terms without function symbols $\ty$ and $\ft$ is.
@@ -1342,11 +1358,13 @@ Since $R_0$ is confluent, $c \Rightarrow_{R_0}^* d$ and $c \Rightarrow_{R_0}^* d
                  } \]
 \end{proof}
 
-Now we can prove that the confluence under $R^{tf}_T$ implies the confluence under $R^{tf}_T \cup R^t_T$ for closed defined terms (that is, terms $t$ such that the sequent $\sststile{}{} t\!\downarrow$ is derivable):
+We will say that a closed term $t$ is \emph{defined} if the sequent $\sststile{}{} t\!\downarrow$ is derivable.
+Let $\Term_T^t$ be the set of closed defined terms in which function symbols $\ty$ and $\ft$ do not occur.
+Now we can prove that the confluence under $R^{tf}_T$ implies the confluence under $R^{tf}_T \cup R^t_T$ for closed defined terms.
 
 \begin{prop}
 Let $T$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types.
-Suppose that closed defined terms in which $\ty$ does not occur are confluent under $R^{tf}_T$.
+Suppose that terms in $\Term_T^t$ are confluent under $R^{tf}_T$.
 Then closed defined terms of $T$ are confluent (in the underlying term rewriting system of $T$).
 \end{prop}
 \begin{proof}
@@ -1364,7 +1382,7 @@ By \rlem{der-eq}, there is a zig-zag of reductions of the form $a \Rightarrow_{R
 and either $a' = b'$ is a subformula of $\psi$ or $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_t \cup \mathcal{A}_{tf}'$.
 Moreover, $\psi \sststile{}{} \varphi[\rho]$ is derivale and the size of derivation is less than the size of the derivation of $\psi \sststile{}{} t = s$, so the induction hypothesis applies to $\varphi[\rho]$.
 
-By assumption, closed defined terms in which $\ty$ does not occur are confluent under $R^{tf}_T$.
+By assumption, closed defined terms in which $\ty$ and $\ft$ do not occur are confluent under $R^{tf}_T$.
 It is easy to see that all closed defined terms are confluent under $R^{tf}_T$.
 Moreover, the term rewriting system $R^t_T$ is normalizing and confluent by \rlem{types-red}.
 Thus we can apply \rlem{conf-nf} to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^{nf} \Rightarrow_{R_T^{tf}}^*$.
@@ -1390,7 +1408,7 @@ Moreover, since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induc
 
 \begin{cor}[ya-morita-conf]
 Let $T_0$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types and let $T_1$ be a theory as defined in \rprop{conf-main}.
-Suppose that closed defined terms of $T_0$ in which $\ty$ does not occur are confluent under $R^{tf}_T$.
+Suppose that terms in $\Term_{T_0}^t$ are confluent under $R^{tf}_{T_0}$.
 Then closed defined terms of $T_1$ are confluent.
 \end{cor}
 \begin{proof}
@@ -1409,7 +1427,7 @@ But if we know that the conditions of \rdefn{confluent} hold, then this is true:
 Let $T$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types.
 Suppose that the following conditions hold:
 \begin{itemize}
-\item Closed terms of $T$ in which $\ty$ does not occur are confluent under $R^{tf}_T$.
+\item Terms in $\Term_T^t$ are confluent under $R^{tf}_T$.
 \item For every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$ and every substitution $\rho$, if the sequent $\psi \sststile{}{V} t[\rho]\!\downarrow$ is derivable, then so is the sequent $\psi \sststile{}{V} \varphi[\rho]$.
 \end{itemize}
 Then $T$ is confluent.
@@ -1443,7 +1461,7 @@ Evety such theory $T$ has a few $\ty$-free axioms that involve function symbols 
 Corresponding reduction rules look like this:
 \begin{align*}
 \subst_{p,n,k}(B, v_i(A), a_1, \ldots a_n) & \Rightarrow a_{n-i} \\
-\subst_{\tm,n,n}(\Gamma, a, v_{k-1}(\Gamma), \ldots v_0(\Gamma)) & \Rightarrow a \\
+\subst_{\tm,n,n}(\Gamma, a, v_{n-1}(\Gamma), \ldots v_0(\Gamma)) & \Rightarrow a \\
 \subst_{p,n,m}(\Gamma, \sigma_m(\Delta, b_1, \ldots b_k), a_1, \ldots a_m) & \Rightarrow \sigma_n(\Gamma, b_1', \ldots b_k') \\
 \subst_{p,n,k}(C, \subst_{p,k,m}(B, a, a_1, \ldots a_m), b_1, \ldots b_k) & \Rightarrow \subst_{p,n,m}(C, a, a_1', \ldots a_m')
 \end{align*}
@@ -1492,12 +1510,11 @@ Then closed defined terms of the term rewriting system $R^s_T$ are strongly norm
 TODO
 \end{proof}
 
-Let $\Term_T$ be the set of closed defined terms of $T$ in which function symbols $\ty_m$ and $\ft_m$ do not occur
-and let $\Term_T^s$ be the subset of $\Term_T$ consisting of terms in which function symbols $\subst_{p,n,k}$ do not occur.
+Let $\Term_T^s$ be the set of closed defined terms in which function symbols $\ty_m$, $\ft_m$, and $\subst_{p,n,k}$ do not occur.
 
-\begin{prop}
+\begin{prop}[subst-elim]
 Let $T$ be a theory in which axioms are well-behaved with respect to substitution.
-Then the reduction relation on $\Term_T$ is confluent if and only if the induced reduction relation on $\Term_T^s$ is confluent.
+Then the reduction relation $R^{tf}_T$ on $\Term_T^t$ is confluent if and only if the reduction relation $R^{sf}_T$ on $\Term_T^s$ is confluent.
 \end{prop}
 \begin{proof}
 Since $\Term_T^s$ is a subset of $\Term_T$ which is closed under reductions, the ``only if'' direction is obvious.
@@ -1510,34 +1527,39 @@ TODO
 TODO: Consider more complicated case.
 
 \subsection{Contexts}
+\label{sec:contexts}
 
-Let $\mathcal{F}_0$ be the set of basic function symbols of the theory $T_0$.
-If $t$ is a term of $T$ in which function symbols $\ft_m$ and $\ty_m$ do not occur, then we can define a term $U(t) \in \Term_{\mathcal{F}_0}$ in the obvious way:
+Let $T$ be a contextual theory and let $\mathcal{F}_0$ be the set of its basic function symbols.
+Let $\mathcal{F}_0'$ be the set consisting of elements of $\mathcal{F}_0$ and function symbols $v_0$ for all $i \in \mathbb{N}$.
+If $t$ is a term of $T$ in which function symbols $\ft_m$, $\ty_m$, and $\subst_{p,n,k}$ do not occur, then we can define a term $U(t) \in \Term_{\mathcal{F}'_0}$ in the obvious way:
 \begin{align*}
 U(x) & = x \\
-U(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \sigma(U(t_1), \ldots U(t_k))
+U(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \sigma(U(t_1), \ldots U(t_k)) \\
+U(v_{n,i}(\Gamma)) & = v_i
 \end{align*}
 
-Let $\Term_T$ be the set of closed defined terms of $T$ in which $\ty_m$ and $\ft_m$ do not occur.
-Let $\Term_T^c$ be the image of $\Term_T$ under $U$.
-If $T$ has separated typing axioms, then $\ty$-free axioms of $T$ induces a reduction relation on $\Term_T^c$ in the obvious way.
+Let $\Term_T^c$ be the image of $\Term_T^s$ under $U$.
+The reduction relation $R^{sf}_T$ induces a reduction relation $R^{cf}_T$ on $\Term_T^c$ in the obvious way:
+it is the minimal relation containing pairs $(U(t),U(s))$ for all $(t,s) \in R^{sf}_T$.
 
-If $t \in \Term_T$, then let $C(t)$ be the multiset of terms discarded by $U$.
+If $t \in \Term_T^s$, then let $C(t)$ be the set of terms discarded by $U$.
 That is, $C(t)$ is defined inductively as follows:
 \begin{align*}
 C(x) & = \varnothing \\
-C(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \{ \Gamma \} \cup \bigcup_{1 \leq i \leq k} C(t_i)
+C(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \{ \Gamma \} \cup \bigcup_{1 \leq i \leq k} C(t_i) \\
+C(v_{n,i}(\Gamma)) & = \{ \Gamma \}
 \end{align*}
+Sometimes we need to regard $C(t)$ as a sequence in which case the order is 
 There is a natural linear order on the multiset $C(t)$, so we can also think of it as a sequence of terms.
 
 \begin{defn}[simp-ctx]
 We will say that a contextual theory $T$ with directed axioms \emph{has simple contexts} if the following conditions hold:
 \begin{enumerate}
-\item For all terms $t$ and $s$ in $\Term_T$ such that $(t,s) \in R_T$, the multiset $C(t)$ consists of distinct variables and the multiset $C(s)$ consists of strongly normalizable terms.
+\item For all terms $t$ and $s$ in $\Term_T^s$ such that $(t,s) \in R_T$, the set $C(t)$ consists of distinct variables and the set $C(s)$ consists of strongly normalizable terms.
 \item For every basic function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ and every $1 \leq i \leq k$,
 if the sequent $\sststile{}{\Gamma, x_1, \ldots x_k} \sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow$ is derivale,
 then there exists a term $A_{\sigma,i}$ such that $FV(A_{\sigma,i}) \subseteq \{ \Gamma, x_1, \ldots x_{i-1} \}$ and the sequent $\sststile{}{\Gamma, x_1, \ldots x_i} e_{p_i}(x_i) = A_{\sigma,i}$ is derivale.
-\item There is a well-founded relation on the set $\Term_T$ such that each element of $C(s)$ is less than $t$ whenever $t \Rightarrow_R^* s$.
+\item There is a well-founded relation on the set $\Term_T^s$ such that each element of $C(s)$ is less than $t$ whenever $t \Rightarrow_R^* s$.
 \end{enumerate}
 \end{defn}
 These conditions are true for all theories that occur in practice.
@@ -1550,41 +1572,41 @@ This theory does not satisfy the second condition of \rdefn{simp-ctx}, but it is
 This trick can be applied to any theory to get a theory satisfying the second condition of \rdefn{simp-ctx}.
 
 The third condition of \rdefn{simp-ctx} holds if the underlying term rewriting system of $T$ is strongly normalizing.
-Indeed, we can define a well-founded relation on the set $\Term_T$ as follows: $t_1 > t_2$ if $|t_1| > |t_2|$ where $|t_i|$ is the length of the longest sequence of reductions starting from $t_i$.
+Indeed, we can define a well-founded relation on the set $\Term_T^s$ as follows: $t_1 > t_2$ if $|t_1| > |t_2|$ where $|t_i|$ is the length of the longest sequence of reductions starting from $t_i$.
 If $t \Rightarrow_R^* s$, then $|t| > |s|$ and if $\Gamma \in C(s)$, then $\Gamma$ is a subterm of $s$, so $|s| \geq |\Gamma|$.
 Many theories that occur in practice are strongly normalizing, but this property is hard to verify, so let us describe another condition on a theory which implies that it has simple contexts.
 
-Let $T$ be a theory such that, for every pair of terms $t$ and $s$ in $\Term_T$ such that $(t,s) \in R_T$, the multiset $C(t)$ consists of distinct variables and $C(s) \subseteq C(t)$.
+Let $T$ be a theory such that, for every pair of terms $t$ and $s$ in $\Term_T^s$ such that $(t,s) \in R_T$, the set $C(t)$ consists of distinct variables and $C(s) \subseteq C(t)$.
 This condition is easy to verify and it holds for all theories that occur in practice.
 If it holds, then the first and the third conditions of \rdefn{simp-ctx} hold for $T$.
 The first condition holds for obvious reasons.
-To prove the third condition, we define a well-founded relation on the set $\Term_T$ as follows: $t_1 > t_2$ if the size of $t_1$ is greater than the size of $t_2$.
+To prove the third condition, we define a well-founded relation on the set $\Term_T^s$ as follows: $t_1 > t_2$ if the size of $t_1$ is greater than the size of $t_2$.
 If $t \Rightarrow_R^* s$, then it is easy to see that $C(s) \subseteq C(t)$.
 Thus, for every $\Gamma \in C(s)$, the size of $\Gamma$ is less than the size of $t$.
 
 A theory with simple contexts satisfies the following properties:
 \begin{enumerate}
-\item \label{it:red-fib} Let $t$ be a term in $\Term_T$ such that $U(t) \Rightarrow_R s$ for some term $s$.
+\item \label{it:red-fib} Let $t$ be a term in $\Term_T^s$ such that $U(t) \Rightarrow_R s$ for some term $s$.
 Then there exists a term $s'$ such that $t \Rightarrow_R s'$ and $U(s') = s$.
 This follows from the fact that the same reduction rule that we applied to $U(t)$ also applies to $t$ since there is no additional conditions on $t$ by the assumption on $T$..
 \item \label{it:red-nf} $U$ preserves normal forms. This follows from the previous property.
 \end{enumerate}
 
 Now we can show that we can omit contexts if they are simple:
-\begin{prop}
+\begin{prop}[ctx-elim]
 Let $T$ be a theory with simple contexts.
-Then the reduction relation on $\Term_T$ is confluent if and only if corresponding reduction relation on $\Term_T^c$ is confluent.
+Then the reduction relation $R^{sf}_T$ on $\Term_T^s$ is confluent if and only if the corresponding reduction relation on $\Term_T^c$ is confluent.
 \end{prop}
 \begin{proof}
-If $\Rightarrow_R$ is confluent on $\Term_T$, then it is easy to show that the same is true for $\Term_T^c$.
+If $\Rightarrow_R$ is confluent on $\Term_T^s$, then it is easy to show that the same is true for $\Term_T^c$.
 Indeed, if we have a term $t \in \Term_T^c$ such that $t \Rightarrow_R^* t_1$ and $t \Rightarrow_R^* t_2$,
-then there is a term $t' \in \Term_T$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that $t' \Rightarrow_R^* t_1'$, $t' \Rightarrow_R^* t_2'$, $U(t_1') = t_1'$, and $U(t_2') = t_2'$.
+then there is a term $t' \in \Term_T^s$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that $t' \Rightarrow_R^* t_1'$, $t' \Rightarrow_R^* t_2'$, $U(t_1') = t_1'$, and $U(t_2') = t_2'$.
 Since $t'$ is confluent, there exists a term $s'$ such that $t_1' \Rightarrow_R^* s'$ and $t_2' \Rightarrow_R^* s'$.
 Hence $U(t_1') \Rightarrow_R^* U(s')$ and $U(t_2') \Rightarrow_R^* U(s')$.
 
-Conversely, let $t_1$ and $t_2$ be equivalent terms in $\Term_T$.
+Conversely, let $t_1$ and $t_2$ be equivalent terms in $\Term_T^s$.
 Note that \rlem{der-separated-closed} and \rlem{der-eq} imply that $t_1$ and $t_2$ are equivalent if and only if there is a zig-zag of reductions between $t_1$ and $t_2$.
-We proceed by induction on $t_1$.
+We proceed by induction on $t_1$ (using the well-founded relation from \rdefn{simp-ctx}).
 Since the reduction relation on $\Term_T^c$ is confluent, we have a term $s' \in \Term_T^c$ such that $U(t_1) \Rightarrow_R^* s'$ and $U(t_2) \Rightarrow_R^* s'$.
 By \eqref{it:red-fib}, there are terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_R^* s_1$, $t_2 \Rightarrow_R^* s_2$, and $U(s_1) = U(s_2) = s'$.
 
@@ -1637,8 +1659,7 @@ If we replace this axiom with the following one, then we obtain a new theory whi
 
 We want to show that the obvious map $T_\Pi \to T_\Pi'$ is a Morita equivalence.
 It is a folklore result that the underlying term rewriting system of $T_\Pi'$ is confluent.
-By \rcor{conf-th}, % TODO: another proposition?
-the theory $T_\Pi'$ is confluent.
+By \rthm{conf-comp}, the theory $T_\Pi'$ is confluent.
 
 Let us show that the condition of \rprop{ext-morita} holds.
 Note that the formula $\app(A,B,\lambda(A,b),a)\!\downarrow$ is equivalent to $\ft(B) = A \land \Pi(A,\ty(b)) = \Pi(A,B) \land \ty(a) = A$.
