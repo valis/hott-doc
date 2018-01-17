@@ -1192,57 +1192,69 @@ Let $t_1$, \ldots $t_n$ be a sequence for $\varphi \sststile{}{V} p = q$ and let
 Then $t'[t_n/y]$, \ldots $t'[t_1/y] = s_1$, \ldots $s_m = s'[t_1/y]$, \ldots $s'[t_n/y]$ is a sequence for $\varphi \sststile{}{V} t'[q/y] = s'[q/y]$.
 \end{proof}
 
-The following propositions shows that equivalent terms of a theory with directed axioms are joinable in the underlying term rewriting system:
+We will say that a term $t$ of a theory $T$ is \emph{defined} with respect to a pair $(\varphi,V) \in P_M$ if the sequent $\varphi \sststile{}{V} t\!\downarrow$ is derivable.
+Let $\Term_{T,\varphi}^d$ be the set of defined terms with respect to the pair $(\varphi,FV(\varphi))$.
+There is an abstract reduction system $\Rightarrow_\varphi$ on the set $\Term_{T,\varphi}^d$ defined as follows.
+If $\varphi = \varphi_1 \land \ldots \land \varphi_n$ and $\varphi_i$ equals to $e_{p_i}(x_i) = t_i$, then $\Rightarrow_\varphi$ consists of pairs $(e_{p_i},t_i)$ for every $1 \leq i \leq n$.
+We will denote by $\Rightarrow_{R_T,\varphi}$ the relation $\Rightarrow_{R_T} \cup \Rightarrow_\varphi$.
+The following propositions shows that equivalent terms of a theory with directed axioms are joinable under this relation:
 
 \begin{prop}[conf-main]
-Let $T_0$ be a theory with directed axioms and let $(\varphi,V)$ be a pair in $P_M$ where $\varphi = \varphi_1 \land \ldots \land \varphi_n$.
-Suppose that closed defined terms of the theory $T_1 = T_0 \cup \{ \sststile{}{} \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ are confluent.
-Let $\varphi \sststile{T_0}{V} t = s$ be a derivable sequent.
-Then there exists a term $r$ of $T_1$ such that $t[c_1/x_1, \ldots c_n/x_n] \Rightarrow_{R_{T_1}}^* r$ and $s[c_1/x_1, \ldots c_n/x_n] \Rightarrow_{R_{T_1}}^* r$.
+Let $T$ be a theory with directed axioms and let $(\varphi,V)$ be a pair in $P_M$ where $\varphi = \varphi_1 \land \ldots \land \varphi_n$.
+Suppose that the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent.
+Then any pair of terms $t$ and $s$ such that $\varphi \sststile{T}{V} t = s$ is joinable in this system.
 \end{prop}
 \begin{proof}
-By \rlem{mcf}, the sequent $\sststile{}{} t' = s'$ is derivable in $T_1$, where $t' = t[c_1/x_1, \ldots c_n/x_n]$ and $s' = s[c_1/x_1, \ldots c_n/x_n]$.
-By \rlem{der-eq} and \rprop{der-separated}, there exists a sequence $t_1$, \ldots $t_n$ such that $t' = t_1$, $s' = t_n$, and, for every $1 \leq i < n$, either $t_i \Rightarrow_{R_{T_1}} t_{i+1}$ or $t_{i+1} \Rightarrow_{R_{T_1}} t_i$.
-Since $T_0$ is confluent, this implies that $t' \Rightarrow_{R_{T_1}}^* r$ and $s' \Rightarrow_{R_{T_1}}^* r$ for some term $r$.
+By \rlem{der-eq} and \rprop{der-separated}, there exists a sequence $t_1$, \ldots $t_n$ such that $t' = t_1$, $s' = t_n$, and, for every $1 \leq i < n$, either $t_i \Rightarrow_{R_T,\varphi} t_{i+1}$ or $t_{i+1} \Rightarrow_{R_T,\varphi} t_i$.
+Since $T$ is confluent, this implies that $t' \Rightarrow_{R_T,\varphi}^* r$ and $s' \Rightarrow_{R_T,\varphi}^* r$ for some term $r$.
 \end{proof}
 
-Note that if $T_0$ has directed axioms, then so does $T_1$, but $R_{T_1}$ may not be confluent even if $R_{T_0}$ is
-and we need the stronger condition since otherwise we can apply \rprop{conf-main} only to sequents of the form $\sststile{}{} t = s$.
-Nevertheless, the confluence of $R_{T_0}$ implies the confluence of $R_{T_1}$ under some mild additional assumptions:
+Note that even if $R_T$ is confluent, in general this does not imply the confluence of $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$.
+Nevertheless, this is often true under some additional assumptions:
 
 \begin{lem}[morita-conf]
-Let $T_0$ be a theory with directed axioms and let $T_1$ be a theory as defined in \rprop{conf-main}.
+Let $T$ be a theory with directed axioms and let $(\varphi,V)$ be a pair in $P_M$.
 Suppose that the following conditions hold:
 \begin{itemize}
-\item The underlying term rewriting system $R_0$ of $T_0$ is left-linear.
-\item Every closed defined term of $T_1$ is confluent in the term rewriting system $(\Term_{T_1},R_0)$.
-\item For every reduction rule $(t,s) \in R_0$, if $t$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
+\item The underlying term rewriting system of $T$ is left-linear.
+\item The abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T})$ is confluent.
+\item For every reduction rule $(t,s) \in R_T$, if $t$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
 \end{itemize}
-Then closed defined terms of $T_1$ are confluent.
+Then the abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent.
 \end{lem}
 \begin{proof}
-Let $R_1 = R_{T_1} \setminus R_0$.
-The last condition implies that the systems $R_0$ and $R_1$ are orthogonal to each other.
+We can think of variables in $V$ as additional constants.
+Then $\Rightarrow_{R_T,\varphi}$ is the union of two confluent term rewriting systems $R_T$ and $\Rightarrow_\varphi$.
+The last condition implies that they are orthogonal to each other.
 It was shown in \cite{raoult} (see also \cite[Theorem~8.6.35]{ohlebusch-advanced}) that the union of confluent orthogonal left-linear systems is confluent.
 \end{proof}
 
-The only serious restriction of the previous lemma is the left-linearity of $R_0$.
+The only serious restriction of the previous lemma is the left-linearity of $R_T$.
 We will give another set of conditions that implies the same result in \rcor{ya-morita-conf}.
 
 If we want to use \rprop{conf-main}, then we need to know that the reduction rules that were constructed in this proposition are derivable.
 In general, this might be false, so we define confluent theories as theories in which this property holds:
 
 \begin{defn}[confluent]
-A \emph{confluent} type theory is a type theory $T_0$ with directed axioms such that, for every pair $(\psi,V)$ in $P_M$,
-closed defined terms of the theory $T_1$ defined in \rprop{conf-main} are confluent and,
-for every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$ and every substitution $\rho$,
-if $\psi \sststile{T}{V} t[\rho]\!\downarrow$, then $\psi \sststile{T}{V} \varphi[\rho]$.
+A \emph{confluent} type theory is a type theory $T$ with directed axioms such that the following conditions hold for every pair $(\varphi,V)$ in $P_M$:
+\begin{enumerate}
+\item \label{it:conf-first} For every pair of terms $t$ and $s$ such that the sequent $\varphi \sststile{}{V} t = s$ is derivable, they are joinable under $\Rightarrow_{R_T,\varphi}$.
+\item \label{it:conf-second} For every axiom $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$ and every substitution $\rho$, if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
+\end{enumerate}
 \end{defn}
+
+\begin{remark}
+If the second condition of \rdefn{confluent} holds, then the converse of \rprop{conf-main} is true.
+That is, for every confluent theory $T$, the abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent.
+Indeed, if $t$ is defined and $t \Rightarrow_{R_T,\varphi} s$, then \eqref{it:conf-second} implies that $\varphi \sststile{T}{V} t = s$.
+Thus, if $t \Rightarrow_{R_T,\varphi} s_1$ and $t \Rightarrow_{R_T,\varphi} s_2$, then $\varphi \sststile{T}{V} s_1 = s_2$.
+Now \eqref{it:conf-first} implies that $s_1$ and $s_2$ are joinable.
+\end{remark}
 
 We can also define a relative version of confluent theories:
 
 \begin{defn}
-A \emph{confluent extension} of a theory $T$ is a confluent theory $T'$ such that $T \subseteq T'$ and, for every term $t$ of $T$ and every term $s$ of $T'$ such that $R_{T'}(t,s)$,
+A \emph{confluent extension} of a theory $T$ is a confluent theory $T'$ such that $T \subseteq T'$ and, for every term $t$ of $T$ and every term $s$ of $T'$ such that $(t,s) \in R_{T'}$,
 the term $s$ also belongs to $T$ and $t\!\downarrow\ \sststile{}{FV(t)} t = s$ is derivable in $T$.
 A \emph{confluent morphism} is a morphism of theories that isomorphic to the inclusion of some theory into its confluent extension.
 \end{defn}
@@ -1254,8 +1266,7 @@ Let $f : T \to T'$ be a confluent map and let $(\varphi,V)$ be a pair in $P_M$.
 If $\varphi \sststile{T}{V} t\!\downarrow\!\land\,s\!\downarrow$ and $f(\varphi) \sststile{T'}{V} f(t) = f(s)$, then $\varphi \sststile{T}{V} t = s$.
 \end{prop}
 \begin{proof}
-By \rlem{mcf}, we may assume that $\varphi = \top$ and $V = \varnothing$.
-By \rprop{conf-main}, there exists a term $r$ such that $f(t) \Rightarrow_R^* r$ and $f(s) \Rightarrow_R^* r$.
+By \rprop{conf-main}, there exists a term $r$ such that $f(t) \Rightarrow_{R_T,\varphi}^* r$ and $f(s) \Rightarrow_{R_T,\varphi}^* r$.
 Since both terms $f(t)$ and $f(s)$ belong to $T$, all of the reduction rules used in these sequences are derivable in $T$ by the definition of a confluent extension.
 \end{proof}
 
@@ -1267,21 +1278,20 @@ The first difference is that they have an explicit substitution operation.
 Another difference is that they contain more information than ordinary terms so that the type and the context of a term can be inferred from it.
 In this section we prove that it is often possible to show that an algebraic type theory is confluent if corresponding usual type theory is.
 
-More precisely, for every contextual theory $T$, we will define a set $\Term_T^c$ which can be described informally as the set of closed defined terms
+More precisely, for every contextual theory $T$, we will define a set $\Term_{T,\varphi}^c$ which can be described informally as the set of defined terms
 in which function symbols $\ty_m$, $\ft_m$, and $\subst_{p,n,k}$ do not occur and in which we omit contexts in function symbols.
 The precise definition will be given in subsection~\ref{sec:contexts}.
 This set corresponds to the set of terms of an ordinary type theory.
 Then we can prove the following theorem:
 
 \begin{thm}[conf-comp]
-Let $T$ be a contextual type theory with separated typing axioms, separated substitution axioms, and simple contexts in which $\ty$-free axioms preserve types.
-Suppose that the induced reduction relation on $\Term_T^c$ is confluent and, for every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$ and every substitution $\rho$,
-if the sequent $\psi \sststile{}{V} t[\rho]\!\downarrow$ is derivable, then so is the sequent $\psi \sststile{}{V} \varphi[\rho]$.
-Then $T$ is confluent.
+Let $T$ be a contextual type theory with separated typing axioms, separated substitution axioms, and simple contexts such that $\ty$-free axioms preserve types.
+For every pair $(\varphi,V) \in P_M$, if the induced reduction relation on $\Term_{T,\varphi}^c$ is confluent and a sequent $\varphi \sststile{}{V} t = s$ is derivable,
+then terms $t$ and $s$ are joinable under the relation $\Rightarrow_{R_T,\varphi}$.
 \end{thm}
 
 The technical assumptions that we put on the theory will be defined in this section.
-The theorem itself follows from \rcor{conf-th}, \rprop{subst-elim}, and \rprop{ctx-elim}.
+The theorem itself follows from \rcor{ty-elim}, \rprop{subst-elim}, and \rprop{ctx-elim}.
 
 \subsection{Typing axioms}
 
@@ -1291,7 +1301,7 @@ To do this we need to know that typing axioms are well-behaved in some sense.
 An axiom is a \emph{typing axiom} if it is of the form
 \[ \varphi \sststile{}{V} e_p(\sigma(x_1, \ldots x_k)) = s \]
 where $\sigma$ is neither $\ft$ nor $\ty$ and the function symbols $\ft$ and $\ty$ are applied only to variables in $s$ (if they appear in this term).
-An axiom $\varphi \sststile{}{V} t = s$ is a \emph{$\ty$-free (and $\ft$-free) axiom} if the function symbols $\ft$ and $\ty$ do not appear in $t$ and $s$.
+An axiom $\varphi \sststile{}{V} t = s$ is a \emph{$\ty$-free (and $\ft$-free) axiom} if the function symbols $\ft$ and $\ty$ do not appear in $t$.
 We will say that a theory $T$ with directed axioms has \emph{separated typing axioms} if every rule in the underlying term rewriting system of $T$ is either a typing axiom or a $\ty$-free axiom.
 The sets of typing and $\ty$-free axioms will be denoted by $\mathcal{A}_t$ and $\mathcal{A}_{tf}$, respectively.
 The sets of reduction rules corresponding to typing and $\ty$-free axioms will be denoted by $R^t_T$ and $R^{tf}_T$, respectively.
@@ -1337,108 +1347,77 @@ This is obvious in our case since the rules in $R^t_T$ do not overlap.
 We will need the following general lemma about term rewriting systems:
 
 \begin{lem}[conf-nf]
-Let $R_0$, $R_1$, and $R_2$ be term rewriting systems on the same theory $T$.
-Let $A$ be a subset of $\Term_T$ such that $(A,\Rightarrow_{R_0})$ is confluent, $(A,\Rightarrow_{R_1})$ is confluent and weakly normalizable
-and if $a,b \in A$ are such that $a \Rightarrow_{R_2} b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_{R_1}^\nf \Rightarrow_{R_0}^*$.
-Then any two elements $a,b \in A$ which are equivalent under $R_2$ (that is, there is a zig-zag of $R_2$-reductions between them) are joinable under $\Rightarrow_{R_1}^\nf \Rightarrow_{R_0}^*$.
+Let $\Rightarrow_0$, $\Rightarrow_1$, and $\Rightarrow_2$ be abstract reduction systems on the same set $A$.
+Suppose that $(A,\Rightarrow_0)$ is confluent, $(A,\Rightarrow_1)$ is confluent and weakly normalizable
+and if $a,b \in A$ are such that $a \Rightarrow_2 b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_1^\nf \Rightarrow_0^*$.
+Then any two elements $a,b \in A$ which are equivalent under $\Rightarrow_2$ (that is, there is a zig-zag of $\Rightarrow_2$-reductions between them) are joinable under $\Rightarrow_1^\nf \Rightarrow_0^*$.
 \end{lem}
 \begin{proof}
-Since being joinable is a symmetric relation, we can assume that $R_2$ is also symmetric.
+Since being joinable is a symmetric relation, we can assume that $\Rightarrow_2$ is also symmetric.
 Let $a_1$, \ldots, $a_n$ be a sequence such that $(a_i, a_{i+1}) \in R_2$ for every $1 \leq i < n$.
-We prove that $a_1$ and $a_n$ are joinable under $\Rightarrow_{R_1}^\nf \Rightarrow_{R_0}^*$ by induction on $n$.
-If $n = 0$, then this follows from the fact that $(A,\Rightarrow_{R_1})$ is weakly normalizable.
+We prove that $a_1$ and $a_n$ are joinable under $\Rightarrow_1^\nf \Rightarrow_0^*$ by induction on $n$.
+If $n = 0$, then this follows from the fact that $(A,\Rightarrow_1)$ is weakly normalizable.
 Suppose $n > 0$.
-We have $a_1 \Rightarrow_{R_1}^\nf a_1'$, $a_1' \Rightarrow_{R_0}^* c_1$, $a_{n-1} \Rightarrow_{R_1}^\nf a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* b$ by assumption.
-We have $a_n \Rightarrow_{R_1}^\nf a_n'$, $a_n' \Rightarrow_{R_0}^* c_2$, $a_{n-1} \Rightarrow_{R_1}^\nf a_{n-1}'$, $a_{n-1}' \Rightarrow_{R_0}^* c$ by the induction hypothesis.
-Since $R_0$ is confluent, $c \Rightarrow_{R_0}^* d$ and $c \Rightarrow_{R_0}^* d$:
-\[ \xymatrix@=1em{  a_1 \ar[rr]^{R_2^*} \ar@{-->}[d]^{R_1^\nf}  &                           & a_{n-1} \ar[rr]^{R_2} \ar@{-->}[d]^{R_1^\nf}          &                           & a_n \ar@{-->}[d]^{R_1^\nf}    \\
-                    a_1' \ar@{-->}[rd]_{R_0^*}                  &                           & a_{n-1}' \ar@{-->}[ld]_{R_0^*} \ar@{-->}[rd]^{R_0^*}  &                           & a_n' \ar@{-->}[ld]^{R_0^*}    \\
-                                                                & b \ar@{-->}[rd]_{R_0^*}   &                                                       & c \ar@{-->}[ld]^{R_0^*}   &                               \\
-                                                                &                           & d                                                     &                           &
+We have $a_1 \Rightarrow_1^\nf a_1'$, $a_1' \Rightarrow_0^* c_1$, $a_{n-1} \Rightarrow_1^\nf a_{n-1}'$, $a_{n-1}' \Rightarrow_0^* b$ by assumption.
+We have $a_n \Rightarrow_1^\nf a_n'$, $a_n' \Rightarrow_0^* c_2$, $a_{n-1} \Rightarrow_1^\nf a_{n-1}'$, $a_{n-1}' \Rightarrow_0^* c$ by the induction hypothesis.
+Since $\Rightarrow_0$ is confluent, $c \Rightarrow_0^* d$ and $c \Rightarrow_0^* d$:
+\[ \xymatrix@=1em{  a_1 \ar[rr]^{\Rightarrow_2^*} \ar@{-->}[d]^{\Rightarrow_1^\nf}  &                                   & a_{n-1} \ar[rr]^{\Rightarrow_2} \ar@{-->}[d]^{\Rightarrow_1^\nf}          &                                   & a_n \ar@{-->}[d]^{\Rightarrow_1^\nf}  \\
+                    a_1' \ar@{-->}[rd]_{\Rightarrow_0^*}                            &                                   & a_{n-1}' \ar@{-->}[ld]_{\Rightarrow_0^*} \ar@{-->}[rd]^{\Rightarrow_0^*}  &                                   & a_n' \ar@{-->}[ld]^{\Rightarrow_0^*}  \\
+                                                                                    & b \ar@{-->}[rd]_{\Rightarrow_0^*} &                                                                           & c \ar@{-->}[ld]^{\Rightarrow_0^*} &                                       \\
+                                                                                    &                                   & d                                                                         &                                   &
                  } \]
 \end{proof}
 
-We will say that a term $t$ is \emph{defined} with respect to a pair $(\varphi,V) \in P_M$ if the sequent $\varphi \sststile{}{V} t\!\downarrow$ is derivable.
-Let $\Term_{T,\varphi}^d$ be the set of defined terms with respect to some pair $(\varphi,FV(\varphi))$.
 Let $\Term_{T,\varphi}^t$ be the subset of $\Term_{T,\varphi}^d$ consisting of terms in which function symbols $\ty$ and $\ft$ do not occur.
-Now we can prove that the confluence under $R^{tf}_T$ implies the confluence under $R^{tf}_T \cup R^t_T$.
+Let $\Rightarrow_{R_T^t,\varphi}$ be the union of $\Rightarrow_{R^t_T}$ and $\Rightarrow_\varphi$.
+Then every $\Rightarrow_{R_T^t,\varphi}$-normal form belongs to $\Term_{T,\varphi}^t$.
+This implies that the relation $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf$ is an abstract reduction system on $\Term_{T,\varphi}^t$
+Now we can prove that the confluence under $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf$ implies the confluence under $\Rightarrow_{R_T,\varphi}$:
 
-\begin{prop}
+\begin{prop}[ty-elim]
 Let $T$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types and let $(\varphi,V)$ be a pair in $P_M$.
-Suppose that the abstract reduction system $(\Term_{T,\varphi}^t,\Rightarrow_{R^{tf}_T})$ is confluent.
-Then the abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R^{tf}_T \cup R^t_T})$ is also confluent.
+Suppose that the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf)$ is confluent.
+If a sequent $\varphi \sststile{}{V} t = s$ is derivable, then $t$ and $s$ are joinable under $\Rightarrow_{R_T,\varphi}$.
 \end{prop}
 \begin{proof}
-TODO
-
 If $<$ is a well-founded relation on a set $A$, then we can define a well-founded relation on the set of subset of $A$ as follows.
 A subset $S$ is less than a subset $T$ if and only there is an element $a \in T$ which is greater than every element of $S$.
 It is easy to see that this relation is well-founded.
 
-Let $\psi = \psi_1 \land \ldots \land \psi_n$ be a closed formula such that if $\psi_i$ is of the form $t_1 = t_2$, then the terms $t_1$ and $t_2$ are joinable under $\Rightarrow_{R_T^t}^\nf \Rightarrow_{R_T^{tf}}^*$.
-We prove that, for every such formula $\psi$, whenever a sequent $\psi \sststile{}{} t = s$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}'$ where $\mathcal{A}_{tf}'$ is a subset of $\mathcal{A}_{tf}$
-the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^\nf \Rightarrow_{R_T^{tf}}^*$.
-The statement of the proposition then follows if we take $\psi = \top$ and $\mathcal{A}_{tf}' = \mathcal{A}_{tf}$.
+Let us denote the relation $\Rightarrow_{R_T^t,\varphi}^\nf (\Rightarrow_{R_T^{tf}} \Rightarrow_{R^t_T,\varphi}^\nf)^*$ by $\Rightarrow_{tf}$
+Let $\psi = \psi_1 \land \ldots \land \psi_n$ be a formula such that if $\psi_i$ is of the form $t_1 = t_2$, then the terms $t_1$ and $t_2$ are joinable under $\Rightarrow_{tf}$.
+We prove that, for every such formula $\psi$, whenever a sequent $\psi \sststile{}{V} t = s$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}'$ where $\mathcal{A}_{tf}'$ is a subset of $\mathcal{A}_{tf}$
+the terms $t$ and $s$ are joinable under $\Rightarrow_{tf}$.
+The statement of the proposition then follows if we take $\psi = \varphi$ and $\mathcal{A}_{tf}' = \mathcal{A}_{tf}$.
 
-We proceed by double induction on the set $\mathcal{A}_{tf}'$ (using the well-founded relation we just described) and (the size of) the derivation of $\psi \sststile{}{} t = s$.
+We proceed by double induction on the set $\mathcal{A}_{tf}'$ (using the well-founded relation we just described) and (the size of) the derivation of $\psi \sststile{}{V} t = s$.
 By \rlem{der-eq}, there is a zig-zag of reductions of the form $a \Rightarrow_{R_2} b$ between $t$ and $s$ where $a \Rightarrow_{R_2} b$ if and only if $a = c[a'[\rho]/x]$, $b = c[b'[\rho]/x]$,
-and either $a' = b'$ is a subformula of $\psi$ or $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_t \cup \mathcal{A}_{tf}'$.
-Moreover, $\psi \sststile{}{} \varphi[\rho]$ is derivale and the size of derivation is less than the size of the derivation of $\psi \sststile{}{} t = s$, so the induction hypothesis applies to $\varphi[\rho]$.
+and either $a' = b'$ is a subformula of $\psi$ or $\chi \sststile{}{V'} a' = b'$ is an axiom in $\mathcal{A}_t \cup \mathcal{A}_{tf}'$.
+Moreover, $\psi \sststile{}{V} \chi[\rho]$ is derivale and the size of derivation is less than the size of the derivation of $\psi \sststile{}{V} t = s$, so the induction hypothesis applies to $\chi[\rho]$.
 
-By assumption, defined terms in which $\ty$ and $\ft$ do not occur are confluent under $R^{tf}_T$.
-It is easy to see that all defined terms are confluent under $R^{tf}_T$.
+By assumption, defined terms in which $\ty$ and $\ft$ do not occur are confluent under $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T}^\nf$.
+This implies that all defined terms are confluent under this relation.
 Moreover, the term rewriting system $R^t_T$ is normalizing and confluent by \rlem{types-red}.
-Thus we can apply \rlem{conf-nf} to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t}^\nf \Rightarrow_{R_T^{tf}}^*$.
+Thus we can apply \rlem{conf-nf} to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{tf}$.
 To do this, we need to prove that terms of the form $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$ are joinable assuming that there is an axiom $\varphi \sststile{}{V} a' = b'$ in $\mathcal{A}_t \cup \mathcal{A}_{tf}'$.
 
-If $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_t$, then this is obvious since $c[a'[\rho]/x] \Rightarrow_{R_T^{tf}} c[b'[\rho]/x]$, so they have the same $R_T^t$-normal form.
-Assume that $\varphi \sststile{}{V} a' = b'$ is an axiom in $\mathcal{A}_{tf}'$.
-Since reduction rules in $R_T^{tf}$ do not contain function symbols $\ft$ and $\ty$, a reduction rule from $R_T^{tf}$ and a reduction rule from $R_T^t$ can overlap only in a term of the form $e_p(\sigma(t_1, \ldots t_k))$ as follows:
-$e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t} u[t_1/x_1, \ldots t_k/x_k]$ for some term $u$ and $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^{tf}} e_p(v)$ for some term $v$.
-We may assume that $R_T^t$-reductions occur only in such overlappings since other $R_T^t$-redexes occur inside either $c$ or $\rho$, so if we reduce them in $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$
-we will still have a reduction of the form $c'[a'[\rho']/x] \Rightarrow_{R_T^{tf}} c'[b'[\rho']/x]$ for some $c'$ and $\rho'$ such that $c \Rightarrow_{R_T^t}^* c'$ and $\rho \Rightarrow_{R_T^{tf}}^* \rho'$.
+If $\chi \sststile{}{V'} a' = b'$ is an axiom in $\mathcal{A}_t$, then this is obvious since $c[a'[\rho]/x] \Rightarrow_{R_T^t} c[b'[\rho]/x]$, so they have the same $\Rightarrow_{R_T^t,\varphi}$-normal form.
+Assume that $\chi \sststile{}{V'} a' = b'$ is an axiom in $\mathcal{A}_{tf}'$.
+Since the left hand side of reduction rules in $R_T^{tf}$ does not contain function symbols $\ft$ and $\ty$,
+reductions $\Rightarrow_{R_T^{tf}}$ and $\Rightarrow_{R_T^t,\varphi}$ can overlap only in a term of the form $e_p(\sigma(t_1, \ldots t_k))$ as follows:
+$e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t,\varphi} u[t_1/x_1, \ldots t_k/x_k]$ for some term $u$ and $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^{tf}} e_p(v)$ for some term $v$.
+We may assume that $\Rightarrow_{R_T^t,\varphi}$-reductions occur only in such overlappings since other $\Rightarrow_{R_T^t,\varphi}$-redexes occur inside either $c$ or $\rho$, so if we reduce them in $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$
+we will still have a reduction of the form $c'[a'[\rho']/x] \Rightarrow_{R_T^{tf}} c'[b'[\rho']/x]$ for some $c'$ and $\rho'$ such that $c \Rightarrow_{R_T^t,\varphi}^* c'$ and $\rho \Rightarrow_{R_T^{tf}}^* \rho'$.
 
 Since we reduce exactly one redex, the term $c'$ contains exactly one occurrence of the variable $x$.
-Since $a'$, $b'$, $c'$, and $\rho'$ do not contain $R_T^t$-redexes, such a redex can occur in terms $c'[a'[\rho']/x]$ and $c'[b'[\rho']/x]$ only when $c'$ contains a subterm of the form $e_p(x)$.
-So there is at most one $R_T^t$-redex in these terms.
-If there is no such redex, then we are done since these terms are $R_T^t$-normal forms and are joinable under $\Rightarrow_{R_T^{tf}}^*$ since one of them reduces to the other.
+Since $a'$, $b'$, $c'$, and $\rho'$ do not contain $\Rightarrow_{R_T^t,\varphi}$-redexes, such a redex can occur in terms $c'[a'[\rho']/x]$ and $c'[b'[\rho']/x]$ only when $c'$ contains a subterm of the form $e_p(x)$.
+So there is at most one $\Rightarrow_{R_T^t,\varphi}$-redex in these terms.
+If there is no such redex, then we are done since these terms are $\Rightarrow_{R_T^t,\varphi}$-normal forms and are joinable under $\Rightarrow_{R_T^{tf}}^*$ since one of them reduces to the other.
 Otherwise, there is a term $c''$ such that $c'[a'[\rho']/x] = c''[e_p(a'[\rho'])/x]$ and $c'[b'[\rho']/x] = c''[e_p(b'[\rho'])/x]$.
-Since $\ty$-free axioms of $T$ preserve types, the sequent $\varphi \sststile{}{V} e_p(a') = e_p(b')$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}''$ for some $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$,
-It follows that $\varphi[\rho'] \sststile{}{} c''[e_p(a'[\rho'])/x] = c''[e_p(b'[\rho'])/x]$ is also derivable from this set of axioms.
-Since the formula $\varphi[\rho]$ satisfies the hypothesis of our inductive proof and $\varphi[\rho] \Rightarrow_{R_T^t}^* \varphi[\rho']$, the latter formula also satisfies it.
-Moreover, since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/x]$ and $c''[e_p(b'[\rho'])/x]$ are joinable under $\Rightarrow_{R_T^t}^\nf \Rightarrow_{R_T^{tf}}^*$.
-\end{proof}
-
-\begin{cor}[ya-morita-conf]
-Let $T_0$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types and let $T_1$ be a theory as defined in \rprop{conf-main}.
-Suppose that the abstract reduction system $(\Term_{T_0,\varphi}^t,\Rightarrow_{R^{tf}_{T_0}})$ is confluent for every $\varphi$.
-Then closed defined terms of $T_1$ are confluent.
-\end{cor}
-\begin{proof}
-The theory $T_1$ has separated typing axioms and the only new axioms of $T_1$ are typing axioms, so $\ty$-free axioms of $T_1$ preserve types.
-Note that there is an isomorphism between abstract reduction systems $(\Term_{T_0,\varphi}^t,\Rightarrow_{R^{tf}_{T_0}})$ and $(\Term_{T_1,\top},\Rightarrow_{R^{tf}_{T_1}})$.
-Thus we can apply the previous proposition to $T_1$ with $\varphi = \top$.
-\end{proof}
-
-Note that even if we know that the term rewriting system is confluent, it does not imply that defined terms are confluent since they may not be closed under reductions.
-But if we know that the conditions of \rdefn{confluent} hold, then this is true:
-\begin{cor}[conf-th]
-Let $T$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types.
-Suppose that the following conditions hold:
-\begin{itemize}
-\item The abstract reduction system $(\Term_{T,\varphi}^t,\Rightarrow_{R^{tf}_T})$ is confluent for every $\varphi$.
-\item For every axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$, every pair $(\psi,V) \in P_M$, and every substitution $\rho$,
-if the sequent $\psi \sststile{}{V} t[\rho]\!\downarrow$ is derivable, then so is the sequent $\psi \sststile{}{V} \varphi[\rho]$.
-\end{itemize}
-Then $T$ is confluent.
-\end{cor}
-\begin{proof}
-By \rcor{ya-morita-conf}, we just need to show that defined terms of $T$ in which $\ty$ does not occur are confluent under $R^{tf}_T$.
-To do so, it is enough to show that defined terms are closed under reduction rules.
-But this follows from the second assumption of this corollary.
-Indeed, if $a \Rightarrow b$, then there is an axiom $\varphi \sststile{}{FV(t)} t = s$ in $\mathcal{A}_e$, a substitution $\rho$, and a term $c$ such that $x \in FV(c)$, $a = c[t[\rho]/x]$, and $b = c[s[\rho]/x]$.
-We know that $\sststile{T}{} c[t[\rho]/x]\!\downarrow$ which implies $\sststile{T}{} t[\rho]\!\downarrow$ which implies $\sststile{T}{} \varphi[\rho]$ which implies $\sststile{T}{} t[\rho] = s[\rho]$.
-Finally, $\sststile{T}{} c[t[\rho]/x]\!\downarrow$ and $\sststile{T}{} t[\rho] = s[\rho]$ imply that $\sststile{T}{} c[s[\rho]/x]\!\downarrow$.
+Since $\ty$-free axioms of $T$ preserve types, the sequent $\chi \sststile{}{V'} e_p(a') = e_p(b')$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}''$ for some $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$,
+It follows that $\chi[\rho'] \sststile{}{V} c''[e_p(a'[\rho'])/x] = c''[e_p(b'[\rho'])/x]$ is also derivable from this set of axioms.
+Since the formula $\chi[\rho]$ satisfies the hypothesis of our inductive proof and $\chi[\rho] \Rightarrow_{R_T^t}^* \chi[\rho']$, the latter formula also satisfies it.
+Moreover, since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/x]$ and $c''[e_p(b'[\rho'])/x]$ are joinable under $\Rightarrow_{tf}$.
 \end{proof}
 
 \subsection{Substitution}
@@ -1663,8 +1642,11 @@ Since $T_\Pi'$ is confluent and there are no reductions of the form $\Pi(A,B) \R
 Hence, $\varphi \sststile{}{V} \ty(b) = B$.
 This shows that the condition of \rprop{ext-morita} holds.
 
-We can show that $T_\Pi$ is confluent using the fact that we just proved.
-The second condition of \rcor{conf-th} coincides with the condition of \rprop{ext-morita} which we just proved and the first condition of \rcor{conf-th} we proved earlier.
+This also implies that $T_\Pi$ is confluent.
+Indeed, the conditions of \rdefn{confluent} involve only sequents of the form $\varphi \sststile{}{V} \psi$ where $(\varphi,V) \in P_M$
+and \rprop{ext-morita} implies that such a sequent is derivable in $T_\Pi$ if and only if it is derivable in $T_\Pi'$.
+Moreover, the underlying term rewriting systems of $T_\Pi$ and $T_\Pi'$ coincide.
+These facts imply that $T_\Pi$ is confluent if and only if $T_\Pi'$ is confluent.
 
 Let us describe yet another example.
 We can formulate the beta reduction axiom in one of the following ways:
@@ -1680,7 +1662,7 @@ Then we have the following commutative diagram of theories:
 The top arrow is actually an isomorphism and we can prove that the two remaining arrows are Morita equivalences using \rprop{ext-morita} in the same way as we did this for the arrow $T_\Pi \to T_\Pi'$.
 Note that even theories $T_\Pi$ and $T_\Pi''$ are isomorphic they differ as theories with directed axioms.
 In particular, the underlying term rewriting systems of $T_\Pi$ and $T_\Pi''$ differ.
-The latter is left-linear and this is the main reason why we might be interested in this theory.
+The latter is left-linear (assuming that other reduction rules are also left-linear) and this is the main reason why we might be interested in this theory.
 
 We can summarize results of this subsection as follows.
 There are several ways to defined a theory of $\Pi$-types, but they are all Morita equivalent.
