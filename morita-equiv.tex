@@ -1315,29 +1315,34 @@ where $\mathcal{A}_{tf}'$ is the set of $\ty$-free axioms which are less than $\
 The main property of theories with separated typing axioms is proved in the following lemma:
 
 \begin{lem}[types-red]
-Let $T$ be a theory with separated typing axioms.
-Then the term rewriting system $R^t_T$ is strongly normalizing and confluent.
+Let $T$ be a theory with separated typing axioms and let $(\varphi,V)$ be a pair in $P_M$.
+Then the abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T,\varphi})$ is strongly normalizing and confluent.
 \end{lem}
 \begin{proof}
-To show that the system is strongly normalizing we define, for each term $t$, an ordinal $|t|$ less than $\varepsilon_0$ such that if $t \Rightarrow_{R^t_T} s$, then $|t| > |s|$:
+Note that $V = \{ x_1, \ldots x_k \}$ and $e_{p_i}(x_i) \Rightarrow_\varphi s_i$ where $s_i$ is a term such that $FV(s_i) \subseteq \{ x_1, \ldots x_{i-1} \}$.
+To show that the system is strongly normalizing we define, for each term $t$, an ordinal $|t|$ less than $\varepsilon_\omega$ such that if $t \Rightarrow_{R^t_T,\varphi} s$, then $|t| > |s|$.
 \begin{align*}
-|x| & = 0 \\
+|x_i| & = \varepsilon_{i-1} \\
 |\ty(t)| = |\ft(t)| & = \omega^{|t|}\\
 |\sigma(t_1, \ldots t_k)| & = |t_1| \oplus \ldots \oplus |t_k| \oplus 1
 \end{align*}
 where $\oplus$ is the natural sum of ordinals.
 
-If $\ty(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t} s(\ty(t_1), \ldots \ty(t_k), t_1, \ldots t_k)$, then we need to show that $|\ty(\sigma(t_1, \ldots t_k))| > |s(\ty(t_1), \ldots \ty(t_k), t_1, \ldots t_k)|$.
+If $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t} s(e_{p_1}(t_1), \ldots e_{p_k}(t_k), t_1, \ldots t_k)$, then we need to show that $|e_p(\sigma(t_1, \ldots t_k))| > |s(e_{p_1}(t_1), \ldots e_{p_k}(t_k), t_1, \ldots t_k)|$.
 Let $\alpha_i = |t_i|$ and let $\alpha$ be the maximum of $\alpha_1$, \ldots $\alpha_k$.
-Then $|\ty(\sigma(t_1, \ldots t_k))| = \omega^{\alpha_1 \oplus \ldots \oplus \alpha_k \oplus 1} \geq \omega^{\alpha + 1}$.
+Then $|e_p(\sigma(t_1, \ldots t_k))| = \omega^{\alpha_1 \oplus \ldots \oplus \alpha_k \oplus 1} \geq \omega^{\alpha + 1}$.
 Note that $\ft$ and $\ty$ do not occur in the term $s$.
 It follows that
 \begin{align*}
-|s(\ty(t_1), \ldots \ty(t_k), t_1, \ldots t_k)| & = \omega^{\alpha_1} n_1 \oplus \ldots \oplus \omega^{\alpha_k} n_k \oplus \alpha_1 m_1 \oplus \ldots \oplus \alpha_k m_k \oplus c \\
-                                              & \leq \omega^\alpha n \oplus \alpha m \oplus c
+|s(e_{p_1}(t_1), \ldots e_{p_k}(t_k), t_1, \ldots t_k)| & = \omega^{\alpha_1} n_1 \oplus \ldots \oplus \omega^{\alpha_k} n_k \oplus \alpha_1 m_1 \oplus \ldots \oplus \alpha_k m_k \oplus c \\
+                                                        & \leq \omega^\alpha n \oplus \alpha m \oplus c
 \end{align*}
 for some natural numbers $n_1$, \ldots $n_k$, $m_1$, \ldots $m_k$, $n$, $m$, and $c$.
 Since $\alpha \leq \omega^\alpha$ and $1 \leq \omega^\alpha$, we have $\omega^\alpha n \oplus \alpha m \oplus c \leq \omega^\alpha (n + m + c) < \omega^{\alpha + 1}$.
+
+If $e_p(x_i) \Rightarrow_\varphi s_i$, then $FV(s_i) \subseteq \{ x_1, \ldots x_{i-1} \}$.
+It follows that $|e_p(x_i)| = \omega^{\varepsilon_{i-1}} = \varepsilon_{i-1} > |s_i|$ since $|s_i|$ involves only ordinals less than $\varepsilon_{i-1}$.
+This finishes the proof that $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T,\varphi})$ is strongly normalizing.
 
 By Newman's lemma (see \cite[Lemma~2.2.5]{ohlebusch-advanced} for a proof), to prove that a strongly normalizing system is confluent it is enough to show that it is locally confluent,
 that is if $a \Rightarrow_{R^t_T} b$ and $a \Rightarrow_{R^t_T} c$, then there exists a term $d$ such that $b \Rightarrow_{R^t_T}^* d$ and $c \Rightarrow_{R^t_T}^* d$.
@@ -1347,8 +1352,9 @@ This is obvious in our case since the rules in $R^t_T$ do not overlap.
 We will need the following general lemma about term rewriting systems:
 
 \begin{lem}[conf-nf]
-Let $\Rightarrow_0$, $\Rightarrow_1$, and $\Rightarrow_2$ be abstract reduction systems on the same set $A$.
-Suppose that $(A,\Rightarrow_0)$ is confluent, $(A,\Rightarrow_1)$ is confluent and weakly normalizable
+Let $\Rightarrow_1$ and $\Rightarrow_2$ be abstract reduction systems on the same set $A$.
+Let $A'$ be a subset of $A$ containing all $\Rightarrow_1$-normal forms and let $\Rightarrow_0$ be an abstract reduction system on it.
+Suppose that $(A',\Rightarrow_0)$ is confluent, $(A,\Rightarrow_1)$ is confluent and weakly normalizable
 and if $a,b \in A$ are such that $a \Rightarrow_2 b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_1^\nf \Rightarrow_0^*$.
 Then any two elements $a,b \in A$ which are equivalent under $\Rightarrow_2$ (that is, there is a zig-zag of $\Rightarrow_2$-reductions between them) are joinable under $\Rightarrow_1^\nf \Rightarrow_0^*$.
 \end{lem}
@@ -1395,10 +1401,9 @@ By \rlem{der-eq}, there is a zig-zag of reductions of the form $a \Rightarrow_{R
 and either $a' = b'$ is a subformula of $\psi$ or $\chi \sststile{}{V'} a' = b'$ is an axiom in $\mathcal{A}_t \cup \mathcal{A}_{tf}'$.
 Moreover, $\psi \sststile{}{V} \chi[\rho]$ is derivale and the size of derivation is less than the size of the derivation of $\psi \sststile{}{V} t = s$, so the induction hypothesis applies to $\chi[\rho]$.
 
-By assumption, defined terms in which $\ty$ and $\ft$ do not occur are confluent under $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T}^\nf$.
-This implies that all defined terms are confluent under this relation.
-Moreover, the term rewriting system $R^t_T$ is normalizing and confluent by \rlem{types-red}.
-Thus we can apply \rlem{conf-nf} to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{tf}$.
+The abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T,\varphi})$ is normalizing and confluent by \rlem{types-red}.
+Thus we can apply \rlem{conf-nf} with $A = \Term^d_{T,\varphi}$, $A' = \Term^t_{T,\varphi}$, $(\Rightarrow_0) = (\Rightarrow_{R_T^{tf}} \Rightarrow_{R^t_T,\varphi}^\nf)$, and $(\Rightarrow_1) = (\Rightarrow_{R^t_T,\varphi})$
+to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{tf}$.
 To do this, we need to prove that terms of the form $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$ are joinable assuming that there is an axiom $\varphi \sststile{}{V} a' = b'$ in $\mathcal{A}_t \cup \mathcal{A}_{tf}'$.
 
 If $\chi \sststile{}{V'} a' = b'$ is an axiom in $\mathcal{A}_t$, then this is obvious since $c[a'[\rho]/x] \Rightarrow_{R_T^t} c[b'[\rho]/x]$, so they have the same $\Rightarrow_{R_T^t,\varphi}$-normal form.
@@ -1407,17 +1412,22 @@ Since the left hand side of reduction rules in $R_T^{tf}$ does not contain funct
 reductions $\Rightarrow_{R_T^{tf}}$ and $\Rightarrow_{R_T^t,\varphi}$ can overlap only in a term of the form $e_p(\sigma(t_1, \ldots t_k))$ as follows:
 $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t,\varphi} u[t_1/x_1, \ldots t_k/x_k]$ for some term $u$ and $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^{tf}} e_p(v)$ for some term $v$.
 We may assume that $\Rightarrow_{R_T^t,\varphi}$-reductions occur only in such overlappings since other $\Rightarrow_{R_T^t,\varphi}$-redexes occur inside either $c$ or $\rho$, so if we reduce them in $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$
-we will still have a reduction of the form $c'[a'[\rho']/x] \Rightarrow_{R_T^{tf}} c'[b'[\rho']/x]$ for some $c'$ and $\rho'$ such that $c \Rightarrow_{R_T^t,\varphi}^* c'$ and $\rho \Rightarrow_{R_T^{tf}}^* \rho'$.
+we will still have a reduction of the form $c'[a'[\rho']/x] \Rightarrow_{R_T^{tf}}^* c'[b'[\rho']/x]$ for some $c'$ and $\rho'$ such that $c \Rightarrow_{R_T^t,\varphi}^\nf c'$ and $\rho \Rightarrow_{R_T^{tf}}^\nf \rho'$.
 
-Since we reduce exactly one redex, the term $c'$ contains exactly one occurrence of the variable $x$.
-Since $a'$, $b'$, $c'$, and $\rho'$ do not contain $\Rightarrow_{R_T^t,\varphi}$-redexes, such a redex can occur in terms $c'[a'[\rho']/x]$ and $c'[b'[\rho']/x]$ only when $c'$ contains a subterm of the form $e_p(x)$.
-So there is at most one $\Rightarrow_{R_T^t,\varphi}$-redex in these terms.
-If there is no such redex, then we are done since these terms are $\Rightarrow_{R_T^t,\varphi}$-normal forms and are joinable under $\Rightarrow_{R_T^{tf}}^*$ since one of them reduces to the other.
-Otherwise, there is a term $c''$ such that $c'[a'[\rho']/x] = c''[e_p(a'[\rho'])/x]$ and $c'[b'[\rho']/x] = c''[e_p(b'[\rho'])/x]$.
+Since $a'$, $b'$, $c'$, and $\rho'$ do not contain $\Rightarrow_{R_T^t,\varphi}$-redexes, such a redex can occur in terms $c'[a'[\rho']/x]$ and $c'[b'[\rho']/x]$ only when $c'$ contains subterms of the form $e_p(x)$.
+% If there is no such redex, then we are done since these terms are $\Rightarrow_{R_T^t,\varphi}$-normal forms and are joinable under $\Rightarrow_{R_T^{tf}}^*$ since one of them reduces to the other.
+So there is a term $c''$ which does not contain function symbols $\ty$ and $\ft$ such that the following equations hold:
+\begin{align*}
+c'[a'[\rho']/x] & = c''[e_p(a'[\rho'])/y,a'[\rho']/z] \\
+c'[b'[\rho']/x] & = c''[e_p(b'[\rho'])/y,b'[\rho']/z].
+\end{align*}
+
 Since $\ty$-free axioms of $T$ preserve types, the sequent $\chi \sststile{}{V'} e_p(a') = e_p(b')$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}''$ for some $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$,
-It follows that $\chi[\rho'] \sststile{}{V} c''[e_p(a'[\rho'])/x] = c''[e_p(b'[\rho'])/x]$ is also derivable from this set of axioms.
-Since the formula $\chi[\rho]$ satisfies the hypothesis of our inductive proof and $\chi[\rho] \Rightarrow_{R_T^t}^* \chi[\rho']$, the latter formula also satisfies it.
-Moreover, since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/x]$ and $c''[e_p(b'[\rho'])/x]$ are joinable under $\Rightarrow_{tf}$.
+It follows that $\chi[\rho'] \sststile{}{V} c''[e_p(a'[\rho'])/y,a'[\rho']/z] = c''[e_p(b'[\rho'])/y,a'[\rho']/z]$ is also derivable from this set of axioms.
+Since the formula $\chi[\rho]$ satisfies the hypothesis of our inductive proof and $\chi[\rho] \Rightarrow_{R_T^t,\varphi}^* \chi[\rho']$, the latter formula also satisfies it.
+Moreover, since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/y,a'[\rho']/z]$ and $c''[e_p(b'[\rho'])/y,a'[\rho']/z]$ are joinable under $\Rightarrow_{tf}$.
+Since $c''$ does not contain function symbols $\ty$ and $\ft$, terms $c''[e_p(b'[\rho'])/y,a'[\rho']/z]$ and $c''[e_p(b'[\rho'])/y,b'[\rho']/z]$ are also joinable.
+Finally, \rlem{conf-nf} implies that terms $c''[e_p(a'[\rho'])/y,a'[\rho']/z]$ and $c''[e_p(b'[\rho'])/y,b'[\rho']/z]$ are joinable.
 \end{proof}
 
 \subsection{Substitution}
