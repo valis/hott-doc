@@ -1278,20 +1278,23 @@ The first difference is that they have an explicit substitution operation.
 Another difference is that they contain more information than ordinary terms so that the type and the context of a term can be inferred from it.
 In this section we prove that it is often possible to show that an algebraic type theory is confluent if corresponding usual type theory is.
 
-More precisely, for every contextual theory $T$, we will define a set $\Term_{T,\varphi}^c$ which can be described informally as the set of defined terms
+More precisely, for every contextual theory $T$, we will define a set $\Term_{T,\varphi}^s$ which can be described informally as the set of defined terms
 in which function symbols $\ty_m$, $\ft_m$, and $\subst_{p,n,k}$ do not occur and in which we omit contexts in function symbols.
-The precise definition will be given in subsection~\ref{sec:contexts}.
-This set corresponds to the set of terms of an ordinary type theory.
+The precise definition of this set will be given in subsection~\ref{sec:subst}.
+We also define there a reduction relation $\Rightarrow_{sf} \Rightarrow_s^\nf$ on this set.
+This set corresponds to the set of terms of an ordinary type theory and the reduction relation corresponds to the usual reduction relation.
+The idea is that $\Rightarrow_{sf}$ reduces one of the redexes and then $\Rightarrow_s^\nf$ evaluates all explicit substitution expressions.
 Then we can prove the following theorem:
 
 \begin{thm}[conf-comp]
 Let $T$ be a contextual type theory with separated typing axioms, separated substitution axioms, and simple contexts such that $\ty$-free axioms preserve types.
-For every pair $(\varphi,V) \in P_M$, if the induced reduction relation on $\Term_{T,\varphi}^c$ is confluent and a sequent $\varphi \sststile{}{V} t = s$ is derivable,
-then terms $t$ and $s$ are joinable under the relation $\Rightarrow_{R_T,\varphi}$.
+Let $(\varphi,V)$ be a pair in $P_M$.
+Suppose that the abstract reduction system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent.
+Then, for every derivable sequent $\varphi \sststile{}{V} t = s$, the terms $t$ and $s$ are joinable under the relation $\Rightarrow_{R_T,\varphi}$.
 \end{thm}
 
 The technical assumptions that we put on the theory will be defined in this section.
-The theorem itself follows from \rprop{ty-elim}, \rprop{subst-elim}, and \rprop{ctx-elim}.
+The theorem itself follows from \rprop{ty-elim}, \rprop{ctx-elim}, and \rprop{subst-elim}.
 
 \subsection{Typing axioms}
 
@@ -1378,11 +1381,12 @@ Let $\Term_{T,\varphi}^t$ be the subset of $\Term_{T,\varphi}^d$ consisting of t
 Let $\Rightarrow_{R_T^t,\varphi}$ be the union of $\Rightarrow_{R^t_T}$ and $\Rightarrow_\varphi$.
 Then every $\Rightarrow_{R_T^t,\varphi}$-normal form belongs to $\Term_{T,\varphi}^t$.
 This implies that the relation $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf$ is an abstract reduction system on $\Term_{T,\varphi}^t$
-Now we can prove that the confluence under $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf$ implies the confluence under $\Rightarrow_{R_T,\varphi}$:
+Let us denote the relation $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf$ by $\Rightarrow_{tf}$
+Now we can prove that the confluence under $\Rightarrow_{tf}$ implies the confluence under $\Rightarrow_{R_T,\varphi}$:
 
 \begin{prop}[ty-elim]
 Let $T$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types and let $(\varphi,V)$ be a pair in $P_M$.
-Suppose that the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf)$ is confluent.
+Suppose that the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{tf})$ is confluent.
 If a sequent $\varphi \sststile{}{V} t = s$ is derivable, then $t$ and $s$ are joinable under $\Rightarrow_{R_T,\varphi}$.
 \end{prop}
 \begin{proof}
@@ -1390,10 +1394,9 @@ If $<$ is a well-founded relation on a set $A$, then we can define a well-founde
 A subset $S$ is less than a subset $T$ if and only there is an element $a \in T$ which is greater than every element of $S$.
 It is easy to see that this relation is well-founded.
 
-Let us denote the relation $\Rightarrow_{R_T^t,\varphi}^\nf (\Rightarrow_{R_T^{tf}} \Rightarrow_{R^t_T,\varphi}^\nf)^*$ by $\Rightarrow_{tf}$
-Let $\psi = \psi_1 \land \ldots \land \psi_n$ be a formula such that if $\psi_i$ is of the form $t_1 = t_2$, then the terms $t_1$ and $t_2$ are joinable under $\Rightarrow_{tf}$.
+Let $\psi = \psi_1 \land \ldots \land \psi_n$ be a formula such that if $\psi_i$ is of the form $t_1 = t_2$, then the terms $t_1$ and $t_2$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$.
 We prove that, for every such formula $\psi$, whenever a sequent $\psi \sststile{}{V} t = s$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}'$ where $\mathcal{A}_{tf}'$ is a subset of $\mathcal{A}_{tf}$
-the terms $t$ and $s$ are joinable under $\Rightarrow_{tf}$.
+the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$.
 The statement of the proposition then follows if we take $\psi = \varphi$ and $\mathcal{A}_{tf}' = \mathcal{A}_{tf}$.
 
 We proceed by double induction on the set $\mathcal{A}_{tf}'$ (using the well-founded relation we just described) and (the size of) the derivation of $\psi \sststile{}{V} t = s$.
@@ -1402,8 +1405,8 @@ and either $a' = b'$ is a subformula of $\psi$ or $\chi \sststile{}{V'} a' = b'$
 Moreover, $\psi \sststile{}{V} \chi[\rho]$ is derivale and the size of derivation is less than the size of the derivation of $\psi \sststile{}{V} t = s$, so the induction hypothesis applies to $\chi[\rho]$.
 
 The abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T,\varphi})$ is normalizing and confluent by \rlem{types-red}.
-Thus we can apply \rlem{conf-nf} with $A = \Term^d_{T,\varphi}$, $A' = \Term^t_{T,\varphi}$, $(\Rightarrow_0) = (\Rightarrow_{R_T^{tf}} \Rightarrow_{R^t_T,\varphi}^\nf)$, and $(\Rightarrow_1) = (\Rightarrow_{R^t_T,\varphi})$
-to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{tf}$.
+Thus we can apply \rlem{conf-nf} with $A = \Term^d_{T,\varphi}$, $A' = \Term^t_{T,\varphi}$, $(\Rightarrow_0) = (\Rightarrow_{tf})$, and $(\Rightarrow_1) = (\Rightarrow_{R^t_T,\varphi})$
+to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$.
 To do this, we need to prove that terms of the form $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$ are joinable assuming that there is an axiom $\varphi \sststile{}{V} a' = b'$ in $\mathcal{A}_t \cup \mathcal{A}_{tf}'$.
 
 If $\chi \sststile{}{V'} a' = b'$ is an axiom in $\mathcal{A}_t$, then this is obvious since $c[a'[\rho]/x] \Rightarrow_{R_T^t} c[b'[\rho]/x]$, so they have the same $\Rightarrow_{R_T^t,\varphi}$-normal form.
@@ -1412,10 +1415,9 @@ Since the left hand side of reduction rules in $R_T^{tf}$ does not contain funct
 reductions $\Rightarrow_{R_T^{tf}}$ and $\Rightarrow_{R_T^t,\varphi}$ can overlap only in a term of the form $e_p(\sigma(t_1, \ldots t_k))$ as follows:
 $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t,\varphi} u[t_1/x_1, \ldots t_k/x_k]$ for some term $u$ and $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^{tf}} e_p(v)$ for some term $v$.
 We may assume that $\Rightarrow_{R_T^t,\varphi}$-reductions occur only in such overlappings since other $\Rightarrow_{R_T^t,\varphi}$-redexes occur inside either $c$ or $\rho$, so if we reduce them in $c[a'[\rho]/x]$ and $c[b'[\rho]/x]$
-we will still have a reduction of the form $c'[a'[\rho']/x] \Rightarrow_{R_T^{tf}}^* c'[b'[\rho']/x]$ for some $c'$ and $\rho'$ such that $c \Rightarrow_{R_T^t,\varphi}^\nf c'$ and $\rho \Rightarrow_{R_T^{tf}}^\nf \rho'$.
+we will still have a reduction of the form $c'[a'[\rho']/x] \Rightarrow_{R_T^{tf}}^* c'[b'[\rho']/x]$ for some $c'$ and $\rho'$ such that $c \Rightarrow_{R_T^t,\varphi}^\nf c'$ and $\rho \Rightarrow_{R_T^t,\varphi}^\nf \rho'$.
 
 Since $a'$, $b'$, $c'$, and $\rho'$ do not contain $\Rightarrow_{R_T^t,\varphi}$-redexes, such a redex can occur in terms $c'[a'[\rho']/x]$ and $c'[b'[\rho']/x]$ only when $c'$ contains subterms of the form $e_p(x)$.
-% If there is no such redex, then we are done since these terms are $\Rightarrow_{R_T^t,\varphi}$-normal forms and are joinable under $\Rightarrow_{R_T^{tf}}^*$ since one of them reduces to the other.
 So there is a term $c''$ which does not contain function symbols $\ty$ and $\ft$ such that the following equations hold:
 \begin{align*}
 c'[a'[\rho']/x] & = c''[e_p(a'[\rho'])/y,a'[\rho']/z] \\
@@ -1425,12 +1427,12 @@ c'[b'[\rho']/x] & = c''[e_p(b'[\rho'])/y,b'[\rho']/z].
 Since $\ty$-free axioms of $T$ preserve types, the sequent $\chi \sststile{}{V'} e_p(a') = e_p(b')$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}''$ for some $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$,
 It follows that $\chi[\rho'] \sststile{}{V} c''[e_p(a'[\rho'])/y,a'[\rho']/z] = c''[e_p(b'[\rho'])/y,a'[\rho']/z]$ is also derivable from this set of axioms.
 Since the formula $\chi[\rho]$ satisfies the hypothesis of our inductive proof and $\chi[\rho] \Rightarrow_{R_T^t,\varphi}^* \chi[\rho']$, the latter formula also satisfies it.
-Moreover, since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/y,a'[\rho']/z]$ and $c''[e_p(b'[\rho'])/y,a'[\rho']/z]$ are joinable under $\Rightarrow_{tf}$.
+Moreover, since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/y,a'[\rho']/z]$ and $c''[e_p(b'[\rho'])/y,a'[\rho']/z]$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$.
 Since $c''$ does not contain function symbols $\ty$ and $\ft$, terms $c''[e_p(b'[\rho'])/y,a'[\rho']/z]$ and $c''[e_p(b'[\rho'])/y,b'[\rho']/z]$ are also joinable.
 Finally, \rlem{conf-nf} implies that terms $c''[e_p(a'[\rho'])/y,a'[\rho']/z]$ and $c''[e_p(b'[\rho'])/y,b'[\rho']/z]$ are joinable.
 \end{proof}
 
-\subsection{Substitution}
+\subsection{Contexts}
 
 In this subsection we will work with contextual theories with directed axioms (see \cite{alg-tt} for a definition of a contextual theory).
 If $T$ is a contextual theory, then we have a set of function symbols $\mathcal{F}_0$ (which we call \emph{basic function symbols}) such that the set of function symbols of $T$ consists of the following function symbols:
@@ -1439,28 +1441,125 @@ If $T$ is a contextual theory, then we have a set of function symbols $\mathcal{
 \ft_m & : (\ty,m) \to (\ctx,m) \\
 \ty_m & : (\tm,m) \to (\ty,m) \\
 v_{m,i} & : (\ctx,m) \to (\tm,m) \text{, } 0 \leq i < m \\
-\subst_{p,m,k} & : (\ctx,m) \times (p,k) \times (\tm,m)^k \to (p,m) \\
+\subst_{p,m,0} & : (\ctx,m) \times (p,0) \times (p,m) \\
+\subst_{p,m,k} & : (p,k) \times (\tm,m)^k \to (p,m) \text{, } k > 0 \\
 \sigma_m & : (\ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m)
 \end{align*}
 where $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ is a basic function symbol, $m \in \mathbb{N}$, and $p_1, \ldots, p_k, p \in \{ \ty, \tm \}$.
 Moreover, we may assume that $n = 0$ for every $\sigma \in \mathcal{F}_0$.
+Note that we omit the context for function symbols $\subst_{p,m,k}$ when $k > 0$.
+We can do this since it can be inferred from any of the last $k$ parameters.
 
-Let $T$ be a contextual theory with separated typing axioms.
-Evety such theory $T$ has a few $\ty$-free axioms that involve function symbols $\subst_{p,m,k}$.
-Corresponding reduction rules look like this:
+Let $T$ be a contextual theory and let $\mathcal{F}_0$ be the set of its basic function symbols.
+Let $\mathcal{F}_0'$ be the set consisting of elements of $\mathcal{F}_0$, function symbols $v_i$ for all $i \in \mathbb{N}$, and function symbols $\subst_{p,m,k}$ for all $k > 0$.
+If $t$ is a term of $T$ in which function symbols $\ft_m$, $\ty_m$, and $\subst_{p,n,k}$ do not occur, then we can define a term $U(t) \in \Term_{\mathcal{F}'_0}$ in the obvious way:
 \begin{align*}
-\subst_{p,n,k}(B, v_i(A), a_1, \ldots a_n) & \Rightarrow a_{n-i} \\
-\subst_{\tm,n,n}(\Gamma, a, v_{n-1}(\Gamma), \ldots v_0(\Gamma)) & \Rightarrow a \\
-\subst_{p,n,m}(\Gamma, \sigma_m(\Delta, b_1, \ldots b_k), a_1, \ldots a_m) & \Rightarrow \sigma_n(\Gamma, b_1', \ldots b_k') \\
-\subst_{p,n,k}(C, \subst_{p,k,m}(B, a, a_1, \ldots a_m), b_1, \ldots b_k) & \Rightarrow \subst_{p,n,m}(C, a, a_1', \ldots a_m')
+U(x) & = x \\
+U(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \sigma(U(t_1), \ldots U(t_k)) \\
+U(v_{n,i}(\Gamma)) & = v_i \\
+U(\subst_{p,m,0}(\Gamma,t)) & = U(t) \\
+U(\subst_{p,m,k}(t, a_1, \ldots a_k)) & = \subst_{p,m,k}(U(t), U(a_1), \ldots U(a_k))
 \end{align*}
-where $a_i' = \subst_{\tm,n,k}(C, a_i, b_1, \ldots b_k)$, $b_i' = \subst^{n_1}_{p_1,n,m}(\Gamma, b_i, a_1, \ldots a_m)$,
-and function symbols $\subst^k_{p,n,m} : (ctx,n) \times (p,m+k) \times (tm,n)^m \to (p,n+k)$ are defined by induction on $k$.
-Let $\subst^{-1}_{\ty,n,m}(\Gamma, A, a_1, \ldots a_m) = \Gamma$.
-If $k \geq 0$, then let $\subst^k_{p,n,m}(\Gamma, a, a_1, \ldots a_m)$ be equal to
-\[ \subst_{p,n+k,m+k}(\Gamma', a, \wk^k_{\tm,n}(\Gamma',a_1), \ldots \wk^k_{\tm,n}(\Gamma',a_m), v_{k-1}(\Gamma'), \ldots v_0(\Gamma')), \]
-where $\Gamma' = \subst^{k-1}_{\ty,n,m}(\Gamma, \ctx_{m+k}(a), a_1, \ldots a_m)$ and
-\[ \wk^k_{p,n}(\Gamma,a) = \subst_{p,n+k,n}(\Gamma, a, v_{n+k-1}(\Gamma), \ldots v_k(\Gamma)). \]
+
+Let $\Term_T^c$ be the image of $\Term_T^t$ under $U$.
+We define a reduction relation $\Rightarrow_{cf}$ on $\Term_T^c$ as follows:
+it is the minimal relation containing pairs $(U(t),U(s))$ for all $t$ and $s$ such that $t \Rightarrow_{tf} s$.
+
+If $t \in \Term_T^t$, then let $C(t)$ be the set of terms discarded by $U$.
+That is, $C(t)$ is defined inductively as follows:
+\begin{align*}
+C(x) & = \varnothing \\
+C(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \{ \Gamma \} \cup \bigcup_{1 \leq i \leq k} C(t_i) \\
+C(v_{n,i}(\Gamma)) & = \{ \Gamma \} \\
+C(\subst_{p,m,0}(t)) & = C(t) \\
+C(\subst_{p,m,k}(t, a_1, \ldots a_k)) & = C(t) \cup \bigcup_{1 \leq i \leq k} C(a_i)
+\end{align*}
+Sometimes we need to regard $C(t)$ as a sequence in which case the order is 
+There is a natural linear order on the multiset $C(t)$, so we can also think of it as a sequence of terms.
+
+\begin{defn}[simp-ctx]
+We will say that a contextual theory $T$ with separated typing axioms \emph{has simple contexts} if the following conditions hold:
+\begin{enumerate}
+\item For all terms $t$ and $s$ in $\Term_T^t$ such that $(t,s) \in R^{tf}_T$, the sequence $C(t)$ consists of distinct variables and the set $C(s)$ consists of strongly normalizable terms.
+\item For every basic function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ and every $1 \leq i \leq k$,
+if the sequent $\sststile{}{\Gamma, x_1, \ldots x_k} \sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow$ is derivale,
+then there exists a term $A_{\sigma,i}$ such that $FV(A_{\sigma,i}) \subseteq \{ \Gamma, x_1, \ldots x_{i-1} \}$ and the sequent $\sststile{}{\Gamma, x_1, \ldots x_i} e_{p_i}(x_i) = A_{\sigma,i}$ is derivale.
+\item There is a well-founded relation on the set $\Term_T^t$ such that each element of $C(s)$ is less than $t$ whenever $t \Rightarrow_{tf}^* s$.
+\end{enumerate}
+\end{defn}
+These conditions are true for all theories that occur in practice.
+The first condition is easy to verify, but the last two require some explanation.
+The second condition might not hold in a reasonable theory, but every theory is isomoprhic to a theory in which it holds.
+For example, we can define a theory of $\Pi$-types in which the application function symbol is defined as follows:
+\[ \ft(\ft(B)) = \Gamma \land \ty(b) = B \land \ty(a) = \ft(B) \sststile{}{\Gamma,B,b,a} \app_m(\Gamma,B,b,a)\!\downarrow \]
+This theory does not satisfy the second condition of \rdefn{simp-ctx}, but it is easy to modify the definition of $\app$ to fix this problem:
+\[ \ft(A) = \Gamma \land \ft(B) = A \land \ty(b) = B \land \ty(a) = A \sststile{}{\Gamma,A,B,b,a} \app_m(\Gamma,A,B,b,a)\!\downarrow \]
+This trick can be applied to any theory to get a theory satisfying the second condition of \rdefn{simp-ctx}.
+
+The third condition of \rdefn{simp-ctx} holds if the underlying term rewriting system of $T$ is strongly normalizing.
+Indeed, we can define a well-founded relation on the set $\Term_T^t$ as follows: $t_1 > t_2$ if $|t_1| > |t_2|$ where $|t_i|$ is the length of the longest sequence of reductions starting from $t_i$.
+If $t \Rightarrow_{tf}^* s$, then $|t| > |s|$ and if $\Gamma \in C(s)$, then $\Gamma$ is a subterm of $s$, so $|s| \geq |\Gamma|$.
+Many theories that occur in practice are strongly normalizing, but this property is hard to verify, so let us describe another condition on a theory which implies that it has simple contexts.
+
+Let $T$ be a theory such that, for every pair of terms $t$ and $s$ in $\Term_T^t$ such that $(t,s) \in R^{tf}_T$, the set $C(t)$ consists of distinct variables and $C(s) \subseteq C(t)$.
+This condition is easy to verify and it holds for all theories that occur in practice.
+If it holds, then the first and the third conditions of \rdefn{simp-ctx} hold for $T$.
+The first condition holds for obvious reasons.
+To prove the third condition, we define a well-founded relation on the set $\Term_T^t$ as follows: $t_1 > t_2$ if the size of $t_1$ is greater than the size of $t_2$.
+If $t \Rightarrow_{tf}^* s$, then it is easy to see that $C(s) \subseteq C(t)$.
+Thus, for every $\Gamma \in C(s)$, the size of $\Gamma$ is less than the size of $t$.
+
+A theory with simple contexts satisfies the following properties:
+\begin{enumerate}
+\item \label{it:red-fib} Let $t$ be a term in $\Term_T^t$ such that $U(t) \Rightarrow_{cf} s$ for some term $s$.
+Then there exists a term $s'$ such that $t \Rightarrow_{tf} s'$ and $U(s') = s$.
+This follows from the fact that the same reduction rule that we applied to $U(t)$ also applies to $t$ since there is no additional conditions on $t$ by the first condition of \rdefn{simp-ctx}.
+\item \label{it:red-nf} $U$ preserves normal forms. This follows from the previous property.
+\end{enumerate}
+
+Now we can show that we can omit contexts if they are simple:
+\begin{prop}[ctx-elim]
+Let $T$ be a theory with simple contexts and let $(\varphi,V)$ be a pair in $P_M$.
+Then the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{tf})$ is confluent if and only if the system $(\Term_{T,\varphi}^c, \Rightarrow_{cf})$ is.
+\end{prop}
+\begin{proof}
+If $\Rightarrow_{tf}$ is confluent on $\Term_T^t$, then it is easy to show that the same is true for $\Term_T^c$.
+Indeed, if we have a term $t \in \Term_T^c$ such that $t \Rightarrow_{cf}^* t_1$ and $t \Rightarrow_{cf}^* t_2$,
+then there is a term $t' \in \Term_T^t$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that
+$t' \Rightarrow_{tf}^* t_1'$, $t' \Rightarrow_{tf}^* t_2'$, $U(t_1') = t_1'$, and $U(t_2') = t_2'$.
+Since $t'$ is confluent, there exists a term $s'$ such that $t_1' \Rightarrow_{tf}^* s'$ and $t_2' \Rightarrow_{tf}^* s'$.
+Hence $U(t_1') \Rightarrow_{cf}^* U(s')$ and $U(t_2') \Rightarrow_{cf}^* U(s')$.
+
+Conversely, let $t_1$ and $t_2$ be equivalent terms in $\Term_T^t$.
+Note that \rlem{der-separated-closed} and \rlem{der-eq} imply that $t_1$ and $t_2$ are equivalent if and only if there is a zig-zag of reductions between $t_1$ and $t_2$.
+We proceed by induction on $t_1$ (using the well-founded relation from \rdefn{simp-ctx}).
+Since the reduction relation on $\Term_T^c$ is confluent, we have a term $s' \in \Term_T^c$ such that $U(t_1) \Rightarrow_{cf}^* s'$ and $U(t_2) \Rightarrow_{cf}^* s'$.
+By \eqref{it:red-fib}, there are terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_{tf}^* s_1$, $t_2 \Rightarrow_{tf}^* s_2$, and $U(s_1) = U(s_2) = s'$.
+
+To prove that $s_1$ and $s_2$ are joinable, it is enough to show that sequences $C(s_1)$ and $C(s_2)$ are equal up to equivalence.
+Indeed, if this is true, then we can conclude that $j$-th elements of $C(s_1)$ and $C(s_2)$ are joinable by induction hypothesis for every $j$.
+This implies that $s_1$ and $s_2$ are also joinable.
+The first elements of $C(s_i)$ are equivalent to $\ctx(s_i)$ and they are equivalent since $s_1$ and $s_2$ are.
+The second condition of \rdefn{simp-ctx} implies that other elements of $C(s_i)$ are determined by the first element.
+Indeed, if $\sststile{}{V} \sigma_m(\Delta, t_1, \ldots t_k)\!\downarrow$ is derivable, then $\sststile{}{V} e_{p_i}(t_i) = A_{\sigma,i}[\Delta/\Gamma, t_1/x_1, \ldots t_{i-1}/x_{i-1}]$ is also derivable.
+This implies that $j$-th element of $C(s_i)$ are equivalent for all $j$.
+\end{proof}
+
+\subsection{Substitution}
+\label{sec:subst}
+
+Let $T$ be a contextual theory with simple contexts.
+Evety such theory $T$ has a few $\ty$-free axioms that involve function symbols $\subst_{p,m,k}$.
+Corresponding $\Rightarrow_{cf}$-reduction rules look like this:
+\begin{align*}
+\subst_{p,n,k}(v_i, a_1, \ldots a_n) & \Rightarrow a_{n-i} \\
+\subst_{\tm,n,n}(a, v_{n-1}, \ldots v_0) & \Rightarrow a \\
+\subst_{p,n,m}(\sigma(b_1, \ldots b_k), a_1, \ldots a_m) & \Rightarrow \sigma(b_1', \ldots b_k') \\
+\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k) & \Rightarrow \subst_{p,n,m}(a, a_1', \ldots a_m')
+\end{align*}
+where $a_i' = \subst_{\tm,n,k}(a_i, b_1, \ldots b_k)$ and $b_i'$ equals to
+\[ \subst_{p_i,n+n_i,m+k}(b_i, \wk^{n_i}_{\tm,n}(a_1), \ldots \wk^{n_i}_{\tm,n}(a_m), v_{n_i-1}, \ldots v_0), \]
+where $\wk^k_{p,n}(a) = \subst_{p,n+k,n}(a, v_{n+k-1}, \ldots v_k)$ if $n > 0$ and $\wk^k_{p,0}(a) = a$.
 
 To show that we can eliminate function symbols $\subst_{p,n,m}$, we need to assume that reduction rules are well-behaved in some sense with respect to substitutions.
 For example, we can assume that the only reduction rules in which function symbols $\subst_{p,n,m}$ occur on the left are the ones listed above.
@@ -1479,30 +1578,33 @@ This problem can be fixed, but let us consider the simple situation first.
 % \[ \ty(a) = A \land \ty(i) = I \sststile{}{a,i} \coe_1(A, a, i) = a \]
 % where $A$ is a closed term such that there is a closed term $A'$ such that w
 
-Let $T$ be a theory with separated typing axioms.
+Let $T$ be a theory with simple contexts.
 A $\ty$-free axiom of $T$ is called a \emph{substitution axiom} if it is one of the axioms for $\subst_{p,n,k}$ listed above.
 A $\ty$-free axiom of $T$ is called a \emph{$\subst$-free axiom} if function symbols $\subst_{p,n,k}$ do not occur on the left hand side.
-We will say that a theory $T$ with separated typing axioms has \emph{separated substitution axioms} if every $\ty$-free axiom of $T$ is either a substitution axiom or a $\subst$-free axiom.
+We will say that a theory $T$ with simple contexts has \emph{separated substitution axioms} if every $\ty$-free axiom of $T$ is either a substitution axiom or a $\subst$-free axiom.
 The sets of substitution and $\subst$-free axioms will be denoted by $\mathcal{A}_s$ and $\mathcal{A}_{sf}$, respectively.
 The sets of reduction rules corresponding to substitution and $\subst$-free axioms will be denoted by $R^s_T$ and $R^{sf}_T$, respectively.
 
+The relation $\Rightarrow_{R_T^{tf}}$ is the union of relations $\Rightarrow_{R_T^s}$ and $\Rightarrow_{R_T^{sf}}$.
+Since $\Rightarrow_{R_T^s}$ preserves $\Rightarrow_{R_T^t,\varphi}$-normal forms, this implies that the relation $\Rightarrow_{tf}$ is the union of relations $\Rightarrow_{R_T^s}$ and $\Rightarrow_{R_T^{sf}} \Rightarrow_{R_T^t,\varphi}^\nf$.
+It follows that the relation $\Rightarrow_{cf}$ is also the union of two relations $\Rightarrow_s$ and $\Rightarrow_{sf}$, the images of $\Rightarrow_{R_T^s}$ and $\Rightarrow_{R_T^{sf}} \Rightarrow_{R_T^t,\varphi}^\nf$ under $U$, respectively.
+
 \begin{lem}[subst-red]
 Let $T$ be a theory with separated substitution axioms.
-Then the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{R^s_T,\varphi} \Rightarrow_{R^t_T,\varphi}^\nf)$ is confluent and strongly normalizing for every $(\varphi,V) \in P_M$.
+Then the abstract reduction system $(\Term_{T,\varphi}^c, \Rightarrow_s)$ is confluent and strongly normalizing for every $(\varphi,V) \in P_M$.
 \end{lem}
 \begin{proof}
 TODO
 \end{proof}
 
-Let $\Term_{T,\varphi}^s$ be the subset of $\Term_{T,\varphi}^t$ consisting of terms in which function symbols $\subst_{p,n,k}$ do not occur.
+Let $\Term_{T,\varphi}^s$ be the subset of $\Term_{T,\varphi}^c$ consisting of $\Rightarrow_s$-normal forms.
 
 \begin{prop}[subst-elim]
 Let $T$ be a theory with separated substitution axioms.
-Then the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf)$ is confluent
-if and only if the system $(\Term_{T,\varphi}^s,\Rightarrow_{R^{sf}_T} \Rightarrow_{R^t_T,\varphi}^\nf (\Rightarrow_{R^s_T} \Rightarrow_{R^t_T,\varphi}^\nf)^\nf)$ is confluent.
+Then the abstract reduction system $(\Term_{T,\varphi}^c,\Rightarrow_{cf})$ is confluent if and only if the system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is.
 \end{prop}
 \begin{proof}
-Since $\Term_{T,\varphi}^s$ is a subset of $\Term_{T,\varphi}^t$ which is closed under $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf$, the ``only if'' direction is obvious.
+Since $\Term_{T,\varphi}^s$ is a subset of $\Term_{T,\varphi}^t$ which is closed under $\Rightarrow_{tf}$, the ``only if'' direction is obvious.
 The converse follows from \rlem{conf-nf}.
 By \rlem{subst-red}, $\Rightarrow_{R^s_T,\varphi} \Rightarrow_{R^t_T,\varphi}^\nf$ is strongly normalizing and confluent, so we just need to check that if $t \Rightarrow_{R_T^{sf}} s$,
 then the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^s}^\nf \Rightarrow_{R_T^{sf}}^*$.
@@ -1510,99 +1612,6 @@ TODO
 \end{proof}
 
 TODO: Consider the more complicated case.
-
-\subsection{Contexts}
-\label{sec:contexts}
-
-Let $T$ be a contextual theory and let $\mathcal{F}_0$ be the set of its basic function symbols.
-Let $\mathcal{F}_0'$ be the set consisting of elements of $\mathcal{F}_0$ and function symbols $v_0$ for all $i \in \mathbb{N}$.
-If $t$ is a term of $T$ in which function symbols $\ft_m$, $\ty_m$, and $\subst_{p,n,k}$ do not occur, then we can define a term $U(t) \in \Term_{\mathcal{F}'_0}$ in the obvious way:
-\begin{align*}
-U(x) & = x \\
-U(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \sigma(U(t_1), \ldots U(t_k)) \\
-U(v_{n,i}(\Gamma)) & = v_i
-\end{align*}
-
-Let $\Term_T^c$ be the image of $\Term_T^s$ under $U$.
-The reduction relation $R^{sf}_T$ induces a reduction relation $R^{cf}_T$ on $\Term_T^c$ in the obvious way:
-it is the minimal relation containing pairs $(U(t),U(s))$ for all $(t,s) \in R^{sf}_T$.
-
-If $t \in \Term_T^s$, then let $C(t)$ be the set of terms discarded by $U$.
-That is, $C(t)$ is defined inductively as follows:
-\begin{align*}
-C(x) & = \varnothing \\
-C(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \{ \Gamma \} \cup \bigcup_{1 \leq i \leq k} C(t_i) \\
-C(v_{n,i}(\Gamma)) & = \{ \Gamma \}
-\end{align*}
-Sometimes we need to regard $C(t)$ as a sequence in which case the order is 
-There is a natural linear order on the multiset $C(t)$, so we can also think of it as a sequence of terms.
-
-\begin{defn}[simp-ctx]
-We will say that a contextual theory $T$ with directed axioms \emph{has simple contexts} if the following conditions hold:
-\begin{enumerate}
-\item For all terms $t$ and $s$ in $\Term_T^s$ such that $(t,s) \in R_T$, the set $C(t)$ consists of distinct variables and the set $C(s)$ consists of strongly normalizable terms.
-\item For every basic function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ and every $1 \leq i \leq k$,
-if the sequent $\sststile{}{\Gamma, x_1, \ldots x_k} \sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow$ is derivale,
-then there exists a term $A_{\sigma,i}$ such that $FV(A_{\sigma,i}) \subseteq \{ \Gamma, x_1, \ldots x_{i-1} \}$ and the sequent $\sststile{}{\Gamma, x_1, \ldots x_i} e_{p_i}(x_i) = A_{\sigma,i}$ is derivale.
-\item There is a well-founded relation on the set $\Term_T^s$ such that each element of $C(s)$ is less than $t$ whenever $t \Rightarrow_R^* s$.
-\end{enumerate}
-\end{defn}
-These conditions are true for all theories that occur in practice.
-The first condition is easy to verify, but the last two require some explanation.
-The second condition might not hold in a reasonable theory, but every theory is isomoprhic to a theory in which it holds.
-For example, we can define a theory of $\Pi$-types in which the application function symbol is defined as follows:
-\[ \ft(\ft(B)) = \Gamma \land \ty(b) = B \land \ty(a) = \ft(B) \sststile{}{\Gamma,B,b,a} \app_m(\Gamma,B,b,a)\!\downarrow \]
-This theory does not satisfy the second condition of \rdefn{simp-ctx}, but it is easy to modify the definition of $\app$ to fix this problem:
-\[ \ft(A) = \Gamma \land \ft(B) = A \land \ty(b) = B \land \ty(a) = A \sststile{}{\Gamma,A,B,b,a} \app_m(\Gamma,A,B,b,a)\!\downarrow \]
-This trick can be applied to any theory to get a theory satisfying the second condition of \rdefn{simp-ctx}.
-
-The third condition of \rdefn{simp-ctx} holds if the underlying term rewriting system of $T$ is strongly normalizing.
-Indeed, we can define a well-founded relation on the set $\Term_T^s$ as follows: $t_1 > t_2$ if $|t_1| > |t_2|$ where $|t_i|$ is the length of the longest sequence of reductions starting from $t_i$.
-If $t \Rightarrow_R^* s$, then $|t| > |s|$ and if $\Gamma \in C(s)$, then $\Gamma$ is a subterm of $s$, so $|s| \geq |\Gamma|$.
-Many theories that occur in practice are strongly normalizing, but this property is hard to verify, so let us describe another condition on a theory which implies that it has simple contexts.
-
-Let $T$ be a theory such that, for every pair of terms $t$ and $s$ in $\Term_T^s$ such that $(t,s) \in R_T$, the set $C(t)$ consists of distinct variables and $C(s) \subseteq C(t)$.
-This condition is easy to verify and it holds for all theories that occur in practice.
-If it holds, then the first and the third conditions of \rdefn{simp-ctx} hold for $T$.
-The first condition holds for obvious reasons.
-To prove the third condition, we define a well-founded relation on the set $\Term_T^s$ as follows: $t_1 > t_2$ if the size of $t_1$ is greater than the size of $t_2$.
-If $t \Rightarrow_R^* s$, then it is easy to see that $C(s) \subseteq C(t)$.
-Thus, for every $\Gamma \in C(s)$, the size of $\Gamma$ is less than the size of $t$.
-
-A theory with simple contexts satisfies the following properties:
-\begin{enumerate}
-\item \label{it:red-fib} Let $t$ be a term in $\Term_T^s$ such that $U(t) \Rightarrow_R s$ for some term $s$.
-Then there exists a term $s'$ such that $t \Rightarrow_R s'$ and $U(s') = s$.
-This follows from the fact that the same reduction rule that we applied to $U(t)$ also applies to $t$ since there is no additional conditions on $t$ by the assumption on $T$..
-\item \label{it:red-nf} $U$ preserves normal forms. This follows from the previous property.
-\end{enumerate}
-
-Now we can show that we can omit contexts if they are simple:
-\begin{prop}[ctx-elim]
-Let $T$ be a theory with simple contexts.
-Then the reduction relation $R^{sf}_T$ on $\Term_T^s$ is confluent if and only if the corresponding reduction relation on $\Term_T^c$ is confluent.
-\end{prop}
-\begin{proof}
-If $\Rightarrow_R$ is confluent on $\Term_T^s$, then it is easy to show that the same is true for $\Term_T^c$.
-Indeed, if we have a term $t \in \Term_T^c$ such that $t \Rightarrow_R^* t_1$ and $t \Rightarrow_R^* t_2$,
-then there is a term $t' \in \Term_T^s$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that $t' \Rightarrow_R^* t_1'$, $t' \Rightarrow_R^* t_2'$, $U(t_1') = t_1'$, and $U(t_2') = t_2'$.
-Since $t'$ is confluent, there exists a term $s'$ such that $t_1' \Rightarrow_R^* s'$ and $t_2' \Rightarrow_R^* s'$.
-Hence $U(t_1') \Rightarrow_R^* U(s')$ and $U(t_2') \Rightarrow_R^* U(s')$.
-
-Conversely, let $t_1$ and $t_2$ be equivalent terms in $\Term_T^s$.
-Note that \rlem{der-separated-closed} and \rlem{der-eq} imply that $t_1$ and $t_2$ are equivalent if and only if there is a zig-zag of reductions between $t_1$ and $t_2$.
-We proceed by induction on $t_1$ (using the well-founded relation from \rdefn{simp-ctx}).
-Since the reduction relation on $\Term_T^c$ is confluent, we have a term $s' \in \Term_T^c$ such that $U(t_1) \Rightarrow_R^* s'$ and $U(t_2) \Rightarrow_R^* s'$.
-By \eqref{it:red-fib}, there are terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_R^* s_1$, $t_2 \Rightarrow_R^* s_2$, and $U(s_1) = U(s_2) = s'$.
-
-To prove that $s_1$ and $s_2$ are joinable, it is enough to show that sequences $C(s_1)$ and $C(s_2)$ are equal up to equivalence.
-Indeed, if this is true, then we can conclude that $j$-th elements of $C(s_1)$ and $C(s_2)$ are joinable by induction hypothesis for every $j$.
-This implies that $s_1$ and $s_2$ are also joinable.
-The first elements of $C(s_i)$ are equivalent to $\ctx(s_i)$ and they are equivalent since $s_1$ and $s_2$ are.
-The second condition of \rdefn{simp-ctx} implies that other elements of $C(s_i)$ are determined by the first element.
-Indeed, if $\sststile{}{V} \sigma_m(\Delta, t_1, \ldots t_k)\!\downarrow$ is derivable, then $\sststile{}{V} e_{p_i}(t_i) = A_{\sigma,i}[\Delta/\Gamma, t_1/x_1, \ldots t_{i-1}/x_{i-1}]$ is also derivable.
-This implies that $j$-th element of $C(s_i)$ are equivalent for all $j$.
-\end{proof}
 
 \section{Applications}
 \label{sec:applications}
