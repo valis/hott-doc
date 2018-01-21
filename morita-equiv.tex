@@ -1451,8 +1451,8 @@ Note that we omit the context for function symbols $\subst_{p,m,k}$ when $k > 0$
 We can do this since it can be inferred from any of the last $k$ parameters.
 
 Let $T$ be a contextual theory and let $\mathcal{F}_0$ be the set of its basic function symbols.
-Let $\mathcal{F}_0'$ be the set consisting of elements of $\mathcal{F}_0$, function symbols $v_i$ for all $i \in \mathbb{N}$, and function symbols $\subst_{p,m,k}$ for all $k > 0$.
-If $t$ is a term of $T$ in which function symbols $\ft_m$, $\ty_m$, and $\subst_{p,n,k}$ do not occur, then we can define a term $U(t) \in \Term_{\mathcal{F}'_0}$ in the obvious way:
+Let $\mathcal{F}_0'$ be the set consisting of elements of $\mathcal{F}_0$, function symbols $v_i$ for all $i \in \mathbb{N}$, and function symbols $\subst_{p,n,k}$.
+If $t$ is a term of $T$ in which function symbols $\ft_m$ and $\ty_m$ do not occur, then we can define a term $U(t) \in \Term_{\mathcal{F}'_0}$ in the obvious way:
 \begin{align*}
 U(x) & = x \\
 U(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \sigma(U(t_1), \ldots U(t_k)) \\
@@ -1552,28 +1552,28 @@ Let $T$ be a contextual theory with simple contexts.
 Evety such theory $T$ has a few $\ty$-free axioms that involve function symbols $\subst_{p,m,k}$.
 Corresponding $\Rightarrow_{cf}$-reduction rules look like this:
 \begin{align*}
-\subst_{p,n,k}(v_i, a_1, \ldots a_n) & \Rightarrow a_{n-i} \\
-\subst_{\tm,n,n}(a, v_{n-1}, \ldots v_0) & \Rightarrow a \\
-\subst_{p,n,m}(\sigma(b_1, \ldots b_k), a_1, \ldots a_m) & \Rightarrow \sigma(b_1', \ldots b_k') \\
+\subst_{\tm,n,k}(v_i, a_1, \ldots a_k) & \Rightarrow a_{k-i} \\
+\subst_{p,k,k}(a, v_{k-1}, \ldots v_0) & \Rightarrow a \\
+\subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m) & \Rightarrow \sigma_n(b_1', \ldots b_k') \\
 \subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k) & \Rightarrow \subst_{p,n,m}(a, a_1', \ldots a_m')
 \end{align*}
 where $a_i' = \subst_{\tm,n,k}(a_i, b_1, \ldots b_k)$ and $b_i'$ equals to
-\[ \subst_{p_i,n+n_i,m+k}(b_i, \wk^{n_i}_{\tm,n}(a_1), \ldots \wk^{n_i}_{\tm,n}(a_m), v_{n_i-1}, \ldots v_0), \]
-where $\wk^k_{p,n}(a) = \subst_{p,n+k,n}(a, v_{n+k-1}, \ldots v_k)$ if $n > 0$ and $\wk^k_{p,0}(a) = a$.
+\[ \subst_{p_i,n+n_i,m+n_i}(b_i, \wk^{n_i}_{\tm,n}(a_1), \ldots \wk^{n_i}_{\tm,n}(a_m), v_{n_i-1}, \ldots v_0), \]
+where $\wk^k_{p,n}(a) = \subst_{p,n+k,n}(a, v_{n+k-1}, \ldots v_k)$.
 
 To show that we can eliminate function symbols $\subst_{p,n,m}$, we need to assume that reduction rules are well-behaved in some sense with respect to substitutions.
 For example, we can assume that the only reduction rules in which function symbols $\subst_{p,n,m}$ occur on the left are the ones listed above.
 But there is an example of a theory which we want to consider and which does not satisfy this condition.
-Namely, the theory of the interval type with the $\sigma$ rule:
-\[ \coe_1(\wk_{\ty,0}(A), a, i) \Rightarrow a \]
-where $\wk_{p,n} : (\ctx,n+1) \times (p,n) \to (p,n+1)$ is the weakening operation defined as follows: $\wk_{p,n}(\Gamma,a) = \subst_{p,n+1,n}(\Gamma, a, v_n, \ldots v_1)$.
-Note that this theory is not confluent as formulated since
-\begin{align*}
-\coe_1(\wk_{\ty,0}(I_0), \leftI_0, \rightI_0) & \Rightarrow \leftI_0 \\
-\coe_1(\wk_{\ty,0}(I_0), \leftI_0, \rightI_0) & \Rightarrow \coe_1(I_1, \leftI_0, \rightI_0)
-\end{align*}
-and terms $\leftI_0$ and $\coe_1(I_1, \leftI_0, \rightI_0)$ are not joinable.
-This problem can be fixed, but let us consider the simple situation first.
+% Namely, the theory of the interval type with the $\sigma$ rule:
+% \[ \coe_1(\wk_{\ty,0}(A), a, i) \Rightarrow a \]
+% where $\wk_{p,n} : (\ctx,n+1) \times (p,n) \to (p,n+1)$ is the weakening operation defined as follows: $\wk_{p,n}(\Gamma,a) = \subst_{p,n+1,n}(\Gamma, a, v_n, \ldots v_1)$.
+% Note that this theory is not confluent as formulated since
+% \begin{align*}
+% \coe_1(\wk_{\ty,0}(I_0), \leftI_0, \rightI_0) & \Rightarrow \leftI_0 \\
+% \coe_1(\wk_{\ty,0}(I_0), \leftI_0, \rightI_0) & \Rightarrow \coe_1(I_1, \leftI_0, \rightI_0)
+% \end{align*}
+% and terms $\leftI_0$ and $\coe_1(I_1, \leftI_0, \rightI_0)$ are not joinable.
+% This problem can be fixed, but let us consider the simple situation first.
 % We can fix this problem by adding more axioms:
 % \[ \ty(a) = A \land \ty(i) = I \sststile{}{a,i} \coe_1(A, a, i) = a \]
 % where $A$ is a closed term such that there is a closed term $A'$ such that w
@@ -1594,7 +1594,73 @@ Let $T$ be a theory with separated substitution axioms.
 Then the abstract reduction system $(\Term_{T,\varphi}^c, \Rightarrow_s)$ is confluent and strongly normalizing for every $(\varphi,V) \in P_M$.
 \end{lem}
 \begin{proof}
-TODO
+If $t$ is a term, then let $l(t)$ be its size:
+\begin{align*}
+l(x) & = 0 \\
+l(v_i) & = 0 \\
+l(\subst_{p,n,k}(b, a_1, \ldots a_m)) & = l(b) + l(a_1) + \ldots + l(a_m) + 1 \\
+l(\sigma_n(a_1, \ldots a_n)) & = l(a_1) + \ldots + l(a_n) + 1
+\end{align*}
+For every term $t$, we define a nonzero ordinal $|t|$ less than $\omega^{\omega 2}$:
+\begin{align*}
+|x| & = 1 \\
+|v_i| & = 1 \\
+|\subst_{p,n,k}(b, a_1, \ldots a_m)| & = |b| \otimes 2 \oplus \omega^{l(b)} \otimes (|a_1| \oplus \ldots \oplus |a_m|) \\
+|\sigma_n(a_1, \ldots a_n)| & = |a_1| \oplus \ldots \oplus |a_n| \oplus \omega^\omega
+\end{align*}
+
+Let us prove that $|t| > |t'|$ whenever $t \Rightarrow_s t'$.
+This is obvious for the first rule:
+\[ |\subst_{\tm,n,k}(v_i, a_1, \ldots a_k)| = 2 \oplus |a_1| \oplus \ldots \oplus |a_k| > |a_{k-i}|. \]
+
+The second rule follows from the fact that $|a| > 0$:
+\[ |\subst_{p,k,k}(a, v_{k-1}, \ldots v_0)| = |a| \oplus |a| \oplus k > |a|. \]
+
+Let us consider the following rule:
+\[ \subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m) \Rightarrow_s \sigma_n(b_1', \ldots b_k'). \]
+
+The value of the left hand side can be computed as follows:
+\begin{align*}
+|\subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m)| & = \\
+((\sum_{1 \leq i \leq k} |b_i|) \oplus \omega^\omega) \otimes 2 \oplus \omega^{l(b_1) + \ldots + l(b_k) + 1} \otimes \sum_{1 \leq i \leq m} |a_i| & = \\
+(\sum_{1 \leq i \leq k} |b_i|) \otimes 2 \oplus \omega^\omega \oplus \omega^\omega \oplus \omega^{l(b_1) + \ldots + l(b_k) + 1} \otimes \sum_{1 \leq i \leq m} |a_i|. &
+\end{align*}
+
+Note that $|\wk^k_{p,n}(a)| = |a| \otimes 2 \oplus \omega^{l(a)} n$.
+Now we can compute the value of the right hand side:
+\begin{align*}
+|\sigma_n(\ldots \subst_{p_i,n+n_i,m+n_i}(b_i, \wk^{n_i}_{\tm,n}(a_1), \ldots \wk^{n_i}_{\tm,n}(a_m), v_{n_i-1}, \ldots v_0), \ldots)| & = \\
+(\sum_{1 \leq i \leq k} |b_i| \otimes 2 \oplus \omega^{l(b_i)} \otimes ((\sum_{1 \leq j \leq m} |a_j| \otimes 2 \oplus \omega^{l(a_j)} n) \oplus n_i)) \oplus \omega^\omega & = \\
+(\sum_{1 \leq i \leq k} |b_i|) \otimes 2 \oplus \omega^\omega \oplus \sum_{1 \leq i \leq k} \omega^{l(b_i)} \otimes ((\sum_{1 \leq j \leq m} \omega^{l(a_j)} n) \oplus n_i) \oplus & \\
+(\sum_{1 \leq i \leq k} \omega^{l(b_i)}) \otimes 2 \otimes (\sum_{1 \leq j \leq m} |a_j|). &
+\end{align*}
+Since $\sum_{1 \leq i \leq k} \omega^{l(b_i)} \otimes ((\sum_{1 \leq j \leq m} \omega^{l(a_j)} n) \oplus n_i) < \omega^\omega$,
+we just need to show that $(\sum_{1 \leq i \leq k} \omega^{l(b_i)}) \otimes 2 \leq \omega^{l(b_1) + \ldots + l(b_k) + 1}$.
+Let $\beta$ be the maximum of $l(b_1), \ldots l(b_k)$.
+Then $\omega^{l(b_1) + \ldots + l(b_k) + 1} \geq \omega^{\beta + 1}$ and $(\sum_{1 \leq i \leq k} \omega^{l(b_i)}) \otimes 2 \leq \omega^\beta 2 k < \omega^{\beta + 1}$.
+
+Finally, let us consider the last rule:
+\[ \subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k) \Rightarrow_s \subst_{p,n,m}(a, a_1', \ldots a_m'). \]
+
+The values of the involved terms can be computed as follows:
+\begin{align*}
+|\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)| & = \\
+(|a| \otimes 4) \oplus (\omega^{l(a)} \otimes \sum_{1 \leq i \leq m} |a_i| \otimes 2) \oplus (\omega^{l(a) + l(a_1) + \ldots + l(a_m) + 1} \otimes \sum_{1 \leq i \leq k} |b_i|), &
+\end{align*}
+
+\begin{align*}
+|\subst_{p,n,m}(a, \subst_{\tm,n,k}(a_1, b_1, \ldots b_k), \ldots \subst_{\tm,n,k}(a_m, b_1, \ldots b_k))| & = \\
+(|a| \otimes 2) \oplus (\omega^{l(a)} \otimes \sum_{1 \leq i \leq m} (|a_i| \otimes 2) \oplus (\omega^{l(a_i)} \otimes \sum_{1 \leq j \leq k} |b_j|)) & = \\
+(|a| \otimes 2) \oplus (\omega^{l(a)} \otimes \sum_{1 \leq i \leq m} |a_i| \otimes 2) \oplus (\sum_{1 \leq i \leq m} \omega^{l(a) + l(a_i)} \otimes \sum_{1 \leq j \leq k} |b_j|). &
+\end{align*}
+
+Since $|a| \otimes 4 > |a| \otimes 2$, we just need to show that
+\[ \omega^{l(a) + l(a_1) + \ldots + l(a_m) + 1} \geq \sum_{1 \leq i \leq m} \omega^{l(a) + l(a_i)}. \]
+Let $\alpha$ be the maximum of $l(a_1), \ldots l(a_m)$.
+Then $\omega^{l(a) + l(a_1) + \ldots l(a_m) + 1} \geq \omega^{l(a) + \alpha + 1}$ and $\sum_{1 \leq i \leq m} \omega^{l(a) + l(a_i)} \leq \omega^{l(a) + \alpha} m < \omega^{l(a) + \alpha + 1}$.
+
+This completes the proof that the system is strongly normalizing.
+It follows that the system is confluent if and only if it is locally confluent and local confluence is easy to verify by considering all critical pairs.
 \end{proof}
 
 Let $\Term_{T,\varphi}^s$ be the subset of $\Term_{T,\varphi}^c$ consisting of $\Rightarrow_s$-normal forms.
