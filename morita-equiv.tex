@@ -1152,22 +1152,51 @@ If $R$ is a term rewriting system, then we define the relation $\Rightarrow_R$ o
 if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]]$ for all $c$, $x_1$, \ldots $x_k$, and $t_1$, \ldots $t_k$.
 Every term rewriting system has the underlying abstract reduction system $(\Term_T,\Rightarrow_R)$.
 
-It is often possible to choose a direction for the axioms of a type theory so that the corresponding term rewriting system has some nice properties.
-We also need to put some additional assumptions on the axioms to guarantee that a rule $t \Rightarrow s$ is applicable whenever $t$ is defined.
+Axioms of a type theory are often presented in the form of a term rewriting system.
+We axiomatize this situation in the following definition:
 
 \begin{defn}[directed]
-An algebraic type theory $T$ has \emph{directed axioms} if it has separated axioms and every axiom in $\mathcal{A}_e$ is of the form $\varphi \sststile{}{FV(t)} t = s$, where $t,s \in \Term_T$ and $t$ is not a variable.
-Every type theory with directed axioms induces a term rewriting system $R_T$ on the set $\Term_T$: $R_T(t,s)$ is true if and only if there exists an axiom in $\mathcal{A}_e$ of the form $\varphi \sststile{}{FV(t)} t = s$.
+Let $T$ be a theory with separated axioms.
+A \emph{reduction system} on $T$ is a term rewriting system $R_T$ such that, for every pair $(\varphi,V) \in P_M$ and every substitution $\rho$, the following conditions hold:
+\begin{enumerate}
+\item \label{it:dir-first} For every pair of terms $t$ and $s$ such that $(t,s) \in R_T$, if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
+\item \label{it:dir-second} For every axiom $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$ such that $\varphi \sststile{}{V} \psi[\rho]$ is derivable,
+there is a zig-zag of $\Rightarrow_{R_T}$-reductions between $t[\rho]$ and $s[\rho]$ such that,
+for every term $q$ in this sequence of reductions, the sequent $\varphi \sststile{}{V} q\!\downarrow$ is derivable.
+\end{enumerate}
+% An algebraic type theory $T$ has \emph{directed axioms} if it has separated axioms and every axiom in $\mathcal{A}_e$ of the form $\psi \sststile{}{V'} t = s$ satisfies the following conditions:
+% \begin{itemize}
+% \item The term $t$ is not a variable and $FV(s) \subseteq FV(t)$.
+% \item For every pair $(\varphi,V) \in P_M$ and every substitution $\rho$, if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
+% \end{itemize}
+% Every type theory with directed axioms induces a term rewriting system $R_T$ on the set $\Term_T$: $R_T(t,s)$ is true if and only if there exists an axiom in $\mathcal{A}_e$ of the form $\varphi \sststile{}{V'} t = s$.
 \end{defn}
 
-Let us prove a technical lemma first.
+\begin{example}
+Let $T$ be a theory with a set of axioms $\mathcal{A}_d$ and a term rewriting system $R_T$.
+If we define $\mathcal{A}_e$ as the set of axioms of the form $t\!\downarrow\ \sststile{}{FV(t)} t = s$ for every $(t,s) \in R_T$, then $R_T$ is a reduction system on $T \cup \mathcal{A}_e$.
+We will show in \rexample{directed} that every theory with a reduction system is Morita equivalent to a theory of this form.
+\end{example}
+
+Let $T$ be a theory with separated axioms such that, for every axiom $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$, the following conditions hold:
+\begin{itemize}
+\item The term $t$ is not a variable and $FV(s) \subseteq FV(t)$.
+\item For every pair $(\varphi,V) \in P_M$ and every substitution $\rho$, if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
+\end{itemize}
+Then we can define a term rewriting system $R_T$ as the set of pairs $(t,s)$ such that there is an axiom of the form $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$.
+The first condition implies that this is indeed a term rewriting system and the second condition implies that it is a reduction system on $T$.
+We will say that $T$ \emph{has directed axioms} if these condition hold.
+Most of the theories are presented in this way, so we do not need to specify a term rewriting system explicitly.
+
+Now let us prove a technical lemma which shows that a sequent $\varphi \sststile{}{V} t = s$ is provable in $T$ if and only if
+terms $t$ and $s$ are equivalent in the term rewriting system consisting of the right hand sides of the axioms of $T$ and equalities in $\varphi$.
 
 \begin{lem}[der-eq]
 If a sequent $\varphi \sststile{}{V} t = s$ is derivable in a theory $T$, then there exist terms $t_1, \ldots t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$, $t_i = c[a/x]$ and $t_{i+1} = c[b/x]$
 for some terms $a$, $b$, and $c$ such that there is a unique occurrence of the variable $x$ in $c$ and one of the following conditions hold:
 \begin{enumerate}
-\item There exists an application of \axref{na} in which the premise is derivable and the conclusion is either $\varphi \sststile{}{V} a = b$ or $\varphi \sststile{}{V} b = a$.
-Moreover, a derivation of $\varphi \sststile{}{V} t = s$ in the natural deduction system contains a derivation of these sequents as a subderivation.
+\item There exists an application of \axref{na} in which the premise is derivable from $\varphi$ and the conclusion is either $\varphi \sststile{}{V} a = b$ or $\varphi \sststile{}{V} b = a$.
+Moreover, a derivation of $\varphi \sststile{}{V} t = s$ in the natural deduction system contains a derivation of this conclusion as a subderivation.
 \item $\varphi = \varphi_1 \land \ldots \land \varphi_k$ and there exists $j$ such that $\varphi_j$ equals to either $a = b$ or $b = a$.
 \end{enumerate}
 \end{lem}
@@ -1195,18 +1224,27 @@ Then $t'[t_n/y]$, \ldots $t'[t_1/y] = s_1$, \ldots $s_m = s'[t_1/y]$, \ldots $s'
 We will say that a term $t$ of a theory $T$ is \emph{defined} with respect to a pair $(\varphi,V) \in P_M$ if the sequent $\varphi \sststile{}{V} t\!\downarrow$ is derivable.
 Let $\Term_{T,\varphi}^d$ be the set of defined terms with respect to the pair $(\varphi,FV(\varphi))$.
 There is an abstract reduction system $\Rightarrow_\varphi$ on the set $\Term_{T,\varphi}^d$ defined as follows.
-If $\varphi = \varphi_1 \land \ldots \land \varphi_n$ and $\varphi_i$ equals to $e_{p_i}(x_i) = t_i$, then $\Rightarrow_\varphi$ consists of pairs $(e_{p_i},t_i)$ for every $1 \leq i \leq n$.
+If $\varphi = \varphi_1 \land \ldots \land \varphi_n$ and $\varphi_i$ equals to $e_{p_i}(x_i) = t_i$, then $\Rightarrow_\varphi$ consists of pairs $(c[e_{p_i}(x_i)/y],c[t_i/y])$
+for every $1 \leq i \leq n$ and every term $c$ such that there is exactly one occurrence of $y$ in $c$.
 We will denote by $\Rightarrow_{R_T,\varphi}$ the relation $\Rightarrow_{R_T} \cup \Rightarrow_\varphi$.
 The following propositions shows that equivalent terms of a theory with directed axioms are joinable under this relation:
 
 \begin{prop}[conf-main]
-Let $T$ be a theory with directed axioms and let $(\varphi,V)$ be a pair in $P_M$ where $\varphi = \varphi_1 \land \ldots \land \varphi_n$.
-Suppose that the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent.
-Then any pair of terms $t$ and $s$ such that $\varphi \sststile{T}{V} t = s$ is joinable in this system.
+Let $T$ be a theory with a reduction system and let $(\varphi,V)$ be a pair in $P_M$.
+Then the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent if and only if any pair of terms $t$ and $s$ such that $\varphi \sststile{T}{V} t = s$ is joinable in this system.
 \end{prop}
 \begin{proof}
-By \rlem{der-eq} and \rprop{der-separated}, there exists a sequence $t_1$, \ldots $t_n$ such that $t' = t_1$, $s' = t_n$, and, for every $1 \leq i < n$, either $t_i \Rightarrow_{R_T,\varphi} t_{i+1}$ or $t_{i+1} \Rightarrow_{R_T,\varphi} t_i$.
-Since $T$ is confluent, this implies that $t' \Rightarrow_{R_T,\varphi}^* r$ and $s' \Rightarrow_{R_T,\varphi}^* r$ for some term $r$.
+Suppose that the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent.
+If $t$ and $s$ are terms such that $\varphi \sststile{T}{V} t = s$, then it is enough to show that there is a zig-zag of $\Rightarrow_{R_T,\varphi}$-reductions consisting of $\varphi$-defined terms between them.
+By \rlem{der-eq} and \rprop{der-separated}, there exists a sequence $t_1$, \ldots $t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$,
+either $t_i \Rightarrow_\varphi t_{i+1}$ or $t_{i+1} \Rightarrow_\varphi t_i$ or there is an axiom $\psi \sststile{}{V'} a = b$, a substitution $\rho$, and a term $c$ such that
+the sequent $\varphi \sststile{}{V} \psi[\rho]$ is derivable and $t_i = c[a[\rho]/y]$ and $t_{i+1} = c[b[\rho]/y]$ (or vice versa).
+Condition~\eqref{it:dir-second} of \rdefn{directed} implies that in the latter case there is a zig-zag of $\Rightarrow_{R_T}$-reductions between $t_i$ and $t_{i+1}$.
+Since $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent, this implies that the terms $t$ and $s$ are joinable.
+
+The converse is easy.
+If $t \Rightarrow_{R_T,\varphi} t_1$ and $t \Rightarrow_{R_T,\varphi} t_2$, then $\varphi \sststile{T}{V} t = t_1$ and $\varphi \sststile{T}{V} t = t_2$ which implies that $\varphi \sststile{T}{V} t_1 = t_2$.
+Hence $t_1$ and $t_2$ are joinable.
 \end{proof}
 
 Note that even if $R_T$ is confluent, in general this does not imply the confluence of $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$.
@@ -1232,24 +1270,9 @@ It was shown in \cite{raoult} (see also \cite[Theorem~8.6.35]{ohlebusch-advanced
 The only serious restriction of the previous lemma is the left-linearity of $R_T$.
 We will give another set of conditions that implies the same result in \rcor{ya-morita-conf}.
 
-If we want to use \rprop{conf-main}, then we need to know that the reduction rules that were constructed in this proposition are derivable.
-In general, this might be false, so we define confluent theories as theories in which this property holds:
-
 \begin{defn}[confluent]
-A \emph{confluent} type theory is a type theory $T$ with directed axioms such that the following conditions hold for every pair $(\varphi,V)$ in $P_M$:
-\begin{enumerate}
-\item \label{it:conf-first} For every pair of terms $t$ and $s$ such that the sequent $\varphi \sststile{}{V} t = s$ is derivable, they are joinable under $\Rightarrow_{R_T,\varphi}$.
-\item \label{it:conf-second} For every axiom $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$ and every substitution $\rho$, if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
-\end{enumerate}
+A \emph{confluent} type theory is a type theory $T$ with a reduction system such that equivalent conditions of \rprop{conf-main} hold.
 \end{defn}
-
-\begin{remark}
-If the second condition of \rdefn{confluent} holds, then the converse of \rprop{conf-main} is true.
-That is, for every confluent theory $T$, the abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent.
-Indeed, if $t$ is defined and $t \Rightarrow_{R_T,\varphi} s$, then \eqref{it:conf-second} implies that $\varphi \sststile{T}{V} t = s$.
-Thus, if $t \Rightarrow_{R_T,\varphi} s_1$ and $t \Rightarrow_{R_T,\varphi} s_2$, then $\varphi \sststile{T}{V} s_1 = s_2$.
-Now \eqref{it:conf-first} implies that $s_1$ and $s_2$ are joinable.
-\end{remark}
 
 We can also define a relative version of confluent theories:
 
@@ -1287,10 +1310,8 @@ The idea is that $\Rightarrow_{sf}$ reduces one of the redexes and then $\Righta
 Then we can prove the following theorem:
 
 \begin{thm}[conf-comp]
-Let $T$ be a contextual type theory with separated typing axioms, separated substitution axioms, and simple contexts such that $\ty$-free axioms preserve types.
-Let $(\varphi,V)$ be a pair in $P_M$.
-Suppose that the abstract reduction system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent.
-Then, for every derivable sequent $\varphi \sststile{}{V} t = s$, the terms $t$ and $s$ are joinable under the relation $\Rightarrow_{R_T,\varphi}$.
+Let $T$ be a contextual type theory with a reduction system in which typing axioms are separated, substitution axioms are separated, contexts are simples, and $\ty$-free axioms preserve types.
+Then $T$ is confluent if and only if the abstract reduction system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent for every pair $(\varphi,V) \in P_M$.
 \end{thm}
 
 The technical assumptions that we put on the theory will be defined in this section.
@@ -1363,7 +1384,7 @@ Then any two elements $a,b \in A$ which are equivalent under $\Rightarrow_2$ (th
 \end{lem}
 \begin{proof}
 Since being joinable is a symmetric relation, we can assume that $\Rightarrow_2$ is also symmetric.
-Let $a_1$, \ldots, $a_n$ be a sequence such that $(a_i, a_{i+1}) \in R_2$ for every $1 \leq i < n$.
+Let $a_1$, \ldots, $a_n$ be a sequence such that $a_i \Rightarrow_2 a_{i+1}$ for every $1 \leq i < n$.
 We prove that $a_1$ and $a_n$ are joinable under $\Rightarrow_1^\nf \Rightarrow_0^*$ by induction on $n$.
 If $n = 0$, then this follows from the fact that $(A,\Rightarrow_1)$ is weakly normalizable.
 Suppose $n > 0$.
@@ -1385,9 +1406,8 @@ Let us denote the relation $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\
 Now we can prove that the confluence under $\Rightarrow_{tf}$ implies the confluence under $\Rightarrow_{R_T,\varphi}$:
 
 \begin{prop}[ty-elim]
-Let $T$ be a theory with well-defined typing axioms such that its $\ty$-free axioms preserve types and let $(\varphi,V)$ be a pair in $P_M$.
-Suppose that the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{tf})$ is confluent.
-If a sequent $\varphi \sststile{}{V} t = s$ is derivable, then $t$ and $s$ are joinable under $\Rightarrow_{R_T,\varphi}$.
+Let $T$ be a theory with a reduction system in which typing axioms are spearated and $\ty$-free axioms preserve types.
+Then $T$ is confluent if and only if the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{tf})$ is.
 \end{prop}
 \begin{proof}
 If $<$ is a well-founded relation on a set $A$, then we can define a well-founded relation on the set of subset of $A$ as follows.
@@ -1397,10 +1417,10 @@ It is easy to see that this relation is well-founded.
 Let $\psi = \psi_1 \land \ldots \land \psi_n$ be a formula such that if $\psi_i$ is of the form $t_1 = t_2$, then the terms $t_1$ and $t_2$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$.
 We prove that, for every such formula $\psi$, whenever a sequent $\psi \sststile{}{V} t = s$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}'$ where $\mathcal{A}_{tf}'$ is a subset of $\mathcal{A}_{tf}$
 the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$.
-The statement of the proposition then follows if we take $\psi = \varphi$ and $\mathcal{A}_{tf}' = \mathcal{A}_{tf}$.
+The ``if'' direction of the proposition then follows if we take $\psi = \varphi$ and $\mathcal{A}_{tf}' = \mathcal{A}_{tf}$.
 
 We proceed by double induction on the set $\mathcal{A}_{tf}'$ (using the well-founded relation we just described) and (the size of) the derivation of $\psi \sststile{}{V} t = s$.
-By \rlem{der-eq}, there is a zig-zag of reductions of the form $a \Rightarrow_{R_2} b$ between $t$ and $s$ where $a \Rightarrow_{R_2} b$ if and only if $a = c[a'[\rho]/x]$, $b = c[b'[\rho]/x]$,
+By \rlem{der-eq}, there is a zig-zag of reductions of the form $a \Rightarrow_2 b$ between $t$ and $s$ where $a \Rightarrow_2 b$ if and only if $a = c[a'[\rho]/x]$, $b = c[b'[\rho]/x]$,
 and either $a' = b'$ is a subformula of $\psi$ or $\chi \sststile{}{V'} a' = b'$ is an axiom in $\mathcal{A}_t \cup \mathcal{A}_{tf}'$.
 Moreover, $\psi \sststile{}{V} \chi[\rho]$ is derivale and the size of derivation is less than the size of the derivation of $\psi \sststile{}{V} t = s$, so the induction hypothesis applies to $\chi[\rho]$.
 
@@ -1430,6 +1450,12 @@ Since the formula $\chi[\rho]$ satisfies the hypothesis of our inductive proof a
 Moreover, since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that $c''[e_p(a'[\rho'])/y,a'[\rho']/z]$ and $c''[e_p(b'[\rho'])/y,a'[\rho']/z]$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$.
 Since $c''$ does not contain function symbols $\ty$ and $\ft$, terms $c''[e_p(b'[\rho'])/y,a'[\rho']/z]$ and $c''[e_p(b'[\rho'])/y,b'[\rho']/z]$ are also joinable.
 Finally, \rlem{conf-nf} implies that terms $c''[e_p(a'[\rho'])/y,a'[\rho']/z]$ and $c''[e_p(b'[\rho'])/y,b'[\rho']/z]$ are joinable.
+
+Now let us prove the ``only if'' direction.
+If $T$ is confluent, then the abstract reduction system $(\Term_{T,\varphi}^d, \Rightarrow_{R_T,\varphi})$ is also confluent.
+Since $\Rightarrow_{tf}$ is a subset of $\Rightarrow_{R_T,\varphi}$, it is enough to show that $\Rightarrow_{R_T,\varphi}$-equivalent terms are joinable under $\Rightarrow_{tf}$.
+% But this follows from \rlem{conf-nf}.
+TODO
 \end{proof}
 
 \subsection{Contexts}
@@ -1666,7 +1692,7 @@ It follows that the system is confluent if and only if it is locally confluent a
 Let $\Term_{T,\varphi}^s$ be the subset of $\Term_{T,\varphi}^c$ consisting of $\Rightarrow_s$-normal forms.
 
 \begin{prop}[subst-elim]
-Let $T$ be a theory with separated substitution axioms.
+Let $T$ be a theory with separated substitution axioms and let $(\varphi,V)$ be a pair in $P_M$.
 Then the abstract reduction system $(\Term_{T,\varphi}^c,\Rightarrow_{cf})$ is confluent if and only if the system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is.
 \end{prop}
 \begin{proof}
@@ -1685,21 +1711,23 @@ TODO: Consider the more complicated case.
 In this section we construct several examples of Morita equivalences and describe other applications of results of this paper.
 
 \subsection{Simple examples}
+\label{sec:simp-applications}
 
 In this subsection we consider maps of the form $f : T \to T \cup \mathcal{A}$, where $\mathcal{A}$ is a set of axioms.
 
 \begin{prop}[ext-morita]
 Let $\mathcal{A}$ be a set of sequents in a theory $T$.
-Suppose that, for every axiom $\psi_2 \sststile{}{V'} \chi$ in $\mathcal{A}$, there is a formula $\psi_1$ such that $\psi_1 \sststile{}{V'} \chi$ is a theorem of $T$
-and, for every pair $(\varphi,V)$ in $P_M$ and every substitution $\rho$, the sequent $\varphi \sststile{}{V} \psi_1[\rho]$ is derivable whenever $\varphi \sststile{}{V} \psi_2[\rho]$ is.
-Then, for every pair $(\varphi,V)$ in $P_M$, if a sequent $\varphi \sststile{}{V} \psi$ in $T \cup \mathcal{A}$, then it is also derivable in $T$.
+Suppose that, for every axiom $\psi \sststile{}{V'} \chi$ in $\mathcal{A}$, every pair $(\varphi,V) \in P_M$, and every substitution $\rho$,
+the sequent $\varphi \sststile{}{V} \chi[\rho]$ is derivable whenever $\varphi \sststile{}{V} \psi[\rho]$ is.
+Then, for every pair $(\varphi,V)$ in $P_M$, if a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T \cup \mathcal{A}$, then it is also derivable in $T$.
 In particular, the map $T \to T \cup \mathcal{A}$ is a Morita equivalence.
 \end{prop}
 \begin{proof}
 Obvious induction on the derivation of $\varphi \sststile{}{V} \psi$.
 \end{proof}
 
-We already say an examples of such a Morita equivalence in \rprop{der-separated}.
+\begin{example}
+We already saw examples of such a Morita equivalence in \rprop{der-separated}.
 This proposition implies that the map $T \to T \mathcal{A}_e$ is a Morita equivalence for every theory $T$ with separated axioms.
 This observation has the following implication.
 Suppose that we want to extend $T$ with a typing axiom of the following form:
@@ -1709,8 +1737,18 @@ Let $T_1 = T \cup \{ \varphi_\sigma \sststile{}{V} e_p(\sigma(x_1, \ldots x_k)) 
 Then the obvious map $T_1 \to T_2$ is a Morita equivalence.
 Indeed, theories $T_1 \cup \mathcal{A}_e$ and $T_2 \cup \mathcal{A}_e$ are isomorphic and the maps $T_1 \to T_1 \cup \mathcal{A}_e$ and $T_2 \to T_2 \cup \mathcal{A}_e$ are Morita equivalences.
 So $T_1 \to T_2$ is a Morita equivalence by the 2-out-of-3 property.
+\end{example}
 
-Let us consider another example.
+\begin{example}[directed]
+If $T$ is a theory with a reduction system $R_T$, then we can define another theory which consists of axioms $t\!\downarrow\ \sststile{}{FV(t)} t = s$ for all $(t,s) \in R_T$.
+Let us denote this theory by $T'$.
+Then $T$ and $T'$ are Morita equivalent.
+Indeed, both maps $T \to T \cup T'$ and $T' \to T \cup T'$ satisfy the condition of \rprop{ext-morita}.
+This follows immediately from the definition of reduction systems.
+Condition~\eqref{it:dir-first} of \rdefn{directed} implies that this is true for the first map and \eqref{it:dir-second} implies this for the second.
+\end{example}
+
+\begin{example}
 Let $T_\Pi$ be the theory of $\Pi$-types.
 One of the axioms (beta reduction) of this theory looks like this:
 \[ \ft(B) = A \land \ty(b) = B \land \ty(a) = A \sststile{}{A,B,a,b} \app(A,B,\lambda(A,b),a) = b[a] \]
@@ -1729,12 +1767,13 @@ Hence, $\varphi \sststile{}{V} \ty(b) = B$.
 This shows that the condition of \rprop{ext-morita} holds.
 
 This also implies that $T_\Pi$ is confluent.
-Indeed, the conditions of \rdefn{confluent} involve only sequents of the form $\varphi \sststile{}{V} \psi$ where $(\varphi,V) \in P_M$
+Indeed, the conditions of \rdefn{directed} and \rdefn{confluent} involve only sequents of the form $\varphi \sststile{}{V} \psi$ where $(\varphi,V) \in P_M$
 and \rprop{ext-morita} implies that such a sequent is derivable in $T_\Pi$ if and only if it is derivable in $T_\Pi'$.
 Moreover, the underlying term rewriting systems of $T_\Pi$ and $T_\Pi'$ coincide.
 These facts imply that $T_\Pi$ is confluent if and only if $T_\Pi'$ is confluent.
+\end{example}
 
-Let us describe yet another example.
+\begin{example}
 We can formulate the beta reduction axiom in one of the following ways:
 \begin{align*}
 \ft(B) = A \land A = A' \land \ty(b) = B \land \ty(a) = A & \sststile{}{A,A',B,a,b} \app(A,B,\lambda(A',b),a) = b[a] \\
@@ -1749,6 +1788,7 @@ The top arrow is actually an isomorphism and we can prove that the two remaining
 Note that even theories $T_\Pi$ and $T_\Pi''$ are isomorphic they differ as theories with directed axioms.
 In particular, the underlying term rewriting systems of $T_\Pi$ and $T_\Pi''$ differ.
 The latter is left-linear (assuming that other reduction rules are also left-linear) and this is the main reason why we might be interested in this theory.
+\end{example}
 
 We can summarize results of this subsection as follows.
 There are several ways to defined a theory of $\Pi$-types, but they are all Morita equivalent.
