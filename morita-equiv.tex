@@ -1132,6 +1132,8 @@ We will also say that $a$ and $b$ are joinable under $\Rightarrow$ if the reduct
 An element $a$ is \emph{confluent} if whenever $a \Rightarrow^* b$ and $a \Rightarrow^* c$ the terms $b$ and $c$ are joinable.
 The system is confluent if every element is confluent.
 Equivalently, the system is confluent if every pair of elements is joinable.
+\item Two elements $a$ and $b$ are \emph{$\Rightarrow$-equivalent} if there is a sequence of elements $a_1$, \ldots $a_n$ such that $a = a_1$, $b = a_n$,
+and, for every $1 \leq i < n$, either $a_i \Rightarrow a_{i+1}$ or $a_{i+1} \Rightarrow a_i$.
 \item An element $a$ is a \emph{normal form} if there is no element $a'$ such that $a \Rightarrow a'$.
 We will write $a \Rightarrow^\nf b$ if $a \Rightarrow^* b$ and $b$ is a normal form.
 We will say that an element $a$ \emph{has a normal form} (or that it is \emph{weakly normalizable}) if $a \Rightarrow^\nf b$ for some $b$.
@@ -1152,6 +1154,13 @@ If $R$ is a term rewriting system, then we define the relation $\Rightarrow_R$ o
 if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]]$ for all $c$, $x_1$, \ldots $x_k$, and $t_1$, \ldots $t_k$.
 Every term rewriting system has the underlying abstract reduction system $(\Term_T,\Rightarrow_R)$.
 
+We will say that a term $t$ of a theory $T$ is \emph{defined} with respect to a pair $(\varphi,V) \in P_M$ if the sequent $\varphi \sststile{}{V} t\!\downarrow$ is derivable.
+Let $\Term_{T,\varphi}^d$ be the set of defined terms with respect to the pair $(\varphi,FV(\varphi))$.
+There is an abstract reduction system $\Rightarrow_\varphi$ on the set $\Term_{T,\varphi}^d$ defined as follows.
+If $\varphi = \varphi_1 \land \ldots \land \varphi_n$ and $\varphi_i$ equals to $e_{p_i}(x_i) = t_i$, then $\Rightarrow_\varphi$ consists of pairs $(c[e_{p_i}(x_i)/y],c[t_i/y])$
+for every $1 \leq i \leq n$ and every term $c$ such that there is exactly one occurrence of $y$ in $c$.
+We will denote by $\Rightarrow_{R_T,\varphi}$ the relation $\Rightarrow_{R_T} \cup \Rightarrow_\varphi$.
+
 Axioms of a type theory are often presented in the form of a term rewriting system.
 We axiomatize this situation in the following definition:
 
@@ -1161,18 +1170,11 @@ A \emph{reduction system} on $T$ is a term rewriting system $R_T$ such that, for
 \begin{enumerate}
 \item \label{it:dir-first} For every pair of terms $t$ and $s$ such that $(t,s) \in R_T$, if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
 \item \label{it:dir-second} For every axiom $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$ such that $\varphi \sststile{}{V} \psi[\rho]$ is derivable,
-there is a zig-zag of $\Rightarrow_{R_T}$-reductions between $t[\rho]$ and $s[\rho]$ such that,
-for every term $q$ in this sequence of reductions, the sequent $\varphi \sststile{}{V} q\!\downarrow$ is derivable.
+terms $t[\rho]$ and $s[\rho]$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$.
 \end{enumerate}
-% An algebraic type theory $T$ has \emph{directed axioms} if it has separated axioms and every axiom in $\mathcal{A}_e$ of the form $\psi \sststile{}{V'} t = s$ satisfies the following conditions:
-% \begin{itemize}
-% \item The term $t$ is not a variable and $FV(s) \subseteq FV(t)$.
-% \item For every pair $(\varphi,V) \in P_M$ and every substitution $\rho$, if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
-% \end{itemize}
-% Every type theory with directed axioms induces a term rewriting system $R_T$ on the set $\Term_T$: $R_T(t,s)$ is true if and only if there exists an axiom in $\mathcal{A}_e$ of the form $\varphi \sststile{}{V'} t = s$.
 \end{defn}
 
-\begin{example}
+\begin{example}[dir-ax]
 Let $T$ be a theory with a set of axioms $\mathcal{A}_d$ and a term rewriting system $R_T$.
 If we define $\mathcal{A}_e$ as the set of axioms of the form $t\!\downarrow\ \sststile{}{FV(t)} t = s$ for every $(t,s) \in R_T$, then $R_T$ is a reduction system on $T \cup \mathcal{A}_e$.
 We will show in \rexample{directed} that every theory with a reduction system is Morita equivalent to a theory of this form.
@@ -1187,6 +1189,7 @@ Then we can define a term rewriting system $R_T$ as the set of pairs $(t,s)$ suc
 The first condition implies that this is indeed a term rewriting system and the second condition implies that it is a reduction system on $T$.
 We will say that $T$ \emph{has directed axioms} if these condition hold.
 Most of the theories are presented in this way, so we do not need to specify a term rewriting system explicitly.
+The theory constructed in \rexample{dir-ax} has directed axioms.
 
 Now let us prove a technical lemma which shows that a sequent $\varphi \sststile{}{V} t = s$ is provable in $T$ if and only if
 terms $t$ and $s$ are equivalent in the term rewriting system consisting of the right hand sides of the axioms of $T$ and equalities in $\varphi$.
@@ -1221,37 +1224,35 @@ Let $t_1$, \ldots $t_n$ be a sequence for $\varphi \sststile{}{V} p = q$ and let
 Then $t'[t_n/y]$, \ldots $t'[t_1/y] = s_1$, \ldots $s_m = s'[t_1/y]$, \ldots $s'[t_n/y]$ is a sequence for $\varphi \sststile{}{V} t'[q/y] = s'[q/y]$.
 \end{proof}
 
-We will say that a term $t$ of a theory $T$ is \emph{defined} with respect to a pair $(\varphi,V) \in P_M$ if the sequent $\varphi \sststile{}{V} t\!\downarrow$ is derivable.
-Let $\Term_{T,\varphi}^d$ be the set of defined terms with respect to the pair $(\varphi,FV(\varphi))$.
-There is an abstract reduction system $\Rightarrow_\varphi$ on the set $\Term_{T,\varphi}^d$ defined as follows.
-If $\varphi = \varphi_1 \land \ldots \land \varphi_n$ and $\varphi_i$ equals to $e_{p_i}(x_i) = t_i$, then $\Rightarrow_\varphi$ consists of pairs $(c[e_{p_i}(x_i)/y],c[t_i/y])$
-for every $1 \leq i \leq n$ and every term $c$ such that there is exactly one occurrence of $y$ in $c$.
-We will denote by $\Rightarrow_{R_T,\varphi}$ the relation $\Rightarrow_{R_T} \cup \Rightarrow_\varphi$.
-The following propositions shows that equivalent terms of a theory with directed axioms are joinable under this relation:
+The following proposition is the main property of theories with reduction systems:
 
 \begin{prop}[conf-main]
 Let $T$ be a theory with a reduction system and let $(\varphi,V)$ be a pair in $P_M$.
-Then the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent if and only if any pair of terms $t$ and $s$ such that $\varphi \sststile{T}{V} t = s$ is joinable in this system.
+Then a sequent $\varphi \sststile{}{V} t = s$ is derivable if and only if the terms $t$ and $s$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$.
 \end{prop}
 \begin{proof}
-Suppose that the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent.
-If $t$ and $s$ are terms such that $\varphi \sststile{T}{V} t = s$, then it is enough to show that there is a zig-zag of $\Rightarrow_{R_T,\varphi}$-reductions consisting of $\varphi$-defined terms between them.
-By \rlem{der-eq} and \rprop{der-separated}, there exists a sequence $t_1$, \ldots $t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$,
+If $t$ and $s$ are equivalent in $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$, then there is a zig-zag of $\Rightarrow_{R_T,\varphi}$-reducations between them.
+We need to show that, for every reduction $c[a[\rho]/x] \Rightarrow_{R_T} c[b[\rho]/x]$, the sequent $\varphi \sststile{}{V} c[a[\rho]/x] = c[b[\rho]/x]$ is derivable.
+Since the term $c[a[\rho]/x]$ is $\varphi$-defined, the term $a[\rho]$ is also $\varphi$-defined.
+Condition~\eqref{it:dir-first} of \rdefn{directed} implies that $\varphi \sststile{T}{V} a[\rho] = b[\rho]$ from which follows that the required sequent is derivable.
+If $c[a/x] \Rightarrow_\varphi c[b/x]$, then $\varphi \sststile{}{V} a = b$ is derivable by \axref{nh} which implies that $\varphi \sststile{}{V} c[a/x] = c[b/x]$ is also derivable.
+
+If $t$ and $s$ are terms such that $\varphi \sststile{T}{V} t = s$, then \rlem{der-eq} and \rprop{der-separated} imply that there exists a sequence $t_1$, \ldots $t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$,
 either $t_i \Rightarrow_\varphi t_{i+1}$ or $t_{i+1} \Rightarrow_\varphi t_i$ or there is an axiom $\psi \sststile{}{V'} a = b$, a substitution $\rho$, and a term $c$ such that
 the sequent $\varphi \sststile{}{V} \psi[\rho]$ is derivable and $t_i = c[a[\rho]/y]$ and $t_{i+1} = c[b[\rho]/y]$ (or vice versa).
-Condition~\eqref{it:dir-second} of \rdefn{directed} implies that in the latter case there is a zig-zag of $\Rightarrow_{R_T}$-reductions between $t_i$ and $t_{i+1}$.
-Since $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent, this implies that the terms $t$ and $s$ are joinable.
-
-The converse is easy.
-If $t \Rightarrow_{R_T,\varphi} t_1$ and $t \Rightarrow_{R_T,\varphi} t_2$, then $\varphi \sststile{T}{V} t = t_1$ and $\varphi \sststile{T}{V} t = t_2$ which implies that $\varphi \sststile{T}{V} t_1 = t_2$.
-Hence $t_1$ and $t_2$ are joinable.
+Condition~\eqref{it:dir-second} of \rdefn{directed} implies that $t_i$ and $t_{i+1}$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$.
 \end{proof}
+
+\begin{cor}[conf-main]
+Let $T$ be a theory with a reduction system and let $(\varphi,V)$ be a pair in $P_M$.
+Then the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent if and only if any pair of terms $t$ and $s$ such that $\varphi \sststile{T}{V} t = s$ is joinable in this system.
+\end{cor}
 
 Note that even if $R_T$ is confluent, in general this does not imply the confluence of $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$.
 Nevertheless, this is often true under some additional assumptions:
 
 \begin{lem}[morita-conf]
-Let $T$ be a theory with directed axioms and let $(\varphi,V)$ be a pair in $P_M$.
+Let $T$ be a theory with a reduction system and let $(\varphi,V)$ be a pair in $P_M$.
 Suppose that the following conditions hold:
 \begin{itemize}
 \item The underlying term rewriting system of $T$ is left-linear.
@@ -1267,31 +1268,13 @@ The last condition implies that they are orthogonal to each other.
 It was shown in \cite{raoult} (see also \cite[Theorem~8.6.35]{ohlebusch-advanced}) that the union of confluent orthogonal left-linear systems is confluent.
 \end{proof}
 
-The only serious restriction of the previous lemma is the left-linearity of $R_T$.
-We will give another set of conditions that implies the same result in \rcor{ya-morita-conf}.
+Note that the second condition of \rlem{morita-conf} is true if $R_T$ is confluent.
+So the only serious restriction of this lemma is the left-linearity of $R_T$.
+We will give another set of conditions that implies the same result in \rprop{ty-elim}.
 
 \begin{defn}[confluent]
-A \emph{confluent} type theory is a type theory $T$ with a reduction system such that equivalent conditions of \rprop{conf-main} hold.
+A \emph{confluent} type theory is a type theory $T$ with a reduction system such that equivalent conditions of \rcor{conf-main} hold.
 \end{defn}
-
-We can also define a relative version of confluent theories:
-
-\begin{defn}
-A \emph{confluent extension} of a theory $T$ is a confluent theory $T'$ such that $T \subseteq T'$ and, for every term $t$ of $T$ and every term $s$ of $T'$ such that $(t,s) \in R_{T'}$,
-the term $s$ also belongs to $T$ and $t\!\downarrow\ \sststile{}{FV(t)} t = s$ is derivable in $T$.
-A \emph{confluent morphism} is a morphism of theories that isomorphic to the inclusion of some theory into its confluent extension.
-\end{defn}
-
-The following proposition shows that confluent maps are conservative in a certain sense:
-
-\begin{prop}
-Let $f : T \to T'$ be a confluent map and let $(\varphi,V)$ be a pair in $P_M$.
-If $\varphi \sststile{T}{V} t\!\downarrow\!\land\,s\!\downarrow$ and $f(\varphi) \sststile{T'}{V} f(t) = f(s)$, then $\varphi \sststile{T}{V} t = s$.
-\end{prop}
-\begin{proof}
-By \rprop{conf-main}, there exists a term $r$ such that $f(t) \Rightarrow_{R_T,\varphi}^* r$ and $f(s) \Rightarrow_{R_T,\varphi}^* r$.
-Since both terms $f(t)$ and $f(s)$ belong to $T$, all of the reduction rules used in these sequences are derivable in $T$ by the definition of a confluent extension.
-\end{proof}
 
 \section{Comparsion of algebraic and ordinary type theories}
 
@@ -1310,7 +1293,7 @@ The idea is that $\Rightarrow_{sf}$ reduces one of the redexes and then $\Righta
 Then we can prove the following theorem:
 
 \begin{thm}[conf-comp]
-Let $T$ be a contextual type theory with a reduction system in which typing axioms are separated, substitution axioms are separated, contexts are simples, and $\ty$-free axioms preserve types.
+Let $T$ be a contextual type theory with a reduction system in which typing rules are separated, substitution rules are separated, contexts are simples, and $\ty$-free rules preserve types.
 Then $T$ is confluent if and only if the abstract reduction system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent for every pair $(\varphi,V) \in P_M$.
 \end{thm}
 
@@ -1322,17 +1305,16 @@ The theorem itself follows from \rprop{ty-elim}, \rprop{ctx-elim}, and \rprop{su
 Let us begin by showing that a term rewriting system is confluent whenever the subsystem on terms without function symbols $\ty$ and $\ft$ is.
 To do this we need to know that typing axioms are well-behaved in some sense.
 \begin{defn}
-An axiom is a \emph{typing axiom} if it is of the form
-\[ \varphi \sststile{}{V} e_p(\sigma(x_1, \ldots x_k)) = s \]
+A reduction rule is a \emph{typing rule} if it is of the form
+\[ e_p(\sigma(x_1, \ldots x_k)) \Rightarrow s \]
 where $\sigma$ is neither $\ft$ nor $\ty$ and the function symbols $\ft$ and $\ty$ are applied only to variables in $s$ (if they appear in this term).
-An axiom $\varphi \sststile{}{V} t = s$ is a \emph{$\ty$-free (and $\ft$-free) axiom} if the function symbols $\ft$ and $\ty$ do not appear in $t$.
-We will say that a theory $T$ with directed axioms has \emph{separated typing axioms} if every rule in the underlying term rewriting system of $T$ is either a typing axiom or a $\ty$-free axiom.
-The sets of typing and $\ty$-free axioms will be denoted by $\mathcal{A}_t$ and $\mathcal{A}_{tf}$, respectively.
-The sets of reduction rules corresponding to typing and $\ty$-free axioms will be denoted by $R^t_T$ and $R^{tf}_T$, respectively.
+A reduction rule $t \Rightarrow s$ is \emph{$\ty$-free (and $\ft$-free)} if the function symbols $\ft$ and $\ty$ do not appear in $t$.
+We will say that a theory $T$ with a reduction system has \emph{separated typing rules} if every rule in the underlying term rewriting system of $T$ is either a typing rule or a $\ty$-free rule.
+The sets of typing and $\ty$-free reduction rules will be denoted by $R^t_T$ and $R^{tf}_T$, respectively.
 
-Let $T$ be a theory with separated typing axioms.
-We will say that $\ty$-free axioms of $T$ \emph{preserve types} if there is a well-founded relation on the set of $\ty$-free axioms of $T$ such that,
-for every $\ty$-free axiom $\varphi \sststile{}{V} t = s$, the sequent $\varphi \sststile{}{V} e_p(t) = e_p(s)$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}'$,
+Let $T$ be a theory with separated typing rules.
+We will say that $\ty$-free rules of $T$ \emph{preserve types} if there is a well-founded relation on the set of $\ty$-free rules of $T$ such that,
+for every $\ty$-free rule $(t,s) \in R^{tf}_T$, the sequent $\varphi \sststile{}{V} e_p(t) = e_p(s)$ is derivable from the set $\mathcal{A}_d \cup \mathcal{A}_t \cup \mathcal{A}_{tf}'$,
 where $\mathcal{A}_{tf}'$ is the set of $\ty$-free axioms which are less than $\varphi \sststile{}{V} t = s$.
 \end{defn}
 
@@ -1380,7 +1362,7 @@ Let $\Rightarrow_1$ and $\Rightarrow_2$ be abstract reduction systems on the sam
 Let $A'$ be a subset of $A$ containing all $\Rightarrow_1$-normal forms and let $\Rightarrow_0$ be an abstract reduction system on it.
 Suppose that $(A',\Rightarrow_0)$ is confluent, $(A,\Rightarrow_1)$ is confluent and weakly normalizable
 and if $a,b \in A$ are such that $a \Rightarrow_2 b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_1^\nf \Rightarrow_0^*$.
-Then any two elements $a,b \in A$ which are equivalent under $\Rightarrow_2$ (that is, there is a zig-zag of $\Rightarrow_2$-reductions between them) are joinable under $\Rightarrow_1^\nf \Rightarrow_0^*$.
+Then any two $\Rightarrow_2$-equivalent elements $a,b \in A$ are joinable under $\Rightarrow_1^\nf \Rightarrow_0^*$.
 \end{lem}
 \begin{proof}
 Since being joinable is a symmetric relation, we can assume that $\Rightarrow_2$ is also symmetric.
