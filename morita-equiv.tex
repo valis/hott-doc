@@ -890,7 +890,7 @@ If $a = x$ is a variable, then \eqref{it:char-type-fib} implies that that the re
 
 Now, suppose that $a = \sigma(a_1, \ldots a_k)$.
 Let $A_1$, \ldots $A_k$, $t$ be terms as described in \eqref{it:char-fun-fib}.
-By induction hypothesis, there exist terms $a_1'$, \ldots $a_k'$ such that $\varphi \sststile{}{V} e_{p_i}(a_i') = A_i[x_1 \repl a_1', \ldots x_{i-1} \repl a_{i-1}']$ and $f(\varphi) \sststile{}{V} f(a_i') = a_i$.
+By the induction hypothesis, there exist terms $a_1'$, \ldots $a_k'$ such that $\varphi \sststile{}{V} e_{p_i}(a_i') = A_i[x_1 \repl a_1', \ldots x_{i-1} \repl a_{i-1}']$ and $f(\varphi) \sststile{}{V} f(a_i') = a_i$.
 Let $a' = t[x_1 \repl a_1', \ldots x_k \repl a_k']$.
 Since $\varphi \sststile{}{V} a'\!\downarrow$ and $f(\varphi) \sststile{}{V} f(a') = f(a)$, \eqref{it:char-type-fib} implies that there exists the required lifting.
 \end{proof}
@@ -916,7 +916,7 @@ First, note that if $\Gamma$ and $\Delta$ are context such that $\varphi \sststi
 then there is a morphism of context $d : \Gamma \to \Delta$ such that $f(d)$ is the identity morphism.
 We prove this by induction on the length of contexts.
 There is a unique morphism between empty contexts.
-If contexts are not empty, then we have a morphism $d : \ft(\Gamma) \to \ft(\Delta)$ by induction hypothesis.
+If contexts are not empty, then we have a morphism $d : \ft(\Gamma) \to \ft(\Delta)$ by the induction hypothesis.
 Since $f(d^*(\Delta))$ equals to $f(\Gamma)$, we have a term $\Gamma \vdash b : d^*(\Delta)$ such that $f(b)$ equals to $v_0(f(\Gamma))$ by assumption.
 Thus, $d,b$ is the required morphism of contexts $\Gamma$ and $\Delta$.
 
@@ -967,7 +967,7 @@ We also note that symbols $\ty_n$ and $\ft_n$ satisfy the first condition of \rl
 Now, we can prove by well-founded induction on $\sigma$ that the first condition of \rlem{eq-char-fib} holds.
 If it holds for $\sigma$, then we are done.
 Otherwise, let $A_1$, \ldots $A_k$ be terms that define $\sigma$.
-By induction hypothesis, there exist lifts $A_1'$, \ldots $A_k'$ of these terms (we first lift $\ft^{n_i}(e_{p_i}(A_i))$, then $\ft^{n_i-1}(e_{p_i}(A_i))$, and so on; finally, we can lift $A_i$).
+By the induction hypothesis, there exist lifts $A_1'$, \ldots $A_k'$ of these terms (we first lift $\ft^{n_i}(e_{p_i}(A_i))$, then $\ft^{n_i-1}(e_{p_i}(A_i))$, and so on; finally, we can lift $A_i$).
 If we let $\psi = (\bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i')$, then $f(\psi) \sststile{T_2}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$.
 Thus, by assumption, we have a term $t$ such that $\psi \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow$ and $f(\psi) \sststile{T_2}{x_1, \ldots x_k} f(t) = \sigma(x_1, \ldots x_k)$.
 Since $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{T_2}{x_1, \ldots x_k} f(\psi)$, we are done.
@@ -1294,7 +1294,8 @@ Then we can prove the following theorem:
 
 \begin{thm}[conf-comp]
 Let $T$ be a contextual type theory with a reduction system in which typing rules are separated, substitution rules are separated, contexts are simples, and $\ty$-free rules preserve types.
-Then $T$ is confluent if and only if the abstract reduction system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent for every pair $(\varphi,V) \in P_M$.
+Suppose that the system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent for every pair $(\varphi,V) \in P_M$.
+Then $T$ is also confluent.
 \end{thm}
 
 The technical assumptions that we put on the theory will be defined in this section.
@@ -1390,17 +1391,16 @@ Now we can prove that the confluence under $\Rightarrow_{tf}$ implies the conflu
 
 \begin{prop}[ty-elim]
 Let $T$ be a theory with a reduction system in which typing axioms are spearated and $\ty$-free axioms preserve types.
-Then $T$ is confluent if and only if the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{tf})$ is.
+Suppose that the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{tf})$ is confluent.
+Then $T$ is also confluent.
 \end{prop}
 \begin{proof}
 If $<$ is a well-founded relation on a set $A$, then we can define a well-founded relation on the set of subset of $A$ as follows.
 A subset $S$ is less than a subset $T$ if and only there is an element $a \in T$ which is greater than every element of $S$.
 It is easy to see that this relation is well-founded.
-
-Let us prove the ``if'' direction.
-Suppose that the system $(\Term_{T,\varphi}^t,\Rightarrow_{tf})$ is confluent.
 Let $R^{tf'}_T$ be a subset of $R^{tf}_T$.
-Then we prove by induction on $R^{tf'}_T$ that terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$ whenever they are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T \cup R^{tf'}_T, \varphi})$.
+Then we prove by induction on $R^{tf'}_T$ that terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$
+whenever they are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T \cup R^{tf'}_T, \varphi})$.
 
 The abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T,\varphi})$ is normalizing and confluent by \rlem{types-red}.
 Thus we can apply \rlem{conf-nf} with $A = \Term^d_{T,\varphi}$, $A' = \Term^t_{T,\varphi}$, $(\Rightarrow_0) = (\Rightarrow_{tf})$, $(\Rightarrow_1) = (\Rightarrow_{R^t_T,\varphi})$, and $(\Rightarrow_2) = (\Rightarrow_{R_T,\varphi})$
@@ -1428,17 +1428,11 @@ It follows that $c''[e_p(a[\rho'])/y,a[\rho']/z]$ and $c''[e_p(b[\rho'])/y,a[\rh
 Since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that $c''[e_p(a[\rho'])/y,a[\rho']/z]$ and $c''[e_p(b[\rho'])/y,a[\rho']/z]$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$.
 Since $c''$ does not contain function symbols $\ty$ and $\ft$, terms $c''[e_p(b[\rho'])/y,a[\rho']/z]$ and $c''[e_p(b[\rho'])/y,b[\rho']/z]$ are also joinable.
 Finally, \rlem{conf-nf} implies that terms $c''[e_p(a[\rho'])/y,a[\rho']/z]$ and $c''[e_p(b[\rho'])/y,b[\rho']/z]$ are joinable.
-
-Now let us prove the ``only if'' direction.
-If $T$ is confluent, then the abstract reduction system $(\Term_{T,\varphi}^d, \Rightarrow_{R_T,\varphi})$ is also confluent.
-Since $\Rightarrow_{tf}$ is a subset of $\Rightarrow_{R_T,\varphi}$, it is enough to show that $\Rightarrow_{R_T,\varphi}$-equivalent terms are joinable under $\Rightarrow_{tf}$.
-% But this follows from \rlem{conf-nf}.
-TODO
 \end{proof}
 
 \subsection{Contexts}
 
-In this subsection we will work with contextual theories with directed axioms (see \cite{alg-tt} for a definition of a contextual theory).
+In this subsection we will work with contextual theories (see \cite{alg-tt} for a definition of a contextual theory).
 If $T$ is a contextual theory, then we have a set of function symbols $\mathcal{F}_0$ (which we call \emph{basic function symbols}) such that the set of function symbols of $T$ consists of the following function symbols:
 \begin{align*}
 * & : (\ctx,0) \\
@@ -1527,21 +1521,22 @@ Let $T$ be a theory with simple contexts and let $(\varphi,V)$ be a pair in $P_M
 Then the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{tf})$ is confluent if and only if the system $(\Term_{T,\varphi}^c, \Rightarrow_{cf})$ is.
 \end{prop}
 \begin{proof}
-If $\Rightarrow_{tf}$ is confluent on $\Term_T^t$, then it is easy to show that the same is true for $\Term_T^c$.
-Indeed, if we have a term $t \in \Term_T^c$ such that $t \Rightarrow_{cf}^* t_1$ and $t \Rightarrow_{cf}^* t_2$,
-then there is a term $t' \in \Term_T^t$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that
+If $\Rightarrow_{tf}$ is confluent on $\Term_{T,\varphi}^t$, then it is easy to show that the same is true for $\Term_{T,\varphi}^c$.
+Indeed, if we have a term $t \in \Term_{T,\varphi}^c$ such that $t \Rightarrow_{cf}^* t_1$ and $t \Rightarrow_{cf}^* t_2$,
+then there is a term $t' \in \Term_{T,\varphi}^t$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that
 $t' \Rightarrow_{tf}^* t_1'$, $t' \Rightarrow_{tf}^* t_2'$, $U(t_1') = t_1'$, and $U(t_2') = t_2'$.
 Since $t'$ is confluent, there exists a term $s'$ such that $t_1' \Rightarrow_{tf}^* s'$ and $t_2' \Rightarrow_{tf}^* s'$.
 Hence $U(t_1') \Rightarrow_{cf}^* U(s')$ and $U(t_2') \Rightarrow_{cf}^* U(s')$.
 
-Conversely, let $t_1$ and $t_2$ be equivalent terms in $\Term_T^t$.
-Note that \rlem{der-separated-closed} and \rlem{der-eq} imply that $t_1$ and $t_2$ are equivalent if and only if there is a zig-zag of reductions between $t_1$ and $t_2$.
+Let us prove the converse.
+Suppose that $\Rightarrow_{cf}$ is confluent.
+Let $t_1$ and $t_2$ be equivalent terms in $(\Term_{T,\varphi}^t,\Rightarrow_{tf})$.
 We proceed by induction on $t_1$ (using the well-founded relation from \rdefn{simp-ctx}).
-Since the reduction relation on $\Term_T^c$ is confluent, we have a term $s' \in \Term_T^c$ such that $U(t_1) \Rightarrow_{cf}^* s'$ and $U(t_2) \Rightarrow_{cf}^* s'$.
+Since the reduction relation on $\Term_{T,\varphi}^c$ is confluent, we have a term $s' \in \Term_{T,\varphi}^c$ such that $U(t_1) \Rightarrow_{cf}^* s'$ and $U(t_2) \Rightarrow_{cf}^* s'$.
 By \eqref{it:red-fib}, there are terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_{tf}^* s_1$, $t_2 \Rightarrow_{tf}^* s_2$, and $U(s_1) = U(s_2) = s'$.
 
 To prove that $s_1$ and $s_2$ are joinable, it is enough to show that sequences $C(s_1)$ and $C(s_2)$ are equal up to equivalence.
-Indeed, if this is true, then we can conclude that $j$-th elements of $C(s_1)$ and $C(s_2)$ are joinable by induction hypothesis for every $j$.
+Indeed, if this is true, then we can conclude that $j$-th elements of $C(s_1)$ and $C(s_2)$ are joinable by the induction hypothesis for every $j$.
 This implies that $s_1$ and $s_2$ are also joinable.
 The first elements of $C(s_i)$ are equivalent to $\ctx(s_i)$ and they are equivalent since $s_1$ and $s_2$ are.
 The second condition of \rdefn{simp-ctx} implies that other elements of $C(s_i)$ are determined by the first element.
@@ -1595,76 +1590,33 @@ It follows that the relation $\Rightarrow_{cf}$ is also the union of two relatio
 
 \begin{lem}[subst-red]
 Let $T$ be a theory with separated substitution axioms.
-Then the abstract reduction system $(\Term_{T,\varphi}^c, \Rightarrow_s)$ is confluent and strongly normalizing for every $(\varphi,V) \in P_M$.
+Then the abstract reduction system $(\Term_{T,\varphi}^c,\Rightarrow_s)$ is confluent and weakly normalizing for every $(\varphi,V) \in P_M$.
 \end{lem}
 \begin{proof}
-If $t$ is a term, then let $l(t)$ be its size:
-\begin{align*}
-l(x) & = 0 \\
-l(v_i) & = 0 \\
-l(\subst_{p,n,k}(b, a_1, \ldots a_m)) & = l(b) + l(a_1) + \ldots + l(a_m) + 1 \\
-l(\sigma_n(a_1, \ldots a_n)) & = l(a_1) + \ldots + l(a_n) + 1
-\end{align*}
-For every term $t$, we define a nonzero ordinal $|t|$ less than $\omega^{\omega 2}$:
-\begin{align*}
-|x| & = 1 \\
-|v_i| & = 1 \\
-|\subst_{p,n,k}(b, a_1, \ldots a_m)| & = |b| \otimes 2 \oplus \omega^{l(b)} \otimes (|a_1| \oplus \ldots \oplus |a_m|) \\
-|\sigma_n(a_1, \ldots a_n)| & = |a_1| \oplus \ldots \oplus |a_n| \oplus \omega^\omega
-\end{align*}
+Let us prove that $(\Term_{T,\varphi}^c,\Rightarrow_s)$ is weakly normalizing.
+First, let us prove that every term of the form $\subst_{p,n,k}(a, v_{i_1}, \ldots v_{i_k})$ is weakly normalizable for every normal form $a$ by induction on it.
+If $a = v_i$ or $a = x$, then this is obvious.
+If $a = \subst_{p,k,m}(a', a_1, \ldots a_m)$, then $a'$ is a variable since $a$ is a normal form.
+Then $\subst_{p,n,k}(a, v_{i_1}, \ldots v_{i_k}) \Rightarrow_s \subst_{p,n,m}(a', a_1', \ldots a_m')$, where $a_i' = \subst_{\tm,n,k}(a_i, v_{i_1}, \ldots v_{i_k})$.
+So $a_i'$ are weakly normalizable by the induction hypothesis and if $a_i''$ is a normal form of $a_i'$, then $\subst_{p,n,m}(a', a_1'', \ldots a_m'')$ is a normal form of $\subst_{p,n,k}(a, v_{i_1}, \ldots v_{i_k})$.
+If $a = \sigma_k(b_1, \ldots b_m)$, then $\subst_{p,n,k}(a, v_{i_1}, \ldots v_{i_k}) \Rightarrow_s \sigma_n(b_1', \ldots b_m')$,
+where $b_i'$ is a term such that $b_i' \Rightarrow_s \subst_{p_i,n+n_i,k+n_i}(b_i, v_{i_1'}, \ldots v_{i_{k+n_i}'})$ for some $i_1'$, \ldots $i_{k+n_i}'$.
+Thus $b_i'$ is normalizable by the induction hypothesis.
 
-Let us prove that $|t| > |t'|$ whenever $t \Rightarrow_s t'$.
-This is obvious for the first rule:
-\[ |\subst_{\tm,n,k}(v_i, a_1, \ldots a_k)| = 2 \oplus |a_1| \oplus \ldots \oplus |a_k| > |a_{k-i}|. \]
+Now, we can prove a stronger statement.
+If $a$ is a normal form and $a_1$, \ldots $a_k$ are normalizable, then $\subst_{p,n,k}(a, a_1, \ldots a_k)$ is also normalizable.
+The proof is done by induction on $a$ similarly to the previous one.
+The only interesting case is when $a = \sigma_k(b_1, \ldots b_m)$.
+Then $\subst_{p,n,k}(a, a_1, \ldots a_k) \Rightarrow_s \sigma_n(b_1', \ldots b_m')$, where $b_i' = \subst_{p_i,n+n_i,k+n_i}(b_i, \wk^{n_i}_{\tm,n}(a_1), \ldots \wk^{n_i}_{\tm,n}(a_k), v_{n_i-1}, \ldots v_0)$.
+Since $a_j$ is normalizable, $\wk^{n_i}_{\tm,n}(a_j)$ is also normalizable.
+The induction hypothesis implies that $b_i'$ is also normalizable.
 
-The second rule follows from the fact that $|a| > 0$:
-\[ |\subst_{p,k,k}(a, v_{k-1}, \ldots v_0)| = |a| \oplus |a| \oplus k > |a|. \]
+Finally, we can show that every term is normalizable by induction on it.
+The only nontrivial case is when the term is of the form $\subst_{p,n,k}(a, a_1, \ldots a_k)$.
+Then $a$, $a_1$, \ldots $a_k$ are normalizable by the induction hypothesis.
+If $a'$ is a normal form of $a$, then $\subst_{p,n,k}(a, a_1, \ldots a_k) \Rightarrow_s \subst_{p,n,k}(a', a_1, \ldots a_k)$ and the latter term is normalizable as we just proved.
 
-Let us consider the following rule:
-\[ \subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m) \Rightarrow_s \sigma_n(b_1', \ldots b_k'). \]
-
-The value of the left hand side can be computed as follows:
-\begin{align*}
-|\subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m)| & = \\
-((\sum_{1 \leq i \leq k} |b_i|) \oplus \omega^\omega) \otimes 2 \oplus \omega^{l(b_1) + \ldots + l(b_k) + 1} \otimes \sum_{1 \leq i \leq m} |a_i| & = \\
-(\sum_{1 \leq i \leq k} |b_i|) \otimes 2 \oplus \omega^\omega \oplus \omega^\omega \oplus \omega^{l(b_1) + \ldots + l(b_k) + 1} \otimes \sum_{1 \leq i \leq m} |a_i|. &
-\end{align*}
-
-Note that $|\wk^k_{p,n}(a)| = |a| \otimes 2 \oplus \omega^{l(a)} n$.
-Now we can compute the value of the right hand side:
-\begin{align*}
-|\sigma_n(\ldots \subst_{p_i,n+n_i,m+n_i}(b_i, \wk^{n_i}_{\tm,n}(a_1), \ldots \wk^{n_i}_{\tm,n}(a_m), v_{n_i-1}, \ldots v_0), \ldots)| & = \\
-(\sum_{1 \leq i \leq k} |b_i| \otimes 2 \oplus \omega^{l(b_i)} \otimes ((\sum_{1 \leq j \leq m} |a_j| \otimes 2 \oplus \omega^{l(a_j)} n) \oplus n_i)) \oplus \omega^\omega & = \\
-(\sum_{1 \leq i \leq k} |b_i|) \otimes 2 \oplus \omega^\omega \oplus \sum_{1 \leq i \leq k} \omega^{l(b_i)} \otimes ((\sum_{1 \leq j \leq m} \omega^{l(a_j)} n) \oplus n_i) \oplus & \\
-(\sum_{1 \leq i \leq k} \omega^{l(b_i)}) \otimes 2 \otimes (\sum_{1 \leq j \leq m} |a_j|). &
-\end{align*}
-Since $\sum_{1 \leq i \leq k} \omega^{l(b_i)} \otimes ((\sum_{1 \leq j \leq m} \omega^{l(a_j)} n) \oplus n_i) < \omega^\omega$,
-we just need to show that $(\sum_{1 \leq i \leq k} \omega^{l(b_i)}) \otimes 2 \leq \omega^{l(b_1) + \ldots + l(b_k) + 1}$.
-Let $\beta$ be the maximum of $l(b_1), \ldots l(b_k)$.
-Then $\omega^{l(b_1) + \ldots + l(b_k) + 1} \geq \omega^{\beta + 1}$ and $(\sum_{1 \leq i \leq k} \omega^{l(b_i)}) \otimes 2 \leq \omega^\beta 2 k < \omega^{\beta + 1}$.
-
-Finally, let us consider the last rule:
-\[ \subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k) \Rightarrow_s \subst_{p,n,m}(a, a_1', \ldots a_m'). \]
-
-The values of the involved terms can be computed as follows:
-\begin{align*}
-|\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)| & = \\
-(|a| \otimes 4) \oplus (\omega^{l(a)} \otimes \sum_{1 \leq i \leq m} |a_i| \otimes 2) \oplus (\omega^{l(a) + l(a_1) + \ldots + l(a_m) + 1} \otimes \sum_{1 \leq i \leq k} |b_i|), &
-\end{align*}
-
-\begin{align*}
-|\subst_{p,n,m}(a, \subst_{\tm,n,k}(a_1, b_1, \ldots b_k), \ldots \subst_{\tm,n,k}(a_m, b_1, \ldots b_k))| & = \\
-(|a| \otimes 2) \oplus (\omega^{l(a)} \otimes \sum_{1 \leq i \leq m} (|a_i| \otimes 2) \oplus (\omega^{l(a_i)} \otimes \sum_{1 \leq j \leq k} |b_j|)) & = \\
-(|a| \otimes 2) \oplus (\omega^{l(a)} \otimes \sum_{1 \leq i \leq m} |a_i| \otimes 2) \oplus (\sum_{1 \leq i \leq m} \omega^{l(a) + l(a_i)} \otimes \sum_{1 \leq j \leq k} |b_j|). &
-\end{align*}
-
-Since $|a| \otimes 4 > |a| \otimes 2$, we just need to show that
-\[ \omega^{l(a) + l(a_1) + \ldots + l(a_m) + 1} \geq \sum_{1 \leq i \leq m} \omega^{l(a) + l(a_i)}. \]
-Let $\alpha$ be the maximum of $l(a_1), \ldots l(a_m)$.
-Then $\omega^{l(a) + l(a_1) + \ldots l(a_m) + 1} \geq \omega^{l(a) + \alpha + 1}$ and $\sum_{1 \leq i \leq m} \omega^{l(a) + l(a_i)} \leq \omega^{l(a) + \alpha} m < \omega^{l(a) + \alpha + 1}$.
-
-This completes the proof that the system is strongly normalizing.
-It follows that the system is confluent if and only if it is locally confluent and local confluence is easy to verify by considering all critical pairs.
+Now, let us prove that $(\Term_{T,\varphi}^c,\Rightarrow_s)$ is confluent.
 \end{proof}
 
 Let $\Term_{T,\varphi}^s$ be the subset of $\Term_{T,\varphi}^c$ consisting of $\Rightarrow_s$-normal forms.
