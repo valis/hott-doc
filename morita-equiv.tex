@@ -1460,8 +1460,7 @@ U(\subst_{p,m,k}(t, a_1, \ldots a_k)) & = \subst_{p,m,k}(U(t), U(a_1), \ldots U(
 \end{align*}
 
 Let $\Term_T^c$ be the image of $\Term_T^t$ under $U$.
-We define a reduction relation $\Rightarrow_{cf}$ on $\Term_T^c$ as follows:
-it is the minimal relation containing pairs $(U(t),U(s))$ for all $t$ and $s$ such that $t \Rightarrow_{tf} s$.
+We define a reduction relation $\Rightarrow_{cf}$ on $\Term_T^c$ as the image of $\Rightarrow_{tf}$ under $U$.
 
 If $t \in \Term_T^t$, then let $C(t)$ be the set of terms discarded by $U$.
 That is, $C(t)$ is defined inductively as follows:
@@ -1521,7 +1520,7 @@ Let $T$ be a theory with simple contexts and let $(\varphi,V)$ be a pair in $P_M
 Then the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{tf})$ is confluent if and only if the system $(\Term_{T,\varphi}^c, \Rightarrow_{cf})$ is.
 \end{prop}
 \begin{proof}
-If $\Rightarrow_{tf}$ is confluent on $\Term_{T,\varphi}^t$, then it is easy to show that the same is true for $\Term_{T,\varphi}^c$.
+If $(\Term_{T,\varphi}^t,\Rightarrow_{tf})$ is confluent, then it is easy to show that $(\Term_{T,\varphi}^c,\Rightarrow_{cf})$ is also confluent.
 Indeed, if we have a term $t \in \Term_{T,\varphi}^c$ such that $t \Rightarrow_{cf}^* t_1$ and $t \Rightarrow_{cf}^* t_2$,
 then there is a term $t' \in \Term_{T,\varphi}^t$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that
 $t' \Rightarrow_{tf}^* t_1'$, $t' \Rightarrow_{tf}^* t_2'$, $U(t_1') = t_1'$, and $U(t_2') = t_2'$.
@@ -1550,12 +1549,12 @@ This implies that $j$-th element of $C(s_i)$ are equivalent for all $j$.
 Let $T$ be a contextual theory with simple contexts.
 Evety such theory $T$ has a few $\ty$-free axioms that involve function symbols $\subst_{p,m,k}$.
 Corresponding $\Rightarrow_{cf}$-reduction rules look like this:
-\begin{align*}
-\subst_{\tm,n,k}(v_i, a_1, \ldots a_k) & \Rightarrow a_{k-i} \\
-\subst_{p,k,k}(a, v_{k-1}, \ldots v_0) & \Rightarrow a \\
-\subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m) & \Rightarrow \sigma_n(b_1', \ldots b_k') \\
-\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k) & \Rightarrow \subst_{p,n,m}(a, a_1', \ldots a_m')
-\end{align*}
+\begin{align}
+\subst_{\tm,n,k}(v_i, a_1, \ldots a_k) & \Rightarrow a_{k-i} \label{ax:v-left} \\
+\subst_{p,k,k}(a, v_{k-1}, \ldots v_0) & \Rightarrow a \label{ax:v-right} \\
+\subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m) & \Rightarrow \sigma_n(b_1', \ldots b_k') \label{ax:sigma} \\
+\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k) & \Rightarrow \subst_{p,n,m}(a, a_1', \ldots a_m') \label{ax:assoc}
+\end{align}
 where $a_i' = \subst_{\tm,n,k}(a_i, b_1, \ldots b_k)$ and $b_i'$ equals to
 \[ \subst_{p_i,n+n_i,m+n_i}(b_i, \wk^{n_i}_{\tm,n}(a_1), \ldots \wk^{n_i}_{\tm,n}(a_m), v_{n_i-1}, \ldots v_0), \]
 where $\wk^k_{p,n}(a) = \subst_{p,n+k,n}(a, v_{n+k-1}, \ldots v_k)$.
@@ -1578,11 +1577,10 @@ But there is an example of a theory which we want to consider and which does not
 % where $A$ is a closed term such that there is a closed term $A'$ such that w
 
 Let $T$ be a theory with simple contexts.
-A $\ty$-free axiom of $T$ is called a \emph{substitution axiom} if it is one of the axioms for $\subst_{p,n,k}$ listed above.
-A $\ty$-free axiom of $T$ is called a \emph{$\subst$-free axiom} if function symbols $\subst_{p,n,k}$ do not occur on the left hand side.
-We will say that a theory $T$ with simple contexts has \emph{separated substitution axioms} if every $\ty$-free axiom of $T$ is either a substitution axiom or a $\subst$-free axiom.
-The sets of substitution and $\subst$-free axioms will be denoted by $\mathcal{A}_s$ and $\mathcal{A}_{sf}$, respectively.
-The sets of reduction rules corresponding to substitution and $\subst$-free axioms will be denoted by $R^s_T$ and $R^{sf}_T$, respectively.
+A $\ty$-free rule is called a \emph{substitution rule} if it is one of the rules for $\subst_{p,n,k}$ listed above.
+A $\ty$-free rule is called a \emph{$\subst$-free rule} if function symbols $\subst_{p,n,k}$ do not occur on the left hand side.
+We will say that a theory $T$ with simple contexts has \emph{separated substitution rules} if every $\ty$-free rule of $T$ is either a substitution axiom or a $\subst$-free axiom.
+The sets of substitution and $\subst$-free rules will be denoted by $R^s_T$ and $R^{sf}_T$, respectively.
 
 The relation $\Rightarrow_{R_T^{tf}}$ is the union of relations $\Rightarrow_{R_T^s}$ and $\Rightarrow_{R_T^{sf}}$.
 Since $\Rightarrow_{R_T^s}$ preserves $\Rightarrow_{R_T^t,\varphi}$-normal forms, this implies that the relation $\Rightarrow_{tf}$ is the union of relations $\Rightarrow_{R_T^s}$ and $\Rightarrow_{R_T^{sf}} \Rightarrow_{R_T^t,\varphi}^\nf$.
@@ -1590,33 +1588,123 @@ It follows that the relation $\Rightarrow_{cf}$ is also the union of two relatio
 
 \begin{lem}[subst-red]
 Let $T$ be a theory with separated substitution axioms.
-Then the abstract reduction system $(\Term_{T,\varphi}^c,\Rightarrow_s)$ is confluent and weakly normalizing for every $(\varphi,V) \in P_M$.
+Then the abstract reduction system $(\Term_{T,\varphi}^c,\Rightarrow_s)$ is confluent and strongly normalizing for every $(\varphi,V) \in P_M$.
 \end{lem}
 \begin{proof}
-Let us prove that $(\Term_{T,\varphi}^c,\Rightarrow_s)$ is weakly normalizing.
-First, let us prove that every term of the form $\subst_{p,n,k}(a, v_{i_1}, \ldots v_{i_k})$ is weakly normalizable for every normal form $a$ by induction on it.
-If $a = v_i$ or $a = x$, then this is obvious.
-If $a = \subst_{p,k,m}(a', a_1, \ldots a_m)$, then $a'$ is a variable since $a$ is a normal form.
-Then $\subst_{p,n,k}(a, v_{i_1}, \ldots v_{i_k}) \Rightarrow_s \subst_{p,n,m}(a', a_1', \ldots a_m')$, where $a_i' = \subst_{\tm,n,k}(a_i, v_{i_1}, \ldots v_{i_k})$.
-So $a_i'$ are weakly normalizable by the induction hypothesis and if $a_i''$ is a normal form of $a_i'$, then $\subst_{p,n,m}(a', a_1'', \ldots a_m'')$ is a normal form of $\subst_{p,n,k}(a, v_{i_1}, \ldots v_{i_k})$.
-If $a = \sigma_k(b_1, \ldots b_m)$, then $\subst_{p,n,k}(a, v_{i_1}, \ldots v_{i_k}) \Rightarrow_s \sigma_n(b_1', \ldots b_m')$,
-where $b_i'$ is a term such that $b_i' \Rightarrow_s \subst_{p_i,n+n_i,k+n_i}(b_i, v_{i_1'}, \ldots v_{i_{k+n_i}'})$ for some $i_1'$, \ldots $i_{k+n_i}'$.
-Thus $b_i'$ is normalizable by the induction hypothesis.
+Let us first prove that the system is stronly normalizing.
+For each term $t$, we define a natural number $|t|_1$ greater than $1$ and an ordinal $|t|_2$ less than $\epsilon_0$ such that $(|t|_2,|t|_1)$ is less than $(|t'|_2,|t'|_1)$ in the lexicographical order whenever $t \Rightarrow_s t'$.
+First, let us define $|t|_1$:
+\begin{align*}
+|v_i|_1 & = 2 \\
+|x|_1 & = 2 \\
+|\sigma_m(b_1, \ldots b_k)|_1 & = |b_1|_1 + \ldots + |b_k|_1 \\
+|\subst_{p,n,m}(a, a_1, \ldots a_m)|_1 & = |a|_1 (|a_1|_1 + \ldots + |a_m|_1 + 2)
+\end{align*}
+This interpretation of function symbols is strictly monotone in each variable.
+Let us show that if $t$ reduces to $t'$ by one of the rules \eqref{ax:v-left}, \eqref{ax:v-right}, \eqref{ax:assoc}, then $|t|_1 > |t'|_1$:
+\[ |\subst_{\tm,n,k}(v_i, a_1, \ldots a_k)|_1 = 2 |a_1|_1 + \ldots + 2 |a_k|_1 + 4 > |a_{k-i}|_1, \]
+\[ |\subst_{p,k,k}(a, v_{k-1}, \ldots v_0)|_1 = |a|_1 (2 k + 2) \geq 2|a|_1 > |a|_1. \]
+Finally, note that
+\begin{align*}
+|\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_1 & = |a|_1 (A + 2) B, \\
+|\subst_{p,n,m}(a, a_1', \ldots a_m')|_1 = |a|_1 (|a_1|_1 B + \ldots |a_m|_1 B + 2) & = |a|_1 (A B + 2),
+\end{align*}
+where $A = |a_1|_1 + \ldots + |a_m|_1$ and $B = |b_1|_1 + \ldots + |b_k|_1 + 2$.
+Since $|a|_1 > 0$ and $B > 1$, $|a|_1 (A + 2) B - |a|_1 (A B + 2) = 2 |a|_1 (B - 1) > 0$.
 
-Now, we can prove a stronger statement.
-If $a$ is a normal form and $a_1$, \ldots $a_k$ are normalizable, then $\subst_{p,n,k}(a, a_1, \ldots a_k)$ is also normalizable.
-The proof is done by induction on $a$ similarly to the previous one.
-The only interesting case is when $a = \sigma_k(b_1, \ldots b_m)$.
-Then $\subst_{p,n,k}(a, a_1, \ldots a_k) \Rightarrow_s \sigma_n(b_1', \ldots b_m')$, where $b_i' = \subst_{p_i,n+n_i,k+n_i}(b_i, \wk^{n_i}_{\tm,n}(a_1), \ldots \wk^{n_i}_{\tm,n}(a_k), v_{n_i-1}, \ldots v_0)$.
-Since $a_j$ is normalizable, $\wk^{n_i}_{\tm,n}(a_j)$ is also normalizable.
-The induction hypothesis implies that $b_i'$ is also normalizable.
+Now, let us define $|t|_2$:
+\begin{align*}
+|v_i|_2 & = 0 \\
+|x|_2 & = 0 \\
+|\sigma_m(b_1, \ldots b_k)|_2 & = |b_1|_2 \oplus \ldots \oplus |b_k|_2 \oplus 1 \\
+|\subst_{p,n,m}(a, a_1, \ldots a_m)|_2 & = 
+\left\{
+\begin{array}{c l}	
+     2 \otimes |a|_2 & \forall i (|a_i|_2 = 0) \\
+     |a|_1 \otimes (|a_1|_2 \oplus \ldots \oplus |a_m|_2) & |a|_2 = 0, \exists i (|a_i|_2 \neq 0) \\
+     \omega^{|a|_2} \otimes (|a_1|_2 \oplus \ldots \oplus |a_m|_2) & |a|_2 \neq 0, \exists i (|a_i|_2 \neq 0)
+\end{array}\right.
+\end{align*}
+Let us check that these interpretations are strictly monotone.
+This is obvious for $\sigma_m$.
+Let us check this for $\subst_{p,n,m}$.
+First, suppose that $|a'|_2 > |a|_2$.
+If $\forall i (|a_i|_2 = 0)$, then
+\[ |\subst_{p,n,m}(a', a_1, \ldots a_m)|_2 = 2 \otimes |a'|_2 > 2 \otimes |a|_2 = |\subst_{p,n,m}(a, a_1, \ldots a_m)|_2, \]
+so we may assume that $\exists i (|a_i|_2 \neq 0)$.
+Let $A = |a_1|_2 \oplus \ldots \oplus |a_m|_2$.
+If $|a|_2 \neq 0$, then
+\[ |\subst_{p,n,m}(a', a_1, \ldots a_m)|_2 = \omega^{|a'|_2} \otimes A > \omega^{|a|_2} \otimes A = |\subst_{p,n,m}(a, a_1, \ldots a_m)|_2. \]
+If $|a|_2 = 0$, then
+\[ |\subst_{p,n,m}(a', a_1, \ldots a_m)|_2 = \omega^{|a'|_2} \otimes A \geq \omega \otimes A > \]
+\[ |a|_1 \otimes A = |\subst_{p,n,m}(a, a_1, \ldots a_m)|_2. \]
+Now, suppose that $|a_j'|_2 > |a_j|_2$ for some $j$ and $|a_i'| = |a_i|$ for every $i \neq j$.
+If $\exists i (|a_i|_2 \neq 0)$, then it is obvious that $|\subst_{p,n,m}(a, a_1', \ldots a_m')|_2$ is greater than $|\subst_{p,n,m}(a, a_1, \ldots a_m)|_2$,
+so we may assume that $\forall i (|a_i|_2 = 0)$.
+If $|a|_2 = 0$, then
+\[ |\subst_{p,n,m}(a, a_1', \ldots a_m')|_2 = |a|_1 \otimes A' > 0 = |\subst_{p,n,m}(a, a_1, \ldots a_m)|_2, \]
+where $A' = |a_1'|_2 \oplus \ldots \oplus |a_m'|_2$.
+If $|a|_2 \neq 0$, then
+\[ |\subst_{p,n,m}(a, a_1', \ldots a_m')|_2 = \omega^{|a|_2} \otimes A' \geq \omega^{|a|_2} > \]
+\[ 2 \otimes |a|_2 = |\subst_{p,n,m}(a, a_1, \ldots a_m)|_2. \]
+This compltes the proof that the interpretation of $\subst_{p,n,m}$ is strictly monotone.
 
-Finally, we can show that every term is normalizable by induction on it.
-The only nontrivial case is when the term is of the form $\subst_{p,n,k}(a, a_1, \ldots a_k)$.
-Then $a$, $a_1$, \ldots $a_k$ are normalizable by the induction hypothesis.
-If $a'$ is a normal form of $a$, then $\subst_{p,n,k}(a, a_1, \ldots a_k) \Rightarrow_s \subst_{p,n,k}(a', a_1, \ldots a_k)$ and the latter term is normalizable as we just proved.
+Now, we need to show that $|t|_2 \geq |t'|_2$ whenever $t \Rightarrow_s t'$.
+Moreover, we need to show that this inequality is strict whenever $t$ reduces to $t'$ by the rule \eqref{ax:sigma}.
+We do not need to prove strict inequality for other rules since $|t|_1 > |t'|_1$ in this case.
+This is obvious for the second rule:
+\[ |\subst_{p,k,k}(a, v_{k-1}, \ldots v_0)|_2 = 2 \otimes |a|_2 \geq |a|_2. \]
+Let us prove that $|\subst_{\tm,n,k}(v_i, a_1, \ldots a_k)|_2 \geq |a_{k-i}|_2$.
+If $|a_{k-i}|_2 = 0$, then this is obvious.
+If $|a_{k-i}|_2 \neq 0$, then $|\subst_{\tm,n,k}(v_i, a_1, \ldots a_k)|_2 = 2 \otimes (|a_1|_2 \oplus \ldots \oplus |a_k|_2) \geq |a_{k-i}|_2$.
 
-Now, let us prove that $(\Term_{T,\varphi}^c,\Rightarrow_s)$ is confluent.
+Let us consider the third rule.
+Note that $|\wk^k_{p,n}(a)|_2 = 2 \otimes |a|_2$.
+If $\forall i (|a_i|_2 = 0)$, then
+\[ |\subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m)|_2 = 2 \otimes |b_1|_2 \oplus \ldots \oplus 2 \otimes |b_k|_2 \oplus 2 > \]
+\[ 2 \otimes |b_1|_2 \oplus \ldots \oplus 2 \otimes |b_k|_2 \oplus 1 = |\sigma_n(b_1', \ldots b_k')|_2. \]
+If $\exists i (|a_i|_2 \neq 0)$, then 
+\[ |\subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m)|_2 = \omega^{|b_1|_2 \oplus \ldots \oplus |b_k|_2 \oplus 1} \otimes (|a_1|_2 \oplus \ldots \oplus |a_m|_2), \]
+\[ |\sigma_n(b_1', \ldots b_k')|_2 = (\omega^{|b_1|_2} \oplus \ldots \oplus \omega^{|b_k|_2} \oplus c) \otimes 2 \otimes (|a_1|_2 \oplus \ldots \oplus |a_m|_2) \oplus 1 < \]
+\[ (\omega^{|b_1|_2} \oplus \ldots \oplus \omega^{|b_k|_2} \oplus c \oplus 1) \otimes 2 \otimes (|a_1|_2 \oplus \ldots \oplus |a_m|_2), \]
+where $c$ is some natural number.
+Thus we just need to prove that
+\[ (\omega^{|b_1|_2} \oplus \ldots \oplus \omega^{|b_k|_2} \oplus c \oplus 1) \otimes 2 < \omega^{|b_1|_2 \oplus \ldots \oplus |b_k|_2 \oplus 1}. \]
+Let $\beta$ be the maximum of $|b_1|_2$, \ldots $|b_k|_2$.
+Then
+\[ (\omega^{|b_1|_2} \oplus \ldots \oplus \omega^{|b_k|_2} \oplus c \oplus 1) \otimes 2 \leq \omega^\beta 2 (k + c + 1) < \omega^{\beta + 1} \leq \omega^{|b_1|_2 \oplus \ldots \oplus |b_k|_2 \oplus 1}. \]
+
+Finally, let us consider the fourth rule.
+Let $A_1 = |a_1|_1 + \ldots + |a_m|_1$, $A_2 = |a_1|_2 + \ldots + |a_m|_2$, $B = |b_1|_2 \oplus \ldots \oplus |b_k|_2$, and $a_i' = \subst_{\tm,n,k}(a_i', b_1, \ldots b_k)$.
+If $\forall i (|a_i|_2 = 0)$ and $\forall i (|b_i|_2 = 0)$, then
+\[ |\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_2 = 4 \otimes |a|_2 \geq \]
+\[ 2 \otimes |a|_2 = |\subst_{p,n,m}(a, a_1', \ldots a_m')|_2. \]
+If $\forall i (|a_i|_2 = 0)$, $\exists i (|b_i|_2 \neq 0)$, and $|a|_2 = 0$, then
+\[ |\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_2 = |a|_1 (A_1 + 2) \otimes B > \]
+\[ |a|_1 A_1 \otimes B = |\subst_{p,n,m}(a, a_1', \ldots a_m')|_2. \]
+If $\forall i (|a_i|_2 = 0)$, $\exists i (|b_i|_2 \neq 0)$, and $|a|_2 \neq 0$, then
+\[ |\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_2 = \omega^{2 \otimes |a|_2} \otimes B \geq \omega^{|a|_2} \otimes \omega \otimes B >  \]
+\[ \omega^{|a|_2} \otimes A_1 \otimes B = |\subst_{p,k,m}(a, a_1', \ldots a_m')|_2. \]
+If $\exists i (|a_i|_2 \neq 0)$, $\forall i (|b_i|_2 = 0)$, and $|a|_2 = 0$, then both sides equal to $2 |a|_1 \otimes A_2$.
+If $\exists i (|a_i|_2 \neq 0)$, $\forall i (|b_i|_2 = 0)$, and $|a|_2 \neq 0$, then both sides equal to $2 \otimes \omega^{|a|_2} \otimes A_2$.
+If $\exists i (|a_i|_2 \neq 0)$, $\exists i (|b_i|_2 \neq 0)$, and $|a|_2 = 0$, then
+\[ |\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_2 = \omega^{|a|_1 \otimes A_2} \otimes B, \]
+\[ |\subst_{p,k,m}(a, a_1', \ldots a_m')|_2 = |a|_1 \otimes (\omega^{|a_1|_2 \oplus \ldots \oplus |a_m|_2} \oplus c) \otimes B, \]
+where $c$ is some natural number.
+Let $\alpha$ be the maximum of $|a_1|_2$, \ldots $|a_m|_2$.
+Then $\omega^{|a|_1 \otimes A_2} \geq \omega^{2 \otimes \alpha} \geq \omega^{\alpha + 1} > \omega^\alpha |a|_1 (m + c) \geq |a|_1 \otimes (\omega^{|a_1|_2 \oplus \ldots \oplus |a_m|_2} \oplus c)$.
+If $\exists i (|a_i|_2 \neq 0)$, $\exists i (|b_i|_2 \neq 0)$, and $|a|_2 \neq 0$, then
+\[ |\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_2 = \omega^{\omega^{|a|_2} \otimes A_2} \otimes B, \]
+\[ |\subst_{p,k,m}(a, a_1', \ldots a_m')|_2 = \omega^{|a|_2} \otimes (\omega^{|a_1|_2 \oplus \ldots \oplus |a_m|_2} \oplus c) \otimes B, \]
+where $c$ is some natural number.
+Let $\alpha$ be the maximum of $|a_1|_2$, \ldots $|a_m|_2$.
+Then $\omega^{|a|_2} \otimes (\omega^{|a_1|_2 \oplus \ldots \oplus |a_m|_2} \oplus c) \leq \omega^{|a|_2} \otimes \omega^\alpha (m + c) < \omega^{|a|_2 \oplus \alpha \oplus 1}$.
+Thus we just need to show that $\omega^{|a|_2} \otimes \alpha \geq |a|_2 \oplus \alpha \oplus 1$.
+If $\alpha = 1$, then $\omega^{|a|_2} > |a|_2 \oplus 2$ since $|a|_2 > 0$.
+If $\alpha > 1$, then $\omega^{|a|_2} \otimes \alpha \geq \omega^{|a|_2} \oplus \alpha > |a|_2 \oplus 1 \oplus \alpha$.
+
+This completes the proof that the system is strongly normalizing.
+It follows that the system is confluent if and only if it is locally confluent and local confluence is easy to verify by considering all critical pairs.
 \end{proof}
 
 Let $\Term_{T,\varphi}^s$ be the subset of $\Term_{T,\varphi}^c$ consisting of $\Rightarrow_s$-normal forms.
