@@ -1293,7 +1293,7 @@ The idea is that $\Rightarrow_{sf}$ reduces one of the redexes and then $\Righta
 Then we can prove the following theorem:
 
 \begin{thm}[conf-comp]
-Let $T$ be a contextual type theory with a reduction system in which typing rules are separated, substitution rules are separated, contexts are simples, and $\ty$-free rules preserve types.
+Let $T$ be a contextual type theory with a reduction system in which typing rules are separated, substitution rules are well-behaved and stable, contexts are simples, and $\ty$-free rules preserve types.
 Suppose that the system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent for every pair $(\varphi,V) \in P_M$.
 Then $T$ is also confluent.
 \end{thm}
@@ -1362,8 +1362,12 @@ We will need the following general lemma about term rewriting systems:
 \begin{lem}[conf-nf]
 Let $\Rightarrow_1$ and $\Rightarrow_2$ be abstract reduction systems on the same set $A$.
 Let $A'$ be a subset of $A$ containing all $\Rightarrow_1$-normal forms and let $\Rightarrow_0$ be an abstract reduction system on it.
-Suppose that $(A',\Rightarrow_0)$ is confluent, $(A,\Rightarrow_1)$ is confluent and weakly normalizable,
-and if $a,b \in A$ are such that $a \Rightarrow_2 b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_1^\nf \Rightarrow_0^*$.
+Suppose that the following conditions hold:
+\begin{itemize}
+\item The system $(A',\Rightarrow_0)$ is confluent.
+\item The system $(A,\Rightarrow_1)$ is confluent and weakly normalizing.
+\item If $a,b \in A$ are such that $a \Rightarrow_2 b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_1^\nf \Rightarrow_0^*$.
+\end{itemize}
 Then any two $\Rightarrow_2$-equivalent elements $a,b \in A$ are joinable under $\Rightarrow_1^\nf \Rightarrow_0^*$.
 \end{lem}
 \begin{proof}
@@ -1560,32 +1564,15 @@ where $a_i' = \subst_{\tm,n,k}(a_i, b_1, \ldots b_k)$ and $b_i'$ equals to
 \[ \subst_{p_i,n+n_i,m+n_i}(b_i, \wk^{n_i}_{\tm,n}(a_1), \ldots \wk^{n_i}_{\tm,n}(a_m), v_{n_i-1}, \ldots v_0), \]
 where $\wk^k_{p,n}(a) = \subst_{p,n+k,n}(a, v_{n+k-1}, \ldots v_k)$.
 
-To show that we can eliminate function symbols $\subst_{p,n,m}$, we need to assume that reduction rules are well-behaved in some sense with respect to substitutions.
-For example, we can assume that the only reduction rules in which function symbols $\subst_{p,n,m}$ occur on the left are the ones listed above.
-But there is an example of a theory which we want to consider and which does not satisfy this condition.
-% Namely, the theory of the interval type with the $\sigma$ rule:
-% \[ \coe_1(\wk_{\ty,0}(A), a, i) \Rightarrow a \]
-% where $\wk_{p,n} : (\ctx,n+1) \times (p,n) \to (p,n+1)$ is the weakening operation defined as follows: $\wk_{p,n}(\Gamma,a) = \subst_{p,n+1,n}(\Gamma, a, v_n, \ldots v_1)$.
-% Note that this theory is not confluent as formulated since
-% \begin{align*}
-% \coe_1(\wk_{\ty,0}(I_0), \leftI_0, \rightI_0) & \Rightarrow \leftI_0 \\
-% \coe_1(\wk_{\ty,0}(I_0), \leftI_0, \rightI_0) & \Rightarrow \coe_1(I_1, \leftI_0, \rightI_0)
-% \end{align*}
-% and terms $\leftI_0$ and $\coe_1(I_1, \leftI_0, \rightI_0)$ are not joinable.
-% This problem can be fixed, but let us consider the simple situation first.
-% We can fix this problem by adding more axioms:
-% \[ \ty(a) = A \land \ty(i) = I \sststile{}{a,i} \coe_1(A, a, i) = a \]
-% where $A$ is a closed term such that there is a closed term $A'$ such that w
-
 Let $T$ be a theory with simple contexts.
 A $\ty$-free rule is called a \emph{substitution rule} if it is one of the rules for $\subst_{p,n,k}$ listed above.
-A $\ty$-free rule is called a \emph{$\subst$-free rule} if function symbols $\subst_{p,n,k}$ do not occur on the left hand side.
-We will say that a theory $T$ with simple contexts has \emph{separated substitution rules} if every $\ty$-free rule of $T$ is either a substitution axiom or a $\subst$-free axiom.
+Other $\ty$-free rule are called \emph{$\subst$-free rules}.
 The sets of substitution and $\subst$-free rules will be denoted by $R^s_T$ and $R^{sf}_T$, respectively.
 
 The relation $\Rightarrow_{R_T^{tf}}$ is the union of relations $\Rightarrow_{R_T^s}$ and $\Rightarrow_{R_T^{sf}}$.
 It follows that the relation $\Rightarrow_{cf}$ is also the union of two relations $\Rightarrow_s$ and $\Rightarrow_{sf}$.
 The former consists of rules \eqref{ax:v-left}-\eqref{ax:assoc} and the latter is the image of $\Rightarrow_{R_T^{sf}} \Rightarrow_{R_T^t,\varphi}^\nf$ under $U$.
+Let $\Term_{T,\varphi}^s$ be the subset of $\Term_{T,\varphi}^c$ consisting of $\Rightarrow_s$-normal forms.
 
 \begin{lem}[subst-red]
 Let $T$ be a theory with separated substitution axioms.
@@ -1708,7 +1695,62 @@ This completes the proof that the system is strongly normalizing.
 It follows that the system is confluent if and only if it is locally confluent and local confluence is easy to verify by considering all critical pairs.
 \end{proof}
 
-Let $\Term_{T,\varphi}^s$ be the subset of $\Term_{T,\varphi}^c$ consisting of $\Rightarrow_s$-normal forms.
+To show that we can eliminate function symbols $\subst_{p,n,m}$, we need to assume that reduction rules are well-behaved in some sense with respect to substitutions.
+For example, we can assume that the only reduction rules in which function symbols $\subst_{p,n,m}$ occur on the left are the ones listed above.
+But there is an example of a theory which we want to consider and which does not satisfy this condition.
+Namely, the theory of the interval type with the $\sigma$ rule:
+\[ \coe_1(\wk^1_{\ty,0}(A), a, i) \Rightarrow a \]
+Note that this theory is not confluent as formulated since
+\begin{align*}
+\coe_1(\wk^1_{\ty,0}(I_0), \leftI_0, \rightI_0) & \Rightarrow \leftI_0 \\
+\coe_1(\wk^1_{\ty,0}(I_0), \leftI_0, \rightI_0) & \Rightarrow \coe_1(I_1, \leftI_0, \rightI_0)
+\end{align*}
+and terms $\leftI_0$ and $\coe_1(I_1, \leftI_0, \rightI_0)$ are not joinable.
+To fix this problem, we need to give a few definitions.
+We will say that $\subst$-free rules are \emph{well-behaved} if the following conditions hold:
+\begin{itemize}
+\item For every such $\subst$-free rule $(t,s)$ of sort $(p,n)$, terms $t$ and $s$ are $\Rightarrow_s$-normal forms and,
+for every subterm of $t$ of the form $\subst_{p,n,k}(x, t_1, \ldots t_k)$, it is true that $k > n$ and $t_i = v_{k-i}$ for each $i \leq n$.
+\item For every substitution $\rho$, consisting of $\Rightarrow_s$-normal forms, if $t[\rho] \in \Term_{T,\varphi}^c$,
+then $t' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* s'$, where $t'$ and $s'$ are $\Rightarrow_s$-normal forms of $t[\rho]$ and $s[\rho]$, respectively.
+\end{itemize}
+
+\begin{example}
+If function symbols $\subst_{p,n,k}$ do not occur in $t$, then every rule of the form $(t,s)$ is well-behaved.
+\end{example}
+
+\begin{example}
+To make the $\sigma$ rule well-behaved, we just need to add rules of the form $\coe_1(A, a, i) \Rightarrow a$ for every term $A$ in which $0$-th index does not occur.
+\end{example}
+
+Let us define a lifting function for terms $L^i : \Term_{T,\varphi}^c \to \Term_{T,\varphi}^c$ for every $i \in \mathbb{N}$:
+\begin{align*}
+L^i(x) & = x \\
+L^i(v_j) & = \\
+L^i(\sigma_m(t_1, \ldots t_k)) & = \\
+L^i(\subst_{p,n,k}(t, t_1, \ldots t_k)) & = \\
+\end{align*}
+
+We will say that $\subst$-free rules are \emph{stable} if the following conditions hold: % TODO
+
+% Let $i$ be a natural number.
+% We will say that $i$-th index does not occur in a term $t \in \Term_{T,\varphi}^s$ if the corresponding variable is not free in this term.
+% Formally, this property is defined by induction on $t$.
+% If $t = v_j$, then $i$-th index occurs in $t$ if and only if $i = j$.
+% If $t = x$, then $i$-th index occurs in $t$.
+% If $t = \subst_{p,n,k}(x, t_1, \ldots t_k)$, then $i$-th index occurs in $t$ if and only if it occurs in $t_j$ for some $1 \leq j \leq k$.
+% If $t = \sigma_m(t_1, \ldots t_k)$ and $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$,
+% then $i$-th index occurs in $t$ if and only if there exists $1 \leq j \leq k$ such that $(i+n_j)$-th index occurs in $t_j$.
+
+% If $i$-th index does not occur in a term $t$ of sort $(p,n+1)$, then we define a term $D^i(t)$ of sort $(p,n)$:
+
+% If $t = v_j$, then $i$-th index occurs in $t$ if and only if $i = j$.
+% If $t = x$, then $i$-th index occurs in $t$.
+% If $t = \subst_{p,n,k}(x, t_1, \ldots t_k)$, then $i$-th index occurs in $t$ if and only if it occurs in $t_j$ for some $1 \leq j \leq k$.
+% If $t = \sigma_m(t_1, \ldots t_k)$ and $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$,
+% then $i$-th index occurs in $t$ if and only if there exists $1 \leq j \leq k$ such that $(i+n_j)$-th index occurs in $t_j$.
+
+% We will say that a theory $T$ with simple contexts has \emph{separated substitution rules} if every $\ty$-free rule of $T$ is either a substitution axiom or a $\subst$-free axiom.
 
 \begin{prop}[subst-elim]
 Let $T$ be a theory with separated substitution axioms and let $(\varphi,V)$ be a pair in $P_M$.
