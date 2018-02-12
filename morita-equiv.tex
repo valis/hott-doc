@@ -1095,8 +1095,8 @@ The previous proposition implies that the maps between theories with separated a
 This shows that if we are interested in a theory with separated axioms, then we can work with either minimal or maximal theory corresponding to it instead.
 In general, we prefer to work with the latter, but sometimes it is convenient to switch to the former.
 
-Note that relative $\I$-cell complexes are minimal theories with simples axioms.
-We can define another set $\I'$ of generating cofibrations such that relative $\I'$-cell complexes are maximal theories with simples axioms.
+Note that relative $\I$-cell complexes are minimal theories with simple axioms.
+We can define another set $\I'$ of generating cofibrations such that relative $\I'$-cell complexes are maximal theories with simple axioms.
 Recall that $T_{(p_1,n_1), \ldots (p_{k+1},n_{k+1})}$ is the theory with function symbols $\sigma_i : (p_1,n_1) \times \ldots \times (p_{i-1},n_{i-1}) \to (d_{p_i},n_i)$ for every $1 \leq i \leq k$,
 $\sigma_{k+1} : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p_{k+1},n_{k+1})$, and axioms $\varphi_1 \land \ldots \land \varphi_i \sststile{}{x_1, \ldots x_i} \sigma_{i+1}(x_1, \ldots x_i)\!\downarrow$ for every $1 \leq i \leq k$,
 where $\varphi_j$ equals to $e_{p_j}(x_j) = \sigma_j(x_1, \ldots x_{j-1})$.
@@ -1293,9 +1293,8 @@ The idea is that $\Rightarrow_{sf}$ reduces one of the redexes and then $\Righta
 Then we can prove the following theorem:
 
 \begin{thm}[conf-comp]
-Let $T$ be a contextual type theory with a reduction system in which typing rules are separated, substitution rules are well-behaved and stable, contexts are simples, and $\ty$-free rules preserve types.
-Suppose that the system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent for every pair $(\varphi,V) \in P_M$.
-Then $T$ is also confluent.
+Let $T$ be a contextual type theory with a reduction system in which typing rules are separated, substitution rules are stable, contexts are simple, and $\ty$-free rules preserve types.
+If the abstract reduction system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent for every pair $(\varphi,V) \in P_M$, then $T$ is also confluent.
 \end{thm}
 
 The technical assumptions that we put on the theory will be defined in this section.
@@ -1707,64 +1706,48 @@ Note that this theory is not confluent as formulated since
 \end{align*}
 and terms $\leftI_0$ and $\coe_1(I_1, \leftI_0, \rightI_0)$ are not joinable.
 To fix this problem, we need to give a few definitions.
-We will say that $\subst$-free rules are \emph{well-behaved} if the following conditions hold:
+We will say that a term $t$ of sort $(p,n)$ is \emph{well-behaved} if the following conditions hold:
 \begin{itemize}
-\item For every such $\subst$-free rule $(t,s)$ of sort $(p,n)$, terms $t$ and $s$ are $\Rightarrow_s$-normal forms and,
-for every subterm of $t$ of the form $\subst_{p,n,k}(x, t_1, \ldots t_k)$, it is true that $k > n$ and $t_i = v_{k-i}$ for each $i \leq n$.
-\item For every substitution $\rho$, consisting of $\Rightarrow_s$-normal forms, if $t[\rho] \in \Term_{T,\varphi}^c$,
-then $t' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* s'$, where $t'$ and $s'$ are $\Rightarrow_s$-normal forms of $t[\rho]$ and $s[\rho]$, respectively.
+\item $t$ is a $\Rightarrow_s$-normal form.
+\item All variables in $t$ have sorts greater than or equal to $n$.
+\item All indices are bound in $t$.
+\item For every subterm of the form $\subst_{p,m,k}(x, t_1, \ldots t_k)$, it is true that $t_i = v_{k-i}$ for each $i \leq n$.
 \end{itemize}
+We will say that $\subst$-free rules are \emph{well-behaved} if, for every such $\subst$-free rule $(t,s)$ of sort $(p,n)$, terms $t$ and $s$ are well-behaved and,
+for every substitution $\rho$ consisting of $\Rightarrow_s$-normal forms, if $t[\rho] \in \Term_{T,\varphi}^c$, then $t' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* s'$,
+where $t'$ and $s'$ are $\Rightarrow_s$-normal forms of $t[\rho]$ and $s[\rho]$, respectively.
 
 \begin{example}
-If function symbols $\subst_{p,n,k}$ do not occur in $t$, then every rule of the form $(t,s)$ is well-behaved.
+If $t$ and $s$ are $\Rightarrow_s$-normal forms of sort $(p,0)$ and function symbols $\subst_{p,n,k}$ do not occur in $t$, then $(t,s)$ is well-behaved.
 \end{example}
 
 \begin{example}
 To make the $\sigma$ rule well-behaved, we just need to add rules of the form $\coe_1(A, a, i) \Rightarrow a$ for every term $A$ in which $0$-th index does not occur.
 \end{example}
 
-Let us define a lifting function for terms $L^i : \Term_{T,\varphi}^c \to \Term_{T,\varphi}^c$ for every $i \in \mathbb{N}$:
+If $t$ is a well-behaved term of sort $(p,n)$, then we define a term $L^m(t)$ of sort $(p,m)$ for every $m \in \mathbb{N}$ as follows:
 \begin{align*}
-L^i(x) & = x \\
-L^i(v_j) & = \\
-L^i(\sigma_m(t_1, \ldots t_k)) & = \\
-L^i(\subst_{p,n,k}(t, t_1, \ldots t_k)) & = \\
+L^m(x) & = x \\
+L^m(v_i) & = v_i \\
+L^m(\sigma_l(t_1, \ldots t_k)) & = \sigma_{l-n+m}(L^m(t_1), \ldots L^m(t_k)) \\
+L^m(\subst_{p,l,k}(x, v_{k-1}, \ldots v_{k-n}, t_1, \ldots t_{k-n})) & = \\
+\subst_{p,l-n+m,k-n+m}(x, v_{k-n+m-1}, \ldots v_{k-n}, & L^m(t_1), \ldots L^m(t_{k-n}))
 \end{align*}
+The fact that $t$ is well-behaved guarantees that this is a well-defined function and the term $L^m(t)$ is also well-behaved.
 
-We will say that $\subst$-free rules are \emph{stable} if the following conditions hold: % TODO
-
-% Let $i$ be a natural number.
-% We will say that $i$-th index does not occur in a term $t \in \Term_{T,\varphi}^s$ if the corresponding variable is not free in this term.
-% Formally, this property is defined by induction on $t$.
-% If $t = v_j$, then $i$-th index occurs in $t$ if and only if $i = j$.
-% If $t = x$, then $i$-th index occurs in $t$.
-% If $t = \subst_{p,n,k}(x, t_1, \ldots t_k)$, then $i$-th index occurs in $t$ if and only if it occurs in $t_j$ for some $1 \leq j \leq k$.
-% If $t = \sigma_m(t_1, \ldots t_k)$ and $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$,
-% then $i$-th index occurs in $t$ if and only if there exists $1 \leq j \leq k$ such that $(i+n_j)$-th index occurs in $t_j$.
-
-% If $i$-th index does not occur in a term $t$ of sort $(p,n+1)$, then we define a term $D^i(t)$ of sort $(p,n)$:
-
-% If $t = v_j$, then $i$-th index occurs in $t$ if and only if $i = j$.
-% If $t = x$, then $i$-th index occurs in $t$.
-% If $t = \subst_{p,n,k}(x, t_1, \ldots t_k)$, then $i$-th index occurs in $t$ if and only if it occurs in $t_j$ for some $1 \leq j \leq k$.
-% If $t = \sigma_m(t_1, \ldots t_k)$ and $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$,
-% then $i$-th index occurs in $t$ if and only if there exists $1 \leq j \leq k$ such that $(i+n_j)$-th index occurs in $t_j$.
-
-% We will say that a theory $T$ with simple contexts has \emph{separated substitution rules} if every $\ty$-free rule of $T$ is either a substitution axiom or a $\subst$-free axiom.
+We will say that $\subst$-free rules are \emph{stable} if they are well-behaved and, for every $\subst$-free rule $(t,s)$ and every $m \in \mathbb{N}$, it is true that $t' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* s'$,
+where $t'$ and $s'$ are $(\Rightarrow_t \cup \Rightarrow_s)$-normal forms of $L^m(t)$ and $L^m(s)$, respectively.
 
 \begin{prop}[subst-elim]
-Let $T$ be a theory with separated substitution axioms and let $(\varphi,V)$ be a pair in $P_M$.
-Then the abstract reduction system $(\Term_{T,\varphi}^c,\Rightarrow_{cf})$ is confluent if and only if the system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is.
+Let $T$ be a theory with stable $\subst$-free rules and let $(\varphi,V)$ be a pair in $P_M$.
+If the abstract reduction system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent, then $(\Term_{T,\varphi}^c,\Rightarrow_{cf})$ is also confluent.
 \end{prop}
 \begin{proof}
-Since $\Term_{T,\varphi}^s$ is a subset of $\Term_{T,\varphi}^t$ which is closed under $\Rightarrow_{tf}$, the ``only if'' direction is obvious.
-The converse follows from \rlem{conf-nf}.
-By \rlem{subst-red}, $\Rightarrow_{R^s_T,\varphi} \Rightarrow_{R^t_T,\varphi}^\nf$ is strongly normalizing and confluent, so we just need to check that if $t \Rightarrow_{R_T^{sf}} s$,
-then the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^s}^\nf \Rightarrow_{R_T^{sf}}^*$.
+We will use \rlem{conf-nf}.
+By \rlem{subst-red}, $\Rightarrow_s$ is strongly normalizing and confluent, so we just need to check that if $t \Rightarrow_{sf} s$,
+then terms $t$ and $s$ are joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
 TODO
 \end{proof}
-
-TODO: Consider the more complicated case.
 
 \section{Applications}
 \label{sec:applications}
