@@ -1714,8 +1714,8 @@ We will say that a term $t$ of sort $(p,n)$ is \emph{well-behaved} if the follow
 \item For every subterm of the form $\subst_{p,m,k}(x, t_1, \ldots t_k)$, it is true that $t_i = v_{k-i}$ for each $i \leq n$.
 \end{itemize}
 We will say that $\subst$-free rules are \emph{well-behaved} if, for every such $\subst$-free rule $(t,s)$ of sort $(p,n)$, terms $t$ and $s$ are well-behaved and,
-for every substitution $\rho$ consisting of $\Rightarrow_s$-normal forms, if $t[\rho] \in \Term_{T,\varphi}^c$, then $t' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* s'$,
-where $t'$ and $s'$ are $\Rightarrow_s$-normal forms of $t[\rho]$ and $s[\rho]$, respectively.
+for every substitution $\rho$ consisting of $\Rightarrow_s$-normal forms, if $U(t)[\rho] \in \Term_{T,\varphi}^c$, then $t' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* s'$,
+where $t'$ and $s'$ are $\Rightarrow_s$-normal forms of $U(t)[\rho]$ and $U(\nf^t(s))[\rho]$, respectively, where $\nf^t(s)$ is the $\Rightarrow_{T,\varphi}^t$-normal of $s$.
 
 \begin{example}
 If $t$ and $s$ are $\Rightarrow_s$-normal forms of sort $(p,0)$ and function symbols $\subst_{p,n,k}$ do not occur in $t$, then $(t,s)$ is well-behaved.
@@ -1743,10 +1743,34 @@ Let $T$ be a theory with stable $\subst$-free rules and let $(\varphi,V)$ be a p
 If the abstract reduction system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent, then $(\Term_{T,\varphi}^c,\Rightarrow_{cf})$ is also confluent.
 \end{prop}
 \begin{proof}
-We will use \rlem{conf-nf}.
-By \rlem{subst-red}, $\Rightarrow_s$ is strongly normalizing and confluent, so we just need to check that if $t \Rightarrow_{sf} s$,
-then terms $t$ and $s$ are joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
-TODO
+We apply \rlem{conf-nf} to the following data:
+\begin{align*}
+A & = \Term_{T,\varphi}^c \\
+A' & = \Term_{T,\varphi}^s \\
+(\Rightarrow_0) & = (\Rightarrow_{sf} \Rightarrow_s^\nf) \\
+(\Rightarrow_1) & = (\Rightarrow_s) \\
+(\Rightarrow_2) & = (\Rightarrow_{cf}).
+\end{align*}
+The system $(A',\Rightarrow_0)$ is confluent by the assumption.
+The system $(A,\Rightarrow_1)$ is confluent and strongly normalizing by \rlem{subst-red}.
+Thus we just need to show that every pair of terms $t,s \in \Term_{T,\varphi}^c$ such that $t \Rightarrow_{cf} s$ is joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
+If $t \Rightarrow_s s$, then this is obvious, so we may assume that $t \Rightarrow_{sf} s$.
+
+Since $t \Rightarrow_{sf} s$, there exist terms $a$, $b$, and $c$ and a substitution $\rho$ such that $(a,b) \in R_T^{sf}$, $t = U(c[a[\rho]/x])$, and $s = U(\nf^t(c[b[\rho]/x]))$.
+Since $t \in \Term_{T,\varphi}^c$, the term $c$ and the substitution $\rho$ do not contain occurrences of function symbols $\ft$ and $\ty$.
+Thus $s = U(c[\nf^t(b)[\rho]/x])$.
+Since $U$ commutes with subsitution, $t = U(c)[U(a)[U(\rho)]/x]$ and $s = U(c)[U(\nf^t(b))[U(\rho)]/x]$.
+
+Let $c'$ be the $\Rightarrow_s$-normal form of $U(c)$ and let $\rho'$ be the $\Rightarrow_s$-normal form of $U(\rho)$.
+Note that $U(c)$ contains at most one occurrence of $x$, but $c'$ may contain several such occurrences.
+Let us show that $\Rightarrow_s$-redexes in the term $c'[U(a)[\rho']/x]$ that do not belong to $U(a)$ do not overlap.
+To do this, note that if $c \Rightarrow_s^* c'$ and $c$ contains at most one occurrence of a variable $x$, then, for every subterm of $c'$ of the form $\subst_{p,n,k}(a, a_1, \ldots a_k)$, if $x \in FV(a)$, then $x \notin FV(a_1, \ldots a_k)$.
+Indeed, this property holds for $c$ since it contains at most one occurrence of $x$ and it is easy to show that if it holds for $c$ and $c \Rightarrow_s c'$, then it also holds for $c'$.
+Now, a $\Rightarrow_s$-redex in the term $c'[U(a)[\rho']/x]$ either belongs to $U(a)$ or it comes from a subterm of $c'$ of the form $\subst_{p,n,k}(x, a_1, \ldots a_k)$ and the fact that we just proved implies that $a_1, \ldots a_k$ do not contain such subterms.
+
+Since $\Rightarrow_s$-redexes in the term $c'[U(a)[\rho']/x]$ do not overlap, we may consider them one at a time.
+Thus we just need to prove that every pair of terms of the form $\subst_{p,n,k}(U(a)[\rho'], a_1, \ldots a_k)$ and $\subst_{p,n,k}(U(\nf^t(b))[\rho'], a_1, \ldots a_k)$ is joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
+Since $\subst$-free rules are well-behaved, it is true that $a' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* b'$, where $a'$ and $b'$ are $\Rightarrow_s$-normal forms of $U(a)[\rho']$ and $U(\nf^t(b))[\rho']$, respectively.
 \end{proof}
 
 \section{Applications}
