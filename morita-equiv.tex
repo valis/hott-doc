@@ -1710,12 +1710,15 @@ We will say that a term $t$ of sort $(p,n)$ is \emph{well-behaved} if the follow
 \begin{itemize}
 \item $t$ is a $\Rightarrow_s$-normal form.
 \item All variables in $t$ have sorts greater than or equal to $n$.
-\item All indices are bound in $t$.
-\item For every subterm of the form $\subst_{p,m,k}(x, t_1, \ldots t_k)$, it is true that $t_i = v_{k-i}$ for each $i \leq n$.
+\item For every subterm of the form $\subst_{p,m,k}(x, t_1, \ldots t_k)$, it is true that $k \geq n$ and $t_i = v_{m-i}$ for each $i \leq n$.
+\item All indices except for the ones mentioned in the previous condition are bound in $t$.
 \end{itemize}
-We will say that $\subst$-free rules are \emph{well-behaved} if, for every such $\subst$-free rule $(t,s)$ of sort $(p,n)$, terms $t$ and $s$ are well-behaved and,
-for every substitution $\rho$ consisting of $\Rightarrow_s$-normal forms, if $U(t)[\rho] \in \Term_{T,\varphi}^c$, then $t' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* s'$,
-where $t'$ and $s'$ are $\Rightarrow_s$-normal forms of $U(t)[\rho]$ and $U(\nf^t(s))[\rho]$, respectively, where $\nf^t(s)$ is the $\Rightarrow_{T,\varphi}^t$-normal of $s$.
+We will say that $\subst$-free rules are \emph{well-behaved} if, for every such $\subst$-free rule $(t,s)$ of sort $(p,n)$, the following conditions hold:
+\begin{itemize}
+\item Terms $U(t)$ and $U(\nf^t(s))$ are well-behaved, where $\nf^t(s)$ is the normal form of $s$ with respect to $\Rightarrow_{T,\varphi}^t$.
+\item For every substitution $\rho$ consisting of $\Rightarrow_s$-normal forms, if $U(t)[\rho] \in \Term_{T,\varphi}^c$, then $t' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* s'$,
+where $t'$ and $s'$ are $\Rightarrow_s$-normal forms of $U(t)[\rho]$ and $U(\nf^t(s))[\rho]$, respectively.
+\end{itemize}
 
 \begin{example}
 If $t$ and $s$ are $\Rightarrow_s$-normal forms of sort $(p,0)$ and function symbols $\subst_{p,n,k}$ do not occur in $t$, then $(t,s)$ is well-behaved.
@@ -1730,13 +1733,27 @@ If $t$ is a well-behaved term of sort $(p,n)$, then we define a term $L^m(t)$ of
 L^m(x) & = x \\
 L^m(v_i) & = v_i \\
 L^m(\sigma_l(t_1, \ldots t_k)) & = \sigma_{l-n+m}(L^m(t_1), \ldots L^m(t_k)) \\
-L^m(\subst_{p,l,k}(x, v_{k-1}, \ldots v_{k-n}, t_1, \ldots t_{k-n})) & = \\
-\subst_{p,l-n+m,k-n+m}(x, v_{k-n+m-1}, \ldots v_{k-n}, & L^m(t_1), \ldots L^m(t_{k-n}))
+L^m(\subst_{q,l,k}(x, v_{l-1}, \ldots v_{l-n}, t_1, \ldots t_{k-n})) & = \\
+\subst_{q,l-n+m,k-n+m}(x, v_{l-n+m-1}, \ldots v_{l-n}, & L^m(t_1), \ldots L^m(t_{k-n}))
 \end{align*}
 The fact that $t$ is well-behaved guarantees that this is a well-defined function and the term $L^m(t)$ is also well-behaved.
 
-We will say that $\subst$-free rules are \emph{stable} if they are well-behaved and, for every $\subst$-free rule $(t,s)$ and every $m \in \mathbb{N}$, it is true that $t' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* s'$,
-where $t'$ and $s'$ are $(\Rightarrow_t \cup \Rightarrow_s)$-normal forms of $L^m(t)$ and $L^m(s)$, respectively.
+\begin{lem}
+For every well-behaved term $t$ of sort $(p,n)$,
+\[ \subst_{p,m,n}(t, a_1, \ldots a_n) \Rightarrow_s^\nf L^m(t)[\rho], \]
+where $\rho$ replaces every subterm of the form $\subst_{q,m+l,m+i}(x, v_{m+l-1}, \ldots v_l, t_1, \ldots t_i)$ with the term $\subst_{q,m+l,n+i}(x, \wk_{\tm,m}^l(a_1), \ldots \wk_{\tm,m}^l(a_n), t_1, \ldots t_i)$
+and every variable $y$ with $\subst_{q,m+j,n+j}(y, \wk_{\tm,m}^j(a_1), \ldots \wk_{\tm,m}^j(a_n), v_{j-1}, \ldots v_0)$.
+\end{lem}
+\begin{proof}
+It is easy to prove by induction on a subterm $s$ of $t$ that
+\[ \subst_{q,m+l,n+l}(s, \wk_{\tm,m}^l(a_1), \ldots \wk_{\tm,m}^l(a_n), v_{l-1}, \ldots v_0) \Rightarrow_s^\nf L^m(s)[\rho]. \]
+
+Since $\wk_{\tm,m}^0(a_i) \Rightarrow_s a_i$, terms $\subst_{p,m,n}(t, a_1, \ldots a_n)$ and $L^m(s)[\rho]$ are equivalent.
+Since the latter term is a normal form and $\Rightarrow_s$ is confluent, it follows that the former term reduces to it.
+\end{proof}
+
+We will say that $\subst$-free rules are \emph{stable} if they are well-behaved and, for every $\subst$-free rule $(t,s)$ and every $m \in \mathbb{N}$,
+there exists a $\subst$-free rule $(t',s')$ such that $U(t') = L^m(U(t))$ and $U(\nf^t(s')) = L^m(U(\nt^t(s)))$.
 
 \begin{prop}[subst-elim]
 Let $T$ be a theory with stable $\subst$-free rules and let $(\varphi,V)$ be a pair in $P_M$.
