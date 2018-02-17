@@ -1738,22 +1738,26 @@ L^m(\subst_{q,l,k}(x, v_{l-1}, \ldots v_{l-n}, t_1, \ldots t_{k-n})) & = \\
 \end{align*}
 The fact that $t$ is well-behaved guarantees that this is a well-defined function and the term $L^m(t)$ is also well-behaved.
 
-\begin{lem}
-For every well-behaved term $t$ of sort $(p,n)$,
-\[ \subst_{p,m,n}(t, a_1, \ldots a_n) \Rightarrow_s^\nf L^m(t)[\rho], \]
-where $\rho$ replaces every subterm of the form $\subst_{q,m+l,m+i}(x, v_{m+l-1}, \ldots v_l, t_1, \ldots t_i)$ with the term $\subst_{q,m+l,n+i}(x, \wk_{\tm,m}^l(a_1), \ldots \wk_{\tm,m}^l(a_n), t_1, \ldots t_i)$
-and every variable $y$ with $\subst_{q,m+j,n+j}(y, \wk_{\tm,m}^j(a_1), \ldots \wk_{\tm,m}^j(a_n), v_{j-1}, \ldots v_0)$.
+\begin{lem}[lift]
+For every well-behaved term $t$ of sort $(p,n)$, terms
+\[ \subst_{p,m,n}(t, a_1, \ldots a_n) \]
+and
+\[ L^m(t)[\rho] \]
+are joinable under $\Rightarrow_s$, where
+\[ \rho(x) = \subst_{q,m+i,n+i}(x, \wk_{\tm,m}^i(a_1), \ldots \wk_{\tm,m}^i(a_n), v_{i-1}, \ldots v_0). \]
 \end{lem}
 \begin{proof}
-It is easy to prove by induction on a subterm $s$ of $t$ that
-\[ \subst_{q,m+l,n+l}(s, \wk_{\tm,m}^l(a_1), \ldots \wk_{\tm,m}^l(a_n), v_{l-1}, \ldots v_0) \Rightarrow_s^\nf L^m(s)[\rho]. \]
-
+It is easy to prove by induction on a subterm $s$ of $t$ that terms
+\[ \subst_{q,m+l,n+l}(s, \wk_{\tm,m}^l(a_1), \ldots \wk_{\tm,m}^l(a_n), v_{l-1}, \ldots v_0) \]
+and
+\[ L^m(s)[\rho] \]
+are joinable.
 Since $\wk_{\tm,m}^0(a_i) \Rightarrow_s a_i$, terms $\subst_{p,m,n}(t, a_1, \ldots a_n)$ and $L^m(s)[\rho]$ are equivalent.
 Since the latter term is a normal form and $\Rightarrow_s$ is confluent, it follows that the former term reduces to it.
 \end{proof}
 
 We will say that $\subst$-free rules are \emph{stable} if they are well-behaved and, for every $\subst$-free rule $(t,s)$ and every $m \in \mathbb{N}$,
-there exists a $\subst$-free rule $(t',s')$ such that $U(t') = L^m(U(t))$ and $U(\nf^t(s')) = L^m(U(\nt^t(s)))$.
+there exists a $\subst$-free rule $(t',s')$ such that $U(t') = L^m(U(t))$ and $U(\nf^t(s')) = L^m(U(\nf^t(s)))$.
 
 \begin{prop}[subst-elim]
 Let $T$ be a theory with stable $\subst$-free rules and let $(\varphi,V)$ be a pair in $P_M$.
@@ -1778,16 +1782,26 @@ Since $t \in \Term_{T,\varphi}^c$, the term $c$ and the substitution $\rho$ do n
 Thus $s = U(c[\nf^t(b)[\rho]/x])$.
 Since $U$ commutes with subsitution, $t = U(c)[U(a)[U(\rho)]/x]$ and $s = U(c)[U(\nf^t(b))[U(\rho)]/x]$.
 
-Let $c'$ be the $\Rightarrow_s$-normal form of $U(c)$ and let $\rho'$ be the $\Rightarrow_s$-normal form of $U(\rho)$.
+Let $c'$ be the $\Rightarrow_s$-normal form of $U(c)$.
 Note that $U(c)$ contains at most one occurrence of $x$, but $c'$ may contain several such occurrences.
-Let us show that $\Rightarrow_s$-redexes in the term $c'[U(a)[\rho']/x]$ that do not belong to $U(a)$ do not overlap.
+Let us show that $\Rightarrow_s$-redexes in the term $c'[U(a)[U(\rho)]/x]$ that do not belong to $U(a)$ do not overlap.
 To do this, note that if $c \Rightarrow_s^* c'$ and $c$ contains at most one occurrence of a variable $x$, then, for every subterm of $c'$ of the form $\subst_{p,n,k}(a, a_1, \ldots a_k)$, if $x \in FV(a)$, then $x \notin FV(a_1, \ldots a_k)$.
 Indeed, this property holds for $c$ since it contains at most one occurrence of $x$ and it is easy to show that if it holds for $c$ and $c \Rightarrow_s c'$, then it also holds for $c'$.
-Now, a $\Rightarrow_s$-redex in the term $c'[U(a)[\rho']/x]$ either belongs to $U(a)$ or it comes from a subterm of $c'$ of the form $\subst_{p,n,k}(x, a_1, \ldots a_k)$ and the fact that we just proved implies that $a_1, \ldots a_k$ do not contain such subterms.
+Now, a $\Rightarrow_s$-redex in the term $c'[U(a)[U(\rho)]/x]$ either belongs to $U(a)$ or it comes from a subterm of $c'$ of the form $\subst_{p,n,k}(x, a_1, \ldots a_k)$ and the fact that we just proved implies that $a_1, \ldots a_k$ do not contain such subterms.
 
-Since $\Rightarrow_s$-redexes in the term $c'[U(a)[\rho']/x]$ do not overlap, we may consider them one at a time.
-Thus we just need to prove that every pair of terms of the form $\subst_{p,n,k}(U(a)[\rho'], a_1, \ldots a_k)$ and $\subst_{p,n,k}(U(\nf^t(b))[\rho'], a_1, \ldots a_k)$ is joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
-Since $\subst$-free rules are well-behaved, it is true that $a' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* b'$, where $a'$ and $b'$ are $\Rightarrow_s$-normal forms of $U(a)[\rho']$ and $U(\nf^t(b))[\rho']$, respectively.
+Since $\Rightarrow_s$-redexes in the term $c'[U(a)[U(\rho)]/x]$ do not overlap, we may consider them one at a time.
+Thus we just need to prove that every pair of terms of the form $\subst_{p,n,k}(U(a)[U(\rho)], a_1, \ldots a_k)$ and $\subst_{p,n,k}(U(\nf^t(b))[U(\rho)], a_1, \ldots a_k)$ is joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
+We may assume that if $\rho(x)$ is defined, then $x$ is not free in terms $a_1$, \ldots $a_k$.
+Then
+\[ \subst_{p,n,k}(U(a)[U(\rho)], a_1, \ldots a_k) = \subst_{p,n,k}(U(a), a_1, \ldots a_k)[U(\rho)] \]
+and
+\[ \subst_{p,n,k}(U(\nf^t(b))[U(\rho)], a_1, \ldots a_k) = \subst_{p,n,k}(U(\nf^t(b)), a_1, \ldots a_k)[U(\rho)]. \]
+
+By \rlem{lift}, terms $\subst_{p,n,k}(U(a), a_1, \ldots a_k)[U(\rho)]$ and $L^m(U(a))[\rho'][U(\rho)]$ and terms $\subst_{p,n,k}(U(\nf^t(b)), a_1, \ldots a_k)[U(\rho)]$ and $L^m(U(\nf^t(b)))[\rho'][U(\rho)]$ are joinable under $\Rightarrow_s$,
+where $\rho'$ is the substitution defined in this lemma.
+Since $\subst$-free rules are stable, there is a $\subst$-free rule $(a',b')$ such that $U(a') = L^m(U(a))$ and $U(\nf^t(b')) = L^m(U(\nf^t(b)))$.
+Let $\rho''$ be the substitution consisting of $\Rightarrow_s$-normal forms of $\rho'[U(\rho)]$.
+Since $\subst$-free rules are well-behaved, terms $U(a')[\rho'']$ and $U(\nf^t(b'))[\rho'']$ are joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
 \end{proof}
 
 \section{Applications}
