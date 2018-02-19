@@ -1012,3 +1012,533 @@ Finally, if the first nontrivial block in $s_1$ is $\Rightarrow_{R_0}^*$ and the
 A term $t'$ exists by assumption~\eqref{it:red-comm} and terms $t_1''$, $t_2''$, and $t''$ exist by the induction hypothesis since the sum of lengths of reduction sequences starting from $t_1'$ (and also $t'$) is less than $l(s_1) + l(s_2)$,
 the sum of lengths of reduction sequences starting from $t_2'$ is less than or equal to $l(s_1) + l(s_2)$, and $|t_2'| < |t|$.
 \end{proof}
+
+% 8. Это пойдет в тезис.
+
+\section{Comparsion of algebraic and ordinary type theories}
+
+It is well-known that standard examples of type theories (such as theories of identity types, $\Sigma$-types, and $\Pi$-types) are confluent.
+Terms of algebraic type theories are similar to terms of usual type theories, but they still differ from them.
+The first difference is that they have an explicit substitution operation.
+Another difference is that they contain more information than ordinary terms so that the type and the context of a term can be inferred from it.
+In this section we prove that it is often possible to show that an algebraic type theory is confluent if corresponding usual type theory is.
+
+More precisely, for every contextual theory $T$, we will define a set $\Term_{T,\varphi}^s$ which can be described informally as the set of defined terms
+in which function symbols $\ty_m$, $\ft_m$, and $\subst_{p,n,k}$ do not occur and in which we omit contexts in function symbols.
+The precise definition of this set will be given in subsection~\ref{sec:subst}.
+We also define there a reduction relation $\Rightarrow_{sf} \Rightarrow_s^\nf$ on this set.
+This set corresponds to the set of terms of an ordinary type theory and the reduction relation corresponds to the usual reduction relation.
+The idea is that $\Rightarrow_{sf}$ reduces one of the redexes and then $\Rightarrow_s^\nf$ evaluates all explicit substitution expressions.
+Then we can prove the following theorem:
+
+\begin{thm}[conf-comp]
+Let $T$ be a contextual type theory with a reduction system in which typing rules are separated, substitution rules are stable, contexts are simple, and $\ty$-free rules preserve types.
+If the abstract reduction system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent for every pair $(\varphi,V) \in P_M$, then $T$ is also confluent.
+\end{thm}
+
+The technical assumptions that we put on the theory will be defined in this section.
+The theorem itself follows from \rprop{ty-elim}, \rprop{ctx-elim}, and \rprop{subst-elim}.
+
+\subsection{Typing axioms}
+
+Let us begin by showing that a term rewriting system is confluent whenever the subsystem on terms without function symbols $\ty$ and $\ft$ is.
+To do this we need to know that typing axioms are well-behaved in some sense.
+\begin{defn}
+A reduction rule is a \emph{typing rule} if it is of the form
+\[ e_p(\sigma(x_1, \ldots x_k)) \Rightarrow s \]
+where $\sigma$ is neither $\ft$ nor $\ty$ and the function symbols $\ft$ and $\ty$ are applied only to variables in $s$ (if they appear in this term).
+A reduction rule $t \Rightarrow s$ is \emph{$\ty$-free (and $\ft$-free)} if the function symbols $\ft$ and $\ty$ do not appear in $t$.
+We will say that a theory $T$ with a reduction system has \emph{separated typing rules} if every rule in the underlying term rewriting system of $T$ is either a typing rule or a $\ty$-free rule.
+The sets of typing and $\ty$-free reduction rules will be denoted by $R^t_T$ and $R^{tf}_T$, respectively.
+
+Let $T$ be a theory with separated typing rules.
+We will say that $\ty$-free rules of $T$ \emph{preserve types} if there is a well-founded relation on the set of $\ty$-free rules of $T$ such that,
+for every $\ty$-free rule $(t,s) \in R^{tf}_T$ and every substitution $\rho$ such that $t[\rho]$ is $\varphi$-defined,
+terms $e_p(t[\rho])$ and $e_p(s[\rho])$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T \cup R^{tf'}_T, \varphi})$,
+where $R^{tf'}_T$ is the set of $\ty$-free rules which are less than $(t,s)$.
+\end{defn}
+
+The main property of theories with separated typing axioms is proved in the following lemma:
+
+\begin{lem}[types-red]
+Let $T$ be a theory with separated typing axioms and let $(\varphi,V)$ be a pair in $P_M$.
+Then the abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T,\varphi})$ is strongly normalizing and confluent.
+\end{lem}
+\begin{proof}
+Note that $V = \{ x_1, \ldots x_k \}$ and $e_{p_i}(x_i) \Rightarrow_\varphi s_i$ where $s_i$ is a term such that $FV(s_i) \subseteq \{ x_1, \ldots x_{i-1} \}$.
+To show that the system is strongly normalizing we define, for each term $t$, an ordinal $|t|$ less than $\varepsilon_\omega$ such that if $t \Rightarrow_{R^t_T,\varphi} s$, then $|t| > |s|$.
+\begin{align*}
+|x_i| & = \varepsilon_{i-1} \\
+|\ty(t)| = |\ft(t)| & = \omega^{|t|}\\
+|\sigma(t_1, \ldots t_k)| & = |t_1| \oplus \ldots \oplus |t_k| \oplus 1
+\end{align*}
+where $\oplus$ is the natural sum of ordinals.
+
+If $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t} s(e_{p_1}(t_1), \ldots e_{p_k}(t_k), t_1, \ldots t_k)$, then we need to show that $|e_p(\sigma(t_1, \ldots t_k))| > |s(e_{p_1}(t_1), \ldots e_{p_k}(t_k), t_1, \ldots t_k)|$.
+Let $\alpha_i = |t_i|$ and let $\alpha$ be the maximum of $\alpha_1$, \ldots $\alpha_k$.
+Then $|e_p(\sigma(t_1, \ldots t_k))| = \omega^{\alpha_1 \oplus \ldots \oplus \alpha_k \oplus 1} \geq \omega^{\alpha + 1}$.
+Note that $\ft$ and $\ty$ do not occur in the term $s$.
+It follows that
+\begin{align*}
+|s(e_{p_1}(t_1), \ldots e_{p_k}(t_k), t_1, \ldots t_k)| & = \omega^{\alpha_1} n_1 \oplus \ldots \oplus \omega^{\alpha_k} n_k \oplus \alpha_1 m_1 \oplus \ldots \oplus \alpha_k m_k \oplus c \\
+                                                        & \leq \omega^\alpha n \oplus \alpha m \oplus c
+\end{align*}
+for some natural numbers $n_1$, \ldots $n_k$, $m_1$, \ldots $m_k$, $n$, $m$, and $c$.
+Since $\alpha \leq \omega^\alpha$ and $1 \leq \omega^\alpha$, we have $\omega^\alpha n \oplus \alpha m \oplus c \leq \omega^\alpha (n + m + c) < \omega^{\alpha + 1}$.
+
+If $e_p(x_i) \Rightarrow_\varphi s_i$, then $FV(s_i) \subseteq \{ x_1, \ldots x_{i-1} \}$.
+It follows that $|e_p(x_i)| = \omega^{\varepsilon_{i-1}} = \varepsilon_{i-1} > |s_i|$ since $|s_i|$ involves only ordinals less than $\varepsilon_{i-1}$.
+This finishes the proof that $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T,\varphi})$ is strongly normalizing.
+
+By Newman's lemma (see \cite[Lemma~2.2.5]{ohlebusch-advanced} for a proof), to prove that a strongly normalizing system is confluent it is enough to show that it is locally confluent,
+that is if $a \Rightarrow_{R^t_T} b$ and $a \Rightarrow_{R^t_T} c$, then there exists a term $d$ such that $b \Rightarrow_{R^t_T}^* d$ and $c \Rightarrow_{R^t_T}^* d$.
+This is obvious in our case since the rules in $R^t_T$ do not overlap.
+\end{proof}
+
+We will need the following general lemma about term rewriting systems:
+
+\begin{lem}[conf-nf]
+Let $\Rightarrow_1$ and $\Rightarrow_2$ be abstract reduction systems on the same set $A$.
+Let $A'$ be a subset of $A$ containing all $\Rightarrow_1$-normal forms and let $\Rightarrow_0$ be an abstract reduction system on it.
+Suppose that the following conditions hold:
+\begin{itemize}
+\item The system $(A',\Rightarrow_0)$ is confluent.
+\item The system $(A,\Rightarrow_1)$ is confluent and weakly normalizing.
+\item If $a,b \in A$ are such that $a \Rightarrow_2 b$, then $a$ and $b$ are joinable under the relation $\Rightarrow_1^\nf \Rightarrow_0^*$.
+\end{itemize}
+Then any two $\Rightarrow_2$-equivalent elements $a,b \in A$ are joinable under $\Rightarrow_1^\nf \Rightarrow_0^*$.
+\end{lem}
+\begin{proof}
+Since being joinable is a symmetric relation, we can assume that $\Rightarrow_2$ is also symmetric.
+Let $a_1$, \ldots, $a_n$ be a sequence such that $a_i \Rightarrow_2 a_{i+1}$ for every $1 \leq i < n$.
+We prove that $a_1$ and $a_n$ are joinable under $\Rightarrow_1^\nf \Rightarrow_0^*$ by induction on $n$.
+If $n = 0$, then this follows from the fact that $(A,\Rightarrow_1)$ is weakly normalizable.
+Suppose $n > 0$.
+We have $a_1 \Rightarrow_1^\nf a_1'$, $a_1' \Rightarrow_0^* c_1$, $a_{n-1} \Rightarrow_1^\nf a_{n-1}'$, $a_{n-1}' \Rightarrow_0^* b$ by assumption.
+We have $a_n \Rightarrow_1^\nf a_n'$, $a_n' \Rightarrow_0^* c_2$, $a_{n-1} \Rightarrow_1^\nf a_{n-1}'$, $a_{n-1}' \Rightarrow_0^* c$ by the induction hypothesis.
+Since $\Rightarrow_0$ is confluent, $c \Rightarrow_0^* d$ and $c \Rightarrow_0^* d$:
+\[ \xymatrix@=1em{  a_1 \ar[rr]^{\Rightarrow_2^*} \ar@{-->}[d]^{\Rightarrow_1^\nf}  &                                   & a_{n-1} \ar[rr]^{\Rightarrow_2} \ar@{-->}[d]^{\Rightarrow_1^\nf}          &                                   & a_n \ar@{-->}[d]^{\Rightarrow_1^\nf}  \\
+                    a_1' \ar@{-->}[rd]_{\Rightarrow_0^*}                            &                                   & a_{n-1}' \ar@{-->}[ld]_{\Rightarrow_0^*} \ar@{-->}[rd]^{\Rightarrow_0^*}  &                                   & a_n' \ar@{-->}[ld]^{\Rightarrow_0^*}  \\
+                                                                                    & b \ar@{-->}[rd]_{\Rightarrow_0^*} &                                                                           & c \ar@{-->}[ld]^{\Rightarrow_0^*} &                                       \\
+                                                                                    &                                   & d                                                                         &                                   &
+                 } \]
+\end{proof}
+
+Let $\Term_{T,\varphi}^t$ be the subset of $\Term_{T,\varphi}^d$ consisting of terms in which function symbols $\ty$ and $\ft$ do not occur.
+Let $\Rightarrow_{R_T^t,\varphi}$ be the union of $\Rightarrow_{R^t_T}$ and $\Rightarrow_\varphi$.
+Then every $\Rightarrow_{R_T^t,\varphi}$-normal form belongs to $\Term_{T,\varphi}^t$.
+This implies that the relation $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf$ is an abstract reduction system on $\Term_{T,\varphi}^t$
+Let us denote the relation $\Rightarrow_{R^{tf}_T} \Rightarrow_{R^t_T,\varphi}^\nf$ by $\Rightarrow_{tf}$
+Now we can prove that the confluence under $\Rightarrow_{tf}$ implies the confluence under $\Rightarrow_{R_T,\varphi}$:
+
+\begin{prop}[ty-elim]
+Let $T$ be a theory with a reduction system in which typing axioms are spearated and $\ty$-free axioms preserve types.
+Suppose that the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{tf})$ is confluent.
+Then $T$ is also confluent.
+\end{prop}
+\begin{proof}
+If $<$ is a well-founded relation on a set $A$, then we can define a well-founded relation on the set of subset of $A$ as follows.
+A subset $S$ is less than a subset $T$ if and only there is an element $a \in T$ which is greater than every element of $S$.
+It is easy to see that this relation is well-founded.
+Let $R^{tf'}_T$ be a subset of $R^{tf}_T$.
+Then we prove by induction on $R^{tf'}_T$ that terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$
+whenever they are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T \cup R^{tf'}_T, \varphi})$.
+
+The abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T,\varphi})$ is normalizing and confluent by \rlem{types-red}.
+Thus we can apply \rlem{conf-nf} with $A = \Term^d_{T,\varphi}$, $A' = \Term^t_{T,\varphi}$, $(\Rightarrow_0) = (\Rightarrow_{tf})$, $(\Rightarrow_1) = (\Rightarrow_{R^t_T,\varphi})$, and $(\Rightarrow_2) = (\Rightarrow_{R_T,\varphi})$
+to show that the terms $t$ and $s$ are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$.
+To do this, we need to prove that if $t \Rightarrow_{R^t_T \cup R^{tf'}_T, \varphi} s$, then $t$ and $s$ are joinable.
+
+Note that $\Rightarrow_{R^t_T \cup R^{tf'}_T, \varphi}$ is the union of $\Rightarrow_{R^t_T,\varphi}$ and $\Rightarrow_{R^{tf'}_T}$.
+If $t \Rightarrow_{R^t_T,\varphi} s$, then this is obvious, so let us assume that $t \Rightarrow_{R^{tf'}_T} s$.
+Then $t = c[a[\rho]/x]$ and $s = c[b[\rho]/x]$ for some terms $a$, $b$, and $c$ and some substitution $\rho$ such that $(a,b) \in R^{tf'}_T$.
+Since the left hand side of reduction rules in $R_T^{tf}$ does not contain function symbols $\ft$ and $\ty$,
+reductions $\Rightarrow_{R_T^{tf}}$ and $\Rightarrow_{R_T^t,\varphi}$ can overlap only in a term of the form $e_p(\sigma(t_1, \ldots t_k))$ as follows:
+$e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^t,\varphi} u[t_1/x_1, \ldots t_k/x_k]$ for some term $u$ and $e_p(\sigma(t_1, \ldots t_k)) \Rightarrow_{R_T^{tf}} e_p(v)$ for some term $v$.
+We may assume that $\Rightarrow_{R_T^t,\varphi}$-reductions occur only in such overlappings since other $\Rightarrow_{R_T^t,\varphi}$-redexes occur inside either $c$ or $\rho$, so if we reduce them in $c[a[\rho]/x]$ and $c[b[\rho]/x]$
+we will still have a reduction of the form $c'[a[\rho']/x] \Rightarrow_{R_T^{tf}}^* c'[b[\rho']/x]$ for some $c'$ and $\rho'$ such that $c \Rightarrow_{R_T^t,\varphi}^\nf c'$ and $\rho \Rightarrow_{R_T^t,\varphi}^\nf \rho'$.
+
+Since $a$, $b$, $c'$, and $\rho'$ do not contain $\Rightarrow_{R_T^t,\varphi}$-redexes, such a redex can occur in terms $c'[a[\rho']/x]$ and $c'[b[\rho']/x]$ only when $c'$ contains subterms of the form $e_p(x)$.
+So there is a sequence of natural number $n_1, \ldots n_k$, and a term $c''$ which does not contain function symbols $\ty$ and $\ft$ such that the following equations hold:
+\begin{align*}
+c'[a[\rho']/x] & = c''[\ft^{n_1}(e_p(a[\rho']))/y_1, \ldots \ft^{n_k}(e_p(a[\rho']))/y_k, a[\rho']/z] \\
+c'[b[\rho']/x] & = c''[\ft^{n_1}(e_p(b[\rho']))/y_1, \ldots \ft^{n_k}(e_p(b[\rho']))/y_k, b[\rho']/z].
+\end{align*}
+
+Since $\ty$-free axioms of $T$ preserve types, terms $e_p(a[\rho'])$ and $e_p(b[\rho'])$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R^t_T \cup R^{tf''}_T, \varphi})$ for some $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$.
+It follows that $c'[a[\rho']/x]$ and $c'''$ are also equivalent in this system, where $c'''$ is the following term:
+\[ c''[\ft^{n_1}(e_p(b[\rho']))/y_1, \ldots \ft^{n_k}(e_p(b[\rho']))/y_k, a[\rho']/z]. \]
+Since $\mathcal{A}_{tf}'' < \mathcal{A}_{tf}'$, we can apply the induction hypothesis to conclude that these terms are joinable under $\Rightarrow_{R_T^t,\varphi}^\nf \Rightarrow_{tf}^*$.
+Since $c''$ does not contain function symbols $\ty$ and $\ft$, terms $c'''$ and $c'[b[\rho']/x]$ are also joinable.
+Finally, \rlem{conf-nf} implies that terms $c'[a[\rho']/x]$ and $c'[b[\rho']/x]$ are joinable.
+\end{proof}
+
+\subsection{Contexts}
+
+In this subsection we will work with contextual theories (see \cite{alg-tt} for a definition of a contextual theory).
+If $T$ is a contextual theory, then we have a set of function symbols $\mathcal{F}_0$ (which we call \emph{basic function symbols}) such that the set of function symbols of $T$ consists of the following function symbols:
+\begin{align*}
+* & : (\ctx,0) \\
+\ft_m & : (\ty,m) \to (\ctx,m) \\
+\ty_m & : (\tm,m) \to (\ty,m) \\
+v_{m,i} & : (\ctx,m) \to (\tm,m) \text{, } 0 \leq i < m \\
+\subst_{p,m,0} & : (\ctx,m) \times (p,0) \times (p,m) \\
+\subst_{p,m,k} & : (p,k) \times (\tm,m)^k \to (p,m) \text{, } k > 0 \\
+\sigma_m & : (\ctx,m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m)
+\end{align*}
+where $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ is a basic function symbol, $m \in \mathbb{N}$, and $p_1, \ldots, p_k, p \in \{ \ty, \tm \}$.
+Moreover, we may assume that $n = 0$ for every $\sigma \in \mathcal{F}_0$.
+Note that we omit the context for function symbols $\subst_{p,m,k}$ when $k > 0$.
+We can do this since it can be inferred from any of the last $k$ parameters.
+
+Let $T$ be a contextual theory and let $\mathcal{F}_0$ be the set of its basic function symbols.
+Let $\mathcal{F}_0'$ be the set consisting of elements of $\mathcal{F}_0$, function symbols $v_i$ for all $i \in \mathbb{N}$, and function symbols $\subst_{p,n,k}$.
+If $t$ is a term of $T$ in which function symbols $\ft_m$ and $\ty_m$ do not occur, then we can define a term $U(t) \in \Term_{\mathcal{F}'_0}$ in the obvious way:
+\begin{align*}
+U(x) & = x \\
+U(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \sigma(U(t_1), \ldots U(t_k)) \\
+U(v_{n,i}(\Gamma)) & = v_i \\
+U(\subst_{p,m,0}(\Gamma,t)) & = U(t) \\
+U(\subst_{p,m,k}(t, a_1, \ldots a_k)) & = \subst_{p,m,k}(U(t), U(a_1), \ldots U(a_k))
+\end{align*}
+
+Let $\Term_T^c$ be the image of $\Term_T^t$ under $U$.
+We define a reduction relation $\Rightarrow_{cf}$ on $\Term_T^c$ as the image of $\Rightarrow_{tf}$ under $U$.
+
+If $t \in \Term_T^t$, then let $C(t)$ be the set of terms discarded by $U$.
+That is, $C(t)$ is defined inductively as follows:
+\begin{align*}
+C(x) & = \varnothing \\
+C(\sigma_m(\Gamma, t_1, \ldots t_k)) & = \{ \Gamma \} \cup \bigcup_{1 \leq i \leq k} C(t_i) \\
+C(v_{n,i}(\Gamma)) & = \{ \Gamma \} \\
+C(\subst_{p,m,0}(t)) & = C(t) \\
+C(\subst_{p,m,k}(t, a_1, \ldots a_k)) & = C(t) \cup \bigcup_{1 \leq i \leq k} C(a_i)
+\end{align*}
+Sometimes we need to regard $C(t)$ as a sequence in which case the order is 
+There is a natural linear order on the multiset $C(t)$, so we can also think of it as a sequence of terms.
+
+\begin{defn}[simp-ctx]
+We will say that a contextual theory $T$ with separated typing axioms \emph{has simple contexts} if the following conditions hold:
+\begin{enumerate}
+\item For all terms $t$ and $s$ in $\Term_T^t$ such that $(t,s) \in R^{tf}_T$, the sequence $C(t)$ consists of distinct variables and the set $C(s)$ consists of strongly normalizable terms.
+\item For every basic function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ and every $1 \leq i \leq k$,
+if the sequent $\sststile{}{\Gamma, x_1, \ldots x_k} \sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow$ is derivale,
+then there exists a term $A_{\sigma,i}$ such that $FV(A_{\sigma,i}) \subseteq \{ \Gamma, x_1, \ldots x_{i-1} \}$ and the sequent $\sststile{}{\Gamma, x_1, \ldots x_i} e_{p_i}(x_i) = A_{\sigma,i}$ is derivale.
+\item There is a well-founded relation on the set $\Term_T^t$ such that each element of $C(s)$ is less than $t$ whenever $t \Rightarrow_{tf}^* s$.
+\end{enumerate}
+\end{defn}
+These conditions are true for all theories that occur in practice.
+The first condition is easy to verify, but the last two require some explanation.
+The second condition might not hold in a reasonable theory, but every theory is isomoprhic to a theory in which it holds.
+For example, we can define a theory of $\Pi$-types in which the application function symbol is defined as follows:
+\[ \ft(\ft(B)) = \Gamma \land \ty(b) = B \land \ty(a) = \ft(B) \sststile{}{\Gamma,B,b,a} \app_m(\Gamma,B,b,a)\!\downarrow \]
+This theory does not satisfy the second condition of \rdefn{simp-ctx}, but it is easy to modify the definition of $\app$ to fix this problem:
+\[ \ft(A) = \Gamma \land \ft(B) = A \land \ty(b) = B \land \ty(a) = A \sststile{}{\Gamma,A,B,b,a} \app_m(\Gamma,A,B,b,a)\!\downarrow \]
+This trick can be applied to any theory to get a theory satisfying the second condition of \rdefn{simp-ctx}.
+
+The third condition of \rdefn{simp-ctx} holds if the underlying term rewriting system of $T$ is strongly normalizing.
+Indeed, we can define a well-founded relation on the set $\Term_T^t$ as follows: $t_1 > t_2$ if $|t_1| > |t_2|$ where $|t_i|$ is the length of the longest sequence of reductions starting from $t_i$.
+If $t \Rightarrow_{tf}^* s$, then $|t| > |s|$ and if $\Gamma \in C(s)$, then $\Gamma$ is a subterm of $s$, so $|s| \geq |\Gamma|$.
+Many theories that occur in practice are strongly normalizing, but this property is hard to verify, so let us describe another condition on a theory which implies that it has simple contexts.
+
+Let $T$ be a theory such that, for every pair of terms $t$ and $s$ in $\Term_T^t$ such that $(t,s) \in R^{tf}_T$, the set $C(t)$ consists of distinct variables and $C(s) \subseteq C(t)$.
+This condition is easy to verify and it holds for all theories that occur in practice.
+If it holds, then the first and the third conditions of \rdefn{simp-ctx} hold for $T$.
+The first condition holds for obvious reasons.
+To prove the third condition, we define a well-founded relation on the set $\Term_T^t$ as follows: $t_1 > t_2$ if the size of $t_1$ is greater than the size of $t_2$.
+If $t \Rightarrow_{tf}^* s$, then it is easy to see that $C(s) \subseteq C(t)$.
+Thus, for every $\Gamma \in C(s)$, the size of $\Gamma$ is less than the size of $t$.
+
+A theory with simple contexts satisfies the following properties:
+\begin{enumerate}
+\item \label{it:red-fib} Let $t$ be a term in $\Term_T^t$ such that $U(t) \Rightarrow_{cf} s$ for some term $s$.
+Then there exists a term $s'$ such that $t \Rightarrow_{tf} s'$ and $U(s') = s$.
+This follows from the fact that the same reduction rule that we applied to $U(t)$ also applies to $t$ since there is no additional conditions on $t$ by the first condition of \rdefn{simp-ctx}.
+\item \label{it:red-nf} $U$ preserves normal forms. This follows from the previous property.
+\end{enumerate}
+
+Now we can show that we can omit contexts if they are simple:
+\begin{prop}[ctx-elim]
+Let $T$ be a theory with simple contexts and let $(\varphi,V)$ be a pair in $P_M$.
+Then the abstract reduction system $(\Term_{T,\varphi}^t, \Rightarrow_{tf})$ is confluent if and only if the system $(\Term_{T,\varphi}^c, \Rightarrow_{cf})$ is.
+\end{prop}
+\begin{proof}
+If $(\Term_{T,\varphi}^t,\Rightarrow_{tf})$ is confluent, then it is easy to show that $(\Term_{T,\varphi}^c,\Rightarrow_{cf})$ is also confluent.
+Indeed, if we have a term $t \in \Term_{T,\varphi}^c$ such that $t \Rightarrow_{cf}^* t_1$ and $t \Rightarrow_{cf}^* t_2$,
+then there is a term $t' \in \Term_{T,\varphi}^t$ and \eqref{it:red-fib} implies that there are terms $t_1'$ and $t_2'$ such that
+$t' \Rightarrow_{tf}^* t_1'$, $t' \Rightarrow_{tf}^* t_2'$, $U(t_1') = t_1'$, and $U(t_2') = t_2'$.
+Since $t'$ is confluent, there exists a term $s'$ such that $t_1' \Rightarrow_{tf}^* s'$ and $t_2' \Rightarrow_{tf}^* s'$.
+Hence $U(t_1') \Rightarrow_{cf}^* U(s')$ and $U(t_2') \Rightarrow_{cf}^* U(s')$.
+
+Let us prove the converse.
+Suppose that $\Rightarrow_{cf}$ is confluent.
+Let $t_1$ and $t_2$ be equivalent terms in $(\Term_{T,\varphi}^t,\Rightarrow_{tf})$.
+We proceed by induction on $t_1$ (using the well-founded relation from \rdefn{simp-ctx}).
+Since the reduction relation on $\Term_{T,\varphi}^c$ is confluent, we have a term $s' \in \Term_{T,\varphi}^c$ such that $U(t_1) \Rightarrow_{cf}^* s'$ and $U(t_2) \Rightarrow_{cf}^* s'$.
+By \eqref{it:red-fib}, there are terms $s_1$ and $s_2$ such that $t_1 \Rightarrow_{tf}^* s_1$, $t_2 \Rightarrow_{tf}^* s_2$, and $U(s_1) = U(s_2) = s'$.
+
+To prove that $s_1$ and $s_2$ are joinable, it is enough to show that sequences $C(s_1)$ and $C(s_2)$ are equal up to equivalence.
+Indeed, if this is true, then we can conclude that $j$-th elements of $C(s_1)$ and $C(s_2)$ are joinable by the induction hypothesis for every $j$.
+This implies that $s_1$ and $s_2$ are also joinable.
+The first elements of $C(s_i)$ are equivalent to $\ctx(s_i)$ and they are equivalent since $s_1$ and $s_2$ are.
+The second condition of \rdefn{simp-ctx} implies that other elements of $C(s_i)$ are determined by the first element.
+Indeed, if $\sststile{}{V} \sigma_m(\Delta, t_1, \ldots t_k)\!\downarrow$ is derivable, then $\sststile{}{V} e_{p_i}(t_i) = A_{\sigma,i}[\Delta/\Gamma, t_1/x_1, \ldots t_{i-1}/x_{i-1}]$ is also derivable.
+This implies that $j$-th element of $C(s_i)$ are equivalent for all $j$.
+\end{proof}
+
+\subsection{Substitution}
+\label{sec:subst}
+
+Let $T$ be a contextual theory with simple contexts.
+Evety such theory $T$ has a few $\ty$-free axioms that involve function symbols $\subst_{p,m,k}$.
+Corresponding $\Rightarrow_{cf}$-reduction rules look like this:
+\begin{align}
+\subst_{\tm,n,k}(v_i, a_1, \ldots a_k) & \Rightarrow a_{k-i} \label{ax:v-left} \\
+\subst_{p,k,k}(a, v_{k-1}, \ldots v_0) & \Rightarrow a \label{ax:v-right} \\
+\subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m) & \Rightarrow \sigma_n(b_1', \ldots b_k') \label{ax:sigma} \\
+\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k) & \Rightarrow \subst_{p,n,m}(a, a_1', \ldots a_m') \label{ax:assoc}
+\end{align}
+where $a_i' = \subst_{\tm,n,k}(a_i, b_1, \ldots b_k)$ and $b_i'$ equals to
+\[ \subst_{p_i,n+n_i,m+n_i}(b_i, \wk^{n_i}_{\tm,n}(a_1), \ldots \wk^{n_i}_{\tm,n}(a_m), v_{n_i-1}, \ldots v_0), \]
+where $\wk^k_{p,n}(a) = \subst_{p,n+k,n}(a, v_{n+k-1}, \ldots v_k)$.
+
+Let $T$ be a theory with simple contexts.
+A $\ty$-free rule is called a \emph{substitution rule} if it is one of the rules for $\subst_{p,n,k}$ listed above.
+Other $\ty$-free rule are called \emph{$\subst$-free rules}.
+The sets of substitution and $\subst$-free rules will be denoted by $R^s_T$ and $R^{sf}_T$, respectively.
+
+The relation $\Rightarrow_{R_T^{tf}}$ is the union of relations $\Rightarrow_{R_T^s}$ and $\Rightarrow_{R_T^{sf}}$.
+It follows that the relation $\Rightarrow_{cf}$ is also the union of two relations $\Rightarrow_s$ and $\Rightarrow_{sf}$.
+The former consists of rules \eqref{ax:v-left}-\eqref{ax:assoc} and the latter is the image of $\Rightarrow_{R_T^{sf}} \Rightarrow_{R_T^t,\varphi}^\nf$ under $U$.
+Let $\Term_{T,\varphi}^s$ be the subset of $\Term_{T,\varphi}^c$ consisting of $\Rightarrow_s$-normal forms.
+
+\begin{lem}[subst-red]
+Let $T$ be a theory with separated substitution axioms.
+Then the abstract reduction system $(\Term_{T,\varphi}^c,\Rightarrow_s)$ is confluent and strongly normalizing for every $(\varphi,V) \in P_M$.
+\end{lem}
+\begin{proof}
+Let us first prove that the system is stronly normalizing.
+For each term $t$, we define a natural number $|t|_1$ greater than $1$ and an ordinal $|t|_2$ less than $\epsilon_0$ such that $(|t|_2,|t|_1)$ is less than $(|t'|_2,|t'|_1)$ in the lexicographical order whenever $t \Rightarrow_s t'$.
+First, let us define $|t|_1$:
+\begin{align*}
+|v_i|_1 & = 2 \\
+|x|_1 & = 2 \\
+|\sigma_m(b_1, \ldots b_k)|_1 & = |b_1|_1 + \ldots + |b_k|_1 \\
+|\subst_{p,n,m}(a, a_1, \ldots a_m)|_1 & = |a|_1 (|a_1|_1 + \ldots + |a_m|_1 + 2)
+\end{align*}
+This interpretation of function symbols is strictly monotone in each variable.
+Let us show that if $t$ reduces to $t'$ by one of the rules \eqref{ax:v-left}, \eqref{ax:v-right}, \eqref{ax:assoc}, then $|t|_1 > |t'|_1$:
+\[ |\subst_{\tm,n,k}(v_i, a_1, \ldots a_k)|_1 = 2 |a_1|_1 + \ldots + 2 |a_k|_1 + 4 > |a_{k-i}|_1, \]
+\[ |\subst_{p,k,k}(a, v_{k-1}, \ldots v_0)|_1 = |a|_1 (2 k + 2) \geq 2|a|_1 > |a|_1. \]
+Finally, note that
+\begin{align*}
+|\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_1 & = |a|_1 (A + 2) B, \\
+|\subst_{p,n,m}(a, a_1', \ldots a_m')|_1 = |a|_1 (|a_1|_1 B + \ldots |a_m|_1 B + 2) & = |a|_1 (A B + 2),
+\end{align*}
+where $A = |a_1|_1 + \ldots + |a_m|_1$ and $B = |b_1|_1 + \ldots + |b_k|_1 + 2$.
+Since $|a|_1 > 0$ and $B > 1$, $|a|_1 (A + 2) B - |a|_1 (A B + 2) = 2 |a|_1 (B - 1) > 0$.
+
+Now, let us define $|t|_2$:
+\begin{align*}
+|v_i|_2 & = 0 \\
+|x|_2 & = 0 \\
+|\sigma_m(b_1, \ldots b_k)|_2 & = |b_1|_2 \oplus \ldots \oplus |b_k|_2 \oplus 1 \\
+|\subst_{p,n,m}(a, a_1, \ldots a_m)|_2 & = 
+\left\{
+\begin{array}{c l}	
+     2 \otimes |a|_2 & \forall i (|a_i|_2 = 0) \\
+     |a|_1 \otimes (|a_1|_2 \oplus \ldots \oplus |a_m|_2) & |a|_2 = 0, \exists i (|a_i|_2 \neq 0) \\
+     \omega^{|a|_2} \otimes (|a_1|_2 \oplus \ldots \oplus |a_m|_2) & |a|_2 \neq 0, \exists i (|a_i|_2 \neq 0)
+\end{array}\right.
+\end{align*}
+Let us check that these interpretations are strictly monotone.
+This is obvious for $\sigma_m$.
+Let us check this for $\subst_{p,n,m}$.
+First, suppose that $|a'|_2 > |a|_2$.
+If $\forall i (|a_i|_2 = 0)$, then
+\[ |\subst_{p,n,m}(a', a_1, \ldots a_m)|_2 = 2 \otimes |a'|_2 > 2 \otimes |a|_2 = |\subst_{p,n,m}(a, a_1, \ldots a_m)|_2, \]
+so we may assume that $\exists i (|a_i|_2 \neq 0)$.
+Let $A = |a_1|_2 \oplus \ldots \oplus |a_m|_2$.
+If $|a|_2 \neq 0$, then
+\[ |\subst_{p,n,m}(a', a_1, \ldots a_m)|_2 = \omega^{|a'|_2} \otimes A > \omega^{|a|_2} \otimes A = |\subst_{p,n,m}(a, a_1, \ldots a_m)|_2. \]
+If $|a|_2 = 0$, then
+\[ |\subst_{p,n,m}(a', a_1, \ldots a_m)|_2 = \omega^{|a'|_2} \otimes A \geq \omega \otimes A > \]
+\[ |a|_1 \otimes A = |\subst_{p,n,m}(a, a_1, \ldots a_m)|_2. \]
+Now, suppose that $|a_j'|_2 > |a_j|_2$ for some $j$ and $|a_i'| = |a_i|$ for every $i \neq j$.
+If $\exists i (|a_i|_2 \neq 0)$, then it is obvious that $|\subst_{p,n,m}(a, a_1', \ldots a_m')|_2$ is greater than $|\subst_{p,n,m}(a, a_1, \ldots a_m)|_2$,
+so we may assume that $\forall i (|a_i|_2 = 0)$.
+If $|a|_2 = 0$, then
+\[ |\subst_{p,n,m}(a, a_1', \ldots a_m')|_2 = |a|_1 \otimes A' > 0 = |\subst_{p,n,m}(a, a_1, \ldots a_m)|_2, \]
+where $A' = |a_1'|_2 \oplus \ldots \oplus |a_m'|_2$.
+If $|a|_2 \neq 0$, then
+\[ |\subst_{p,n,m}(a, a_1', \ldots a_m')|_2 = \omega^{|a|_2} \otimes A' \geq \omega^{|a|_2} > \]
+\[ 2 \otimes |a|_2 = |\subst_{p,n,m}(a, a_1, \ldots a_m)|_2. \]
+This compltes the proof that the interpretation of $\subst_{p,n,m}$ is strictly monotone.
+
+Now, we need to show that $|t|_2 \geq |t'|_2$ whenever $t \Rightarrow_s t'$.
+Moreover, we need to show that this inequality is strict whenever $t$ reduces to $t'$ by the rule \eqref{ax:sigma}.
+We do not need to prove strict inequality for other rules since $|t|_1 > |t'|_1$ in this case.
+This inequality is obvious for the second rule:
+\[ |\subst_{p,k,k}(a, v_{k-1}, \ldots v_0)|_2 = 2 \otimes |a|_2 \geq |a|_2. \]
+Let us prove that $|\subst_{\tm,n,k}(v_i, a_1, \ldots a_k)|_2 \geq |a_{k-i}|_2$.
+If $|a_{k-i}|_2 = 0$, then this is obvious.
+If $|a_{k-i}|_2 \neq 0$, then $|\subst_{\tm,n,k}(v_i, a_1, \ldots a_k)|_2 = 2 \otimes (|a_1|_2 \oplus \ldots \oplus |a_k|_2) \geq |a_{k-i}|_2$.
+
+Let us consider the third rule.
+Note that $|\wk^k_{p,n}(a)|_2 = 2 \otimes |a|_2$.
+If $\forall i (|a_i|_2 = 0)$, then
+\[ |\subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m)|_2 = 2 \otimes |b_1|_2 \oplus \ldots \oplus 2 \otimes |b_k|_2 \oplus 2 > \]
+\[ 2 \otimes |b_1|_2 \oplus \ldots \oplus 2 \otimes |b_k|_2 \oplus 1 = |\sigma_n(b_1', \ldots b_k')|_2. \]
+If $\exists i (|a_i|_2 \neq 0)$, then 
+\[ |\subst_{p,n,m}(\sigma_m(b_1, \ldots b_k), a_1, \ldots a_m)|_2 = \omega^{|b_1|_2 \oplus \ldots \oplus |b_k|_2 \oplus 1} \otimes (|a_1|_2 \oplus \ldots \oplus |a_m|_2), \]
+\[ |\sigma_n(b_1', \ldots b_k')|_2 = (\omega^{|b_1|_2} \oplus \ldots \oplus \omega^{|b_k|_2} \oplus c) \otimes 2 \otimes (|a_1|_2 \oplus \ldots \oplus |a_m|_2) \oplus 1 < \]
+\[ (\omega^{|b_1|_2} \oplus \ldots \oplus \omega^{|b_k|_2} \oplus c \oplus 1) \otimes 2 \otimes (|a_1|_2 \oplus \ldots \oplus |a_m|_2), \]
+where $c$ is some natural number.
+Thus we just need to prove that
+\[ (\omega^{|b_1|_2} \oplus \ldots \oplus \omega^{|b_k|_2} \oplus c \oplus 1) \otimes 2 < \omega^{|b_1|_2 \oplus \ldots \oplus |b_k|_2 \oplus 1}. \]
+Let $\beta$ be the maximum of $|b_1|_2$, \ldots $|b_k|_2$.
+Then
+\[ (\omega^{|b_1|_2} \oplus \ldots \oplus \omega^{|b_k|_2} \oplus c \oplus 1) \otimes 2 \leq \omega^\beta 2 (k + c + 1) < \omega^{\beta + 1} \leq \omega^{|b_1|_2 \oplus \ldots \oplus |b_k|_2 \oplus 1}. \]
+
+Finally, let us consider the fourth rule.
+Let $A_1 = |a_1|_1 + \ldots + |a_m|_1$, $A_2 = |a_1|_2 + \ldots + |a_m|_2$, $B = |b_1|_2 \oplus \ldots \oplus |b_k|_2$, and $a_i' = \subst_{\tm,n,k}(a_i', b_1, \ldots b_k)$.
+If $\forall i (|a_i|_2 = 0)$ and $\forall i (|b_i|_2 = 0)$, then
+\[ |\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_2 = 4 \otimes |a|_2 \geq \]
+\[ 2 \otimes |a|_2 = |\subst_{p,n,m}(a, a_1', \ldots a_m')|_2. \]
+If $\forall i (|a_i|_2 = 0)$, $\exists i (|b_i|_2 \neq 0)$, and $|a|_2 = 0$, then
+\[ |\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_2 = |a|_1 (A_1 + 2) \otimes B > \]
+\[ |a|_1 A_1 \otimes B = |\subst_{p,n,m}(a, a_1', \ldots a_m')|_2. \]
+If $\forall i (|a_i|_2 = 0)$, $\exists i (|b_i|_2 \neq 0)$, and $|a|_2 \neq 0$, then
+\[ |\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_2 = \omega^{2 \otimes |a|_2} \otimes B \geq \omega^{|a|_2} \otimes \omega \otimes B >  \]
+\[ \omega^{|a|_2} \otimes A_1 \otimes B = |\subst_{p,k,m}(a, a_1', \ldots a_m')|_2. \]
+If $\exists i (|a_i|_2 \neq 0)$, $\forall i (|b_i|_2 = 0)$, and $|a|_2 = 0$, then both sides equal to $2 |a|_1 \otimes A_2$.
+If $\exists i (|a_i|_2 \neq 0)$, $\forall i (|b_i|_2 = 0)$, and $|a|_2 \neq 0$, then both sides equal to $2 \otimes \omega^{|a|_2} \otimes A_2$.
+If $\exists i (|a_i|_2 \neq 0)$, $\exists i (|b_i|_2 \neq 0)$, and $|a|_2 = 0$, then
+\[ |\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_2 = \omega^{|a|_1 \otimes A_2} \otimes B, \]
+\[ |\subst_{p,k,m}(a, a_1', \ldots a_m')|_2 = |a|_1 \otimes (\omega^{|a_1|_2 \oplus \ldots \oplus |a_m|_2} \oplus c) \otimes B, \]
+where $c$ is some natural number.
+Let $\alpha$ be the maximum of $|a_1|_2$, \ldots $|a_m|_2$.
+Then $\omega^{|a|_1 \otimes A_2} \geq \omega^{2 \otimes \alpha} \geq \omega^{\alpha + 1} > \omega^\alpha |a|_1 (m + c) \geq |a|_1 \otimes (\omega^{|a_1|_2 \oplus \ldots \oplus |a_m|_2} \oplus c)$.
+If $\exists i (|a_i|_2 \neq 0)$, $\exists i (|b_i|_2 \neq 0)$, and $|a|_2 \neq 0$, then
+\[ |\subst_{p,n,k}(\subst_{p,k,m}(a, a_1, \ldots a_m), b_1, \ldots b_k)|_2 = \omega^{\omega^{|a|_2} \otimes A_2} \otimes B, \]
+\[ |\subst_{p,k,m}(a, a_1', \ldots a_m')|_2 = \omega^{|a|_2} \otimes (\omega^{|a_1|_2 \oplus \ldots \oplus |a_m|_2} \oplus c) \otimes B, \]
+where $c$ is some natural number.
+Let $\alpha$ be the maximum of $|a_1|_2$, \ldots $|a_m|_2$.
+Then $\omega^{|a|_2} \otimes (\omega^{|a_1|_2 \oplus \ldots \oplus |a_m|_2} \oplus c) \leq \omega^{|a|_2} \otimes \omega^\alpha (m + c) < \omega^{|a|_2 \oplus \alpha \oplus 1}$.
+Thus we just need to show that $\omega^{|a|_2} \otimes \alpha \geq |a|_2 \oplus \alpha \oplus 1$.
+If $\alpha = 1$, then $\omega^{|a|_2} > |a|_2 \oplus 2$ since $|a|_2 > 0$.
+If $\alpha > 1$, then $\omega^{|a|_2} \otimes \alpha \geq \omega^{|a|_2} \oplus \alpha > |a|_2 \oplus 1 \oplus \alpha$.
+
+This completes the proof that the system is strongly normalizing.
+It follows that the system is confluent if and only if it is locally confluent and local confluence is easy to verify by considering all critical pairs.
+\end{proof}
+
+To show that we can eliminate function symbols $\subst_{p,n,m}$, we need to assume that reduction rules are well-behaved in some sense with respect to substitutions.
+For example, we can assume that the only reduction rules in which function symbols $\subst_{p,n,m}$ occur on the left are the ones listed above.
+But there is an example of a theory which we want to consider and which does not satisfy this condition.
+Namely, the theory of the interval type with the $\sigma$ rule:
+\[ \coe_1(\wk^1_{\ty,0}(A), a, i) \Rightarrow a \]
+Note that this theory is not confluent as formulated since
+\begin{align*}
+\coe_1(\wk^1_{\ty,0}(I_0), \leftI_0, \rightI_0) & \Rightarrow \leftI_0 \\
+\coe_1(\wk^1_{\ty,0}(I_0), \leftI_0, \rightI_0) & \Rightarrow \coe_1(I_1, \leftI_0, \rightI_0)
+\end{align*}
+and terms $\leftI_0$ and $\coe_1(I_1, \leftI_0, \rightI_0)$ are not joinable.
+To fix this problem, we need to give a few definitions.
+We will say that a term $t$ of sort $(p,n)$ is \emph{well-behaved} if the following conditions hold:
+\begin{itemize}
+\item $t$ is a $\Rightarrow_s$-normal form.
+\item All variables in $t$ have sorts greater than or equal to $n$.
+\item For every subterm of the form $\subst_{p,m,k}(x, t_1, \ldots t_k)$, it is true that $k \geq n$ and $t_i = v_{m-i}$ for each $i \leq n$.
+\item All indices except for the ones mentioned in the previous condition are bound in $t$.
+\end{itemize}
+We will say that $\subst$-free rules are \emph{well-behaved} if, for every such $\subst$-free rule $(t,s)$ of sort $(p,n)$, the following conditions hold:
+\begin{itemize}
+\item Terms $U(t)$ and $U(\nf^t(s))$ are well-behaved, where $\nf^t(s)$ is the normal form of $s$ with respect to $\Rightarrow_{T,\varphi}^t$.
+\item For every substitution $\rho$ consisting of $\Rightarrow_s$-normal forms, if $U(t)[\rho] \in \Term_{T,\varphi}^c$, then $t' (\Rightarrow_{sf} \Rightarrow_s^\nf)^* s'$,
+where $t'$ and $s'$ are $\Rightarrow_s$-normal forms of $U(t)[\rho]$ and $U(\nf^t(s))[\rho]$, respectively.
+\end{itemize}
+
+\begin{example}
+If $t$ and $s$ are $\Rightarrow_s$-normal forms of sort $(p,0)$ and function symbols $\subst_{p,n,k}$ do not occur in $t$, then $(t,s)$ is well-behaved.
+\end{example}
+
+\begin{example}
+To make the $\sigma$ rule well-behaved, we just need to add rules of the form $\coe_1(A, a, i) \Rightarrow a$ for every term $A$ in which $0$-th index does not occur.
+\end{example}
+
+If $t$ is a well-behaved term of sort $(p,n)$, then we define a term $L^m(t)$ of sort $(p,m)$ for every $m \in \mathbb{N}$ as follows:
+\begin{align*}
+L^m(x) & = x \\
+L^m(v_i) & = v_i \\
+L^m(\sigma_l(t_1, \ldots t_k)) & = \sigma_{l-n+m}(L^m(t_1), \ldots L^m(t_k)) \\
+L^m(\subst_{q,l,k}(x, v_{l-1}, \ldots v_{l-n}, t_1, \ldots t_{k-n})) & = \\
+\subst_{q,l-n+m,k-n+m}(x, v_{l-n+m-1}, \ldots v_{l-n}, & L^m(t_1), \ldots L^m(t_{k-n}))
+\end{align*}
+The fact that $t$ is well-behaved guarantees that this is a well-defined function and the term $L^m(t)$ is also well-behaved.
+
+\begin{lem}[lift]
+For every well-behaved term $t$ of sort $(p,n)$, terms
+\[ \subst_{p,m,n}(t, a_1, \ldots a_n) \]
+and
+\[ L^m(t)[\rho] \]
+are joinable under $\Rightarrow_s$, where
+\[ \rho(x) = \subst_{q,m+i,n+i}(x, \wk_{\tm,m}^i(a_1), \ldots \wk_{\tm,m}^i(a_n), v_{i-1}, \ldots v_0). \]
+\end{lem}
+\begin{proof}
+It is easy to prove by induction on a subterm $s$ of $t$ that terms
+\[ \subst_{q,m+l,n+l}(s, \wk_{\tm,m}^l(a_1), \ldots \wk_{\tm,m}^l(a_n), v_{l-1}, \ldots v_0) \]
+and
+\[ L^m(s)[\rho] \]
+are joinable.
+Since $\wk_{\tm,m}^0(a_i) \Rightarrow_s a_i$, terms $\subst_{p,m,n}(t, a_1, \ldots a_n)$ and $L^m(s)[\rho]$ are equivalent.
+Since the latter term is a normal form and $\Rightarrow_s$ is confluent, it follows that the former term reduces to it.
+\end{proof}
+
+We will say that $\subst$-free rules are \emph{stable} if they are well-behaved and, for every $\subst$-free rule $(t,s)$ and every $m \in \mathbb{N}$,
+there exists a $\subst$-free rule $(t',s')$ such that $U(t') = L^m(U(t))$ and $U(\nf^t(s')) = L^m(U(\nf^t(s)))$.
+
+\begin{prop}[subst-elim]
+Let $T$ be a theory with stable $\subst$-free rules and let $(\varphi,V)$ be a pair in $P_M$.
+If the abstract reduction system $(\Term_{T,\varphi}^s, \Rightarrow_{sf} \Rightarrow_s^\nf)$ is confluent, then $(\Term_{T,\varphi}^c,\Rightarrow_{cf})$ is also confluent.
+\end{prop}
+\begin{proof}
+We apply \rlem{conf-nf} to the following data:
+\begin{align*}
+A & = \Term_{T,\varphi}^c \\
+A' & = \Term_{T,\varphi}^s \\
+(\Rightarrow_0) & = (\Rightarrow_{sf} \Rightarrow_s^\nf) \\
+(\Rightarrow_1) & = (\Rightarrow_s) \\
+(\Rightarrow_2) & = (\Rightarrow_{cf}).
+\end{align*}
+The system $(A',\Rightarrow_0)$ is confluent by the assumption.
+The system $(A,\Rightarrow_1)$ is confluent and strongly normalizing by \rlem{subst-red}.
+Thus we just need to show that every pair of terms $t,s \in \Term_{T,\varphi}^c$ such that $t \Rightarrow_{cf} s$ is joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
+If $t \Rightarrow_s s$, then this is obvious, so we may assume that $t \Rightarrow_{sf} s$.
+
+Since $t \Rightarrow_{sf} s$, there exist terms $a$, $b$, and $c$ and a substitution $\rho$ such that $(a,b) \in R_T^{sf}$, $t = U(c[a[\rho]/x])$, and $s = U(\nf^t(c[b[\rho]/x]))$.
+Since $t \in \Term_{T,\varphi}^c$, the term $c$ and the substitution $\rho$ do not contain occurrences of function symbols $\ft$ and $\ty$.
+Thus $s = U(c[\nf^t(b)[\rho]/x])$.
+Since $U$ commutes with subsitution, $t = U(c)[U(a)[U(\rho)]/x]$ and $s = U(c)[U(\nf^t(b))[U(\rho)]/x]$.
+
+Let $c'$ be the $\Rightarrow_s$-normal form of $U(c)$.
+Note that $U(c)$ contains at most one occurrence of $x$, but $c'$ may contain several such occurrences.
+Let us show that $\Rightarrow_s$-redexes in the term $c'[U(a)[U(\rho)]/x]$ that do not belong to $U(a)$ do not overlap.
+To do this, note that if $c \Rightarrow_s^* c'$ and $c$ contains at most one occurrence of a variable $x$, then, for every subterm of $c'$ of the form $\subst_{p,n,k}(a, a_1, \ldots a_k)$, if $x \in FV(a)$, then $x \notin FV(a_1, \ldots a_k)$.
+Indeed, this property holds for $c$ since it contains at most one occurrence of $x$ and it is easy to show that if it holds for $c$ and $c \Rightarrow_s c'$, then it also holds for $c'$.
+Now, a $\Rightarrow_s$-redex in the term $c'[U(a)[U(\rho)]/x]$ either belongs to $U(a)$ or it comes from a subterm of $c'$ of the form $\subst_{p,n,k}(x, a_1, \ldots a_k)$ and the fact that we just proved implies that $a_1, \ldots a_k$ do not contain such subterms.
+
+Since $\Rightarrow_s$-redexes in the term $c'[U(a)[U(\rho)]/x]$ do not overlap, we may consider them one at a time.
+Thus we just need to prove that every pair of terms of the form $\subst_{p,n,k}(U(a)[U(\rho)], a_1, \ldots a_k)$ and $\subst_{p,n,k}(U(\nf^t(b))[U(\rho)], a_1, \ldots a_k)$ is joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
+We may assume that if $\rho(x)$ is defined, then $x$ is not free in terms $a_1$, \ldots $a_k$.
+Then
+\[ \subst_{p,n,k}(U(a)[U(\rho)], a_1, \ldots a_k) = \subst_{p,n,k}(U(a), a_1, \ldots a_k)[U(\rho)] \]
+and
+\[ \subst_{p,n,k}(U(\nf^t(b))[U(\rho)], a_1, \ldots a_k) = \subst_{p,n,k}(U(\nf^t(b)), a_1, \ldots a_k)[U(\rho)]. \]
+
+By \rlem{lift}, terms $\subst_{p,n,k}(U(a), a_1, \ldots a_k)[U(\rho)]$ and $L^m(U(a))[\rho'][U(\rho)]$ and terms $\subst_{p,n,k}(U(\nf^t(b)), a_1, \ldots a_k)[U(\rho)]$ and $L^m(U(\nf^t(b)))[\rho'][U(\rho)]$ are joinable under $\Rightarrow_s$,
+where $\rho'$ is the substitution defined in this lemma.
+Since $\subst$-free rules are stable, there is a $\subst$-free rule $(a',b')$ such that $U(a') = L^m(U(a))$ and $U(\nf^t(b')) = L^m(U(\nf^t(b)))$.
+Let $\rho''$ be the substitution consisting of $\Rightarrow_s$-normal forms of $\rho'[U(\rho)]$.
+Since $\subst$-free rules are well-behaved, terms $U(a')[\rho'']$ and $U(\nf^t(b'))[\rho'']$ are joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
+\end{proof}
