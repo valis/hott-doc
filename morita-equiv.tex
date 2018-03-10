@@ -868,7 +868,6 @@ To prove this, we just need to show that the unit of the adjunction is a weak eq
 But it is actually an isomorphism since $\Lang_T$ is full and faithful.
 
 \section{Characterization of lifting properties}
-\label{sec:char-lift-prop}
 
 In this section we prove several useful lemmas that characterize trivial fibrations in various model structures that we considered in previous section.
 Since all of these notations are defined in terms of lifting properties, we will prove general results about them.
@@ -886,21 +885,21 @@ Let $f : T_1 \to T_2$ be a morphism of theories such that the following conditio
 \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i & \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow \\
 \sigma(x_1, \ldots x_k)\!\downarrow & \sststile{T_2}{x_1, \ldots x_k} f(t) = \sigma(x_1, \ldots x_k) \land \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = f(A_i)
 \end{align*}
-\item \label{it:char-type-fib} For all terms $A$, $B$, and $a$ of $T_1$ such that $\varphi \sststile{T_1}{V} e_p(a) = A$ and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
+\item \label{it:char-type-fib} For all terms $A$, $B$, and $a$ of $T_1$ such that $\varphi \sststile{T_1}{V} e_p(a) = A$, $\varphi \sststile{T_1}{V} B\!\downarrow$, and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
 there exists a term $b$ such that $\varphi \sststile{T_1}{V} e_p(b) = B$ and $f(b)$ equals to $f(a)$.
 \end{enumerate}
 Then $f$ has the lifting property with respect to $V,\varphi$.
 \end{lem}
 \begin{proof}
-Let $A$ and $a$ be terms such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$.
+Let $A$ and $a$ be terms such that $\varphi \sststile{T_1}{V} A\!\downarrow$ and $f(\varphi) \sststile{T_2}{V} e_p(a) = f(A)$.
 Then we construct the required lifting by induction on $a$.
 If $a = x$ is a variable, then \eqref{it:char-type-fib} implies that that the required lifting exists.
 
 Now, suppose that $a = \sigma(a_1, \ldots a_k)$.
 Let $A_1$, \ldots $A_k$, $t$ be terms as described in \eqref{it:char-fun-fib}.
-By the induction hypothesis, there exist terms $a_1'$, \ldots $a_k'$ such that $\varphi \sststile{}{V} e_{p_i}(a_i') = A_i[x_1 \repl a_1', \ldots x_{i-1} \repl a_{i-1}']$ and $f(\varphi) \sststile{}{V} f(a_i') = a_i$.
+By the induction hypothesis, there exist terms $a_1'$, \ldots $a_k'$ such that $\varphi \sststile{T_1}{V} e_{p_i}(a_i') = A_i[x_1 \repl a_1', \ldots x_{i-1} \repl a_{i-1}']$ and $f(\varphi) \sststile{T_2}{V} f(a_i') = a_i$.
 Let $a' = t[x_1 \repl a_1', \ldots x_k \repl a_k']$.
-Since $\varphi \sststile{}{V} a'\!\downarrow$ and $f(\varphi) \sststile{}{V} f(a') = f(a)$, \eqref{it:char-type-fib} implies that there exists the required lifting.
+Since $\varphi \sststile{T_1}{V} a'\!\downarrow$ and $f(\varphi) \sststile{T_2}{V} f(a') = f(a)$, \eqref{it:char-type-fib} implies that there exists the required lifting.
 \end{proof}
 
 \begin{remark}[stable-eq-char-fib]
@@ -1126,8 +1125,8 @@ The identity functor is a Quillen equivalence between this model structure and t
 \subsection{Confluent theories}
 
 In this subsection we define confluent theories and prove their properties.
-First, we need to define a few notions from the theory of term rewriting systems.
-For a general introduction to term rewriting systems we refer the reader to \cite{Terese,klop-trs,ohlebusch-advanced}.
+First, we need to define a few notions from the theory of abstract reduction systems.
+For a general introduction to this topic we refer the reader to \cite{Terese,klop-trs,ohlebusch-advanced}.
 \begin{enumerate}
 \item An \emph{abstract reduction system} is a set $A$ together with a binary relation $\Rightarrow$ on it.
 We will denote by $\Rightarrow^*$ the reflexive transitive closure of $\Rightarrow$.
@@ -1167,25 +1166,36 @@ Let $\Term_{T,\varphi}^d$ be the set of defined terms with respect to the pair $
 There is an abstract reduction system $\Rightarrow_\varphi$ on the set $\Term_{T,\varphi}^d$ defined as follows.
 If $\varphi = \varphi_1 \land \ldots \land \varphi_n$ and $\varphi_i$ equals to $e_{p_i}(x_i) = t_i$, then $\Rightarrow_\varphi$ consists of pairs $(c[e_{p_i}(x_i)/y],c[t_i/y])$
 for every $1 \leq i \leq n$ and every term $c$ such that there is exactly one occurrence of $y$ in $c$.
-We will denote by $\Rightarrow_{R_T,\varphi}$ the relation $\Rightarrow_{R_T} \cup \Rightarrow_\varphi$.
 
 Axioms of a type theory are often presented in the form of a term rewriting system.
+So there is a natural choice of an abstract reduction system on the set of terms of a type theory.
 We axiomatize this situation in the following definition:
 
 \begin{defn}[directed]
 Let $T$ be a theory with separated axioms.
-A \emph{reduction system} on $T$ is a term rewriting system $R_T$ such that, for every pair $(\varphi,V) \in P_M$ and every substitution $\rho$, the following conditions hold:
+A \emph{reduction system} on $T$ is a choice of an abstract reduction system $\Rightarrow_{T,\varphi}$ on $\Term^d_{T,\varphi}$ for every pair $(\varphi,V) \in P_M$ such that the following conditions hold:
 \begin{enumerate}
-\item \label{it:dir-first} For every pair of terms $t$ and $s$ such that $(t,s) \in R_T$, if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
-\item \label{it:dir-second} For every axiom $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$ such that $\varphi \sststile{}{V} \psi[\rho]$ is derivable,
-terms $t[\rho]$ and $s[\rho]$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$.
+\item \label{it:dir-zero} The system $\Rightarrow_{T,\varphi}$ contains $\Rightarrow_\varphi$.
+\item \label{it:dir-first} For every pair of terms $t$ and $s$ such that $t \Rightarrow_{T,\varphi} s$, the sequent $\varphi \sststile{}{V} t = s$ is derivable.
+\item \label{it:dir-second} For every substitution $\rho$, every term $c$, and every axiom $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$
+such that sequent $\varphi \sststile{}{V} \psi[\rho] \land c[t[\rho]/x] = c[s[\rho]/x]$ is derivable,
+terms $c[t[\rho]/x]$ and $c[s[\rho]/x]$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{T,\varphi})$.
 \end{enumerate}
 \end{defn}
 
+\begin{remark}
+Often a reduction system on $T$ is defined as $\Rightarrow_{R,\varphi} \cup \Rightarrow_\varphi$,
+where $\Rightarrow_{R,\varphi}$ is a restriction of the system $\Rightarrow_R$ to $\Term^d_{T,\varphi}$ for some term rewriting sytem $R$.
+In this case, condition~\eqref{it:dir-zero} is automatically satisfied.
+To verify condition~\eqref{it:dir-first}, it is enough to prove that, for every substitution $\rho$ and every pair of terms $t$ and $s$ such that $(t,s) \in R$,
+if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
+Also, it is enough to prove condition~\eqref{it:dir-second} only for $c = x$ since $a \Rightarrow_{T,\varphi} b$ implies $c[a/x] \Rightarrow_{T,\varphi} c[b/x]$.
+\end{remark}
+
 \begin{example}[dir-ax]
-Let $T$ be a theory with a set of axioms $\mathcal{A}_d$ and a term rewriting system $R_T$.
-If we define $\mathcal{A}_e$ as the set of axioms of the form $t\!\downarrow\ \sststile{}{FV(t)} t = s$ for every $(t,s) \in R_T$, then $R_T$ is a reduction system on $T \cup \mathcal{A}_e$.
-We will show in \rexample{directed} that every theory with a reduction system is Morita equivalent to a theory of this form.
+Let $T$ be a theory with a set of axioms $\mathcal{A}_d$ and a term rewriting system $R$.
+If we define $\mathcal{A}_e$ as the set of axioms of the form $t\!\downarrow\ \sststile{}{FV(t)} t = s$ for every $(t,s) \in R$,
+then $\Rightarrow_R \cup \Rightarrow_\varphi$ is a reduction system on $T \cup \mathcal{A}_e$.
 \end{example}
 
 Let $T$ be a theory with separated axioms such that, for every axiom $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$, the following conditions hold:
@@ -1193,7 +1203,7 @@ Let $T$ be a theory with separated axioms such that, for every axiom $\psi \ssts
 \item The term $t$ is not a variable and $FV(s) \subseteq FV(t)$.
 \item For every pair $(\varphi,V) \in P_M$ and every substitution $\rho$, if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
 \end{itemize}
-Then we can define a term rewriting system $R_T$ as the set of pairs $(t,s)$ such that there is an axiom of the form $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$.
+Then we can define a term rewriting system $R$ as the set of pairs $(t,s)$ such that there is an axiom of the form $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$.
 The first condition implies that this is indeed a term rewriting system and the second condition implies that it is a reduction system on $T$.
 We will say that $T$ \emph{has directed axioms} if these condition hold.
 Most of the theories are presented in this way, so we do not need to specify a term rewriting system explicitly.
@@ -1211,6 +1221,7 @@ Moreover, a derivation of $\varphi \sststile{}{V} t = s$ in the natural deductio
 \item $\varphi = \varphi_1 \land \ldots \land \varphi_k$ and there exists $j$ such that $\varphi_j$ equals to either $a = b$ or $b = a$.
 \end{enumerate}
 \end{lem}
+Moreover, the sequent $\varphi \sststile{}{V} t_i\!\downarrow$ is derivable for every $1 \leq i \leq n$.
 \begin{proof}
 We prove this by induction on a derivation of $\varphi \sststile{}{V} t = s$ in the natural deduction system.
 The rules \axref{nv}, \axref{np}, and \axref{nf} are obvious.
@@ -1230,48 +1241,54 @@ Finally, let us consider the rule \axref{nl}:
 Note that we may assume that there is a unique occurrence of the variable $y$ in $\psi$ since the general rule follows from this special case.
 Let $t_1$, \ldots $t_n$ be a sequence for $\varphi \sststile{}{V} p = q$ and let $s_1$, \ldots $s_m$ be a sequence for $\varphi \sststile{}{V} t'[p/y] = s'[p/y]$.
 Then $t'[t_n/y]$, \ldots $t'[t_1/y] = s_1$, \ldots $s_m = s'[t_1/y]$, \ldots $s'[t_n/y]$ is a sequence for $\varphi \sststile{}{V} t'[q/y] = s'[q/y]$.
+
+Let us prove that $\varphi \sststile{}{V} t_i\!\downarrow$ is derivable by induction on $i$.
+This is true for $i = 1$ by assumption.
+Suppose that this is true for some $i$.
+Then $t_i = c[a/x]$ and $t_{i+1} = c[b/x]$ and the sequent $\varphi \sststile{}{V} a = b$ is derivable.
+Then \axref{nl} implies that the sequent $\varphi \sststile{}{V} t_{i+1}\!\downarrow$ is derivable.
 \end{proof}
 
 The following proposition is the main property of theories with reduction systems:
 
 \begin{prop}[conf-main]
 Let $T$ be a theory with a reduction system and let $(\varphi,V)$ be a pair in $P_M$.
-Then a sequent $\varphi \sststile{}{V} t = s$ is derivable if and only if the terms $t$ and $s$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$.
+Then a sequent $\varphi \sststile{}{V} t = s$ is derivable if and only if the terms $t$ and $s$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{T,\varphi})$.
 \end{prop}
 \begin{proof}
-If $t$ and $s$ are equivalent in $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$, then there is a zig-zag of $\Rightarrow_{R_T,\varphi}$-reducations between them.
-We need to show that, for every reduction $c[a[\rho]/x] \Rightarrow_{R_T} c[b[\rho]/x]$, the sequent $\varphi \sststile{}{V} c[a[\rho]/x] = c[b[\rho]/x]$ is derivable.
-Since the term $c[a[\rho]/x]$ is $\varphi$-defined, the term $a[\rho]$ is also $\varphi$-defined.
-Condition~\eqref{it:dir-first} of \rdefn{directed} implies that $\varphi \sststile{T}{V} a[\rho] = b[\rho]$ from which follows that the required sequent is derivable.
-If $c[a/x] \Rightarrow_\varphi c[b/x]$, then $\varphi \sststile{}{V} a = b$ is derivable by \axref{nh} which implies that $\varphi \sststile{}{V} c[a/x] = c[b/x]$ is also derivable.
+If $t$ and $s$ are equivalent in $(\Term_{T,\varphi}^d,\Rightarrow_{T,\varphi})$, then there is a zig-zag of $\Rightarrow_{T,\varphi}$-reducations between them.
+Since the relation $\varphi \sststile{T}{V} - = -$ is an equivalence relation on the set $\Term_{T,\varphi}^d$, we can assume that $t \Rightarrow_{T,\varphi} s$.
+Then condition~\eqref{it:dir-first} of \rdefn{directed} implies that $\varphi \sststile{T}{V} t = s$.
 
-If $t$ and $s$ are terms such that $\varphi \sststile{T}{V} t = s$, then \rlem{der-eq} and \rprop{der-separated} imply that there exists a sequence $t_1$, \ldots $t_n$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$,
-either $t_i \Rightarrow_\varphi t_{i+1}$ or $t_{i+1} \Rightarrow_\varphi t_i$ or there is an axiom $\psi \sststile{}{V'} a = b$, a substitution $\rho$, and a term $c$ such that
+If $t$ and $s$ are terms such that $\varphi \sststile{T}{V} t = s$, then \rlem{der-eq} and \rprop{der-separated} imply that
+there exists a sequence $t_1$, \ldots $t_n$ of elements of $\Term^d_{T,\varphi}$ such that $t = t_1$, $s = t_n$, and, for every $1 \leq i < n$,
+either $t_i \Rightarrow_\varphi t_{i+1}$ or $t_{i+1} \Rightarrow_\varphi t_i$ or there is an axiom $\psi \sststile{}{V'} a = b$ in $\mathcal{A}_e$, a substitution $\rho$, and a term $c$ such that
 the sequent $\varphi \sststile{}{V} \psi[\rho]$ is derivable and $t_i = c[a[\rho]/y]$ and $t_{i+1} = c[b[\rho]/y]$ (or vice versa).
-Condition~\eqref{it:dir-second} of \rdefn{directed} implies that $t_i$ and $t_{i+1}$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$.
+Condition~\eqref{it:dir-second} of \rdefn{directed} implies that $t_i$ and $t_{i+1}$ are equivalent in the system $(\Term_{T,\varphi}^d,\Rightarrow_{T,\varphi})$.
 \end{proof}
 
 \begin{cor}[conf-main]
 Let $T$ be a theory with a reduction system and let $(\varphi,V)$ be a pair in $P_M$.
-Then the system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent if and only if any pair of terms $t$ and $s$ such that $\varphi \sststile{T}{V} t = s$ is joinable in this system.
+Then the system $(\Term_{T,\varphi}^d,\Rightarrow_{T,\varphi})$ is confluent if and only if any pair of terms $t$ and $s$ such that $\varphi \sststile{T}{V} t = s$ is joinable in this system.
 \end{cor}
 
-Note that even if $R_T$ is confluent, in general this does not imply the confluence of $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$.
+Note that if $\Rightarrow_{T,\varphi}$ is defined as $\Rightarrow_R \cup \Rightarrow_\varphi$ for some confluent term rewriting system $R$,
+in general this does not imply the confluence of $(\Term_{T,\varphi}^d,\Rightarrow_{R,\varphi})$.
 Nevertheless, this is often true under some additional assumptions:
 
 \begin{lem}[morita-conf]
 Let $T$ be a theory with a reduction system and let $(\varphi,V)$ be a pair in $P_M$.
+Let $R$ be a left-linear term rewriting system.
 Suppose that the following conditions hold:
 \begin{itemize}
-\item The underlying term rewriting system of $T$ is left-linear.
-\item The abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T})$ is confluent.
-\item For every reduction rule $(t,s) \in R_T$, if $t$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
+\item The abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_R)$ is confluent.
+\item For every reduction rule $(t,s) \in R$, if $t$ contains a subterm of the form $e_p(t')$, then $t'$ is not a variable.
 \end{itemize}
-Then the abstract reduction system $(\Term_{T,\varphi}^d,\Rightarrow_{R_T,\varphi})$ is confluent.
+Then the abstract reduction system $(\Term_{T,\varphi}^d, \Rightarrow_R \cup \Rightarrow_\varphi)$ is confluent.
 \end{lem}
 \begin{proof}
 We can think of variables in $V$ as additional constants.
-Then $\Rightarrow_{R_T,\varphi}$ is the union of two confluent term rewriting systems $R_T$ and $\Rightarrow_\varphi$.
+Then $\Rightarrow_{R,\varphi}$ is the union of two confluent term rewriting systems $R$ and $\Rightarrow_\varphi$.
 The last condition implies that they are orthogonal to each other.
 It was shown in \cite{raoult} (see also \cite[Theorem~8.6.35]{ohlebusch-advanced}) that the union of confluent orthogonal left-linear systems is confluent.
 \end{proof}
@@ -1291,7 +1308,7 @@ In this subsection we consider maps of the form $f : T \to T \cup \mathcal{A}$, 
 \begin{prop}[ext-morita]
 Let $\mathcal{A}$ be a set of sequents in a theory $T$.
 Suppose that, for every axiom $\psi \sststile{}{V'} \chi$ in $\mathcal{A}$, every pair $(\varphi,V) \in P_M$, and every substitution $\rho$,
-the sequent $\varphi \sststile{}{V} \chi[\rho]$ is derivable whenever $\varphi \sststile{}{V} \psi[\rho]$ is.
+the sequent $\varphi \sststile{}{V} \chi[\rho]$ is derivable in $T$ whenever $\varphi \sststile{}{V} \psi[\rho]$ is.
 Then, for every pair $(\varphi,V)$ in $P_M$, if a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T \cup \mathcal{A}$, then it is also derivable in $T$.
 In particular, the map $T \to T \cup \mathcal{A}$ is a Morita equivalence.
 \end{prop}
@@ -1301,24 +1318,16 @@ Obvious induction on the derivation of $\varphi \sststile{}{V} \psi$.
 
 \begin{example}
 We already saw examples of such a Morita equivalence in \rprop{der-separated}.
-This proposition implies that the map $T \to T \mathcal{A}_e$ is a Morita equivalence for every theory $T$ with separated axioms.
-This observation has the following implication.
+This proposition implies that the map $T \to T \cup \mathcal{A}_d'$ is a Morita equivalence for every theory $T$ with separated axioms.
+It also has the following implication.
 Suppose that we want to extend $T$ with a typing axiom of the following form:
 \[ \psi \sststile{}{V} e_p(\sigma(x_1, \ldots x_k)) = A \]
 There are two natural choices for the formula $\psi$: $\varphi_\sigma$ and $\sigma(x_1, \ldots x_k)\!\downarrow$.
 Let $T_1 = T \cup \{ \varphi_\sigma \sststile{}{V} e_p(\sigma(x_1, \ldots x_k)) = A \}$ and $T_2 = T \cup \{ \sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{V} e_p(\sigma(x_1, \ldots x_k)) = A \}$.
 Then the obvious map $T_1 \to T_2$ is a Morita equivalence.
-Indeed, theories $T_1 \cup \mathcal{A}_e$ and $T_2 \cup \mathcal{A}_e$ are isomorphic and the maps $T_1 \to T_1 \cup \mathcal{A}_e$ and $T_2 \to T_2 \cup \mathcal{A}_e$ are Morita equivalences.
-So $T_1 \to T_2$ is a Morita equivalence by the 2-out-of-3 property.
-\end{example}
-
-\begin{example}[directed]
-If $T$ is a theory with a reduction system $R_T$, then we can define another theory which consists of axioms $t\!\downarrow\ \sststile{}{FV(t)} t = s$ for all $(t,s) \in R_T$.
-Let us denote this theory by $T'$.
-Then $T$ and $T'$ are Morita equivalent.
-Indeed, both maps $T \to T \cup T'$ and $T' \to T \cup T'$ satisfy the condition of \rprop{ext-morita}.
-This follows immediately from the definition of reduction systems.
-Condition~\eqref{it:dir-first} of \rdefn{directed} implies that this is true for the first map and \eqref{it:dir-second} implies this for the second.
+Indeed, if a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T_2$, then it is also derivable in $T_2 \cup \mathcal{A}_d'$.
+Since theories $T_1 \cup \mathcal{A}_d'$ and $T_2 \cup \mathcal{A}_d'$ have the same theorems, it is also derivable in $T_1 \cup \mathcal{A}_d'$.
+By \rprop{der-separated}, it is also derivable in $T_1$.
 \end{example}
 
 \begin{example}
@@ -1330,8 +1339,8 @@ If we replace this axiom with the following one, then we obtain a new theory whi
 
 We want to show that the obvious map $T_\Pi \to T_\Pi'$ is a Morita equivalence.
 It is a folklore result that the ordinary type theory with $\Pi$-types is confluent.
-This does not imply confluence of $T_\Pi'$ immediately, but it is possible to prove confluence of $T_\Pi'$ using this fact and also the fact that it is strongly normalizing.
-This proof is out of scope of this paper, so we will simply assume that $T_\Pi'$ is confluent.
+This does not imply confluence of $T_\Pi'$ immediately since terms of this theory differ from terms of ordinary type theory.
+It is possible to prove confluence of $T_\Pi'$, but this proof is beyond the scope of this paper, so we will simply assume that $T_\Pi'$ is confluent.
 
 Let us show that the condition of \rprop{ext-morita} holds.
 Note that the formula $\app(A,B,\lambda(A,b),a)\!\downarrow$ is equivalent to $\ft(B) = A \land \Pi(A,\ty(b)) = \Pi(A,B) \land \ty(a) = A$.
@@ -1361,7 +1370,7 @@ Then we have the following commutative diagram of theories:
 The top arrow is actually an isomorphism and we can prove that the two remaining arrows are Morita equivalences using \rprop{ext-morita} in the same way as we did this for the arrow $T_\Pi \to T_\Pi'$.
 Note that even theories $T_\Pi$ and $T_\Pi''$ are isomorphic they differ as theories with directed axioms.
 In particular, the underlying term rewriting systems of $T_\Pi$ and $T_\Pi''$ differ.
-The latter is left-linear (assuming that other reduction rules are also left-linear) and this is the main reason why we might be interested in this theory.
+The latter is left-linear and this is the main reason why we might be interested in this theory.
 \end{example}
 
 We can summarize results of this subsection as follows.
@@ -1372,6 +1381,10 @@ Also, similar results can be proved for other theories such as the theory of $\S
 
 We defined several theories with the interval type in \cite{alg-models} and it was conjectured that these theories are equivalent.
 We will prove that, for every theory $T$ with an interval type satisfying some mild additional hypotheses, $T$ is equivalent to the theory with the $\sigma$-rule.
+First, we need to establish a technical lemma:
+
+\begin{lem}[hom-pres]
+\end{lem}
 
 \begin{prop}
 Let $f : T \to T \cup \mathcal{A}$ be a map of theories such that $T \cup \mathcal{A}$ is a confluent theory and $T$ is a theory with separated axioms such that,
@@ -1382,11 +1395,11 @@ Then $f$ is a trivial fibration.
 \end{prop}
 \begin{proof}
 We will verify conditions of \rlem{eq-char-fib}.
-Br \rprop{der-separated}, we may assume that $T$ is maximal.
+By \rprop{der-separated}, we may assume that $T$ is maximal.
 The first condition follows from the fact $T$ is a maximal theory with separated axioms and that the $(\varphi_\sigma, \{ x_1, \ldots x_k \})$ belongs to $P_M$.
 To prove the second condition, we need to verify conditions of \rlem{char-type-fib}.
 If $\varphi \sststile{T}{V} \ft(A) = \ft(B)$ and $\varphi \sststile{T \cup \mathcal{A}}{V} A = B$, then there is a term $C$ such that $A \Rightarrow_{R_{T \cup \mathcal{A}},\varphi}^* C$ and $B \Rightarrow_{R_{T \cup \mathcal{A}},\varphi}^* C$.
-By assumption, there exists a sequence of homotopies between $A$ and $B$, which are constant in $T \cup \mathcal{A}$.
+By assumption and \rlem{hom-pres}, there exists a sequence of homotopies between $A$ and $B$, which are constant in $T \cup \mathcal{A}$.
 This implies that there is a term $A \vdash b : B$ which is equal to $v_0(A)$ in $T \cup \mathcal{A}$.
 \end{proof}
 
@@ -1405,121 +1418,6 @@ We can define the following relative homotopy between $\coe_1(x. A, a, i)$ and $
 This homotopy is constant in $T'$.
 Thus the conditions of the previous proposition hold.
 \end{example}
-
-\subsection{Other examples}
-
-Let us consider the theory of $\Sigma$-types:
-\medskip
-\begin{center}
-\AxiomC{}
-\UnaryInfC{$\vdash \Sigma(A, x.\,B)\ \type$}
-\DisplayProof
-\quad
-\AxiomC{$\vdash b : B[a]$}
-\doubleLine
-\UnaryInfC{$\vdash \pair(A, x.\,B, a, b) : \Sigma(A, x.\,B)$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$z : \Sigma(A, x.\,B) \vdash D\ \type$}
-\AxiomC{$x : A, y : B \vdash d : D'$}
-\AxiomC{$\vdash p : \Sigma(A, x.\,B)$}
-\doubleLine
-\TrinaryInfC{$\vdash \Sigma\text{-}\elim(A, B, z.\,D, x y.\,d, p) : D[p]$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{$z : \Sigma(A,x.\,B) \vdash D\ \type$}
-\AxiomC{$x : A, y : B \vdash d : D'$}
-\AxiomC{$\vdash b : B[a]$}
-\TrinaryInfC{$\vdash \Sigma\text{-}\elim(A, B, z.\,D, x y.\,d, \pair(A, x.\,B, a, b)) \deq d[a,b]$}
-\DisplayProof
-\end{center}
-
-where $D' = D[\pair(A, B, x, y)]$.
-We will denote this theory by $\Sigma$.
-We can modify the last rule as follows:
-\medskip
-\begin{center}
-\AxiomC{$\Sigma\text{-}\elim(A, B, z.\,D, x y.\,d, \pair(A', x.\,B', a, b))\!\downarrow$}
-\UnaryInfC{$\vdash \Sigma\text{-}\elim(A, B, z.\,D, x y.\,d, \pair(A', x.\,B', a, b)) \deq d[a,b]$}
-\DisplayProof
-\end{center}
-The modified theory will be denoted by $\Sigma'$.
-There is an obvious map $\Sigma \to \Sigma'$.
-
-\begin{example}
-Let $T$ be a theory under $\Sigma$ and let $f : T \to T'$ be the pushout of the map $\Sigma \to \Sigma'$.
-If $T'$ is confluent and there is no reduction rules of the form $\Sigma(A, x.\,B) \Rightarrow t$, then $f$ is a Morita equivalence.
-To prove this it is enough to show that, for every $(\varphi,V) \in P_M$, if a sequent $\varphi \sststile{}{V} t = s$ is derivable in $T'$, then it is derivable in $T$.
-% If \varphi \sststile{}{V} t\!\downarrow in T and t => s in T', then t => s in T. We do this by induction on the length of the maximal reduction sequence starting from $t$.
-% This implies:
-% If \varphi \sststile{}{V} t\!\downarrow \land s\!\downarrow in T and \varphi \sststile{}{V} t = s in T', then \varphi \sststile{}{V} t = s in T.
-% We just need to show that if $\varphi \sststile{}{V} t\!\downarrow$ in T', then the same is true in T.
-% We do this by induction on the size of $t$, where the size of $t$ is the maximum among ordinals (natural sum of \omega^{\omega*f(\sigma)} for every \sigma in p, where $f$ is the ordinal corresponding to $\sigma$) for every paths p from the root of $t$ to a leaf.
-\end{example}
-
-% Note that this proposition does not use the condition that we put on formulas $\varphi_{t,s}$, so we can use it to prove that it holds.
-% Let us sketch a proof of this fact for the theory of $\Pi$-types.
-% We need to show that if $t \Rightarrow_R s$ and $\psi \sststile{}{V} t\!\downarrow$, then $\psi \sststile{}{V} \varphi_{t,s}$.
-% 
-% 
-% The reduction relation in the theory of $\Pi$-types is strongly normalizable (that is, the relation $R_0$ is well-founded).
-% We proceed by induction on the length of the longest chain of reductions starting in $t$ ignoring the reductions of the form $\ty(t_1) \Rightarrow t_2$ (we can do this since this relation is also strongly normalizable).
-% The only interesting case is when $t = \app(B, \lambda(b), a)$.
-% In this case, $\psi \sststile{}{V} \Pi(\ty(b)) = \Pi(B)$ and we need to prove that $\psi \sststile{}{V} \ty(b) = B$.
-% \Rprop{conf-main} implies that $\Pi(\ty(b))$ and $\Pi(B)$ reduce to the same term and, since there is no reduction rule of the form $\Pi(t) \Rightarrow s$, this implies that $\ty(b)$ and $B$ also reduce to the same term.
-% The induction hypothesis applies to $\ty(b)$ and $B$ and implies that $\psi \sststile{}{V} \ty(b) = B$.
-
-\begin{comment}
-\subsection{Properness of the model categories of models}
-
-Let us show that the model category of models of a confluent theory is proper:
-
-\begin{prop}
-Let $T$ be a confluent theory under $\coeT_1 + \sigma + \PathT + \wUA$ with well-defined function symbols.
-Then the category of models of $T$ is proper model category
-\end{prop}
-\begin{proof}
-Since all objects of $\Mod{T}$ are fibrant, this category is right proper.
-To prove that it is left proper, we just need to prove that trivial fibrations are closed under the operation of attaching a single term or type.
-To be more precise, we need to prove that for every trivial fibration $f : X \to Y$ in $\Mod{T}$ and every map $F(\{ A : (d_p,n) \}) \to X$,
-the following pushout of $f$ is also a trivial fibration:
-\[ \xymatrix{ X \ar[r] \ar[d]_f &     X \amalg_{F(\{ A : (d_p,n) \})} F(\{ e_p(a) = A \}) \ar[d] \\
-              Y \ar[r]          & \po Y \amalg_{F(\{ A : (d_p,n) \})} F(\{ e_p(a) = A \})
-            } \]
-
-Since $\Lang$ is a left adjoint, we have the following pushout square:
-\[ \xymatrix{ \Lang(X) \ar[r] \ar[d]_\Lang(f) &     \Lang(X) \amalg_{\{ A : (d_p,n) \}} \{ e_p(a) = A \} \ar[d] \\
-              \Lang(Y) \ar[r]                 & \po \Lang(Y) \amalg_{\{ A : (d_p,n) \}} \{ e_p(a) = A \}
-            } \]
-A map $g$ of models is a trivial fibration if and only if $\Lang(g)$ has the lifting property with respect to $P_0$.
-Thus it is enough to show that conditions of \rlem{eq-char-fib} hold for this pushout of $\Lang(f)$.
-The first condition is easy to prove.
-If $\sigma$ is a function symbol of $T$ or $\sigma = a$, then we can lift it to itself.
-If $\sigma = O_y$ for some $y \in Y$, then we can lift it to $O_x$, where $x \in X$ is a lift of $y$
-
-TODO
-\end{proof}
-\end{comment}
-
-% trivial fibrations are closed under pushouts along weak cofibrations, in particular weak equivalences are closed under coproducts
-% the universe functor preserves trivial fibrations and hence weak equivalences
-% two different versions of Sigma are Morita equivalent (using cylinder objects for theories)
-% arrows and pi types are Morita equivalent
-% cofibrant replacement of theories (in particular, Id_- for Id, also Sigma and other simple theories)
-% T -> T + wUA is a Morita equivalence
-% ommiting contexts in terms
-
-TODO: Modularity.
-Since many type theories are constructed as coproducts of simple basic theories, it is natural to ask whether coproducts preserve the confluence property.
-If the confluence property is stable under the union in some class of theories, then we say that it is \emph{modular} for this class.
-It was shown by Toyama in \cite{toyama} (see also \cite{klop-confluence,oostrom-confluence}) that the confluence is modular for disjoint theories.
-There are many generalizations of this result for theories that may share particular some function symbols (see for instance \cite{ohlebusch-confluence,ohlebusch-composable,middeldorp-completeness}).
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
