@@ -1542,3 +1542,48 @@ Since $\subst$-free rules are stable, there is a $\subst$-free rule $(a',b')$ su
 Let $\rho''$ be the substitution consisting of $\Rightarrow_s$-normal forms of $\rho'[U(\rho)]$.
 Since $\subst$-free rules are well-behaved, terms $U(a')[\rho'']$ and $U(\nf^t(b'))[\rho'']$ are joinable under $\Rightarrow_s^\nf (\Rightarrow_{sf} \Rightarrow_s^\nf)^*$.
 \end{proof}
+
+% 9. Попытка доказать, что можно работать только с нормализованными формулами. Безуспешная.
+
+\subsection{Morita equivalences between confluent theories}
+
+The first condition of \rlem{eq-char-fib} is usually easy to check.
+In this subsection we give several lemmas that will be useful for proving the second condition of this lemma.
+Let $T_I = \IdT_- + I + p_I + \wUA$, where $\IdT_-$ is the theory with identity types in which computational rule for $J$ is replaced with a propositional equality,
+$\wUA$ is the weak univalence axiom, and be the theory with the following constructions:
+\begin{center}
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash I\ \type$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \leftI : I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash$}
+\UnaryInfC{$\Gamma \vdash \rightI : I$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash i : I$}
+\UnaryInfC{$\Gamma \vdash p_I(i) : \Id(\leftI,i)$}
+\DisplayProof
+\end{center}
+All the theories with the interval type that we considered before are theories under $T_I$.
+% If $e_{p_j}(t) = A_j$, then we can define a term $\coe(H,t)$ such that $e_{p_j}(\coe(H,t)) = A_j'$.
+
+\begin{lem}
+Let $(\varphi, V)$ be a pair in $P_M$, where $\varphi = \bigwedge_{1 \leq i \leq n} e_{p_i}(x_i) = A_i$.
+Let $A_j'$ be a term homotopic to $A_j$ for some $1 \leq j \leq n$.
+Let $T_1$ be a theory under $T_I$ and let $f : T_1 \to T_2$ be a map with the weak lifting property with respect to $(\varphi', V \setminus \{ x_j \} \cup \{ x_j' \})$, where $\varphi'$ is the following formula:
+\[ \bigwedge_{1 \leq i < j} e_{p_i}(x_i) = A_i \land e_{p_j}(x_j') = A_j' \land \bigwedge_{j < i \leq n} e_{p_i}(x_i) = A_i[\coe(H^{-1},x_j')/x_j]. \]
+Then $f$ also has this property with respect to $(\varphi,V)$.
+\end{lem}
+\begin{proof}
+Let $H$ be a homotopy between $A_j$ and $A_j'$.
+Let $B$ and $b$ be terms such that $\varphi \sststile{T_1}{V} B\!\downarrow$ and $f(\varphi) \sststile{T_2}{V} e_p(b) = f(B)$.
+Then $\varphi' \sststile{T_1}{V'} B'\!\downarrow$ and $f(\varphi') \sststile{T_2}{V'} e_p(b') = f(B')\!\downarrow$, where $B' = B[\coe(H^{-1},x_j')/x_j]$ and $b' = b[\coe(f(H)^{-1},x_j')/x_j]$.
+By assumption, there exist terms $c'$ and $h$ such that $\varphi' \sststile{T_1}{V'} e_p(c') = B'$ and $h$ is a relative homotopy between $f(c')$ and $b'$.
+Then $\varphi'' \sststile{T_1}{V'} e_p(c'') = B''$, where $\varphi''$ is the following formula:
+\[ \bigwedge_{1 \leq i \leq j} e_{p_i}(x_i) = A_i \land \bigwedge_{j < i \leq n} e_{p_i}(x_i) = A_i[\coe(H^{-1},\coe(H,x_j))/x_j], \]
+$c'' = c'[\coe(H,x_j)/x_j']$, and $B'' = B[\coe(H^{-1},\coe(H,x_j))/x_j]$.
+\end{proof}
