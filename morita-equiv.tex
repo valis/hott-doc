@@ -1437,15 +1437,25 @@ This implies that we cannot prove that the map $T \to T \amalg T_2$ is a Morita 
 We know that the map $T \to T \amalg T_0$ is a Morita equivalence when $T$ has the weak univalence axioms and the map $T \amalg T_0 \to T \amalg T_2$ is a Morita equivalence when it does not,
 so we cannot conclude that their composition is a Morita equivalence.
 
+First, we need to prove a technical lemma.
+Let $T$ be a theory and let $(\varphi,V)$ be a pair in $P_M$.
+Then we define a relation $\Rightarrow_{T,\varphi}^c$, which is a subset of $\Rightarrow_{T,\varphi}$.
+\begin{lem}
+% If $T$ satisfies some conditions, $\ctx(t)$ is equivalent to $\ctx(s)$, th
+\end{lem}
+\begin{proof}
+\end{proof}
+
 Suppose that $T$ is a theory under $\coeT_1 + \sigma + \PathT$ with well-defined function symbols.
 Then the first condition of \rlem{eq-char-fib} holds for the map $T \amalg T_0 \to T \amalg T_2$.
 Thus, to prove that it is a Morita equivalence, it is enough to check that it satisfies the condition of \rlem{char-type-fib}.
 That is, we need to prove that, for every pair $(\varphi,V) \in P_M$ and every pair of types $\Gamma \vdash A\ \type$ and $\Gamma \vdash B\ \type$ in $T \amalg T_0$ such that $f(\Gamma) \vdash f(A) \deq f(B)$ is provable in $T \amalg T_0 \cup \varphi$,
 there exists a term $\Gamma, A \vdash b : B$ such that $f(\Gamma), f(A) \vdash f(b) \deq v_0$.
 Suppose that $T \amalg T_2$ is confluent.
+% TODO: Define \Rightarrow_{T \amalg T_2, f(\varphi)}^c
 Then it is enough to prove the following facts:
 \begin{enumerate}
-\item \label{it:contr-first} For every type $\Gamma \vdash A\ \type$ of $T \amalg T_0$, if $f(A) \Rightarrow_{T \amalg T_2, f(\varphi)} A'$, then there exists terms $A''$, $a_1$, and $a_2$ such that $f(A'') = A'$ and the following sequents are derivable:
+\item \label{it:contr-first} For every type $\Gamma \vdash A\ \type$ of $T \amalg T_0$, if $f(A) \Rightarrow_{T \amalg T_2, f(\varphi)}^c A'$, then there exists terms $A''$, $a_1$, and $a_2$ such that $f(A'') = A'$ and the following sequents are derivable:
 \begin{align*}
 \Gamma, A & \vdash a_1 : A'' \\
 \Gamma, A'' & \vdash a_2 : A \\
@@ -1475,31 +1485,33 @@ It is easy to construct a term $\Delta \vdash p : \Id(\Id(C,c_0,c_0),\Ceq(c_0),\
 Thus we can define $h_n(a,b)$ as $\at(p,i)$.
 
 Now let us prove \eqref{it:contr-first}.
-Let $\Gamma \vdash A\ \type$ be a type of $T \amalg T_0$ such that $f(A) \Rightarrow_{T \amalg T_2, f(\varphi)} A'$.
+Let $\Gamma \vdash A\ \type$ be a type of $T \amalg T_0$ such that $f(A) \Rightarrow_{T \amalg T_2, f(\varphi)}^c A'$.
 We will prove that there is a type $\Gamma \vdash A''\ \type$ such that $f(A'') = A'$ and a homotopy $\Gamma, i : I \vdash H \type$ between $A$ and $A''$ such that $f(H)$ is the constant homotopy.
-% For every type $B$ of $T \amalg T_0$ such that $f(B)$ is equivalent to $\top$, we choose a homotopy $H_B$ between $C$ and $B$ such that $f(H_B)$ is the constant homotopy.
-% TODO
 
 For every term $t$ of $T \amalg T_0$ such that $\ctx^n(t) = \Gamma$, we define terms $g_n(t)$ and $h_n(t)$ such that $\ctx^n(g_n(t)) = \Gamma$ and $\ctx^n(h_n(t)) = (\Gamma, i : I)$
 by replacing every subterm $c$ of type $C$ with $c_0$ and $\at\Ceq(c),i)$, respectively.
 Formally, we define $g_n(t)$ and $h_n(t)$ by induction on $t$.
 If $\Gamma, \Delta \vdash t : C$, then we define $g_n(t)$ as $\Gamma, g_n(\Delta) \vdash c_0 : C$ and $h_n(t)$ as $\Gamma, i : I, h_n(\Delta) \vdash \at(\Ceq(c),i) : C$.
-If $t = x$, $t = v_i(\Gamma)$, or $t$ has the same sort as $\Gamma$, then $g_n(t) = t$ and $h_n(t)$ is the weakening of $t$.
+If $t = x$, $t = v_i$, or $t$ has the same sort as $\Gamma$, then $g_n(t) = t$ and $h_n(t)$ is the weakening of $t$.
 If $t = \sigma_m(t_1, \ldots t_k)$, then $g_n(t) = \sigma_m(g_n(t_1), \ldots g_n(t_k))$ and $h_n(t) = \sigma_{m+1}(h_n(t_1), \ldots h_n(t_k))$.
 If $t = \subst_{p,m,k}(t, t_1, \ldots t_k)$, then $g_n(t) = \subst_{p,m,k}(g_k(t), g_n(t_1), \ldots g_n(t_k))$ and $h_n(t) = \subst_{p,m+1,k+1}(h_k(t), v_n, h_n(t_1), \ldots h_n(t_k))$.
 
 Suppose that $\varphi \sststile{V}{T \amalg T_0} t\!\downarrow$.
 Then we can prove by induction on $t$ that $\varphi \sststile{V}{T \amalg T_0} g_n(t)\!\downarrow \land h_n(t)\!\downarrow$.
-If $t = \sigma_m$
+If $\Gamma, \Delta \vdash t : C$, $t = x$, or $t = v_i$, then it is obvious.
+Let us consider the case $t = \sigma_m(t_1, \ldots t_k)$
+If $t = \subst_{p,m,k}(t, t_1, \ldots t_k)$, then a similar argument applies, so we omit this case.
+We also prove this only for $g_n$, the proof for $h_n$ is similar.
 
-% Suppose that the only subterms of $\varphi$ of type $C$ are $c_0$.
-% We want to prove that $\varphi \sststile{V}{T \amalg T_0} g_n(t)\!\downarrow \land h_n(t)\!\downarrow$ whenever $\varphi \sststile{V}{T \amalg T_0} t\!\downarrow$.
-% To do this, we need to assume that $g_n(t_1)$ is equivalent to $g_n(t_2)$ and $h_n(t_1)$ is equivalent to $h_n(t_2)$ whenever $t_1 \Rightarrow_{T \amalg T_0, \varphi} t_2$.
-
-% This means that this theory can be presented in such a way that, for every function symbol $\sigma_m$, there are terms $A_1, \ldots A_k$ satisfying several conditions including the following one:
-% \[ \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i \ssststile{}{\Delta, x_1, \ldots x_k} \sigma_m(x_1, \ldots x_k)\!\downarrow \]
-% We assume that, for every such $A_i$ and for all terms $a_1$, \ldots $a_{i-1}$, terms $g_n(A_i[a_1/x_1, \ldots a_{i-1}/x_{i-1}])$ and $A_i[g_n(a_1)/x_1, \ldots g_n(a_{i-1})/x_{i-1}]$ are equivalent.
-% This is a simple techincal assumption that holds in all naturally occurring theories.
+Since $T \amalg T_0$ has well-defined function symbols, there exist terms $A_1, \ldots A_k$ satisfying several conditions including the following one:
+\[ \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i \ssststile{}{x_1, \ldots x_k} \sigma_m(x_1, \ldots x_k)\!\downarrow \]
+Note that, for every such $A_i$ and for all terms $t_1$, \ldots $t_{i-1}$, terms $g_n(A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}])$ and $A_i[g_n(t_1)/x_1, \ldots g_n(t_{i-1})/x_{i-1}]$ are equivalent.
+This is true because $A_i$ cannot have nontrivial terms of type $C$.
+Thus, to prove that $\sigma_m(g_n(t_1), \ldots g_n(t_k))$ is defined, it is enough to prove that terms $g_n(A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}])$ and $g_n(e_{p_i}(t_i))$ are equivalent.
+By the induction hypothesis, these terms are defined.
+Moreover, terms $A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}]$ and $e_{p_i}(t_i)$ are equivalent.
+Since the theory is confluent, this implies that they reduce to the same term.
+Thus it is enough to prove that $g_n(t) \Rightarrow_{T \amalg T_2, f(\varphi)}^c g_n(s)$ whenever $t \Rightarrow_{T \amalg T_2, f(\varphi)}^c s$.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
