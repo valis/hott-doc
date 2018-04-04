@@ -1187,7 +1187,7 @@ terms $c[t[\rho]/x]$ and $c[s[\rho]/x]$ are equivalent in the system $(\Term_{T,
 \end{enumerate}
 \end{defn}
 
-\begin{remark}
+\begin{remark}[trs-theory]
 Often a reduction system on $T$ is defined as $\Rightarrow_{R,\varphi} \cup \Rightarrow_\varphi$,
 where $\Rightarrow_{R,\varphi}$ is a restriction of the system $\Rightarrow_R$ to $\Term^d_{T,\varphi}$ for some term rewriting sytem $R$.
 In this case, condition~\eqref{it:dir-zero} is automatically satisfied.
@@ -1439,40 +1439,71 @@ so we cannot conclude that their composition is a Morita equivalence.
 
 First, we need to give several definitions and prove a technical lemma.
 Let $t$ be a term of sort $(p,n)$, where $p \in \{ \ty, \tm \}$.
-Suppose that function symbol $\ft$ does not occur in $t$.
+We will say that $t$ is \emph{$\ft$-free} if function symbol $\ft$ does not occur in $t$.
 Then we define \emph{the set of contexts} of $t$ as the set of subterms of $t$ of sort $(\ctx,n)$ which are not proper subterms of a subterm of this sort.
 In other words, if either $t = x$ or $t = \ty(x)$, then the set of contexts of $t$ is empty,
 and if either $t = \sigma_m(\Gamma, t_1, \ldots t_k)$ or $t = \ty(\sigma_m(\Gamma, t_1, \ldots t_k))$, then the set of contexts of $t$ consists of $\Gamma$ and contexts of terms $t_1$, \ldots $t_k$.
-We will say that $t$ is \emph{a context-normal form} if $\ft$ does not occur in $t$ and the set of contexts is either empty or a singleton.
+We will say that $t$ is \emph{a context-normal form} if $t$ is $\ft$-free and the set of contexts is either empty or a singleton.
 In the latter case the single element of the set of contexts of $t$ will be called \emph{the context of $t$}.
-If $(\varphi,V)$ is a pair in $P_M$ and $t$ is a term such that $\varphi \sststile{V}{T} t\!\downarrow$, then there is a context-normal form $t'$ such that $\varphi \sststile{V}{T} t = t'$.
+If $(\varphi,V)$ is a pair in $P_M$ and $t$ is a term such that $\varphi \sststile{T}{V} t\!\downarrow$, then there is a context-normal form $t'$ such that $\varphi \sststile{T}{V} t = t'$.
 This term will be called \emph{the context-normal form of $t$}.
 
 Let $T$ be a theory with a reduction system and let $(\varphi,V)$ be a pair in $P_M$.
 Let $\Rightarrow_{T,\varphi}^0$ be an abstract reduction system such that $\Rightarrow_{T,\varphi}$ is the closure of $\Rightarrow_{T,\varphi}^0$ in the sense that $\Rightarrow_{T,\varphi}$ contains $\Rightarrow_{T,\varphi}^0$
 and $\sigma(t_1, \ldots t_k) \Rightarrow_{T,\varphi} \sigma(t_1, \ldots t_i', \ldots t_k)$ whenever $t_i \Rightarrow_{T,\varphi} t_i'$ for all function symbols $\sigma_m$ including $v_j$, $\subst$, $\ft$, and $\ty$.
-Then we can define an abstract reduction system $\Rightarrow_{T,\varphi}^c$ on context-normal forms.
-Let $t$ be a term in which function symbol $\ft$ does not occur.
+Then we can define another abstract reduction system $\Rightarrow_{T,\varphi}^c$.
+Let $t$ be a $\ft$-free term.
 Then we define $t \Rightarrow_{T,\varphi}^c s$ in the same way as $t \Rightarrow_{T,\varphi} s$ except for the fact that $\Rightarrow_{T,\varphi}^0$-reductions are not allowed in contexts.
-We assume that $s$ is a context-normal form whenever $t$ is and $t \Rightarrow_{T,\varphi}^c s$.
+We will say that $T$ \emph{preserves $\ft$-free terms} if, for all terms $t$ and $s$ such that $t \Rightarrow_{T,\varphi}^0 s$, if $t$ is $\ft$-free, then so is $s$.
+If $T$ satisfies this condition, then $\Rightarrow_{T,\varphi}^c$ is a relation on $\ft$-free terms.
+We will say that $T$ \emph{preserves context-normal forms} if it preserves $\ft$-free terms and, for all $\ft$-free terms $t$ and $s$ such that $t \Rightarrow_{T,\varphi}^0 s$, the set of contexts of $s$ is a subset of the set of contexts of $t$.
+If $T$ satisfies it, then $\Rightarrow_{T,\varphi}^c$ is a relation on context-normal forms.
+
+Finally, we need yet another assumption on the theory $T$.
+Let $t$ be a $\ft$-free term and let $x_1$, \ldots $x_n$ be variables that occur in contexts of $t$.
+Let $r_1$, \ldots $r_n$ and $s$ be terms such that $t[r_1/x_1, \ldots r_n/x_n] \Rightarrow_{T,\varphi}^0 s$.
+We will say that $T$ is \emph{context-irrelevant} if, for all such $t$, $r_1$, \ldots $r_n$, and $s$, there exists a term $s'$ such that variables $x_1$, \ldots $x_n$ occur in contexts of $s'$, $s = s'[r_1/x_1, \ldots r_n/x_n]$,
+and, for all terms $r_1'$, \ldots $r_n'$, it is true that $t[r_1'/x_1, \ldots r_n'/x_n] \Rightarrow_{T,\varphi}^{0*} s'[r_1'/x_1, \ldots r_n'/x_n]$.
 This is a simple technical assumption on $T$ which holds for all theories that occur in practice.
 
-\begin{lem}
-% If $T$ satisfies some conditions, $\ctx(t)$ is equivalent to $\ctx(s)$, th
+\begin{lem}[context]
+Let $T$ be a context-irrelevant theory with a reduction system which preserves context-normal forms and let $(\varphi,V)$ be a pair in $P_M$.
+Let $t$ and $s$ be context-normal forms such that either one of them does not have a context or both of them have the same context.
+If $t$ and $s$ are joinable under $\Rightarrow_{T,\varphi}$, then they are joinable under $\Rightarrow_{T,\varphi}^c$.
 \end{lem}
 \begin{proof}
+First, let us prove that if $t$ is a $\ft$-free term and $t \Rightarrow_{T,\varphi}^* s$, then $t \Rightarrow_{T,\varphi}^{c*} \Rightarrow_{T,\varphi}^{d*} s$,
+where $t_1 \Rightarrow_{T,\varphi}^d t_2$ if $t_1 \Rightarrow_{T,\varphi} t_2$ and not $t_1 \Rightarrow_{T,\varphi}^c t_2$.
+To prove this, it is enough to show that if $t \Rightarrow_{T,\varphi}^{d*} \Rightarrow_{T,\varphi}^c s$, then $t \Rightarrow_{T,\varphi}^{c*} \Rightarrow_{T,\varphi}^{d*} s$.
+We prove this by induction on the size of $t$ without contexts.
+Since $t$ cannot be a variable, we can assume that $t = \sigma_m(\Gamma, t_1, \ldots t_k)$, $t \Rightarrow_{T,\varphi}^{d*} \sigma_m(\Gamma', t_1', \ldots t_k')$, and $\sigma_m(\Gamma', t_1, \ldots t_k') \Rightarrow_{T,\varphi}^c s$.
+Then either $s = \sigma_m(\Gamma', t_1', \ldots t_i'', \ldots t_k')$ and $t_i' \Rightarrow_{T,\varphi}^c t_i''$ or $\sigma_m(\Gamma', t_1, \ldots t_k') \Rightarrow_{T,\varphi}^0 s$.
+In the former case, we conclude by induction hypothesis.
+In the latter case, we use the fact that $T$ is context-irrelevant.
+Since $t \Rightarrow_{T,\varphi}^{d*} \sigma_m(\Gamma', t_1', \ldots t_k')$, there exist terms $t'$, $r_1$, \ldots $r_n$, $r_1'$, \ldots $r_n'$ and variables $x_1$, \ldots $x_n$ which occur in contexts of $t$
+such that $t = t'[r_1'/x_1, \ldots r_n'/x_n]$ and $\sigma_m(\Gamma', t_1', \ldots t_k') = t'[r_1/x_1, \ldots r_n/x_n]$.
+Since $T$ is context-irrelevant, there exists a term $s'$ such that $s = s'[r_1/x_1, \ldots r_n/x_n]$ and $\sigma_m(\Gamma', t_1', \ldots t_k') \Rightarrow_{T,\varphi}^{0*} s'[r_1'/x_1, \ldots r_n'/x_n]$.
+Moreover, since $r_i' \Rightarrow_{T,\varphi}^* r_i$ and variables $x_1$, \ldots $x_n$ occur in contexts of $s'$, it is true that $s'[r_1'/x_1, \ldots r_n'/x_n] \Rightarrow_{T,\varphi}^{d*} s'[r_1/x_1, \ldots r_n/x_n]$.
+Thus $t \Rightarrow_{T,\varphi}^{0*} s'[r_1'/x_1, \ldots r_n'/x_n] \Rightarrow_{T,\varphi}^{d*} s$.
+
+Now, we can prove the lemma.
+If $t \Rightarrow_{T,\varphi}^* q$ and $s \Rightarrow_{T,\varphi}^* q$, then $t \Rightarrow_{T,\varphi}^{c*} q_1 \Rightarrow_{T,\varphi}^{d*} q$ and $s \Rightarrow_{T,\varphi}^{c*} q_2 \Rightarrow_{T,\varphi}^{d*} q$.
+Since $T$ preserves context-normal forms, $q_1$ and $q_2$ are context normal forms and the contexts of $q_1$ and $q_2$ coincide with the context of $t$ and $s$.
+Reductions $q_1 \Rightarrow_{T,\varphi}^{d*} q$ and $q_2 \Rightarrow_{T,\varphi}^{d*} q$ occur only in contexts of $q_1$ and $q_2$.
+This means that the parts of terms $q_1$ and $q_2$ without contexts coincide.
+Since the contexts of $q_1$ and $q_2$ are also the same, this implies that $q_1 = q_2$.
 \end{proof}
 
-Suppose that $T$ is a theory under $\coeT_1 + \sigma + \PathT$ with well-defined function symbols.
+Suppose that $T$ is a theory under $\coeT_1 + \sigma + \PathT$ with well-defined function symbols which satisfies the conditions of \rlem{context}.
 Then the first condition of \rlem{eq-char-fib} holds for the map $T \amalg T_0 \to T \amalg T_2$.
 Thus, to prove that it is a Morita equivalence, it is enough to check that it satisfies the condition of \rlem{char-type-fib}.
 That is, we need to prove that, for every pair $(\varphi,V) \in P_M$ and every pair of types $\Gamma \vdash A\ \type$ and $\Gamma \vdash B\ \type$ in $T \amalg T_0$ such that $f(\Gamma) \vdash f(A) \deq f(B)$ is provable in $T \amalg T_0 \cup \varphi$,
 there exists a term $\Gamma, A \vdash b : B$ such that $f(\Gamma), f(A) \vdash f(b) \deq v_0$.
 Suppose that $T \amalg T_2$ is confluent.
-% TODO: Define \Rightarrow_{T \amalg T_2, f(\varphi)}^c
-Then it is enough to prove the following facts:
+By \rlem{context}, it is enough to prove the following facts:
 \begin{enumerate}
-\item \label{it:contr-first} For every type $\Gamma \vdash A\ \type$ of $T \amalg T_0$, if $f(A) \Rightarrow_{T \amalg T_2, f(\varphi)}^c A'$, then there exists terms $A''$, $a_1$, and $a_2$ such that $f(A'') = A'$ and the following sequents are derivable:
+\item \label{it:contr-first} There is a confluent subset $\Rightarrow_{T \amalg T_2, f(\varphi)}^{cp}$ of $\Rightarrow_{T \amalg T_2, f(\varphi)}^c$ such that its transitive closure is $\Rightarrow_{T \amalg T_2, f(\varphi)}^c$ and,
+for every type $\Gamma \vdash A\ \type$ of $T \amalg T_0$, if $f(A) \Rightarrow_{T \amalg T_2, f(\varphi)}^{cp} A'$, then there exists terms $A''$, $a_1$, and $a_2$ such that $f(A'') = A'$ and the following sequents are derivable:
 \begin{align*}
 \Gamma, A & \vdash a_1 : A'' \\
 \Gamma, A'' & \vdash a_2 : A \\
@@ -1505,31 +1536,89 @@ Now let us prove \eqref{it:contr-first}.
 Let $\Gamma \vdash A\ \type$ be a type of $T \amalg T_0$ such that $f(A) \Rightarrow_{T \amalg T_2, f(\varphi)}^c A'$.
 We will prove that there is a type $\Gamma \vdash A''\ \type$ such that $f(A'') = A'$ and a homotopy $\Gamma, i : I \vdash H \type$ between $A$ and $A''$ such that $f(H)$ is the constant homotopy.
 
-For every term $t$ of $T \amalg T_0$ such that $\ctx^n(t) = \Gamma$, we define terms $g_n(t)$ and $h_n(t)$ such that $\ctx^n(g_n(t)) = \Gamma$ and $\ctx^n(h_n(t)) = (\Gamma, i : I)$
-by replacing every subterm $c$ of type $C$ with $c_0$ and $\at\Ceq(c),i)$, respectively.
+For every $\ft$-free term $t$ of $T \amalg T_0$ such that $\ctx^n(t) = \Gamma$, we define terms $g_n(t)$ and $h_n(t)$ such that $\ctx^n(g_n(t)) = \Gamma$ and $\ctx^n(h_n(t)) = (\Gamma, i : I)$
+by replacing every subterm $c$ (which is not in a context of $t$) of type $C$ with $c_0$ and $\at(\Ceq(c),i)$, respectively.
 Formally, we define $g_n(t)$ and $h_n(t)$ by induction on $t$.
-If $\Gamma, \Delta \vdash t : C$, then we define $g_n(t)$ as $\Gamma, g_n(\Delta) \vdash c_0 : C$ and $h_n(t)$ as $\Gamma, i : I, h_n(\Delta) \vdash \at(\Ceq(c),i) : C$.
-If $t = x$, $t = v_i$, or $t$ has the same sort as $\Gamma$, then $g_n(t) = t$ and $h_n(t)$ is the weakening of $t$.
-If $t = \sigma_m(t_1, \ldots t_k)$, then $g_n(t) = \sigma_m(g_n(t_1), \ldots g_n(t_k))$ and $h_n(t) = \sigma_{m+1}(h_n(t_1), \ldots h_n(t_k))$.
-If $t = \subst_{p,m,k}(t, t_1, \ldots t_k)$, then $g_n(t) = \subst_{p,m,k}(g_k(t), g_n(t_1), \ldots g_n(t_k))$ and $h_n(t) = \subst_{p,m+1,k+1}(h_k(t), v_n, h_n(t_1), \ldots h_n(t_k))$.
+Let us give the definition of $h_n(t)$; $g_n(t)$ is defined similarly.
+If $\Gamma, \Delta \vdash t : C$, then $h_n(t) = \Gamma, i : I, h_n(\Delta) \vdash \at(\Ceq(c),i) : C$.
+If $t = x$, $t = v_i$, or $t$ has the same sort as $\Gamma$, then $h_n(t)$ is the weakening of $t$.
+If $t = \sigma_m(t_1, \ldots t_k)$, then $h_n(t) = \sigma_{m+1}(h_n(t_1), \ldots h_n(t_k))$.
+If $t = \subst_{p,m,k}(t, t_1, \ldots t_k)$, then $h_n(t) = \subst_{p,m+1,k+1}(h_k(t), v_n, h_n(t_1), \ldots h_n(t_k))$.
 
-Suppose that $\varphi \sststile{V}{T \amalg T_0} t\!\downarrow$.
-Then we can prove by induction on $t$ that $\varphi \sststile{V}{T \amalg T_0} g_n(t)\!\downarrow \land h_n(t)\!\downarrow$.
+Suppose that $\varphi \sststile{T \amalg T_0}{V} t\!\downarrow$.
+Then we can prove by induction on $t$ that $\varphi \sststile{T \amalg T_0}{V} g_n(t)\!\downarrow \land h_n(t)\!\downarrow$.
 If $\Gamma, \Delta \vdash t : C$, $t = x$, or $t = v_i$, then it is obvious.
 Let us consider the case $t = \sigma_m(t_1, \ldots t_k)$
 If $t = \subst_{p,m,k}(t, t_1, \ldots t_k)$, then a similar argument applies, so we omit this case.
 We also prove this only for $g_n$, the proof for $h_n$ is similar.
 
 Since $T \amalg T_0$ has well-defined function symbols, there exist terms $A_1, \ldots A_k$ satisfying several conditions including the following one:
-\[ \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i \ssststile{}{x_1, \ldots x_k} \sigma_m(x_1, \ldots x_k)\!\downarrow \]
-Note that, for every such $A_i$ and for all terms $t_1$, \ldots $t_{i-1}$, terms $g_n(A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}])$ and $A_i[g_n(t_1)/x_1, \ldots g_n(t_{i-1})/x_{i-1}]$ are equivalent.
+\[ \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i \ssststile{T}{x_1, \ldots x_k} \sigma_m(x_1, \ldots x_k)\!\downarrow \]
+For every such $A_i$ and for all terms $t_1$, \ldots $t_{i-1}$, terms $g_n(A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}])$ and $A_i[g_n(t_1)/x_1, \ldots g_n(t_{i-1})/x_{i-1}]$ are equivalent.
 This is true because $A_i$ cannot have nontrivial terms of type $C$.
 Thus, to prove that $\sigma_m(g_n(t_1), \ldots g_n(t_k))$ is defined, it is enough to prove that terms $g_n(A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}])$ and $g_n(e_{p_i}(t_i))$ are equivalent.
 By the induction hypothesis, these terms are defined.
 Moreover, terms $A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}]$ and $e_{p_i}(t_i)$ are equivalent.
 Since the theory is confluent, this implies that they reduce to the same term.
+\Rlem{context} implies that this is also true for the reduction system $\Rightarrow_{T \amalg T_0, \varphi}^c$
 
-Thus it is enough to prove that $g_n(t) \Rightarrow_{T \amalg T_0, \varphi}^c g_n(s)$ whenever $t \Rightarrow_{T \amalg T_0, \varphi}^c s$.
+Thus it is enough to prove that $g_n(t) \Rightarrow_{T \amalg T_0, \varphi}^{c*} g_n(s)$ whenever $t \Rightarrow_{T \amalg T_0, \varphi}^c s$.
+Moreover, it is enough to prove this only when $t \Rightarrow_{T \amalg T_0, \varphi}^0 s$ since if $t \Rightarrow_{T \amalg T_0, \varphi}^c s$ and the redex is inside $t$,
+then this redex is either in a subterm of $t$ of type $C$ or not.
+In the former case, $g_n(t) = g_n(s)$.
+In the latter case, it is easy to see that $g_n(t) \Rightarrow_{T \amalg T_0, \varphi}^{c*} g_n(s)$.
+Assume that $t \Rightarrow_{T \amalg T_0, \varphi}^0 s$.
+Relation $\Rightarrow_{T \amalg T_0, \varphi}^0$ depends on the theory and we cannot prove that $t \Rightarrow_{T \amalg T_0, \varphi}^c s$ in general,
+but this is true if $T$ satisfies some mild additional hypothesis.
+For example, if $T$ is defined in terms of a term rewriting system $R_T$ as in \rremark{trs-theory}, then we just need to assume that, for every reduction rule $(t,s) \in R_T$,
+the only subterms of $t$ and $s$ of type $C$ are variables.
+This is true for all theories that occur in practice.
+The only problem is reduction rules of the form $e_p(x) \Rightarrow_\varphi A$ since terms $A$ may contain subterms of type $C$.
+Let us assume that the only subterms of $\varphi$ of type $C$ are $c_0$.
+
+Now, we can finally prove \eqref{it:contr-first}.
+Let $\Rightarrow_{T \amalg T_2, f(\varphi)}^{cp}$ be the subset of $\Rightarrow_{T \amalg T_2, f(\varphi)}^{c*}$ which consists of the same reductions as $\Rightarrow_{T \amalg T_2, f(\varphi)}^c$
+except for the reduction $t \Rightarrow_{T \amalg T_2, f(\varphi)} \unit$.
+Instead, $t \Rightarrow_{T \amalg T_2, f(\varphi)}^{cp} s$ is true when all subterms of $t$ of type $\top$ are replaced with $\unit$.
+In this case the condition of \eqref{it:contr-first} holds since we can take $A'' = g_n(t)$, $a_2 = \coe^l_0(h_n(t), v_0)$, and $a_1 = \coe^l_2(h_n(t), \rightI, v_0, \leftI)$.
+If $t \Rightarrow_{T \amalg T_2, f(\varphi)}^{cp} s$ is an ordinary reduction from $\Rightarrow_{T \amalg T_2, f(\varphi)}^c$, then the condition of \eqref{it:contr-first} holds strictly,
+that is there is a term $A''$ such that $t \Rightarrow_{T \amalg T_0, \varphi} A''$.
+
+We proved that $T \amalg T_0 \to T \amalg T_2$ has the lifting property with respect to $(\varphi,V) \in P_M$ if the only subterms of $\varphi$ of type $C$ are $c_0$.
+Let us show that this map has the lifting property with respect to all $(\varphi,V) \in P_M$.
+Let $\varphi = \bigwedge_{1 \leq i \leq n} e_{p_i}(x_i) = A_i$.
+Let $j$ be a number such that, for all $i < j$, the only subterms of $A_i$ of type $C$ are $c_0$.
+We prove by induction on $n + 1 - j$ that $T \amalg T_0 \to T \amalg T_2$ has the lifting property.
+If $j = n + 1$, then this is true by the proof above.
+Suppose that $j \leq n$.
+Let $B$ and $b$ be terms such that $\varphi \sststile{T \amalg T_0}{V} B\!\downarrow$ and $f(\varphi) \sststile{T \amalg T_2}{V} e_p(b) = f(B)$.
+Let us denote by $\varphi'$ the following formula:
+\[ \bigwedge_{1 \leq i < j} e_{p_i}(x_i) = A_i \land \bigwedge_{j \leq i \leq n} e_{p_i}(x_i') = A_i', \]
+where $A_j' = g_0(A_j)$ and $A_i' = A_i[\coe^l_0(h_0(A_j),x_j')/x_j]$ for $i > j$.
+
+By induction hypothesis, $T \amalg T_0 \to T \amalg T_2$ has the lifting property with respect to $(\varphi',V')$, where $V' = \{ x_1, \ldots x_{j-1}, x_j', \ldots x_n' \}$.
+Let $B' = B[\coe^l_0(h_0(A_j),x_j')/x_j]$.
+Since $h_0(A_j)$ is a constant homotopy in $T \amalg T_2$, the sequent $f(\varphi') \sststile{}{V'} f(B') = f(B)$ is derivable in this theory.
+It follows that there is a term $b'$ such that $\varphi' \sststile{T \amalg T_0}{V'} e_p(b') = B'$ and $f(\varphi') \sststile{T \amalg T_2}{V'} f(b') = b$.
+
+Now, we define a sequence of terms $a_j$, \ldots $a_n$ such that the following sequent is derivable in $T \amalg T_0$ for all $j \leq k \leq n$:
+\[ \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i \sststile{T \amalg T_0}{x_1, \ldots x_k} e_{p_k}(a_k) = A_i'[a_j/x_j', \ldots a_{k-1}/x_{k-1}']. \]
+Let $a_j = \coe^l_2(h_0(A_j), \rightI, x_j, \leftI)$.
+There is an obvious homotopy between $x_j$ and $\coe^l_0(h_0(A_j),a_j)$.
+Let us denote it by $H(i)$.
+For every $j < k \leq n$, we define a term $a_k'(i)$ as follows:
+\[ \coe_1(i. A_k[H(i)/x_j, a_{j+1}'(i)/x_{j+1}, \ldots a_{k-1}'(i)/x_{k-1}], x_k). \]
+We define $a_k$ as $a_k'(\rightI)$ for all $j < k \leq n$.
+
+Now, we define a term $b''$ as $b'[a_j/x_j', \ldots a_n/x_n']$.
+Then $\varphi \sststile{T \amalg T_0}{V} e_p(b'') = B'[a_j/x_j', \ldots a_n/x_n']$.
+Moreover, $f(\varphi) \sststile{T \amalg T_2}{V} f(b'') = b$.
+Note that
+\[ H' = B[H(i)/x_j, a_{j+1}'(i)/x_{j+1}, \ldots a_n'(i)/x_n] \]
+is a homotopy between $B$ and $B'[a_j/x_j', \ldots a_n/x_n']$ which is constant in $T \amalg T_2$.
+Thus $\coe^l_2(H',\rightI,b'',\leftI)$ is the required lifting of $b$.
+
+\section{Conclusion}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
