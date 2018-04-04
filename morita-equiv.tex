@@ -1437,9 +1437,26 @@ This implies that we cannot prove that the map $T \to T \amalg T_2$ is a Morita 
 We know that the map $T \to T \amalg T_0$ is a Morita equivalence when $T$ has the weak univalence axioms and the map $T \amalg T_0 \to T \amalg T_2$ is a Morita equivalence when it does not,
 so we cannot conclude that their composition is a Morita equivalence.
 
-First, we need to prove a technical lemma.
-Let $T$ be a theory and let $(\varphi,V)$ be a pair in $P_M$.
-Then we define a relation $\Rightarrow_{T,\varphi}^c$, which is a subset of $\Rightarrow_{T,\varphi}$.
+First, we need to give several definitions and prove a technical lemma.
+Let $t$ be a term of sort $(p,n)$, where $p \in \{ \ty, \tm \}$.
+Suppose that function symbol $\ft$ does not occur in $t$.
+Then we define \emph{the set of contexts} of $t$ as the set of subterms of $t$ of sort $(\ctx,n)$ which are not proper subterms of a subterm of this sort.
+In other words, if either $t = x$ or $t = \ty(x)$, then the set of contexts of $t$ is empty,
+and if either $t = \sigma_m(\Gamma, t_1, \ldots t_k)$ or $t = \ty(\sigma_m(\Gamma, t_1, \ldots t_k))$, then the set of contexts of $t$ consists of $\Gamma$ and contexts of terms $t_1$, \ldots $t_k$.
+We will say that $t$ is \emph{a context-normal form} if $\ft$ does not occur in $t$ and the set of contexts is either empty or a singleton.
+In the latter case the single element of the set of contexts of $t$ will be called \emph{the context of $t$}.
+If $(\varphi,V)$ is a pair in $P_M$ and $t$ is a term such that $\varphi \sststile{V}{T} t\!\downarrow$, then there is a context-normal form $t'$ such that $\varphi \sststile{V}{T} t = t'$.
+This term will be called \emph{the context-normal form of $t$}.
+
+Let $T$ be a theory with a reduction system and let $(\varphi,V)$ be a pair in $P_M$.
+Let $\Rightarrow_{T,\varphi}^0$ be an abstract reduction system such that $\Rightarrow_{T,\varphi}$ is the closure of $\Rightarrow_{T,\varphi}^0$ in the sense that $\Rightarrow_{T,\varphi}$ contains $\Rightarrow_{T,\varphi}^0$
+and $\sigma(t_1, \ldots t_k) \Rightarrow_{T,\varphi} \sigma(t_1, \ldots t_i', \ldots t_k)$ whenever $t_i \Rightarrow_{T,\varphi} t_i'$ for all function symbols $\sigma_m$ including $v_j$, $\subst$, $\ft$, and $\ty$.
+Then we can define an abstract reduction system $\Rightarrow_{T,\varphi}^c$ on context-normal forms.
+Let $t$ be a term in which function symbol $\ft$ does not occur.
+Then we define $t \Rightarrow_{T,\varphi}^c s$ in the same way as $t \Rightarrow_{T,\varphi} s$ except for the fact that $\Rightarrow_{T,\varphi}^0$-reductions are not allowed in contexts.
+We assume that $s$ is a context-normal form whenever $t$ is and $t \Rightarrow_{T,\varphi}^c s$.
+This is a simple technical assumption on $T$ which holds for all theories that occur in practice.
+
 \begin{lem}
 % If $T$ satisfies some conditions, $\ctx(t)$ is equivalent to $\ctx(s)$, th
 \end{lem}
@@ -1511,7 +1528,8 @@ Thus, to prove that $\sigma_m(g_n(t_1), \ldots g_n(t_k))$ is defined, it is enou
 By the induction hypothesis, these terms are defined.
 Moreover, terms $A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}]$ and $e_{p_i}(t_i)$ are equivalent.
 Since the theory is confluent, this implies that they reduce to the same term.
-Thus it is enough to prove that $g_n(t) \Rightarrow_{T \amalg T_2, f(\varphi)}^c g_n(s)$ whenever $t \Rightarrow_{T \amalg T_2, f(\varphi)}^c s$.
+
+Thus it is enough to prove that $g_n(t) \Rightarrow_{T \amalg T_0, \varphi}^c g_n(s)$ whenever $t \Rightarrow_{T \amalg T_0, \varphi}^c s$.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
