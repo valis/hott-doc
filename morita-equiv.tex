@@ -872,6 +872,7 @@ To prove this, we just need to show that the unit of the adjunction is a weak eq
 But it is actually an isomorphism since $\Lang_T$ is full and faithful.
 
 \section{Characterization of lifting properties}
+\label{sec:triv-fib}
 
 In this section we prove several useful lemmas that characterize trivial fibrations in various model structures that we considered in previous section.
 Since all of these notations are defined in terms of lifting properties, we will prove general results about them.
@@ -1382,6 +1383,7 @@ There are several ways to defined a theory of $\Pi$-types, but they are all Mori
 Also, similar results can be proved for other theories such as the theory of $\Sigma$-types or the theory of identity types.
 
 \subsection{Contractible types}
+\label{sec:contr}
 
 The theory of the contractible type can be formulated in several different ways.
 In this subsection we will prove that some of them are Morita equivalent.
@@ -1619,6 +1621,73 @@ is a homotopy between $B$ and $B'[a_j/x_j', \ldots a_n/x_n']$ which is constant 
 Thus $\coe^l_2(H',\rightI,b'',\leftI)$ is the required lifting of $b$.
 
 \section{Conclusion}
+
+We defined several notions of equivalence between type theories: strict Morita equivalence, Morita equivalence, and syntactic equivalence.
+It seems that the notion of strict Morita equivalence is rather useless due to the fact that there are no natural nontrivial examples of such an equivalence.
+The problem stems from the fact that, to prove that a map is a strict Morita equivalence, we need to work with arbitrary equations between terms, which prevents us from using techniques associated with confluent theories.
+Morita equivalence is the main notion of equivalence between theories and syntactic equivalence can be seen as a first approximation to this notion.
+It might be easier to check that a map is a syntactic equivalence before tackling the more difficult problem of proving that a map is a Morita equivalence.
+
+The notion of a confluent type theory that we also defined in this paper is very useful when working with theories syntactically.
+The reason is that it is very easy to check when a term of a confluent is defined and when two terms are equivalent.
+The latter is true if the terms are defined and reduce to the same term.
+To check that a term $\sigma(t_1, \ldots t_k)$ of a confluent theory is defined, it is enough to check recursively that subterms $t_1$, \ldots $t_k$ are defined and that equations that define $\sigma$ are satisfied.
+
+We also defined a model structure on categories of type theories with the interval type with Morita equivalences as weak equivalences.
+This structure can be used in several ways to prove that a certain map is a Morita equivalence.
+First of all, the existence of a model structure implies that Morita equivalences between type theories with the interval type satisfy the 2-out-of-3 property.
+We do not know whether this is true for all type theories.
+Another useful consequence is that a Morita equivalence which is a cofibrations is always a homotopy equivalence since all objects are fibrant in this model structure.
+
+A map between arbitrary type theories can always be factored into a cofibration followed by a trivial fibration using the small object argument,
+and we believe it is often possible to construct such a factorization explicitly.
+In general, a Morita equivalence which is a cofibration may not be a homotopy equivalence, but we believe it is often the case.
+This leaves us with the question of how to prove that a map is a trivial fibration.
+Section~\ref{sec:triv-fib} is devoted to this question.
+
+To prove that a map $f : T_1 \to T_2$ is a trivial fibration, it is necessary to show that, for every pair of terms of $T_1$ which are equivalent in $T_2$, there is a homotopy between them which is constant in $T_2$.
+This is usually the most difficult part of a proof that a map is a trivial fibration.
+If $T_2$ is confluent, then it is enough to prove conditions \eqref{it:contr-first} and \eqref{it:contr-second} that appear in subsection~\ref{sec:contr}.
+
+There is a problem with this approach.
+To describe it, let us assume that $T_1$ and $T_2$ have the same function symbols.
+Suppose that we have a reduction $t[a/x] \Rightarrow_{T_2,\varphi} t[b/x]$, where $a$ reduces to $b$ in $T_2$, but not in $T_1$.
+To prove \eqref{it:contr-first}, we need to find a term $s$ of $T_1$ such that $f(s) = t[b/x]$.
+Since $T_1$ and $T_2$ have the same function symbols, this means that $s$ must be equal to $t[b/x]$.
+The problem is that this term may not be defined in $T_1$.
+For example, if $t = \sigma(x,a,\refl(a)$, where $\sigma(x,y,p)$ is defined if $p : \Id(A,x,y)$, then $t[a/x]$ is defined in $T_1$, but $t[b/x]$ is not.
+
+We solved this problem in subsection~\ref{sec:contr} by replacing all occurrences of $a$ in the term that we are reducing.
+This solution also has a problem.
+To check that term $t[b/x]$ is defined, we need to verify that various terms are equivalent, that is reduce to the same term.
+The problem is that these terms may contain term $a$ as a subterm \emph{after the reduction}.
+This problem does not occur in the case of the unit type since we are replacing all subterms of a certain type
+and it is true that if $t \Rightarrow_{T_1,\varphi} s$ and $t$ does not contain subterms of some type, then this is also true for $s$.
+This argument does not work if $a \Rightarrow_{T_2,\varphi} b$ is a usual reduction rule such as $\app(A,B,\lambda(A',b),a) \Rightarrow_{T_2,\varphi} b[a]$.
+
+The last problem does not occur if $T_1$ does not have reduction rules appart from typing axioms and the rules for $\subst$.
+So we could try to use this argument to give an explicit construction of cofibrant replacement for some theories.
+We believe that it is often possible to replace reduction rules of a theory with propositional equalities to get a cofibrant replacement.
+The problem is that we cannot assume that theory has the interval type since the theory of the interval type has nontrivial reduction rules.
+It is difficult to show that various constructions of a theory with the interval type preserve homotopies, but we believe that it can be done.
+
+Finally, let us describe another idea that can be used to prove that a map $f : T_1 \to T_2$ (between theories with the interval type) is a trivial fibration.
+We can modify conditiona \eqref{it:contr-first} and \eqref{it:contr-second} slightly so that we do not have to assume that $T_1$ does not have any reduction rules.
+Consider a reduction rule of the form $\sigma(a, t_2, \ldots t_k) \Rightarrow_{T_2,\varphi} \sigma(b, t_2, \ldots t_k)$, where $\sigma(a, t_1, \ldots t_k)$ is a term defined in $T_1$.
+Then the following term is also defined in $T_1$:
+\[ t' = \sigma(b, \coe_0(i.\,A_2[h],t_1), \ldots \coe_0(i.\,A_k[h],t_k)), \]
+where $A_1$, \ldots $A_k$ are terms such that $\bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i \ssststile{T_1}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ and $i : I \vdash h : A_1$ is a homotopy between $a$ and $b$.
+Similar construction can be used in the more general case of the reduction $t[a/x] \Rightarrow_{T_2,\varphi} t[b/x]$.
+
+Terms $t'$ and $t[b/x]$ are equivalent in $T_2$, but they are not equal.
+Thus we have to modify condition \eqref{it:contr-first} so that we can construct a term in $T_1$ which is not necessarily equal to $t[b/x]$ in $T_2$, but still is sufficiently close to it.
+More specifically, $t'$ may contain additional applications of $\coe_0(i.\,A,-)$ inserted in $t[b/x]$ such that $A$ is a trivial homotopy in $T_2$.
+To apply this method, we need to solve to problems.
+The first one is that the term in $T_1$ does not match a term in $T_2$ strictly, so it might be more difficult to construct a homotopy in $T_1$ corresponding to a reduction rule of $T_2$.
+The second problem is that we need to modify \eqref{it:contr-second} accordingly and it seems that this problem is more serious.
+
+Let us say in conclusion that even though we developed the basic theory of Morita equivalences between type theories it seems that there is much more to be done as we discussed in this section.
+Also, it seems that most of this theory is not related to type theories and can be generalized to arbitrary partial Horn theories.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
