@@ -42,8 +42,12 @@
 \newref{remark}{Remark}{Remark}
 
 \newcommand{\type}{\mathrm{type}}
-\newcommand{\ob}{\mathrm{ob}}
+\newcommand{\ob}{\mathrm{type}}
 \newcommand{\subst}{\mathit{subst}}
+\newcommand{\Hom}{\mathit{Hom}}
+\newcommand{\Id}{\mathit{Id}}
+\newcommand{\refl}{\mathit{refl}}
+\newcommand{\sym}{\mathit{sym}}
 
 \numberwithin{figure}{section}
 
@@ -73,24 +77,28 @@ An indexed type theory consists of two levels.
 The first level is just an ordinary type theory and it represents $\mathcal{B}$
 Since we are mostly interested in the case when $\mathcal{B}$ is the $\infty$-category of spaces,
 we can assume that the first level has all usual constructions such as identity types, $\Sigma$-types, $\Pi$-types, (univalent) universes, and (higher) inductive types.
-Nevertheless, in this paper, we will always explicitly specify the assumptions on the base theory.
-For many basic constructions, it is enough to assume that it has identity types.
+Nevertheless, in general, we will assume that the base theory has only identity types; all additional assumptions will be explicitly specified.
 
 The second level of the theory represents $\infty$-categories $F(\Gamma)$ for various objects $\Gamma$ of $\mathcal{B}$.
 In this section, we will discuss \emph{indexed unary type theories}, that is indexed type theories in which the second level consists of unary type theories.
 A unary type theory is a non-dependent type theory in which contexts consist of exactly one type.
 Such theories represent arbitrary 1-categories.
-We do not know whether indexed unary type theories represent all indexed $\infty$-categories over a given base, but we believe that this should be true.
+We do not know whether indexed unary type theories represent all indexed $\infty$-categories over a given base, but it seems that this should be true at least for locally small indexed $\infty$-categories.
 
 Indexed unary type theories have four kinds of judgements:
-\[ \Gamma \vdash A\ \type \qquad \Gamma \vdash a : A \qquad \Gamma \vdash A\ \ob \qquad \Gamma \mid x : A \vdash b : B \]
-Judgements $\Gamma \vdash A\ \type$ and $\Gamma \vdash a : A$ represent types and terms of the first level of the theory.
-When we say that the indexing theory has some construction such as $\Pi$-types or universes, this means that there are usual rules for these constructions formulated in terms of these judgements.
-Judgements $\Gamma \vdash A\ \ob$ represent types of the second level of the theory.
-We will call these types objects to distinguish them from types of the indexing theory.
+\[ \Gamma \vdash A\ \type \qquad \Gamma \vdash a : A \qquad \Gamma \mid \cdot \vdash A\ \ob \qquad \Gamma \mid x : A \vdash b : B \]
+
 In each of these judgements, $\Gamma$ is a context, that is a sequence of the form $x_1 : A_1, \ldots x_n : A_n$, where $A_1$, \ldots $A_n$ are types and $x_1$, \ldots $x_n$ are pairwise distinct variables.
-In a judgement $\Gamma \mid x : A \vdash b : B$, $x$ is a variable which is distinct from the variables in $\Gamma$, $A$ and $B$ are objects, and $b$ is a term of the second level of the theory.
-Such a term represents a morphism between objects $A$ and $B$.
+Judgements $\Gamma \vdash A\ \type$ and $\Gamma \vdash a : A$ represent types and terms of the first level of the theory.
+We will call such types and terms \emph{base types} and \emph{base terms}, respectively.
+The collection of rules that involve only judgements for base types and base terms will be called the base (sub)theory.
+When we say that the base theory has some construction such as $\Pi$-types or universes, this means that there are usual rules for these constructions formulated in terms of these judgements.
+
+Judgements $\Gamma \mid \cdot \vdash A\ \ob$ represent types of the second level of the theory.
+We will call these types \emph{indexed types} to distinguish them from base types.
+In a judgement $\Gamma \mid x : A \vdash b : B$, $x$ is a variable which is distinct from the variables in $\Gamma$, $A$ and $B$ are indexed types, and $b$ is a term of the second level of the theory.
+We will call such terms \emph{indexed terms}.
+Indexed types represent objects indexed by $\Gamma$ and indexed an indexed term $\Gamma \mid x : A \vdash b : B$ represents a morphism between $A$ and $B$.
 
 We have the usual rules for variables and substitutions for the indexing theory:
 \begin{center}
@@ -133,7 +141,7 @@ d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/
 \end{align*}
 where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
 
-For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_k)$ in the indexing theory, we have the following equation:
+For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_n)$ in the indexing theory, we have the following equation whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in $b_1$, \ldots $b_k$:
 \[ \sigma(\ldots, \overline{z_i}.\,c_i, \ldots)[b_1/y_1, \ldots b_k/y_k] = \sigma(\ldots, \overline{z_i}.\,c_i[b_1/y_1, \ldots b_k/y_k], \ldots) \]
 We also have the weakening operation which is left implicit as usual.
 This concludes the description of basic rules of the indexing theory.
@@ -145,9 +153,9 @@ Variables of the indexed theory represent identity morphisms and substitution re
 \UnaryInfC{$\Gamma \mid x : A \vdash x : A$}
 \DisplayProof
 \qquad
-\AxiomC{$\Gamma \mid x : A \vdash b : B$}
+\AxiomC{$\Gamma \mid \Delta \vdash b : B$}
 \AxiomC{$\Gamma \mid y : B \vdash c : C$}
-\BinaryInfC{$\Gamma \mid x : A \vdash c[b/y] : C$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash c[b/y] : C$}
 \DisplayProof
 \end{center}
 
@@ -158,7 +166,7 @@ b[x/x] & = b \\
 d[c/z][b/y] & = d[c[b/y]/z]
 \end{align*}
 
-We can also substitute terms of the indexing theory into objects and terms of the indexed theory:
+We can also substitute base terms into indexed types and terms:
 \begin{center}
 \def\extraVskip{1pt}
 \Axiom$\fCenter \Gamma \vdash b_1 : B_1$
@@ -166,9 +174,9 @@ We can also substitute terms of the indexing theory into objects and terms of th
 \UnaryInf$\fCenter \ldots$
 \noLine
 \UnaryInf$\fCenter \Gamma \vdash b_k : B_k[b_1/y_1, \ldots b_{k-1}/y_{k-1}]$
-\Axiom$\fCenter \Gamma, y_1 : B_1, \ldots y_k : B_k \vdash C\ \ob$
+\Axiom$\fCenter \Gamma, y_1 : B_1, \ldots y_k : B_k \mid \cdot \vdash C\ \ob$
 \def\extraVskip{2pt}
-\BinaryInfC{$\Gamma \vdash C[b_1/y_1, \ldots b_k/y_k]\ \ob$}
+\BinaryInfC{$\Gamma \mid \cdot \vdash C[b_1/y_1, \ldots b_k/y_k]\ \ob$}
 \DisplayProof
 \end{center}
 
@@ -197,12 +205,122 @@ where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
 The first two equations correspond to the fact that reindexing preserves identity morphisms and composition in the indexed theory.
 The last two equations correspond to the fact that reindexing is functorial, that is it preserves identity morphisms and composition in the indexing theory.
 
-For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_k)$ in the indexed theory, we have the following equation:
+For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_k)$ in the indexed theory, we have the following equation whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in $b_1$, \ldots $b_k$:
 \[ \sigma(\ldots, \overline{z_i}.\,c_i, \ldots)[b_1/y_1, \ldots b_k/y_k] = \sigma(\ldots, \overline{z_i}.\,c_i[b_1/y_1, \ldots b_k/y_k], \ldots) \]
 We also have the weakening operation which is left implicit as usual.
 This equation corresponds to the fact that all constructions in the indexed category must be stable under reindexing.
 
-% 1. Определить индексированные унарные теории типов.
+As we noted before, we assume that the base theory has identity types:
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash a' : A$}
+\BinaryInfC{$\Gamma \vdash \Id_A(a,a')\ \type$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash \refl(a) : \Id_A(a,a)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash a : A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash a' : A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash t : \Id_A(a,a')$
+\Axiom$\fCenter \Gamma, x : A, p : \Id_A(a,x), \Delta \vdash D\ \type$
+\noLine
+\UnaryInf$\fCenter \Gamma, \Delta[a/x,\refl(a)/p] \vdash d : D$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma, \Delta[a'/x,t/p] \vdash J(a, x p \Delta.\,D, \Delta.\,d, a', t) : D[a'/x,t/p]$}
+\DisplayProof
+\end{center}
+
+\[ J(a, x p \Delta.\,D, \Delta.\,d, a, \refl(a)) = d \]
+
+We also assume that the indexed theory has $J$ operator:
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash a : A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash a' : A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash t : \Id_A(a,a')$
+\Axiom$\fCenter \Gamma, x : A, p : \Id_A(a,x), \Delta \mid \cdot \vdash D\ \type$
+\noLine
+\UnaryInf$\fCenter \Gamma, \Delta[a/x,\refl(a)/p] | E[a/x,\refl(a)/p] \vdash d : D$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma, \Delta[a'/x,t/p] | E[a'/x,t/p] \vdash J(a, x p \Delta.\,D, \Delta E.\,d, a', t) : D[a'/x,t/p]$}
+\DisplayProof
+\end{center}
+
+\[ J(a, x p \Delta.\,D, \Delta E.\,d, a, \refl(a)) = d \]
+
+An indexed type theory is \emph{locally small} if there is a type of its morphisms.
+That is, it must contain the following rules and equations:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A\ \ob$}
+\AxiomC{$\Gamma \mid \cdot \vdash B\ \ob$}
+\BinaryInfC{$\Gamma \vdash \Hom(A,B)\ \type$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid x : A \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda x.\,b : \Hom(A,B)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Hom(A,B)$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash f\,a : B$}
+\DisplayProof
+\end{center}
+
+\begin{align*}
+(\lambda x.\,b)\,a & = b[a/x] \\
+\lambda x.\,f\,x & = f
+\end{align*}
+
+We might also use notation $A \to B$ for $\Hom(A,B)$, but we prefer the latter notation since the former may be confusing.
+Indeed, $A \to B$ might also denote the indexed type of functions if the indexed theory is Cartesian closed or the base type of function if $A$ and $B$ are base types.
+
+If the indexed theory is locally small, then indexed types must carry the structure of an $\infty$-category.
+We cannot construct this structure internally due to coherence issues, but we can at least construct lower levels of this structure.
+Morphisms between indexed types $A$ and $B$ are terms of type $\Hom(A,B)$.
+The identity morphism on an indexed type $A$ is $\lambda x.\,x : \Hom(A,A)$.
+Composition of morphisms $f : \Hom(A,B)$ and $g : \Hom(B,C)$ is defined as $\lambda x.\,g\,(f\,x) : \Hom(A,C)$.
+Composition is strictly associative and identity morphisms are strictly unital.
+
+If $f,g : \Hom(A,B)$ are morphisms, then a 2-morphism between them is a term $p : \Id_{\Hom(A,B)}(f,g)$.
+Vertical composition of 2-morphisms is defined as the usual operation of path concatenation.
+The identity 2-morphism on $f : \Hom(A,B)$ is $\refl(f)$.
+Vertical composition is associative, identity 2-morphisms are unital, and every 2-morphism is invertible.
+These facts are true in a weak sense, that is up to a 3-morphism.
+
+Let $f,g : \Hom(A,B)$ and $h,i : \Hom(B,C)$ be morphisms and let $p : \Id_{\Hom(A,B)}(f,g)$ and $q : \Id_{\Hom(B,C)}(h,i)$ be 2-morphisms.
+Then the horizontal composition of $p$ and $q$ is a term $p * q$ of type $\Id_{\Hom(A,C)}(\lambda x.\,h\,(f\,x), \lambda x.\,i\,(g\,x))$.
+To define $p * q$, we just need to eliminate $p$ and $q$ and then define $\refl(f) * \refl(h)$ as $\refl(\lambda x.\,h\,(f\,x))$.
+
+% TODO: Define equivalences and discuss different definitions of the type of equivalences.
+
+If the indexed theory is locally small, then not only base morphisms act on indexed types and terms, but also homotopies between them.
+Let $\Gamma \vdash a : A$ and $\Gamma \vdash a' : A$ be two base terms.
+If $\Gamma, x : A \mid \cdot \vdash B\ \ob$ be an indexed type, then we have indexed types $\Gamma \mid \cdot \vdash B[a]\ \ob$ and $\Gamma \mid \cdot \vdash B[a']\ \ob$.
+Let $\Gamma \vdash h : \Id_A(a,a')$ be homotopy between $a$ and $a'$.
+Then we can construct an equivalence between $B[a]$ and $B[a']$.
+A map from $B[a]$ to $B[a']$ is defined as $\lambda y.\,J(a, x p.\,B, y.\,y, a', h)$.
+A map from $B[a']$ to $B[a]$ is constructed similarly: $\lambda y.\,J(a', x p.\,B, y.\,y, a, \sym(h))$.
+% TODO: Prove that these terms are mutually inverse.
+
+\section{Limits and colimits}
+
+In this section, we will work in a locally small indexed unary type theory.
+We will define notions of finite (co)limits and arbitrary (co)products.
+
 % 2. Определить конечные (ко)пределы и произвольных (ко)произведения.
 % 3. Disjoint coproducts / эквивалентные определения extensive category.
 % 4. Определить (pre)descent condition для них.
@@ -215,7 +333,7 @@ This equation corresponds to the fact that all constructions in the indexed cate
 % 11. Записать про коммутирование Id и Sigma с Hom справа.
 % 12. Упомянуть, что копределы могут быть и не стабильны относительно подстановок.
 % 13. Сказать про связные объекты.
-% 14. (Pre)descent condition и большие элиминатор{.
+% 14. (Pre)descent condition и большие элиминатор.
 % 15. Сравнить внешнее и внутренее определение копределов.
 
 \end{document}
