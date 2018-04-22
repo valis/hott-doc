@@ -1,0 +1,221 @@
+\documentclass[reqno]{amsart}
+
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{turnstile}
+\usepackage{etex}
+
+\hypersetup{colorlinks=true,linkcolor=blue}
+
+\newcommand{\axlabel}[1]{(#1) \phantomsection \label{ax:#1}}
+\newcommand{\axtag}[1]{\label{ax:#1} \tag{#1}}
+\newcommand{\axref}[1]{(\hyperref[ax:#1]{#1})}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname n#2\endcsname[1]{\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{Theorem}{Theorem}
+\newref{lem}{Lemma}{Lemma}
+\newref{prop}{Proposition}{Proposition}
+\newref{cor}{Corollary}{Corollary}
+\newref{cond}{Condition}{Condition}
+
+\theoremstyle{definition}
+\newref{defn}{Definition}{Definition}
+\newref{example}{Example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{Remark}{Remark}
+
+\newcommand{\type}{\mathrm{type}}
+\newcommand{\ob}{\mathrm{ob}}
+\newcommand{\subst}{\mathit{subst}}
+
+\numberwithin{figure}{section}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\title{Indexed type theories}
+
+\author{Valery Isaev}
+
+\begin{abstract}
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+\section{Indexed unary type theories}
+
+We can think about an indexed type theory as a syntactic representation of indexed $\infty$-categories, that is a functor $F$ from an $\infty$-category $\mathcal{B}$ to the large $\infty$-category of $\infty$-categories.
+An indexed type theory consists of two levels.
+The first level is just an ordinary type theory and it represents $\mathcal{B}$
+Since we are mostly interested in the case when $\mathcal{B}$ is the $\infty$-category of spaces,
+we can assume that the first level has all usual constructions such as identity types, $\Sigma$-types, $\Pi$-types, (univalent) universes, and (higher) inductive types.
+Nevertheless, in this paper, we will always explicitly specify the assumptions on the base theory.
+For many basic constructions, it is enough to assume that it has identity types.
+
+The second level of the theory represents $\infty$-categories $F(\Gamma)$ for various objects $\Gamma$ of $\mathcal{B}$.
+In this section, we will discuss \emph{indexed unary type theories}, that is indexed type theories in which the second level consists of unary type theories.
+A unary type theory is a non-dependent type theory in which contexts consist of exactly one type.
+Such theories represent arbitrary 1-categories.
+We do not know whether indexed unary type theories represent all indexed $\infty$-categories over a given base, but we believe that this should be true.
+
+Indexed unary type theories have four kinds of judgements:
+\[ \Gamma \vdash A\ \type \qquad \Gamma \vdash a : A \qquad \Gamma \vdash A\ \ob \qquad \Gamma \mid x : A \vdash b : B \]
+Judgements $\Gamma \vdash A\ \type$ and $\Gamma \vdash a : A$ represent types and terms of the first level of the theory.
+When we say that the indexing theory has some construction such as $\Pi$-types or universes, this means that there are usual rules for these constructions formulated in terms of these judgements.
+Judgements $\Gamma \vdash A\ \ob$ represent types of the second level of the theory.
+We will call these types objects to distinguish them from types of the indexing theory.
+In each of these judgements, $\Gamma$ is a context, that is a sequence of the form $x_1 : A_1, \ldots x_n : A_n$, where $A_1$, \ldots $A_n$ are types and $x_1$, \ldots $x_n$ are pairwise distinct variables.
+In a judgement $\Gamma \mid x : A \vdash b : B$, $x$ is a variable which is distinct from the variables in $\Gamma$, $A$ and $B$ are objects, and $b$ is a term of the second level of the theory.
+Such a term represents a morphism between objects $A$ and $B$.
+
+We have the usual rules for variables and substitutions for the indexing theory:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$x_1 : A_1, \ldots x_n : A_n \vdash x_i : A_i$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash b_1 : B_1$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash b_k : B_k[b_1/y_1, \ldots b_{k-1}/y_{k-1}]$
+\Axiom$\fCenter \Gamma, y_1 : B_1, \ldots y_k : B_k \vdash C\ \type$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \vdash C[b_1/y_1, \ldots b_k/y_k]\ \type$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash b_1 : B_1$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash b_k : B_k[b_1/y_1, \ldots b_{k-1}/y_{k-1}]$
+\Axiom$\fCenter \Gamma, y_1 : B_1, \ldots y_k : B_k \vdash c : C$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \vdash c[b_1/y_1, \ldots b_k/y_k] : C[b_1/y_1, \ldots b_k/y_k]$}
+\DisplayProof
+\end{center}
+
+We also have the usual equations for substitution:
+\begin{align*}
+y_i[b_1/y_1, \ldots b_k/y_k] & = b_i \\
+c[y_1/y_1, \ldots y_k/y_k] & = c \\
+d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/z_n],
+\end{align*}
+where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
+
+For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_k)$ in the indexing theory, we have the following equation:
+\[ \sigma(\ldots, \overline{z_i}.\,c_i, \ldots)[b_1/y_1, \ldots b_k/y_k] = \sigma(\ldots, \overline{z_i}.\,c_i[b_1/y_1, \ldots b_k/y_k], \ldots) \]
+We also have the weakening operation which is left implicit as usual.
+This concludes the description of basic rules of the indexing theory.
+They are the usual rules of a dependent type theory which we include here so that they can be compared to the rules of the indexed theory.
+
+Variables of the indexed theory represent identity morphisms and substitution represents composition:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid x : A \vdash x : A$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid x : A \vdash b : B$}
+\AxiomC{$\Gamma \mid y : B \vdash c : C$}
+\BinaryInfC{$\Gamma \mid x : A \vdash c[b/y] : C$}
+\DisplayProof
+\end{center}
+
+These operations satisfy the obvious equations:
+\begin{align*}
+y[b/y] & = b \\
+b[x/x] & = b \\
+d[c/z][b/y] & = d[c[b/y]/z]
+\end{align*}
+
+We can also substitute terms of the indexing theory into objects and terms of the indexed theory:
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash b_1 : B_1$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash b_k : B_k[b_1/y_1, \ldots b_{k-1}/y_{k-1}]$
+\Axiom$\fCenter \Gamma, y_1 : B_1, \ldots y_k : B_k \vdash C\ \ob$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \vdash C[b_1/y_1, \ldots b_k/y_k]\ \ob$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash b_1 : B_1$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash b_k : B_k[b_1/y_1, \ldots b_{k-1}/y_{k-1}]$
+\Axiom$\fCenter \Gamma, y_1 : B_1, \ldots y_k : B_k \mid z : C \vdash d : D$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid z : C[b_1/y_1, \ldots b_k/y_k] \vdash d[b_1/y_1, \ldots b_k/y_k] : D[b_1/y_1, \ldots b_k/y_k]$}
+\DisplayProof
+\end{center}
+
+These operations represent reindexing along a morphism in the base category.
+They satisfy the following equations:
+\begin{align*}
+x[b_1/y_1, \ldots b_k/y_k] & = x \\
+d[c/z][b_1/y_1, \ldots b_k/y_k] & = d[b_1/y_1, \ldots b_k/y_k][c[b_1/y_1, \ldots b_k/y_k]/z] \\
+c[y_1/y_1, \ldots y_k/y_k] & = c \\
+d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/z_n],
+\end{align*}
+where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
+The first two equations correspond to the fact that reindexing preserves identity morphisms and composition in the indexed theory.
+The last two equations correspond to the fact that reindexing is functorial, that is it preserves identity morphisms and composition in the indexing theory.
+
+For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_k)$ in the indexed theory, we have the following equation:
+\[ \sigma(\ldots, \overline{z_i}.\,c_i, \ldots)[b_1/y_1, \ldots b_k/y_k] = \sigma(\ldots, \overline{z_i}.\,c_i[b_1/y_1, \ldots b_k/y_k], \ldots) \]
+We also have the weakening operation which is left implicit as usual.
+This equation corresponds to the fact that all constructions in the indexed category must be stable under reindexing.
+
+% 1. Определить индексированные унарные теории типов.
+% 2. Определить конечные (ко)пределы и произвольных (ко)произведения.
+% 3. Disjoint coproducts / эквивалентные определения extensive category.
+% 4. Определить (pre)descent condition для них.
+% 5. (Локальная) декартовая замкнутость.
+% 6. Определить условие well-powered (B1.3:1.3.14).
+% 7. Вселенная Prop, ее связь с условием well-powered и прочие вселенные.
+% 8. Определить индексированные теории зависимых типов.
+% 9. Определить (pre)descent для Id, юнит-типов и сигм.
+% 10. Доказать, что в них есть конечные произведение и бесконечные тоже, если предположить их должны образом.
+% 11. Записать про коммутирование Id и Sigma с Hom справа.
+% 12. Упомянуть, что копределы могут быть и не стабильны относительно подстановок.
+% 13. Сказать про связные объекты.
+% 14. (Pre)descent condition и большие элиминатор{.
+% 15. Сравнить внешнее и внутренее определение копределов.
+
+\end{document}
