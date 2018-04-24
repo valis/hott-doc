@@ -51,8 +51,16 @@
 \newcommand{\refl}{\fs{refl}}
 \newcommand{\sym}{\fs{sym}}
 \newcommand{\id}{\fs{id}}
+\newcommand{\pmap}{\fs{ap}}
 
 \numberwithin{figure}{section}
+
+\newcommand{\ct}{%
+  \mathchoice{\mathbin{\raisebox{0.25ex}{$\displaystyle\centerdot$}}}%
+             {\mathbin{\raisebox{0.25ex}{$\centerdot$}}}%
+             {\mathbin{\raisebox{0.25ex}{$\scriptstyle\,\centerdot\,$}}}%
+             {\mathbin{\raisebox{0.25ex}{$\scriptscriptstyle\,\centerdot\,$}}}
+}
 
 \newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
 \newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
@@ -77,7 +85,7 @@ An indexed type theory consists of two levels.
 The first level is just an ordinary type theory and it represents $\mathcal{B}$
 Since we are mostly interested in the case when $\mathcal{B}$ is the $\infty$-category of spaces,
 we can assume that the first level has all usual constructions such as identity types, $\Sigma$-types, $\Pi$-types, (univalent) universes, and (higher) inductive types.
-Nevertheless, in general, we will assume that the base theory has only identity types; all additional assumptions will be explicitly specified.
+Nevertheless, in general, we will assume that the base theory has only identity types and $\Sigma$-types; all additional assumptions will be explicitly specified.
 
 The second level of the theory represents $\infty$-categories $F(\Gamma)$ for various objects $\Gamma$ of $\mathcal{B}$.
 In this section, we will discuss \emph{indexed unary type theories}, that is indexed type theories in which the second level consists of unary type theories.
@@ -261,6 +269,9 @@ We also assume that the indexed theory has $J$ operator:
 
 We will sometimes omit the type in the notation $\Id_A(a,a')$.
 The fact that the type $\Id(a,a')$ is inhabited will be denoted by $a \sim a'$.
+If $\Gamma \vdash p : \Id_A(a,a')$, $\Gamma, x : A \vdash B\ \type$, and $\Gamma \vdash b : B[a/x]$, then we will write $\Gamma \vdash p_*(b) : B[a'/x]$ for the usual transport operation defined in terms of $J$.
+Operation $\pmap$ is defined in terms of $J$ and has the following type:
+if $\Gamma \vdash B\ \type$, $\Gamma, x : A \vdash b : B$, and $\Gamma \vdash p : \Id_A(a,a')$, then $\Gamma \vdash \pmap(x.b, p) : \Id_B(b[a/x],b[a'/x])$.
 
 An indexed type theory is \emph{locally small} if there is a type of its morphisms.
 That is, it must contain the following rules and equations:
@@ -299,7 +310,7 @@ Composition of morphisms $f : \Hom(A,B)$ and $g : \Hom(B,C)$ is defined as $\lam
 Composition is strictly associative and identity morphisms are strictly unital.
 
 If $f,g : \Hom(A,B)$ are morphisms, then a 2-morphism between them is a term $p : \Id_{\Hom(A,B)}(f,g)$.
-Vertical composition of 2-morphisms is defined as the usual operation of path concatenation.
+Vertical composition $p \ct q$ of 2-morphisms $p$ and $q$ is defined as the usual operation of path concatenation.
 The identity 2-morphism on $f : \Hom(A,B)$ is $\refl(f)$.
 Vertical composition is associative, identity 2-morphisms are unital, and every 2-morphism is invertible.
 These facts are true in a weak sense, that is up to a 3-morphism.
@@ -323,15 +334,13 @@ To prove that $g \circ f$ and $f \circ g$ are homotopic to identity morphisms, i
 
 \section{Equivalences}
 
-If the base theory has $\Sigma$-types, then we can define types expressing the property of a map $f : \Hom(A,B)$ of being an equivalence.
-In this section, we define two such types and prove that they are equivalent.
+In this section, we define types that express the property of a map $f : \Hom(A,B)$ of being an equivalence and prove that they are equivalent.
 We also prove a few simple properties of equivalences.
 These questions were studied in \cite[Section~4]{hottbook} for ordinary homotopy type theory.
 Most of the theorems in this section also hold in the framework of indexed unary type theories, but the proofs must be modified.
 
 \subsection{Bi-invertible maps}
 
-Suppose that the base theory has $\Sigma$-types.
 Let $f : \Hom(A,B)$ be a morphism.
 We will say that $f$ is \emph{bi-invertible} if the following type is inhabited:
 \[ \fs{biinv}(f) = \fs{linv}(f) \times \fs{rinv}(f), \]
@@ -372,7 +381,6 @@ This follows from \rprop{biinv-equiv} and \rlem{lrinv-contr}.
 
 \subsection{Half adjoint equivalences}
 
-Suppose that the base theory has $\Sigma$-types.
 Let $f : \Hom(A,B)$ be a morphism.
 We will say that $f$ is a \emph{half adjoint equivalnce} if the following type is inhabited:
 \[ \fs{ishae}(f) = \sum_{g : \Hom(B,A)} \sum_{\eta : \Id(g \circ f, \id_A)} \sum_{\epsilon : \Id(f \circ g, \id_B)} \Id(\eta * \refl(f), \refl(f) * \epsilon). \]
@@ -389,14 +397,17 @@ $\refl(f \circ g) * \sym(\epsilon) : \Id(f \circ g, f \circ g \circ f \circ g)$,
 We need to prove that $\refl(f) * \epsilon' \sim \eta * \refl(f)$.
 
 First, note that $\eta * \refl(g \circ f) \sim \refl(g \circ f) * \eta$.
-Indeed, the concatenation of both of these paths with $\eta$ is homotopic to $\eta * \eta$.
+Indeed, $(\eta * \refl(g \circ f)) \ct \eta \sim \eta * \eta \sim (\refl(g \circ f) * \eta) \ct \eta$.
 Thus, if we cancel $\eta$, this gives us a homotopy between the original paths.
-
-It follows that $\refl(f) * \epsilon'$ is homotopic to the concatenation of paths 
-$\refl(f \circ g \circ f) * \sym(\epsilon)$, $\eta * \refl(f \circ g \circ f)$, and $\refl(f) * \epsilon$.
-This path is homotopic to the concatenation of $\eta * \refl(f) * \sym(\epsilon)$ and $\refl(f) * \epsilon$,
-which is homotopic to the concatenation of $\eta * \refl(f)$, $\refl(f) * \sym(\epsilon)$, and $\refl(f) * \epsilon$,
-which is homotopic to $\eta * \refl(f)$.
+Now, we can finish the proof:
+\begin{align*}
+\refl(f) * \epsilon' & \sim \\
+(\refl(f \circ g \circ f) * \sym(\epsilon)) \ct (\refl(g \circ f) * \eta * \refl(f)) \ct (\refl(f) * \epsilon) & \sim \\
+(\refl(f \circ g \circ f) * \sym(\epsilon)) \ct (\eta * \refl(f \circ g \circ f)) \ct (\refl(f) * \epsilon) & \sim \\
+(\eta * \refl(f) * \sym(\epsilon)) \ct (\refl(f) * \epsilon) & \sim \\
+(\eta * \refl(f)) \ct (\refl(f) * \sym(\epsilon)) \ct (\refl(f) * \epsilon) & \sim \\
+\eta * \refl(f) & .
+\end{align*}
 \end{proof}
 
 \begin{prop}
@@ -449,7 +460,93 @@ $f \circ j \circ h \circ k \sim m \circ g \circ h \circ k \sim m \circ \id_D \ci
 \section{Limits and colimits}
 
 In this section, we will work in a locally small indexed unary type theory.
-We will define notions of finite (co)limits and arbitrary (co)products.
+We will define specific finite (co)limits and arbitrary (co)products.
+
+\subsection{Finite (co)limits}
+
+An indexed type $T$ is \emph{terminal} if, for every indexed type $X$, the type $\Hom(X,T)$ is contractible.
+Dually, an indexed type $T$ is \emph{initial} if, for every indexed type $X$, the type $\Hom(T,X)$ is contractible.
+Terminal and initial types are unique up to unique equivalence, that is the type of equivalences between a pair of terminal or initial types is contractible.
+We will say that an indexed unary type theory \emph{has terminal (resp., initial) types} if, for every context $\Gamma$, there is a terminal (resp., initial) type $\Gamma \mid \cdot \vdash T\ \ob$ and substitution preserves terminal (resp., initial) types.
+
+A \emph{binary product} of indexed types $A$ and $B$ is an indexed type $A \times B$ together with a pair of maps $\pi_1 : \Hom(A \times B, A)$ and $\pi_2 : \Hom(A \times B, B)$
+such that, for every triple $C$, $f : \Hom(C,A)$, $g : \Hom(C,B)$, the type
+\[ \sum_{h : \Hom(C, A \times B)} \Id(\pi_1 \circ h, f) \times \Id(\pi_2 \circ h, g) \]
+is contractible.
+An indexed unary type theory \emph{has binary products} if a binary product exists for every pair of types in every context and binary products are stable under substitution.
+\emph{Binary coproducts} are defined dually.
+Binary products and binary coproducts are unique up to unique equivalence.
+
+An \emph{equalizer} of a pair of maps $f,g : \Hom(A,B)$ is a map $e : \Hom(E,A)$ together with a homotopy $p : \Id(f \circ e, g \circ e)$
+such that, for all $e' : \Hom(E',A)$ and $p' : \Id(f \circ e', g \circ e')$, the following type is contractible:
+\[ \sum_{h : \Hom(E',E)} \sum_{q : \Id(e', e \circ h)} \Id(q_*(p'), \pmap(x.\,x \circ h, p)). \]
+An indexed unary type theory \emph{has equalizers} if an equalizer exists for every parallel pair of maps in every context and equalizers are stable under substitution.
+\emph{Coequalizers} are defined dually.
+Equalizers and coequalizers are unique up to unique equivalence.
+
+A \emph{pullback} of a pair of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is a triple $h : \Hom(P,A)$, $k : \Hom(P,B)$, $p : \Id(f \circ h, g \circ k)$
+such that, for every triple $h' : \Hom(P',A)$, $k' : \Hom(P',B)$, $p' : \Id(f \circ h', g \circ k')$, the following type is contractible:
+\[ \sum_{i : \Hom(P',P)} \sum_{q : \Id(h', h \circ i)} \sum_{r : \Id(k \circ i, k')} \Id((q * \refl(f)) \ct (\refl(i) * p) \ct (r * \refl(g)), p'). \]
+An indexed unary type theory \emph{has pullbacks} if a pullback exists for every pair of maps with a common codomain in every context and pullbacks are stable under substitution.
+\emph{Pushouts} are defined dually.
+Pullbacks and pushouts are unique up to unique equivalence.
+
+\begin{prop}[fin-lim]
+An indexed unary type theory with terminal types has pullbacks if and only if it has equalizers and binary products.
+\end{prop}
+
+We omit the proof of this proposition since the basic idea is the same as in ordinary category theory, but actual details are very technical and messy.
+
+\begin{defn}[fin-lim]
+An indexed unary type theory \emph{has finite limits} if equivalent conditions of \rprop{fin-lim} hold.
+\end{defn}
+
+We can define an extension of the basic locally small indexed unary type theory which makes it into a theory with finite limits.
+First, we define canonical terminal types:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \cdot \vdash \top\ \type$}
+\DisplayProof
+\qquad
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{tt} : \top$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid x : A \vdash b : \top$}
+\UnaryInfC{$\Gamma \vdash \top\text{-}\fs{uni}(A, x.\,b) : \Id(\lambda x.\,b, \lambda x.\,tt)$}
+\DisplayProof
+\end{center}
+
+These constructions imply that $\top$ is contractible.
+Moreover, since $\top$ is stable under substitution, every terminal type is equivalent to $\top$, and every type which is equivalent to $\top$ is terminal, it follows that terminal types are also stable under substitution.
+
+Similarly, we can define canonical pullback types:
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Hom(A,C)$}
+\AxiomC{$\Gamma \vdash g : \Hom(B,C)$}
+\BinaryInfC{$\Gamma \mid \cdot \vdash \fs{pb}(f,g)\ \type$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Hom(A,C)$}
+\AxiomC{$\Gamma \vdash g : \Hom(B,C)$}
+\AxiomC{$\Gamma \mid \Delta \vdash t : \fs{pb}(f,g)$}
+\TrinaryInfC{$\Gamma \mid \Delta \vdash \pi_1(f,g,t) : A$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Hom(A,C)$}
+\AxiomC{$\Gamma \vdash g : \Hom(B,C)$}
+\AxiomC{$\Gamma \mid \Delta \vdash t : \fs{pb}(f,g)$}
+\TrinaryInfC{$\Gamma \mid \Delta \vdash \pi_2(f,g,t) : B$}
+\DisplayProof
+\end{center}
+
+\subsection{(Co)products}
 
 % 2. Определить конечные (ко)пределы и произвольных (ко)произведения.
 % 3. Disjoint coproducts / эквивалентные определения extensive category.
@@ -463,7 +560,7 @@ We will define notions of finite (co)limits and arbitrary (co)products.
 % 11. Записать про коммутирование Id и Sigma с Hom справа.
 % 12. Упомянуть, что копределы могут быть и не стабильны относительно подстановок.
 % 13. Сказать про связные объекты.
-% 14. (Pre)descent condition и большие элиминатор.
+% 14. (Pre)descent condition и большие элиминаторы.
 % 15. Сравнить внешнее и внутренее определение копределов.
 % 16. Regular categories and propositional truncation?
 
