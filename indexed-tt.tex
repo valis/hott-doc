@@ -43,11 +43,14 @@
 
 \newcommand{\type}{\mathrm{type}}
 \newcommand{\ob}{\mathrm{type}}
-\newcommand{\subst}{\mathit{subst}}
-\newcommand{\Hom}{\mathit{Hom}}
-\newcommand{\Id}{\mathit{Id}}
-\newcommand{\refl}{\mathit{refl}}
-\newcommand{\sym}{\mathit{sym}}
+
+\newcommand{\fs}[1]{\mathit{#1}}
+\newcommand{\subst}{\fs{subst}}
+\newcommand{\Hom}{\fs{Hom}}
+\newcommand{\Id}{\fs{Id}}
+\newcommand{\refl}{\fs{refl}}
+\newcommand{\sym}{\fs{sym}}
+\newcommand{\id}{\fs{id}}
 
 \numberwithin{figure}{section}
 
@@ -55,9 +58,6 @@
 \newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
 
 \begin{document}
-
-\bibliographystyle{amsplain}
-\bibliography{ref}
 
 \title{Indexed type theories}
 
@@ -259,6 +259,9 @@ We also assume that the indexed theory has $J$ operator:
 
 \[ J(a, x p \Delta.\,D, \Delta E.\,d, a, \refl(a)) = d \]
 
+We will sometimes omit the type in the notation $\Id_A(a,a')$.
+The fact that the type $\Id(a,a')$ is inhabited will be denoted by $a \sim a'$.
+
 An indexed type theory is \emph{locally small} if there is a type of its morphisms.
 That is, it must contain the following rules and equations:
 \begin{center}
@@ -291,8 +294,8 @@ Indeed, $A \to B$ might also denote the indexed type of functions if the indexed
 If the indexed theory is locally small, then indexed types must carry the structure of an $\infty$-category.
 We cannot construct this structure internally due to coherence issues, but we can at least construct lower levels of this structure.
 Morphisms between indexed types $A$ and $B$ are terms of type $\Hom(A,B)$.
-The identity morphism on an indexed type $A$ is $\lambda x.\,x : \Hom(A,A)$.
-Composition of morphisms $f : \Hom(A,B)$ and $g : \Hom(B,C)$ is defined as $\lambda x.\,g\,(f\,x) : \Hom(A,C)$.
+The identity morphism $\id_A$ on an indexed type $A$ is $\lambda x.\,x : \Hom(A,A)$.
+Composition of morphisms $f : \Hom(A,B)$ and $g : \Hom(B,C)$ is defined as $\lambda x.\,g\,(f\,x) : \Hom(A,C)$ and denoted by $g \circ f$.
 Composition is strictly associative and identity morphisms are strictly unital.
 
 If $f,g : \Hom(A,B)$ are morphisms, then a 2-morphism between them is a term $p : \Id_{\Hom(A,B)}(f,g)$.
@@ -300,21 +303,148 @@ Vertical composition of 2-morphisms is defined as the usual operation of path co
 The identity 2-morphism on $f : \Hom(A,B)$ is $\refl(f)$.
 Vertical composition is associative, identity 2-morphisms are unital, and every 2-morphism is invertible.
 These facts are true in a weak sense, that is up to a 3-morphism.
-
 Let $f,g : \Hom(A,B)$ and $h,i : \Hom(B,C)$ be morphisms and let $p : \Id_{\Hom(A,B)}(f,g)$ and $q : \Id_{\Hom(B,C)}(h,i)$ be 2-morphisms.
-Then the horizontal composition of $p$ and $q$ is a term $p * q$ of type $\Id_{\Hom(A,C)}(\lambda x.\,h\,(f\,x), \lambda x.\,i\,(g\,x))$.
+The horizontal composition of $p$ and $q$ is a term $p * q$ of type $\Id_{\Hom(A,C)}(\lambda x.\,h\,(f\,x), \lambda x.\,i\,(g\,x))$.
 To define $p * q$, we just need to eliminate $p$ and $q$ and then define $\refl(f) * \refl(h)$ as $\refl(\lambda x.\,h\,(f\,x))$.
+It is easy to prove that usual properties of this operation hold.
 
-% TODO: Define equivalences and discuss different definitions of the type of equivalences.
+\begin{defn}
+An equivalence between indexed types $A$ and $B$ is a morphism $f : \Hom(A,B)$ such that there is a morphism $g : \Hom(B,A)$ such that $g \circ f \sim \id_A$ and $f \circ g \sim \id_B$.
+\end{defn}
 
 If the indexed theory is locally small, then not only base morphisms act on indexed types and terms, but also homotopies between them.
 Let $\Gamma \vdash a : A$ and $\Gamma \vdash a' : A$ be two base terms.
 If $\Gamma, x : A \mid \cdot \vdash B\ \ob$ be an indexed type, then we have indexed types $\Gamma \mid \cdot \vdash B[a]\ \ob$ and $\Gamma \mid \cdot \vdash B[a']\ \ob$.
 Let $\Gamma \vdash h : \Id_A(a,a')$ be homotopy between $a$ and $a'$.
 Then we can construct an equivalence between $B[a]$ and $B[a']$.
-A map from $B[a]$ to $B[a']$ is defined as $\lambda y.\,J(a, x p.\,B, y.\,y, a', h)$.
-A map from $B[a']$ to $B[a]$ is constructed similarly: $\lambda y.\,J(a', x p.\,B, y.\,y, a, \sym(h))$.
-% TODO: Prove that these terms are mutually inverse.
+A map $f$ from $B[a]$ to $B[a']$ is defined as $\lambda y.\,J(a, x p.\,B, y.\,y, a', h)$.
+A map $g$ from $B[a']$ to $B[a]$ is constructed similarly: $\lambda y.\,J(a', x p.\,B, y.\,y, a, \sym(h))$.
+To prove that $g \circ f$ and $f \circ g$ are homotopic to identity morphisms, it is enough to eliminate $h$ using $J$ and then both $g \circ f$ and $f \circ g$ become identity morphisms.
+
+\section{Equivalences}
+
+If the base theory has $\Sigma$-types, then we can define types expressing the property of a map $f : \Hom(A,B)$ of being an equivalence.
+In this section, we define two such types and prove that they are equivalent.
+We also prove a few simple properties of equivalences.
+These questions were studied in \cite[Section~4]{hottbook} for ordinary homotopy type theory.
+Most of the theorems in this section also hold in the framework of indexed unary type theories, but the proofs must be modified.
+
+\subsection{Bi-invertible maps}
+
+Suppose that the base theory has $\Sigma$-types.
+Let $f : \Hom(A,B)$ be a morphism.
+We will say that $f$ is \emph{bi-invertible} if the following type is inhabited:
+\[ \fs{biinv}(f) = \fs{linv}(f) \times \fs{rinv}(f), \]
+where $\fs{linv}(f)$ and $\fs{rinv}(f)$ are types of left and right inverses of $f$, respectively:
+\begin{align*}
+\fs{linv}(f) & = \sum_{g : \Hom(B,A)} \Id(g \circ f, \id_A) \\
+\fs{rinv}(f) & = \sum_{g : \Hom(B,A)} \Id(f \circ g, \id_B)
+\end{align*}
+
+\begin{prop}[biinv-equiv]
+A map is bi-invertible if and only if it is an equivalence.
+\end{prop}
+\begin{proof}
+Obviously, if a map is an equivalence, then it is bi-invertible.
+Let us prove the converse.
+Let $g : \Hom(B,A)$, $p : \Id(g \circ f, \id_A)$ be a left inverse of $f$ and let $g' : \Hom(B,A)$, $p' : \Id(f \circ g', \id_B)$ be a right inverse of $f$.
+Then $\refl(g') * p : \Id(g \circ f \circ g', g')$.
+Since $f \circ g' \sim \id_B$, there is a term of type $\Id(g,g')$.
+It follows that $g$ is an inverse of $f$.
+\end{proof}
+
+\begin{lem}[lrinv-contr]
+If $f$ is an equivalence, then types $\fs{linv}(f)$ and $\fs{rinv}(f)$ are contractible.
+\end{lem}
+\begin{proof}
+If $f$ is an equivalence, then precomposition with $f$ is an equivalence between types $\Hom(B,C)$ and $\Hom(A,C)$.
+Similarly, postcomposition with $f$ is an equivalence between types $\Hom(C,A)$ and $\Hom(C,B)$.
+Since $\fs{linv}(f)$ and $\fs{rinv}(f)$ are fibres of these maps over the identity morphisms, \cite[Theorem~4.2.3]{hottbook} and \cite[Theorem~4.2.6]{hottbook} imply that these types are contractible.
+Note that the proofs of these theorems work even if we do not have $\Pi$-types.
+\end{proof}
+
+\begin{prop}
+The type $\fs{biinv}(f)$ is a proposition.
+\end{prop}
+\begin{proof}
+This follows from \rprop{biinv-equiv} and \rlem{lrinv-contr}.
+\end{proof}
+
+\subsection{Half adjoint equivalences}
+
+Suppose that the base theory has $\Sigma$-types.
+Let $f : \Hom(A,B)$ be a morphism.
+We will say that $f$ is a \emph{half adjoint equivalnce} if the following type is inhabited:
+\[ \fs{ishae}(f) = \sum_{g : \Hom(B,A)} \sum_{\eta : \Id(g \circ f, \id_A)} \sum_{\epsilon : \Id(f \circ g, \id_B)} \Id(\eta * \refl(f), \refl(f) * \epsilon). \]
+
+\begin{prop}
+A map is a half adjoint equivalence if and only if it is an equivalence.
+\end{prop}
+\begin{proof}
+Obviously, if a map is a half adjoint equivalence, then it is an equivalence.
+Let us prove the converse.
+Let $g : \Hom(B,A)$, $\eta : \Id(g \circ f, \id_A)$, $\epsilon : \Id(f \circ g, \id_B)$ be an inverse of $f$.
+Then we define $\epsilon' : \Id(f \circ g, \id_B)$ as concatenation of paths
+$\refl(f \circ g) * \sym(\epsilon) : \Id(f \circ g, f \circ g \circ f \circ g)$, $\refl(g) * \eta * \refl(f) : \Id(f \circ g \circ f \circ g, f \circ g)$, and $\epsilon : \Id(f \circ g, \id_B)$.
+We need to prove that $\refl(f) * \epsilon' \sim \eta * \refl(f)$.
+
+First, note that $\eta * \refl(g \circ f) \sim \refl(g \circ f) * \eta$.
+Indeed, the concatenation of both of these paths with $\eta$ is homotopic to $\eta * \eta$.
+Thus, if we cancel $\eta$, this gives us a homotopy between the original paths.
+
+It follows that $\refl(f) * \epsilon'$ is homotopic to the concatenation of paths 
+$\refl(f \circ g \circ f) * \sym(\epsilon)$, $\eta * \refl(f \circ g \circ f)$, and $\refl(f) * \epsilon$.
+This path is homotopic to the concatenation of $\eta * \refl(f) * \sym(\epsilon)$ and $\refl(f) * \epsilon$,
+which is homotopic to the concatenation of $\eta * \refl(f)$, $\refl(f) * \sym(\epsilon)$, and $\refl(f) * \epsilon$,
+which is homotopic to $\eta * \refl(f)$.
+\end{proof}
+
+\begin{prop}
+The type $\fs{ishae}(f)$ is a proposition.
+\end{prop}
+\begin{proof}
+We can assume that $f$ is an equivalence and prove that $\fs{ishae}(f)$ is contractible.
+By \rlem{lrinv-contr}, the type $\Sigma_{g : \Hom(B,A)} \Id(g \circ f, \id_A)$ is contractible.
+Thus, we just need to prove that, for every $g : \Hom(B,A)$ and $\eta : \Id(g \circ f, \id_A)$, the type $\Sigma_{\epsilon : \Id(f \circ g, \id_B)} \Id(\eta * \refl(f), \refl(f) * \epsilon)$ is also contractible.
+
+Since $f$ is an equivalence, the function $\refl(f) * -$ is also an equivalence.
+It follows that the type $\Id(\eta * \refl(f), \refl(f) * \epsilon)$ is equivalent to the type $\Id(h(\eta * \refl(f)), \epsilon)$, where $h$ is the inverse of $\refl(f) * -$.
+Thus, the type $\Sigma_{\epsilon : \Id(f \circ g, \id_B)} \Id(\eta * \refl(f), \refl(f) * \epsilon)$ is equivalent to the type $\Sigma_{\epsilon : \Id(f \circ g, \id_B)} \Id(h(\eta * \refl(f)), \epsilon)$, which is contractible by \cite[Lemma~3.11.8]{hottbook}.
+\end{proof}
+
+\subsection{Properties of equivalences}
+
+\begin{prop}
+Equivalences satisfy the 2-out-of-6 property.
+That is, if $f : \Hom(A,B)$, $g : \Hom(B,C)$, and $h : \Hom(C,D)$ are maps such that $g \circ f$ and $h \circ g$ are equivalences, then so are the maps $f$, $g$, $h$, and $h \circ g \circ f$.
+\end{prop}
+\begin{proof}
+Let $i : \Hom(C,A)$ be an inverse of $g \circ f$ and let $k : \Hom(D,B)$ be an inverse of $h \circ g$.
+Since $g \circ f \circ i \sim \id_C$ and $h \circ g \circ k \sim \id_D$, \rprop{biinv-equiv} implies that $g$ is an equivalence.
+The map $i \circ g$ is an inverse of $f$.
+Indeed, $i \circ g \circ f \sim \id_A$ since $i$ is an inverse of $g \circ f$.
+Since $g \circ f \circ i \sim \id_C$, it follows that $g \circ f \circ i \circ g \sim g$.
+Since $g$ is an equivalence, this implies that $f \circ i \circ g \sim \id_B$.
+Similarly, $g \circ k$ is an inverse of $h$.
+The map $h \circ g \circ f$ is an equivalence since equivalences are closed under composition.
+\end{proof}
+
+A map $f : \Hom(A,B)$ is a \emph{quasi-retract} of a map $g : \Hom(C,D)$ if there is a commutative diagram of the form
+\[ \xymatrix{ A \ar[r]^i \ar[d]_f & C \ar[r]^j \ar[d]_g & A \ar[d]_f \\
+              B \ar[r]_k          & D \ar[r]_m          & B
+            } \]
+such that $j \circ i \sim \id_A$ and $m \circ k \sim \id_B$.
+
+\begin{prop}
+Equivalences are closed under quasi-retracts.
+\end{prop}
+\begin{proof}
+Let $f : \Hom(A,B)$ be a retract of $g : \Hom(C,D)$ and let $i,j,k,m$ be maps as in the diagram above.
+Let $h : \Hom(D,C)$ be an inverse of $g$.
+Then $j \circ h \circ k$ is an inverse of $f$.
+Indeed, $j \circ h \circ k \circ f \sim j \circ h \circ g \circ i \sim j \circ \id_C \circ i = j \circ i \sim \id_B$ and
+$f \circ j \circ h \circ k \sim m \circ g \circ h \circ k \sim m \circ \id_D \circ k = m \circ k \sim \id_B$.
+\end{proof}
 
 \section{Limits and colimits}
 
@@ -335,5 +465,9 @@ We will define notions of finite (co)limits and arbitrary (co)products.
 % 13. Сказать про связные объекты.
 % 14. (Pre)descent condition и большие элиминатор.
 % 15. Сравнить внешнее и внутренее определение копределов.
+% 16. Regular categories and propositional truncation?
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
 
 \end{document}
