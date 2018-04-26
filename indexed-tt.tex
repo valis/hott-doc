@@ -467,27 +467,27 @@ We will define specific finite (co)limits and arbitrary (co)products.
 An indexed type $T$ is \emph{terminal} if, for every indexed type $X$, the type $\Hom(X,T)$ is contractible.
 Dually, an indexed type $T$ is \emph{initial} if, for every indexed type $X$, the type $\Hom(T,X)$ is contractible.
 Terminal and initial types are unique up to unique equivalence, that is the type of equivalences between a pair of terminal or initial types is contractible.
-We will say that an indexed unary type theory \emph{has terminal (resp., initial) types} if, for every context $\Gamma$, there is a terminal (resp., initial) type $\Gamma \mid \cdot \vdash T\ \ob$ and substitution preserves terminal (resp., initial) types.
+We will say that an indexed unary type theory \emph{has terminal (resp., initial) types} if, for every context $\Gamma$, there is a terminal (resp., initial) type $\Gamma \mid \cdot \vdash T\ \ob$.
 
 A \emph{binary product} of indexed types $A$ and $B$ is an indexed type $A \times B$ together with a pair of maps $\pi_1 : \Hom(A \times B, A)$ and $\pi_2 : \Hom(A \times B, B)$
 such that, for every triple $C$, $f : \Hom(C,A)$, $g : \Hom(C,B)$, the type
 \[ \sum_{h : \Hom(C, A \times B)} \Id(\pi_1 \circ h, f) \times \Id(\pi_2 \circ h, g) \]
 is contractible.
-An indexed unary type theory \emph{has binary products} if a binary product exists for every pair of types in every context and binary products are stable under substitution.
+An indexed unary type theory \emph{has binary products} if a binary product exists for every pair of types in every context.
 \emph{Binary coproducts} are defined dually.
 Binary products and binary coproducts are unique up to unique equivalence.
 
 An \emph{equalizer} of a pair of maps $f,g : \Hom(A,B)$ is a map $e : \Hom(E,A)$ together with a homotopy $p : \Id(f \circ e, g \circ e)$
 such that, for all $e' : \Hom(E',A)$ and $p' : \Id(f \circ e', g \circ e')$, the following type is contractible:
 \[ \sum_{h : \Hom(E',E)} \sum_{q : \Id(e', e \circ h)} \Id(q_*(p'), \pmap(x.\,x \circ h, p)). \]
-An indexed unary type theory \emph{has equalizers} if an equalizer exists for every parallel pair of maps in every context and equalizers are stable under substitution.
+An indexed unary type theory \emph{has equalizers} if an equalizer exists for every parallel pair of maps in every context.
 \emph{Coequalizers} are defined dually.
 Equalizers and coequalizers are unique up to unique equivalence.
 
 A \emph{pullback} of a pair of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is a triple $h : \Hom(P,A)$, $k : \Hom(P,B)$, $p : \Id(f \circ h, g \circ k)$
 such that, for every triple $h' : \Hom(P',A)$, $k' : \Hom(P',B)$, $p' : \Id(f \circ h', g \circ k')$, the following type is contractible:
 \[ \sum_{i : \Hom(P',P)} \sum_{q : \Id(h', h \circ i)} \sum_{r : \Id(k \circ i, k')} \Id((q * \refl(f)) \ct (\refl(i) * p) \ct (r * \refl(g)), p'). \]
-An indexed unary type theory \emph{has pullbacks} if a pullback exists for every pair of maps with a common codomain in every context and pullbacks are stable under substitution.
+An indexed unary type theory \emph{has pullbacks} if a pullback exists for every pair of maps with a common codomain in every context.
 \emph{Pushouts} are defined dually.
 Pullbacks and pushouts are unique up to unique equivalence.
 
@@ -501,8 +501,7 @@ We omit the proof of this proposition since the basic idea is the same as in ord
 An indexed unary type theory \emph{has finite limits} if equivalent conditions of \rprop{fin-lim} hold.
 \end{defn}
 
-We can define an extension of the basic locally small indexed unary type theory which makes it into a theory with finite limits.
-First, we define canonical terminal types:
+The theory of terminal types is defined as follows:
 \begin{center}
 \AxiomC{}
 \UnaryInfC{$\Gamma \mid \cdot \vdash \top\ \ob$}
@@ -517,19 +516,62 @@ First, we define canonical terminal types:
 \DisplayProof
 \end{center}
 
-These constructions imply that $\top$ is contractible.
-Moreover, since $\top$ is stable under substitution, every terminal type is equivalent to $\top$, and every type which is equivalent to $\top$ is terminal, it follows that terminal types are also stable under substitution.
-Theories of canonical products, equalizers, and pullbacks are defined similarly and the same argument shows that these theories have corresponding categorical constructions.
+An indexed unary type theory has terminal types if and only if the theory of terminal types can be interpreted in it.
+Theories of products, equalizers, and pullbacks are defined similarly.
 
 \subsection{(Co)products}
 
-In this subsection, we assume that the base theory has $\Pi$-types.
+In this subsection, we assume that the base theory has extensional $\Pi$-types.
 
-A \emph{product} of an indexed type $\Gamma, i : I \mid \cdot \vdash B\ \ob$ is an indexed type $\Gamma \mid \cdot \vdash P\ \ob$ together with an indexed term $\Gamma, i : I \mid x : P \vdash p : B$
-such that, for all $\Gamma \mid \cdot \vdash P'\ \ob$ and $\Gamma, i : I \mid x : P' \vdash p' : B$, the following type is contractible:
-\[ \sum_{h : \Hom(P',P)}  \]
+A \emph{product} of an indexed type $\Gamma, i : I \mid \cdot \vdash B\ \ob$ is an indexed type $\Gamma \mid \cdot \vdash P\ \ob$ together with a term $\Gamma \vdash \pi : \Pi_{i : I} \Hom(P,B)$
+such that, for all $\Gamma \mid \cdot \vdash P'\ \ob$ and $\Gamma \vdash \pi' : \Pi_{i : I} \Hom(P',B)$, the following type is contractible:
+\[ \sum_{h : \Hom(P',P)} \prod_{i : I} \Id(\pi i \circ h, \pi' i). \]
 
-% 2. Определить конечные (ко)пределы и произвольных (ко)произведения.
+If $\Gamma \mid \cdot \vdash P\ \ob$ is an indexed type and $\Gamma \vdash \pi : \Pi_{i : I} \Hom(P,B)$ is a term, then we can define the following function for every indexed type $\Gamma \mid \cdot \vdash P'$:
+\[ \lambda h i.\,\pi i \circ h : \Hom(P',P) \to \prod_{i : I} \Hom(P',B). \]
+Note that the type that appears in the definition of products is (equivalent to) the fiber of this function over $\pi'$.
+Thus, a pair $(P,\pi)$ is a product if and only if this function is an equivalence.
+This implies that $\Hom(P',-)$ preserves products.
+
+The theory of coproducts is defined dually.
+A \emph{coproduct} of an indexed type $\Gamma, i : I \mid \cdot \vdash B\ \ob$ is an indexed type $\Gamma \mid \cdot \vdash P\ \ob$ together with a term $\Gamma \vdash \fs{in} : \Pi_{i : I} \Hom(B,P)$
+such that, for all $\Gamma \mid \cdot \vdash P'\ \ob$ and $\Gamma \vdash \fs{in}' : \Pi_{i : I} \Hom(B,P')$, the following type is contractible:
+\[ \sum_{h : \Hom(P,P')} \prod_{i : I} \Id(h \circ \fs{in}(i), \fs{in}'(i)). \]
+A pair $(P,\fs{in})$ is a coproduct if and only if the following function is an equivalence for every indexed type $P'$:
+\[ \lambda h i.\,h \circ \fs{in}(i) : \Hom(P,P') \to \prod_{i : I} \Hom(B,P'). \]
+
+Products and coproducts are unique up to unique equivalence.
+We will denote the product and the coproduct of a family $\Gamma, i : I \mid \cdot \vdash B\ \type$ by $\prod_{i : I} B$ and $\coprod_{i : I} B$, respectively.
+
+We can also define the theory of \emph{strict products}:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \cdot \vdash B\ \ob$}
+\UnaryInfC{$\Gamma \mid \cdot \vdash \prod_{i : I} B\ \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \cdot \vdash A\ \ob$}
+\AxiomC{$\Gamma, i : I \mid x : A \vdash b : B$}
+\BinaryInfC{$\Gamma \mid x : A \vdash \lambda i.\,b : \prod_{i : I} B$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash f : \prod_{i : I} B$}
+\AxiomC{$\Gamma \vdash j : I$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash f\,j : B[j/i]$}
+\DisplayProof
+\end{center}
+
+\begin{align*}
+(\lambda i.\,b)\,j & = b[j/i] \\
+\lambda i.\,f\,i & = f
+\end{align*}
+
+The difference between weak and strict products is that the former requires types $\Hom(P',\Pi_{i : I} B)$ and $\Pi_{i : I} \Hom(P',B)$ to be equivalent while the latter requires them to be \emph{isomorphic}.
+Of course, the theory of products can be interpreted in the theory of strict products, but not the other way around.
+Nevertherless, these theories should be weakly equivalent.
+
 % 3. Disjoint coproducts / эквивалентные определения extensive category.
 % 4. Определить (pre)descent condition для них.
 % 5. (Локальная) декартовая замкнутость.
