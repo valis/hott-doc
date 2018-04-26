@@ -571,6 +571,46 @@ We can also define the theory of \emph{strict products}:
 The difference between weak and strict products is that the former requires types $\Hom(P',\Pi_{i : I} B)$ and $\Pi_{i : I} \Hom(P',B)$ to be equivalent while the latter requires them to be \emph{isomorphic}.
 Of course, the theory of products can be interpreted in the theory of strict products, but not the other way around.
 Nevertherless, these theories should be weakly equivalent.
+We will sometimes use the notation with $\lambda$ and application for weak products since we still can define these operations for them (with the caveat that the last two equalities do not hold judgementally for weak products).
+
+Let us prove a few properties of products and coproducts
+
+\begin{prop}
+Let $I$ be a contractible type and let $i_0$ be a point of $I$.
+Then types $\prod_{i : I} B$, $\coprod_{i : I} B$, and $B[i_0/i]$ are equivalent.
+\end{prop}
+\begin{proof}
+Let $p(i)$ be a path between $i_0$ and $i : I$.
+Then the pair $B[i_0/i]$, $\pi = \lambda i.\,\lambda x.\,p(i)_*(x))$ is a product of $B$.
+Indeed, since $I$ is contractible, evaluation at $i_0$ establishes an equivalence between types $\Pi_{i : I} \Id(\pi i \circ h, \pi' i)$ and $\Id(\pi i_0 \circ h, \pi' i_0)$.
+Since $p(i_0)$ is homotopic to $\refl(i_0)$, the morphism $\pi i_0 : \Hom(B[i_0/i],B[i_0/i])$ is homotopic to the identity morphism.
+Thus, the type $\Sigma_{h : \Hom(P',P)} \Pi_{i : I} \Id(\pi i \circ h, \pi' i)$ is equivalent to the type $\Sigma_{h : \Hom(P',P)} \Id(h, \pi' i_0)$, which is contractible by \cite[Lemma~3.11.8]{hottbook}.
+Since $(B[i_0/i],\pi)$ is a product and products are unique up to equivalence, it follows that $B[i_0/i]$ is equivalent to $\prod_{i : I} B$.
+Similar argument shows that it is also equivalent to $\coprod_{i : I} B$.
+\end{proof}
+
+\begin{prop}
+Let $\Gamma \vdash I\ \type$ and $\Gamma, i : I \vdash J\ \type$ be base types and let $\Gamma, i : I, j : J \mid \cdot \vdash B\ \ob$ be an indexed type.
+Then types $\prod_{(p : \Sigma_{i : I} J)} B[\pi_1(p)/i, \pi_2(p)/j]$ and $\prod_{i : I} \prod_{j : J} B$ are equivalent.
+Dually, types $\coprod_{(p : \Sigma_{i : I} J)} B[\pi_1(p)/i, \pi_2(p)/j]$ and $\coprod_{i : I} \coprod_{j : J} B$ are equivalent.
+\end{prop}
+\begin{proof}
+We will prove this statement for products; the case of coproducts is dual.
+To do this, it is enough to show that $\prod_{i : I} \prod_{j : J} B$ is a product of $\Gamma , p : \Sigma_{i : I} J \mid \cdot \vdash B[\pi_1(p)/i, \pi_2(p)/j]\ \ob$.
+We define projections as follows:
+\[ \lambda f.\,f\,(\pi_1(p))\,(\pi_2(p)) : \Hom(\prod_{i : I} \prod_{j : J} B, B[\pi_1(p)/i,\pi_2(p)/j]). \]
+We need to show that the following map is an equivalence:
+\begin{align*}
+& \Hom(X, \prod_{i : I} \prod_{j : J} B) \to \prod_{p : \sum_{i : I} J} \Hom(X, B[\pi_1(p)/i,\pi_2(p)/j]) \\
+& \lambda g.\,\lambda p.\,\lambda x.\,g\,x\,(\pi_1(p))\,(\pi_2(p)).
+\end{align*}
+Note that this map factors through the following maps:
+\begin{align*}
+\lambda g.\,\lambda i j.\,\lambda x.\,g\,x\,i\,j & : \Hom(X, \prod_{i : I} \prod_{j : J} B) \to \prod_{i : I} \prod_{j : J} \Hom(X,B) \\
+\lambda h p.\,h\,(\pi_1(p))\,(\pi_2(p)) & : \prod_{i : I} \prod_{j : J} \Hom(X,B) \to \prod_{p : \sum_{i : I} J} \Hom(X, B[\pi_1(p)/i,\pi_2(p)/j]).
+\end{align*}
+The first map is an equivalence since $\prod_{i : I} \prod_{j : J} B$ is a product and the fact that the second map is an equivalence is an easy exercise in the ordinary type theory.
+\end{proof}
 
 % 3. Disjoint coproducts / эквивалентные определения extensive category.
 % 4. Определить (pre)descent condition для них.
