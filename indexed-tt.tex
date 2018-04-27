@@ -240,32 +240,13 @@ As we noted before, we assume that the base theory has identity types:
 \UnaryInf$\fCenter \Gamma \vdash t : \Id_A(a,a')$
 \Axiom$\fCenter \Gamma, x : A, p : \Id_A(a,x), \Delta \vdash D\ \type$
 \noLine
-\UnaryInf$\fCenter \Gamma, \Delta[a/x,\refl(a)/p] \vdash d : D$
+\UnaryInf$\fCenter \Gamma, \Delta[a/x,\refl(a)/p] \vdash d : D[a/x,\refl(a)/p]$
 \def\extraVskip{2pt}
 \BinaryInfC{$\Gamma, \Delta[a'/x,t/p] \vdash J(a, x p \Delta.\,D, \Delta.\,d, a', t) : D[a'/x,t/p]$}
 \DisplayProof
 \end{center}
 
 \[ J(a, x p \Delta.\,D, \Delta.\,d, a, \refl(a)) = d \]
-
-We also assume that the indexed theory has $J$ operator:
-
-\begin{center}
-\def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \vdash a : A$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash a' : A$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash t : \Id_A(a,a')$
-\Axiom$\fCenter \Gamma, x : A, p : \Id_A(a,x), \Delta \mid \cdot \vdash D\ \ob$
-\noLine
-\UnaryInf$\fCenter \Gamma, \Delta[a/x,\refl(a)/p] | E[a/x,\refl(a)/p] \vdash d : D$
-\def\extraVskip{2pt}
-\BinaryInfC{$\Gamma, \Delta[a'/x,t/p] | E[a'/x,t/p] \vdash J(a, x p \Delta.\,D, \Delta E.\,d, a', t) : D[a'/x,t/p]$}
-\DisplayProof
-\end{center}
-
-\[ J(a, x p \Delta.\,D, \Delta E.\,d, a, \refl(a)) = d \]
 
 We will sometimes omit the type in the notation $\Id_A(a,a')$.
 The fact that the type $\Id(a,a')$ is inhabited will be denoted by $a \sim a'$.
@@ -325,11 +306,11 @@ An equivalence between indexed types $A$ and $B$ is a morphism $f : \Hom(A,B)$ s
 
 If the indexed theory is locally small, then not only base morphisms act on indexed types and terms, but also homotopies between them.
 Let $\Gamma \vdash a : A$ and $\Gamma \vdash a' : A$ be two base terms.
-If $\Gamma, x : A \mid \cdot \vdash B\ \ob$ be an indexed type, then we have indexed types $\Gamma \mid \cdot \vdash B[a]\ \ob$ and $\Gamma \mid \cdot \vdash B[a']\ \ob$.
+If $\Gamma, x : A \mid \cdot \vdash B\ \ob$ be an indexed type, then we have indexed types $\Gamma \mid \cdot \vdash B[a/x]\ \ob$ and $\Gamma \mid \cdot \vdash B[a'/x]\ \ob$.
 Let $\Gamma \vdash h : \Id_A(a,a')$ be homotopy between $a$ and $a'$.
-Then we can construct an equivalence between $B[a]$ and $B[a']$.
-A map $f$ from $B[a]$ to $B[a']$ is defined as $\lambda y.\,J(a, x p.\,B, y.\,y, a', h)$.
-A map $g$ from $B[a']$ to $B[a]$ is constructed similarly: $\lambda y.\,J(a', x p.\,B, y.\,y, a, \sym(h))$.
+Then we can construct an equivalence between $B[a/x]$ and $B[a'/x]$.
+A map $f : \Hom(B[a/x],B[a'/x])$ is defined as $J(a, x p.\,\Hom(B[a/x],B), \id_{B[a/x]}, a', h)$.
+A map $g : \Hom(B[a'/x],B[a/x])$ is constructed similarly: $\lambda y.\,J(a, x p.\,\Hom(B,B[a/x]), \id_{B[a/x]}, a', h)$.
 To prove that $g \circ f$ and $f \circ g$ are homotopic to identity morphisms, it is enough to eliminate $h$ using $J$ and then both $g \circ f$ and $f \circ g$ become identity morphisms.
 
 \section{Equivalences}
@@ -607,25 +588,35 @@ We need to show that the following map is an equivalence:
 Note that this map factors through the following maps:
 \begin{align*}
 \lambda g.\,\lambda i j.\,\lambda x.\,g\,x\,i\,j & : \Hom(X, \prod_{i : I} \prod_{j : J} B) \to \prod_{i : I} \prod_{j : J} \Hom(X,B) \\
-\lambda h p.\,h\,(\pi_1(p))\,(\pi_2(p)) & : \prod_{i : I} \prod_{j : J} \Hom(X,B) \to \prod_{p : \sum_{i : I} J} \Hom(X, B[\pi_1(p)/i,\pi_2(p)/j]).
+\lambda h p.\,h\,(\pi_1(p))\,(\pi_2(p)) & : (\prod_{i : I} \prod_{j : J} \Hom(X,B)) \to \prod_{p : \sum_{i : I} J} \Hom(X, B[\pi_1(p)/i,\pi_2(p)/j]).
 \end{align*}
 The first map is an equivalence since $\prod_{i : I} \prod_{j : J} B$ is a product and the fact that the second map is an equivalence is an easy exercise in the ordinary type theory.
 \end{proof}
 
+\begin{prop}
+Suppose that the base theory has the empty type $\bot$.
+Let $\Gamma, i : \bot \mid \cdot \vdash B\ \ob$ be an indexed type.
+Then $\prod_{i : \bot} B$ is terminal and $\coprod_{i : \bot} B$ is initial.
+\end{prop}
+\begin{proof}
+Since $\Hom(P, \prod_{i : \bot} B)$ is equivalent to $\Pi_{i : \bot} \Hom(P,B)$ and $\Hom(\coprod_{i : \bot} B, P)$ is equivalent $\Pi_{i : \bot} \Hom(B,P)$,
+the statement follows from the fact that $\Pi_{i : \bot} X$ is contractible for every base type $X$.
+\end{proof}
+
+% 1. Записать примеры (ко)пределов: loop space and suspension, (co)tensoring, примеры со сферами.
+% 2. Доказать утверждение про то, как строятся (ко)произведения над пушаутами, привести пример с окружностью.
 % 3. Disjoint coproducts / эквивалентные определения extensive category.
-% 4. Определить (pre)descent condition для них.
-% 5. (Локальная) декартовая замкнутость.
-% 6. Определить условие well-powered (B1.3:1.3.14).
-% 7. Вселенная Prop, ее связь с условием well-powered и прочие вселенные.
-% 8. Определить индексированные теории зависимых типов.
-% 9. Определить (pre)descent для Id, юнит-типов и сигм.
+% 4. (Локальная) декартовая замкнутость.
+% 5. Определить условие well-powered (B1.3:1.3.14).
+% 6. Вселенная Prop, ее связь с условием well-powered и прочие вселенные.
+% 7. Определить индексированные теории зависимых типов.
+% 8. Привести пример канонической нидексации базовой теории над собой.
+% 9. Определить predescent для Id и внешний пи-тип, сравнить их.
 % 10. Доказать, что в них есть конечные произведение и бесконечные тоже, если предположить их должны образом.
 % 11. Записать про коммутирование Id и Sigma с Hom справа.
 % 12. Упомянуть, что копределы могут быть и не стабильны относительно подстановок.
-% 13. Сказать про связные объекты.
-% 14. (Pre)descent condition и большие элиминаторы.
-% 15. Сравнить внешнее и внутренее определение копределов.
-% 16. Regular categories and propositional truncation?
+% 13. Сравнить внешнее и внутренее определение копределов.
+% 14. Regular categories and propositional truncation?
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
