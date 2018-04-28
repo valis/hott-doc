@@ -43,8 +43,9 @@
 
 \newcommand{\type}{\mathrm{type}}
 \newcommand{\ob}{\mathrm{type}}
+\newcommand{\term}{1}
 
-\newcommand{\fs}[1]{\mathit{#1}}
+\newcommand{\fs}[1]{\mathrm{#1}}
 \newcommand{\subst}{\fs{subst}}
 \newcommand{\Hom}{\fs{Hom}}
 \newcommand{\Id}{\fs{Id}}
@@ -443,20 +444,31 @@ $f \circ j \circ h \circ k \sim m \circ g \circ h \circ k \sim m \circ \id_D \ci
 In this section, we will work in a locally small indexed unary type theory.
 We will define specific finite (co)limits and arbitrary (co)products.
 
-\subsection{Finite (co)limits}
+\subsection{Terminal and initial types}
 
 An indexed type $T$ is \emph{terminal} if, for every indexed type $X$, the type $\Hom(X,T)$ is contractible.
 Dually, an indexed type $T$ is \emph{initial} if, for every indexed type $X$, the type $\Hom(T,X)$ is contractible.
 Terminal and initial types are unique up to unique equivalence, that is the type of equivalences between a pair of terminal or initial types is contractible.
 We will say that an indexed unary type theory \emph{has terminal (resp., initial) types} if, for every context $\Gamma$, there is a terminal (resp., initial) type $\Gamma \mid \cdot \vdash T\ \ob$.
 
+\subsection{Binary (co)products}
+
 A \emph{binary product} of indexed types $A$ and $B$ is an indexed type $A \times B$ together with a pair of maps $\pi_1 : \Hom(A \times B, A)$ and $\pi_2 : \Hom(A \times B, B)$
 such that, for every triple $C$, $f : \Hom(C,A)$, $g : \Hom(C,B)$, the type
 \[ \sum_{h : \Hom(C, A \times B)} \Id(\pi_1 \circ h, f) \times \Id(\pi_2 \circ h, g) \]
 is contractible.
 An indexed unary type theory \emph{has binary products} if a binary product exists for every pair of types in every context.
-\emph{Binary coproducts} are defined dually.
+\emph{Binary coproducts} $A \amalg B$ are defined dually.
 Binary products and binary coproducts are unique up to unique equivalence.
+
+Let $A \times B$ be an indexed type together with a pair of maps $\pi_1 : \Hom(A \times B, A)$ and $\pi_2 : \Hom(A \times B, B)$.
+Then we can define the following function for every indexed type $C$:
+\[ \lambda h.\,(\pi_1 \circ h, \pi_2 \circ h) : \Hom(C, A \times B) \to \Hom(C,A) \times \Hom(C,B). \]
+Note that the type that appears in the definition of binary products is (equivalent to) the fiber of this function over $(f,g)$.
+Thus, $A \times B$ is a binary product of $A$ and $B$ if and only if this function is an equivalence.
+This implies that $\Hom(C,-)$ preserves binary products.
+
+\subsection{(Co)equalizers}
 
 An \emph{equalizer} of a pair of maps $f,g : \Hom(A,B)$ is a map $e : \Hom(E,A)$ together with a homotopy $p : \Id(f \circ e, g \circ e)$
 such that, for all $e' : \Hom(E',A)$ and $p' : \Id(f \circ e', g \circ e')$, the following type is contractible:
@@ -465,40 +477,63 @@ An indexed unary type theory \emph{has equalizers} if an equalizer exists for ev
 \emph{Coequalizers} are defined dually.
 Equalizers and coequalizers are unique up to unique equivalence.
 
-A \emph{pullback} of a pair of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is a triple $h : \Hom(P,A)$, $k : \Hom(P,B)$, $p : \Id(f \circ h, g \circ k)$
-such that, for every triple $h' : \Hom(P',A)$, $k' : \Hom(P',B)$, $p' : \Id(f \circ h', g \circ k')$, the following type is contractible:
-\[ \sum_{i : \Hom(P',P)} \sum_{q : \Id(h', h \circ i)} \sum_{r : \Id(k \circ i, k')} \Id((q * \refl(f)) \ct (\refl(i) * p) \ct (r * \refl(g)), p'). \]
+Let $E$ be an indexed type together with a map $e : \Hom(E,A)$ and a homotopy $p : \Id(f \circ e, g \circ e)$.
+Then we can define the following function for every indexed type $E'$:
+\[ \lambda h.\,(e \circ h, \refl(h) * p) : \Hom(E', E) \to \sum_{e' : \Hom(E',A)} \Id(f \circ e', g \circ e'). \]
+Note that the type that appears in the definition of equalizers is (equivalent to) the fiber of this function over $(e',p')$.
+Thus, $E$ is an equalizer of $f$ and $g$ if and only if this function is an equivalence.
+This implies that $\Hom(E',-)$ preserves equalizers.
+
+\subsection{Pullbacks and pushouts}
+
+A \emph{pullback} of a pair of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is a triple $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \times_C B, B)$, $p : \Id(f \circ \pi_1, g \circ \pi_2)$
+such that, for every triple $\pi_1' : \Hom(P,A)$, $\pi_2' : \Hom(P,B)$, $p' : \Id(f \circ \pi_1', g \circ \pi_2')$, the following type is contractible:
+\[ \sum_{h : \Hom(P, A \times_C B)} \sum_{q : \Id(\pi_1', \pi_1 \circ h)} \sum_{r : \Id(\pi_2 \circ h, \pi_2')} \Id((q * \refl(f)) \ct (\refl(h) * p) \ct (r * \refl(g)), p'). \]
 An indexed unary type theory \emph{has pullbacks} if a pullback exists for every pair of maps with a common codomain in every context.
-\emph{Pushouts} are defined dually.
+\emph{Pushouts} $A \amalg_C B$ are defined dually.
 Pullbacks and pushouts are unique up to unique equivalence.
+
+Suppose that we have the following square which commutes up to a homotopy $p : \Id(f \circ \pi_1, g \circ \pi_2)$:
+\[ \xymatrix{ A \times_C B \ar[r]^-{\pi_1} \ar[d]_-{\pi_2}  & A \ar[d]^-f \\
+              B \ar[r]_-g                                   & C.
+            } \]
+Then we can define the following function for every indexed type $P$:
+\[ \lambda h.\,(\pi_1 \circ h, \pi_2 \circ h, \refl(h) * p) : \Hom(P, A \times_C B) \to \Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B), \]
+where the pullback of types $\Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B)$ is defined as usual:
+\[ \sum_{\pi_1' : \Hom(P,A)} \sum_{\pi_2' : \Hom(P,B)} \Id(f \circ \pi_1', g \circ \pi_2'). \]
+Note that the type that appears in the definition of pullbacks is (equivalent to) the fiber of this function over $(\pi_1',\pi_2',p')$.
+Thus, $A \times_C B$ is a pullback of $f$ and $g$ if and only if this function is an equivalence.
+This implies that $\Hom(P,-)$ preserves pullbacks.
+
+\subsection{Finite limits}
+
+We have the following standard proposition:
 
 \begin{prop}[fin-lim]
 An indexed unary type theory with terminal types has pullbacks if and only if it has equalizers and binary products.
 \end{prop}
-
-We omit the proof of this proposition since the basic idea is the same as in ordinary category theory, but actual details are very technical and messy.
+\begin{proof}
+% TODO
+\end{proof}
 
 \begin{defn}[fin-lim]
 An indexed unary type theory \emph{has finite limits} if equivalent conditions of \rprop{fin-lim} hold.
 \end{defn}
 
-The theory of terminal types is defined as follows:
-\begin{center}
-\AxiomC{}
-\UnaryInfC{$\Gamma \mid \cdot \vdash \top\ \ob$}
-\DisplayProof
-\qquad
-\AxiomC{}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{tt} : \top$}
-\DisplayProof
-\qquad
-\AxiomC{$\Gamma \mid x : A \vdash b : \top$}
-\UnaryInfC{$\Gamma \vdash \top\text{-}\fs{uni}(A, x.\,b) : \Id(\lambda x.\,b, \lambda x.\,tt)$}
-\DisplayProof
-\end{center}
+\begin{example}
+If an indexed unary type theory has a terminal type $\term$, then the \emph{loop space type} of a pointed type $Y$, $y_0 : \Hom(\term,Y)$ is the pullback of $y_0$ and $y_0$.
+Equivalently, the loop space type is the equalizer of $y_0$ and $y_0$.
+Thus, the loop space type is a type $\Omega(Y,y_0)$ together with a homotopy $\Id_{\Hom(\Omega(Y,y_0), Y)}(\lambda s.\,y_0\,\fs{tt}, \lambda s.\,y_0\,\fs{tt})$ satisfying the universal property.
+Since $\Hom(X,-)$ preserves terminal types and pullbacks, we have the following equivalence:
+\[ \Hom(X, \Omega(Y,y_0)) \simeq \Omega(\Hom(X,Y), \lambda x.\,y_0\,\fs{tt}), \]
+where the second $\Omega$ is the usual loop space base type: $\Omega(S,s_0) = \Id_S(s_0,s_0)$.
+\end{example}
 
-An indexed unary type theory has terminal types if and only if the theory of terminal types can be interpreted in it.
-Theories of products, equalizers, and pullbacks are defined similarly.
+\begin{example}
+The \emph{suspension} $\Sigma X$ of a type $X$ is the pushout of the maps $\lambda x.\,tt, \lambda x.\,tt : \Hom(X,\term)$.
+The \emph{$0$-sphere} $S^0$ is the coproduct $\term \amalg \term$.
+The \emph{$(n+1)$-sphere} $S^{n+1}$ is the suspension $\Sigma S^n$.
+\end{example}
 
 \subsection{(Co)products}
 
@@ -554,7 +589,14 @@ Of course, the theory of products can be interpreted in the theory of strict pro
 Nevertherless, these theories should be weakly equivalent.
 We will sometimes use the notation with $\lambda$ and application for weak products since we still can define these operations for them (with the caveat that the last two equalities do not hold judgementally for weak products).
 
-Let us prove a few properties of products and coproducts
+\begin{example}
+If $\Gamma \vdash I\ \type$ is a base type and $\Gamma \mid \cdot \vdash X\ \type$ is an indexed type, then the \emph{power} (or \emph{cotensor}) of $X$ by $I$ is the product $\prod_{i : I} X$.
+The \emph{copower} (or \emph{tensor}) of $X$ by $I$ is the coproduct $\coprod_{i : I} X$.
+The power will be denoted by $X^I$ and the tensor by $I \cdot X$.
+\end{example}
+
+Let us prove a few properties of products and coproducts.
+The following proposition shows that the (co)product of a contractible family of types is any type of this family:
 
 \begin{prop}
 Let $I$ be a contractible type and let $i_0$ be a point of $I$.
@@ -569,6 +611,8 @@ Thus, the type $\Sigma_{h : \Hom(P',P)} \Pi_{i : I} \Id(\pi i \circ h, \pi' i)$ 
 Since $(B[i_0/i],\pi)$ is a product and products are unique up to equivalence, it follows that $B[i_0/i]$ is equivalent to $\prod_{i : I} B$.
 Similar argument shows that it is also equivalent to $\coprod_{i : I} B$.
 \end{proof}
+
+The following proposition shows how to compute products and coproducts indexed by $\Sigma$-types:
 
 \begin{prop}
 Let $\Gamma \vdash I\ \type$ and $\Gamma, i : I \vdash J\ \type$ be base types and let $\Gamma, i : I, j : J \mid \cdot \vdash B\ \ob$ be an indexed type.
@@ -593,6 +637,8 @@ Note that this map factors through the following maps:
 The first map is an equivalence since $\prod_{i : I} \prod_{j : J} B$ is a product and the fact that the second map is an equivalence is an easy exercise in the ordinary type theory.
 \end{proof}
 
+The following proposition shows that the product of an empty family of types is the terminal object and the coproduct of such a family is initial:
+
 \begin{prop}
 Suppose that the base theory has the empty type $\bot$.
 Let $\Gamma, i : \bot \mid \cdot \vdash B\ \ob$ be an indexed type.
@@ -603,7 +649,51 @@ Since $\Hom(P, \prod_{i : \bot} B)$ is equivalent to $\Pi_{i : \bot} \Hom(P,B)$ 
 the statement follows from the fact that $\Pi_{i : \bot} X$ is contractible for every base type $X$.
 \end{proof}
 
-% 1. Записать примеры (ко)пределов: loop space and suspension, (co)tensoring, примеры со сферами.
+The following proposition shows how to compute products and coproducts indexed by pushouts:
+
+\begin{prop}
+Suppose that the base theory has the following pushout:
+\[ \xymatrix{ K \ar[r]^-g \ar[d]_-f & J \ar[d]^-{f'} \\
+              I \ar[r]_-{g'}        & \po I \amalg_K J.
+            } \]
+Let $\Gamma, s : I \amalg_K J \mid \cdot \vdash B\ \ob$ be an indexed type.
+Then we have the following canonical equivalences:
+\begin{align*}
+\prod_{s : I \amalg_K J} B & \simeq (\prod_{i : I} B[g' i/s]) \times_{(\prod_{k : K} B[g' (f k) / s])} (\prod_{j : J} B[f' j/s]) \\
+\coprod_{s : I \amalg_K J} B & \simeq (\coprod_{i : I} B[g' i/s]) \amalg_{(\coprod_{k : K} B[f' (g k) / s])} (\coprod_{j : J} B[f' j/s]).
+\end{align*}
+\end{prop}
+\begin{proof}
+We will construct the first equivalence; the second is its dual.
+First, let us define maps that appears in the pullback in the statement of this proposition.
+The map $\Hom(\prod_{i : I} B[g' i/s], \prod_{k : K} B[g' (f k) / s])$ is defined as $\lambda p.\,\lambda k.\,p\,(f\,k)$.
+One of the constructors of the pushout $I \amalg_K J$ gives us a map $h : \Pi_{k : K} \Id(f'\,(g\,k),g'\,(f\,k))$.
+The map $\Hom(\prod_{j : J} B[f' j/s], \prod_{k : K} B[g' (f k) / s])$ is defined as $\lambda p.\,\lambda k.\,h(k)_*(p\,(g\,k))$.
+
+Now, let us check that this pullback has the universal property of the product.
+% TODO
+\end{proof}
+
+The following corollary shows how to compute tensoring by different type-theoretic constructions:
+
+\begin{cor}
+We have the following canonical equivalences:
+\begin{align*}
+\bot \cdot X & \simeq 0 \\
+(I \amalg_K J) \cdot X & \simeq I \cdot X \amalg_{K \cdot X} J \cdot X \\
+\top \cdot X & \simeq X \\
+(\sum_{i : I} J) \cdot X & \simeq \coprod_{i : I} J \cdot X \\
+(\Sigma I) \cdot 1 & \simeq \Sigma (I \cdot 1) \\
+S^n \cdot 1 & \simeq S^n
+\end{align*}
+\end{cor}
+\begin{proof}
+The first four equivalences follow from previous propositions.
+The equivalence for suspension follows from previous equations since suspension is defined in terms of pushouts and terminal types.
+The last equivalence follows from previous since spheres are defined in terms of suspensions, coproducts, and terminal types.
+\end{proof}
+
+% 1. Переписать определение конечных пределов и прозведений.
 % 2. Доказать утверждение про то, как строятся (ко)произведения над пушаутами, привести пример с окружностью.
 % 3. Disjoint coproducts / эквивалентные определения extensive category.
 % 4. (Локальная) декартовая замкнутость.
