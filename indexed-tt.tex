@@ -44,6 +44,7 @@
 \newcommand{\type}{\mathrm{type}}
 \newcommand{\ob}{\mathrm{type}}
 \newcommand{\term}{1}
+\newcommand{\unit}{()}
 
 \newcommand{\fs}[1]{\mathrm{#1}}
 \newcommand{\subst}{\fs{subst}}
@@ -95,7 +96,7 @@ Such theories represent arbitrary 1-categories.
 We do not know whether indexed unary type theories represent all indexed $\infty$-categories over a given base, but it seems that this should be true at least for locally small indexed $\infty$-categories.
 
 Indexed unary type theories have four kinds of judgements:
-\[ \Gamma \vdash A\ \type \qquad \Gamma \vdash a : A \qquad \Gamma \mid \cdot \vdash A\ \ob \qquad \Gamma \mid x : A \vdash b : B \]
+\[ \Gamma \vdash A\ \type \qquad \Gamma \vdash a : A \qquad \Gamma \mid \cdot \vdash B\ \ob \qquad \Gamma \mid x : A \vdash b : B \]
 
 In each of these judgements, $\Gamma$ is a context, that is a sequence of the form $x_1 : A_1, \ldots x_n : A_n$, where $A_1$, \ldots $A_n$ are types and $x_1$, \ldots $x_n$ are pairwise distinct variables.
 Judgements $\Gamma \vdash A\ \type$ and $\Gamma \vdash a : A$ represent types and terms of the first level of the theory.
@@ -109,7 +110,7 @@ In a judgement $\Gamma \mid x : A \vdash b : B$, $x$ is a variable which is dist
 We will call such terms \emph{indexed terms}.
 Indexed types represent objects indexed by $\Gamma$ and indexed an indexed term $\Gamma \mid x : A \vdash b : B$ represents a morphism between $A$ and $B$.
 
-We have the usual rules for variables and substitutions for the indexing theory:
+We have the usual rules for variables and substitutions for the base theory:
 \begin{center}
 \AxiomC{}
 \UnaryInfC{$x_1 : A_1, \ldots x_n : A_n \vdash x_i : A_i$}
@@ -150,10 +151,10 @@ d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/
 \end{align*}
 where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
 
-For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_n)$ in the indexing theory, we have the following equation whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in $b_1$, \ldots $b_k$:
+For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_n)$ in the base theory, we have the following equation whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in $b_1$, \ldots $b_k$:
 \[ \sigma(\ldots, \overline{z_i}.\,c_i, \ldots)[b_1/y_1, \ldots b_k/y_k] = \sigma(\ldots, \overline{z_i}.\,c_i[b_1/y_1, \ldots b_k/y_k], \ldots) \]
 We also have the weakening operation which is left implicit as usual.
-This concludes the description of basic rules of the indexing theory.
+This concludes the description of basic rules of the base theory.
 They are the usual rules of a dependent type theory which we include here so that they can be compared to the rules of the indexed theory.
 
 Variables of the indexed theory represent identity morphisms and substitution represents composition:
@@ -212,7 +213,7 @@ d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/
 \end{align*}
 where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
 The first two equations correspond to the fact that reindexing preserves identity morphisms and composition in the indexed theory.
-The last two equations correspond to the fact that reindexing is functorial, that is it preserves identity morphisms and composition in the indexing theory.
+The last two equations correspond to the fact that reindexing is functorial, that is it preserves identity morphisms and composition in the base theory.
 
 For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_k)$ in the indexed theory, we have the following equation whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in $b_1$, \ldots $b_k$:
 \[ \sigma(\ldots, \overline{z_i}.\,c_i, \ldots)[b_1/y_1, \ldots b_k/y_k] = \sigma(\ldots, \overline{z_i}.\,c_i[b_1/y_1, \ldots b_k/y_k], \ldots) \]
@@ -521,16 +522,16 @@ An indexed unary type theory \emph{has finite limits} if equivalent conditions o
 \end{defn}
 
 \begin{example}
-If an indexed unary type theory has a terminal type $\term$, then the \emph{loop space type} of a pointed type $Y$, $y_0 : \Hom(\term,Y)$ is the pullback of $y_0$ and $y_0$.
+If an indexed unary type theory has a terminal type $\term$ with a point $\unit : \term$, then the \emph{loop space type} of a pointed type $Y$, $y_0 : \Hom(\term,Y)$ is the pullback of $y_0$ and $y_0$.
 Equivalently, the loop space type is the equalizer of $y_0$ and $y_0$.
-Thus, the loop space type is a type $\Omega(Y,y_0)$ together with a homotopy $\Id_{\Hom(\Omega(Y,y_0), Y)}(\lambda s.\,y_0\,\fs{tt}, \lambda s.\,y_0\,\fs{tt})$ satisfying the universal property.
+Thus, the loop space type is a type $\Omega(Y,y_0)$ together with a homotopy $\Id_{\Hom(\Omega(Y,y_0), Y)}(\lambda s.\,y_0\,\unit, \lambda s.\,y_0\,\unit)$ satisfying the universal property.
 Since $\Hom(X,-)$ preserves terminal types and pullbacks, we have the following equivalence:
-\[ \Hom(X, \Omega(Y,y_0)) \simeq \Omega(\Hom(X,Y), \lambda x.\,y_0\,\fs{tt}), \]
+\[ \Hom(X, \Omega(Y,y_0)) \simeq \Omega(\Hom(X,Y), \lambda x.\,y_0\,\unit), \]
 where the second $\Omega$ is the usual loop space base type: $\Omega(S,s_0) = \Id_S(s_0,s_0)$.
 \end{example}
 
 \begin{example}
-The \emph{suspension} $\Sigma X$ of a type $X$ is the pushout of the maps $\lambda x.\,tt, \lambda x.\,tt : \Hom(X,\term)$.
+The \emph{suspension} $\Sigma X$ of a type $X$ is the pushout of the maps $\lambda x.\,\unit, \lambda x.\,\unit : \Hom(X,\term)$.
 The \emph{$0$-sphere} $S^0$ is the coproduct $\term \amalg \term$.
 The \emph{$(n+1)$-sphere} $S^{n+1}$ is the suspension $\Sigma S^n$.
 \end{example}
@@ -695,18 +696,277 @@ The last equivalence follows from previous since spheres are defined in terms of
 
 % 1. Переписать определение конечных пределов и прозведений.
 % 2. Доказать утверждение про то, как строятся (ко)произведения над пушаутами, привести пример с окружностью.
-% 3. Disjoint coproducts / эквивалентные определения extensive category.
-% 4. (Локальная) декартовая замкнутость.
-% 5. Определить условие well-powered (B1.3:1.3.14).
-% 6. Вселенная Prop, ее связь с условием well-powered и прочие вселенные.
-% 7. Определить индексированные теории зависимых типов.
-% 8. Привести пример канонической нидексации базовой теории над собой.
-% 9. Определить predescent для Id и внешний пи-тип, сравнить их.
-% 10. Доказать, что в них есть конечные произведение и бесконечные тоже, если предположить их должны образом.
-% 11. Записать про коммутирование Id и Sigma с Hom справа.
-% 12. Упомянуть, что копределы могут быть и не стабильны относительно подстановок.
-% 13. Сравнить внешнее и внутренее определение копределов.
-% 14. Regular categories and propositional truncation?
+
+\section{Indexed dependent type theories}
+
+In this section, we define the dependent version of indexed type theories.
+
+\subsection{Basic rules}
+
+\emph{Indexed dependent type theories} have four kinds of judgements:
+\[ \Gamma \vdash A\ \type \qquad \Gamma \vdash a : A \qquad \Gamma \mid \Delta \vdash B\ \ob \qquad \Gamma \mid \Delta \vdash b : B \]
+
+In each of these judgements, $\Delta$ is an indexed context, that is a sequence of the form $y_1 : B_1, \ldots y_k : B_k$, where $B_1$, \ldots $B_k$ are indexed types and $y_1$, \ldots $y_k$ are pairwise distinct variables.
+The base theory has the same rules as the base theory in indexed unary type theories.
+The indexed theory has the following rules:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid x_1 : A_1, \ldots x_n : A_n \vdash x_i : A_i$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \mid \Delta \vdash b_1 : B_1$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta \vdash b_k : B_k[b_1/y_1, \ldots b_{k-1}/y_{k-1}]$
+\Axiom$\fCenter \Gamma \mid \Delta, y_1 : B_1, \ldots y_k : B_k \vdash C\ \type$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid \Delta \vdash C[b_1/y_1, \ldots b_k/y_k]\ \type$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \mid \Delta \vdash b_1 : B_1$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta \vdash b_k : B_k[b_1/y_1, \ldots b_{k-1}/y_{k-1}]$
+\Axiom$\fCenter \Gamma \mid \Delta, y_1 : B_1, \ldots y_k : B_k \vdash c : C$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid \Delta \vdash c[b_1/y_1, \ldots b_k/y_k] : C[b_1/y_1, \ldots b_k/y_k]$}
+\DisplayProof
+\end{center}
+
+We also have the usual equations for substitution:
+\begin{align*}
+y_i[b_1/y_1, \ldots b_k/y_k] & = b_i \\
+c[y_1/y_1, \ldots y_k/y_k] & = c \\
+d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/z_n],
+\end{align*}
+where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
+
+For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_n)$ in the indexed theory, we have the following equation whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in $b_1$, \ldots $b_k$:
+\[ \sigma(\ldots, \overline{z_i}.\,c_i, \ldots)[b_1/y_1, \ldots b_k/y_k] = \sigma(\ldots, \overline{z_i}.\,c_i[b_1/y_1, \ldots b_k/y_k], \ldots) \]
+We also have the weakening operation which is left implicit as usual.
+
+We can also substitute base terms into indexed types and terms:
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash b_1 : B_1$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash b_k : B_k[b_1/y_1, \ldots b_{k-1}/y_{k-1}]$
+\Axiom$\fCenter \Gamma, y_1 : B_1, \ldots y_k : B_k \mid \Delta \vdash C\ \ob$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid \Delta[b_1/y_1, \ldots b_k/y_k] \vdash C[b_1/y_1, \ldots b_k/y_k]\ \ob$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash b_1 : B_1$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash b_k : B_k[b_1/y_1, \ldots b_{k-1}/y_{k-1}]$
+\Axiom$\fCenter \Gamma, y_1 : B_1, \ldots y_k : B_k \mid \Delta \vdash c : C$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid \Delta[b_1/y_1, \ldots b_k/y_k] \vdash c[b_1/y_1, \ldots b_k/y_k] : C[b_1/y_1, \ldots b_k/y_k]$}
+\DisplayProof
+\end{center}
+
+These operations satisfy the following equations for all base terms $b_1$, \ldots $b_k$ and indexed terms $c_1$, \ldots $c_n$:
+\begin{align*}
+x[b_1/y_1, \ldots b_k/y_k] & = x \\
+d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/z_n],
+\end{align*}
+where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
+
+These operations satisfy the following equations for all base terms $b_1$, \ldots $b_k$, $c_1$, \ldots $c_n$:
+\begin{align*}
+c[y_1/y_1, \ldots y_k/y_k] & = c \\
+d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/z_n],
+\end{align*}
+where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
+
+Since the second level of an indexed dependent type theory is also a dependent type theory,
+we can add standard type-theoretic construction to it.
+When we add such a construction, we always assume that it is defined in every base context.
+
+Indexed dependent type theories have the same rules as indexed unary type theories.
+This means that indexed unary type theories can be interpreted in indexed dependent type theories.
+This implies that every model of an indexed dependent type theory is a model of corresponding unary theory
+(that is, there is a forgetful functor from the category of models of an indexed dependent theory to the category of models of an indexed unary theory).
+Every model of an ordinary dependent type theory (as defined in \cite{alg-tt}) is a model of an indexed dependent type theory.
+This follows from the fact that indexed type theories can be interpreted in ordinary dependent type theories.
+
+Judgements $\Gamma \mid \Delta \vdash A\ \ob$ and $\Gamma \mid \Delta \vdash a : A$ are interpreted as $\Gamma, \Delta \vdash A\ \type$ and $\Gamma, \Delta \vdash a : A$, respectively.
+All the rules of indexed dependent type theories correspond to some rules of ordinary dependent type theories.
+This interpretation will be called \emph{the canonical indexing of a dependent type theories over itself}.
+It is analogous to the canonical indexing of a cartesian category over itself.
+
+\subsection{Dependent $\Hom$-types}
+
+Since every indexed dependent type theory is an indexed unary type theory, the extensions that we discussed in the context of unary theories also applies to dependent versions.
+Note that these constructions apply only to closed indexed types.
+Sometimes we can extend the notion, so that it applies to indexed types in a non-empty context.
+
+For example, there is a notion of locally small indexed dependent type theory.
+We can also define the following dependent version of $\Hom$-types:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash B\ \ob$}
+\UnaryInfC{$\Gamma \vdash \Hom(\Delta.B)\ \type$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \Delta \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda \Delta.\,b : \Hom(\Delta.B)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Hom(\Delta.B)$}
+\AxiomC{$\Gamma \mid E \vdash a_1 : A_1\ \ldots\ \Gamma \mid E \vdash a_k : A_k[a_1/x_1, \ldots a_{k-1}/x_{k-1}]$}
+\BinaryInfC{$\Gamma \mid E \vdash f\,a_1\,\ldots\,a_k : B[a_1/x_1, \ldots a_k/x_k]$}
+\DisplayProof
+\end{center}
+where $\Delta = x_1 : A_1, \ldots x_k : A_k$.
+
+\begin{align*}
+(\lambda x_1 \ldots x_k.\,b)\,a_1\,\ldots\,a_k & = b[a_1/x_1, \ldots a_k/x_k] \\
+\lambda x_1 \ldots x_k.\,f\,x_1\,\ldots\,x_k & = f
+\end{align*}
+If $\Delta$ is empty, then we will write the application operation as $f\,()$.
+
+If we have such dependent $\Hom$-types, then we can define the following operation:
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash a : A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash a' : A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash t : \Id_A(a,a')$
+\Axiom$\fCenter \Gamma, x : A, p : \Id_A(a,x), \Delta \mid E \vdash D\ \ob$
+\noLine
+\UnaryInf$\fCenter \Gamma, \Delta[a/x,\refl(a)/p] \mid E[a/x,\refl(a)/p] \vdash d : D[a/x,\refl(a)/p]$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma, \Delta[a'/x,t/p] \mid E[a'/x,t/p] \vdash J(a, x p \Delta E.\,D, \Delta E.\,d, a', t) : D[a'/x,t/p]$}
+\DisplayProof
+\end{center}
+
+\[ J(a, x p \Delta E.\,D, \Delta E.\,d, a, \refl(a)) = d \]
+
+Indeed, we define $J(a, x p \Delta E.\,D, \Delta E.\,d, a', t)$ as follows:
+\[ J(a, x p \Delta.\,\Hom(E.D), \Delta.\,\lambda E.\,d, a', t)\,y_1\,\ldots\,y_k, \]
+where $E = y_1 : B_1, \ldots y_k : B_k$.
+If we do not assume dependent $\Hom$-types, then we need to add this operation explicitly.
+If the indexed theory has identity types, then we can define the following operation:
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Id_{\Hom(A,B)}(f,g)$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{hap}(p,a) : \Id_B(f\,a,g\,a)$}
+\DisplayProof
+\end{center}
+It is defined as follows:
+\[ \fs{hap}(p,a) = J(f, h q.\,\Id_B(f\,a,h\,a), \refl(f\,a), g, p). \]
+
+We will say that identity types are \emph{extensional} if $\fs{hap}$ is an equivalence.
+More precisely, the theory of extensional identity types has the following constructions:
+\begin{center}
+\AxiomC{$\Gamma \mid x : A \vdash p : \Id_{B}(f\,x,g\,x)$}
+\UnaryInfC{$\Gamma \vdash \fs{hap^{-1}}(x.\,p) : \Id_{\Hom(A,B)}(f,g)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid x : A \vdash p : \Id_{B}(f\,x,g\,x)$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{hap'}(x.\,p,a) : \Id_B(\fs{hap}(\fs{hap^{-1}}(x.\,p),a),p[a/x])$}
+\DisplayProof
+\end{center}
+\medskip
+The standard argument implies that we also have the following homotopy:
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Id_{\Hom(A,B)}(f,g)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{hap''}(p) : \Id(\fs{hap^{-1}}(x.\,\fs{hap}(p,x)),p)$}
+\DisplayProof
+\end{center}
+If we have dependent $\Hom$-types, then identity types are extensional if and only if the following function is an equivalence:
+\[ \lambda p.\,\lambda x.\,\fs{hap}(p,x) : \Id_{\Hom(A,B)}(f,g) \to \Hom(A, x.\,\Id_B(f\,x,g\,x)). \]
+
+\begin{example}
+The canonical indexing of a dependent type theory over itself is locally small if and only if it has non-dependent function types.
+It has dependent $\Hom$-types if and only if it has $\Pi$-types.
+It has extensional identity types if and only if it has identity types and the functional extensionality.
+\end{example}
+
+\subsection{Weak dependent $\Hom$-types}
+
+If the indexed theory has extensional identity types, $\Sigma$-types, and the unit type, then we can define a weak version of dependent $\Hom$-types:
+\[ \Hom(\Delta.B) = \sum_{f : \Hom(\Sigma(\Delta),\Sigma_{p : \Sigma(\Delta)} B[\pi_1(p)/x_1, \ldots \pi_k(p)/x_k])} \Id(\pi_1 \circ f, \id_{\Sigma(\Delta)}), \]
+where $\Delta = x_1 : A_1, \ldots x_k : A_k$ and $\Sigma(\Delta)$ is defined inductively:
+\begin{align*}
+\Sigma(\cdot) & = \top \\
+\Sigma(x : A, \Delta) & = \sum_{x : A} \Sigma(\Delta).
+\end{align*}
+The abstraction is defined as follows:
+\[ \lambda x_1 \ldots x_k.\,b = (\lambda p.\,(p, b[\pi_1(p)/x_1, \ldots \pi_k(p)/x_k]), \refl(\id_{\Sigma(\Delta)})). \]
+The application is defined as follows:
+\[ f\,a_1\,\ldots\,a_k = \fs{hap}(\pi_2(f),(a_1, \ldots a_k))_*(\pi_2(\pi_1(f)\,(a_1, \ldots a_k))). \]
+The beta rule holds judgementally, but the eta rule holds only propositionally.
+Indeed, $\lambda x_1 \ldots x_k.\,f\,x_1\,\ldots\,x_k$ equals to
+\[ (\lambda p.\,(p,\fs{hap}(\pi_2(f),p')_*(\pi_2(\pi_1(f)\,p'))), \refl(\id_{\Sigma(\Delta)})), \]
+where $p' = (\pi_1(p), \ldots \pi_k(p))$.
+To prove that it is homotopic to $f$, we need to construct a homotopy of the following type:
+\[ h : \Id(\pi_1(f), \lambda p.\,(p,\fs{hap}(\pi_2(f),p')_*(\pi_2(\pi_1(f)\,p')))) \]
+such that $h * \refl(\pi_1)$ is homotopic to $\pi_2(f)$.
+To construct such a homotopy, we can use $\fs{hap^{-1}}$.
+Then we need to define two homotopies for every $p : \Sigma(\Delta)$:
+\begin{align*}
+h_1 & : \Id(\pi_1(\pi_1(f)\,p),p) \\
+h_2 & : \Id((h_1)_*(\pi_2(\pi_1(f)\,p)),\fs{hap}(\pi_2(f),p')_*(\pi_2(\pi_1(f)\,p')))
+\end{align*}
+The condition that $h * \refl(\pi_1)$ is homotopic to $\pi_2(f)$ is satisfied if we put $h_1 = \fs{hap}(\pi_2(f),p)$.
+Finally, to construct $h_2$, it is enough to note that $p'$ is homotopic to $p$.
+
+Thus, the theory of dependent $\Hom$-types is a slightly stricter version of the theory of $\Hom$-types.
+This is similar to the theory of $\Pi$-types being a strict version of the theory of non-dependent function types.
+
+We can define a dependent version of $\fs{hap}$:
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Id_{\Hom(\Delta,B)}(f,g)$}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \mid E \vdash a_1 : A_1$
+\noLine
+\UnaryInf$\fCenter \ldots$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid E \vdash a_k : A_k[a_1/x_1, \ldots a_{k-1}/x_{k-1}]$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid E \vdash \fs{hap}(p, a_1, \ldots a_k) : \Id_{B[a_1/x_1, \ldots a_k/x_k]}(f\,a_1\,\ldots\,a_k,g\,a_1\,\ldots\,a_k)$}
+\DisplayProof
+\end{center}
+It is defined as follows:
+\[ \fs{hap}(p, a_1, \ldots a_k) = J(f, h q.\,\Id(f\,a_1\,\ldots\,a_k,h\,a_1\,\ldots\,a_k), \refl(f\,a_1\,\ldots\,a_k), g, p). \]
+It is straightforward to check that if identity types are extensional, then the following function is an equivalence:
+\begin{align*}
+& \Id_{\Hom(x_1 \ldots x_k.B)}(f,g) \to \Hom(x_1 \ldots x_k.\,\Id_B(f\,x_1\,\ldots\,x_k,g\,x_1\,\ldots\,x_k)) \\
+& \lambda p.\,\lambda x_1 \ldots x_k.\,\fs{hap}(p, x_1, \ldots x_k).
+\end{align*}
+
+% 3. (Локальная) декартовая замкнутость.
+% 4. Вселенная Prop и прочие вселенные.
+% 5. Доказать, что в indexed dependent type theories есть конечные произведение и бесконечные тоже, если предположить их должны образом.
+% 6. Записать про коммутирование Id и Sigma с Hom справа.
+% 7. Упомянуть, что копределы могут быть и не стабильны относительно подстановок.
+% 8. Сравнить внешнее и внутренее определение копределов.
+% 9. Regular categories and propositional truncation?
+% 10. Other factorization systems, modalities, and localizations?
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
