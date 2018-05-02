@@ -959,14 +959,137 @@ It is straightforward to check that if identity types are extensional, then the 
 & \lambda p.\,\lambda x_1 \ldots x_k.\,\fs{hap}(p, x_1, \ldots x_k).
 \end{align*}
 
-% 3. (Локальная) декартовая замкнутость.
-% 4. Вселенная Prop и прочие вселенные.
-% 5. Доказать, что в indexed dependent type theories есть конечные произведение и бесконечные тоже, если предположить их должны образом.
-% 6. Записать про коммутирование Id и Sigma с Hom справа.
-% 7. Упомянуть, что копределы могут быть и не стабильны относительно подстановок.
-% 8. Сравнить внешнее и внутренее определение копределов.
-% 9. Regular categories and propositional truncation?
-% 10. Other factorization systems, modalities, and localizations?
+\section{Limits and colimits in indexed dependent type theories}
+
+In this section, we discuss the concepts of limits and colimits in indexed dependent type theories.
+
+\subsection{Finite limits}
+
+Clearly, an indexed dependent type theory has a terminal type if and only if it has a closed contractible type.
+For example, this is true when it has the unit type.
+If an indexed dependent type theory has extensional identity types and $\Sigma$-types, then it has pullbacks.
+Indeed, we can define a pullback of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ as $A \times_C B = \Sigma_{x : A} \Sigma_{y : B} \Id_C(f\,x,g\,y)$
+with the obvious projections $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \times_C B, B)$ and the obvious homotopy between $f \circ \pi_1$ and $g \circ \pi_2$: namely, $\fs{hap^{-1}}(p.\,\pi_3(p))$.
+We need to show that the following map is equivalence:
+\begin{align*}
+& \Hom(P, A \times_C B) \to \sum_{F : \Hom(P,A)} \sum_{G : \Hom(P,B)} \Id(f \circ F, g \circ G) \\
+& \lambda s.\,(\pi_1 \circ s, \pi_2 \circ s, \refl(s) * \fs{hap^{-1}}(p.\,\pi_3(p))).
+\end{align*}
+The inverse of this map is defined as follows:
+\[ \lambda t.\,\lambda p.\,(\pi_1(t)\,p, \pi_2(t)\,p, \fs{hap}(\pi_3(t),p)). \]
+It is easy to see that these functions are inverse of each other using the fact that $\refl(s) * \fs{hap^{-1}}(p.\,\pi_3(p)) = \fs{hap^{-1}}(p.\,\pi_3(s\,p))$.
+
+The following proposition shows that $\Hom(x_1 \ldots x_n.\,-)$ commutes with $\Sigma$-types and identity types:
+\begin{prop}
+If an indexed dependent type theory has extensional identity types and $\Sigma$-types, then it has the following canonical equivalences:
+\begin{align*}
+\Hom(x_1 \ldots x_n.\,\Id_A(a,a')) & \simeq \Id_{\Hom(x_1 \ldots x_n. A)}(\lambda x_1 \ldots x_n.\,a, \lambda x_1 \ldots x_n.\,a') \\
+\Hom(x_1 \ldots x_n.\,\sum_{y : A} B) & \simeq \sum_{f : \Hom(x_1 \ldots x_n. A)} \Hom(x_1 \ldots x_n.\,B[f\,x_1\,\ldots\,x_n / y]).
+\end{align*}
+\end{prop}
+\begin{proof}
+The first equivalence is simly the extensionality for identity types.
+The second equivalence is defined as follows:
+\begin{align*}
+& \lambda g.\,(\lambda x_1 \ldots x_n.\,\pi_1\,(g\,x_1\,\ldots\,x_n), \lambda x_1 \ldots x_n.\,\pi_2\,(g\,x_1\,\ldots\,x_n)) \\
+& \lambda p.\,\lambda x_1 \ldots x_n.\,(\pi_1(p)\,x_1\,\ldots\,x_n, \pi_2(p)\,x_1\,\ldots\,x_n)
+\end{align*}
+It is easy to see that these functions are mutually inverse.
+\end{proof}
+
+\subsection{Initial types}
+
+Finite colimits can be defined in an indexed dependent type theory as higher inductive types.
+We need to be careful since the usual definition gives us finite colimits which are stable under pullbacks.
+If we want a definition of general finite colimits, then we need to modify the rules for higher inductive types slightly.
+
+Let us consider the following version of the empty type:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \Delta \vdash 0\ \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid x : 0 \vdash D\ \type$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash 0\text{-}\fs{elim}(x.D,a) : D[a/x]$}
+\DisplayProof
+\end{center}
+Note that we can eliminate $0$ only into a type which have only one free variable of type $0$.
+
+\begin{prop}
+If an indexed dependent type theory has extensional identity types and $\Sigma$-types, then it has the $0$ type if and only if it has an initial type.
+\end{prop}
+\begin{proof}
+Suppose that the theory has the $0$ type.
+Then it is initial.
+Indeed, we can define a map $\lambda x.\,0\text{-}\fs{elim}(y.D,x) : \Hom(0,D)$.
+If $f,g : \Hom(0,D)$, then we can define a homotopy between them as $\fs{hap^{-1}}(x.\,0\text{-}\fs{elim}(y.\,\Id_D(f\,y,g\,y),x)) : \Id(f,g)$.
+
+Suppose that the theory has an initial type.
+Then it is the $0$ type.
+Indeed, we can define $0\text{-}\fs{elim}(x.D,a)$ as $\fs{hap}(h,a)_*(\pi_2(f\,a))$, where $f : \Hom(0,\Sigma_{x : 0} D)$ is any map and $h$ is any homotopy between $\pi_1 \circ f$ and $\id_0$.
+\end{proof}
+
+We will say that the initial type $0$ in an indexed unary type theory is \emph{stable under products} if, for every type $B$ such that the product $B \times 0$ exists, this product is initial.
+
+\begin{prop}
+Let $0$ be a type in an indexed dependent type theory has extensional identity types and $\Sigma$-types.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:init-first} The theory has the following rule:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, x : 0, E \vdash D\ \type$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
+\BinaryInfC{$\Gamma \mid \Delta, E[a/x] \vdash 0\text{-}\fs{elim''}(x E.D,a) : D[a/x]$}
+\DisplayProof
+\end{center}
+\item \label{it:init-second} The theory has the following rule:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash D\ \type$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash 0\text{-}\fs{elim'}(D,a) : D$}
+\DisplayProof
+\end{center}
+\item \label{it:init-third} For every map $f : \Hom(B,0)$, the type $B$ is initial.
+\item \label{it:init-fourth} The type $0$ is a stable under products initial type.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+\eqref{it:init-first} $\Rightarrow$ \eqref{it:init-second}
+This is obvious since $0\text{-}\fs{elim'}$ is a special case of $0\text{-}\fs{elim''}$.
+
+\eqref{it:init-second} $\Rightarrow$ \eqref{it:init-third}
+For every type $C$, we can define a map $\lambda x.\,0\text{-}\fs{elim'}(C,f\,x) : \Hom(B,C)$.
+Let $g_1,g_2 : \Hom(B,C)$ be a pair of maps.
+Then we can define a homotopy between them as follows:
+\[ \fs{hap^{-1}}(x.\,0\text{-}\fs{elim'}(\Id_C(g_1\,x,g_2\,x),f\,x)) : \Id(g_1,g_2). \]
+
+\eqref{it:init-third} $\Rightarrow$ \eqref{it:init-fourth}
+Since we have the map $\id_0 : \Hom(0,0)$, the type $0$ is initial.
+Moreover, since we have the projection $\pi_2 : \Hom(B \times 0, 0)$, every product $B \times 0$ is also initial.
+
+\eqref{it:init-fourth} $\Rightarrow$ \eqref{it:init-third}
+It is enough to prove that $B$ is equivalent to $B \times 0$ since the latter type is initial.
+We have maps $\langle \id_B, f \rangle : \Hom(B, B \times 0)$ and $\pi_1 : B \times 0 \to B$.
+It is clear that $\pi_1 \circ \langle id_B, f \rangle$ is homotopic to $\id_B$.
+The map $\langle \id_B, f \rangle \circ \pi_1$ is homotopic to $\id_{B \times 0}$ since $B \times 0$ is initial.
+
+\eqref{it:init-third} $\Rightarrow$ \eqref{it:init-first}
+Let $\Delta = x_1 : A_1, \ldots x_m : A_m$ and $E = y_1 : C_1, \ldots y_n : C_n$.
+Let $B = \Sigma(\Delta, x : 0, E)$.
+Since we have the projection $\pi_{m+1} : \Hom(B,0)$, the type $B$ is initial.
+Thus, we have a map $f : \Hom(B, \Sigma_{b : B} D')$, where
+\[ D' = D[\pi_1(b)/x_1, \ldots \pi_m(b)/x_m, \pi_{m+1}(b)/x, \pi_{m+2}(b)/y_1, \ldots \pi_{m+n+1}(b)/y_n]. \]
+We also have a homotopy $h : \Id(\pi_1 \circ f, \id_B)$.
+Now, we can define $0\text{-}\fs{elim''}(x E.D, a)$ as $\fs{hap}(h,p)_*(\pi_2(f\,p))$, where $p = (x_1, \ldots x_m, a, y_1, \ldots y_n)$.
+\end{proof}
+
+% 3. Доказать, что в indexed dependent type theories есть конечные произведение и бесконечные тоже, если предположить их должны образом.
+% 4. Сравнить внешнее и внутренее определение копределов.
+% 5. (Локальная) декартовая замкнутость.
+% 6. Вселенная Prop и прочие вселенные.
+% 7. Regular categories and propositional truncation?
+% 8. Other factorization systems, modalities, and localizations?
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
