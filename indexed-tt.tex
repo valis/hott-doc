@@ -445,68 +445,41 @@ $f \circ j \circ h \circ k \sim m \circ g \circ h \circ k \sim m \circ \id_D \ci
 In this section, we will work in a locally small indexed unary type theory.
 We will define specific finite (co)limits and arbitrary (co)products.
 
-\subsection{Terminal and initial types}
+\subsection{Finite (co)limits}
 
 An indexed type $T$ is \emph{terminal} if, for every indexed type $X$, the type $\Hom(X,T)$ is contractible.
 Dually, an indexed type $T$ is \emph{initial} if, for every indexed type $X$, the type $\Hom(T,X)$ is contractible.
 Terminal and initial types are unique up to unique equivalence, that is the type of equivalences between a pair of terminal or initial types is contractible.
 We will say that an indexed unary type theory \emph{has terminal (resp., initial) types} if, for every context $\Gamma$, there is a terminal (resp., initial) type $\Gamma \mid \cdot \vdash T\ \ob$.
 
-\subsection{Binary (co)products}
-
 A \emph{binary product} of indexed types $A$ and $B$ is an indexed type $A \times B$ together with a pair of maps $\pi_1 : \Hom(A \times B, A)$ and $\pi_2 : \Hom(A \times B, B)$
-such that, for every triple $C$, $f : \Hom(C,A)$, $g : \Hom(C,B)$, the type
-\[ \sum_{h : \Hom(C, A \times B)} \Id(\pi_1 \circ h, f) \times \Id(\pi_2 \circ h, g) \]
-is contractible.
+such that the following function is an equivalence for every indexed type $C$:
+\[ \lambda h.\,(\pi_1 \circ h, \pi_2 \circ h) : \Hom(C, A \times B) \to \Hom(C,A) \times \Hom(C,B). \]
+The inverse of this function will be denoted by $\langle -, - \rangle$.
 An indexed unary type theory \emph{has binary products} if a binary product exists for every pair of types in every context.
 \emph{Binary coproducts} $A \amalg B$ are defined dually.
-Binary products and binary coproducts are unique up to unique equivalence.
-
-Let $A \times B$ be an indexed type together with a pair of maps $\pi_1 : \Hom(A \times B, A)$ and $\pi_2 : \Hom(A \times B, B)$.
-Then we can define the following function for every indexed type $C$:
-\[ \lambda h.\,(\pi_1 \circ h, \pi_2 \circ h) : \Hom(C, A \times B) \to \Hom(C,A) \times \Hom(C,B). \]
-Note that the type that appears in the definition of binary products is (equivalent to) the fiber of this function over $(f,g)$.
-Thus, $A \times B$ is a binary product of $A$ and $B$ if and only if this function is an equivalence.
-This implies that $\Hom(C,-)$ preserves binary products.
-
-\subsection{(Co)equalizers}
 
 An \emph{equalizer} of a pair of maps $f,g : \Hom(A,B)$ is a map $e : \Hom(E,A)$ together with a homotopy $p : \Id(f \circ e, g \circ e)$
-such that, for all $e' : \Hom(E',A)$ and $p' : \Id(f \circ e', g \circ e')$, the following type is contractible:
-\[ \sum_{h : \Hom(E',E)} \sum_{q : \Id(e', e \circ h)} \Id(q_*(p'), \pmap(x.\,x \circ h, p)). \]
+such that the following function is an equivalence for every indexed type $E'$:
+\[ \lambda h.\,(e \circ h, \refl(h) * p) : \Hom(E', E) \to \sum_{e' : \Hom(E',A)} \Id(f \circ e', g \circ e'). \]
 An indexed unary type theory \emph{has equalizers} if an equalizer exists for every parallel pair of maps in every context.
 \emph{Coequalizers} are defined dually.
-Equalizers and coequalizers are unique up to unique equivalence.
-
-Let $E$ be an indexed type together with a map $e : \Hom(E,A)$ and a homotopy $p : \Id(f \circ e, g \circ e)$.
-Then we can define the following function for every indexed type $E'$:
-\[ \lambda h.\,(e \circ h, \refl(h) * p) : \Hom(E', E) \to \sum_{e' : \Hom(E',A)} \Id(f \circ e', g \circ e'). \]
-Note that the type that appears in the definition of equalizers is (equivalent to) the fiber of this function over $(e',p')$.
-Thus, $E$ is an equalizer of $f$ and $g$ if and only if this function is an equivalence.
-This implies that $\Hom(E',-)$ preserves equalizers.
-
-\subsection{Pullbacks and pushouts}
 
 A \emph{pullback} of a pair of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is a triple $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \times_C B, B)$, $p : \Id(f \circ \pi_1, g \circ \pi_2)$
-such that, for every triple $\pi_1' : \Hom(P,A)$, $\pi_2' : \Hom(P,B)$, $p' : \Id(f \circ \pi_1', g \circ \pi_2')$, the following type is contractible:
-\[ \sum_{h : \Hom(P, A \times_C B)} \sum_{q : \Id(\pi_1', \pi_1 \circ h)} \sum_{r : \Id(\pi_2 \circ h, \pi_2')} \Id((q * \refl(f)) \ct (\refl(h) * p) \ct (r * \refl(g)), p'). \]
-An indexed unary type theory \emph{has pullbacks} if a pullback exists for every pair of maps with a common codomain in every context.
-\emph{Pushouts} $A \amalg_C B$ are defined dually.
-Pullbacks and pushouts are unique up to unique equivalence.
-
-Suppose that we have the following square which commutes up to a homotopy $p : \Id(f \circ \pi_1, g \circ \pi_2)$:
-\[ \xymatrix{ A \times_C B \ar[r]^-{\pi_1} \ar[d]_-{\pi_2}  & A \ar[d]^-f \\
-              B \ar[r]_-g                                   & C.
-            } \]
-Then we can define the following function for every indexed type $P$:
+such that the following function is an equivalence for every indexed type $P'$:
 \[ \lambda h.\,(\pi_1 \circ h, \pi_2 \circ h, \refl(h) * p) : \Hom(P, A \times_C B) \to \Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B), \]
 where the pullback of types $\Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B)$ is defined as usual:
 \[ \sum_{\pi_1' : \Hom(P,A)} \sum_{\pi_2' : \Hom(P,B)} \Id(f \circ \pi_1', g \circ \pi_2'). \]
-Note that the type that appears in the definition of pullbacks is (equivalent to) the fiber of this function over $(\pi_1',\pi_2',p')$.
-Thus, $A \times_C B$ is a pullback of $f$ and $g$ if and only if this function is an equivalence.
-This implies that $\Hom(P,-)$ preserves pullbacks.
+An indexed unary type theory \emph{has pullbacks} if a pullback exists for every pair of maps with a common codomain in every context.
+\emph{Pushouts} $A \amalg_C B$ are defined dually.
 
-\subsection{Finite limits}
+\begin{remark}
+Binary (co)products, (co)equalizers, pullbacks, and pushouts are unique up to unique equivalence.
+\end{remark}
+
+\begin{remark}
+The function $\Hom(C,-)$ preserves binary products, equalizers, and pullbacks.
+\end{remark}
 
 We have the following standard proposition:
 
@@ -514,7 +487,32 @@ We have the following standard proposition:
 An indexed unary type theory with terminal types has pullbacks if and only if it has equalizers and binary products.
 \end{prop}
 \begin{proof}
-% TODO
+First, suppose that the theory has a terminal type $1$ and pullbacks.
+Then we can define a product of types $A$ and $B$ as the pullback of unique maps $!_A : \Hom(A,1)$ and $!_B : \Hom(B,1)$.
+Since $\Hom(P,1)$ is contractible, the obvious projection $\Hom(P,A) \times_{\Hom(P,1)} \Hom(P,B) \to \Hom(P,A) \times \Hom(P,B)$ is an equivalence.
+This implies that $A \times_1 B$ is a product of $A$ and $B$.
+
+An equalizer of maps $f,g : \Hom(A,B)$ can be defined as the pullback of $\langle \id_B, \id_B \rangle : \Hom(B, B \times B)$ along $\langle f, g \rangle : \Hom(A, B \times B)$:
+\[ \xymatrix{ E \ar[r]^s \ar[d]_e & B \ar[d]^{\langle \id_B, \id_B \rangle} \\
+              A \ar[r]_-{\langle f, g \rangle} & B \times B
+            } \]
+By the definition of products, the type of homotopies $\Id_{\Hom(P, B \times B)}(r,r')$ is equivalent to the type $\Id_{\Hom(P,B)}(\pi_1 \circ r, \pi_1 \circ r') \times \Id_{\Hom(P,B)}(\pi_2 \circ r, \pi_2 \circ r')$.
+Thus, by the definition of pushouts, we have the following equivalence:
+\begin{align*}
+& \Hom(P,E) \to \sum_{a : \Hom(P,A)} \sum_{b : \Hom(P,B)} \Id(f \circ a, b) \times \Id(g \circ a, b) \\
+& \lambda q.\,(e \circ q, s \circ q, \refl(q) * h_1, \refl(q) * h_2),
+\end{align*}
+where $h_1 : \Id(f \circ e, s)$ and $h_2 : \Id(g \circ e, s)$ are certain homotopies.
+The codomain of this function is equivalent to $\Sigma_{a : \Hom(P,A)} \Id(f \circ a, g \circ a)$.
+This implies that we have the following equivalence:
+\[ \lambda q.\,(e \circ q, \refl(q) * (h_1 \ct \sym(h_2))) : \Hom(P,E) \to \sum_{a : \Hom(P,A)} \Id(f \circ a, g \circ a). \]
+Thus, we can define an equalizer of maps $f$ and $g$ as the triple $E$, $e$, $h_1 \ct \sym(h_2)$.
+
+Now, suppose that the theory has binary products and equalizers.
+Let $f : \Hom(A,C)$ and $g : \Hom(B,C)$ be a pair of maps.
+Let $e : P \to A \times B$, $h : \Id(f \circ \pi_1 \circ e, g \circ \pi_2 \circ e)$ be the equalizer of the maps $f \circ \pi_1, g \circ \pi_2 : A \times B \to C$.
+Then we can define a pullback of $f$ and $g$ as the triple $\pi_1 \circ e$, $\pi_2 \circ e$, $h$.
+The universal property of equalizers implies the universal property of pullbacks.
 \end{proof}
 
 \begin{defn}[fin-lim]
