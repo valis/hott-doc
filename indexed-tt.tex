@@ -1003,31 +1003,23 @@ Finite colimits can be defined in an indexed dependent type theory as higher ind
 We need to be careful since the usual definition gives us finite colimits which are stable under pullbacks.
 If we want a definition of general finite colimits, then we need to modify the rules for higher inductive types slightly.
 
-Let us consider the following version of the empty type:
+\begin{prop}
+Let $0$ be a type in an indexed dependent type theory has extensional identity types and $\Sigma$-types.
+Then $0$ is initial if and only if the theory has the following rules:
 \begin{center}
-\AxiomC{}
-\UnaryInfC{$\Gamma \mid \Delta \vdash 0\ \ob$}
-\DisplayProof
-\qquad
 \AxiomC{$\Gamma \mid x : 0 \vdash D\ \type$}
 \AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
 \BinaryInfC{$\Gamma \mid \Delta \vdash 0\text{-}\fs{elim}(x.D,a) : D[a/x]$}
 \DisplayProof
 \end{center}
-Note that we can eliminate $0$ only into a type which have only one free variable of type $0$.
-
-\begin{prop}
-If an indexed dependent type theory has extensional identity types and $\Sigma$-types, then it has the $0$ type if and only if it has an initial type.
 \end{prop}
 \begin{proof}
-Suppose that the theory has the $0$ type.
-Then it is initial.
-Indeed, we can define a map $\lambda x.\,0\text{-}\fs{elim}(y.D,x) : \Hom(0,D)$.
-If $f,g : \Hom(0,D)$, then we can define a homotopy between them as $\fs{hap^{-1}}(x.\,0\text{-}\fs{elim}(y.\,\Id_D(f\,y,g\,y),x)) : \Id(f,g)$.
+If $0$ is initial, then we can define $0\text{-}\fs{elim}(x.D,a)$ as $\fs{hap}(h,a)_*(\pi_2(f\,a))$, where $f : \Hom(0,\Sigma_{x : 0} D)$ is any map and $h$ is any homotopy between $\pi_1 \circ f$ and $\id_0$.
 
-Suppose that the theory has an initial type.
-Then it is the $0$ type.
-Indeed, we can define $0\text{-}\fs{elim}(x.D,a)$ as $\fs{hap}(h,a)_*(\pi_2(f\,a))$, where $f : \Hom(0,\Sigma_{x : 0} D)$ is any map and $h$ is any homotopy between $\pi_1 \circ f$ and $\id_0$.
+Conversely, suppose that the theory has the the rule $0\text{-}\fs{elim}$.
+Then, for every type $D$, we can define a map $\lambda x.\,0\text{-}\fs{elim}(y.D,x) : \Hom(0,D)$.
+For all maps $f,g : \Hom(0,D)$, we can define a homotopy between them as follows:
+\[ \fs{hap^{-1}}(x.\,0\text{-}\fs{elim}(y.\,\Id_D(f\,y,g\,y),x)) : \Id(f,g). \]
 \end{proof}
 
 We will say that the initial type $0$ in an indexed unary type theory is \emph{stable under products} if, for every type $B$ such that the product $B \times 0$ exists, this product is initial.
@@ -1083,6 +1075,68 @@ Thus, we have a map $f : \Hom(B, \Sigma_{b : B} D')$, where
 We also have a homotopy $h : \Id(\pi_1 \circ f, \id_B)$.
 Now, we can define $0\text{-}\fs{elim''}(x E.D, a)$ as $\fs{hap}(h,p)_*(\pi_2(f\,p))$, where $p = (x_1, \ldots x_m, a, y_1, \ldots y_n)$.
 \end{proof}
+
+\subsection{Pushouts}
+
+Let $f : \Hom(A,B)$ and $g : \Hom(A,C)$ be a pair of maps.
+Suppose that we have the following rules:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \Delta \vdash B \amalg_A C\ \ob$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash b : B$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{inl}(b) : B \amalg_A C$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \Delta \vdash c : C$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{inr}(c) : B \amalg_A C$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{glue}(a) : \Id(\fs{inl}(f\,a),\fs{inr}(g\,a))$}
+\DisplayProof
+\end{center}
+\medskip
+
+We will say that the type $B \amalg_A C$ together with $\fs{inl}$, $\fs{inr}$, and $\fs{glue}$ is a \emph{weak dependent pushout} of $f$ and $g$ if the following rules are derivable:
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \mid z : B \amalg_A C \vdash D\ \ob$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta \vdash t : A \amalg_C B$
+\Axiom$\fCenter \Gamma \mid \Delta, x : B \vdash d_1 : D[\fs{inl}(x)/z]$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta, y : C \vdash d_2 : D[\fs{inr}(y)/z]$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta, w : A \vdash d_3 : \Id(\fs{glue}(w)_*(d_1[f\,w/x]), d_2[g\,w/y])$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \amalg\text{-}\fs{elim}(z.D, x.d_1, y.d_2, w.d_3, t) : D[t/z]$}
+\DisplayProof
+\end{center}
+\medskip
+
+We will omit all of the arguments of $\amalg\text{-}\fs{elim}$ except the last one.
+
+\begin{align*}
+h_1(b) & : \Id(\amalg\text{-}\fs{elim}(\fs{inl}(b)), d_1[b/x]) \\
+h_2(c) & : \Id(\amalg\text{-}\fs{elim}(\fs{inr}(c)), d_2[c/x])
+\end{align*}
+
+\[ \xymatrix{ \fs{glue}(a)_*(\amalg\text{-}\fs{elim}(\fs{inl}(f\,a))) \ar@{=}[r] \ar@{=}[d] & \fs{glue}(a)_*(d_1[f\,a/x]) \ar@{=}[d]^{d_3[a/w]} \\
+              \amalg\text{-}\fs{elim}(\fs{inr}(g\,a)) \ar@{=}[r]_-{h_2(g\,a)} & d_2[g\,a/x]
+            } \]
+The last square must commute up to a homotopy $h_3(a)$.
+The left arrow is
+\[ J(\fs{inl}(f\,a), v p.\,\Id(p_*(\amalg\text{-}\fs{elim}(\fs{inl}(f\,a))), \amalg\text{-}\fs{elim}(v)), \refl, \fs{inr}(g\,a), \fs{glue}(a)). \]
+The top arrow is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a))$.
 
 % 3. Доказать, что в indexed dependent type theories есть конечные произведение и бесконечные тоже, если предположить их должны образом.
 % 4. Сравнить внешнее и внутренее определение копределов.
