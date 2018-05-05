@@ -535,6 +535,7 @@ The \emph{$(n+1)$-sphere} $S^{n+1}$ is the suspension $\Sigma S^n$.
 \end{example}
 
 \subsection{(Co)products}
+\label{sec:products}
 
 A \emph{product} of an indexed type $\Gamma, i : I \mid \cdot \vdash B\ \ob$ is an indexed type $\Gamma \mid \cdot \vdash P\ \ob$ together with a term $\Gamma, i : I \vdash \pi : \Hom(P,B)$
 such that the function $\pi \circ -$ has an inverse in the sense that there is a rule of the form
@@ -579,9 +580,9 @@ We can also define the theory of \emph{strict products}:
 \UnaryInfC{$\Gamma \mid \cdot \vdash \prod_{i : I} B\ \ob$}
 \DisplayProof
 \qquad
-\AxiomC{$\Gamma \mid \cdot \vdash A\ \ob$}
-\AxiomC{$\Gamma, i : I \mid x : A \vdash b : B$}
-\BinaryInfC{$\Gamma \mid x : A \vdash \lambda i.\,b : \prod_{i : I} B$}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash b : B$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \lambda i.\,b : \prod_{i : I} B$}
 \DisplayProof
 \end{center}
 \medskip
@@ -1041,7 +1042,7 @@ For all maps $f,g : \Hom(0,D)$, we can define a homotopy between them as follows
 We will say that the initial type $0$ in an indexed unary type theory is \emph{stable under products} if, for every type $B$ such that the product $B \times 0$ exists, this product is initial.
 
 \begin{prop}
-Let $0$ be a type in an indexed dependent type theory has extensional identity types and $\Sigma$-types.
+Let $0$ be a type in an indexed dependent type theory with extensional identity types and $\Sigma$-types.
 Then the following conditions are equivalent:
 \begin{enumerate}
 \item \label{it:init-first} The theory has the following rule:
@@ -1154,12 +1155,63 @@ The left arrow is
 \[ J(\fs{inl}(f\,a), v p.\,\Id(p_*(\amalg\text{-}\fs{elim}(\fs{inl}(f\,a))), \amalg\text{-}\fs{elim}(v)), \refl, \fs{inr}(g\,a), \fs{glue}(a)). \]
 The top arrow is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a))$.
 
-% 3. Доказать, что в indexed dependent type theories есть конечные произведение и бесконечные тоже, если предположить их должны образом.
-% 4. Сравнить внешнее и внутренее определение копределов.
-% 5. (Локальная) декартовая замкнутость.
-% 6. Вселенная Prop и прочие вселенные.
-% 7. Regular categories and propositional truncation?
-% 8. Other factorization systems, modalities, and localizations?
+\begin{prop}
+Suppose that we have a square
+\[ \xymatrix{ A \ar[r]^-f \ar[d]_g & B \ar[d]^{\fs{inl}} \\
+              C \ar[r]_-{\fs{inr}} & B \amalg_A C
+            } \]
+that commutes up to a homotopy $\fs{glue}$.
+If the indexed dependent type theory has extensional identity types and $\Sigma$-types, then this square is a weak dependent pushout if and only if it is a pushout.
+\end{prop}
+\begin{proof}
+% TODO
+\end{proof}
+
+% TODO: Define stable pushouts.
+
+\subsection{Strict dependent products}
+
+We defined strict products in subsection~\ref{sec:products}.
+We can define even stricter version of products which we call \emph{strict dependent products} in indexed dependent type theories:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash B\ \ob$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \prod_{i : I} B\ \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash b : B$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \lambda i.\,b : \prod_{i : I} B$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash f : \prod_{i : I} B$}
+\AxiomC{$\Gamma \vdash j : I$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash f\,j : B[j/i]$}
+\DisplayProof
+\end{center}
+
+\begin{align*}
+(\lambda i.\,b)\,j & = b[j/i] \\
+\lambda i.\,f\,i & = f
+\end{align*}
+
+\begin{example}
+The canonical indexing of a dependent type theories over itself has strict dependent products if and only if it has $\Pi$-types.
+\end{example}
+
+Obviously, if a theory has strict dependent products, then it also has strict products.
+Conversely, if a theory has finite limits and products, then we can define a version of strict dependent products in which the last two rules hold propositionally.
+
+% TODO: Prove this.
+% TODO: Prove functional extensionality for strict dependent products.
+
+% 1. (Локальная) декартовая замкнутость.
+% 2. Вселенная Prop и прочие вселенные.
+% 3. Regular categories and propositional truncation?
+% 4. Other factorization systems, modalities, and localizations?
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
