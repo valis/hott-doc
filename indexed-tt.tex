@@ -536,24 +536,39 @@ The \emph{$(n+1)$-sphere} $S^{n+1}$ is the suspension $\Sigma S^n$.
 
 \subsection{(Co)products}
 
-In this subsection, we assume that the base theory has extensional $\Pi$-types.
-
-A \emph{product} of an indexed type $\Gamma, i : I \mid \cdot \vdash B\ \ob$ is an indexed type $\Gamma \mid \cdot \vdash P\ \ob$ together with a term $\Gamma \vdash \pi : \Pi_{i : I} \Hom(P,B)$
-such that, for all $\Gamma \mid \cdot \vdash P'\ \ob$ and $\Gamma \vdash \pi' : \Pi_{i : I} \Hom(P',B)$, the following type is contractible:
-\[ \sum_{h : \Hom(P',P)} \prod_{i : I} \Id(\pi i \circ h, \pi' i). \]
-
-If $\Gamma \mid \cdot \vdash P\ \ob$ is an indexed type and $\Gamma \vdash \pi : \Pi_{i : I} \Hom(P,B)$ is a term, then we can define the following function for every indexed type $\Gamma \mid \cdot \vdash P'$:
-\[ \lambda h i.\,\pi i \circ h : \Hom(P',P) \to \prod_{i : I} \Hom(P',B). \]
-Note that the type that appears in the definition of products is (equivalent to) the fiber of this function over $\pi'$.
-Thus, a pair $(P,\pi)$ is a product if and only if this function is an equivalence.
-This implies that $\Hom(P',-)$ preserves products.
+A \emph{product} of an indexed type $\Gamma, i : I \mid \cdot \vdash B\ \ob$ is an indexed type $\Gamma \mid \cdot \vdash P\ \ob$ together with a term $\Gamma, i : I \vdash \pi : \Hom(P,B)$
+such that the function $\pi \circ -$ has an inverse in the sense that there is a rule of the form
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash P'\ \ob$}
+\AxiomC{$\Gamma, i : I \vdash f : \Hom(P',B)$}
+\BinaryInfC{$\Gamma \vdash \langle f \rangle_{i : I} : \Hom(P',P)$}
+\DisplayProof
+\end{center}
+and the following types are inhabited:
+\begin{align*}
+& \Id(\pi \circ \langle f \rangle_{i : I}, f) \\
+& \Id(\langle \pi \circ f \rangle_{i : I}, f).
+\end{align*}
 
 The theory of coproducts is defined dually.
-A \emph{coproduct} of an indexed type $\Gamma, i : I \mid \cdot \vdash B\ \ob$ is an indexed type $\Gamma \mid \cdot \vdash P\ \ob$ together with a term $\Gamma \vdash \fs{in} : \Pi_{i : I} \Hom(B,P)$
-such that, for all $\Gamma \mid \cdot \vdash P'\ \ob$ and $\Gamma \vdash \fs{in}' : \Pi_{i : I} \Hom(B,P')$, the following type is contractible:
-\[ \sum_{h : \Hom(P,P')} \prod_{i : I} \Id(h \circ \fs{in}(i), \fs{in}'(i)). \]
-A pair $(P,\fs{in})$ is a coproduct if and only if the following function is an equivalence for every indexed type $P'$:
-\[ \lambda h i.\,h \circ \fs{in}(i) : \Hom(P,P') \to \prod_{i : I} \Hom(B,P'). \]
+A \emph{coproduct} of an indexed type $\Gamma, i : I \mid \cdot \vdash B\ \ob$ is an indexed type $\Gamma \mid \cdot \vdash C\ \ob$ together with a term $\Gamma, i : I \vdash \fs{in} : \Hom(B,C)$
+such that the function $- \circ \fs{in}$ has an inverse in the sense that there is a rule of the form
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash C'\ \ob$}
+\AxiomC{$\Gamma, i : I \vdash f : \Hom(B,C')$}
+\BinaryInfC{$\Gamma \vdash [ f ]_{i : I} : \Hom(C,C')$}
+\DisplayProof
+\end{center}
+and the following types are inhabited:
+\begin{align*}
+& \Id([ f ]_{i : I} \circ \fs{in}, f) \\
+& \Id([ f \circ \fs{in} ]_{i : I}, f).
+\end{align*}
+
+If the $\Pi$-type $\Pi_{i : I} \Hom(P',B)$ exists for all indexed types $\Gamma \mid \cdot \vdash P'\ \ob$, then a pair $P$, $\pi$ is a product of a family $B$ if and only if the following function is an equivalence for every indexed type $P'$:
+\[ \lambda h.\,\lambda i.\,\pi \circ h : \Hom(P',P) \to \prod_{i : I} \Hom(P',B). \]
+Dually, if the $\Pi$-type $\Pi_{i : I} \Hom(B,C')$ exists for all indexed types $\Gamma \mid \cdot \vdash C'\ \ob$, then a pair $C$, $\fs{in}$ is a product of a family $B$ if and only if the following function is an equivalence for every indexed type $C'$:
+\[ \lambda h.\,\lambda i.\,h \circ \fs{in}(i) : \Hom(C,C') \to \prod_{i : I} \Hom(B,C'). \]
 
 Products and coproducts are unique up to unique equivalence.
 We will denote the product and the coproduct of a family $\Gamma, i : I \mid \cdot \vdash B\ \type$ by $\prod_{i : I} B$ and $\coprod_{i : I} B$, respectively.
@@ -583,7 +598,8 @@ We can also define the theory of \emph{strict products}:
 \lambda i.\,f\,i & = f
 \end{align*}
 
-The difference between weak and strict products is that the former requires types $\Hom(P',\Pi_{i : I} B)$ and $\Pi_{i : I} \Hom(P',B)$ to be equivalent while the latter requires them to be \emph{isomorphic}.
+The difference between weak and strict products is that the former requires types $\Hom(P',\prod_{i : I} B)$ and $\Pi_{i : I} \Hom(P',B)$ to be equivalent while the latter requires them to be \emph{isomorphic}.
+In particular, the type $\Pi_{i : I} \Hom(P',B)$ always exists in a theory with strict products.
 Of course, the theory of products can be interpreted in the theory of strict products, but not the other way around.
 Nevertherless, these theories should be weakly equivalent.
 We will sometimes use the notation with $\lambda$ and application for weak products since we still can define these operations for them (with the caveat that the last two equalities do not hold judgementally for weak products).
@@ -595,6 +611,7 @@ The power will be denoted by $X^I$ and the tensor by $I \cdot X$.
 \end{example}
 
 Let us prove a few properties of products and coproducts.
+To simplify the notation, we will assume that the base theory of an indexed theory with a product $\prod_{i : I} B$ has $\Pi$-types $\Pi_{i : I} \Hom(P,B)$ for all $P$.
 The following proposition shows that the (co)product of a contractible family of types is any type of this family:
 
 \begin{prop}
@@ -603,11 +620,10 @@ Then types $\prod_{i : I} B$, $\coprod_{i : I} B$, and $B[i_0/i]$ are equivalent
 \end{prop}
 \begin{proof}
 Let $p(i)$ be a path between $i_0$ and $i : I$.
-Then the pair $B[i_0/i]$, $\pi = \lambda i.\,\lambda x.\,p(i)_*(x))$ is a product of $B$.
-Indeed, since $I$ is contractible, evaluation at $i_0$ establishes an equivalence between types $\Pi_{i : I} \Id(\pi i \circ h, \pi' i)$ and $\Id(\pi i_0 \circ h, \pi' i_0)$.
-Since $p(i_0)$ is homotopic to $\refl(i_0)$, the morphism $\pi i_0 : \Hom(B[i_0/i],B[i_0/i])$ is homotopic to the identity morphism.
-Thus, the type $\Sigma_{h : \Hom(P',P)} \Pi_{i : I} \Id(\pi i \circ h, \pi' i)$ is equivalent to the type $\Sigma_{h : \Hom(P',P)} \Id(h, \pi' i_0)$, which is contractible by \cite[Lemma~3.11.8]{hottbook}.
-Since $(B[i_0/i],\pi)$ is a product and products are unique up to equivalence, it follows that $B[i_0/i]$ is equivalent to $\prod_{i : I} B$.
+Then the pair $B[i_0/i], \pi_i = \lambda x.\,p(i)_*(x)$ is a product of $B$.
+We can define $\langle f \rangle_{i : I}$ as $\lambda x.\,\sym(p(i))_*(f\,x)$.
+Clearly, this is an inverse to $\pi \circ -$.
+Since $B[i_0/i],\pi$ is a product and products are unique up to equivalence, it follows that $B[i_0/i]$ is equivalent to $\prod_{i : I} B$.
 Similar argument shows that it is also equivalent to $\coprod_{i : I} B$.
 \end{proof}
 
@@ -692,8 +708,10 @@ The equivalence for suspension follows from previous equations since suspension 
 The last equivalence follows from previous since spheres are defined in terms of suspensions, coproducts, and terminal types.
 \end{proof}
 
-% 1. Переписать определение конечных пределов и прозведений.
-% 2. Доказать утверждение про то, как строятся (ко)произведения над пушаутами, привести пример с окружностью.
+\begin{example}
+Let $S^1$ be the pushout of $1 \amalg 1$ in the base theory, that is a higher inductive type with two point constructors $N,S : S^1$ and two path constructors $L,R : \Id_{S^1}(N,S)$.
+Then the product of a family $\Gamma, x : S^1 \mid \cdot \vdash B$ is the equalizer of the maps $L_*(-),R_*(-) : B[N/x] \to B[S/x]$.
+\end{example}
 
 \section{Indexed dependent type theories}
 
