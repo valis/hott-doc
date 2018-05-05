@@ -41,8 +41,8 @@
 \theoremstyle{remark}
 \newref{remark}{Remark}{Remark}
 
-\newcommand{\type}{\mathrm{type}}
-\newcommand{\ob}{\mathrm{type}}
+\newcommand{\type}{}
+\newcommand{\ob}{}
 \newcommand{\term}{1}
 \newcommand{\unit}{()}
 
@@ -824,7 +824,7 @@ This follows from the fact that indexed type theories can be interpreted in ordi
 
 Judgements $\Gamma \mid \Delta \vdash A\ \ob$ and $\Gamma \mid \Delta \vdash a : A$ are interpreted as $\Gamma, \Delta \vdash A\ \type$ and $\Gamma, \Delta \vdash a : A$, respectively.
 All the rules of indexed dependent type theories correspond to some rules of ordinary dependent type theories.
-This interpretation will be called \emph{the canonical indexing of a dependent type theories over itself}.
+This interpretation will be called \emph{the canonical indexing of a dependent type theory over itself}.
 It is analogous to the canonical indexing of a cartesian category over itself.
 
 \subsection{Dependent $\Hom$-types}
@@ -1199,7 +1199,7 @@ We can define even stricter version of products which we call \emph{strict depen
 \end{align*}
 
 \begin{example}
-The canonical indexing of a dependent type theories over itself has strict dependent products if and only if it has $\Pi$-types.
+The canonical indexing of a dependent type theory over itself has strict dependent products if and only if it has $\Pi$-types.
 \end{example}
 
 Obviously, if a theory has strict dependent products, then it also has strict products.
@@ -1207,6 +1207,42 @@ Conversely, if a theory has finite limits and products, then we can define a ver
 
 % TODO: Prove this.
 % TODO: Prove functional extensionality for strict dependent products.
+
+\subsection{Dependent coproducts}
+
+We can define coproducts in a more type-theoretic way.
+The theory of \emph{dependent coproducts} has the following rules:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \cdot \vdash B\ \ob$}
+\UnaryInfC{$\Gamma \mid \cdot \vdash \coprod_{i : I} B\ \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash j : I$}
+\AxiomC{$\Gamma \mid \Delta \vdash b : B[j/i]$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash (j,b) : \coprod_{i : I} B$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid z : \coprod_{i : I} B \vdash D\ \ob$}
+\AxiomC{$\Gamma, i : I \mid \Delta, x : B \vdash d : D[(i,x)/z]$}
+\AxiomC{$\Gamma \mid \Delta \vdash t : \coprod_{i : I} B$}
+\TrinaryInfC{$\Gamma \mid \Delta \vdash \coprod\text{-}\fs{elim}(z.D, i x.d, t) : D[t/z]$}
+\DisplayProof
+\end{center}
+\medskip
+
+\[ \coprod\text{-}\fs{elim}(z.D, i x.d, (j,b)) = d[j/i,b/x] \]
+
+The theory of \emph{weak dependent coproducts} has the same rules except for the last equality which holds only propositionally.
+
+\begin{example}
+The canonical indexing of a dependent type theory over itself always has dependent coproducts since we always assume that the base theory has $\Sigma$-types.
+\end{example}
+
+% TODO: Prove that weak coproducts are equivalent to coproducts in unary theories.
+% TODO: Define stable coproducts.
 
 % 1. (Локальная) декартовая замкнутость.
 % 2. Вселенная Prop и прочие вселенные.
