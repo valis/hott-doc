@@ -54,6 +54,8 @@
 \newcommand{\sym}{\fs{sym}}
 \newcommand{\id}{\fs{id}}
 \newcommand{\pmap}{\fs{ap}}
+\newcommand{\Fib}{\fs{Fib}}
+\newcommand{\Bund}{\fs{Bund}}
 
 \numberwithin{figure}{section}
 
@@ -88,6 +90,8 @@ The first level is just an ordinary type theory and it represents $\mathcal{B}$
 Since we are mostly interested in the case when $\mathcal{B}$ is the $\infty$-category of spaces,
 we can assume that the first level has all usual constructions such as identity types, $\Sigma$-types, $\Pi$-types, (univalent) universes, and (higher) inductive types.
 Nevertheless, in general, we will assume that the base theory has only identity types and $\Sigma$-types; all additional assumptions will be explicitly specified.
+We will often talk about functions, but this is only for notational convenience and does not assume that function types exist.
+Terms of type $A \to B$ correspond to terms of type $B$ in context $x : A$, so we can talk about functions $A \to B$ as long as this type does not appear inside other types.
 
 The second level of the theory represents $\infty$-categories $F(\Gamma)$ for various objects $\Gamma$ of $\mathcal{B}$.
 In this section, we will discuss \emph{indexed unary type theories}, that is indexed type theories in which the second level consists of unary type theories.
@@ -1244,6 +1248,10 @@ The canonical indexing of a dependent type theory over itself always has depende
 % TODO: Prove that weak coproducts are equivalent to coproducts in unary theories.
 % TODO: Define stable coproducts.
 
+\section{General adjoint functor theorem}
+
+% TODO: Prove it.
+
 \section{Locally cartesian closed indexed theories}
 
 In this section, we will define locally cartesian closed unary type theories and discuss the relationship between them and indexed dependent type theories with $\Pi$-types.
@@ -1312,9 +1320,96 @@ Then the following conditions are equivalent:
 The standard argument shows that if a theory is locally cartesian closed, then the existence of $0\text{-}\fs{elim}$ implies the existence of $0\text{-}\fs{elim''}$ and the same is true for eliminators of pushouts and dependent coproducts.
 Thus, initial types, pushouts, and coproducts are stable under pullbacks in a locally cartesian closed theory.
 
-% 1. Вселенная Prop и прочие вселенные.
-% 2. Regular categories and propositional truncation?
-% 3. Other factorization systems, modalities, and localizations?
+\section{Classifying morphisms}
+
+In this section, we will define the notion of classifying morphisms, discuss its relationship to the notions of universes and factorization systems.
+
+\subsection{Subobject classifier}
+
+Let $f : \Hom(A,B)$ be a map in an indexed unary type theory.
+We will say that it is a \emph{monomorphism} if the map $f \circ - : \Hom(X,A) \to \Hom(X,B)$ is an embedding for all indexed types $X$.
+This definition makes sense in models of indexed unary type theories, but the problem is that it is not algebraic since it quantifies over indexed types.
+That is, we cannot define a predicate on $\Hom(A,B)$ which corresponds to the notion of a monomorphism in models.
+But we can fix this problem if the indexed theory has pullbacks and products.
+
+\begin{prop}[mono]
+A map $f : \Hom(A,B)$ is a monomorphism if and only if the following square is a pullback:
+\[ \xymatrix{ A \ar[r]^f \ar[d]_{\langle \id_A, \id_A \rangle} & B \ar[d]^{\langle \id_B, \id_B \rangle} \\
+              A \times A \ar[r]_{f \times f} & B \times B.
+            } \]
+\end{prop}
+\begin{proof}
+This square is a pullback if and only if the following function is an equivalence for all indexed types $X$:
+\begin{align*}
+& \Hom(X,A) \to \sum_{g : \Hom(X,A)} \sum_{g' : \Hom(X,A)} \sum_{h : \Hom(X,B)} \Id(f \circ g, h) \times \Id(f \circ g', h) \\
+& \lambda t.\,(t, t, f \circ t, \refl, \refl).
+\end{align*}
+
+Since the type $\Sigma_{h : \Hom(X,B)} \Id(f \circ g', h)$ is contractible, this is true if and only if the following function is an equivalence:
+\[ \lambda t.\,(t, t, \refl) : \Hom(X,A) \to \sum_{g : \Hom(X,A)} \sum_{g' : \Hom(X,A)} \Id(f \circ g, f \circ g'). \]
+
+Since $\Hom(X,A)$ is equivalent to $\Sigma_{t : \Hom(X,A)} \Sigma_{t' : \Hom(X,A)} \Id(t,t')$, this is true if and only the following function is an equivalence:
+\begin{align*}
+& \sum_{t : \Hom(X,A)} \sum_{t' : \Hom(X,A)} \Id(t,t') \to \sum_{g : \Hom(X,A)} \sum_{g' : \Hom(X,A)} \Id(f \circ g, f \circ g') \\
+& \lambda p.\,(\pi_1(p), \pi_2(p), \pmap(f \circ -, \pi_3(p))).
+\end{align*}
+
+By \cite[Theorem~4.7.7]{hottbook}, this function is an equivalence if and only if
+the function $\lambda t.\,\pmap(f \circ -, t) : \Id(g,g') \to \Id(f \circ g, f \circ g')$ is an equivalence
+for all $g,g' : \Hom(X,A)$ and this is just the definition of an embedding.
+\end{proof}
+
+Thus, if the theory has pullbacks and products, then a map $f : \Hom(A,B)$ is a monomorphism if and only if the canonical map from $A$ to the pullback of $f \times f$ and $\langle \id_B, \id_B \rangle$ is an equivalence.
+
+\begin{remark}
+A map $f : \Hom(A,B)$ is \emph{$n$-truncated} if the map $f \circ - : \Hom(X,A) \to \Hom(X,B)$ is $n$-truncated for all indexed types $X$.
+An argument similar to \rprop{mono} shows that if the theory has pullbacks a map is $n$-truncated if and only if the following square is a pullback:
+\end{remark}
+
+\subsection{Bundles}
+
+We will be working in an indexed unary type theory.
+Suppose that we have a class of families of types over all indexed morphisms:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A\ \ob$}
+\AxiomC{$\Gamma \mid \cdot \vdash B\ \ob$}
+\AxiomC{$\Gamma \vdash f : \Hom(A,B)$}
+\TrinaryInfC{$\Gamma \vdash \Bund(f) \type$}
+\DisplayProof
+\end{center}
+We will call maps $f$ together witn an element of $\Bund(f)$ \emph{bundles}.
+Often, $\Bund(f)$ is a proposition.
+In this case, we will denote $\Bund(f)$ by $\Fib(f)$ and call bundles \emph{fibrations}.
+Thus, fibrations are just maps satisfying some property and bundles are maps with additional data on them.
+
+Sometimes $\Bund(f)$ is not a type, but a finite number of judgements of the form $\Gamma, \Delta_i \vdash A_i \type$.
+For example, we might want to define $\Bund(f)$ as $\fs{isEquiv}(C(f))$ for some morphism $C(f)$.
+In general, this is not a type, but a collection of four judgements.
+If the base theory has $\Pi$-types, then we can always replace such a collection of judgements with a single type.
+Even if the base theory does not have $\Pi$-types, we still can work with such definitions of $\Bund(f)$;
+we just need to replace judgements of the form $\Gamma \vdash b : \Bund(f)$ with a finite collection of judgements of the form $\Gamma, \Delta_i \vdash a_i : A_i$.
+For notational convenience, we will always assume that $\Bund(f)$ is a single type.
+
+\begin{example}
+% TODO: Pointed types.
+\end{example}
+
+\begin{example}
+% TODO: Principal G-bundles.
+\end{example}
+
+\begin{example}
+% TODO: n-truncated maps.
+\end{example}
+
+\begin{defn}
+We will say that a class $\Bund$ is \emph{small} if % TODO
+\end{defn}
+
+\section{Factorization systems}
+
+% 1. Propositional truncation
+% 2. Other factorization systems, modalities, and localizations?
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
