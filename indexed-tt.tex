@@ -1324,47 +1324,66 @@ Thus, initial types, pushouts, and coproducts are stable under pullbacks in a lo
 
 In this section, we will define the notion of classifying morphisms, discuss its relationship to the notions of universes and factorization systems.
 
-\subsection{Subobject classifier}
+\subsection{Truncated maps}
 
-Let $f : \Hom(A,B)$ be a map in an indexed unary type theory.
-We will say that it is a \emph{monomorphism} if the map $f \circ - : \Hom(X,A) \to \Hom(X,B)$ is an embedding for all indexed types $X$.
+Let $f : \Hom(A,B)$ be a map in an indexed unary type theory and let $n$ be an integer $\geq -2$.
+We will say that $f$ is \emph{$n$-truncated} if the map $f \circ - : \Hom(X,A) \to \Hom(X,B)$ is $n$-truncated for all indexed types $X$.
 This definition makes sense in models of indexed unary type theories, but the problem is that it is not algebraic since it quantifies over indexed types.
-That is, we cannot define a predicate on $\Hom(A,B)$ which corresponds to the notion of a monomorphism in models.
-But we can fix this problem if the indexed theory has pullbacks and products.
+That is, we cannot define a predicate on $\Hom(A,B)$ which corresponds to the notion of $n$-truncated maps in models.
+But we can fix this problem if the indexed theory has finite limits.
+
+First, for all indexed types $A$ and integers $n \geq -1$, we define the \emph{$n$-fold iterated free loop space} $\Omega^n(A)$ together with a map $\omega^n_A : \Hom(A,\Omega^n(A))$.
+Let $\Omega^{-1}(A)$ be the terminal type and let $\omega^{-1}_A$ be the unique map.
+Let $\Omega^{n+1}(A)$ as the following pullback:
+\[ \xymatrix{ \Omega^{n+1}(A) \ar[r] \ar[d] \pb & A \ar[d]^{\omega^n_A} \\
+              A \ar[r]_-{\omega^n_A}            & \Omega^n(A).
+            } \]
+The map $\omega^{n+1}(A) : \Hom(A,\Omega^{n+1}(A))$ is induced by the maps $\id_A$ and $\id_A$.
+For every map $f : \Hom(A,B)$, the map $\Omega^n(f) : \Hom(\Omega^n(A),\Omega^n(B))$ is defined in the obvious way.
 
 \begin{prop}[mono]
-A map $f : \Hom(A,B)$ is a monomorphism if and only if the following square is a pullback:
-\[ \xymatrix{ A \ar[r]^f \ar[d]_{\langle \id_A, \id_A \rangle} & B \ar[d]^{\langle \id_B, \id_B \rangle} \\
-              A \times A \ar[r]_{f \times f} & B \times B.
+Let $n$ be an integer $\geq -2$.
+A map $f : \Hom(A,B)$ is $n$-truncated if and only if the following square is a pullback:
+\[ \xymatrix{ A \ar[r]^f \ar[d]_{\omega^{n+1}_A} & B \ar[d]^{\omega^{n+1}_B} \\
+              \Omega^{n+1}(A) \ar[r]_{\Omega^{n+1}(f)} & \Omega^{n+1}(B).
             } \]
 \end{prop}
 \begin{proof}
-This square is a pullback if and only if the following function is an equivalence for all indexed types $X$:
+Since $\Hom(X,-)$ preserves limits, it also preserves $\Omega^n(C)$.
+Hence, the square in the statement of this proposition is a pullback if and only if the following square is:
+\[ \xymatrix{ \Hom(X,A) \ar[rr]^{f \circ -} \ar[d]_{\omega^{n+1}_{\Hom(X,A)}}   & & \Hom(X,B) \ar[d]^{\omega^{n+1}_{\Hom(X,B)}} \\
+              \Omega^{n+1}(\Hom(X,A)) \ar[rr]_{\Omega^{n+1}(f \circ -)}         & & \Omega^{n+1}(\Hom(X,B)).
+            } \]
+Thus, we just need to prove the statement of this proposition for base types.
+
+This is obvious for $n = -2$.
+Let us assume that $n \geq -1$.
+In this case, $\Omega^{n+1}(A)$ is equivalent to $\Sigma_{a : A} \Omega^{n+1}(A,a)$.
+This is easy to prove by induction on $n$.
+
+Using this equivalence the square in the statement of this proposition can be rewritten as follows:
+\[ \xymatrix{ A \ar[rrrr]^f \ar[d]_{\lambda a.(a,\refl^{n+1}(a))}                                                   & & & & B \ar[d]^{\lambda b.(b,\refl^{n+1}(b))} \\
+              \sum_{a : A} \Omega^{n+1}(A,a) \ar[rrrr]_-{\lambda p.(\pi_1(p),\Omega^{n+1}(f,\pi_1(p))(\pi_2(p)))}   & & & & \sum_{b : B} \Omega^{n+1}(B,b).
+            } \]
+
+This square is a pullback if and only if the induced map to the canonical pullback is an equivalence:
+\[ A \to \sum_{a : A} \sum_{p : \Omega^{n+1}(A,a)} \sum_{b : B} \Id((f\,a,\Omega^{n+1}(f,a)(p)),(b,\refl^{n+1}(b))). \]
+By \cite[Theorem~4.7.7]{hottbook}, this function is an equivalence if and only if, for all $a : A$, the first (and hence every) type in the following sequence of equivalences is contractible:
 \begin{align*}
-& \Hom(X,A) \to \sum_{g : \Hom(X,A)} \sum_{g' : \Hom(X,A)} \sum_{h : \Hom(X,B)} \Id(f \circ g, h) \times \Id(f \circ g', h) \\
-& \lambda t.\,(t, t, f \circ t, \refl, \refl).
+\sum_{p : \Omega^{n+1}(A,a)} \sum_{b : B} \Id((f\,a,\Omega^{n+1}(f,a)(p)),(b,\refl^{n+1}(b))) & \simeq \\
+\sum_{p : \Omega^{n+1}(A,a)} \sum_{b : B} \sum_{q : \Id(f a,b)} \Id(q_*(\Omega^{n+1}(f,a)(p)),\refl^{n+1}(b)) & \simeq \\
+\sum_{p : \Omega^{n+1}(A,a)} \Id(\Omega^{n+1}(f,a)(p),\refl^{n+1}(f\,a)) & \simeq \\
+\Omega^{n+1}(\sum_{a' : A} \Id(f\,a',f\,a), (a,\refl(f\,a))) & .
 \end{align*}
+The last equivalence can be proved by induction on $n$.
 
-Since the type $\Sigma_{h : \Hom(X,B)} \Id(f \circ g', h)$ is contractible, this is true if and only if the following function is an equivalence:
-\[ \lambda t.\,(t, t, \refl) : \Hom(X,A) \to \sum_{g : \Hom(X,A)} \sum_{g' : \Hom(X,A)} \Id(f \circ g, f \circ g'). \]
-
-Since $\Hom(X,A)$ is equivalent to $\Sigma_{t : \Hom(X,A)} \Sigma_{t' : \Hom(X,A)} \Id(t,t')$, this is true if and only the following function is an equivalence:
-\begin{align*}
-& \sum_{t : \Hom(X,A)} \sum_{t' : \Hom(X,A)} \Id(t,t') \to \sum_{g : \Hom(X,A)} \sum_{g' : \Hom(X,A)} \Id(f \circ g, f \circ g') \\
-& \lambda p.\,(\pi_1(p), \pi_2(p), \pmap(f \circ -, \pi_3(p))).
-\end{align*}
-
-By \cite[Theorem~4.7.7]{hottbook}, this function is an equivalence if and only if
-the function $\lambda t.\,\pmap(f \circ -, t) : \Id(g,g') \to \Id(f \circ g, f \circ g')$ is an equivalence
-for all $g,g' : \Hom(X,A)$ and this is just the definition of an embedding.
+By \cite[Theorem~7.2.9]{hottbook}, the map $f$ is $n$-truncated if and only if, for all $b : B$, $a : A$, and $p : \Id(f\,a,b)$, the following type is contractible:
+\[ \Omega^{n+1}(\sum_{a' : A} \Id(f\,a',b), (a,p)). \]
+Since $\Sigma_{b : B} \Id(f\,a,b)$ is contractible, this is true if and only if, for all $a : A$, the last type in the sequence of equivalences above is contractible.
 \end{proof}
 
-Thus, if the theory has pullbacks and products, then a map $f : \Hom(A,B)$ is a monomorphism if and only if the canonical map from $A$ to the pullback of $f \times f$ and $\langle \id_B, \id_B \rangle$ is an equivalence.
-
-\begin{remark}
-A map $f : \Hom(A,B)$ is \emph{$n$-truncated} if the map $f \circ - : \Hom(X,A) \to \Hom(X,B)$ is $n$-truncated for all indexed types $X$.
-An argument similar to \rprop{mono} shows that if the theory has pullbacks a map is $n$-truncated if and only if the following square is a pullback:
-\end{remark}
+This proposition implies that if the theory has pullbacks and products, then a map $f : \Hom(A,B)$ is $n$-truncated if and only if the canonical map from $A$ to the pullback of $\Omega^{n+1}(f)$ and $\omega^{n+1}_B$ is an equivalence.
+Thus, in such theories, we can define a predicate on maps that corresponds to the notion of $n$-truncated maps.
 
 \subsection{Bundles}
 
@@ -1405,6 +1424,8 @@ For notational convenience, we will always assume that $\Bund(f)$ is a single ty
 \begin{defn}
 We will say that a class $\Bund$ is \emph{small} if % TODO
 \end{defn}
+
+\subsection{Subobject classifier}
 
 \section{Factorization systems}
 
