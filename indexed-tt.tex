@@ -55,7 +55,7 @@
 \newcommand{\id}{\fs{id}}
 \newcommand{\pmap}{\fs{ap}}
 \newcommand{\Fib}{\fs{Fib}}
-\newcommand{\Bund}{\fs{Bund}}
+\newcommand{\El}{\fs{El}}
 
 \numberwithin{figure}{section}
 
@@ -1385,47 +1385,77 @@ Since $\Sigma_{b : B} \Id(f\,a,b)$ is contractible, this is true if and only if,
 This proposition implies that if the theory has pullbacks and products, then a map $f : \Hom(A,B)$ is $n$-truncated if and only if the canonical map from $A$ to the pullback of $\Omega^{n+1}(f)$ and $\omega^{n+1}_B$ is an equivalence.
 Thus, in such theories, we can define a predicate on maps that corresponds to the notion of $n$-truncated maps.
 
-\subsection{Bundles}
+\subsection{Fibrations}
 
-We will be working in an indexed unary type theory.
-Suppose that we have a class of families of types over all indexed morphisms:
+Suppose that we have a class of families of propositions over all indexed morphisms:
 \begin{center}
-\AxiomC{$\Gamma \mid \cdot \vdash A\ \ob$}
-\AxiomC{$\Gamma \mid \cdot \vdash B\ \ob$}
+\AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
+\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
 \AxiomC{$\Gamma \vdash f : \Hom(A,B)$}
-\TrinaryInfC{$\Gamma \vdash \Bund(f) \type$}
+\TrinaryInfC{$\Gamma \vdash \Fib(f) \type$}
 \DisplayProof
 \end{center}
-We will call maps $f$ together witn an element of $\Bund(f)$ \emph{bundles}.
-Often, $\Bund(f)$ is a proposition.
-In this case, we will denote $\Bund(f)$ by $\Fib(f)$ and call bundles \emph{fibrations}.
-Thus, fibrations are just maps satisfying some property and bundles are maps with additional data on them.
+We will call maps $f$ together witn an element of $\Fib(f)$ \emph{fibrations}.
 
-Sometimes $\Bund(f)$ is not a type, but a finite number of judgements of the form $\Gamma, \Delta_i \vdash A_i \type$.
-For example, we might want to define $\Bund(f)$ as $\fs{isEquiv}(C(f))$ for some morphism $C(f)$.
+Sometimes $\Fib(f)$ is not a type, but a finite number of judgements of the form $\Gamma, \Delta_i \vdash A_i \type$.
+For example, we might want to define $\Fib(f)$ as $\fs{isEquiv}(C(f))$ for some morphism $C(f)$.
 In general, this is not a type, but a collection of four judgements.
 If the base theory has $\Pi$-types, then we can always replace such a collection of judgements with a single type.
-Even if the base theory does not have $\Pi$-types, we still can work with such definitions of $\Bund(f)$;
-we just need to replace judgements of the form $\Gamma \vdash b : \Bund(f)$ with a finite collection of judgements of the form $\Gamma, \Delta_i \vdash a_i : A_i$.
-For notational convenience, we will always assume that $\Bund(f)$ is a single type.
+Even if the base theory does not have $\Pi$-types, we still can work with such definitions of $\Fib(f)$;
+we just need to replace judgements of the form $\Gamma \vdash b : \Fib(f)$ with a finite collection of judgements of the form $\Gamma, \Delta_i \vdash a_i : A_i$.
+For notational convenience, we will always assume that $\Fib(f)$ is a single type.
+
+We can also define the dependent version of classes of fibrations:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash B \ob$}
+\UnaryInfC{$\Gamma \vdash \Fib(\Delta.B) \type$}
+\DisplayProof
+\end{center}
+We will also call dependent types $B$ together witn an element of $\Fib(\Delta.B)$ fibrations.
+It is often more convenient to work with the dependent version of this definition.
+If the indexed theory has $\Sigma$ types, then, for every class of fibrations $\Fib$, we can define its dependent version as follows:
+\[ \Fib(\Delta.B) = \Fib(\pi_1 : \Hom(\sum_{p : \Sigma(\Delta)} B[\pi_1(p)/x_1, \ldots \pi_n(p)/x_n],\Sigma(\Delta))). \]
+Conversely, if the indexed theory also has identity types, then, for every dependent class of firations $\Fib$, we can define its non-dependent version:
+\[ \Fib(f : \Hom(A,B)) = \Fib((y : B).\,\sum_{x : A} \Id(f\,x,y)). \]
 
 \begin{example}
-% TODO: Pointed types.
+If the indexed theory has finite limits, then we can define a class of fibrations consisting of $n$-truncated maps (or $n$-truncated indexed types) as was explained in the previous subsection.
 \end{example}
 
-\begin{example}
-% TODO: Principal G-bundles.
-\end{example}
+An \emph{external universe} is a base type $\mathcal{U}(\Delta)$ defined for all indexed context $\Delta$ together with an indexed type $\El(c)$ over $\Delta$ for all $c : \mathcal{U}(\Delta)$:
+\begin{center}
+\AxiomC{$\Gamma \vdash c : \mathcal{U}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \El(c) \ob$}
+\DisplayProof
+\end{center}
+We have a function from $\Id_{\mathcal{U}(\Delta)}(c,c')$ to the type of equivalences between $\El(c)$ and $\El(c')$ over $\Delta$ defined as the transport of the identity morphism along the homotopy $\Id_{\mathcal{U}(\Delta)}(c,c')$.
+We will say that the universe $\mathcal{U}(\Delta)$ is \emph{univalent} if this function is an equivalence.
+We will say that a universe \emph{classifies} fibrations $\Fib$ if it is univalent, the family $\El(c)$ satisfies $\Fib$ for all $c$, and every fibration is equivalent to a fibration of the form $\El(c)$ for some $c$.
 
-\begin{example}
-% TODO: n-truncated maps.
-\end{example}
+If a universe classifying $\Fib$ exists, then it is unique up to a canonical equivalence.
+Indeed, let $\mathcal{U}$ and $\mathcal{U}'$ be two universes classifying $\Fib$.
+Then, for every indexed context $\Delta$ over a base context $\Gamma$, we have a fibration $\El(x)$ over $\Delta$ in the context $\Gamma, x : \mathcal{U}$.
+This fibration is equivalent to a fibration of the form $\El'(c')$ for some $\Gamma, x : \mathcal{U} \vdash c' : \mathcal{U}'$.
+Thus, we have a map $\lambda x.\,c' : \mathcal{U} \to \mathcal{U}'$.
+Similarly, we have a map $\lambda y.\,c : \mathcal{U}' \to \mathcal{U}$.
+We need to construct a homotopy $\Gamma, x : \mathcal{U} \vdash h : \Id(c[c'/y],x)$.
+By univalence, it is enough to prove that $\El(c[c'/y])$ is equivalent to $\El(x)$ over $\Delta$.
+By definition of $c$, we have an equivalence $\Gamma, y : \mathcal{U}' \mid \Delta \vdash e : \El(c) \simeq \El'(y)$.
+It follows that we have the following equivalence: $\Gamma, x : \mathcal{U} \mid \Delta \vdash e[c'/y] : \El(c[c'/y]) \simeq \El'(c')$.
+By definition of $c'$, $\El'(c')$ is equivalent to $\El(x)$ over $\Delta$.
+The composition of these two equivalences gives us the required equivalence between $\El(c[c'/y])$ and $\El(x)$ over $\Delta$.
+A homotopy between $c'[c/x]$ and $y$ is constructed similarly.
 
 \begin{defn}
-We will say that a class $\Bund$ is \emph{small} if % TODO
+We will say that a class $\Fib$ is \emph{locally small} if it is classified by an external universe.
 \end{defn}
 
-\subsection{Subobject classifier}
+\begin{example}
+An indexed type theory is called \emph{well-powered} if the class of monomorphisms (that is, $(-1)$-truncated maps) is locally small.
+This definition is analogous to the definition of well-powered indexed categories (see \cite[Example~B1.3.14]{elephant}).
+\end{example}
+
+\subsection{Object classifiers}
 
 \section{Factorization systems}
 
