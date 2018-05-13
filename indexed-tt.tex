@@ -862,7 +862,7 @@ where $\Delta = x_1 : A_1, \ldots x_k : A_k$.
 (\lambda x_1 \ldots x_k.\,b)\,a_1\,\ldots\,a_k & = b[a_1/x_1, \ldots a_k/x_k] \\
 \lambda x_1 \ldots x_k.\,f\,x_1\,\ldots\,x_k & = f
 \end{align*}
-If $\Delta$ is empty, then we will write the application operation as $f\,()$.
+If $\Delta$ is empty, then we will write $\Hom(\Delta.B)$ as $\Hom(B)$, abstraction as $\lambda(b)$, and the application operation as $f\,()$.
 
 If we have such dependent $\Hom$-types, then we can define the following operation:
 \begin{center}
@@ -1456,6 +1456,100 @@ This definition is analogous to the definition of well-powered indexed categorie
 \end{example}
 
 \subsection{Object classifiers}
+
+Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be a map in an indexed unary type theory such that its pullbacks along all maps exist.
+Then we can define a map from $\Id_{\Hom(\Delta,\mathcal{U})}(f,g)$ to the type of equivalences over $\Delta$ between pullbacks of $p$ along $f$ and $g$ as the transport of the identity map along the homotopy between $f$ and $g$.
+An \emph{object classifier} is a map $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ such that its pullbacks exist and the map defined above is an equivalence.
+We will say that an object classifier \emph{classifies} a class of fibrations if this class is closed under pullbacks, $p$ is a fibration, and every fibration is a pullback of $p$.
+
+\begin{example}
+A subobject classifier is an object classifier for monomorphisms.
+\end{example}
+
+An \emph{internal universe} is an indexed type $\mathcal{U}$ together with an indexed type $\El(c)$ for all $c : \mathcal{U}$:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \mathcal{U} \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \Delta \vdash c : \mathcal{U}$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \El(c) \ob$}
+\DisplayProof
+\end{center}
+An internal universe is \emph{univalent} if the obvious map from $\Id_{\mathcal{U}}(c,c')$ to the type of equivalences between $\El(c)$ and $\El(c')$ is an equivalence.
+Internal universes in a theory with $\Sigma$-types and identity types correspond to maps $\Hom(\widehat{\mathcal{U}},\mathcal{U})$ via the construction $\pi_1 : \Hom(\Sigma_{x : \mathcal{U}} \El(x), \mathcal{U})$.
+Such a map is an object classifier if and only if the corresponding universe is univalent.
+
+Every internal universe $\mathcal{U}$ gives rise to an external one, namely $\Hom(\Delta.\mathcal{U})$.
+An internal universe is univalent if and only if the corresponding external one is.
+Moreover, a class of fibration is classified by an internal universe if and only if it is classified by the corresponding external one.
+An internal universe classifying a given class of fibrations is also unique up to a canonical equivalence.
+The proof is the same as for external universes.
+
+\begin{lem}[trunc-pullback]
+In an indexed unary type theory, $n$-truncated maps are closed under pullbacks.
+\end{lem}
+\begin{proof}
+Suppose that we have a pullback square in which the right arrow is $n$-truncated:
+\[ \xymatrix{ A \ar[r] \ar[d] \pb   & C \ar[d] \\
+              B \ar[r]              & D.
+            } \]
+Since $\Hom(X,-)$ preserves pullbacks, the following square is also pullback and the right arrow is $n$-truncated by the definition of $n$-truncated maps in indexed type theories:
+\[ \xymatrix{ \Hom(X,A) \ar[r] \ar[d] \pb   & \Hom(X,C) \ar[d] \\
+              \Hom(X,B) \ar[r]              & \Hom(X,D).
+            } \]
+
+Thus, we just need to prove that $n$-truncated maps are closed under pullbacks in the base theory.
+Suppose that we have the following pullback square:
+\[ \xymatrix{ \sum_{b : B} P(f(b)) \ar[r] \ar[d] \pb    & \sum_{d : D} P(d) \ar[d] \\
+              B \ar[r]_f                                & D.
+            } \]
+If the right arrow is $n$-truncated, then its fibers $P(d)$ are $n$-types for all $d : D$, but this implies that fibers of the left arrow are also $n$-types; hence, it is also $n$-truncated.
+\end{proof}
+
+\begin{prop}
+If $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ is an $n$-truncated map which is also an object classifier, then $\mathcal{U}$ and $\widehat{\mathcal{U}}$ are $(n+1)$-truncated.
+\end{prop}
+\begin{proof}
+First, let us prove that $\mathcal{U}$ is $(n+1)$-truncated.
+This is true if and only if $\Hom(B,\mathcal{U})$ is $(n+1)$-truncated for all $B$, which is true if and only if the type $\Id(f,f')$ is $n$-truncated for all $f,f' : \Hom(B,\mathcal{U})$.
+Since $p$ is an object classifier, the type $\Id(f,f')$ is equivalent to the type of equivalences over $B$ between pullbacks of $p$ along $f$ and $f'$.
+By \rlem{trunc-pullback}, pullbacks of $p$ are $n$-truncated.
+Since the type of equivalences over $B$ is embedded into the type of maps over $B$, we just need to prove that the type of such maps between $n$-truncated maps is $n$-truncated.
+
+Let $s : \Hom(E,B)$ and $s' : \Hom(E',B)$ be $n$-truncated maps.
+The type of maps over $B$ is defined as $\Sigma_{f : \Hom(E,E')} \Id(s' \circ f, s)$.
+This type is the fiber of $s' \circ -$ over $s$, which is $n$-truncated since $s' \circ -$ is $n$-truncated.
+
+Finally, since both $p$ and $\mathcal{U}$ are $(n+1)$-truncated, $\widehat{\mathcal{U}}$ is also $(n+1)$-truncated.
+\end{proof}
+
+\begin{prop}
+If $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ is an object classifier which is also a monomorphism, then $\widehat{\mathcal{U}}$ is contractible.
+\end{prop}
+\begin{proof}
+Since the identity morphism $\id_B$ is a monomorphism for all $B$, it is a pullback of $p$.
+In particular, there is a map from $B$ to $\widehat{\mathcal{U}}$.
+Thus, we just need to show that any to maps $\Hom(B,\widehat{\mathcal{U}})$ are homotopic.
+
+First, note that any commutative square of the form
+\[ \xymatrix{ B \ar[r]^s \ar[d]_{\id_B} & \widehat{\mathcal{U}} \ar[d]^p \\
+              B \ar[r]_t                & \mathcal{U}
+            } \]
+is a pullback.
+We need to prove that the canonical map
+\[ r : \Hom(X,B) \to \sum_{f : \Hom(X,B)} \sum_{g : \Hom(X,\widehat{\mathcal{U}})} \Id(t \circ f, p \circ g). \]
+is an equivalence for all $X$.
+Since $t$ is homotopic to $p \circ s$, the type $\Id(t \circ f, p \circ g)$ is equivalent to $\Id(p \circ s \circ f, p \circ g)$.
+Since $p$ is a monomorphism, it is equivalent to $\Id(s \circ f, g)$.
+Since the type $\Sigma_{g : \Hom(X,\widehat{\mathcal{U}})} \Id(s \circ f, g)$ is contractible, $r$ is indeed an equivalence.
+
+Let $f_1,f_2 : \Hom(B,\widehat{\mathcal{U}})$ be a pair of maps.
+Since $p$ is a monomorphism, it is enough to construct a homotopy between $p \circ f_1$ and $p \circ f_2$.
+We have two pullback squares as above with $s = f_i$ and $t = p \circ f_i$.
+Since $p$ is an object classifier, we have an equivalence between $\Id(p \circ f_1, p \circ f_2)$ and the type of equivalences between pullbacks of $p$ along $p \circ f_1$ and $p \circ f_2$.
+Since both pullbacks are just $\id_B$, they are equivalent; so, we have a homotopy between $p \circ f_1$ and $p \circ f_2$.
+\end{proof}
 
 \section{Factorization systems}
 
