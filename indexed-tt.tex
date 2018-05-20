@@ -55,6 +55,7 @@
 \newcommand{\id}{\fs{id}}
 \newcommand{\pmap}{\fs{ap}}
 \newcommand{\Fib}{\fs{Fib}}
+\newcommand{\fib}{\ \fs{fib}}
 \newcommand{\El}{\fs{El}}
 
 \numberwithin{figure}{section}
@@ -1330,60 +1331,53 @@ Let $f : \Hom(A,B)$ be a map in an indexed unary type theory and let $n$ be an i
 We will say that $f$ is \emph{$n$-truncated} if the map $f \circ - : \Hom(X,A) \to \Hom(X,B)$ is $n$-truncated for all indexed types $X$.
 This definition makes sense in models of indexed unary type theories, but the problem is that it is not algebraic since it quantifies over indexed types.
 That is, we cannot define a predicate on $\Hom(A,B)$ which corresponds to the notion of $n$-truncated maps in models.
-But we can fix this problem if the indexed theory has finite limits.
+But we can fix this problem if the indexed theory has pullbacks.
 
-First, for all indexed types $A$ and integers $n \geq -1$, we define the \emph{$n$-fold iterated free loop space} $\Omega^n(A)$ together with a map $\omega^n_A : \Hom(A,\Omega^n(A))$.
-Let $\Omega^{-1}(A)$ be the terminal type and let $\omega^{-1}_A$ be the unique map.
-Let $\Omega^{n+1}(A)$ as the following pullback:
-\[ \xymatrix{ \Omega^{n+1}(A) \ar[r] \ar[d] \pb & A \ar[d]^{\omega^n_A} \\
-              A \ar[r]_-{\omega^n_A}            & \Omega^n(A).
-            } \]
-The map $\omega^{n+1}(A) : \Hom(A,\Omega^{n+1}(A))$ is induced by the maps $\id_A$ and $\id_A$.
-For every map $f : \Hom(A,B)$, the map $\Omega^n(f) : \Hom(\Omega^n(A),\Omega^n(B))$ is defined in the obvious way.
+First, let us prove a few technical lemmas:
 
-\begin{prop}[mono]
-Let $n$ be an integer $\geq -2$.
-A map $f : \Hom(A,B)$ is $n$-truncated if and only if the following square is a pullback:
-\[ \xymatrix{ A \ar[r]^f \ar[d]_{\omega^{n+1}_A} & B \ar[d]^{\omega^{n+1}_B} \\
-              \Omega^{n+1}(A) \ar[r]_{\Omega^{n+1}(f)} & \Omega^{n+1}(B).
-            } \]
-\end{prop}
+\begin{lem}[trunc-pb]
+In an indexed unary type theory, $n$-truncated maps are closed under pullbacks.
+\end{lem}
 \begin{proof}
-Since $\Hom(X,-)$ preserves limits, it also preserves $\Omega^n(C)$.
-Hence, the square in the statement of this proposition is a pullback if and only if the following square is:
-\[ \xymatrix{ \Hom(X,A) \ar[rr]^{f \circ -} \ar[d]_{\omega^{n+1}_{\Hom(X,A)}}   & & \Hom(X,B) \ar[d]^{\omega^{n+1}_{\Hom(X,B)}} \\
-              \Omega^{n+1}(\Hom(X,A)) \ar[rr]_{\Omega^{n+1}(f \circ -)}         & & \Omega^{n+1}(\Hom(X,B)).
+Suppose that we have a pullback square in which the right arrow is $n$-truncated:
+\[ \xymatrix{ A \ar[r] \ar[d] \pb   & C \ar[d] \\
+              B \ar[r]              & D.
             } \]
-Thus, we just need to prove the statement of this proposition for base types.
-
-This is obvious for $n = -2$.
-Let us assume that $n \geq -1$.
-In this case, $\Omega^{n+1}(A)$ is equivalent to $\Sigma_{a : A} \Omega^{n+1}(A,a)$.
-This is easy to prove by induction on $n$.
-
-Using this equivalence the square in the statement of this proposition can be rewritten as follows:
-\[ \xymatrix{ A \ar[rrrr]^f \ar[d]_{\lambda a.(a,\refl^{n+1}(a))}                                                   & & & & B \ar[d]^{\lambda b.(b,\refl^{n+1}(b))} \\
-              \sum_{a : A} \Omega^{n+1}(A,a) \ar[rrrr]_-{\lambda p.(\pi_1(p),\Omega^{n+1}(f,\pi_1(p))(\pi_2(p)))}   & & & & \sum_{b : B} \Omega^{n+1}(B,b).
+Since $\Hom(X,-)$ preserves pullbacks, the following square is also pullback and the right arrow is $n$-truncated by the definition of $n$-truncated maps in indexed type theories:
+\[ \xymatrix{ \Hom(X,A) \ar[r] \ar[d] \pb   & \Hom(X,C) \ar[d] \\
+              \Hom(X,B) \ar[r]              & \Hom(X,D).
             } \]
 
-This square is a pullback if and only if the induced map to the canonical pullback is an equivalence:
-\[ A \to \sum_{a : A} \sum_{p : \Omega^{n+1}(A,a)} \sum_{b : B} \Id((f\,a,\Omega^{n+1}(f,a)(p)),(b,\refl^{n+1}(b))). \]
-By \cite[Theorem~4.7.7]{hottbook}, this function is an equivalence if and only if, for all $a : A$, the first (and hence every) type in the following sequence of equivalences is contractible:
-\begin{align*}
-\sum_{p : \Omega^{n+1}(A,a)} \sum_{b : B} \Id((f\,a,\Omega^{n+1}(f,a)(p)),(b,\refl^{n+1}(b))) & \simeq \\
-\sum_{p : \Omega^{n+1}(A,a)} \sum_{b : B} \sum_{q : \Id(f a,b)} \Id(q_*(\Omega^{n+1}(f,a)(p)),\refl^{n+1}(b)) & \simeq \\
-\sum_{p : \Omega^{n+1}(A,a)} \Id(\Omega^{n+1}(f,a)(p),\refl^{n+1}(f\,a)) & \simeq \\
-\Omega^{n+1}(\sum_{a' : A} \Id(f\,a',f\,a), (a,\refl(f\,a))) & .
-\end{align*}
-The last equivalence can be proved by induction on $n$.
-
-By \cite[Theorem~7.2.9]{hottbook}, the map $f$ is $n$-truncated if and only if, for all $b : B$, $a : A$, and $p : \Id(f\,a,b)$, the following type is contractible:
-\[ \Omega^{n+1}(\sum_{a' : A} \Id(f\,a',b), (a,p)). \]
-Since $\Sigma_{b : B} \Id(f\,a,b)$ is contractible, this is true if and only if, for all $a : A$, the last type in the sequence of equivalences above is contractible.
+Thus, we just need to prove that $n$-truncated maps are closed under pullbacks in the base theory.
+Suppose that we have the following pullback square:
+\[ \xymatrix{ \sum_{b : B} P(f(b)) \ar[r] \ar[d] \pb    & \sum_{d : D} P(d) \ar[d] \\
+              B \ar[r]_f                                & D.
+            } \]
+If the right arrow is $n$-truncated, then its fibers $P(d)$ are $n$-types for all $d : D$, but this implies that fibers of the left arrow are also $n$-types; hence, it is also $n$-truncated.
 \end{proof}
 
-This proposition implies that if the theory has pullbacks and products, then a map $f : \Hom(A,B)$ is $n$-truncated if and only if the canonical map from $A$ to the pullback of $\Omega^{n+1}(f)$ and $\omega^{n+1}_B$ is an equivalence.
-Thus, in such theories, we can define a predicate on maps that corresponds to the notion of $n$-truncated maps.
+\begin{lem}[trunc-total]
+Let $B$ and $C$ be base types over $x : A$.
+Then a function $f : B \to C$ is $n$-truncated if and only if the induced function $f' : \Sigma_{x : A} B \to \Sigma_{x : A} C$ is $n$-truncated.
+\end{lem}
+\begin{proof}
+By \cite[Theorem~4.7.6]{hottbook}, the fiber of $f'$ over a point $(x,c)$ is equivalent to the fiber of $f$ over $c$.
+Thus, fibers of $f'$ are $n$-truncated if and only if fibers of $f$ are $n$-truncated.
+\end{proof}
+
+The following lemma is similar to \cite[5.5.6.15]{lurie-topos}, which is proved in the context of $\infty$-categories.
+
+\begin{lem}[trunc-id]
+A map $f : \Hom(A,B)$ is $n$-truncated if and only if the map $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$ is $(n-1)$-truncated.
+\end{lem}
+\begin{proof}
+Since $\Hom(X,-)$ preserves and reflects $n$-truncatedness and pullbacks, it is enough to prove this fact for base types.
+By \cite[Lemma~7.6.2]{hottbook}, a function $f : A \to B$ is $n$-truncated if and only if, for all $a,a' : A$, the function $\pmap(f,-) : \Id(a,a') \to \Id(f\,a,f\,a')$ is $(n-1)$-truncated.
+By \rlem{trunc-total}, the latter function is $n$-truncated if and only if the induced function $\Sigma_{a : A} \Sigma_{a' : A} \Id(a,a') \to \Sigma_{a : A} \Sigma_{a' : A} \Id(f\,a,f\,a')$ is $(n-1)$-truncated.
+The latter function is equivalent to $\lambda a.\,(a,a,\refl) : A \to \Sigma_{a : A} \Sigma_{a' : A} \Id(f\,a,f\,a')$, which is equivalent to $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$.
+\end{proof}
+
+The last lemma implies that if the theory has pullbacks, then we can define a predicate on maps that corresponds to the notion of $n$-truncated maps by induction on $n$.
 
 \subsection{Fibrations}
 
@@ -1395,7 +1389,8 @@ Suppose that we have a class of families of propositions over all indexed morphi
 \TrinaryInfC{$\Gamma \vdash \Fib(f) \type$}
 \DisplayProof
 \end{center}
-We will call maps $f$ together witn an element of $\Fib(f)$ \emph{fibrations}.
+We will call maps $f$ together witn an element of $\Fib(f)$ \emph{fibrations} and denote them by $\twoheadrightarrow$.
+We will assume that $\Fib$ is closed under equivalences, that is if $f : \Hom(A,B)$ is a fibration and $e_1 : \Hom(A',A)$ and $e_2 : \Hom(B,B')$ are equivalences, then $e_2 \circ f \circ e_1$ is a fibration.
 
 Sometimes $\Fib(f)$ is not a type, but a finite number of judgements of the form $\Gamma, \Delta_i \vdash A_i \type$.
 For example, we might want to define $\Fib(f)$ as $\fs{isEquiv}(C(f))$ for some morphism $C(f)$.
@@ -1420,6 +1415,119 @@ Conversely, if the indexed theory also has identity types, then, for every depen
 
 \begin{example}
 If the indexed theory has finite limits, then we can define a class of fibrations consisting of $n$-truncated maps (or $n$-truncated indexed types) as was explained in the previous subsection.
+\end{example}
+
+For every dependent class of fibrations $\Fib$, we can add a new sort of dependent types $\Gamma \mid \Delta \vdash A \fib$ consisting of types satisfying the predicate $\Fib$:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash A \fib$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \El(A) \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \Delta \vdash A \fib$}
+\UnaryInfC{$\Gamma \vdash \fs{fp}(\Delta.A) : \Fib(\Delta.\,\El(A))$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
+\AxiomC{$\Gamma \vdash p : \Fib(\Delta.A)$}
+\AxiomC{$\Gamma \mid E \vdash b_i : B_i[b_1/x_1, \ldots b_{i-1}/x_{i-1}]$}
+\TrinaryInfC{$\Gamma \mid E \vdash \fs{rf}(\Delta.A, p, b_1, \ldots b_k) \fib$}
+\DisplayProof
+\end{center}
+where $\Delta = x_1 : B_1, \ldots x_k : B_k$.
+\[ \El(\fs{rf}(\Delta.A, p, b_1, \ldots b_k)) = A[b_1/x_1, \ldots b_k/x_k]. \]
+We define equivalences between fibrations $\Gamma \mid \Delta \vdash A \fib$ and $\Gamma \mid \Delta \vdash B \fib$ as equivalences between underlying types $\El(A)$ and $\El(B)$.
+We will often omit the function symbol $\El$.
+
+We can assume various closure conditions on the class of fibrations in the usual way.
+For example, we can assume that $\Fib$ is closed under contractible types.
+This is true if and only if it contains all identity morphisms.
+Similarly, $\Fib$ is closed under $n$-types (as a dependent class) if and only if it contains all $n$-truncated maps (as a non-dependent class).
+
+\begin{prop}[fib-sigma]
+A class of fibrations is closed under $\Sigma$-types if and only if the corresponding non-dependent class is closed under compositions.
+\end{prop}
+\begin{proof}
+First, suppose that $\Fib$ is closed under compositions.
+If we have fibrations $\Gamma \mid \Delta \vdash A$ and $\Gamma \mid \Delta, x : A \vdash B$, then the type $\Sigma_{x : A} B$ corresponds to the following map:
+\[ \Sigma(\Delta, A, B) \xrightarrow{\simeq} \sum_{p : \Sigma(\Delta, A)} B[\overline{\pi_i(p)/x_i}] \xrightarrow{\pi_1} \Sigma(\Delta, A) \xrightarrow{\simeq} \sum_{p : \Sigma(\Delta)} A[\overline{\pi_i(p)/x_i}] \xrightarrow{\pi_1} \Sigma(\Delta). \]
+The first and the third maps are equivalences and the second and the fourth maps are fibrations by assumption.
+Thus, the type $\Sigma_{x : A} B$ is also a fibration.
+
+Now, suppose that $\Fib$ is closed under $\Sigma$-types.
+Let $f : \Hom(A,B)$ and $g : \Hom(B,C)$ be fibrations.
+These maps correspond to the types $y : B \vdash \Sigma_{x : A} \Id(f\,x,y)$ and $z : C \vdash \Sigma_{y : B} \Id(g\,y,z)$.
+The first type is equivalent to the type $z : C, p : \Sigma_{y : B} \Id(g\,y,z) \vdash \Sigma_{x : A} \Id(f\,x,\pi_1(p))$.
+Since fibrations are closed under $\Sigma$-types, the type $z : C \vdash \Sigma_{(p : \Sigma_{y : B} \Id(g y, z))} \sum_{x : A} \Id(f\,x,\pi_1(p))$ is a fibration.
+This type corresponds to the following map:
+\[ \pi_1 : \Hom(\sum_{z : C} \sum_{(p : \sum_{y : B} \Id(g y, z))} \sum_{x : A} \Id(f\,x,\pi_1(p)), C). \]
+Since this map is equivalent to $g \circ f$, the composite is a fibration.
+\end{proof}
+
+\begin{prop}[fib-id]
+Let $\Fib$ be a class of fibrations closed under pullbacks.
+Then it is closed under identity types if and only if, for every fibration $p : \Hom(A,B)$, the map $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$ is also a fibration.
+\end{prop}
+\begin{proof}
+First, suppose that $\Fib$ is closed under identity types.
+Let $a_1 : A, a_2 : A, h : \Id(p\,a_1,p\,a_2)$ be an element of $A \times_B A$.
+The fiber over this element is the following type:
+\begin{align*}
+\sum_{a : A} \sum_{h_1 : \Id(a_1,a)} \sum_{h_2 : \Id(a,a_2)} \Id(\pmap(p, h_1 \ct h_2), h) & \simeq \\
+\sum_{h' : \Id(a_1,a_2)} \Id(\pmap(p,h'),h) & \simeq \\
+\Id_{\sum_{a : A} \Id(p a_1, p a)}((a_1,\refl), (a_2,h)) & .
+\end{align*}
+Since $\Fib$ is closed under identity types, it is enough to show that $\sum_{a : A} \Id(p\,a_1,p\,a)$ is a fibration over $a_1,a_2,h$.
+This follows from the fact that this type is a pullback of the type $\sum_{a : A} \Id(b,p\,a)$ over $b : B$ which is a fibration since it is the fiber of $p$ over $b$.
+
+Now, let us prove the converse.
+Let $\Gamma \mid \Delta \vdash c_1 : C$ and $\Gamma \mid \Delta \vdash c_2 : C$ be a pair of terms.
+Then the following square is a pullback:
+\[ \xymatrix{ \Sigma_{p : \Sigma(\Delta)} \Id(c_1',c_2') \ar[r]^-{c_1' \circ \pi_1} \ar@{->>}[d]_{\pi_1} \pb    & C' \ar@{->>}[d]^{\langle \id_{C'}, \id_{C'} \rangle} \\
+              \Sigma(\Delta) \ar[r]_-{\langle c_1', c_2' \rangle}                                               & C' \times_{\Sigma(\Delta)} C'
+            } \]
+where $C' = \Sigma_{p : \Sigma(\Delta)} C[\overline{\pi_i(p)/x_i}]$ and $c_i' = c_i[\overline{\pi_i(p)/x_i}]$.
+Since $\Gamma \mid \Delta \vdash \Id(c_1,c_2)$ is equivalent to $\Gamma \mid p : \Sigma(\Delta) \vdash \Id(c_1',c_2')$, it follows that $\Id(c_1,c_2)$ is a fibration.
+\end{proof}
+
+The following proposition shows that if the class of fibrations is closed under pullbacks and compositions, then there is another characterization of the condition that it is closed under identity types.
+
+\begin{prop}[fib-id-comp]
+Let $\Fib$ be a class of fibrations in an indexed unary type theory
+If $\Fib$ is closed under pullbacks and compositions, then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:fib-pb} For every fibration $p : \Hom(A,B)$, the map $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$ is also a fibration.
+\item \label{it:fib-over} For every commutative diagram as below in which $p$ and $q$ are fibrations, $f$ is also a fibration.
+\[ \xymatrix{ A \ar[rr]^f \ar@{->>}[dr]_p &   & C \ar@{->>}[dl]^q \\
+                                          & B &
+            }\]
+\end{enumerate}
+\end{prop}
+\begin{proof}
+First, suppose that \eqref{it:fib-pb} holds.
+Consider the following diagram:
+\[ \xymatrix{ A \ar[r]^f \ar@{->>}[d]_r \pb             & C \ar@{->>}[d]^{\langle \id_C, \id_C \rangle} & \\
+              A \times_B C \ar[r]^{f'} \ar@{->>}[d] \pb & C \times_B C \ar[r]^-{q'} \ar@{->>}[d] \pb    & C \ar@{->>}[d]^q \\
+              A \ar[r]_f                                & C \ar[r]_q                                    & B
+            } \]
+The map $q' \circ f'$ is a pullback of $q \circ f = p$, so it is a fibration.
+The map $r$ is a fibration since it is a pullback of $\langle \id_C, \id_C \rangle$, which is a fibration by \eqref{it:fib-pb}.
+Since fibrations are closed under compositions, $q' \circ f' \circ r$ is also a fibration.
+Finally, $f$ is a fibration since $f = q' \circ \langle \id_C, \id_C \rangle \circ f = q' \circ f' \circ r$.
+
+Now, suppose that \eqref{it:fib-over} holds.
+Let $f : \Hom(A,B)$ be a fibration.
+Let $q$ be the composite $A \times_B A \xrightarrow{\pi_1} A \xrightarrow{f} B$.
+Since fibrations are closed under pullbacks, the first map is a fibration.
+Since they are closed under compositions, $q$ is also a fibration.
+Since $q \circ \langle \id_A, \id_A \rangle = f$ is a fibration, $\langle \id_A, \id_A \rangle$ is also a fibration by \eqref{it:fib-over}.
+\end{proof}
+
+\begin{example}
+The class of $n$-truncated maps is closed under compositions, pullbacks, $m$-types for $m \leq n$, $\Sigma$-types, and identity types.
+This follows from \rlem{trunc-pb}, \rprop{fib-sigma}, \rprop{fib-id}, and \rlem{trunc-id}.
 \end{example}
 
 An \emph{external universe} is a base type $\mathcal{U}(\Delta)$ defined for all indexed context $\Delta$ together with an indexed type $\El(c)$ over $\Delta$ for all $c : \mathcal{U}(\Delta)$:
@@ -1466,7 +1574,28 @@ We will say that an object classifier \emph{classifies} a class of fibrations if
 A subobject classifier is an object classifier for monomorphisms.
 \end{example}
 
-An \emph{internal universe} is an indexed type $\mathcal{U}$ together with an indexed type $\El(c)$ for all $c : \mathcal{U}$:
+Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be any map.
+We can think of such a map as a (non-univalent) universe.
+We will say that the universe $\mathcal{U}$ \emph{contains a type $A$} if there is a map $a : \Hom(1,\mathcal{U})$ and an equivalence between $A$ and the pullback of $p$ along $a$.
+We will say that $\mathcal{U}$ is \emph{closed under coproducts} if, for all maps $a,b : \Hom(\Gamma,\mathcal{U})$, there is a map $a + b : \Hom(\Gamma,\mathcal{U})$
+and an equivalence over $\Gamma$ between the pullback of $p$ along $a + b$ and the sum of pullbacks of $p$ along $a$ and $b$.
+Similarly, we will say that $\mathcal{U}$ is \emph{closed under $\Sigma$-types} if, for every map $a : \Hom(\Gamma,\mathcal{U})$
+and every map $b : \Hom(\Gamma \times_\mathcal{U} \widehat{\mathcal{U}}, \mathcal{U})$, there is a map $\Sigma(a,b) : \Hom(\Gamma,\mathcal{U})$
+together with an equivalence over $\Gamma$ between the pullback of $p$ along $\Sigma(a,b)$ and the composition of pullbacks of $p$ along $b$ and $a$.
+The closure under other constructions is defined similarly.
+
+In general, being closed under different construction is not a property of a map but additional data on it.
+The following proposition shows that it is a property if the map $p$ is an object classifier:
+
+\begin{prop}
+Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be an object classifier.
+Then the types corresponding to the closure conditions listed above are propositions.
+\end{prop}
+\begin{proof}
+% TODO
+\end{proof}
+
+An \emph{(internal) universe} in an indexed dependent type theory is an indexed type $\mathcal{U}$ together with an indexed type $\El(c)$ for all $c : \mathcal{U}$:
 \begin{center}
 \AxiomC{}
 \UnaryInfC{$\Gamma \mid \Delta \vdash \mathcal{U} \ob$}
@@ -1486,26 +1615,19 @@ Moreover, a class of fibration is classified by an internal universe if and only
 An internal universe classifying a given class of fibrations is also unique up to a canonical equivalence.
 The proof is the same as for external universes.
 
-\begin{lem}[trunc-pullback]
-In an indexed unary type theory, $n$-truncated maps are closed under pullbacks.
-\end{lem}
-\begin{proof}
-Suppose that we have a pullback square in which the right arrow is $n$-truncated:
-\[ \xymatrix{ A \ar[r] \ar[d] \pb   & C \ar[d] \\
-              B \ar[r]              & D.
-            } \]
-Since $\Hom(X,-)$ preserves pullbacks, the following square is also pullback and the right arrow is $n$-truncated by the definition of $n$-truncated maps in indexed type theories:
-\[ \xymatrix{ \Hom(X,A) \ar[r] \ar[d] \pb   & \Hom(X,C) \ar[d] \\
-              \Hom(X,B) \ar[r]              & \Hom(X,D).
-            } \]
+A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) contains a type $A$} if there is an element $a : \mathcal{U}$ such that $\El(a)$ is propositionally (resp., judgementally) equivalent to $A$. 
+A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under coproducts} if, for all elements $a,b : \mathcal{U}$, there exists an element $a + b : \mathcal{U}$ such that $\El(a + b)$ is propositionally (resp., judgementally) equivalent to the coproduct of $\El(a)$ and $\El(b)$.
+A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under $\Sigma$-types} if, for every element $a : \mathcal{U}$ and every function $b : \El(a) \to \mathcal{U}$, there exists an element $\Sigma(a,x.b(x)) : \mathcal{U}$ such that $\El(\Sigma(a,x.b(x)))$ is propositionally (resp., judgementally) equivalent to $\Sigma_{x : \El(a)} \El(b(x))$.
 
-Thus, we just need to prove that $n$-truncated maps are closed under pullbacks in the base theory.
-Suppose that we have the following pullback square:
-\[ \xymatrix{ \sum_{b : B} P(f(b)) \ar[r] \ar[d] \pb    & \sum_{d : D} P(d) \ar[d] \\
-              B \ar[r]_f                                & D.
-            } \]
-If the right arrow is $n$-truncated, then its fibers $P(d)$ are $n$-types for all $d : D$, but this implies that fibers of the left arrow are also $n$-types; hence, it is also $n$-truncated.
+\begin{prop}
+Let $\mathcal{U}$ be a universe.
+Then it is weakly closed under one of the constructions listed above if and only if the corresponding map $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ is closed under the corresponding construction.
+\end{prop}
+\begin{proof}
+% TODO
 \end{proof}
+
+The following propositions discuss $n$-truncated object classifiers.
 
 \begin{prop}
 If $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ is an $n$-truncated map which is also an object classifier, then $\mathcal{U}$ and $\widehat{\mathcal{U}}$ are $(n+1)$-truncated.
@@ -1514,7 +1636,7 @@ If $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ is an $n$-truncated map which i
 First, let us prove that $\mathcal{U}$ is $(n+1)$-truncated.
 This is true if and only if $\Hom(B,\mathcal{U})$ is $(n+1)$-truncated for all $B$, which is true if and only if the type $\Id(f,f')$ is $n$-truncated for all $f,f' : \Hom(B,\mathcal{U})$.
 Since $p$ is an object classifier, the type $\Id(f,f')$ is equivalent to the type of equivalences over $B$ between pullbacks of $p$ along $f$ and $f'$.
-By \rlem{trunc-pullback}, pullbacks of $p$ are $n$-truncated.
+By \rlem{trunc-pb}, pullbacks of $p$ are $n$-truncated.
 Since the type of equivalences over $B$ is embedded into the type of maps over $B$, we just need to prove that the type of such maps between $n$-truncated maps is $n$-truncated.
 
 Let $s : \Hom(E,B)$ and $s' : \Hom(E',B)$ be $n$-truncated maps.
@@ -1551,10 +1673,69 @@ Since $p$ is an object classifier, we have an equivalence between $\Id(p \circ f
 Since both pullbacks are just $\id_B$, they are equivalent; so, we have a homotopy between $p \circ f_1$ and $p \circ f_2$.
 \end{proof}
 
-\section{Factorization systems}
+Finally, let us prove another simple but useful result.
+Analogous result in the context of higher categories was proved in \cite[Theorem~3.28]{rasekh-eht}.
 
-% 1. Propositional truncation
-% 2. Other factorization systems, modalities, and localizations?
+\begin{prop}
+Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be an object classifier and let $f : \Hom(\mathcal{U}',\mathcal{U})$ be any map.
+Then the pullback of $p$ is an object classifier if and only if $f$ is a monomorphism.
+\end{prop}
+\begin{proof}
+% TODO
+\end{proof}
+
+\subsection{Locally reflective classes of fibrations}
+
+In this subsection, we discuss the notion of modalities in indexed type theories.
+Several equivalent definitions of modalities were defined in \cite{modality-hott} in the context of ordinary homotopy type theory.
+We define the notion of locally reflective classes of fibrations which is similar to the notion of a reflective subuniverse.
+This definition makes sense in an indexed unary type theory.
+We also define a dependent version of this notion which is similar to the notion of a higher modality.
+
+Let $\Fib$ be a class of fibrations in an indexed unary type theory as defined in the previous section.
+We will say that it is \emph{locally reflective} if every map $f : \Hom(A,B)$ factors through a fibration $p : \Hom(C,B)$
+such that, for every factorization of $f$ through any fibration $p' : \Hom(C',B)$, the type of lifts in the following square is contractible:
+\[ \xymatrix{ A \ar[r] \ar[d]                   & C' \ar@{->>}[d]^{p'} \\
+              C \ar@{->>}[r]_p \ar@{-->}[ur]    & B
+            } \]
+
+Let $\Fib$ be a dependent class of fibrations in an indexed dependent type theory.
+To simplify the notation, we will assume that we have a separate sort for fibrations.
+We will say that $\Fib$ is \emph{strictly reflective} if it is closed under identity types and we have the following constructions:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \| A \| \fib$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash | a | : \| A \|$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, z : \| A \| \vdash D \fib$}
+\AxiomC{$\Gamma \mid \Delta, x : A \vdash d : D[| x | / z]$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : \| A \|$}
+\TrinaryInfC{$\Gamma \mid \Delta \vdash \| A \|\text{-}\fs{elim}(z.D, x.d, a) : D[a/z]$}
+\DisplayProof
+\end{center}
+
+\[ \| A \|\text{-}\fs{elim}(z.D, f, x.d, |a|) = d[a/x] \]
+
+We will say that the class $\Fib$ is \emph{weakly reflective} if the last equation holds only propositionally.
+
+\begin{prop}
+Let $\Fib$ be a dependent class of fibrations in an indexed dependent type theory with $\Sigma$-types and identity types.
+Then $\Fib$ is weakly reflective if and only if the corresponding non-dependent class is locally reflective.
+\end{prop}
+\begin{proof}
+% TODO
+\end{proof}
+
+\begin{example}
+Since the class of $n$-truncated maps is closed under identity types, it is locally reflective if and only if we have the weak version of the $n$-truncation operation.
+\end{example}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
