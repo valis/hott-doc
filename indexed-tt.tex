@@ -306,6 +306,7 @@ Let $f,g : \Hom(A,B)$ and $h,i : \Hom(B,C)$ be morphisms and let $p : \Id_{\Hom(
 The horizontal composition of $p$ and $q$ is a term $p * q$ of type $\Id_{\Hom(A,C)}(\lambda x.\,h\,(f\,x), \lambda x.\,i\,(g\,x))$.
 To define $p * q$, we just need to eliminate $p$ and $q$ and then define $\refl(f) * \refl(h)$ as $\refl(\lambda x.\,h\,(f\,x))$.
 It is easy to prove that usual properties of this operation hold.
+Expressions $\refl(f) * q$, $p * \refl(g)$, and $\refl(f) * \refl(g)$ will be denoted by $f * q$, $p * g$, and $f * g$, respectively.
 
 \begin{defn}
 An equivalence between indexed types $A$ and $B$ is a morphism $f : \Hom(A,B)$ such that there is a morphism $g : \Hom(B,A)$ such that $g \circ f \sim \id_A$ and $f \circ g \sim \id_B$.
@@ -345,7 +346,7 @@ A map is bi-invertible if and only if it is an equivalence.
 Obviously, if a map is an equivalence, then it is bi-invertible.
 Let us prove the converse.
 Let $g : \Hom(B,A)$, $p : \Id(g \circ f, \id_A)$ be a left inverse of $f$ and let $g' : \Hom(B,A)$, $p' : \Id(f \circ g', \id_B)$ be a right inverse of $f$.
-Then $\refl(g') * p : \Id(g \circ f \circ g', g')$.
+Then $g' * p : \Id(g \circ f \circ g', g')$.
 Since $f \circ g' \sim \id_B$, there is a term of type $\Id(g,g')$.
 It follows that $g$ is an inverse of $f$.
 \end{proof}
@@ -371,7 +372,7 @@ This follows from \rprop{biinv-equiv} and \rlem{lrinv-contr}.
 
 Let $f : \Hom(A,B)$ be a morphism.
 We will say that $f$ is a \emph{half adjoint equivalnce} if the following type is inhabited:
-\[ \fs{ishae}(f) = \sum_{g : \Hom(B,A)} \sum_{\eta : \Id(g \circ f, \id_A)} \sum_{\epsilon : \Id(f \circ g, \id_B)} \Id(\eta * \refl(f), \refl(f) * \epsilon). \]
+\[ \fs{ishae}(f) = \sum_{g : \Hom(B,A)} \sum_{\eta : \Id(g \circ f, \id_A)} \sum_{\epsilon : \Id(f \circ g, \id_B)} \Id(\eta * f, f * \epsilon). \]
 
 \begin{prop}
 A map is a half adjoint equivalence if and only if it is an equivalence.
@@ -381,20 +382,20 @@ Obviously, if a map is a half adjoint equivalence, then it is an equivalence.
 Let us prove the converse.
 Let $g : \Hom(B,A)$, $\eta : \Id(g \circ f, \id_A)$, $\epsilon : \Id(f \circ g, \id_B)$ be an inverse of $f$.
 Then we define $\epsilon' : \Id(f \circ g, \id_B)$ as concatenation of paths
-$\refl(f \circ g) * \sym(\epsilon) : \Id(f \circ g, f \circ g \circ f \circ g)$, $\refl(g) * \eta * \refl(f) : \Id(f \circ g \circ f \circ g, f \circ g)$, and $\epsilon : \Id(f \circ g, \id_B)$.
-We need to prove that $\refl(f) * \epsilon' \sim \eta * \refl(f)$.
+$g * f * \sym(\epsilon) : \Id(f \circ g, f \circ g \circ f \circ g)$, $g * \eta * f : \Id(f \circ g \circ f \circ g, f \circ g)$, and $\epsilon : \Id(f \circ g, \id_B)$.
+We need to prove that $f * \epsilon' \sim \eta * f$.
 
-First, note that $\eta * \refl(g \circ f) \sim \refl(g \circ f) * \eta$.
-Indeed, $(\eta * \refl(g \circ f)) \ct \eta \sim \eta * \eta \sim (\refl(g \circ f) * \eta) \ct \eta$.
+First, note that $\eta * f * g \sim f * g * \eta$.
+Indeed, $(\eta * f * g) \ct \eta \sim \eta * \eta \sim (f * g * \eta) \ct \eta$.
 Thus, if we cancel $\eta$, this gives us a homotopy between the original paths.
 Now, we can finish the proof:
 \begin{align*}
-\refl(f) * \epsilon' & \sim \\
-(\refl(f \circ g \circ f) * \sym(\epsilon)) \ct (\refl(g \circ f) * \eta * \refl(f)) \ct (\refl(f) * \epsilon) & \sim \\
-(\refl(f \circ g \circ f) * \sym(\epsilon)) \ct (\eta * \refl(f \circ g \circ f)) \ct (\refl(f) * \epsilon) & \sim \\
-(\eta * \refl(f) * \sym(\epsilon)) \ct (\refl(f) * \epsilon) & \sim \\
-(\eta * \refl(f)) \ct (\refl(f) * \sym(\epsilon)) \ct (\refl(f) * \epsilon) & \sim \\
-\eta * \refl(f) & .
+f * \epsilon' & \sim \\
+(f * g * f * \sym(\epsilon)) \ct (f * g * \eta * f) \ct (f * \epsilon) & \sim \\
+(f * g * f * \sym(\epsilon)) \ct (\eta * f * g * f) \ct (f * \epsilon) & \sim \\
+(\eta * f * \sym(\epsilon)) \ct (f * \epsilon) & \sim \\
+(\eta * f) \ct (f * \sym(\epsilon)) \ct (f * \epsilon) & \sim \\
+\eta * f & .
 \end{align*}
 \end{proof}
 
@@ -404,11 +405,11 @@ The type $\fs{ishae}(f)$ is a proposition.
 \begin{proof}
 We can assume that $f$ is an equivalence and prove that $\fs{ishae}(f)$ is contractible.
 By \rlem{lrinv-contr}, the type $\Sigma_{g : \Hom(B,A)} \Id(g \circ f, \id_A)$ is contractible.
-Thus, we just need to prove that, for every $g : \Hom(B,A)$ and $\eta : \Id(g \circ f, \id_A)$, the type $\Sigma_{\epsilon : \Id(f \circ g, \id_B)} \Id(\eta * \refl(f), \refl(f) * \epsilon)$ is also contractible.
+Thus, we just need to prove that, for every $g : \Hom(B,A)$ and $\eta : \Id(g \circ f, \id_A)$, the type $\Sigma_{\epsilon : \Id(f \circ g, \id_B)} \Id(\eta * f, f * \epsilon)$ is also contractible.
 
-Since $f$ is an equivalence, the function $\refl(f) * -$ is also an equivalence.
-It follows that the type $\Id(\eta * \refl(f), \refl(f) * \epsilon)$ is equivalent to the type $\Id(h(\eta * \refl(f)), \epsilon)$, where $h$ is the inverse of $\refl(f) * -$.
-Thus, the type $\Sigma_{\epsilon : \Id(f \circ g, \id_B)} \Id(\eta * \refl(f), \refl(f) * \epsilon)$ is equivalent to the type $\Sigma_{\epsilon : \Id(f \circ g, \id_B)} \Id(h(\eta * \refl(f)), \epsilon)$, which is contractible by \cite[Lemma~3.11.8]{hottbook}.
+Since $f$ is an equivalence, the function $f * -$ is also an equivalence.
+It follows that the type $\Id(\eta * f, f * \epsilon)$ is equivalent to the type $\Id(h(\eta * f), \epsilon)$, where $h$ is the inverse of $f * -$.
+Thus, the type $\Sigma_{\epsilon : \Id(f \circ g, \id_B)} \Id(\eta * f, f * \epsilon)$ is equivalent to the type $\Sigma_{\epsilon : \Id(f \circ g, \id_B)} \Id(h(\eta * f), \epsilon)$, which is contractible by \cite[Lemma~3.11.8]{hottbook}.
 \end{proof}
 
 \subsection{Properties of equivalences}
@@ -466,13 +467,13 @@ An indexed unary type theory \emph{has binary products} if a binary product exis
 
 An \emph{equalizer} of a pair of maps $f,g : \Hom(A,B)$ is a map $e : \Hom(E,A)$ together with a homotopy $p : \Id(f \circ e, g \circ e)$
 such that the following function is an equivalence for every indexed type $E'$:
-\[ \lambda h.\,(e \circ h, \refl(h) * p) : \Hom(E', E) \to \sum_{e' : \Hom(E',A)} \Id(f \circ e', g \circ e'). \]
+\[ \lambda h.\,(e \circ h, h * p) : \Hom(E', E) \to \sum_{e' : \Hom(E',A)} \Id(f \circ e', g \circ e'). \]
 An indexed unary type theory \emph{has equalizers} if an equalizer exists for every parallel pair of maps in every context.
 \emph{Coequalizers} are defined dually.
 
-A \emph{pullback} of a pair of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is a triple $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \times_C B, B)$, $p : \Id(f \circ \pi_1, g \circ \pi_2)$
+A \emph{pullback} of a pair of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is a triple $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \times_C B, B)$, $\pi_3 : \Id(f \circ \pi_1, g \circ \pi_2)$
 such that the following function is an equivalence for every indexed type $P'$:
-\[ \lambda h.\,(\pi_1 \circ h, \pi_2 \circ h, \refl(h) * p) : \Hom(P, A \times_C B) \to \Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B), \]
+\[ \lambda h.\,(\pi_1 \circ h, \pi_2 \circ h, h * \pi_3) : \Hom(P, A \times_C B) \to \Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B), \]
 where the pullback of types $\Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B)$ is defined as usual:
 \[ \sum_{\pi_1' : \Hom(P,A)} \sum_{\pi_2' : \Hom(P,B)} \Id(f \circ \pi_1', g \circ \pi_2'). \]
 An indexed unary type theory \emph{has pullbacks} if a pullback exists for every pair of maps with a common codomain in every context.
@@ -505,12 +506,12 @@ By the definition of products, the type of homotopies $\Id_{\Hom(P, B \times B)}
 Thus, by the definition of pushouts, we have the following equivalence:
 \begin{align*}
 & \Hom(P,E) \to \sum_{a : \Hom(P,A)} \sum_{b : \Hom(P,B)} \Id(f \circ a, b) \times \Id(g \circ a, b) \\
-& \lambda q.\,(e \circ q, s \circ q, \refl(q) * h_1, \refl(q) * h_2),
+& \lambda q.\,(e \circ q, s \circ q, q * h_1, q * h_2),
 \end{align*}
 where $h_1 : \Id(f \circ e, s)$ and $h_2 : \Id(g \circ e, s)$ are certain homotopies.
 The codomain of this function is equivalent to $\Sigma_{a : \Hom(P,A)} \Id(f \circ a, g \circ a)$.
 This implies that we have the following equivalence:
-\[ \lambda q.\,(e \circ q, \refl(q) * (h_1 \ct \sym(h_2))) : \Hom(P,E) \to \sum_{a : \Hom(P,A)} \Id(f \circ a, g \circ a). \]
+\[ \lambda q.\,(e \circ q, q * (h_1 \ct \sym(h_2))) : \Hom(P,E) \to \sum_{a : \Hom(P,A)} \Id(f \circ a, g \circ a). \]
 Thus, we can define an equalizer of maps $f$ and $g$ as the triple $E$, $e$, $h_1 \ct \sym(h_2)$.
 
 Now, suppose that the theory has binary products and equalizers.
@@ -771,9 +772,10 @@ d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/
 \end{align*}
 where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
 
-For every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_n)$ in the indexed theory, we have the following equation whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in $b_1$, \ldots $b_k$:
+We often assume that, for every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_n)$ in the indexed theory, the following equation holds whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in $b_1$, \ldots $b_k$:
 \[ \sigma(\ldots, \overline{z_i}.\,c_i, \ldots)[b_1/y_1, \ldots b_k/y_k] = \sigma(\ldots, \overline{z_i}.\,c_i[b_1/y_1, \ldots b_k/y_k], \ldots) \]
 We also have the weakening operation which is left implicit as usual.
+We will call a theory or a construction \emph{unstable} if this equation does not hold.
 
 We can also substitute base terms into indexed types and terms:
 \begin{center}
@@ -947,14 +949,14 @@ Indeed, $\lambda x_1 \ldots x_k.\,f\,x_1\,\ldots\,x_k$ equals to
 where $p' = (\pi_1(p), \ldots \pi_k(p))$.
 To prove that it is homotopic to $f$, we need to construct a homotopy of the following type:
 \[ h : \Id(\pi_1(f), \lambda p.\,(p,\fs{hap}(\pi_2(f),p')_*(\pi_2(\pi_1(f)\,p')))) \]
-such that $h * \refl(\pi_1)$ is homotopic to $\pi_2(f)$.
+such that $h * \pi_1$ is homotopic to $\pi_2(f)$.
 To construct such a homotopy, we can use $\fs{hap^{-1}}$.
 Then we need to define two homotopies for every $p : \Sigma(\Delta)$:
 \begin{align*}
 h_1 & : \Id(\pi_1(\pi_1(f)\,p),p) \\
 h_2 & : \Id((h_1)_*(\pi_2(\pi_1(f)\,p)),\fs{hap}(\pi_2(f),p')_*(\pi_2(\pi_1(f)\,p')))
 \end{align*}
-The condition that $h * \refl(\pi_1)$ is homotopic to $\pi_2(f)$ is satisfied if we put $h_1 = \fs{hap}(\pi_2(f),p)$.
+The condition that $h * \pi_1$ is homotopic to $\pi_2(f)$ is satisfied if we put $h_1 = \fs{hap}(\pi_2(f),p)$.
 Finally, to construct $h_2$, it is enough to note that $p'$ is homotopic to $p$.
 
 Thus, the theory of dependent $\Hom$-types is a slightly stricter version of the theory of $\Hom$-types.
@@ -995,11 +997,11 @@ with the obvious projections $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \t
 We need to show that the following map is equivalence:
 \begin{align*}
 & \Hom(P, A \times_C B) \to \sum_{F : \Hom(P,A)} \sum_{G : \Hom(P,B)} \Id(f \circ F, g \circ G) \\
-& \lambda s.\,(\pi_1 \circ s, \pi_2 \circ s, \refl(s) * \fs{hap^{-1}}(p.\,\pi_3(p))).
+& \lambda s.\,(\pi_1 \circ s, \pi_2 \circ s, s * \fs{hap^{-1}}(p.\,\pi_3(p))).
 \end{align*}
 The inverse of this map is defined as follows:
 \[ \lambda t.\,\lambda p.\,(\pi_1(t)\,p, \pi_2(t)\,p, \fs{hap}(\pi_3(t),p)). \]
-It is easy to see that these functions are inverse of each other using the fact that $\refl(s) * \fs{hap^{-1}}(p.\,\pi_3(p)) = \fs{hap^{-1}}(p.\,\pi_3(s\,p))$.
+It is easy to see that these functions are inverse of each other using the fact that $s * \fs{hap^{-1}}(p.\,\pi_3(p)) = \fs{hap^{-1}}(p.\,\pi_3(s\,p))$.
 
 The following proposition shows that $\Hom(x_1 \ldots x_n.\,-)$ commutes with $\Sigma$-types and identity types:
 \begin{prop}
@@ -1621,7 +1623,7 @@ A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under $\Sigma$
 
 \begin{prop}
 Let $\mathcal{U}$ be a universe.
-Then it is weakly closed under one of the constructions listed above if and only if the corresponding map $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ is closed under the corresponding construction.
+Then it is weakly closed under one of the constructions listed above if and only if the map $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ is closed under the corresponding construction.
 \end{prop}
 \begin{proof}
 % TODO
@@ -1684,9 +1686,9 @@ Then the pullback of $p$ is an object classifier if and only if $f$ is a monomor
 % TODO
 \end{proof}
 
-\subsection{Locally reflective classes of fibrations}
+\section{Locally reflective classes of fibrations}
 
-In this subsection, we discuss the notion of modalities in indexed type theories.
+In this section, we discuss the notion of modalities in indexed type theories.
 Several equivalent definitions of modalities were defined in \cite{modality-hott} in the context of ordinary homotopy type theory.
 We define the notion of locally reflective classes of fibrations which is similar to the notion of a reflective subuniverse.
 This definition makes sense in an indexed unary type theory.
@@ -1698,6 +1700,98 @@ such that, for every factorization of $f$ through any fibration $p' : \Hom(C',B)
 \[ \xymatrix{ A \ar[r] \ar[d]                   & C' \ar@{->>}[d]^{p'} \\
               C \ar@{->>}[r]_p \ar@{-->}[ur]    & B
             } \]
+The factorization $A \to C \to B$ will be called \emph{the universal factorization} of $f$.
+We will say that $\Fib$ is \emph{stably} locally reflective if the universal factorization of any map is stable under pullbacks.
+
+\begin{lem}[fib-refl]
+If $A \xrightarrow{i} C \xrightarrow{p} B$ is the universal factorization of $f$, then the following conditions are equivalent:
+\begin{enumerate}
+\item $i$ is an equivalence.
+\item $f$ is a fibration.
+\item $i$ has a retraction over $B$.
+\end{enumerate}
+\end{lem}
+\begin{proof}
+If $i$ is an equivalence, then $f$ is a fibration since fibrations are closed under equivalences and $p$ is a firation.
+If $f$ is a fibration, then the lift in the following square is a retraction of $i$ over $B$.
+\[ \xymatrix{ A \ar@{=}[r] \ar[d]_i             & A \ar@{->>}[d]^{f} \\
+              C \ar@{->>}[r]_p \ar@{-->}[ur]^r  & B
+            } \]
+Let $r$ be a retraction of $i$ over $B$.
+Consider the following commutative square:
+\[ \xymatrix{ A \ar[r]^i \ar[d]_i                                                           & C \ar@{->>}[d]^{p} \\
+              C \ar@{->>}[r]_p \ar@{-->}@<-0.5ex>[ur]_{i \circ r} \ar@{-->}@<0.5ex>[ur]^\id & B
+            } \]
+It is easy to see that $\id_C$ and $i \circ r$ are lifts in this square.
+Since lifts are unique up to a homotopy, these maps are homotopic.
+Thus, $i$ is an equivalence.
+\end{proof}
+
+\begin{lem}
+Any locally reflective class of fibrations contains all identity morphisms
+\end{lem}
+\begin{proof}
+Let $A \xrightarrow{i} B \xrightarrow{p} A$ be the universal factorization of $\id_A$.
+Then $p$ is a retraction of $i$ over $A$.
+By \rlem{fib-refl}, $\id_A$ is a fibration.
+\end{proof}
+
+\begin{lem}
+Any stably locally reflective class of fibrations is closed under pullbacks.
+\end{lem}
+\begin{proof}
+Let $f$ be a fibration and let $f = p \circ i$ be its universal factorization.
+Since the class of fibrations is stably locally reflactive, the pullbacks of $p$ and $i$ constitute the universal factorization of a pullback of $f$.
+By \rlem{fib-refl}, $i$ is an equivalence.
+Hence, its pullback is also an equivalence.
+Since the pullback of $p$ is a fibration and fibrations are closed under equivalences, the pullback of $f$ is also a fibration.
+\end{proof}
+
+\begin{lem}[fib-refl-lift]
+Let $\Fib$ be a locally reflective class of fibrations closed under pullbacks.
+Let $A \xrightarrow{i} C \xrightarrow{p} B$ be the universal factorization of a map $f : \Hom(A,B)$.
+Then every commutative square as below has a lift if $v$ factors through $p$.
+\[ \xymatrix{ A \ar[r] \ar[d]_i & D \ar[d] \\
+              C \ar[r]_v        & E
+            } \]
+\end{lem}
+\begin{proof}
+% TODO
+\end{proof}
+
+\begin{lem}[fib-refl-id]
+Any locally reflective class of fibrations closed under pullbacks satisfies the equivalent conditions of \rprop{fib-id}.
+\end{lem}
+\begin{proof}
+Let $f : \Hom(A,B)$ be a fibration and let $d = \langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$.
+We need to prove that $d$ is a fibration.
+Let $A \xrightarrow{i} C \xrightarrow{p} A \times_B A$ be the universal factorization of $d$.
+By \rlem{fib-refl}, it is enough to prove that $i$ has a retraction over $A \times_B A$.
+We define the retraction $r$ as the composite $C \xrightarrow{p} A \times_B A \xrightarrow{\pi_1} A$.
+We need to prove that the following diagram commutes and the induced homotopy between $p \circ i$ and $d$ is homotopic to the canonical homotopy obtained from the factorization.
+\[ \xymatrix{ A \ar@{=}[r] \ar[d]_i & A \ar[d]^d \\
+              C \ar[r]_-p \ar[ur]^r & A \times_B A
+            } \]
+The top triangle commutes because $r \circ i = \pi_1 \circ p \circ i \sim \pi_1 \circ d \sim \id_A$.
+By the universal property of pullbacks, to prove that the bottom triangle commutes, it is enough to prove that
+triples $(r,r,\refl)$ and $(\pi_1 \circ p, \pi_2 \circ p, p * \pi_3)$ are homotopic as elements of $\Sigma_{s_1 s_2 : \Hom(C,A)} \Id(f \circ s_1, f \circ s_2)$.
+The first components are homotopic trivially.
+The second components are homotopic since they are both lifts in the following square:
+\[ \xymatrix{ A \ar@{=}[r] \ar[d]_i             & A \ar[d]^f \\
+              C \ar[r]_{f \circ \pi_2 \circ p}  & B
+            } \]
+Lifts in this square are unique by \rlem{fib-refl-lift}.
+This means that we have a homotopy $h : \Id(r, \pi_2 \circ p)$ such that $h * f \sim p * \pi_3$.
+Then $h$ is the second component in the homotopy between $(r,r,\refl)$ and $(\pi_1 \circ p, \pi_2 \circ p, p * \pi_3)$ and $h * f \sim p * \pi_3$ gives us the third component.
+Moreover, $i * h$ is homotopic to the homotopy $r \circ i = \pi_1 \circ p \circ i \sim \pi_1 \circ d \sim \id_A \sim \pi_2 \circ d \sim \pi_2 \circ p \circ i$
+and this homotopy can be combined with the homotopy $h * f \sim p * \pi_3$ to give another coherence homotopy.
+These homotopies can be used to construct a coherence homotopy for the lift in the original square.
+\end{proof}
+
+We can reformulate the definition of locally reflective class of fibrations in dependent theories.
+Let $\Fib$ be a dependent class of fibrations.
+Then the corresponding non-dependent class of fibrations is locally reflective if and only if we have the following \emph{unstable} constructions:
+% TODO
 
 Let $\Fib$ be a dependent class of fibrations in an indexed dependent type theory.
 To simplify the notation, we will assume that we have a separate sort for fibrations.
@@ -1727,9 +1821,16 @@ We will say that the class $\Fib$ is \emph{weakly reflective} if the last equati
 
 \begin{prop}
 Let $\Fib$ be a dependent class of fibrations in an indexed dependent type theory with $\Sigma$-types and identity types.
-Then $\Fib$ is weakly reflective if and only if the corresponding non-dependent class is locally reflective.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item $\Fib$ is weakly reflective and is closed under identity types and $\Sigma$-types.
+\item The non-dependent version of $\Fib$ is locally reflective and is closed under compositions.
+\end{enumerate}
 \end{prop}
 \begin{proof}
+By \rprop{fib-sigma}, $\Fib$ is closed under $\Sigma$-types if and only if it is closed under compositions.
+First, suppose that $\Fib$ is locally reflective.
+By \rprop{fib-refl-id}, it is closed under identity types.
 % TODO
 \end{proof}
 
