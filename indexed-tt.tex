@@ -983,7 +983,7 @@ It is straightforward to check that if identity types are extensional, then the 
 & \lambda p.\,\lambda x_1 \ldots x_k.\,\fs{hap}(p, x_1, \ldots x_k).
 \end{align*}
 
-\section{Limits and colimits in indexed dependent type theories}
+\section{Limits and colimits in dependent theories}
 
 In this section, we discuss the concepts of limits and colimits in indexed dependent type theories.
 
@@ -1497,7 +1497,7 @@ Since $\Gamma \mid \Delta \vdash \Id(c_1,c_2)$ is equivalent to $\Gamma \mid p :
 The following proposition shows that if the class of fibrations is closed under pullbacks and compositions, then there is another characterization of the condition that it is closed under identity types.
 
 \begin{prop}[fib-id-comp]
-Let $\Fib$ be a class of fibrations in an indexed unary type theory
+Let $\Fib$ be a class of fibrations in an indexed unary type theory.
 If $\Fib$ is closed under pullbacks and compositions, then the following conditions are equivalent:
 \begin{enumerate}
 \item \label{it:fib-pb} For every fibration $p : \Hom(A,B)$, the map $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$ is also a fibration.
@@ -1517,7 +1517,7 @@ Consider the following diagram:
 The map $q' \circ f'$ is a pullback of $q \circ f = p$, so it is a fibration.
 The map $r$ is a fibration since it is a pullback of $\langle \id_C, \id_C \rangle$, which is a fibration by \eqref{it:fib-pb}.
 Since fibrations are closed under compositions, $q' \circ f' \circ r$ is also a fibration.
-Finally, $f$ is a fibration since $f = q' \circ \langle \id_C, \id_C \rangle \circ f = q' \circ f' \circ r$.
+Finally, $f$ is a fibration since $f \sim q' \circ \langle \id_C, \id_C \rangle \circ f \sim q' \circ f' \circ r$.
 
 Now, suppose that \eqref{it:fib-over} holds.
 Let $f : \Hom(A,B)$ be a fibration.
@@ -1525,6 +1525,17 @@ Let $q$ be the composite $A \times_B A \xrightarrow{\pi_1} A \xrightarrow{f} B$.
 Since fibrations are closed under pullbacks, the first map is a fibration.
 Since they are closed under compositions, $q$ is also a fibration.
 Since $q \circ \langle \id_A, \id_A \rangle = f$ is a fibration, $\langle \id_A, \id_A \rangle$ is also a fibration by \eqref{it:fib-over}.
+\end{proof}
+
+\begin{lem}[fib-id-idm]
+Let $\Fib$ be a class of fibrations in an indexed unary type theory.
+If $\Fib$ is closed under pullbacks and contains all identity morphisms, then \eqref{it:fib-over} implies \eqref{it:fib-pb}.
+\end{lem}
+\begin{proof}
+Let $f : \Hom(A,B)$ be a fibration.
+Since $\pi_1 : \Hom(A \times_B A, A)$ is a pullback of $f$, it is also a fibration.
+Moreover, $\id_A$ is a fibration by assumption.
+Now, the claim follows from the fact that $\pi_1 \circ \langle \id_A, \id_A \rangle \sim \id_A$.
 \end{proof}
 
 \begin{example}
@@ -1694,17 +1705,19 @@ We define the notion of locally reflective classes of fibrations which is simila
 This definition makes sense in an indexed unary type theory.
 We also define a dependent version of this notion which is similar to the notion of a higher modality.
 
+\subsection{Locally reflective classes in unary theories}
+
 Let $\Fib$ be a class of fibrations in an indexed unary type theory as defined in the previous section.
 We will say that it is \emph{locally reflective} if every map $f : \Hom(A,B)$ factors through a fibration $p : \Hom(C,B)$
 such that, for every factorization of $f$ through any fibration $p' : \Hom(C',B)$, the type of lifts in the following square is contractible:
 \[ \xymatrix{ A \ar[r] \ar[d]                   & C' \ar@{->>}[d]^{p'} \\
               C \ar@{->>}[r]_p \ar@{-->}[ur]    & B
             } \]
-The factorization $A \to C \to B$ will be called \emph{the universal factorization} of $f$.
+The factorization $A \to C \twoheadrightarrow B$ will be called \emph{the universal factorization} of $f$.
 We will say that $\Fib$ is \emph{stably} locally reflective if the universal factorization of any map is stable under pullbacks.
 
 \begin{lem}[fib-refl]
-If $A \xrightarrow{i} C \xrightarrow{p} B$ is the universal factorization of $f$, then the following conditions are equivalent:
+If $A \xrightarrow{i} C \overset{p}\twoheadrightarrow B$ is the universal factorization of $f$, then the following conditions are equivalent:
 \begin{enumerate}
 \item $i$ is an equivalence.
 \item $f$ is a fibration.
@@ -1727,11 +1740,11 @@ Since lifts are unique up to a homotopy, these maps are homotopic.
 Thus, $i$ is an equivalence.
 \end{proof}
 
-\begin{lem}
+\begin{lem}[fib-idm]
 Any locally reflective class of fibrations contains all identity morphisms
 \end{lem}
 \begin{proof}
-Let $A \xrightarrow{i} B \xrightarrow{p} A$ be the universal factorization of $\id_A$.
+Let $A \xrightarrow{i} B \overset{p}\twoheadrightarrow A$ be the universal factorization of $\id_A$.
 Then $p$ is a retraction of $i$ over $A$.
 By \rlem{fib-refl}, $\id_A$ is a fibration.
 \end{proof}
@@ -1749,49 +1762,82 @@ Since the pullback of $p$ is a fibration and fibrations are closed under equival
 
 \begin{lem}[fib-refl-lift]
 Let $\Fib$ be a locally reflective class of fibrations closed under pullbacks.
-Let $A \xrightarrow{i} C \xrightarrow{p} B$ be the universal factorization of a map $f : \Hom(A,B)$.
-Then every commutative square as below has a lift if $v$ factors through $p$.
-\[ \xymatrix{ A \ar[r] \ar[d]_i & D \ar[d] \\
+Let $A \xrightarrow{i} C \overset{p}\twoheadrightarrow B$ be the universal factorization of a map $f : \Hom(A,B)$.
+Then the type of lifts in every commutative square as below is contractible if $v$ factors through $p$.
+\[ \xymatrix{ A \ar[r] \ar[d]_i & D \ar@{->>}[d] \\
               C \ar[r]_v        & E
             } \]
 \end{lem}
 \begin{proof}
-% TODO
+By assumption, $v$ equals to $C \overset{p}\twoheadrightarrow B \xrightarrow{u} E$ for some map $u$.
+Consider the following diagram:
+\[ \xymatrix{ A \ar[r]^{i'} \ar[d]_i    & C' \ar[r]^{u'} \ar@{->>}[d] \pb   & D \ar@{->>}[d]^q \\
+              C \ar@{->>}[r]_p          & B \ar[r]_u                        & E
+            } \]
+Since the type of lift in the left square is contractible, it is enough to prove that it is equivalent to the type of lifts in the original square.
+Let $H_1$ and $H_2$ be the homotopies witnessing the commutativity of the left and right square, respectively.
+By the universal property of pullbacks, the type of lifts in the left square is equivalent to the following type:
+\begin{align*}
+& \sum_{r_1 : \Hom(C,B)} \sum_{r_2 : \Hom(C,D)} \sum_{r_3 : \Id(u \circ r_1, q \circ r_2)} \sum_{h : \Id(p,r_1)} \\
+& \sum_{h_1 : \Id(r_1 \circ i, p' \circ i')} \sum_{h_2 : \Id(u' \circ i', r_2 \circ i)} \sum_{h_3 : \Id((h_1 * u) \ct H_2 \ct (h_2 * q), i * r_3)} \Id(h_*(h_1),H_1).
+\end{align*}
+After reducing $r_1$, $h$, $h_1$, and the last homotopy we get the following equivalent type:
+\[ \sum_{r_2 : \Hom(C,D)} \sum_{r_3 : \Id(u \circ p, q \circ r_2)} \sum_{h_2 : \Id(u' \circ i', r_2 \circ i)} \Id((H_1 * u) \ct H_2 \ct (h_2 * q), i * r_3). \]
+This type is equivalent to the type of lifts in the original square.
 \end{proof}
 
-\begin{lem}[fib-refl-id]
+\begin{prop}[fib-refl-id]
 Any locally reflective class of fibrations closed under pullbacks satisfies the equivalent conditions of \rprop{fib-id}.
-\end{lem}
+\end{prop}
 \begin{proof}
-Let $f : \Hom(A,B)$ be a fibration and let $d = \langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$.
-We need to prove that $d$ is a fibration.
-Let $A \xrightarrow{i} C \xrightarrow{p} A \times_B A$ be the universal factorization of $d$.
-By \rlem{fib-refl}, it is enough to prove that $i$ has a retraction over $A \times_B A$.
-We define the retraction $r$ as the composite $C \xrightarrow{p} A \times_B A \xrightarrow{\pi_1} A$.
-We need to prove that the following diagram commutes and the induced homotopy between $p \circ i$ and $d$ is homotopic to the canonical homotopy obtained from the factorization.
-\[ \xymatrix{ A \ar@{=}[r] \ar[d]_i & A \ar[d]^d \\
-              C \ar[r]_-p \ar[ur]^r & A \times_B A
+By \rlem{fib-id-idm} and \rlem{fib-idm}, it is enough to prove condition~\eqref{it:fib-over} of \rprop{fib-id-comp}.
+Let $f : \Hom(A,D)$ be a map and let $q : \Hom(D,B)$ be a fibration such that $q \circ f$ is also a fibration.
+We need to prove that $f$ is a fibration.
+Let $A \xrightarrow{i} C \overset{p}\twoheadrightarrow D$ be the universal factorization of $f$.
+By \rlem{fib-refl}, it is enough to show that $i$ has a retraction over $D$.
+By \rlem{fib-refl-lift}, we have a lift in the following square:
+\[ \xymatrix{ A \ar@{=}[r] \ar[d]_i                 & A \ar@{->>}[d]^{q \circ f} \\
+              C \ar[r]_{q \circ p} \ar@{-->}[ur]^r  & B
             } \]
-The top triangle commutes because $r \circ i = \pi_1 \circ p \circ i \sim \pi_1 \circ d \sim \id_A$.
-By the universal property of pullbacks, to prove that the bottom triangle commutes, it is enough to prove that
-triples $(r,r,\refl)$ and $(\pi_1 \circ p, \pi_2 \circ p, p * \pi_3)$ are homotopic as elements of $\Sigma_{s_1 s_2 : \Hom(C,A)} \Id(f \circ s_1, f \circ s_2)$.
-The first components are homotopic trivially.
-The second components are homotopic since they are both lifts in the following square:
-\[ \xymatrix{ A \ar@{=}[r] \ar[d]_i             & A \ar[d]^f \\
-              C \ar[r]_{f \circ \pi_2 \circ p}  & B
+Both maps $p$ and $f \circ r$ are lifts in the following square:
+\[ \xymatrix{ A \ar[r]^f \ar[d]_i   & D \ar@{->>}[d]^q \\
+              C \ar[r]_{q \circ p}  & B
             } \]
-Lifts in this square are unique by \rlem{fib-refl-lift}.
-This means that we have a homotopy $h : \Id(r, \pi_2 \circ p)$ such that $h * f \sim p * \pi_3$.
-Then $h$ is the second component in the homotopy between $(r,r,\refl)$ and $(\pi_1 \circ p, \pi_2 \circ p, p * \pi_3)$ and $h * f \sim p * \pi_3$ gives us the third component.
-Moreover, $i * h$ is homotopic to the homotopy $r \circ i = \pi_1 \circ p \circ i \sim \pi_1 \circ d \sim \id_A \sim \pi_2 \circ d \sim \pi_2 \circ p \circ i$
-and this homotopy can be combined with the homotopy $h * f \sim p * \pi_3$ to give another coherence homotopy.
-These homotopies can be used to construct a coherence homotopy for the lift in the original square.
+By \rlem{fib-refl-lift}, we have a homotopy $h$ between $p$ and $f \circ r$ such that $i * h$ is homotopic to the canonical homotopy between $p \circ i$ and $f \circ r \circ i$.
+This implies that $r$ is a retraction of $i$ over $D$.
 \end{proof}
+
+\subsection{Locally reflective classes in dependent theories}
 
 We can reformulate the definition of locally reflective class of fibrations in dependent theories.
 Let $\Fib$ be a dependent class of fibrations.
-Then the corresponding non-dependent class of fibrations is locally reflective if and only if we have the following \emph{unstable} constructions:
-% TODO
+Then the corresponding non-dependent class of fibrations is locally reflective if and only if the following conditions hold:
+\begin{enumerate}
+\item The theory has the following \emph{unstable} constructions:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \| A \| \fib$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash | a | : \| A \|$}
+\DisplayProof
+\end{center}
+\item The following function is an equivalence for every firant type $B$:
+\[ \lambda f.\, f \circ | - | : \Hom_\Delta(\| A \|, B) \to \Hom_\Delta(A, B) \]
+\end{enumerate}
+
+\begin{remark}
+The second condition holds if and only if the type of lifts in the following diagram is contractible for every fibrant dependent type $B$ and every map $\Hom_\Delta(A,B)$:
+\[ \xymatrix{ A \ar[r] \ar[d]_{| - |} & B \\
+              \| A \| \ar@{-->}[ur]
+            } \]
+\end{remark}
+
+\begin{remark}
+If the constructions in the first condition are stable, then $\Fib$ is stably locally reflective,
+but the converse does not hold since the stability under substitutions is a stricter condition, then the stability under pullbacks.
+\end{remark}
 
 Let $\Fib$ be a dependent class of fibrations in an indexed dependent type theory.
 To simplify the notation, we will assume that we have a separate sort for fibrations.
