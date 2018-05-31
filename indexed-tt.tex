@@ -1410,7 +1410,7 @@ We can also define the dependent version of classes of fibrations:
 \end{center}
 We will also call dependent types $B$ together with an element of $\Fib(\Delta.B)$ fibrations.
 It is often more convenient to work with the dependent version of this definition.
-If the indexed theory has $\Sigma$ types, then, for every class of fibrations $\Fib$, we can define its dependent version as follows:
+If the indexed theory has $\Sigma$-types and unit types, then, for every class of fibrations $\Fib$, we can define its dependent version as follows:
 \[ \Fib(\Delta.B) = \Fib(\pi_1 : \Hom(\sum_{p : \Sigma(\Delta)} B[\pi_1(p)/x_1, \ldots \pi_n(p)/x_n],\Sigma(\Delta))). \]
 Conversely, if the indexed theory also has identity types, then, for every dependent class of fibrations $\Fib$, we can define its non-dependent version:
 \[ \Fib(f : \Hom(A,B)) = \Fib((y : B).\,\sum_{x : A} \Id(f\,x,y)). \]
@@ -1749,7 +1749,7 @@ Then $p$ is a retraction of $i$ over $A$.
 By \rlem{fib-refl}, $\id_A$ is a fibration.
 \end{proof}
 
-\begin{lem}
+\begin{lem}[fib-pullback]
 Any stably locally reflective class of fibrations is closed under pullbacks.
 \end{lem}
 \begin{proof}
@@ -1828,60 +1828,7 @@ We prove a more general equivalence between (non-stable) orthogonal factorizatio
 \begin{defn}
 Let $\Fib$ be a locally reflective class of fibrations in an indexed unary type theory.
 A map $f$ is \emph{connected} if the fibration in the universal factorization of $f$ is an equivalence.
-Cofibrations will be denoted by $\hookrightarrow$.
 \end{defn}
-
-\begin{defn}
-Let $f : \Hom(A,B)$ and $g : \Hom(C,D)$ be maps in an indexed unary type theory.
-We will say that $f$ is \emph{left orthogonal} to $g$ and $g$ is \emph{right orthogonal} to $f$ if the type of lifts in squares of the form depicted below is contractible.
-\[ \xymatrix{ A \ar[r] \ar[d]_f         & C \ar[d]^g \\
-              B \ar[r] \ar@{-->}[ur]    & D
-            } \]
-\end{defn}
-
-\begin{lem}[conn-orth]
-Let $\Fib$ be a locally reflective class of fibrations closed under pullbacks.
-Then connected maps are left orthogonal to fibrations.
-\end{lem}
-\begin{proof}
-Let $i : \Hom(A,B)$ be a connected map and let $p : \Hom(C,D)$ be a fibration.
-Consider a commutative square of the following form:
-\[ \xymatrix{ A \ar@{^{(}->}[d]_i \ar[r]^f  & C \ar[d]^p \\
-              B \ar[r]_g                    & D
-            } \]
-The type of lifts in this square is
-\[ \sum_{r : \Hom(B,C)} \sum_{h_1 : \Id(f, r \circ i)} \sum_{h_2 : \Id(p \circ r, g)} \Id((h_1 * p) \ct (i * h_2), H), \]
-where $H$ is the homotopy witnessing the commutativity of the square.
-Let us denote this type by $L$.
-We need to prove that $L$ is contractible.
-
-Let $A \xrightarrow{i'} B' \overset{q}\twoheadrightarrow B$ be the universal factorization of $i$.
-By \rlem{fib-refl-lift}, the type of lifts in the following square is contractible:
-\[ \xymatrix{ A \ar[d]_{i'} \ar[rr]^f       &               & C \ar[d]^p \\
-              B' \ar[r]_q \ar@{-->}[urr]    & B \ar[r]_g    & D
-            } \]
-The type of lifts in this square is defined as follows:
-\[ \sum_{r' : \Hom(B',C)} \sum_{h_1' : \Id(f, r' \circ i')} \sum_{h_2 : \Id(p \circ r', g \circ q)} \Id((h_1' * p) \ct (i' * h_2'), H \ct (H' * g)), \]
-where $H'$ is the homotopy between $i$ and $q \circ i'$.
-Let us denote this type by $L'$.
-It is enough to prove that $L$ and $L'$ are equivalent.
-
-We have an obvious map $s : L \to L'$ which maps $(r,h_1,h_2,h_3)$ to $(r \circ q, h_1 \ct (H' * r), q * h_2, h_3')$, where $h_3'$ is the following homotopy:
-\begin{align*}
-((h_1 \ct (H' * r)) * p) \ct (i' * q * h_2) & \sim \\
-((h_1 * p) \ct (H' * r * p)) \ct (i' * q * h_2) & \sim \\
-(h_1 * p) \ct (H' * h_2) & \sim \\
-((h_1 * p) \ct (i * h_2)) \ct (H' * g) & \sim \\
-H \ct (H' * g) & ,
-\end{align*}
-where we use $h_3$ at the last step and other steps are usual interchange laws.
-
-To prove that this map is an equivalence, it is enough to show that it is an equivalence on each component.
-Since $i$ is connected, $q$ is an equivalence.
-This implies that functions $- \circ q$ and $q * -$ are equivalences and these functions are the first and the third component of $s$, respectively.
-The second component of $s$ is $- \ct (H' * r)$, which is also an equivalence.
-Finally, the third component of $s$ is an equivalence since it is a function that concatenates its argument with fixed homotopies.
-\end{proof}
 
 \begin{lem}[uni-conn]
 Let $\Fib$ be a locally reflective class of fibrations closed under compositions.
@@ -1917,6 +1864,77 @@ The fact that the combination of these homotopies is homotopic to the trivial ho
 Since both $\id_{B'}$ and $k \circ q$ are lifts in the square above, these maps are homotopic.
 It follows that $q$ is an equivalence.
 Hence, $i$ is connected.
+\end{proof}
+
+\begin{lem}[conn-pullback]
+Let $\Fib$ be a stably locally reflective class of fibrations.
+Then connected maps are closed under pullbacks.
+\end{lem}
+\begin{proof}
+Let $f : \Hom(A,C)$ be a connected map and let $g : \Hom(D,C)$ be an arbitrary map.
+We need to prove that the pullback of $f$ along $g$ is connected.
+Let $A \xrightarrow{i} B \overset{p}\twoheadrightarrow C$ be the universal factorization of $f$.
+Then we have the following diagram:
+\[ \xymatrix{ A' \ar[r] \ar[d] \pb  & A \ar[d]^i \\
+              B' \ar[r] \ar[d] \pb  & B \ar@{->>}[d]^p \\
+              D  \ar[r]_g           & C
+            } \]
+Since $\Fib$ is stably locally reflective, $A' \to B' \to D$ is the universal factorization of $A' \to D$.
+Since $f$ is connected, $p$ is an equivalence.
+Hence, $B' \to D$ is also an equivalence.
+Thus, $A' \to D$ is connected.
+\end{proof}
+
+\begin{defn}
+Let $f : \Hom(A,B)$ and $g : \Hom(C,D)$ be maps in an indexed unary type theory.
+We will say that $f$ is \emph{left orthogonal} to $g$ and $g$ is \emph{right orthogonal} to $f$ if the type of lifts in squares of the form depicted below is contractible.
+\[ \xymatrix{ A \ar[r] \ar[d]_f         & C \ar[d]^g \\
+              B \ar[r] \ar@{-->}[ur]    & D
+            } \]
+\end{defn}
+
+\begin{lem}[conn-orth]
+Let $\Fib$ be a locally reflective class of fibrations closed under pullbacks.
+Then connected maps are left orthogonal to fibrations.
+\end{lem}
+\begin{proof}
+Let $i : \Hom(A,B)$ be a connected map and let $p : \Hom(C,D)$ be a fibration.
+Consider a commutative square of the following form:
+\[ \xymatrix{ A \ar[d]_i \ar[r]^f   & C \ar[d]^p \\
+              B \ar[r]_g            & D
+            } \]
+The type of lifts in this square is
+\[ \sum_{r : \Hom(B,C)} \sum_{h_1 : \Id(f, r \circ i)} \sum_{h_2 : \Id(p \circ r, g)} \Id((h_1 * p) \ct (i * h_2), H), \]
+where $H$ is the homotopy witnessing the commutativity of the square.
+Let us denote this type by $L$.
+We need to prove that $L$ is contractible.
+
+Let $A \xrightarrow{i'} B' \overset{q}\twoheadrightarrow B$ be the universal factorization of $i$.
+By \rlem{fib-refl-lift}, the type of lifts in the following square is contractible:
+\[ \xymatrix{ A \ar[d]_{i'} \ar[rr]^f       &               & C \ar[d]^p \\
+              B' \ar[r]_q \ar@{-->}[urr]    & B \ar[r]_g    & D
+            } \]
+The type of lifts in this square is defined as follows:
+\[ \sum_{r' : \Hom(B',C)} \sum_{h_1' : \Id(f, r' \circ i')} \sum_{h_2 : \Id(p \circ r', g \circ q)} \Id((h_1' * p) \ct (i' * h_2'), H \ct (H' * g)), \]
+where $H'$ is the homotopy between $i$ and $q \circ i'$.
+Let us denote this type by $L'$.
+It is enough to prove that $L$ and $L'$ are equivalent.
+
+We have an obvious map $s : L \to L'$ which maps $(r,h_1,h_2,h_3)$ to $(r \circ q, h_1 \ct (H' * r), q * h_2, h_3')$, where $h_3'$ is the following homotopy:
+\begin{align*}
+((h_1 \ct (H' * r)) * p) \ct (i' * q * h_2) & \sim \\
+((h_1 * p) \ct (H' * r * p)) \ct (i' * q * h_2) & \sim \\
+(h_1 * p) \ct (H' * h_2) & \sim \\
+((h_1 * p) \ct (i * h_2)) \ct (H' * g) & \sim \\
+H \ct (H' * g) & ,
+\end{align*}
+where we use $h_3$ at the last step and other steps are usual interchange laws.
+
+To prove that this map is an equivalence, it is enough to show that it is an equivalence on each component.
+Since $i$ is connected, $q$ is an equivalence.
+This implies that functions $- \circ q$ and $q * -$ are equivalences and these functions are the first and the third component of $s$, respectively.
+The second component of $s$ is $- \ct (H' * r)$, which is also an equivalence.
+Finally, the third component of $s$ is an equivalence since it is a function that concatenates its argument with fixed homotopies.
 \end{proof}
 
 Let $\mathcal{L}$ and $\mathcal{R}$ be a pair of classes of maps closed under equivalences such that maps in $\mathcal{L}$ are left orthogonal to maps in $\mathcal{R}$.
@@ -2008,7 +2026,7 @@ Conversely, if we have an orthogonal factorization system $(\mathcal{L},\Fib)$, 
 
 \subsection{Locally reflective classes in dependent theories}
 
-We can reformulate the definition of locally reflective class of fibrations in dependent theories.
+We can reformulate the definition of locally reflective class of fibrations in dependent theories with identity types, $\Sigma$-types, and unit types.
 Let $\Fib$ be a dependent class of fibrations.
 A factorization of a map in a unary theory can be turned into a factorization of a dependent type $\Delta \vdash A \ob$, which consists of a dependent type $\Delta \vdash \| A \| \ob$ and a map $\eta_A : \Hom_\Delta(A, \| A \|)$.
 Then $\Fib$ is locally reflective if and only if, for every dependent type $A$, there exists its factorization such that the following function is an equivalence for every fibrant type $\Delta \vdash B \ob$:
@@ -2036,74 +2054,81 @@ Then $\eta_A$ can be defined as $\lambda x.\,| x | : \Hom_\Delta(A, \| A \|)$.
 Conversely, $| a |$ can be defined in terms of $\eta_A$ as $\eta_A\,a$.
 These constructions are mutually inverse.
 
+We can define locally reflective classes of fibration in a more type-theoretic way using the following constructions:
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$
+\Axiom$\fCenter \Gamma \mid \Delta \vdash a : \| A \|$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid \Delta, E[a/z] \vdash \| A \|\text{-}\fs{elim}(z E .D, x E.d, a) : D[a/z]$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[| x | / z]$
+\Axiom$\fCenter \Gamma \mid \Delta \vdash a : A$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid \Delta, E[|a|/z] \vdash \| A \|\text{-}\fs{elim_h}(z E.D, x E.d, a) : \Id(\| A \|\text{-}\fs{elim}(z E.D, x E.d, |a|), d[a/x])$}
+\DisplayProof
+\end{center}
+
 \begin{prop}
 Let $\Fib$ be a class of fibrations closed under $\Sigma$-types and let $\| - \|$, $| - |$ be a pair of stable constructions as described above.
 Then the following conditions are equivalent:
 \begin{enumerate}
 \item \label{it:fib-non-dep} The pair $\| - \|$, $| - |$ makes $\Fib$ into a (stably) locally reflective class.
-\item \label{it:fib-dep} $\Fib$ is closed under identity types and the theory has the following stable constructions:
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \| A \| \vdash D \fib$}
-\AxiomC{$\Gamma \mid \Delta, x : A \vdash d : D[|x|/z]$}
-\AxiomC{$\Gamma \mid \Delta \vdash a : \| A \|$}
-\TrinaryInfC{$\Gamma \mid \Delta \vdash \| A \|\text{-}\fs{elim}(z.D, x.d, a) : D[a/z]$}
-\DisplayProof
-\end{center}
-\medskip
-
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \| A \| \vdash D \fib$}
-\AxiomC{$\Gamma \mid \Delta, x : A \vdash d : D[|x|/z]$}
-\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
-\TrinaryInfC{$\Gamma \mid \Delta \vdash \| A \|\text{-}\fs{elim_{eq}}(z.D, x.d, a) : \Id(\| A \|\text{-}\fs{elim}(z.D, x.d, |a|), d[a/x])$}
-\DisplayProof
-\end{center}
+\item \label{it:fib-dep} $\Fib$ is closed under identity types and $\| A \|\text{-}\fs{elim}$ and $\| A \|\text{-}\fs{elim_h}$ are definable.
+\item \label{it:fib-dep-local} $\Fib$ is closed under identity types and $\| A \|\text{-}\fs{elim}$ and $\| A \|\text{-}\fs{elim_h}$ are definable when $E$ is the empty context.
 \end{enumerate}
 \end{prop}
 \begin{proof}
 (\ref{it:fib-non-dep} $\Rightarrow$ \ref{it:fib-dep})
-By \rprop{fib-refl-id}, a locally reflective class of fibrations is closed under identity types.
-Since $\Fib$ is closed under $\Sigma$-types, the type $\Delta \vdash \Sigma_{z : \| A \|} D$ is fibrant.
-If $\Delta, x : A \vdash d : D[|x|/z]$, then we have a lift in the following diagram:
-\[ \xymatrix{ A \ar[r]^{\lambda x.\,(|x|,d)} \ar[d]_{|-|} & \Sigma_{z : \| A \|} D \\
-              \| A \| \ar@{-->}[ur]_{d'}
+By \rprop{fib-refl-id} and \rlem{fib-pullback}, a stably locally reflective class of fibrations is closed under identity types.
+Consider the following pullback square:
+\[ \xymatrix{ \Sigma(\Delta, x : A, E[|x|/z]) \ar[r] \ar[d]_j \pb   & \Sigma(\Delta, x : A) \ar[d]^j \\
+              \Sigma(\Delta, z : \| A \|, E) \ar[r]                 & \Sigma(\Delta, z : \| A \|),
             } \]
-If $\Delta \vdash a : A$, then $\pi_2\,(d'\,a) : $
+where the bottom and top maps are the obvious projection and the left and right maps are defined in terms of $| - |$.
+Since $\Fib$ is closed under $\Sigma$-types, \rprop{fib-sigma} implies that it is also closed under compositions.
+Then \rlem{uni-conn} implies that $j$ is connected.
+Since $\Fib$ is stably locally reflective, \rlem{conn-pullback} implies that $i$ is also connected.
 
-(\ref{it:fib-dep} $\Rightarrow$ \ref{it:fib-non-dep})
-\end{proof}
+Let $B = \Sigma(\Delta, z : \| A \|, E)$ and $\pi_1 : \Hom(T,B)$ be the fibration corresponding to $D$.
+Any term $\Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$ determines the top map in the following diagram:
+\[ \xymatrix{ \Sigma(\Delta, x : A, E[|x|/z]) \ar[r] \ar[d]_i           & \Sigma(\Delta, z : \| A \|, E, D) \ar@{->>}[d] \\
+              \Sigma(\Delta, z : \| A \|, E) \ar@{-->}[ur] \ar@{=}[r]   & \Sigma(\Delta, z : \| A \|, E)
+            } \]
+The right map is the obvious projection, which is a fibration since $D$ is fibrant over $\Delta, z : \| A \|, E$.
+Since $i$ is connected, we have a lift in this square.
+This lift determines a term $\Delta, z : \| A \|, E \vdash d : D$ and a homotopy $\Delta, x : A, E[|x|/z] \vdash h : \Id(d[|x|/z],d)$.
+Now, we can define $\| A \|\text{-}\fs{elim}(z E .D, x E.d, a)$ and $\| A \|\text{-}\fs{elim_h}(z E .D, x E.d, a)$ as $d[a/z]$ and $h[a/x]$, respectively.
 
-$\Fib$ is closed under identity types and the theory has the following stable constructions:
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$}
-\AxiomC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$}
-\AxiomC{$\Gamma \mid \Delta \vdash a : \| A \|$}
-\TrinaryInfC{$\Gamma \mid \Delta, E[a/z] \vdash \| A \|\text{-}\fs{elim}(z.D, x.d, a) : D[a/z]$}
-\DisplayProof
-\end{center}
-\medskip
+(\ref{it:fib-dep} $\Rightarrow$ \ref{it:fib-dep-local}) Obvious.
 
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$}
-\AxiomC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[| x | / z]$}
-\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
-\TrinaryInfC{$\Gamma \mid \Delta, E[|a|/z] \vdash \| A \|\text{-}\fs{elim_{eq}}(z.D, x.d, a) : \Id(\| A \|\text{-}\fs{elim}(z.D, x.d, |a|), d[a/x])$}
-\DisplayProof
-\end{center}
+(\ref{it:fib-dep-local} $\Rightarrow$ \ref{it:fib-non-dep})
+Let $B$ be a fibrant type over $\Delta$.
+We need to prove that the type of lifts in the following diagram is contractible:
+\[ \xymatrix{ A \ar[r]^b \ar[d]_{\eta_A} & B \\
+              \| A \| \ar@{-->}[ur]
+            } \]
+We can define a lift in this diagram as $\lambda z.\,\| A \|\text{-}\fs{elim}(z.B, x.b x, z)$.
+The commutativity of the triangle is witnessed by the term $\lambda x.\,\| A \|\text{-}\fs{elim_h}(z.B, x.b x, x)$.
 
-\begin{prop}
-Let $\Fib$ be a dependent class of fibrations in an indexed dependent type theory with $\Sigma$-types and identity types.
-Then the following conditions are equivalent:
-\begin{enumerate}
-\item $\Fib$ is weakly reflective and is closed under identity types and $\Sigma$-types.
-\item The non-dependent version of $\Fib$ is locally reflective and is closed under compositions.
-\end{enumerate}
-\end{prop}
-\begin{proof}
-By \rprop{fib-sigma}, $\Fib$ is closed under $\Sigma$-types if and only if it is closed under compositions.
-First, suppose that $\Fib$ is locally reflective.
-By \rprop{fib-refl-id}, it is closed under identity types.
-% TODO
+Let $\Delta, z : \| A \| \vdash f_i : B$, $\Delta, x : A \vdash h_i : \Id(f_i[|x|/z],b\,x)$ be lifts in this diagram for $i \in \{1,2\}$.
+We need to construct a homotopy between them.
+Since $\Fib$ is closed under identity types, the type $\Id(f_1,f_2)$ is fibrant over $\Delta, y : \| A \|, z : \| A \|$.
+Thus, we have a homotopy between $f_1$ and $f_2$:
+\[ \Delta, y : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.\Id(f_1,f_2), x. h_1 \ct \sym{h_2}, y) : \Id(f_1[y/z], f_2[y/z]). \]
+Let us denote this homotopy by $H$.
+We need to prove that $\sym{H[|x|/y]} \ct h_1$ is homotopic to $h_2$.
+This homotopy can be constructed from the following one:
+\[ \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.\Id(f_1,f_2), x. h_1 \ct \sym{h_2}, x) : \Id(H[|x|/y], h_1 \ct \sym{h_2}). \]
 \end{proof}
 
 \begin{example}
