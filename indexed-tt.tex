@@ -1760,6 +1760,25 @@ Hence, its pullback is also an equivalence.
 Since the pullback of $p$ is a fibration and fibrations are closed under equivalences, the pullback of $f$ is also a fibration.
 \end{proof}
 
+\begin{lem}[pullback-lift]
+Suppose that we have the following diagram, where the right square is a pullback.
+\[ \xymatrix{ A \ar[r]^{c} \ar[d]_i & C \ar[r]^e \ar[d]_p \pb   & E \ar[d]^q \\
+              B \ar[r]_d            & D \ar[r]_f                & F
+            } \]
+Then the type of lifts in the left square is equivalent to the type of lifts in the outer rectangle.
+\end{lem}
+\begin{proof}
+Let $H_1$ and $H_2$ be the homotopies witnessing the commutativity of the left and right square, respectively.
+By the universal property of pullbacks, the type of lifts in the left square is equivalent to the following type:
+\begin{align*}
+& \sum_{r_1 : \Hom(B,D)} \sum_{r_2 : \Hom(B,E)} \sum_{r_3 : \Id(f \circ r_1, q \circ r_2)} \sum_{h : \Id(d,r_1)} \\
+& \sum_{h_1 : \Id(r_1 \circ i, p \circ c)} \sum_{h_2 : \Id(e \circ c, r_2 \circ i)} \sum_{h_3 : \Id((h_1 * f) \ct (c * H_2) \ct (h_2 * q), i * r_3)} \Id(h_1,h_*(H_1)).
+\end{align*}
+After reducing $r_1$, $h$, $h_1$, and the last homotopy we get the following equivalent type:
+\[ \sum_{r_2 : \Hom(B,E)} \sum_{r_3 : \Id(f \circ d, q \circ r_2)} \sum_{h_2 : \Id(e \circ c, r_2 \circ i)} \Id((H_1 * f) \ct (c * H_2) \ct (h_2 * q), i * r_3). \]
+This type is equivalent to the type of lifts in the outer rectangle.
+\end{proof}
+
 \begin{lem}[fib-refl-lift]
 Let $\Fib$ be a locally reflective class of fibrations closed under pullbacks.
 Let $A \xrightarrow{i} C \overset{p}\twoheadrightarrow B$ be the universal factorization of a map $f : \Hom(A,B)$.
@@ -1771,19 +1790,10 @@ Then the type of lifts in every commutative square as below is contractible if $
 \begin{proof}
 By assumption, $v$ equals to $C \overset{p}\twoheadrightarrow B \xrightarrow{u} E$ for some map $u$.
 Consider the following diagram:
-\[ \xymatrix{ A \ar[r]^{i'} \ar[d]_i    & C' \ar[r]^{u'} \ar@{->>}[d] \pb   & D \ar@{->>}[d]^q \\
-              C \ar@{->>}[r]_p          & B \ar[r]_u                        & E
+\[ \xymatrix{ A \ar[r] \ar[d]_i & C' \ar[r] \ar@{->>}[d] \pb    & D \ar@{->>}[d] \\
+              C \ar@{->>}[r]_p  & B \ar[r]_u                    & E
             } \]
-Since the type of lift in the left square is contractible, it is enough to prove that it is equivalent to the type of lifts in the original square.
-Let $H_1$ and $H_2$ be the homotopies witnessing the commutativity of the left and right square, respectively.
-By the universal property of pullbacks, the type of lifts in the left square is equivalent to the following type:
-\begin{align*}
-& \sum_{r_1 : \Hom(C,B)} \sum_{r_2 : \Hom(C,D)} \sum_{r_3 : \Id(u \circ r_1, q \circ r_2)} \sum_{h : \Id(p,r_1)} \\
-& \sum_{h_1 : \Id(r_1 \circ i, p' \circ i')} \sum_{h_2 : \Id(u' \circ i', r_2 \circ i)} \sum_{h_3 : \Id((h_1 * u) \ct H_2 \ct (h_2 * q), i * r_3)} \Id(h_*(h_1),H_1).
-\end{align*}
-After reducing $r_1$, $h$, $h_1$, and the last homotopy we get the following equivalent type:
-\[ \sum_{r_2 : \Hom(C,D)} \sum_{r_3 : \Id(u \circ p, q \circ r_2)} \sum_{h_2 : \Id(u' \circ i', r_2 \circ i)} \Id((H_1 * u) \ct H_2 \ct (h_2 * q), i * r_3). \]
-This type is equivalent to the type of lifts in the original square.
+The type of lift in the left square is contractible and \rlem{pullback-lift} implies that this type is equivalent to the type of lifts in the original square.
 \end{proof}
 
 \begin{prop}[fib-refl-id]
@@ -1810,6 +1820,10 @@ This implies that $r$ is a retraction of $i$ over $D$.
 \subsection{Orthogonal factorization systems}
 
 In this subsection, we defined connected maps and orthogonal factorization systems and prove that they are equivalent to locally reflective classes of fibrations.
+Similar equivalence was proved in \cite{modality-hott}, but our proof is more general since it applies to any (indexed) unary theory.
+Moreover, the proof in \cite{modality-hott} applies only to stable orthogonal factorization systems and stably locally reflective classes of fibrations.
+The reason is that it is done in the internal language of the theory and everything must be stable in this language.
+We prove a more general equivalence between (non-stable) orthogonal factorization systems and (non-stable) locally reflective classes of fibrations.
 
 \begin{defn}
 Let $\Fib$ be a locally reflective class of fibrations in an indexed unary type theory.
@@ -1825,8 +1839,9 @@ We will say that $f$ is \emph{left orthogonal} to $g$ and $g$ is \emph{right ort
             } \]
 \end{defn}
 
-\begin{lem}
-Connected maps are left orthogonal to fibrations.
+\begin{lem}[conn-orth]
+Let $\Fib$ be a locally reflective class of fibrations closed under pullbacks.
+Then connected maps are left orthogonal to fibrations.
 \end{lem}
 \begin{proof}
 Let $i : \Hom(A,B)$ be a connected map and let $p : \Hom(C,D)$ be a fibration.
@@ -1868,7 +1883,7 @@ The second component of $s$ is $- \ct (H' * r)$, which is also an equivalence.
 Finally, the third component of $s$ is an equivalence since it is a function that concatenates its argument with fixed homotopies.
 \end{proof}
 
-\begin{lem}
+\begin{lem}[uni-conn]
 Let $\Fib$ be a locally reflective class of fibrations closed under compositions.
 If $A \xrightarrow{i} B \overset{p}\twoheadrightarrow C$ is the universal factorization of some map, then $i$ is connected.
 \end{lem}
@@ -1904,26 +1919,91 @@ It follows that $q$ is an equivalence.
 Hence, $i$ is connected.
 \end{proof}
 
-Let $\mathcal{L}$ and $\mathcal{R}$ be a pair of classes of maps such that maps in $\mathcal{L}$ are left orthogonal to maps in $\mathcal{R}$.
-Then the type of factorizations of a map into a map in $\mathcal{L}$ followed by a map in $\mathcal{R}$ is a proposition.
-The pair $(\mathcal{L},\mathcal{R})$ is called an \emph{orthogonal factorization system} if this proposition is true.
+Let $\mathcal{L}$ and $\mathcal{R}$ be a pair of classes of maps closed under equivalences such that maps in $\mathcal{L}$ are left orthogonal to maps in $\mathcal{R}$.
+Then a factorizations of a map into a map in $\mathcal{L}$ followed by a map in $\mathcal{R}$ is essentially unique.
+The pair $(\mathcal{L},\mathcal{R})$ is called an \emph{orthogonal factorization system} if such a factorization exists for every map.
 
-\begin{prop}
-Let $\mathcal{R}$ be a class of maps.
-Then the class of maps $\mathcal{L}$ such that $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system is essentially unique.
-That is, if $\mathcal{L}_1$ and $\mathcal{L}_2$ is two such classes, then a map belongs to one of them if and only if it belongs to the other.
-\end{prop}
+\begin{lem}[orth-refl]
+If $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system, then $\mathcal{R}$ is a locally reflective class of maps.
+Moreover, if $A \xrightarrow{i} B \twoheadrightarrow C$ is the universal factorization of some map, then $i$ belongs to $\mathcal{L}$.
+\end{lem}
 \begin{proof}
-% TODO
+Obviously, any factorization of a map into a map in $\mathcal{L}$ followed by a map in $\mathcal{R}$ is a universal factorization.
+The second assertion follows from the facts that universal factorizations are essentially unique and $\mathcal{L}$ is closed under equivalences.
 \end{proof}
 
-\begin{thm}
+\begin{prop}
+If $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system, then $\mathcal{L}$ and $\mathcal{R}$ contains all identity morphisms.
+\end{prop}
+\begin{proof}
+By \rlem{orth-refl} and \rlem{fib-idm}, $\mathcal{R}$ contains all identity morphisms.
+Since $A \xrightarrow{\id_A} A \xrightarrow{\id_A} A$ is the universal factorization of $\id_A$, \rlem{orth-refl} implies that $\id_A$ belongs to $\mathcal{L}$.
+\end{proof}
+
+\begin{prop}[orth-char]
+If $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system, then
+$\mathcal{R}$ is precisely the class of maps which are right orthogonal to $\mathcal{L}$ and
+$\mathcal{L}$ is precisely the class of maps which are left orthogonal to $\mathcal{R}$.
+\end{prop}
+\begin{proof}
+We prove the first assertion; the other one follows by a dual argument.
+Maps in $\mathcal{R}$ are right orthogonal to $\mathcal{L}$ by definition.
+Let $f : \Hom(A,C)$ be a map which is right orthogonal to $\mathcal{L}$.
+We need to prove that $f$ belongs to $\mathcal{R}$.
+By \rlem{orth-refl}, $\mathcal{R}$ is a locally reflective class of maps.
+Let $A \xrightarrow{i} B \xrightarrow{p} C$ be the universal factorization of $f$.
+By \rlem{orth-refl}, $i$ belongs to $\mathcal{L}$.
+Hence, we have a lift in the following square:
+\[ \xymatrix{ A \ar@{=}[r] \ar[d]_i     & A \ar[d]^f \\
+              B \ar[r]_p \ar@{-->}[ur]  & C
+            } \]
+By \rlem{fib-refl}, $f$ belongs to $\mathcal{R}$.
+\end{proof}
+
+\begin{cor}[orth-unique]
+Let $\mathcal{R}$ be a class of maps.
+Then a class of maps $\mathcal{L}$ such that $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system is essentially unique.
+That is, if $\mathcal{L}_1$ and $\mathcal{L}_2$ is two such classes, then a map belongs to one of them if and only if it belongs to the other.
+Dually, a class of maps $\mathcal{R}$ such that $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system for a fixed $\mathcal{L}$ is essentially unique.
+\end{cor}
+
+\begin{prop}[orth-comp]
+If $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system, then $\mathcal{R}$ and $\mathcal{L}$ are closed under compositions.
+\end{prop}
+\begin{proof}
+We prove this for $\mathcal{R}$; the assertion about $\mathcal{L}$ follows by a dual argument.
+Let $f : \Hom(A,B)$ and $g : \Hom(B,C)$ be maps in $\mathcal{R}$.
+By \rlem{orth-refl}, there exists a universal factorization $A \xrightarrow{i} D \xrightarrow{p} C$ of $g \circ f$ such that $i \in \mathcal{L}$.
+By \rlem{fib-refl}, to prove that $g \circ f$ belongs to $\mathcal{R}$, it is enough to show that $i$ has a retraction over $C$.
+Since $i \in \mathcal{L}$, we have two lifts in the following diagram:
+\[ \xymatrix{ A \ar@{=}[r] \ar[dd]_i                    & A \ar@{->>}[d]^f \\
+                                                        & B \ar@{->>}[d]^g \\
+              D \ar[r]_p \ar@{-->}[ur] \ar@{-->}[uur]^r & C
+            } \]
+Then $r$ is a retraction of $i$ over $C$.
+\end{proof}
+
+\begin{prop}[orth-pullback]
+If $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system, then $\mathcal{R}$ is closed under pullbacks and $\mathcal{L}$ is closed under pushouts.
+\end{prop}
+\begin{proof}
+We prove this for $\mathcal{R}$; the assertion about $\mathcal{L}$ follows by a dual argument.
+Let $f$ be a pullback of a map $g \in \mathcal{R}$.
+Since $g$ is right orthogonal to $\mathcal{L}$, \rlem{pullback-lift} implies that $f$ is also right orthogonal to $\mathcal{L}$.
+\rprop{orth-char} implies that $f \in \mathcal{R}$.
+\end{proof}
+
+Now, we are ready to prove that orthogonal factorizations systems are equivalent to locally reflective classes of maps which are closed under compositions and pullbacks:
+
+\begin{thm}[refl-orth]
 Let $\Fib$ be a class of fibrations.
-If $\Fib$ is locally reflective and closed under compositions, then $(\mathcal{L},\Fib)$ is an orthogonal factorization system, where $\mathcal{L}$ is the class of connected maps.
-The converse is also true in the sense that if $(\mathcal{L},\Fib)$ is an orthogonal factorization system for some class of maps $\mathcal{L}$, then $\Fib$ is locally reflective and closed under compositions.
+If $\Fib$ is locally reflective and closed under compositions and pullbacks, then $(\mathcal{C},\Fib)$ is an orthogonal factorization system, where $\mathcal{C}$ is the class of connected maps.
+The converse is also true in the sense that if $(\mathcal{L},\Fib)$ is an orthogonal factorization system for some class of maps $\mathcal{L}$, then $\Fib$ is locally reflective and closed under compositions and pullbacks.
 \end{thm}
 \begin{proof}
-% TODO
+If $\Fib$ is locally reflective and closed under compositions, then connected maps are left orthogonal to fibrations by \rlem{conn-orth} and the factorization exists by \rlem{uni-conn}.
+Thus, $(\mathcal{C},\Fib)$ is an orthogonal factorization system.
+Conversely, if we have an orthogonal factorization system $(\mathcal{L},\Fib)$, then $\Fib$ is locally reflective by \rlem{orth-refl} and it is closed under compositions and pullbacks by \rprop{orth-comp} and \rprop{orth-pullback}, respectively.
 \end{proof}
 
 \subsection{Locally reflective classes in dependent theories}
