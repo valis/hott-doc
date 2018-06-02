@@ -1594,11 +1594,11 @@ A subobject classifier is an object classifier for monomorphisms.
 Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be any map.
 We can think of such a map as a (non-univalent) universe.
 We will say that the universe $\mathcal{U}$ \emph{contains a type $A$} if there is a map $a : \Hom(1,\mathcal{U})$ and an equivalence between $A$ and the pullback of $p$ along $a$.
-We will say that $\mathcal{U}$ is \emph{closed under coproducts} if, for all maps $a,b : \Hom(\Gamma,\mathcal{U})$, there is a map $a + b : \Hom(\Gamma,\mathcal{U})$
-and an equivalence over $\Gamma$ between the pullback of $p$ along $a + b$ and the sum of pullbacks of $p$ along $a$ and $b$.
-Similarly, we will say that $\mathcal{U}$ is \emph{closed under $\Sigma$-types} if, for every map $a : \Hom(\Gamma,\mathcal{U})$
-and every map $b : \Hom(\Gamma \times_\mathcal{U} \widehat{\mathcal{U}}, \mathcal{U})$, there is a map $\Sigma(a,b) : \Hom(\Gamma,\mathcal{U})$
-together with an equivalence over $\Gamma$ between the pullback of $p$ along $\Sigma(a,b)$ and the composition of pullbacks of $p$ along $b$ and $a$.
+We will say that $\mathcal{U}$ is \emph{closed under coproducts} if, for all maps $a,b : \Hom(\Delta,\mathcal{U})$, there is a map $a + b : \Hom(\Delta,\mathcal{U})$
+and an equivalence over $\Delta$ between the pullback of $p$ along $a + b$ and the sum of pullbacks of $p$ along $a$ and $b$.
+Similarly, we will say that $\mathcal{U}$ is \emph{closed under $\Sigma$-types} if, for every map $a : \Hom(\Delta,\mathcal{U})$
+and every map $b : \Hom(\Delta \times_\mathcal{U} \widehat{\mathcal{U}}, \mathcal{U})$, there is a map $\Sigma(a,b) : \Hom(\Delta,\mathcal{U})$
+together with an equivalence over $\Delta$ between the pullback of $p$ along $\Sigma(a,b)$ and the composition of pullbacks of $p$ along $b$ and $a$.
 The closure under other constructions is defined similarly.
 
 In general, being closed under different construction is not a property of a map but additional data on it.
@@ -1609,7 +1609,10 @@ Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be an object classifier.
 Then the types corresponding to the closure conditions listed above are propositions.
 \end{prop}
 \begin{proof}
-% TODO
+Such types consist of a map $c : \Hom(\Delta,\mathcal{U})$ for some fixed type $\Delta$ together with an equivalence between the fiber of $p$ over $c$ and some fixed type over $\Delta$.
+Let $(c_1,e_1)$ and $(c_2,e_2)$ be two such pairs.
+Since $p$ is an object classifier, to define a homotopy between these pairs, it is enough to define a homotopy $e$ between fibers of $p$ over $c_1$ and $c_2$ together with a homotopy between $e \circ e_1$ and $e_2$.
+We can define $e$ as $e_2 \circ e_1^{-1}$.
 \end{proof}
 
 An \emph{(internal) universe} in an indexed dependent type theory is an indexed type $\mathcal{U}$ together with an indexed type $\El(c)$ for all $c : \mathcal{U}$:
@@ -1637,11 +1640,11 @@ A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under coproduc
 A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under $\Sigma$-types} if, for every element $a : \mathcal{U}$ and every function $b : \El(a) \to \mathcal{U}$, there exists an element $\Sigma(a,x.b(x)) : \mathcal{U}$ such that $\El(\Sigma(a,x.b(x)))$ is propositionally (resp., judgementally) equivalent to $\Sigma_{x : \El(a)} \El(b(x))$.
 
 \begin{prop}
-Let $\mathcal{U}$ be a universe.
-Then it is weakly closed under one of the constructions listed above if and only if the map $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ is closed under the corresponding construction.
+A universe $\mathcal{U}$ is weakly closed under one of the constructions listed above if and only if the map $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ is closed under this construction.
 \end{prop}
 \begin{proof}
-% TODO
+This follows from the fact that elements of $\mathcal{U}$ in a context $\Delta$ correspond to maps $\Hom(\Delta, \mathcal{U})$ and
+types of the form $\El(c)$ over $\Delta$ correspond to pullbacks of $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ along $c$.
 \end{proof}
 
 The following propositions discuss $n$-truncated object classifiers.
@@ -1695,10 +1698,16 @@ Analogous result in the context of higher categories was proved in \cite[Theorem
 
 \begin{prop}
 Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be an object classifier and let $f : \Hom(\mathcal{U}',\mathcal{U})$ be any map.
-Then the pullback of $p$ is an object classifier if and only if $f$ is a monomorphism.
+Then the pullback of $p$ along $f$ is an object classifier if and only if $f$ is a monomorphism.
 \end{prop}
 \begin{proof}
-% TODO
+Let us denote the pullback of $p$ along $f$ by $p' : \Hom(\widehat{\mathcal{U}'},\mathcal{U}')$.
+Then the pullback of $p'$ along a map $g : \Hom(\Delta,\mathcal{U}')$ is equivalent to the pullback of $p$ along $f \circ g$.
+Thus, we have an equivalence between the type of equivalences between $g_1^*(p')$ and $g_2^*(p')$ and the type of equivalences between $(f \circ g_1)^*(p)$ and $(f \circ g_2)^*(p)$.
+Since $p$ is an object classifier, the latter type is equivalent to $\Id(f \circ g_1, f \circ g_2)$.
+Thus, $p'$ is an object classifier if and only if the canonical function $\Id(g_1,g_2) \to \Id(f \circ g_1, f \circ g_2)$ is an equivalence.
+This function maps $\refl(g)$ to $\refl(f \circ g)$.
+This implies that it is homotopic to $\lambda h.\,\pmap(f \circ -, h)$, but this map is an equivalence if and only if $f$ is a monomorphism.
 \end{proof}
 
 \section{Locally reflective classes of fibrations}
