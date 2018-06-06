@@ -579,6 +579,14 @@ Dually, if the $\Pi$-type $\Pi_{i : I} \Hom(B,C')$ exists for all indexed types 
 
 Products and coproducts are unique up to unique equivalence.
 We will denote the product and the coproduct of a family $\Gamma, i : I \mid \cdot \vdash B \type$ by $\prod_{i : I} B$ and $\coprod_{i : I} B$, respectively.
+We will say that the product $\prod_{i : I} B$ is \emph{extensional} if the type $\Hom(P, \prod_{i : I} B)$ satisfies functional extensionality as a weak $\Pi$-type $\Pi_{i : I} \Hom(P,B)$ for all indexed types $P$.
+Similarly, we will say that the coproduct $\coprod_{i : I} B$ is \emph{extensional} if the type $\Hom(\coprod_{i : I} B, C)$ satisfies functional extensionality as a weak $\Pi$-type $\Pi_{i : I} \Hom(B,C)$ for all indexed types $C$.
+
+\begin{example}
+If $\Gamma \vdash I \type$ is a base type and $\Gamma \mid \cdot \vdash X \type$ is an indexed type, then the \emph{power} (or \emph{cotensor}) of $X$ by $I$ is the product $\prod_{i : I} X$.
+The \emph{copower} (or \emph{tensor}) of $X$ by $I$ is the coproduct $\coprod_{i : I} X$.
+The power will be denoted by $X^I$ and the tensor by $I \cdot X$.
+\end{example}
 
 We can also define the theory of \emph{strict products}:
 \begin{center}
@@ -606,16 +614,32 @@ We can also define the theory of \emph{strict products}:
 \end{align*}
 
 The difference between weak and strict products is that the former requires types $\Hom(P',\prod_{i : I} B)$ and $\Pi_{i : I} \Hom(P',B)$ to be equivalent while the latter requires them to be \emph{isomorphic}.
-In particular, the type $\Pi_{i : I} \Hom(P',B)$ always exists in a theory with strict products.
-Of course, the theory of products can be interpreted in the theory of strict products, but not the other way around.
-Nevertheless, these theories should be weakly equivalent.
-We will sometimes use the notation with $\lambda$ and application for weak products since we still can define these operations for them (with the caveat that the last two equalities do not hold judgementally for weak products).
+The theory of \emph{weak products} is define in the same way as the theory of strict products with the difference that the last two equations hold only propositionally.
 
-\begin{example}
-If $\Gamma \vdash I \type$ is a base type and $\Gamma \mid \cdot \vdash X \type$ is an indexed type, then the \emph{power} (or \emph{cotensor}) of $X$ by $I$ is the product $\prod_{i : I} X$.
-The \emph{copower} (or \emph{tensor}) of $X$ by $I$ is the coproduct $\coprod_{i : I} X$.
-The power will be denoted by $X^I$ and the tensor by $I \cdot X$.
-\end{example}
+\begin{prop}
+A type $\Gamma \mid \cdot \vdash \prod_{i : I} B$ is a product of a family $\Gamma, i : I \mid \cdot \vdash B \ob$ if and only if it is a weak product of this family.
+\end{prop}
+\begin{proof}
+First, suppose that $\prod_{i : I} B$ is a product.
+If $\Gamma, i : I \mid x : A \vdash b : B$, then we define $\lambda i.\,b$ as $\langle \lambda x.\,b \rangle_{i : I}\,x$.
+If $\Gamma \mid x : A \vdash f : \prod_{i : I} B$ and $\Gamma \vdash j : I$, then we define $f\,j$ as $\pi[j/i]\,f$.
+The $\beta$ and $\eta$ equations hold for these definitions:
+\begin{align*}
+& \lambda x.\,(\lambda i.b)\,j = \lambda x.\,\pi[j/i]\,(\langle \lambda x.b \rangle_{i : I}\,x) = (\pi \circ \langle \lambda x.b \rangle_{i : I})[j/i] \sim (\lambda x.b)[j/i] = \lambda x.\,b[j/i] \\
+& \lambda x.\,\lambda i.\,f\,i = \lambda x.\,\langle \lambda x.\,\pi\,f \rangle_{i : I}\,x = \langle \lambda x.\,\pi\,f \rangle_{i : I} = \langle \pi \circ (\lambda x.f) \rangle_{i : I} \sim \lambda x.f
+\end{align*}
+
+Now, suppose that $\prod_{i : I} B$ is a weak product.
+We define
+\[ \Gamma, i : I \vdash \pi : \Hom(\prod_{i : I} B, B) \]
+as $\lambda f.\,f\,i$.
+If $\Gamma, i : I \vdash g : \Hom(P,B)$, then we define $\Gamma \vdash \langle g \rangle_{i : I} : \Hom(P, \prod_{i : I} B)$ as $\lambda x.\,\lambda i.\,g\,x$.
+The required homotopies can be constructed as follows:
+\begin{align*}
+& \pi \circ \langle g \rangle_{i : I} = \lambda x.\,(\lambda i.\,g\,x)\,i \sim \lambda x.\,g\,x = g \\
+& \langle \pi \circ g \rangle_{i : I} = \lambda x.\,\lambda i.\,g\,x\,i \sim \lambda x.\,g\,x = g
+\end{align*}
+\end{proof}
 
 Let us prove a few properties of products and coproducts.
 To simplify the notation, we will assume that the base theory of an indexed theory with a product $\prod_{i : I} B$ has $\Pi$-types $\Pi_{i : I} \Hom(P,B)$ for all $P$.
@@ -1007,6 +1031,11 @@ The inverse of this map is defined as follows:
 \[ \lambda t.\,\lambda p.\,(\pi_1(t)\,p, \pi_2(t)\,p, \fs{hap}(\pi_3(t),p)). \]
 It is easy to see that these functions are inverse of each other using the fact that $s * \fs{hap^{-1}}(p.\,\pi_3(p)) = \fs{hap^{-1}}(p.\,\pi_3(s\,p))$.
 
+\begin{remark}
+The existence of $\Sigma$-types also implies the existence of products.
+Thus, equalizers also can be constructed from $\Sigma$-types.
+\end{remark}
+
 The following proposition shows that $\Hom(x_1 \ldots x_n.\,-)$ commutes with $\Sigma$-types and identity types:
 \begin{prop}
 If an indexed dependent type theory has extensional identity types and $\Sigma$-types, then it has the following canonical equivalences:
@@ -1019,7 +1048,7 @@ If an indexed dependent type theory has extensional identity types and $\Sigma$-
 The first equivalence is simply the extensionality for identity types.
 The second equivalence is defined as follows:
 \begin{align*}
-& \lambda g.\,(\lambda x_1 \ldots x_n.\,\pi_1\,(g\,x_1\,\ldots\,x_n), \lambda x_1 \ldots x_n.\,\pi_2\,(g\,x_1\,\ldots\,x_n)) \\
+& \lambda g.\,(\lambda x_1 \ldots x_n.\,\pi_1(g\,x_1\,\ldots\,x_n), \lambda x_1 \ldots x_n.\,\pi_2(g\,x_1\,\ldots\,x_n)) \\
 & \lambda p.\,\lambda x_1 \ldots x_n.\,(\pi_1(p)\,x_1\,\ldots\,x_n, \pi_2(p)\,x_1\,\ldots\,x_n)
 \end{align*}
 It is easy to see that these functions are mutually inverse.
@@ -1106,11 +1135,14 @@ Now, we can define $0\text{-}\fs{elim''}(x E.D, a)$ as $\fs{hap}(h,p)_*(\pi_2(f\
 
 \subsection{Pushouts}
 
-Let $f : \Hom(A,B)$ and $g : \Hom(A,C)$ be a pair of maps.
-Suppose that we have the following rules:
+We will say that pushouts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $f : \Hom(A,B)$, $g : \Hom(A,C)$, $p : \Hom(B \amalg_A C, D)$, and $r : \Hom(E,D)$,
+the canonical map from $r^*(B) \amalg_{r^*(A)} r^*(C)$ to $r^*(B \amalg_A C)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
+
+We will say that the theory has \emph{weak dependent pushouts} if the following rules are derivable:
 \begin{center}
-\AxiomC{}
-\UnaryInfC{$\Gamma \mid \Delta \vdash B \amalg_A C \ob$}
+\AxiomC{$\Gamma \mid \Delta \vdash f : \Hom(A,B)$}
+\AxiomC{$\Gamma \mid \Delta \vdash g : \Hom(A,C)$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash B \amalg_A C \ob$}
 \DisplayProof
 \end{center}
 \medskip
@@ -1133,24 +1165,22 @@ Suppose that we have the following rules:
 \end{center}
 \medskip
 
-We will say that the type $B \amalg_A C$ together with $\fs{inl}$, $\fs{inr}$, and $\fs{glue}$ is a \emph{weak dependent pushout} of $f$ and $g$ if the following rules are derivable:
-
 \begin{center}
 \def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \mid z : B \amalg_A C \vdash D \ob$
+\Axiom$\fCenter \Gamma \mid \Delta, z : B \amalg_A C, E \vdash D \ob$
 \noLine
 \UnaryInf$\fCenter \Gamma \mid \Delta \vdash t : A \amalg_C B$
-\Axiom$\fCenter \Gamma \mid \Delta, x : B \vdash d_1 : D[\fs{inl}(x)/z]$
+\Axiom$\fCenter \Gamma \mid \Delta, x : B, E[\fs{inl}(x)/z] \vdash d_1 : D[\fs{inl}(x)/z]$
 \noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, y : C \vdash d_2 : D[\fs{inr}(y)/z]$
+\UnaryInf$\fCenter \Gamma \mid \Delta, y : C, E[\fs{inr}(y)/z] \vdash d_2 : D[\fs{inr}(y)/z]$
 \noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, w : A \vdash d_3 : \Id(\fs{glue}(w)_*(d_1[f\,w/x]), d_2[g\,w/y])$
+\UnaryInf$\fCenter \Gamma \mid \Delta, w : A, E[\fs{inr}(y)/z] \vdash d_3 : \Id(d_1', d_2[g\,w/y])$
 \def\extraVskip{2pt}
-\BinaryInfC{$\Gamma \mid \Delta \vdash \amalg\text{-}\fs{elim}(z.D, x.d_1, y.d_2, w.d_3, t) : D[t/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, E[t/z] \vdash \amalg\text{-}\fs{elim}(z E.D, x E.d_1, y E.d_2, w E.d_3, t) : D[t/z]$}
 \DisplayProof
 \end{center}
 \medskip
-
+where $E = z_1 : E_1, \ldots z_n : E_n$, $d_1' = \fs{glue}(w)_*(d_1[\rho(\fs{glue}(w)), f\,w/x])$, and $\rho(p) = \overline{\sym{p}_*(z_i)/z_i}$.
 We will omit all of the arguments of $\amalg\text{-}\fs{elim}$ except the last one.
 
 \begin{align*}
@@ -1158,27 +1188,33 @@ h_1(b) & : \Id(\amalg\text{-}\fs{elim}(\fs{inl}(b)), d_1[b/x]) \\
 h_2(c) & : \Id(\amalg\text{-}\fs{elim}(\fs{inr}(c)), d_2[c/x])
 \end{align*}
 
-\[ \xymatrix{ \fs{glue}(a)_*(\amalg\text{-}\fs{elim}(\fs{inl}(f\,a))) \ar@{=}[r] \ar@{=}[d] & \fs{glue}(a)_*(d_1[f\,a/x]) \ar@{=}[d]^{d_3[a/w]} \\
-              \amalg\text{-}\fs{elim}(\fs{inr}(g\,a)) \ar@{=}[r]_-{h_2(g\,a)} & d_2[g\,a/x]
+\[ \xymatrix{ \fs{glue}(a)_*(\amalg\text{-}\fs{elim}(\fs{inl}(f\,a))[\rho(\fs{glue}(a))]) \ar@{=}[r] \ar@{=}[d] & d_1'[a/w] \ar@{=}[d]^{d_3[a/w]} \\
+              \amalg\text{-}\fs{elim}(\fs{inr}(g\,a)) \ar@{=}[r]_-{h_2(g\,a)} & d_2[g\,a/y]
             } \]
 The last square must commute up to a homotopy $h_3(a)$.
 The left arrow is
-\[ J(\fs{inl}(f\,a), v p.\,\Id(p_*(\amalg\text{-}\fs{elim}(\fs{inl}(f\,a))), \amalg\text{-}\fs{elim}(v)), \refl, \fs{inr}(g\,a), \fs{glue}(a)). \]
-The top arrow is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a))$.
+\[ J(\fs{inl}(f\,a), v p.\,\Id(p_*(\amalg\text{-}\fs{elim}(\fs{inl}(f\,a))[\rho(p)]), \amalg\text{-}\fs{elim}(v)), \refl, \fs{inr}(g\,a), \fs{glue}(a)). \]
+The top arrow is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a)[\rho(\fs{glue}(a))])$.
+
+The eliminator that we described will be called \emph{local}.
+The \emph{global} eliminator is its special case for $E = \cdot$.
+If the theory has weak dependent pushouts with either local or global eliminator, then it has pushouts which are stable under pullbacks.
+The converse is not true since weak dependent pushouts are stable under substitution which is a stricter condition than being closed under pullbacks.
+But we can show that the existence of pushouts implies the existence of the eliminator which is not stable under substitutions:
 
 \begin{prop}
-Suppose that we have a square
-\[ \xymatrix{ A \ar[r]^-f \ar[d]_g & B \ar[d]^{\fs{inl}} \\
-              C \ar[r]_-{\fs{inr}} & B \amalg_A C
-            } \]
-that commutes up to a homotopy $\fs{glue}$.
-If the indexed dependent type theory has extensional identity types and $\Sigma$-types, then this square is a weak dependent pushout if and only if it is a pushout.
+Suppose that we have stable constructions $\fs{inl}$, $\fs{inr}$, and $\fs{glue}$ as described above.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item These constructions have the universal property of pushouts.
+\item The theory has local unstable eliminator.
+\item The theory has global unstable eliminator.
+\end{enumerate}
+If these equivalent conditions hold, then pushouts are stable under pullbacks.
 \end{prop}
 \begin{proof}
 % TODO
 \end{proof}
-
-% TODO: Define stable pushouts.
 
 \subsection{Strict dependent products}
 
@@ -1209,23 +1245,50 @@ We can define even stricter version of products which we call \emph{strict depen
 \lambda i.\,f\,i & = f
 \end{align*}
 
+\emph{Weak dependent products} is a version of this construction in which the last two equations hold propositionally.
+
 \begin{example}
 The canonical indexing of a dependent type theory over itself has strict dependent products if and only if it has $\Pi$-types.
 \end{example}
 
-Obviously, if a theory has strict dependent products, then it also has strict products.
-Conversely, if a theory has finite limits and products, then we can define a version of strict dependent products in which the last two rules hold propositionally.
+Obviously, if a theory has strict (resp., weak) dependent products, then it also has strict (resp., weak) products.
+We can think of (weak) dependent products as wide pullbacks.
+Thus, to construct them from ordinary products, we also need to assume the existence of $\Sigma$-types and identity types:
 
-% TODO: Prove this.
-% TODO: Prove functional extensionality for strict dependent products.
+\begin{prop}
+If a theory has $\Sigma$-types, extensional identity types, and extensional products, then it has weak unstable extensional dependent products.
+\end{prop}
+\begin{proof}
+Let $\Gamma, i : I \mid \Delta \vdash B \ob$ be an indexed type.
+If $\Delta$ is the empty context, then $\prod_{i : I} B$ is the usual weak product.
+Thus, we may assume that it is non-empty.
+Since we have $\Sigma$-types, we may assume that $\Delta$ consists of exactly one type, that is $\Delta = (x : A)$.
+We define $\Gamma \mid x : A \vdash \prod_{i : I} B$ as follows:
+\[ \Gamma \mid x : A \vdash \sum_{f : \prod_{i : I} \Sigma_{x : A} B_i} \Id_{A^I}(\lambda i.\,\pi_1(f\,i), \lambda i.\,x). \]
+
+Let $\Gamma, i : I \mid x : A \vdash b : B$ be a term.
+Then we define $\Gamma \mid x : A \vdash \lambda i.\,b : \prod_{i : I} B$ as follows:
+\[ \Gamma \mid x : A \vdash (\lambda i.(x,b),h), \]
+where $h$ is the homotopy $\lambda i.\,\pi_1((\lambda i.(x,b))\,i) \sim \lambda i.\,\pi_1(x,b) = \lambda i.\,x$.
+This homotopy exists since products are extensional.
+If $\Gamma \mid x : A \vdash p : \prod_{i : I} B$ and $\Gamma \vdash j : I$, then we define $\Gamma \mid x : A \vdash p\,j : B[j/i]$ as follows:
+\[ \Gamma \mid x : A \vdash h'_*(\pi_2(\pi_1(p)\,j)) : B_j, \]
+where $h'$ is the homotopy $\pi_1(\pi_1(p)\,j) \sim (\lambda i.\,\pi_1(\pi_1(p)\,i))\,j \sim (\lambda i.\,x)\,j \sim x$.
+The second homotopy is $\pmap(f.\,f\,j, \pi_2(p))$ and the other two homotopies are just propositional $\beta$-equivalences.
+% TODO: Finish the proof.
+\end{proof}
 
 \subsection{Dependent coproducts}
+
+We will say that coproducts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$,
+the canonical map from $\coprod_{i : I} r^*(B_i)$ to $r^*(\coprod_{i : I} B_i)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
 
 We can define coproducts in a more type-theoretic way.
 The theory of \emph{dependent coproducts} has the following rules:
 \begin{center}
-\AxiomC{$\Gamma, i : I \mid \cdot \vdash B \ob$}
-\UnaryInfC{$\Gamma \mid \cdot \vdash \coprod_{i : I} B \ob$}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash B \ob$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \coprod_{i : I} B \ob$}
 \DisplayProof
 \qquad
 \AxiomC{$\Gamma \vdash j : I$}
@@ -1236,10 +1299,10 @@ The theory of \emph{dependent coproducts} has the following rules:
 \medskip
 
 \begin{center}
-\AxiomC{$\Gamma \mid z : \coprod_{i : I} B \vdash D \ob$}
-\AxiomC{$\Gamma, i : I \mid \Delta, x : B \vdash d : D[(i,x)/z]$}
+\AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash D \ob$}
+\AxiomC{$\Gamma, i : I \mid \Delta, x : B, E[(i,x)/z] \vdash d : D[(i,x)/z]$}
 \AxiomC{$\Gamma \mid \Delta \vdash t : \coprod_{i : I} B$}
-\TrinaryInfC{$\Gamma \mid \Delta \vdash \coprod\text{-}\fs{elim}(z.D, i x.d, t) : D[t/z]$}
+\TrinaryInfC{$\Gamma \mid \Delta, E[t/z] \vdash \coprod\text{-}\fs{elim}(z.D, i x.d, t) : D[t/z]$}
 \DisplayProof
 \end{center}
 \medskip
@@ -1247,13 +1310,26 @@ The theory of \emph{dependent coproducts} has the following rules:
 \[ \coprod\text{-}\fs{elim}(z.D, i x.d, (j,b)) = d[j/i,b/x] \]
 
 The theory of \emph{weak dependent coproducts} has the same rules except for the last equality which holds only propositionally.
+The eliminator that we described will be called \emph{local}.
+The \emph{global} eliminator is its special case for $E = \cdot$.
 
 \begin{example}
 The canonical indexing of a dependent type theory over itself always has dependent coproducts since we always assume that the base theory has $\Sigma$-types.
 \end{example}
 
-% TODO: Prove that weak coproducts are equivalent to coproducts in unary theories.
-% TODO: Define stable coproducts.
+\begin{prop}
+Suppose that we have stable constructions $\coprod$ and $(-,-)$ as described above.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item These constructions have the universal property of coproducts.
+\item The theory has local unstable eliminator.
+\item The theory has global unstable eliminator.
+\end{enumerate}
+If these equivalent conditions hold, then coproducts are stable under pullbacks.
+\end{prop}
+\begin{proof}
+% TODO
+\end{proof}
 
 \section{General adjoint functor theorem}
 
@@ -2096,8 +2172,8 @@ Let $\Fib$ be a class of fibrations closed under $\Sigma$-types and let $\| - \|
 Then the following conditions are equivalent:
 \begin{enumerate}
 \item \label{it:fib-non-dep} The pair $\| - \|$, $| - |$ makes $\Fib$ into a (stably) locally reflective class.
-\item \label{it:fib-dep} $\Fib$ is closed under identity types and $\| A \|\text{-}\fs{elim}$ and $\| A \|\text{-}\fs{elim_h}$ are definable.
-\item \label{it:fib-dep-local} $\Fib$ is closed under identity types and $\| A \|\text{-}\fs{elim}$ and $\| A \|\text{-}\fs{elim_h}$ are definable when $E$ is the empty context.
+\item \label{it:fib-dep} $\Fib$ is closed under identity types and unstable constructions $\| A \|\text{-}\fs{elim}$ and $\| A \|\text{-}\fs{elim_h}$ are definable.
+\item \label{it:fib-dep-local} $\Fib$ is closed under identity types and unstable constructions $\| A \|\text{-}\fs{elim}$ and $\| A \|\text{-}\fs{elim_h}$ are definable when $E$ is the empty context.
 \end{enumerate}
 \end{prop}
 \begin{proof}
