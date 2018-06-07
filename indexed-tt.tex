@@ -1022,7 +1022,7 @@ For example, this is true when it has the unit type.
 If an indexed dependent type theory has extensional identity types and $\Sigma$-types, then it has pullbacks.
 Indeed, we can define a pullback of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ as $A \times_C B = \Sigma_{x : A} \Sigma_{y : B} \Id_C(f\,x,g\,y)$
 with the obvious projections $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \times_C B, B)$ and the obvious homotopy between $f \circ \pi_1$ and $g \circ \pi_2$: namely, $\fs{hap^{-1}}(p.\,\pi_3(p))$.
-We need to show that the following map is equivalence:
+We need to show that the following map is an equivalence:
 \begin{align*}
 & \Hom(P, A \times_C B) \to \sum_{F : \Hom(P,A)} \sum_{G : \Hom(P,B)} \Id(f \circ F, g \circ G) \\
 & \lambda s.\,(\pi_1 \circ s, \pi_2 \circ s, s * \fs{hap^{-1}}(p.\,\pi_3(p))).
@@ -1386,22 +1386,33 @@ The \emph{$\Pi$-type} $\Pi_{x : A} B$ of a family $\Gamma \vdash \Delta, x : A \
 
 The last two equations are called $\beta$ and $\eta$ rules.
 \emph{Weak function types} and \emph{weak $\Pi$-types} are defined in the same way except for the $\beta$ and $\eta$ rules which hold only propositionally.
+We will denote them by $\beta(x.b,a)$ and $\eta(f)$:
+\begin{align*}
+\beta(x.b, a) & : \Id((\lambda x.\,b)\,a, b[a/x]) \\
+\eta(f) & : \Id(\lambda x.\,f\,x, f)
+\end{align*}
+\emph{Functional extensionality} for (weak) function types and $\Pi$-types is defined as usual.
 
 \begin{prop}
 Let $\Gamma \mid \Delta \vdash A \ob$ be a type in an indexed dependent type theory with $\Sigma$-types and extensional identity types.
 Then the following conditions are equivalent:
 \begin{enumerate}
-\item Weak $\Pi$-types $\Pi_{x : A} B$ exist for all families $\Gamma \mid \Delta, x : A \vdash B \ob$.
-\item Weak function types $A \to B$ exist for all types $\Gamma \mid \Delta \vdash B \ob$.
+\item Weak unstable extensional $\Pi$-types $\Pi_{x : A} B$ exist for all families $\Gamma \mid \Delta, x : A \vdash B \ob$.
+\item Weak unstable extensional function types $A \to B$ exist for all types $\Gamma \mid \Delta \vdash B \ob$.
 \item $A$ is exponentiable.
 \end{enumerate}
+If these conditions holds, then $\Pi$-types $\Pi_{x : A} B$ are stable if and only if function types $A \to B$ are stable.
 \end{prop}
 \begin{proof}
-% TODO
+Obviously, if weak unstable (resp., stable) $\Pi$-types $\Pi_{x : A} B$ exist, then weak unstable (resp., stable) function types $A \to B$ also exist.
+Let us prove that the existence of weak stable extensional function types $A \to B$ implies the existence of weak stable extensional $\Pi$-types $\Pi_{x : A} B$.
+We define $\Pi_{x : A} B$ as follows:
+\[ \sum_{f : A \to \Sigma_{x : A} B} \Id_{A \to A}(\lambda x.\,\pi_1\,(f\,x), \lambda x.\,x). \]
+If $\Gamma \mid \Delta, x : A \vdash b : B$, then we define $\lambda x.\,b$ as follows:
+\[ (\lambda x.(x,b), \fs{funext}(x.\,\pmap(p.\,\pi_1(p), \beta(x.(x,b),x)))). \]
+If $\Gamma \mid \Delta \vdash p : \Pi_{x : A} B$ and $\Gamma \mid \Delta \vdash a : A$, then we define $f\,a$ as follows:
+\[ (\sym{\beta(x.\,\pi_1\,(\pi_1(p)\,x),a)} \ct \pmap(f.\,f\,a,\pi_2(p)) \ct \beta(x.x,a))_*(\pi_2(\pi_1(p)\,a)). \]
 \end{proof}
-
-The standard argument shows that if a theory is locally cartesian closed, then the existence of $0\text{-}\fs{elim}$ implies the existence of $0\text{-}\fs{elim''}$ and the same is true for eliminators of pushouts and dependent coproducts.
-Thus, initial types, pushouts, and coproducts are stable under pullbacks in a locally cartesian closed theory.
 
 \section{Classifying morphisms}
 
