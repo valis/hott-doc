@@ -1339,10 +1339,25 @@ If these equivalent conditions hold, then coproducts are stable under pullbacks.
 
 In this section, we will define locally cartesian closed unary type theories and discuss the relationship between them and indexed dependent type theories with $\Pi$-types.
 
+\subsection{Types over contexts}
+
 Let $p_A : \Hom(A,\Delta)$ and $p_B : \Hom(B,\Delta)$ be a pair of maps with the same codomain.
 We will write $\Hom_\Delta(A,B)$ for the type $\Sigma_{f : \Hom(A,B)} \Id(p_B \circ f, p_A)$.
-If we think of maps $\Hom(A,\Delta)$ as types over $\Delta$, then $\Hom_\Delta(A,B)$ is the type of morphisms between such types.
+If we think of maps $\Hom(X,\Delta)$ as types over $\Delta$, then $\Hom_\Delta(A,B)$ is the type of morphisms between such types.
 We will identify elements of $\Hom_\Delta(A,B)$ with underlying morphisms $\Hom(A,B)$ and we will often omit the homotopy in $\Hom_\Delta(A,B)$ when constructing an element of this type.
+
+If the theory has $\Sigma$-types and unit types, then, for every dependent types $\Delta \vdash B \ob$, we can define the following map:
+\[ \pi_1 : \Hom(\sum_{p : \Sigma(\Delta)} B[\pi_1(p)/x_1, \ldots \pi_k(p)/x_k]), \Sigma(\Delta)), \]
+where $\Delta = x_1 : A_1, \ldots x_k : A_k$.
+Conversely, if the theory also has identity types, then, for every map $f : \Hom(A,B)$, we can define the following dependent type:
+\[ y : B \vdash \sum_{x : A} \Id_B(f\,x,y). \]
+These constructions are mutually inverse.
+This implies that every dependent type in an arbitrary context is equivalent to a type in a context of size 1.
+
+If $A$ and $B$ are dependent types in a context $\Delta$ in an indexed dependent type theory, then we will write $\Hom_\Delta(A,B)$ for $\Hom((\Delta, x : A). B)$.
+This type corresponds to the previously defined type of maps over $\Delta$ through the equivalence between dependent types and types over $\Sigma(\Delta)$.
+
+\subsection{Exponentiable maps}
 
 Let $p_A : \Hom(A,\Delta)$ be a morphism in an indexed unary type theory such that its pullbacks along any map exist.
 An \emph{exponential type over $\Delta$} of $p_A$ and a map $p_B : \Hom(B,\Delta)$ is a map $p : \Hom(B^A,\Delta)$ together with a map $\fs{ev} : \Hom_\Delta(B^A \times_\Delta A, B)$ such that the following function is an equivalence for every indexed type $X$:
@@ -1391,7 +1406,92 @@ We will denote them by $\beta(x.b,a)$ and $\eta(f)$:
 \beta(x.b, a) & : \Id((\lambda x.\,b)\,a, b[a/x]) \\
 \eta(f) & : \Id(\lambda x.\,f\,x, f)
 \end{align*}
-\emph{Functional extensionality} for (weak) function types and $\Pi$-types is defined as usual.
+
+\emph{Functional extensionality} for (weak) function types and $\Pi$-types is defined as usual:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, x : A \vdash p : \Id_B(f\,x,g\,x)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{funext}(x.p) : \Id_{\Pi_{x : A} B}(f,g)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash p : \Id_{\Pi_{x : A} B}(f,g)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{funext_h}(p) : \Id(\fs{funext}(x.\pmap(f.\,f\,x,p)), p)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, x : A \vdash p : \Id_B(f\,x,g\,x)$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{funext_h'}(x.p) : \Id(\pmap(f.\,f\,a,\fs{funext}(x.p)), p[a/x])$}
+\DisplayProof
+\end{center}
+
+\begin{prop}
+Let $\Gamma \mid \Delta \vdash A \ob$ be a type in an indexed dependent type theory with $\Sigma$-types and extensional identity types.
+Then the theory has weak stable extensional $\Pi$-types $\Pi_{x : A} B$ for all dependent types $B$ if and only if it has weak stable extensional function types $A \to B$ for all types $B$.
+\end{prop}
+\begin{proof}
+The ``only if'' direction holds for obvious reasons.
+Let us prove the converse.
+We define $\Pi_{x : A} B$ as follows:
+\[ \sum_{f : A \to \Sigma_{x : A} B} \Id_{A \to A}(\lambda x.\,\pi_1\,(f\,x), \lambda x.\,x). \]
+If $\Gamma \mid \Delta, x : A \vdash b : B$, then we define $\lambda x.b$ as follows:
+\[ (\lambda x.(x,b), \fs{funext}(x. h(b,x))), \]
+where $h(b,x) = \beta(x.\,\pi_1\,((\lambda x.(x,b))\,x),x) \ct \pmap(p.\,\pi_1(p), \beta(x.(x,b),x)) \ct \sym{\beta(x.x,x)}$.
+We will denote this pair by $\lambda^d x.b$ to distinguish it from the non-dependent $\lambda$.
+If $\Gamma \mid \Delta \vdash p : \Pi_{x : A} B$ and $\Gamma \mid \Delta \vdash a : A$, then we define $p\,a$ as follows:
+\[ h'(p,a)_*(\pi_2(\pi_1(p)\,a)), \]
+where $h'(p,a) = \sym{\beta(x.\,\pi_1\,(\pi_1(p)\,x),a)} \ct \pmap(f.\,f\,a,\pi_2(p)) \ct \beta(x.x,a)$.
+
+Let us prove that $(\lambda^d x.b)\,a = h'(\lambda^d x.b,a)_*((\lambda x.(x,b))\,a)$ is homotopic to $b[a/x]$.
+First, note that we have the following homotopy:
+\[ \beta(x.(x,b),a) : \Id_{\Sigma_{x : A} B}((\lambda x.(x,b))\,a,(a,b[a/x])). \]
+A standard argument implies that $\pmap(p.\,\pi_1(p),\beta(x.(x,b),a))_*((\lambda x.(x,b))\,a)$ is homotopic to $b[a/x]$.
+Thus, we just need to prove that $\pmap(p.\,\pi_1(p),\beta(x.(x,b),a))$ is homotopic to $h'(\lambda^d x.b,a)$:
+\begin{align*}
+h'(\lambda^d x.b,a) & = \\
+\sym{\beta(x.\,\pi_1\,((\lambda x.(x,b))\,x),a)} \ct \pmap(f.\,f\,a,\fs{funext}(x. h(b,x))) \ct \beta(x.x,a) & \sim \\
+\sym{\beta(x.\,\pi_1\,((\lambda x.(x,b))\,x),a)} \ct h(b,a) \ct \beta(x.x,a) & \sim \\
+\pmap(p.\,\pi_1(p), \beta(x.(x,b),x)) & .
+\end{align*}
+The first homotopy follows from $\fs{funext_h'}$ and the second one from the definition of $h(b,a)$.
+
+Now, let $(f,q)$ be a term of type $\Pi_{x : A} B$.
+Let us prove that $\lambda^d x.\,(f,q)\,x$ is homotopic to $(f,q)$.
+Let $b = h'((f,q),x)_*(\pi_2(f\,x))$.
+Then
+\[ \lambda^d x.\,(f,q)\,x = (\lambda x.(x,b),\fs{funext}(x.h(b,x))). \]
+By $\Sigma$-extensionality, it is enough to construct a homotopy $t$ between $f$ and $\lambda x.(x,b)$ such that $t_*(q)$ is homotopic to $\fs{funext}(x.h(b,x))$.
+We can define $t$ as follows:
+\[ \fs{funext}(x. \Sigma \fs{ext}(h'((f,q),x),\refl) \ct \sym{\beta(x.(x,b),x)}). \]
+Note that $t_*(q)$ is homotopic $\sym{\fs{funext}(x.s)} \ct q$, where
+\[ s = \beta(x.\,\pi_1(f\,x),x) \ct \pmap(p.\,\pi_1(p\,x),t) \ct \sym{\beta(x.\,\pi_1((\lambda x.(x,b))\,x),x)}. \]
+This is easy to prove by the path induction on $t$.
+Thus, we just need to prove that $q$ is homotopic to $\fs{funext}(x.\,s \ct h(b,x))$.
+By $\fs{funext_h}$, it is enough to prove that $\pmap(f.\,f\,x,q)$ is homotopic to $s \ct h(b,x)$.
+
+We have the following sequence of homotopies:
+\begin{align*}
+\pmap(p.\,\pi_1(p\,x),t) & \sim \\
+\pmap(p.\,\pi_1(p),\pmap(f.\,f\,x,t)) & = \\
+\pmap(p.\,\pi_1(p),\pmap(f.\,f\,x, \fs{funext}(x. \Sigma \fs{ext}(h'((f,q),x),\refl) \ct \sym{\beta(x.(x,b),x)}))) & \sim \\
+\pmap(p.\,\pi_1(p), \Sigma \fs{ext}(h'((f,q),x),\refl) \ct \sym{\beta(x.(x,b),x)}) & \sim \\
+h'((f,q),x) \ct \sym{\pmap(p.\,\pi_1(p), \beta(x.(x,b),x))} & .
+\end{align*}
+This implies the existence of the required homotopy:
+\begin{align*}
+s \ct h(b,x) & \sim \\
+\beta(x.\,\pi_1(f\,x),x) \ct \pmap(p.\,\pi_1(p\,x),t) \ct \pmap(p.\,\pi_1(p), \beta(x.(x,b),x)) \ct \sym{\beta(x.x,x)} & \sim \\
+\beta(x.\,\pi_1(f\,x),x) \ct h'((f,q),x) \ct \sym{\beta(x.x,x)} & \sim \\
+\pmap(f.\,f\,x,q) & .
+\end{align*}
+The first homotopy easily follows from the definitions of $s$ and $h(b,x)$.
+The second homotopy follows from the sequence above.
+The last homotopy follows from the definition of $h'((f,q),x)$.
+\end{proof}
 
 \begin{prop}
 Let $\Gamma \mid \Delta \vdash A \ob$ be a type in an indexed dependent type theory with $\Sigma$-types and extensional identity types.
@@ -1401,17 +1501,9 @@ Then the following conditions are equivalent:
 \item Weak unstable extensional function types $A \to B$ exist for all types $\Gamma \mid \Delta \vdash B \ob$.
 \item $A$ is exponentiable.
 \end{enumerate}
-If these conditions holds, then $\Pi$-types $\Pi_{x : A} B$ are stable if and only if function types $A \to B$ are stable.
 \end{prop}
 \begin{proof}
-Obviously, if weak unstable (resp., stable) $\Pi$-types $\Pi_{x : A} B$ exist, then weak unstable (resp., stable) function types $A \to B$ also exist.
-Let us prove that the existence of weak stable extensional function types $A \to B$ implies the existence of weak stable extensional $\Pi$-types $\Pi_{x : A} B$.
-We define $\Pi_{x : A} B$ as follows:
-\[ \sum_{f : A \to \Sigma_{x : A} B} \Id_{A \to A}(\lambda x.\,\pi_1\,(f\,x), \lambda x.\,x). \]
-If $\Gamma \mid \Delta, x : A \vdash b : B$, then we define $\lambda x.\,b$ as follows:
-\[ (\lambda x.(x,b), \fs{funext}(x.\,\pmap(p.\,\pi_1(p), \beta(x.(x,b),x)))). \]
-If $\Gamma \mid \Delta \vdash p : \Pi_{x : A} B$ and $\Gamma \mid \Delta \vdash a : A$, then we define $f\,a$ as follows:
-\[ (\sym{\beta(x.\,\pi_1\,(\pi_1(p)\,x),a)} \ct \pmap(f.\,f\,a,\pi_2(p)) \ct \beta(x.x,a))_*(\pi_2(\pi_1(p)\,a)). \]
+% TODO
 \end{proof}
 
 \section{Classifying morphisms}
