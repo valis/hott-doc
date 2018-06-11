@@ -1101,7 +1101,7 @@ We will denote them by $\beta(x.b,a)$ and $\eta(f)$:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta, x : A \vdash p : \Id_B(f\,x,g\,x)$}
 \AxiomC{$\Gamma \mid \Delta \vdash a : A$}
-\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{funext_h'}(x.p) : \Id(\pmap(f.\,f\,a,\fs{funext}(x.p)), p[a/x])$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{funext_h'}(x.p,a) : \Id(\pmap(f.\,f\,a,\fs{funext}(x.p)), p[a/x])$}
 \DisplayProof
 \end{center}
 
@@ -1183,7 +1183,7 @@ Thus, we just need to prove that $\pmap(p.\,\pi_1(p),\beta(x.(x,b),a))$ is homot
 h'(\lambda^d x.b,a) & = \\
 \sym{\beta(x.\,\pi_1\,((\lambda x.(x,b))\,x),a)} \ct \pmap(f.\,f\,a,\fs{funext}(x. h(b,x))) \ct \beta(x.x,a) & \sim \\
 \sym{\beta(x.\,\pi_1\,((\lambda x.(x,b))\,x),a)} \ct h(b,a) \ct \beta(x.x,a) & \sim \\
-\pmap(p.\,\pi_1(p), \beta(x.(x,b),x)) & .
+\pmap(p.\,\pi_1(p), \beta(x.(x,b),a)) & .
 \end{align*}
 The first homotopy follows from $\fs{funext_h'}$ and the second one from the definition of $h(b,a)$.
 
@@ -1472,6 +1472,38 @@ We can define even stricter version of products which we call \emph{strict depen
 \end{align*}
 
 \emph{Weak dependent products} is a version of this construction in which the last two equations hold propositionally.
+We will denote these homotopies by $\beta$ and $\eta$:
+\begin{align*}
+\beta(i.b,j) & : \Id((\lambda i.\,b)\,j,b[j/i]) \\
+\eta(f) & : \Id(\lambda i.\,f\,i,f)
+\end{align*}
+
+We will say that a dependent product $\prod_{i : I} B$ is \emph{extensional} if we have the following constructions:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash p : \Id_B(f\,i,g\,i)$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{ext}(i.p) : \Id_{\prod_{i : I} B}(f,g)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash p : \Id_{\prod_{i : I} B}(f,g)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{ext_h}(p) : \Id(\fs{ext}(i.\pmap(f.\,f\,i,p)), p)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash p : \Id_B(f\,i,g\,i)$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\AxiomC{$\Gamma \vdash j : I$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{ext_h'}(i.p,j) : \Id(\pmap(f.\,f\,j,\fs{ext}(i.p)), p[j/i])$}
+\DisplayProof
+\end{center}
+
+A (weak) non-dependent product is a special case of (weak) dependent products.
+If identity types are extensional, then a product is extensional if and only if it is extensional in the sense defined above.
 
 \begin{example}
 The canonical indexing of a dependent type theory over itself has strict dependent products if and only if it has $\Pi$-types.
@@ -1482,26 +1514,69 @@ We can think of (weak) dependent products as wide pullbacks.
 Thus, to construct them from ordinary products, we also need to assume the existence of $\Sigma$-types and identity types:
 
 \begin{prop}
-If a theory has $\Sigma$-types, extensional identity types, and extensional products, then it has weak unstable extensional dependent products.
+If a theory has $\Sigma$-types, extensional identity types, and weak extensional products, then it has weak unstable extensional dependent products.
 \end{prop}
 \begin{proof}
-Let $\Gamma, i : I \mid \Delta \vdash B \ob$ be an indexed type.
-If $\Delta$ is the empty context, then $\prod_{i : I} B$ is the usual weak product.
+Let $\Gamma, i : I \mid \Delta \vdash B_i \ob$ be an indexed type.
+If $\Delta$ is the empty context, then $\prod_{i : I} B_i$ is the usual weak product.
 Thus, we may assume that it is non-empty.
 Since we have $\Sigma$-types, we may assume that $\Delta$ consists of exactly one type, that is $\Delta = (x : A)$.
-We define $\Gamma \mid x : A \vdash \prod_{i : I} B$ as follows:
+We define $\Gamma \mid x : A \vdash \prod_{i : I} B_i$ as follows:
 \[ \Gamma \mid x : A \vdash \sum_{f : \prod_{i : I} \Sigma_{x : A} B_i} \Id_{A^I}(\lambda i.\,\pi_1(f\,i), \lambda i.\,x). \]
 
-Let $\Gamma, i : I \mid x : A \vdash b : B$ be a term.
-Then we define $\Gamma \mid x : A \vdash \lambda i.\,b : \prod_{i : I} B$ as follows:
-\[ \Gamma \mid x : A \vdash (\lambda i.(x,b),h), \]
-where $h$ is the homotopy $\lambda i.\,\pi_1((\lambda i.(x,b))\,i) \sim \lambda i.\,\pi_1(x,b) = \lambda i.\,x$.
-This homotopy exists since products are extensional.
-If $\Gamma \mid x : A \vdash p : \prod_{i : I} B$ and $\Gamma \vdash j : I$, then we define $\Gamma \mid x : A \vdash p\,j : B[j/i]$ as follows:
-\[ \Gamma \mid x : A \vdash h'_*(\pi_2(\pi_1(p)\,j)) : B_j, \]
-where $h'$ is the homotopy $\pi_1(\pi_1(p)\,j) \sim (\lambda i.\,\pi_1(\pi_1(p)\,i))\,j \sim (\lambda i.\,x)\,j \sim x$.
-The second homotopy is $\pmap(f.\,f\,j, \pi_2(p))$ and the other two homotopies are just propositional $\beta$-equivalences.
-% TODO: Finish the proof.
+Let $\Gamma, i : I \mid x : A \vdash b : B_i$ be a term.
+Then we define $\Gamma \mid x : A \vdash \lambda i.\,b : \prod_{i : I} B_i$ as follows:
+\[ \Gamma \mid x : A \vdash (\lambda i.(x,b), \fs{ext}(i. h(b,i))), \]
+where $h(b,i) = \beta(i.\,\pi_1\,((\lambda i.(x,b))\,i),i) \ct \pmap(p.\,\pi_1(p), \beta(i.(x,b),i)) \ct \sym{\beta(i.x,i)}$.
+If $\Gamma \mid x : A \vdash p : \prod_{i : I} B_i$ and $\Gamma \vdash j : I$, then we define $\Gamma \mid x : A \vdash p\,j : B_j$ as follows:
+\[ \Gamma \mid x : A \vdash h'(p,j)_*(\pi_2(\pi_1(p)\,j)) : B_j, \]
+where $h'(p,j) = \sym{\beta(i.\,\pi_1\,(\pi_1(p)\,i),j)} \ct \pmap(f.\,f\,j,\pi_2(p)) \ct \beta(i.x,j)$.
+
+Let us prove that $(\lambda i.b)\,j = h'(\lambda i.b,j)_*((\lambda i.(x,b))\,j)$ is homotopic to $b[j/i]$.
+First, note that we have the following homotopy:
+\[ \beta(i.(x,b),j) : \Id_{\Sigma_{x : A} B_j}((\lambda i.(x,b))\,j,(x,b[j/i])). \]
+A standard argument implies that $\pmap(p.\,\pi_1(p),\beta(i.(x,b),j))_*((\lambda i.(x,b))\,j)$ is homotopic to $b[j/i]$.
+Thus, we just need to prove that $\pmap(p.\,\pi_1(p),\beta(i.(x,b),j))$ is homotopic to $h'(\lambda i.b,j)$:
+\begin{align*}
+h'(\lambda i.b,j) & = \\
+\sym{\beta(i.\,\pi_1\,((\lambda i.(x,b))\,i),j)} \ct \pmap(f.\,f\,j,\fs{ext}(i. h(b,i))) \ct \beta(i.x,j) & \sim \\
+\sym{\beta(i.\,\pi_1\,((\lambda i.(x,b))\,i),j)} \ct h(b,j) \ct \beta(i.x,j) & \sim \\
+\pmap(p.\,\pi_1(p), \beta(i.(x,b),j)) & .
+\end{align*}
+The first homotopy follows from $\fs{ext_h'}$ and the second one from the definition of $h(b,j)$.
+
+Now, let $(f,q)$ be a term of type $\prod_{i : I} B_i$.
+Let us prove that $\lambda i.\,(f,q)\,i$ is homotopic to $(f,q)$.
+Let $b = h'((f,q),i)_*(\pi_2(f\,i))$.
+Then
+\[ \lambda i.\,(f,q)\,i = (\lambda i.(x,b),\fs{ext}(i.h(b,i))). \]
+By $\Sigma$-extensionality, it is enough to construct a homotopy $t$ between $f$ and $\lambda i.(x,b)$ such that $t_*(q)$ is homotopic to $\fs{ext}(i.h(b,i))$.
+We can define $t$ as follows:
+\[ \fs{ext}(i. \Sigma \fs{ext}(h'((f,q),i),\refl) \ct \sym{\beta(i.(x,b),i)}). \]
+Note that $t_*(q)$ is homotopic $\sym{\fs{ext}(i.s)} \ct q$, where
+\[ s = \beta(i.\,\pi_1(f\,i),i) \ct \pmap(p.\,\pi_1(p\,i),t) \ct \sym{\beta(i.\,\pi_1((\lambda i.(x,b))\,i),i)}. \]
+This is easy to prove by the path induction on $t$.
+Thus, we just need to prove that $q$ is homotopic to $\fs{ext}(i.\,s \ct h(b,i))$.
+By $\fs{ext_h}$, it is enough to prove that $\pmap(f.\,f\,i,q)$ is homotopic to $s \ct h(b,i)$.
+
+We have the following sequence of homotopies:
+\begin{align*}
+\pmap(p.\,\pi_1(p\,i),t) & \sim \\
+\pmap(p.\,\pi_1(p),\pmap(f.\,f\,i,t)) & = \\
+\pmap(p.\,\pi_1(p),\pmap(f.\,f\,i, \fs{ext}(i. \Sigma \fs{ext}(h'((f,q),i),\refl) \ct \sym{\beta(i.(x,b),i)}))) & \sim \\
+\pmap(p.\,\pi_1(p), \Sigma \fs{ext}(h'((f,q),i),\refl) \ct \sym{\beta(i.(x,b),i)}) & \sim \\
+h'((f,q),i) \ct \sym{\pmap(p.\,\pi_1(p), \beta(i.(x,b),i))} & .
+\end{align*}
+This implies the existence of the required homotopy:
+\begin{align*}
+s \ct h(b,x) & \sim \\
+\beta(i.\,\pi_1(f\,i),i) \ct \pmap(p.\,\pi_1(p\,i),t) \ct \pmap(p.\,\pi_1(p), \beta(i.(x,b),i)) \ct \sym{\beta(i.x,i)} & \sim \\
+\beta(i.\,\pi_1(f\,i),i) \ct h'((f,q),i) \ct \sym{\beta(i.x,i)} & \sim \\
+\pmap(f.\,f\,i,q) & .
+\end{align*}
+The first homotopy easily follows from the definitions of $s$ and $h(b,i)$.
+The second homotopy follows from the sequence above.
+The last homotopy follows from the definition of $h'((f,q),i)$.
 \end{proof}
 
 \subsection{Dependent coproducts}
