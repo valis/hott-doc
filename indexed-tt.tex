@@ -1035,9 +1035,9 @@ This type corresponds to the previously defined type of maps over $\Delta$ throu
 
 \subsection{Exponentiable maps}
 
-Let $p_A : \Hom(A,\Delta)$ be a morphism in an indexed unary type theory such that its pullbacks along any map exist.
-The \emph{exponent over $\Delta$} of $p_A$ and a map $p_B : \Hom(B,\Delta)$ is a map $p : \Hom(B^A,\Delta)$ together with a map $\fs{ev} : \Hom_\Delta(B^A \times_\Delta A, B)$ such that the following function is an equivalence for every indexed type $X$:
-\[ \lambda f.\, \fs{ev} \circ (f \times_\Delta A) : \Hom_\Delta(X, B^A) \to \Hom_\Delta(X \times_\Delta A, B). \]
+Let $p_A : \Hom(A,D)$ be a morphism in an indexed unary type theory such that its pullbacks along any map exist.
+The \emph{exponent over $D$} of $p_A$ and a map $p_B : \Hom(B,D)$ is a map $p : \Hom(B^A,D)$ together with a map $\fs{ev} : \Hom_D(B^A \times_D A, B)$ such that the following function is an equivalence for every indexed type $X$:
+\[ \lambda f.\, \fs{ev} \circ (f \times_D A) : \Hom_D(X, B^A) \to \Hom_D(X \times_D A, B). \]
 We will say that $p_A$ is \emph{exponentiable} if the exponent $B^A$ exists for all maps $p_B$.
 We will say that the theory is \emph{locally cartesian closed} if all maps are exponentiable.
 
@@ -1105,6 +1105,29 @@ We will denote them by $\beta(x.b,a)$ and $\eta(f)$:
 \DisplayProof
 \end{center}
 
+\begin{lem}[dep-exp]
+Let $\Delta = y_1 : A_1, \ldots y_k : A_k$ be a context and let $\Gamma \mid \Delta \vdash \Pi_{x : A} B \ob$ be a $\Pi$-type in this context.
+Then the following function is an equivalence:
+\[ \lambda f.\,\lambda \overline{y} x.\,f\,\overline{y}\,x : \Hom(\Delta. \Pi_{x : A} B) \to \Hom((\Delta, x : A). B). \]
+\end{lem}
+\begin{proof}
+The inverse of this function is given by $\lambda g.\,\lambda \overline{y}.\lambda x.\,g\,\overline{y}\,x$:
+\begin{align*}
+(\lambda f.\,\lambda \overline{y} x.\,f\,\overline{y}\,x) \circ (\lambda g.\,\lambda \overline{y}.\lambda x.\,g\,\overline{y}\,x) & = \\
+\lambda g.\,\lambda \overline{y} x.\,(\lambda \overline{y}.\lambda x.\,g\,\overline{y}\,x)\,\overline{y}\,x & = \\
+\lambda g.\,\lambda \overline{y} x.\,(\lambda x.\,g\,\overline{y}\,x)\,x & \sim \\
+\lambda g.\,\lambda \overline{y} x.\,g\,\overline{y}\,x & \sim \\
+\lambda g.g &
+\end{align*}
+\begin{align*}
+(\lambda g.\,\lambda \overline{y}.\lambda x.\,g\,\overline{y}\,x) \circ (\lambda f.\,\lambda \overline{y} x.\,f\,\overline{y}\,x) & = \\
+\lambda f.\,\lambda \overline{y}.\lambda x.\,(\lambda \overline{y} x.\,f\,\overline{y}\,x)\,\overline{y}\,x & = \\
+\lambda f.\,\lambda \overline{y}.\lambda x.\,f\,\overline{y}\,x & \sim \\
+\lambda f.\,\lambda \overline{y}.\,f\,\overline{y} & \sim \\
+\lambda f.f &
+\end{align*}
+\end{proof}
+
 \begin{prop}
 Functional extensionality holds for all $\Pi$-types that exist in an indexed dependent type theory with extensional identity types.
 \end{prop}
@@ -1114,16 +1137,13 @@ Consider the following square:
 \[ \xymatrix{ \Id_{\Hom(\Delta. \Pi_{x : A} B)}(f',g') \ar[r] \ar[d] & \Id_{\Hom((\Delta, x : A). B)}(\lambda \overline{y} x.\,f'\,\overline{y}\,x, \lambda \overline{y} x.\,g'\,\overline{y}\,x) \ar[d] \\
               \Hom(\Delta.\,\Id_{\Pi_{x : A} B}(f'\,\overline{y}, g'\,\overline{y})) \ar[r] & \Hom((\Delta, x : A).\,\Id_B(f'\,\overline{y}\,x, g'\,\overline{y}\,x))
             } \]
-The top map is defined as $\lambda p.\,\pmap(f.\,\lambda \overline{y} x.\,f\,\overline{y}\,x,p)$.
 The bottom map is defined as $\lambda s.\,\lambda \overline{y} x.\,\pmap(f.\,f\,x,s\,\overline{y})$.
 The left and right maps are defined as $\fs{hap}$.
+These functions are equivalences since identity maps are extensional.
+The top map is defined as $\lambda p.\,\pmap(f.\,\lambda \overline{y} x.\,f\,\overline{y}\,x,p)$.
+\Rlem{dep-exp} implies that this function is also an equivalence.
 Since the functions appearing in this square preserve $\refl$, path induction implies that it commutes.
-
-The left and the right functions are equivalences since identity maps are extensional.
-To prove that the top map is an equivalence, it is enough to show that the following function is:
-\[ \lambda f.\,\lambda \overline{y} x.\,f\,\overline{y}\,x : \Hom(\Delta. \Pi_{x : A} B) \to \Hom((\Delta, x : A). B). \]
-The inverse of this function is given by $\lambda g.\,\lambda \overline{y}.\lambda x.\,g\,\overline{y}\,x$.
-Thus, the bottom function is also an equivalence.
+Thus, the bottom map is an equivalence.
 Let $r(f',g')$ be its inverse.
 
 If $\Gamma \mid \Delta, x : A \vdash p : \Id(f\,x,g\,x)$, then we define $\fs{funext}(x.p)$ as follows:
@@ -1200,11 +1220,21 @@ The first homotopy easily follows from the definitions of $s$ and $h(b,x)$.
 The second homotopy follows from the sequence above.
 The last homotopy follows from the definition of $h'((f,q),x)$.
 
-\eqref{it:exp-non-dep} $\Rightarrow$ \eqref{it:exp-exp}.
-% TODO
+\eqref{it:exp-non-dep} $\Leftrightarrow$ \eqref{it:exp-exp}.
+A map $\fs{ev} : \Hom_D(B^A \times_D A, B)$ corresponds to a map $\fs{ev} : \Hom((d : D, f : B^A, a : A). B)$.
+Then $\lambda f.\,\fs{ev} \circ (f \times_D A)$ is an equivalence if and only if the following function is an equivalence:
+\[ \lambda f. \lambda d x a.\,\fs{ev}\,d\,(f\,d\,x)\,a : \Hom((d : D, x : X).\,B^A) \to \Hom((d : D, x : X, a : A). B). \]
+If the function type $\Gamma \mid d : D \vdash A \to B \ob$ exists, then we define $B^A$ as $A \to B$ and $\fs{ev}$ as $\lambda d f a.\,f\,a$.
+The function $\lambda f. \lambda d x a.\,\fs{ev}\,d\,(f\,d\,x)\,a = \lambda f.\,\lambda d x a.\,f\,d\,x\,a$ is an equivalence by \rlem{dep-exp}.
 
-\eqref{it:exp-exp} $\Rightarrow$ \eqref{it:exp-non-dep}.
-% TODO
+Conversely, suppose that the exponent $B^A$ over $D$ exists for all dependent types $\Gamma \mid d : D \vdash A \ob$ and $\Gamma \mid d : D \vdash B \ob$.
+Let $\Gamma \mid \Delta \vdash A \ob$ and $\Gamma \mid \Delta \vdash B \ob$ be a pair of dependent types.
+Since the theory has $\Sigma$-types and unit types, we may assume that $\Delta$ consists of a signle type, that is $\Delta = (d : D)$.
+Then we can define $A \to B$ as $B^A$.
+If $\Gamma \mid d : D \vdash f : A \to B$ and $\Gamma \mid d : D \vdash a : A$, then we define $\Gamma \mid d : D \vdash f\,a : B$ as $\fs{ev}\,d\,f\,a$.
+Let $r$ be the inverse of $\lambda f. \lambda d x a.\,\fs{ev}\,d\,(f\,d\,x)\,a$ for $X = \top$.
+If $\Gamma \mid d : D, x : A \vdash b : B$, then we define $\Gamma \mid d : D \vdash \lambda x.b : A \to B$ as $r\,(\lambda d x a.\,b[a/x])\,d\,\fs{tt}$, where $\fs{tt}$ is the unique element of $\top$.
+Then $\beta$ and $\eta$ equivalences follow from the fact that $r$ is the inverse of $\lambda f. \lambda d x a.\,\fs{ev}\,d\,(f\,d\,x)\,a$.
 \end{proof}
 
 \section{Limits and colimits in dependent theories}
