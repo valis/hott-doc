@@ -1521,23 +1521,23 @@ The construction of the abstraction and the application and proofs of $\beta$ an
 \subsection{Dependent coproducts}
 
 Coproducts can be defined in a more type-theoretic way:
+The theory of \emph{dependent coproducts} consists of the following unstable rules:
 \begin{center}
-\AxiomC{$\Gamma, i : I \mid \Delta \vdash B \ob$}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash B_i \ob$}
 \RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \coprod_{i : I} B \ob$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \coprod_{i : I} B_i \ob$}
 \DisplayProof
 \qquad
 \AxiomC{$\Gamma \vdash j : I$}
-\AxiomC{$\Gamma \mid \Delta \vdash b : B[j/i]$}
-\BinaryInfC{$\Gamma \mid \Delta \vdash (j,b) : \coprod_{i : I} B$}
+\UnaryInfC{$\Gamma \mid \Delta, x : B_j \vdash \fs{in}_j(x) : \coprod_{i : I} B_i$}
 \DisplayProof
 \end{center}
 \medskip
 
 \begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash D \ob$}
-\AxiomC{$\Gamma, i : I \mid \Delta, x : B, E[(i,x)/z] \vdash d : D[(i,x)/z]$}
-\BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash \coprod\text{-}\fs{elim}(z.D, i x.d) : D$}
+\AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B \vdash D \ob$}
+\AxiomC{$\Gamma, i : I \mid \Delta, x : B \vdash d : D[(i,x)/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B \vdash \coprod\text{-}\fs{elim}(z.D, i x.d) : D$}
 \DisplayProof
 \end{center}
 \medskip
@@ -1545,28 +1545,45 @@ Coproducts can be defined in a more type-theoretic way:
 \[ \coprod\text{-}\fs{elim}(z.D, i x.d)[(j,b)/z] = d[j/i,b/x] \]
 
 The theory of \emph{weak dependent coproducts} has the same rules except for the last equality which holds only propositionally.
-The eliminator that we described will be called \emph{local}.
-The \emph{global} eliminator is its special case for $E = \cdot$.
 
 \begin{example}
 The canonical indexing of a dependent type theory over itself always has dependent coproducts since we always assume that the base theory has $\Sigma$-types.
 \end{example}
 
 \begin{prop}[coprod-char]
-Suppose that we have stable constructions $\coprod$ and $(-,-)$ as described above.
-Then the following conditions are equivalent:
-\begin{enumerate}
-\item These constructions have the universal property of coproducts in the empty context.
-\item The local weak unstable eliminator is definable.
-\item The global weak unstable eliminator is definable.
-\end{enumerate}
+Suppose that an indexed dependent type theory has $\Sigma$-types and let $\coprod$, $\fs{in}$ be a pair of unstalbe constructions as described above for some fixed context $\Delta$.
+Then the eliminator is definable if and only if the induced map $\Hom(\Sigma(\Delta,B_j), \Sigma(\Delta, \coprod_{i : I} B_i))$ makes $\Sigma(\Delta, \coprod_{i : I} B_i)$ into the coproduct of the family $\Gamma, i : I \mid \cdot \vdash \Sigma(\Delta,B_i)$.
 \end{prop}
 \begin{proof}
-% TODO
+First, suppose that the eliminator is definable.
+If $\Gamma, i : I \vdash f : \Hom(B_i,C)$, then we define $\Gamma \vdash [f]_{i : I} : \Hom(\coprod_{i : I} B_i, C)$ as follows:
+\[ [f]_{i : I} = \lambda z.\,\coprod\text{-}\fs{elim}(z.C, i x.\,f\,x). \]
+Let us prove that $[f]_{i : I} \circ \fs{in}_i \sim f$:
+\[ [f]_{i : I} \circ \fs{in}_i = \lambda x.\,[f]_{i : I}\,(i,x) = \lambda x.\,\coprod\text{-}\fs{elim}(z.C, i x.\,f\,x)[(i,x)/z] \sim \lambda x.\,f\,x \sim f. \]
+Finilly, for every $g : \Hom(\coprod_{i : I} B_i, C)$, we need to prove that $[g \circ \fs{in}_i]_{i : I}$.
+It is enough to prove that, for every $z : \coprod_{i : I} B_i$, there is a homotopy between $[g \circ \fs{in}_i]_{i : I}\,z$ and $g\,z$.
+To do this, we can use the eliminator for $\coprod$.
+Then we just need to construct a homotopy between $[g \circ \fs{in}_i]_{i : I}\,(i,x)$ and $g\,(i,x)$:
+\[ [g \circ \fs{in}_i]_{i : I}\,(i,x) = \coprod\text{-}\fs{elim}(z.C, i x.\,g\,(i,x))[(i,x)/z] \sim g\,(i,x). \]
+
+Now, suppose that $\Sigma(\Delta, \coprod_{i : I} B_i)$ is a coproduct.
 \end{proof}
 
 We will say that coproducts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$,
 the canonical map from $\coprod_{i : I} r^*(B_i)$ to $r^*(\coprod_{i : I} B_i)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
+
+% \begin{center}
+% \AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash D \ob$}
+% \AxiomC{$\Gamma, i : I \mid \Delta, x : B, E[(i,x)/z] \vdash d : D[(i,x)/z]$}
+% \BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash \coprod\text{-}\fs{elim}(z E. D, i x E. d) : D$}
+% \DisplayProof
+% \end{center}
+% \medskip
+
+% \[ \coprod\text{-}\fs{elim}(z E. D, i x E. d)[(j,b)/z] = d[j/i,b/x] \]
+
+% The eliminator that we described will be called \emph{local}.
+% The \emph{global} eliminator is its special case for $E = \cdot$.
 
 \begin{prop}[coprod-sigma]
 Dependent coproducts commute with $\Sigma$-types.
@@ -1577,6 +1594,19 @@ More precisely, the following map is an equivalence for every dependent type $\G
 The inverse of this map is defined as follows:
 \[ \lambda p. \coprod\text{-}\fs{elim}(z. \coprod_{i : I} \sum_{d : D} B, i b. (i,(\pi_1(p),b)))[\pi_2(p)/z] : \Hom(\sum_{d : D} \coprod_{i : I} B, \coprod_{i : I} \sum_{d : D} B). \]
 It is easy to show that these maps are mutually inverse using the eliminator for coproducts.
+\end{proof}
+
+\begin{prop}[coprod-char]
+Suppose that an indexed dependent type theory has $\Sigma$-types and stable constructions $\coprod$ and $(-,-)$ as described above.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:coprod-local} The local weak unstable eliminator is definable.
+\item \label{it:coprod-global} The global weak unstable eliminator is definable.
+\item \label{it:coprod-uni} The type $\coprod_{i : I} B_i$ together with the map $\fs{in}_i = \lambda b.(i,b) : \Hom(B_i, \coprod_{i : I} B_i)$ has the universal property of coproducts for all $\Gamma, i : I \mid \cdot \vdash B_i \ob$.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+% TODO
 \end{proof}
 
 \begin{prop}
@@ -2323,24 +2353,90 @@ This condition holds if and only if the type of lifts in the following diagram i
             } \]
 
 The constructions $\| - \|$ and $\eta$ are unstable, that is they are not stable under substitutions.
-If we assume the stability condition, then $\Fib$ is stably locally reflective,
-but the converse does not hold since the stability under substitutions is a stricter condition, then the stability under pullbacks.
-If we assume the stability under substitutions, then instead of $\eta$ we can use the following construction:
+An \emph{(unstable) higher modality} consists of a class of fibrations $\Fib$ closed under identity types together with the following unstable rules:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
 \UnaryInfC{$\Gamma \mid \Delta \vdash \| A \| \fib$}
 \DisplayProof
 \qquad
+\AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
+\UnaryInfC{$\Gamma \mid \Delta, x : A \vdash \eta_A(x) : \|A\|$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, z : \| A \| \vdash D \fib$}
+\AxiomC{$\Gamma \mid \Delta, x : A \vdash d : D[\eta_A(x)/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.D, x.d) : D$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, z : \| A \| \vdash D \fib$}
+\AxiomC{$\Gamma \mid \Delta, x : A \vdash d : D[\eta_A(x)/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.D, x.d) : \Id(\| A \|\text{-}\fs{elim}(z.D, x.d)[\eta_A(x)/z], d)$}
+\DisplayProof
+\end{center}
+
+The following proposition shows that unstable higher modalities are the same as locally reflective classes of fibrations:
+
+\begin{prop}[fib-dep-unst]
+Let $\Fib$ be a class of fibrations closed under substitutions and $\Sigma$-types and let $\| - \|$, $\eta$ be a pair of unstable constructions as described above.
+Then this pair extends to a higher modality if and only if it makes $\Fib$ into a locally reflective class.
+\end{prop}
+\begin{proof}
+First, suppose that $\Fib$ is locally reflective class.
+By \rprop{fib-refl-id}, $\Fib$ is closed under identity types.
+Let $j : \Hom(\Sigma(\Delta, x : A), \Sigma(\Delta, z : \| A \|))$ be the obvious map defined in terms of $\eta$.
+Since $\Fib$ is closed under $\Sigma$-types, \rprop{fib-sigma} implies that it is also closed under compositions.
+Then \rlem{uni-conn} implies that $j$ is connected.
+A term $\Delta, x : A \vdash d : D[\eta_A(x)/z]$ determines the top map in the following diagram:
+\[ \xymatrix{ \Sigma(\Delta, x : A) \ar[r] \ar[d]_j                  & \Sigma(\Delta, z : \| A \|, D) \ar@{->>}[d] \\
+              \Sigma(\Delta, z : \| A \|) \ar@{-->}[ur] \ar@{=}[r]  & \Sigma(\Delta, z : \| A \|)
+            } \]
+The right map is the obvious projection, which is a fibration since $D$ is fibrant over $\Delta, z : \| A \|$.
+Since $j$ is connected, we have a lift in this square.
+This lift determines a term $\Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.D, x.d) : D$.
+The commutativity of the upper triangle implies the existence of a term $\Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.D, x.d) : \Id(\| A \|\text{-}\fs{elim}(z.D, x.d)[\eta_A(x)/z],d)$.
+
+Now, suppose that $\Fib$ extends to a higher modality.
+Let $B$ be a fibrant type over $\Delta$.
+We need to prove that the type of lifts in the following diagram is contractible:
+\[ \xymatrix{ A \ar[r]^b \ar[d]_{\eta_A} & B \\
+              \| A \| \ar@{-->}[ur]
+            } \]
+We can define a lift in this diagram as $\lambda z.\,\| A \|\text{-}\fs{elim}(z.B, x.\,b\,x)$.
+The commutativity of the triangle is witnessed by the term $\lambda x.\,\| A \|\text{-}\fs{elim_h}(z.B, x.\,b\,x)$.
+
+Let $\Delta, z : \| A \| \vdash f_i : B$, $\Delta, x : A \vdash h_i : \Id(f_i[|x|/z],\,b\,x)$ be lifts in this diagram for $i \in \{1,2\}$.
+We need to construct a homotopy between them.
+Since $\Fib$ is closed under identity types, the type $\Id(f_1,f_2)$ is fibrant over $\Delta, z : \| A \|$.
+Thus, we have a homotopy between $f_1$ and $f_2$:
+\[ \Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(f_1, f_2). \]
+Let us denote this homotopy by $H$.
+We need to prove that $\sym{H[|x|/z]} \ct h_1$ is homotopic to $h_2$.
+This homotopy can be constructed from the following one:
+\[ \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(H[|x|/z], h_1 \ct \sym{h_2}). \]
+\end{proof}
+
+If we assume the stability condition for $\eta$, then we can replace it with the following stable rule:
+\begin{center}
 \AxiomC{$\Gamma \mid \Delta \vdash a : A$}
 \UnaryInfC{$\Gamma \mid \Delta \vdash | a | : \| A \|$}
 \DisplayProof
 \end{center}
 \medskip
-Then $\eta_A$ can be defined as $\lambda x.\,| x | : \Hom_\Delta(A, \| A \|)$.
-Conversely, $| a |$ can be defined in terms of $\eta_A$ as $\eta_A\,a$.
-These constructions are mutually inverse.
+Indeed, $\eta_A(x)$ can be defined as $| x |$.
+Conversely, $| a |$ can be defined in terms of $\eta_A$ as $\eta_A(x)[a/x]$.
+Since $|-|$ is stable, these constructions are mutually inverse.
 
-We can define locally reflective classes of fibration in a more type-theoretic way using the following constructions:
+We will say that a higher modality is \emph{stable} if $\| - \|$ and $| - |$ are stable.
+The underlying class of fibrations of a stable higher modality is stably locally reflective.
+The converse does not hold since the stability under substitutions is a stricter condition, then the stability under pullbacks.
+
+If a higher modality is stable, then we can define the local version of its eliminator:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$}
 \AxiomC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$}
@@ -2357,18 +2453,19 @@ We can define locally reflective classes of fibration in a more type-theoretic w
 \end{center}
 where $d' = \| A \|\text{-}\fs{elim}(z E.D, x E.d)$.
 
-\begin{prop}
+\begin{prop}[fib-dep-st]
 Let $\Fib$ be a class of fibrations closed under $\Sigma$-types and let $\| - \|$, $| - |$ be a pair of stable constructions as described above.
 Then the following conditions are equivalent:
 \begin{enumerate}
 \item \label{it:fib-non-dep} The pair $\| - \|$, $| - |$ makes $\Fib$ into a (stably) locally reflective class.
-\item \label{it:fib-dep} $\Fib$ is closed under identity types and unstable constructions $\| A \|\text{-}\fs{elim}$ and $\| A \|\text{-}\fs{elim_h}$ are definable.
-\item \label{it:fib-dep-local} $\Fib$ is closed under identity types and unstable constructions $\| A \|\text{-}\fs{elim}$ and $\| A \|\text{-}\fs{elim_h}$ are definable when $E$ is the empty context.
+\item \label{it:fib-dep} The pair $\| - \|$, $| - |$ makes $\Fib$ into a (stable) higher modality.
+\item \label{it:fib-dep-local} The class $\Fib$ is closed under identity types and the unstable local eliminator is definable.
 \end{enumerate}
 \end{prop}
 \begin{proof}
-\eqref{it:fib-non-dep} $\Rightarrow$ \eqref{it:fib-dep}
-By \rprop{fib-refl-id} and \rlem{fib-pullback}, a stably locally reflective class of fibrations is closed under identity types.
+The equivalence between \eqref{it:fib-non-dep} and \eqref{it:fib-dep} holds by \rprop{fib-dep-unst}.
+Obviously, \eqref{it:fib-dep-local} implies \eqref{it:fib-dep} since the (global) eliminator is a special case of the local one.
+Let us prove that \eqref{it:fib-non-dep} implies the existence of the unstable local eliminator.
 Consider the following pullback square:
 \[ \xymatrix{ \Sigma(\Delta, x : A, E[|x|/z]) \ar[r] \ar[d]_i \pb   & \Sigma(\Delta, x : A) \ar[d]^j \\
               \Sigma(\Delta, z : \| A \|, E) \ar[r]                 & \Sigma(\Delta, z : \| A \|),
@@ -2378,7 +2475,6 @@ Since $\Fib$ is closed under $\Sigma$-types, \rprop{fib-sigma} implies that it i
 Then \rlem{uni-conn} implies that $j$ is connected.
 Since $\Fib$ is stably locally reflective, \rlem{conn-pullback} implies that $i$ is also connected.
 
-Let $B = \Sigma(\Delta, z : \| A \|, E)$ and $\pi_1 : \Hom(T,B)$ be the fibration corresponding to $D$.
 Any term $\Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$ determines the top map in the following diagram:
 \[ \xymatrix{ \Sigma(\Delta, x : A, E[|x|/z]) \ar[r] \ar[d]_i           & \Sigma(\Delta, z : \| A \|, E, D) \ar@{->>}[d] \\
               \Sigma(\Delta, z : \| A \|, E) \ar@{-->}[ur] \ar@{=}[r]   & \Sigma(\Delta, z : \| A \|, E)
@@ -2387,27 +2483,6 @@ The right map is the obvious projection, which is a fibration since $D$ is fibra
 Since $i$ is connected, we have a lift in this square.
 This lift determines a term $\Delta, z : \| A \|, E \vdash \| A \|\text{-}\fs{elim}(z E. D, x E. d) : D$.
 The commutativity of the upper triangle implies the existence of a term $\Delta, x : A, E[|x|/z] \vdash \| A \|\text{-}\fs{elim_h}(z E. D, x E .d) : \Id(\| A \|\text{-}\fs{elim}(z E. D, x E. d)[|x|/z],d)$.
-
-\eqref{it:fib-dep} $\Rightarrow$ \eqref{it:fib-dep-local} Obvious.
-
-\eqref{it:fib-dep-local} $\Rightarrow$ \eqref{it:fib-non-dep}
-Let $B$ be a fibrant type over $\Delta$.
-We need to prove that the type of lifts in the following diagram is contractible:
-\[ \xymatrix{ A \ar[r]^b \ar[d]_{\eta_A} & B \\
-              \| A \| \ar@{-->}[ur]
-            } \]
-We can define a lift in this diagram as $\lambda z.\,\| A \|\text{-}\fs{elim}(z.B, x.b x)$.
-The commutativity of the triangle is witnessed by the term $\lambda x.\,\| A \|\text{-}\fs{elim_h}(z.B, x.b x)$.
-
-Let $\Delta, z : \| A \| \vdash f_i : B$, $\Delta, x : A \vdash h_i : \Id(f_i[|x|/z],b\,x)$ be lifts in this diagram for $i \in \{1,2\}$.
-We need to construct a homotopy between them.
-Since $\Fib$ is closed under identity types, the type $\Id(f_1,f_2)$ is fibrant over $\Delta, z : \| A \|$.
-Thus, we have a homotopy between $f_1$ and $f_2$:
-\[ \Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(f_1, f_2). \]
-Let us denote this homotopy by $H$.
-We need to prove that $\sym{H[|x|/z]} \ct h_1$ is homotopic to $h_2$.
-This homotopy can be constructed from the following one:
-\[ \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(H[|x|/z], h_1 \ct \sym{h_2}). \]
 \end{proof}
 
 \begin{example}
