@@ -106,6 +106,8 @@ Indexed categories were defined in \cite{indexed-cats} (see also \cite[B1]{eleph
 
 % Рассказать подробнее про проблемы со вселенными и системами факторизаций.
 
+% Сказать еще где-то, что работа в индексированной теории типов похожа на работу в категории, обагащенной в типах.
+
 % План.
 
 \section{Indexed unary type theories}
@@ -1420,31 +1422,30 @@ We will say that the theory has \emph{weak dependent pushouts} if the following 
 \def\extraVskip{1pt}
 \Axiom$\fCenter \Gamma \mid \Delta, z : B \amalg_A C, E \vdash D \ob$
 \noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta \vdash t : A \amalg_C B$
-\Axiom$\fCenter \Gamma \mid \Delta, x : B, E[\fs{inl}(x)/z] \vdash d_1 : D[\fs{inl}(x)/z]$
+\UnaryInf$\fCenter \Gamma \mid \Delta, x : B, E[\fs{inl}(x)/z] \vdash d_1 : D[\fs{inl}(x)/z]$
 \noLine
 \UnaryInf$\fCenter \Gamma \mid \Delta, y : C, E[\fs{inr}(y)/z] \vdash d_2 : D[\fs{inr}(y)/z]$
 \noLine
 \UnaryInf$\fCenter \Gamma \mid \Delta, w : A, E[\fs{inr}(y)/z] \vdash d_3 : \Id(d_1', d_2[g\,w/y])$
 \def\extraVskip{2pt}
-\BinaryInfC{$\Gamma \mid \Delta, E[t/z] \vdash \amalg\text{-}\fs{elim}(z E.D, x E.d_1, y E.d_2, w E.d_3, t) : D[t/z]$}
+\UnaryInf$\fCenter \Gamma \mid \Delta, z : B \amalg_A C, E \vdash \amalg\text{-}\fs{elim}(z E.D, x E.d_1, y E.d_2, w E.d_3) : D$
 \DisplayProof
 \end{center}
 \medskip
 where $E = z_1 : E_1, \ldots z_n : E_n$, $d_1' = \fs{glue}(w)_*(d_1[\rho(\fs{glue}(w)), f\,w/x])$, and $\rho(p) = \overline{\sym{p}_*(z_i)/z_i}$.
-We will omit all of the arguments of $\amalg\text{-}\fs{elim}$ except the last one.
+We will omit contexts in the arguments of $\amalg\text{-}\fs{elim}$.
 
 \begin{align*}
-h_1(b) & : \Id(\amalg\text{-}\fs{elim}(\fs{inl}(b)), d_1[b/x]) \\
-h_2(c) & : \Id(\amalg\text{-}\fs{elim}(\fs{inr}(c)), d_2[c/x])
+h_1(b) & : \Id(\amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inl}(b)/z], d_1[b/x]) \\
+h_2(c) & : \Id(\amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inr}(c)/z], d_2[c/x])
 \end{align*}
 
-\[ \xymatrix{ \fs{glue}(a)_*(\amalg\text{-}\fs{elim}(\fs{inl}(f\,a))[\rho(\fs{glue}(a))]) \ar@{=}[r] \ar@{=}[d] & d_1'[a/w] \ar@{=}[d]^{d_3[a/w]} \\
-              \amalg\text{-}\fs{elim}(\fs{inr}(g\,a)) \ar@{=}[r]_-{h_2(g\,a)} & d_2[g\,a/y]
+\[ \xymatrix{ \fs{glue}(a)_*(\amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inl}(f\,a)/z,\rho(\fs{glue}(a))]) \ar@{=}[r] \ar@{=}[d] & d_1'[a/w] \ar@{=}[d]^{d_3[a/w]} \\
+              \amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inr}(g\,a)/z] \ar@{=}[r]_-{h_2(g\,a)} & d_2[g\,a/y]
             } \]
 The last square must commute up to a homotopy $h_3(a)$.
 The left arrow is
-\[ J(\fs{inl}(f\,a), v p.\,\Id(p_*(\amalg\text{-}\fs{elim}(\fs{inl}(f\,a))[\rho(p)]), \amalg\text{-}\fs{elim}(v)), \refl, \fs{inr}(g\,a), \fs{glue}(a)). \]
+\[ J(\fs{inl}(f\,a), v p.\,\Id(p_*(\amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inl}(f\,a)/z,\rho(p)]), \amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[v/z]), \refl, \fs{inr}(g\,a), \fs{glue}(a)). \]
 The top arrow is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a)[\rho(\fs{glue}(a))])$.
 
 The eliminator that we described will be called \emph{local}.
@@ -1458,8 +1459,8 @@ Suppose that we have stable constructions $\fs{inl}$, $\fs{inr}$, and $\fs{glue}
 Then the following conditions are equivalent:
 \begin{enumerate}
 \item These constructions have the universal property of pushouts.
-\item The theory has local unstable eliminator.
-\item The theory has global unstable eliminator.
+\item The local weak unstable eliminator is definable.
+\item The global weak unstable eliminator is definable.
 \end{enumerate}
 If these equivalent conditions hold, then pushouts are stable under pullbacks.
 \end{prop}
@@ -1519,11 +1520,7 @@ The construction of the abstraction and the application and proofs of $\beta$ an
 
 \subsection{Dependent coproducts}
 
-We will say that coproducts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$,
-the canonical map from $\coprod_{i : I} r^*(B_i)$ to $r^*(\coprod_{i : I} B_i)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
-
-We can define coproducts in a more type-theoretic way.
-The theory of \emph{dependent coproducts} has the following rules:
+Coproducts can be defined in a more type-theoretic way:
 \begin{center}
 \AxiomC{$\Gamma, i : I \mid \Delta \vdash B \ob$}
 \RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
@@ -1540,13 +1537,12 @@ The theory of \emph{dependent coproducts} has the following rules:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash D \ob$}
 \AxiomC{$\Gamma, i : I \mid \Delta, x : B, E[(i,x)/z] \vdash d : D[(i,x)/z]$}
-\AxiomC{$\Gamma \mid \Delta \vdash t : \coprod_{i : I} B$}
-\TrinaryInfC{$\Gamma \mid \Delta, E[t/z] \vdash \coprod\text{-}\fs{elim}(z.D, i x.d, t) : D[t/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash \coprod\text{-}\fs{elim}(z.D, i x.d) : D$}
 \DisplayProof
 \end{center}
 \medskip
 
-\[ \coprod\text{-}\fs{elim}(z.D, i x.d, (j,b)) = d[j/i,b/x] \]
+\[ \coprod\text{-}\fs{elim}(z.D, i x.d)[(j,b)/z] = d[j/i,b/x] \]
 
 The theory of \emph{weak dependent coproducts} has the same rules except for the last equality which holds only propositionally.
 The eliminator that we described will be called \emph{local}.
@@ -1556,18 +1552,48 @@ The \emph{global} eliminator is its special case for $E = \cdot$.
 The canonical indexing of a dependent type theory over itself always has dependent coproducts since we always assume that the base theory has $\Sigma$-types.
 \end{example}
 
-\begin{prop}
+\begin{prop}[coprod-char]
 Suppose that we have stable constructions $\coprod$ and $(-,-)$ as described above.
 Then the following conditions are equivalent:
 \begin{enumerate}
-\item These constructions have the universal property of coproducts.
-\item The theory has local unstable eliminator.
-\item The theory has global unstable eliminator.
+\item These constructions have the universal property of coproducts in the empty context.
+\item The local weak unstable eliminator is definable.
+\item The global weak unstable eliminator is definable.
 \end{enumerate}
-If these equivalent conditions hold, then coproducts are stable under pullbacks.
 \end{prop}
 \begin{proof}
 % TODO
+\end{proof}
+
+We will say that coproducts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$,
+the canonical map from $\coprod_{i : I} r^*(B_i)$ to $r^*(\coprod_{i : I} B_i)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
+
+\begin{prop}[coprod-sigma]
+Dependent coproducts commute with $\Sigma$-types.
+More precisely, the following map is an equivalence for every dependent type $\Gamma, i : I \mid \Delta, d : D \vdash B \ob$:
+\[ \lambda z. \coprod\text{-}\fs{elim}(z. \sum_{d : D} \coprod_{i : I} B, i p. (\pi_1(p),(i,\pi_2(p)))) : \Hom(\coprod_{i : I} \sum_{d : D} B, \sum_{d : D} \coprod_{i : I} B). \]
+\end{prop}
+\begin{proof}
+The inverse of this map is defined as follows:
+\[ \lambda p. \coprod\text{-}\fs{elim}(z. \coprod_{i : I} \sum_{d : D} B, i b. (i,(\pi_1(p),b)))[\pi_2(p)/z] : \Hom(\sum_{d : D} \coprod_{i : I} B, \coprod_{i : I} \sum_{d : D} B). \]
+It is easy to show that these maps are mutually inverse using the eliminator for coproducts.
+\end{proof}
+
+\begin{prop}
+If the equivalent conditions of \rprop{coprod-char} hold, then coproducts are stable under pullbacks.
+\end{prop}
+\begin{proof}
+Let $\Gamma, i : I \mid \cdot \vdash B \ob$ be a dependent type and let $p : \Hom(\coprod_{i : I} B, D)$ and $r : \Hom(E,D)$ be maps.
+We define $\Gamma, i : I \mid d : D \vdash B' \ob$ as the fiber of $B$ over $d$.
+Then we have the following pullback squares:
+\[ \xymatrix{ \coprod_{i : I} r^*(B) \ar[r] \ar[d]_\simeq \pb & \coprod_{i : I} B \ar[d]^\simeq \\
+              \coprod_{i : I} \sum_{e : E} B'[r\,e/d] \ar[r] \ar[d]_\simeq \pb & \coprod_{i : I} \sum_{d : D} B' \ar[d]^\simeq \\
+              \sum_{e : E} \coprod_{i : I} B'[r\,e/d] \ar[r] \ar[d] \pb & \sum_{d : D} \coprod_{i : I} B' \ar[d] \\
+              E \ar[r] & D
+            } \]
+The bottom square is a pullback since substitutions correspond to pullbacks.
+Vertical maps in the second row are equivalences by \rprop{coprod-sigma}.
+Vertical maps in the first row are equivalences since $B \simeq \Sigma_{d : D} B'$ and $r^*(B) \simeq B'[r\,e/d]$.
 \end{proof}
 
 \section{General adjoint functor theorem}
@@ -2316,27 +2342,20 @@ These constructions are mutually inverse.
 
 We can define locally reflective classes of fibration in a more type-theoretic way using the following constructions:
 \begin{center}
-\def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$
-\noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$
-\Axiom$\fCenter \Gamma \mid \Delta \vdash a : \| A \|$
-\def\extraVskip{2pt}
-\BinaryInfC{$\Gamma \mid \Delta, E[a/z] \vdash \| A \|\text{-}\fs{elim}(z E .D, x E.d, a) : D[a/z]$}
+\AxiomC{$\Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$}
+\AxiomC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, z : \| A \|, E \vdash \| A \|\text{-}\fs{elim}(z E .D, x E.d) : D$}
 \DisplayProof
 \end{center}
 \medskip
 
 \begin{center}
-\def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$
-\noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[| x | / z]$
-\Axiom$\fCenter \Gamma \mid \Delta \vdash a : A$
-\def\extraVskip{2pt}
-\BinaryInfC{$\Gamma \mid \Delta, E[|a|/z] \vdash \| A \|\text{-}\fs{elim_h}(z E.D, x E.d, a) : \Id(\| A \|\text{-}\fs{elim}(z E.D, x E.d, |a|), d[a/x])$}
+\AxiomC{$\Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$}
+\AxiomC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[| x | / z]$}
+\BinaryInfC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash \| A \|\text{-}\fs{elim_h}(z E.D, x E.d) : \Id(d'[|x|/z], d)$}
 \DisplayProof
 \end{center}
+where $d' = \| A \|\text{-}\fs{elim}(z E.D, x E.d)$.
 
 \begin{prop}
 Let $\Fib$ be a class of fibrations closed under $\Sigma$-types and let $\| - \|$, $| - |$ be a pair of stable constructions as described above.
@@ -2351,7 +2370,7 @@ Then the following conditions are equivalent:
 \eqref{it:fib-non-dep} $\Rightarrow$ \eqref{it:fib-dep}
 By \rprop{fib-refl-id} and \rlem{fib-pullback}, a stably locally reflective class of fibrations is closed under identity types.
 Consider the following pullback square:
-\[ \xymatrix{ \Sigma(\Delta, x : A, E[|x|/z]) \ar[r] \ar[d]_j \pb   & \Sigma(\Delta, x : A) \ar[d]^j \\
+\[ \xymatrix{ \Sigma(\Delta, x : A, E[|x|/z]) \ar[r] \ar[d]_i \pb   & \Sigma(\Delta, x : A) \ar[d]^j \\
               \Sigma(\Delta, z : \| A \|, E) \ar[r]                 & \Sigma(\Delta, z : \| A \|),
             } \]
 where the bottom and top maps are the obvious projection and the left and right maps are defined in terms of $| - |$.
@@ -2366,8 +2385,8 @@ Any term $\Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$ determines the top map in
             } \]
 The right map is the obvious projection, which is a fibration since $D$ is fibrant over $\Delta, z : \| A \|, E$.
 Since $i$ is connected, we have a lift in this square.
-This lift determines a term $\Delta, z : \| A \|, E \vdash d : D$ and a homotopy $\Delta, x : A, E[|x|/z] \vdash h : \Id(d[|x|/z],d)$.
-Now, we can define $\| A \|\text{-}\fs{elim}(z E .D, x E.d, a)$ and $\| A \|\text{-}\fs{elim_h}(z E .D, x E.d, a)$ as $d[a/z]$ and $h[a/x]$, respectively.
+This lift determines a term $\Delta, z : \| A \|, E \vdash \| A \|\text{-}\fs{elim}(z E. D, x E. d) : D$.
+The commutativity of the upper triangle implies the existence of a term $\Delta, x : A, E[|x|/z] \vdash \| A \|\text{-}\fs{elim_h}(z E. D, x E .d) : \Id(\| A \|\text{-}\fs{elim}(z E. D, x E. d)[|x|/z],d)$.
 
 \eqref{it:fib-dep} $\Rightarrow$ \eqref{it:fib-dep-local} Obvious.
 
@@ -2377,18 +2396,18 @@ We need to prove that the type of lifts in the following diagram is contractible
 \[ \xymatrix{ A \ar[r]^b \ar[d]_{\eta_A} & B \\
               \| A \| \ar@{-->}[ur]
             } \]
-We can define a lift in this diagram as $\lambda z.\,\| A \|\text{-}\fs{elim}(z.B, x.b x, z)$.
-The commutativity of the triangle is witnessed by the term $\lambda x.\,\| A \|\text{-}\fs{elim_h}(z.B, x.b x, x)$.
+We can define a lift in this diagram as $\lambda z.\,\| A \|\text{-}\fs{elim}(z.B, x.b x)$.
+The commutativity of the triangle is witnessed by the term $\lambda x.\,\| A \|\text{-}\fs{elim_h}(z.B, x.b x)$.
 
 Let $\Delta, z : \| A \| \vdash f_i : B$, $\Delta, x : A \vdash h_i : \Id(f_i[|x|/z],b\,x)$ be lifts in this diagram for $i \in \{1,2\}$.
 We need to construct a homotopy between them.
-Since $\Fib$ is closed under identity types, the type $\Id(f_1,f_2)$ is fibrant over $\Delta, y : \| A \|, z : \| A \|$.
+Since $\Fib$ is closed under identity types, the type $\Id(f_1,f_2)$ is fibrant over $\Delta, z : \| A \|$.
 Thus, we have a homotopy between $f_1$ and $f_2$:
-\[ \Delta, y : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.\Id(f_1,f_2), x. h_1 \ct \sym{h_2}, y) : \Id(f_1[y/z], f_2[y/z]). \]
+\[ \Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(f_1, f_2). \]
 Let us denote this homotopy by $H$.
-We need to prove that $\sym{H[|x|/y]} \ct h_1$ is homotopic to $h_2$.
+We need to prove that $\sym{H[|x|/z]} \ct h_1$ is homotopic to $h_2$.
 This homotopy can be constructed from the following one:
-\[ \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.\Id(f_1,f_2), x. h_1 \ct \sym{h_2}, x) : \Id(H[|x|/y], h_1 \ct \sym{h_2}). \]
+\[ \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(H[|x|/z], h_1 \ct \sym{h_2}). \]
 \end{proof}
 
 \begin{example}
