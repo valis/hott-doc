@@ -1315,7 +1315,7 @@ If we want a definition of general finite colimits, then we need to modify the r
 
 \begin{prop}
 Let $0$ be a type in an indexed dependent type theory has extensional identity types and $\Sigma$-types.
-Then $0$ is initial if and only if the theory has the following rules:
+Then $0$ is initial if and only if the theory has the following rule:
 \begin{center}
 \AxiomC{$\Gamma \mid x : 0 \vdash D \type$}
 \AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
@@ -1324,7 +1324,8 @@ Then $0$ is initial if and only if the theory has the following rules:
 \end{center}
 \end{prop}
 \begin{proof}
-If $0$ is initial, then we can define $0\text{-}\fs{elim}(x.D,a)$ as $\fs{hap}(h,a)_*(\pi_2(f\,a))$, where $f : \Hom(0,\Sigma_{x : 0} D)$ is any map and $h$ is any homotopy between $\pi_1 \circ f$ and $\id_0$.
+If $0$ is initial, then $\Gamma \mid x : 0 \vdash \fs{hap}(h,x)_*(\pi_2(f\,x)) : D$, where $f$ is the unique map $\Hom(0,\Sigma_{x : 0} D)$ and $h$ is the unique homotopy between $\pi_1 \circ f$ and $\id_0$.
+Now, we can define $0\text{-}\fs{elim}(x.D,a)$ as $\fs{hap}(h,x)_*(\pi_2(f\,x))[a/x]$.
 
 Conversely, suppose that the theory has the the rule $0\text{-}\fs{elim}$.
 Then, for every type $D$, we can define a map $\lambda x.\,0\text{-}\fs{elim}(y.D,x) : \Hom(0,D)$.
@@ -1338,14 +1339,14 @@ We will say that the initial type $0$ in an indexed unary type theory is \emph{s
 Let $0$ be a type in an indexed dependent type theory with extensional identity types and $\Sigma$-types.
 Then the following conditions are equivalent:
 \begin{enumerate}
-\item \label{it:init-first} The theory has the following rule:
+\item \label{it:init-first} The theory has the following unstable rule:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta, x : 0, E \vdash D \type$}
 \AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
 \BinaryInfC{$\Gamma \mid \Delta, E[a/x] \vdash 0\text{-}\fs{elim''}(x E.D,a) : D[a/x]$}
 \DisplayProof
 \end{center}
-\item \label{it:init-second} The theory has the following rule:
+\item \label{it:init-second} The theory has the following unstable rule:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta \vdash D \type$}
 \AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
@@ -1384,6 +1385,210 @@ Thus, we have a map $f : \Hom(B, \Sigma_{b : B} D')$, where
 \[ D' = D[\pi_1(b)/x_1, \ldots \pi_m(b)/x_m, \pi_{m+1}(b)/x, \pi_{m+2}(b)/y_1, \ldots \pi_{m+n+1}(b)/y_n]. \]
 We also have a homotopy $h : \Id(\pi_1 \circ f, \id_B)$.
 Now, we can define $0\text{-}\fs{elim''}(x E.D, a)$ as $\fs{hap}(h,p)_*(\pi_2(f\,p))$, where $p = (x_1, \ldots x_m, a, y_1, \ldots y_n)$.
+\end{proof}
+
+\subsection{Dependent products}
+
+We defined strict products in subsection~\ref{sec:products}.
+We can define even stricter version of products which we call \emph{strict dependent products} in indexed dependent type theories:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash B \ob$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \prod_{i : I} B \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash b : B$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \lambda i.\,b : \prod_{i : I} B$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash f : \prod_{i : I} B$}
+\AxiomC{$\Gamma \vdash j : I$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash f\,j : B[j/i]$}
+\DisplayProof
+\end{center}
+
+\begin{align*}
+(\lambda i.\,b)\,j & = b[j/i] \\
+\lambda i.\,f\,i & = f
+\end{align*}
+
+\begin{example}
+The canonical indexing of a dependent type theory over itself has strict dependent products if and only if it has $\Pi$-types.
+\end{example}
+
+\emph{Weak dependent products} are defined in the same way except for the last two equations which hold only propositionally.
+Obviously, if a theory has strict (resp., weak) dependent products, then it also has strict (resp., weak) products.
+We can think of dependent products as wide pullbacks.
+Thus, to construct them from ordinary products, we also need to assume the existence of finite limits:
+
+\begin{prop}
+If a theory has $\Sigma$-types, unit types, extensional identity types, and weak extensional products, then it also has weak unstable dependent products.
+\end{prop}
+\begin{proof}
+Let $\Gamma, i : I \mid \Delta \vdash B_i \ob$ be an indexed type.
+Since we have $\Sigma$-types and unit types, we may assume that $\Delta$ consists of exactly one type, that is $\Delta = (x : A)$.
+We define $\Gamma \mid x : A \vdash \prod_{i : I} B_i$ as follows:
+\[ \Gamma \mid x : A \vdash \sum_{f : \prod_{i : I} \Sigma_{x : A} B_i} \Id_{A^I}(\lambda i.\,\pi_1(f\,i), \lambda i.\,x). \]
+The construction of the abstraction and the application and proofs of $\beta$ and $\eta$ equivalences are the same as in \rprop{lccc}.
+\end{proof}
+
+\subsection{Dependent coproducts}
+
+Coproducts can be defined in a more type-theoretic way:
+The theory of \emph{(unstable) dependent coproducts} consists of the following unstable rules:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash B_i \ob$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \coprod_{i : I} B_i \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash j : I$}
+\UnaryInfC{$\Gamma \mid \Delta, x : B_j \vdash \fs{in}_j(x) : \coprod_{i : I} B_i$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B \vdash D \ob$}
+\AxiomC{$\Gamma, i : I \mid \Delta, x : B \vdash d : D[\fs{in}_i(x)/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B \vdash \coprod\text{-}\fs{elim}(z.D, i x.d) : D$}
+\DisplayProof
+\end{center}
+\medskip
+
+\[ \coprod\text{-}\fs{elim}(z.D, i x.d)[\fs{in}_j(x)[b/x]/z] = d[j/i,b/x] \]
+
+The theory of \emph{weak (unstable) dependent coproducts} has the same rules except for the last equality which holds only propositionally.
+
+\begin{example}
+The canonical indexing of a dependent type theory over itself always has dependent coproducts since we always assume that the base theory has $\Sigma$-types.
+\end{example}
+
+\begin{prop}[coprod-sigma]
+Dependent coproducts commute with $\Sigma$-types.
+More precisely, the following map is an equivalence for every dependent type $\Gamma, i : I \mid \Delta, d : D \vdash B \ob$:
+\[ \lambda z. \coprod\text{-}\fs{elim}(z. \sum_{d : D} \coprod_{i : I} B, i p. (\pi_1(p),\fs{in}_i(x)[\pi_2(p)/x])) : \Hom(\coprod_{i : I} \sum_{d : D} B, \sum_{d : D} \coprod_{i : I} B). \]
+\end{prop}
+\begin{proof}
+The inverse of this map is defined as follows:
+\[ \lambda p. \coprod\text{-}\fs{elim}(z. \coprod_{i : I} \sum_{d : D} B, i b.\,\fs{in}_i(x)[(\pi_1(p),b)/x])[\pi_2(p)/z]. \]
+It is easy to show that these maps are mutually inverse using the eliminator for coproducts.
+\end{proof}
+
+\begin{lem}[coprod-char]
+Suppose that an indexed dependent type theory has $\Sigma$-types and let $\coprod$, $\fs{in}$ be a pair of unstalbe constructions as described above for some fixed context $\Delta$.
+Then the eliminator is definable if and only if the induced map $\Gamma, i : I \vdash \fs{in}_i' : \Hom(\Sigma(\Delta,B_i), \Sigma(\Delta, \coprod_{i : I} B_i))$ makes $\Sigma(\Delta, \coprod_{i : I} B_i)$ into the coproduct of the family $\Gamma, i : I \mid \cdot \vdash \Sigma(\Delta,B_i)$.
+\end{lem}
+\begin{proof}
+First, suppose that the eliminator is definable.
+Let $\Delta = x_1 : A_1, \ldots x_n : A_n$.
+Then $\fs{in}_i' = \lambda p.(\pi_1(p), \ldots \pi_n(p), \fs{in}_i(x)[\pi_{n+1}(p)/x])$.
+Let $f$ be a map of the following form:
+\[ \Gamma, i : I \vdash f : \Hom(\Sigma(\Delta,B_i),C). \]
+Then we define $\Gamma \vdash [f]_{i : I} : \Hom(\Sigma(\Delta, \coprod_{i : I} B_i), C)$ as follows:
+\[ [f]_{i : I} = \lambda p.\,\coprod\text{-}\fs{elim}(z.C, i x.\,f\,(\pi_1(p), \ldots \pi_n(p), x))[\pi_{n+1}(p)/z]. \]
+Let us prove that $[f]_{i : I} \circ \fs{in}_i' \sim f$:
+\begin{align*}
+[f]_{i : I} \circ \fs{in}_i' & = \\
+\lambda p.\,\coprod\text{-}\fs{elim}(z.C, i x.\,f\,(\pi_1(p), \ldots \pi_n(p), x))[\fs{in}_i(x)[\pi_{n+1}(p)/x]/z] & \sim \\
+\lambda p.\,f\,(\pi_1(p), \ldots \pi_{n+1}(p)) & \sim \\
+\lambda p.\,f\,p & \sim \\
+f & .
+\end{align*}
+Finilly, for every $g : \Hom(\coprod_{i : I} B_i, C)$, we need to prove that $[g \circ \fs{in}_i']_{i : I} \sim g$.
+It is enough to prove that, for all $x_1 : A_1, \ldots x_n : A_n, z : \coprod_{i : I} B_i$, there is a homotopy between $[g \circ \fs{in}_i']_{i : I}\,(x_1, \ldots x_n, z)$ and $g\,(x_1, \ldots x_n, z)$.
+To do this, we can apply the eliminator for $\coprod$ to $z$.
+Then we just need to construct a homotopy between $[g \circ \fs{in}_i']_{i : I}\,(x_1, \ldots x_n, \fs{in}_i(x))$ and $g\,(x_1, \ldots x_n, \fs{in}_i(x))$:
+\begin{align*}
+[g \circ \fs{in}_i']_{i : I}\,(x_1, \ldots x_n, \fs{in}_i(x)) & = \\
+\lambda p.\,\coprod\text{-}\fs{elim}(z.C, i x.\,g\,(\fs{in}_i\,(x_1, \ldots x_n, x)))[\fs{in}_i(x)/z] & \sim \\
+g\,(x_1, \ldots x_n, \fs{in}_i(x)) & .
+\end{align*}
+
+Now, let us prove the converse.
+Let $\Gamma, i : I \mid \Delta, x : B_i \vdash d : D[\fs{in}_i(x)/z]$ be a term.
+Since $\Sigma(\Delta, \coprod_{i : I} B_i)$ is a coproduct of $\Sigma(\Delta, B_i)$, we have the following map:
+\begin{align*}
+t & : \Hom(\Sigma(\Delta, \coprod_{i : I} B_i), \Sigma(\Delta, z : \coprod_{i : I} B_i, D)) \\
+t & = [\lambda p.(x_1, \ldots x_n, \fs{in}_i(x), d)[\pi_1(p)/x_1, \ldots \pi_n(p)/x_n, \pi_{n+1}(p)/x]]_{i : I}
+\end{align*}
+% TODO: Fix this
+% We have the following homotopy:
+% \[ \pi_1 \circ t \sim [\pi_1 \circ t \circ \fs{in}_i]_{i : I} \sim [\lambda x.\,\fs{in}_i(x)]_{i : I} \sim \id. \]
+% If we denote this homotopy by $h$, then we can define the eliminator $\coprod\text{-}\fs{elim}(z.D, i x.d)$ as $h_*(\pi_2(t\,z))$.
+
+% TODO: Construct \coprod\text{-}\fs{elim_h}.
+\end{proof}
+
+\begin{prop}
+If an indexed dependent type theory has $\Sigma$-types and extensional identity types, then it has weak dependent coproducts if and only if it has coproducts.
+\end{prop}
+\begin{proof}
+If the theory has weak dependent coproducts, then it has coproducts by \rlem{coprod-char}.
+Conversely, suppose that it has coproducts.
+Let $\Gamma, i : I \mid \Delta \vdash B_i \ob$ be a dependent type.
+If $\Delta$ is empty, then the eliminator is definable by \rlem{coprod-char}.
+Thus, we may assume that $\Delta$ is not empty.
+Since we have $\Sigma$-types, we may also assume that it consists of a single type, that is $\Delta = (x : A)$.
+
+We define $\coprod'_{i : I} B_i$ as $\Gamma \mid \Delta \vdash \Sigma_{(p : \coprod_{i : I} \Sigma_{x : A} B_i)} \Id_A([\pi_1]_{i : I}\,p, x) \ob$.
+If $\Gamma \vdash j : I$, then we define $\fs{in}_j$ as $\Gamma \mid \Delta, y : B_j \vdash (\fs{in}_j(x,y), \refl(x)) : \coprod'_{i : I} B_i$.
+Let $\fs{in}_i'$ be the following map:
+\[ \lambda p. (\pi_1(p), \fs{in}_i\,p, \refl(x)) : \Hom(\Sigma(\Delta, B_i), \Sigma(\Delta, p : \coprod_{i : I} \Sigma(\Delta, B_i), \Id_A([\pi_1]_{i : I}\,p,x))). \]
+By \rlem{coprod-char}, we just need to prove that $\fs{in}_i'$ makes its codomain into a coproduct.
+Since the type $\Sigma(\Delta, \Id_A([\pi_1]_{i : I}\,p,x))$ is contractible, the following map is an equivalence:
+\[ \pi_2 : \Hom(\Sigma(\Delta, p : \coprod_{i : I} \Sigma(\Delta, B_i), \Id_A([\pi_1]_{i : I}\,p,x)), \coprod_{i : I} \Sigma(\Delta, B_i)). \]
+Since $\pi_2 \circ \fs{in}_i'$ makes $\coprod_{i : I} \Sigma(\Delta, B_i)$ into the coproduct of $\Sigma(\Delta, B_i)$ and $\pi_2$ is an equivalence, this is also true for $\fs{in}_i'$.
+\end{proof}
+
+We will say that coproducts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$,
+the canonical map from $\coprod_{i : I} r^*(B_i)$ to $r^*(\coprod_{i : I} B_i)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
+
+% \begin{center}
+% \AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash D \ob$}
+% \AxiomC{$\Gamma, i : I \mid \Delta, x : B, E[(i,x)/z] \vdash d : D[(i,x)/z]$}
+% \BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash \coprod\text{-}\fs{elim}(z E. D, i x E. d) : D$}
+% \DisplayProof
+% \end{center}
+% \medskip
+
+% \[ \coprod\text{-}\fs{elim}(z E. D, i x E. d)[(j,b)/z] = d[j/i,b/x] \]
+
+% The eliminator that we described will be called \emph{local}.
+% The \emph{global} eliminator is its special case for $E = \cdot$.
+
+\begin{prop}[coprod-char]
+Suppose that an indexed dependent type theory has $\Sigma$-types and stable constructions $\coprod$ and $(-,-)$ as described above.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:coprod-local} The local weak unstable eliminator is definable.
+\item \label{it:coprod-global} The global weak unstable eliminator is definable.
+\item \label{it:coprod-uni} The type $\coprod_{i : I} B_i$ together with the map $\fs{in}_i = \lambda b.(i,b) : \Hom(B_i, \coprod_{i : I} B_i)$ has the universal property of coproducts for all $\Gamma, i : I \mid \cdot \vdash B_i \ob$.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+% TODO
+\end{proof}
+
+\begin{prop}
+If the equivalent conditions of \rprop{coprod-char} hold, then coproducts are stable under pullbacks.
+\end{prop}
+\begin{proof}
+Let $\Gamma, i : I \mid \cdot \vdash B \ob$ be a dependent type and let $p : \Hom(\coprod_{i : I} B, D)$ and $r : \Hom(E,D)$ be maps.
+We define $\Gamma, i : I \mid d : D \vdash B' \ob$ as the fiber of $B$ over $d$.
+Then we have the following pullback squares:
+\[ \xymatrix{ \coprod_{i : I} r^*(B) \ar[r] \ar[d]_\simeq \pb & \coprod_{i : I} B \ar[d]^\simeq \\
+              \coprod_{i : I} \sum_{e : E} B'[r\,e/d] \ar[r] \ar[d]_\simeq \pb & \coprod_{i : I} \sum_{d : D} B' \ar[d]^\simeq \\
+              \sum_{e : E} \coprod_{i : I} B'[r\,e/d] \ar[r] \ar[d] \pb & \sum_{d : D} \coprod_{i : I} B' \ar[d] \\
+              E \ar[r] & D
+            } \]
+The bottom square is a pullback since substitutions correspond to pullbacks.
+Vertical maps in the second row are equivalences by \rprop{coprod-sigma}.
+Vertical maps in the first row are equivalences since $B \simeq \Sigma_{d : D} B'$ and $r^*(B) \simeq B'[r\,e/d]$.
 \end{proof}
 
 \subsection{Pushouts}
@@ -1466,164 +1671,6 @@ If these equivalent conditions hold, then pushouts are stable under pullbacks.
 \end{prop}
 \begin{proof}
 % TODO
-\end{proof}
-
-\subsection{Strict dependent products}
-
-We defined strict products in subsection~\ref{sec:products}.
-We can define even stricter version of products which we call \emph{strict dependent products} in indexed dependent type theories:
-\begin{center}
-\AxiomC{$\Gamma, i : I \mid \Delta \vdash B \ob$}
-\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \prod_{i : I} B \ob$}
-\DisplayProof
-\qquad
-\AxiomC{$\Gamma, i : I \mid \Delta \vdash b : B$}
-\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \lambda i.\,b : \prod_{i : I} B$}
-\DisplayProof
-\end{center}
-\medskip
-
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta \vdash f : \prod_{i : I} B$}
-\AxiomC{$\Gamma \vdash j : I$}
-\BinaryInfC{$\Gamma \mid \Delta \vdash f\,j : B[j/i]$}
-\DisplayProof
-\end{center}
-
-\begin{align*}
-(\lambda i.\,b)\,j & = b[j/i] \\
-\lambda i.\,f\,i & = f
-\end{align*}
-
-\begin{example}
-The canonical indexing of a dependent type theory over itself has strict dependent products if and only if it has $\Pi$-types.
-\end{example}
-
-Obviously, if a theory has strict (resp., weak) dependent products, then it also has strict (resp., weak) products.
-We can think of (weak) dependent products as wide pullbacks.
-Thus, to construct them from ordinary products, we also need to assume the existence of $\Sigma$-types and identity types:
-
-\begin{prop}
-If a theory has $\Sigma$-types, extensional identity types, and weak extensional products, then it has weak unstable dependent products.
-\end{prop}
-\begin{proof}
-Let $\Gamma, i : I \mid \Delta \vdash B_i \ob$ be an indexed type.
-If $\Delta$ is the empty context, then $\prod_{i : I} B_i$ is the usual weak product.
-Thus, we may assume that it is non-empty.
-Since we have $\Sigma$-types, we may assume that $\Delta$ consists of exactly one type, that is $\Delta = (x : A)$.
-We define $\Gamma \mid x : A \vdash \prod_{i : I} B_i$ as follows:
-\[ \Gamma \mid x : A \vdash \sum_{f : \prod_{i : I} \Sigma_{x : A} B_i} \Id_{A^I}(\lambda i.\,\pi_1(f\,i), \lambda i.\,x). \]
-The construction of the abstraction and the application and proofs of $\beta$ and $\eta$ equivalences are the same as in \rprop{lccc}.
-\end{proof}
-
-\subsection{Dependent coproducts}
-
-Coproducts can be defined in a more type-theoretic way:
-The theory of \emph{dependent coproducts} consists of the following unstable rules:
-\begin{center}
-\AxiomC{$\Gamma, i : I \mid \Delta \vdash B_i \ob$}
-\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \coprod_{i : I} B_i \ob$}
-\DisplayProof
-\qquad
-\AxiomC{$\Gamma \vdash j : I$}
-\UnaryInfC{$\Gamma \mid \Delta, x : B_j \vdash \fs{in}_j(x) : \coprod_{i : I} B_i$}
-\DisplayProof
-\end{center}
-\medskip
-
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B \vdash D \ob$}
-\AxiomC{$\Gamma, i : I \mid \Delta, x : B \vdash d : D[(i,x)/z]$}
-\BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B \vdash \coprod\text{-}\fs{elim}(z.D, i x.d) : D$}
-\DisplayProof
-\end{center}
-\medskip
-
-\[ \coprod\text{-}\fs{elim}(z.D, i x.d)[(j,b)/z] = d[j/i,b/x] \]
-
-The theory of \emph{weak dependent coproducts} has the same rules except for the last equality which holds only propositionally.
-
-\begin{example}
-The canonical indexing of a dependent type theory over itself always has dependent coproducts since we always assume that the base theory has $\Sigma$-types.
-\end{example}
-
-\begin{prop}[coprod-char]
-Suppose that an indexed dependent type theory has $\Sigma$-types and let $\coprod$, $\fs{in}$ be a pair of unstalbe constructions as described above for some fixed context $\Delta$.
-Then the eliminator is definable if and only if the induced map $\Hom(\Sigma(\Delta,B_j), \Sigma(\Delta, \coprod_{i : I} B_i))$ makes $\Sigma(\Delta, \coprod_{i : I} B_i)$ into the coproduct of the family $\Gamma, i : I \mid \cdot \vdash \Sigma(\Delta,B_i)$.
-\end{prop}
-\begin{proof}
-First, suppose that the eliminator is definable.
-If $\Gamma, i : I \vdash f : \Hom(B_i,C)$, then we define $\Gamma \vdash [f]_{i : I} : \Hom(\coprod_{i : I} B_i, C)$ as follows:
-\[ [f]_{i : I} = \lambda z.\,\coprod\text{-}\fs{elim}(z.C, i x.\,f\,x). \]
-Let us prove that $[f]_{i : I} \circ \fs{in}_i \sim f$:
-\[ [f]_{i : I} \circ \fs{in}_i = \lambda x.\,[f]_{i : I}\,(i,x) = \lambda x.\,\coprod\text{-}\fs{elim}(z.C, i x.\,f\,x)[(i,x)/z] \sim \lambda x.\,f\,x \sim f. \]
-Finilly, for every $g : \Hom(\coprod_{i : I} B_i, C)$, we need to prove that $[g \circ \fs{in}_i]_{i : I}$.
-It is enough to prove that, for every $z : \coprod_{i : I} B_i$, there is a homotopy between $[g \circ \fs{in}_i]_{i : I}\,z$ and $g\,z$.
-To do this, we can use the eliminator for $\coprod$.
-Then we just need to construct a homotopy between $[g \circ \fs{in}_i]_{i : I}\,(i,x)$ and $g\,(i,x)$:
-\[ [g \circ \fs{in}_i]_{i : I}\,(i,x) = \coprod\text{-}\fs{elim}(z.C, i x.\,g\,(i,x))[(i,x)/z] \sim g\,(i,x). \]
-
-Now, suppose that $\Sigma(\Delta, \coprod_{i : I} B_i)$ is a coproduct.
-\end{proof}
-
-We will say that coproducts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$,
-the canonical map from $\coprod_{i : I} r^*(B_i)$ to $r^*(\coprod_{i : I} B_i)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
-
-% \begin{center}
-% \AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash D \ob$}
-% \AxiomC{$\Gamma, i : I \mid \Delta, x : B, E[(i,x)/z] \vdash d : D[(i,x)/z]$}
-% \BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash \coprod\text{-}\fs{elim}(z E. D, i x E. d) : D$}
-% \DisplayProof
-% \end{center}
-% \medskip
-
-% \[ \coprod\text{-}\fs{elim}(z E. D, i x E. d)[(j,b)/z] = d[j/i,b/x] \]
-
-% The eliminator that we described will be called \emph{local}.
-% The \emph{global} eliminator is its special case for $E = \cdot$.
-
-\begin{prop}[coprod-sigma]
-Dependent coproducts commute with $\Sigma$-types.
-More precisely, the following map is an equivalence for every dependent type $\Gamma, i : I \mid \Delta, d : D \vdash B \ob$:
-\[ \lambda z. \coprod\text{-}\fs{elim}(z. \sum_{d : D} \coprod_{i : I} B, i p. (\pi_1(p),(i,\pi_2(p)))) : \Hom(\coprod_{i : I} \sum_{d : D} B, \sum_{d : D} \coprod_{i : I} B). \]
-\end{prop}
-\begin{proof}
-The inverse of this map is defined as follows:
-\[ \lambda p. \coprod\text{-}\fs{elim}(z. \coprod_{i : I} \sum_{d : D} B, i b. (i,(\pi_1(p),b)))[\pi_2(p)/z] : \Hom(\sum_{d : D} \coprod_{i : I} B, \coprod_{i : I} \sum_{d : D} B). \]
-It is easy to show that these maps are mutually inverse using the eliminator for coproducts.
-\end{proof}
-
-\begin{prop}[coprod-char]
-Suppose that an indexed dependent type theory has $\Sigma$-types and stable constructions $\coprod$ and $(-,-)$ as described above.
-Then the following conditions are equivalent:
-\begin{enumerate}
-\item \label{it:coprod-local} The local weak unstable eliminator is definable.
-\item \label{it:coprod-global} The global weak unstable eliminator is definable.
-\item \label{it:coprod-uni} The type $\coprod_{i : I} B_i$ together with the map $\fs{in}_i = \lambda b.(i,b) : \Hom(B_i, \coprod_{i : I} B_i)$ has the universal property of coproducts for all $\Gamma, i : I \mid \cdot \vdash B_i \ob$.
-\end{enumerate}
-\end{prop}
-\begin{proof}
-% TODO
-\end{proof}
-
-\begin{prop}
-If the equivalent conditions of \rprop{coprod-char} hold, then coproducts are stable under pullbacks.
-\end{prop}
-\begin{proof}
-Let $\Gamma, i : I \mid \cdot \vdash B \ob$ be a dependent type and let $p : \Hom(\coprod_{i : I} B, D)$ and $r : \Hom(E,D)$ be maps.
-We define $\Gamma, i : I \mid d : D \vdash B' \ob$ as the fiber of $B$ over $d$.
-Then we have the following pullback squares:
-\[ \xymatrix{ \coprod_{i : I} r^*(B) \ar[r] \ar[d]_\simeq \pb & \coprod_{i : I} B \ar[d]^\simeq \\
-              \coprod_{i : I} \sum_{e : E} B'[r\,e/d] \ar[r] \ar[d]_\simeq \pb & \coprod_{i : I} \sum_{d : D} B' \ar[d]^\simeq \\
-              \sum_{e : E} \coprod_{i : I} B'[r\,e/d] \ar[r] \ar[d] \pb & \sum_{d : D} \coprod_{i : I} B' \ar[d] \\
-              E \ar[r] & D
-            } \]
-The bottom square is a pullback since substitutions correspond to pullbacks.
-Vertical maps in the second row are equivalences by \rprop{coprod-sigma}.
-Vertical maps in the first row are equivalences since $B \simeq \Sigma_{d : D} B'$ and $r^*(B) \simeq B'[r\,e/d]$.
 \end{proof}
 
 \section{General adjoint functor theorem}
@@ -1975,7 +2022,7 @@ If $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ is an object classifier which i
 \begin{proof}
 Since the identity morphism $\id_B$ is a monomorphism for all $B$, it is a pullback of $p$.
 In particular, there is a map from $B$ to $\widehat{\mathcal{U}}$.
-Thus, we just need to show that any to maps $\Hom(B,\widehat{\mathcal{U}})$ are homotopic.
+Thus, we just need to show that any two maps $\Hom(B,\widehat{\mathcal{U}})$ are homotopic.
 
 First, note that any commutative square of the form
 \[ \xymatrix{ B \ar[r]^s \ar[d]_{\id_B} & \widehat{\mathcal{U}} \ar[d]^p \\
@@ -2420,6 +2467,10 @@ We need to prove that $\sym{H[|x|/z]} \ct h_1$ is homotopic to $h_2$.
 This homotopy can be constructed from the following one:
 \[ \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(H[|x|/z], h_1 \ct \sym{h_2}). \]
 \end{proof}
+
+\begin{cor}
+A class of fibrations closed under substitutions and $\Sigma$-types is locally reflective if and only if it extends to a higher modality.
+\end{cor}
 
 If we assume the stability condition for $\eta$, then we can replace it with the following stable rule:
 \begin{center}
