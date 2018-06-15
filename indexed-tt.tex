@@ -1438,7 +1438,7 @@ The construction of the abstraction and the application and proofs of $\beta$ an
 
 \subsection{Dependent coproducts}
 
-Coproducts can be defined in a more type-theoretic way:
+Coproducts can be defined in a more type-theoretic way.
 The theory of \emph{(unstable) dependent coproducts} consists of the following unstable rules:
 \begin{center}
 \AxiomC{$\Gamma, i : I \mid \Delta \vdash B_i \ob$}
@@ -1479,14 +1479,14 @@ The inverse of this map is defined as follows:
 It is easy to show that these maps are mutually inverse using the eliminator for coproducts.
 \end{proof}
 
-\begin{lem}[coprod-char]
-Suppose that an indexed dependent type theory has $\Sigma$-types and let $\coprod$, $\fs{in}$ be a pair of unstalbe constructions as described above for some fixed context $\Delta$.
-Then the eliminator is definable if and only if the induced map $\Gamma, i : I \vdash \fs{in}_i' : \Hom(\Sigma(\Delta,B_i), \Sigma(\Delta, \coprod_{i : I} B_i))$ makes $\Sigma(\Delta, \coprod_{i : I} B_i)$ into the coproduct of the family $\Gamma, i : I \mid \cdot \vdash \Sigma(\Delta,B_i)$.
+\begin{lem}[dep-coprod-coprod]
+Suppose that an indexed dependent type theory has $\Sigma$-types, extensional identity types, and dependent coproducts.
+Then the map $\Gamma, i : I \vdash \fs{in}_i' : \Hom(\Sigma(\Delta,B_i), \Sigma(\Delta, \coprod_{i : I} B_i))$ induced by $\fs{in}_i$ makes $\Sigma(\Delta, \coprod_{i : I} B_i)$ into a coproduct of the family $\Gamma, i : I \mid \cdot \vdash \Sigma(\Delta,B_i)$.
 \end{lem}
 \begin{proof}
-First, suppose that the eliminator is definable.
 Let $\Delta = x_1 : A_1, \ldots x_n : A_n$.
-Then $\fs{in}_i' = \lambda p.(\pi_1(p), \ldots \pi_n(p), \fs{in}_i(x)[\pi_{n+1}(p)/x])$.
+Then $\fs{in}_i'$ is defined as follows:
+\[ \fs{in}_i' = \lambda p.(\pi_1(p), \ldots \pi_n(p), \fs{in}_i(x)[\pi_{n+1}(p)/x]). \]
 Let $f$ be a map of the following form:
 \[ \Gamma, i : I \vdash f : \Hom(\Sigma(\Delta,B_i),C). \]
 Then we define $\Gamma \vdash [f]_{i : I} : \Hom(\Sigma(\Delta, \coprod_{i : I} B_i), C)$ as follows:
@@ -1501,37 +1501,55 @@ f & .
 \end{align*}
 Finilly, for every $g : \Hom(\coprod_{i : I} B_i, C)$, we need to prove that $[g \circ \fs{in}_i']_{i : I} \sim g$.
 It is enough to prove that, for all $x_1 : A_1, \ldots x_n : A_n, z : \coprod_{i : I} B_i$, there is a homotopy between $[g \circ \fs{in}_i']_{i : I}\,(x_1, \ldots x_n, z)$ and $g\,(x_1, \ldots x_n, z)$.
-To do this, we can apply the eliminator for $\coprod$ to $z$.
+To do this, we can apply $\coprod\text{-}\fs{elim}$ to $z$.
 Then we just need to construct a homotopy between $[g \circ \fs{in}_i']_{i : I}\,(x_1, \ldots x_n, \fs{in}_i(x))$ and $g\,(x_1, \ldots x_n, \fs{in}_i(x))$:
 \begin{align*}
 [g \circ \fs{in}_i']_{i : I}\,(x_1, \ldots x_n, \fs{in}_i(x)) & = \\
 \lambda p.\,\coprod\text{-}\fs{elim}(z.C, i x.\,g\,(\fs{in}_i\,(x_1, \ldots x_n, x)))[\fs{in}_i(x)/z] & \sim \\
 g\,(x_1, \ldots x_n, \fs{in}_i(x)) & .
 \end{align*}
+\end{proof}
 
-Now, let us prove the converse.
-Let $\Gamma, i : I \mid \Delta, x : B_i \vdash d : D[\fs{in}_i(x)/z]$ be a term.
+This lemma implies that $\Hom_\Delta(\coprod_{i : I} B_i, C)$ is a weak $\Pi$-type $\Pi_{i : I} \Hom_\Delta(B_i,C)$.
+We will say that dependent coproducts are \emph{extensional} if this $\Pi$-type satisfies functional extensionality.
+
+\begin{lem}[coprod-dep-coprod]
+Suppose that an indexed dependent type theory has $\Sigma$-types and identity types.
+If $\coprod$ and $\fs{in}$ are unstable constructions defined above and the map $\Gamma, i : I \vdash \fs{in}_i' : \Hom(\Sigma(\Delta,B_i), \Sigma(\Delta, \coprod_{i : I} B_i))$ induced by $\fs{in}_i$ makes $\Sigma(\Delta, \coprod_{i : I} B_i)$ into an extensional coproduct of the family $\Gamma, i : I \mid \cdot \vdash \Sigma(\Delta,B_i)$,
+then the eliminator is definable and this dependent coproduct is extensional.
+\end{lem}
+\begin{proof}
+Let $\Delta = x_1 : A_1, \ldots x_n : A_n$ and let $\Gamma, i : I \mid \Delta, x : B_i \vdash d : D[\fs{in}_i(x)/z]$ be a term.
 Since $\Sigma(\Delta, \coprod_{i : I} B_i)$ is a coproduct of $\Sigma(\Delta, B_i)$, we have the following map:
 \begin{align*}
 t & : \Hom(\Sigma(\Delta, \coprod_{i : I} B_i), \Sigma(\Delta, z : \coprod_{i : I} B_i, D)) \\
 t & = [\lambda p.(x_1, \ldots x_n, \fs{in}_i(x), d)[\pi_1(p)/x_1, \ldots \pi_n(p)/x_n, \pi_{n+1}(p)/x]]_{i : I}
 \end{align*}
-% TODO: Fix this
-% We have the following homotopy:
-% \[ \pi_1 \circ t \sim [\pi_1 \circ t \circ \fs{in}_i]_{i : I} \sim [\lambda x.\,\fs{in}_i(x)]_{i : I} \sim \id. \]
-% If we denote this homotopy by $h$, then we can define the eliminator $\coprod\text{-}\fs{elim}(z.D, i x.d)$ as $h_*(\pi_2(t\,z))$.
+Let $\pi_0 : \Hom(\Sigma(\Delta, z : \coprod_{i : I} B_i, D), \Sigma(\Delta, \coprod_{i : I} B_i))$ be the obvious projection map.
+Let $\eta(q)$ be the following homotopy:
+\[ \eta(q) : \Id(t\,q, (x_1, \ldots x_n, \fs{in}_i(x), d)[\pi_1(q)/x_1, \ldots \pi_n(q)/x_n, \pi_{n+1}(q)/x]). \]
+Then $\eta(\fs{in}_i'\,p) * \pi_0$ is a homotopy between $\pi_0\,(t\,(\fs{in}_i'\,p))$ and $\fs{in}_i'\,p$.
+By the universal property of coproducts, there exists (a unique) homotopy $h(q)$ between $\pi_0\,(t\,q)$ and $q$ such that $h(\fs{in}_i'\,p)$ is homotopic to $\eta(\fs{in}_i'\,p) * \pi_0$.
+Now, we can define the eliminator $\coprod\text{-}\fs{elim}(z.D, i x.d)$ as $h(x_1, \ldots x_n, z)_*(\pi_{n+2}(t\,(x_1, \ldots x_n, z)))$.
 
-% TODO: Construct \coprod\text{-}\fs{elim_h}.
+We need to construct the following homotopy:
+\[ h(x_1, \ldots x_n, \fs{in}_j(x)[b/x])_*(\pi_{n+2}(t\,(x_1, \ldots x_n, \fs{in}_j(x)[b/x]))) \sim d[j/i,b/x]. \]
+Since $\eta(q)$ is a homotopy between $\Sigma$-types, the standard argument about such homotopies shows that we have the following homotopy:
+\[ (\eta(\fs{in}_j'(b)) * \pi_0)_*(\pi_{n+2}(t\,(x_1, \ldots x_n, \fs{in}_j(x)[b/x]))) \sim d[j/i,b/x]. \]
+Thus, we just need to prove that $h(x_1, \ldots x_n, \fs{in}_j(x)[b/x])$ is homotopic to $\eta(\fs{in}_j'(b)) * \pi_0$, but this is true by the definition of $h$.
+
+The extensionality of dependent coproducts is equivalent to the extensionality of the ordinary coproduct $\Sigma(\Delta, \coprod_{i : I} B_i)$.
 \end{proof}
 
 \begin{prop}
-If an indexed dependent type theory has $\Sigma$-types and extensional identity types, then it has weak dependent coproducts if and only if it has coproducts.
+If an indexed dependent type theory has $\Sigma$-types and extensional identity types, then it has weak extensional dependent coproducts if and only if it has extensional coproducts.
 \end{prop}
 \begin{proof}
-If the theory has weak dependent coproducts, then it has coproducts by \rlem{coprod-char}.
-Conversely, suppose that it has coproducts.
+If the theory has weak dependent coproducts, then it has coproducts by \rlem{dep-coprod-coprod}.
+If dependent coproducts are extensional, then coproducts are also extensional since the latter is the special case of the former.
+Conversely, suppose that the theory has extensional coproducts.
 Let $\Gamma, i : I \mid \Delta \vdash B_i \ob$ be a dependent type.
-If $\Delta$ is empty, then the eliminator is definable by \rlem{coprod-char}.
+If $\Delta$ is empty, then an extensional dependent coproduct of $B_i$ exists by \rlem{coprod-dep-coprod}.
 Thus, we may assume that $\Delta$ is not empty.
 Since we have $\Sigma$-types, we may also assume that it consists of a single type, that is $\Delta = (x : A)$.
 
@@ -1539,56 +1557,64 @@ We define $\coprod'_{i : I} B_i$ as $\Gamma \mid \Delta \vdash \Sigma_{(p : \cop
 If $\Gamma \vdash j : I$, then we define $\fs{in}_j$ as $\Gamma \mid \Delta, y : B_j \vdash (\fs{in}_j(x,y), \refl(x)) : \coprod'_{i : I} B_i$.
 Let $\fs{in}_i'$ be the following map:
 \[ \lambda p. (\pi_1(p), \fs{in}_i\,p, \refl(x)) : \Hom(\Sigma(\Delta, B_i), \Sigma(\Delta, p : \coprod_{i : I} \Sigma(\Delta, B_i), \Id_A([\pi_1]_{i : I}\,p,x))). \]
-By \rlem{coprod-char}, we just need to prove that $\fs{in}_i'$ makes its codomain into a coproduct.
+By \rlem{coprod-dep-coprod}, we just need to prove that $\fs{in}_i'$ makes its codomain into an extensional coproduct.
 Since the type $\Sigma(\Delta, \Id_A([\pi_1]_{i : I}\,p,x))$ is contractible, the following map is an equivalence:
 \[ \pi_2 : \Hom(\Sigma(\Delta, p : \coprod_{i : I} \Sigma(\Delta, B_i), \Id_A([\pi_1]_{i : I}\,p,x)), \coprod_{i : I} \Sigma(\Delta, B_i)). \]
-Since $\pi_2 \circ \fs{in}_i'$ makes $\coprod_{i : I} \Sigma(\Delta, B_i)$ into the coproduct of $\Sigma(\Delta, B_i)$ and $\pi_2$ is an equivalence, this is also true for $\fs{in}_i'$.
+Since $\pi_2 \circ \fs{in}_i'$ makes $\coprod_{i : I} \Sigma(\Delta, B_i)$ into an extensional coproduct of $\Sigma(\Delta, B_i)$ and $\pi_2$ is an equivalence, this is also true for $\fs{in}_i'$.
 \end{proof}
 
+If we assume the stability condition for $\fs{in}$, then we can replace it with the following stable rule:
+\begin{center}
+\AxiomC{$\Gamma \vdash j : I$}
+\AxiomC{$\Gamma \mid \Delta \vdash b : B_j$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash (j,b) : \coprod_{i : I} B_i$}
+\DisplayProof
+\end{center}
+\medskip
+Indeed, $\fs{in}_j(x)$ can be defined as $(j,x)$.
+Conversely, $(j,b)$ can be defined in terms of $\fs{in}$ as $\fs{in}_j(x)[b/x]$.
+Since $(-,-)$ is stable, these constructions are mutually inverse.
+
+We will say that dependent coproducts are \emph{stable} if $\coprod$ and $(-,-)$ are stable.
 We will say that coproducts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$,
 the canonical map from $\coprod_{i : I} r^*(B_i)$ to $r^*(\coprod_{i : I} B_i)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
 
-% \begin{center}
-% \AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash D \ob$}
-% \AxiomC{$\Gamma, i : I \mid \Delta, x : B, E[(i,x)/z] \vdash d : D[(i,x)/z]$}
-% \BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B, E \vdash \coprod\text{-}\fs{elim}(z E. D, i x E. d) : D$}
-% \DisplayProof
-% \end{center}
-% \medskip
+If dependent coproducts are stable, then we can define the local version of their eliminator:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B_i, E \vdash D \ob$}
+\AxiomC{$\Gamma, i : I \mid \Delta, x : B_i, E[(i,x)/z] \vdash d : D[(i,x)/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B_i, E \vdash \coprod\text{-}\fs{elim}(z E. D, i x E. d) : D$}
+\DisplayProof
+\end{center}
+\medskip
 
-% \[ \coprod\text{-}\fs{elim}(z E. D, i x E. d)[(j,b)/z] = d[j/i,b/x] \]
+\[ \coprod\text{-}\fs{elim}(z E. D, i x E. d)[(j,b)/z] = d[j/i,b/x] \]
 
-% The eliminator that we described will be called \emph{local}.
-% The \emph{global} eliminator is its special case for $E = \cdot$.
-
-\begin{prop}[coprod-char]
-Suppose that an indexed dependent type theory has $\Sigma$-types and stable constructions $\coprod$ and $(-,-)$ as described above.
-Then the following conditions are equivalent:
-\begin{enumerate}
-\item \label{it:coprod-local} The local weak unstable eliminator is definable.
-\item \label{it:coprod-global} The global weak unstable eliminator is definable.
-\item \label{it:coprod-uni} The type $\coprod_{i : I} B_i$ together with the map $\fs{in}_i = \lambda b.(i,b) : \Hom(B_i, \coprod_{i : I} B_i)$ has the universal property of coproducts for all $\Gamma, i : I \mid \cdot \vdash B_i \ob$.
-\end{enumerate}
-\end{prop}
-\begin{proof}
-% TODO
-\end{proof}
+This is a strict version of the local eliminator.
+We can define its weak version as usual by replacing the judgemental equality with a propositional one.
 
 \begin{prop}
-If the equivalent conditions of \rprop{coprod-char} hold, then coproducts are stable under pullbacks.
+Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, and dependent coproducts.
+If $\coprod$ and $(-,-)$ are stable, then the local weak unstable eliminator is definable and coproducts are stable under pullbacks.
 \end{prop}
 \begin{proof}
-Let $\Gamma, i : I \mid \cdot \vdash B \ob$ be a dependent type and let $p : \Hom(\coprod_{i : I} B, D)$ and $r : \Hom(E,D)$ be maps.
-We define $\Gamma, i : I \mid d : D \vdash B' \ob$ as the fiber of $B$ over $d$.
+First, let us prove that coproducts are stable under pullbacks.
+Let $\Gamma, i : I \mid \cdot \vdash B_i \ob$ be a dependent type and let $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$ be maps.
+We define $\Gamma, i : I \mid d : D \vdash B_i' \ob$ as the fiber of $B_i$ over $d$.
 Then we have the following pullback squares:
-\[ \xymatrix{ \coprod_{i : I} r^*(B) \ar[r] \ar[d]_\simeq \pb & \coprod_{i : I} B \ar[d]^\simeq \\
-              \coprod_{i : I} \sum_{e : E} B'[r\,e/d] \ar[r] \ar[d]_\simeq \pb & \coprod_{i : I} \sum_{d : D} B' \ar[d]^\simeq \\
-              \sum_{e : E} \coprod_{i : I} B'[r\,e/d] \ar[r] \ar[d] \pb & \sum_{d : D} \coprod_{i : I} B' \ar[d] \\
+\[ \xymatrix{ \coprod_{i : I} r^*(B_i) \ar[r] \ar[d]_\simeq \pb & \coprod_{i : I} B_i \ar[d]^\simeq \\
+              \coprod_{i : I} \sum_{e : E} B_i'[r\,e/d] \ar[r] \ar[d]_\simeq \pb & \coprod_{i : I} \sum_{d : D} B_i' \ar[d]^\simeq \\
+              \sum_{e : E} \coprod_{i : I} B_i'[r\,e/d] \ar[r] \ar[d] \pb & \sum_{d : D} \coprod_{i : I} B_i' \ar[d] \\
               E \ar[r] & D
             } \]
 The bottom square is a pullback since substitutions correspond to pullbacks.
 Vertical maps in the second row are equivalences by \rprop{coprod-sigma}.
-Vertical maps in the first row are equivalences since $B \simeq \Sigma_{d : D} B'$ and $r^*(B) \simeq B'[r\,e/d]$.
+Vertical maps in the first row are equivalences since $B_i \simeq \Sigma_{d : D} B_i'$ and $r^*(B_i) \simeq B_i'[r\,e/d]$.
+
+Now, let us prove the existence of the local weak unstable eliminator.
+By \rlem{coprod-dep-coprod}, it is enough to show that the following map makes its codomain into a coproduct:
+\[ \fs{in}_i : \Hom(\Sigma(x : B_i, E[(i,x)/z]), \Sigma(z : \coprod_{i : I} B_i, E)). \]
+This follows from the fact that coproducts are stable under pullbacks since the codomain of this map is a pullback of $\id_{\coprod_{i : I} B_i}$ along the obvious projection from $\Sigma(z : \coprod_{i : I} B_i, E)$ to $\coprod_{i : I} B_i$.
 \end{proof}
 
 \subsection{Pushouts}
@@ -2017,30 +2043,33 @@ Finally, since both $p$ and $\mathcal{U}$ are $(n+1)$-truncated, $\widehat{\math
 \end{proof}
 
 \begin{prop}
-If $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ is an object classifier which is also a monomorphism, then $\widehat{\mathcal{U}}$ is contractible.
+If $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ is an object classifier which is also a monomorphism, then $\widehat{\mathcal{U}}$ is subterminal.
+It is terminal if and only if identity morphisms are classified by $p$.
 \end{prop}
 \begin{proof}
-Since the identity morphism $\id_B$ is a monomorphism for all $B$, it is a pullback of $p$.
-In particular, there is a map from $B$ to $\widehat{\mathcal{U}}$.
-Thus, we just need to show that any two maps $\Hom(B,\widehat{\mathcal{U}})$ are homotopic.
-
-First, note that any commutative square of the form
+Any commutative square of the form
 \[ \xymatrix{ B \ar[r]^s \ar[d]_{\id_B} & \widehat{\mathcal{U}} \ar[d]^p \\
               B \ar[r]_t                & \mathcal{U}
             } \]
 is a pullback.
-We need to prove that the canonical map
+To prove this, we need to show that the canonical map
 \[ r : \Hom(X,B) \to \sum_{f : \Hom(X,B)} \sum_{g : \Hom(X,\widehat{\mathcal{U}})} \Id(t \circ f, p \circ g). \]
 is an equivalence for all $X$.
 Since $t$ is homotopic to $p \circ s$, the type $\Id(t \circ f, p \circ g)$ is equivalent to $\Id(p \circ s \circ f, p \circ g)$.
 Since $p$ is a monomorphism, it is equivalent to $\Id(s \circ f, g)$.
 Since the type $\Sigma_{g : \Hom(X,\widehat{\mathcal{U}})} \Id(s \circ f, g)$ is contractible, $r$ is indeed an equivalence.
 
-Let $f_1,f_2 : \Hom(B,\widehat{\mathcal{U}})$ be a pair of maps.
+To prove that $\widehat{\mathcal{U}}$ is subterminal, we need to show that any two maps $f_1,f_2 : \Hom(B,\widehat{\mathcal{U}})$ are homotopic.
 Since $p$ is a monomorphism, it is enough to construct a homotopy between $p \circ f_1$ and $p \circ f_2$.
 We have two pullback squares as above with $s = f_i$ and $t = p \circ f_i$.
 Since $p$ is an object classifier, we have an equivalence between $\Id(p \circ f_1, p \circ f_2)$ and the type of equivalences between pullbacks of $p$ along $p \circ f_1$ and $p \circ f_2$.
 Since both pullbacks are just $\id_B$, they are equivalent; so, we have a homotopy between $p \circ f_1$ and $p \circ f_2$.
+
+If $p$ classifies identity morphisms, then, for every $B$, the map $\id_B$ is a pullback of $p$.
+In particular, there exists a map from $B$ to $\widehat{\mathcal{U}}$.
+Thus, $\widehat{\mathcal{U}}$ is terminal.
+Conversely, if $\widehat{\mathcal{U}}$ is terminal, then, for every type $B$, we have a commutative square as depicted at the beginning of the proof.
+Since this square is a pullback, $p$ classifies $\id_B$.
 \end{proof}
 
 Finally, let us prove another simple but useful result.
