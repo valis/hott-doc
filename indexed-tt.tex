@@ -1619,10 +1619,8 @@ This follows from the fact that coproducts are stable under pullbacks since the 
 
 \subsection{Pushouts}
 
-We will say that pushouts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $f : \Hom(A,B)$, $g : \Hom(A,C)$, $p : \Hom(B \amalg_A C, D)$, and $r : \Hom(E,D)$,
-the canonical map from $r^*(B) \amalg_{r^*(A)} r^*(C)$ to $r^*(B \amalg_A C)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
-
-We will say that the theory has \emph{weak dependent pushouts} if the following rules are derivable:
+Pushouts can be defined in a more type-theoretic way.
+The theory of \emph{(unstable) weak dependent pushouts} consists of the following unstable rules:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta \vdash f : \Hom(A,B)$}
 \AxiomC{$\Gamma \mid \Delta \vdash g : \Hom(A,C)$}
@@ -1632,22 +1630,58 @@ We will say that the theory has \emph{weak dependent pushouts} if the following 
 \medskip
 
 \begin{center}
-\AxiomC{$\Gamma \mid \Delta \vdash b : B$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{inl}(b) : B \amalg_A C$}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \Delta, y : B \vdash \fs{inl}(y) : B \amalg_A C$}
 \DisplayProof
 \qquad
-\AxiomC{$\Gamma \mid \Delta \vdash c : C$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{inr}(c) : B \amalg_A C$}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \Delta, z : C \vdash \fs{inr}(z) : B \amalg_A C$}
 \DisplayProof
 \end{center}
 \medskip
 
 \begin{center}
-\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{glue}(a) : \Id(\fs{inl}(f\,a),\fs{inr}(g\,a))$}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \Delta, x : A \vdash \fs{glue}(x) : \Id(\fs{inl}(y)[f\,x/y],\fs{inr}(z)[g\,x/z])$}
 \DisplayProof
 \end{center}
 \medskip
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \mid \Delta, w : B \amalg_A C \vdash D \ob$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta, y : B \vdash d_1 : D[\fs{inl}(y)/w]$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta, z : C \vdash d_2 : D[\fs{inr}(z)/w]$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta, x : A \vdash d_3 : \Id(\fs{glue}(x)_*(d_1[f\,x/y]), d_2[g\,x/z])$
+\def\extraVskip{2pt}
+\UnaryInf$\fCenter \Gamma \mid \Delta, w : B \amalg_A C \vdash \amalg\text{-}\fs{elim}(w.D, y.d_1, z.d_2, x.d_3) : D$
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{align*}
+h_1(b) & : \Id(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inl}(y)[b/y]/w], d_1[b/y]) \\
+h_2(c) & : \Id(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inr}(z)[c/z]/w], d_2[c/z])
+\end{align*}
+
+\[ \xymatrix{ \fs{glue}(a)_*(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inl}(y)[f\,a/y]/w]) \ar@{=}[r] \ar@{=}[d] & d_1'[a/w] \ar@{=}[d]^{d_3[a/x]} \\
+              \amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inr}(z)[g\,a/z]/w] \ar@{=}[r]_-{h_2(g\,a)} & d_2[g\,a/z]
+            } \]
+The last square must commute up to a homotopy $h_3(a)$.
+The top arrow in this square is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a)[\rho(\fs{glue}(a))])$ and the left arrow is defined by path induction on $\fs{glue}(a)$.
+
+\begin{prop}
+If an indexed dependent type theory has $\Sigma$-types and extensional identity types, then it has weak dependent pushouts if and only if it has pushouts.
+\end{prop}
+\begin{proof}
+% TODO
+\end{proof}
+
+We will say that pushouts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $f : \Hom(A,B)$, $g : \Hom(A,C)$, $p : \Hom(B \amalg_A C, D)$, and $r : \Hom(E,D)$,
+the canonical map from $r^*(B) \amalg_{r^*(A)} r^*(C)$ to $r^*(B \amalg_A C)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
 
 \begin{center}
 \def\extraVskip{1pt}
@@ -1679,21 +1713,15 @@ The left arrow is
 \[ J(\fs{inl}(f\,a), v p.\,\Id(p_*(\amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inl}(f\,a)/z,\rho(p)]), \amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[v/z]), \refl, \fs{inr}(g\,a), \fs{glue}(a)). \]
 The top arrow is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a)[\rho(\fs{glue}(a))])$.
 
-The eliminator that we described will be called \emph{local}.
-The \emph{global} eliminator is its special case for $E = \cdot$.
-If the theory has weak dependent pushouts with either local or global eliminator, then it has pushouts which are stable under pullbacks.
-The converse is not true since weak dependent pushouts are stable under substitution which is a stricter condition than being closed under pullbacks.
-But we can show that the existence of pushouts implies the existence of the eliminator which is not stable under substitutions:
+% The eliminator that we described will be called \emph{local}.
+% The \emph{global} eliminator is its special case for $E = \cdot$.
+% If the theory has weak dependent pushouts with either local or global eliminator, then it has pushouts which are stable under pullbacks.
+% The converse is not true since weak dependent pushouts are stable under substitution which is a stricter condition than being closed under pullbacks.
+% But we can show that the existence of pushouts implies the existence of the eliminator which is not stable under substitutions:
 
 \begin{prop}
-Suppose that we have stable constructions $\fs{inl}$, $\fs{inr}$, and $\fs{glue}$ as described above.
-Then the following conditions are equivalent:
-\begin{enumerate}
-\item These constructions have the universal property of pushouts.
-\item The local weak unstable eliminator is definable.
-\item The global weak unstable eliminator is definable.
-\end{enumerate}
-If these equivalent conditions hold, then pushouts are stable under pullbacks.
+Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, and dependent pushouts.
+If $B \amalg_A C$, $\fs{inl}$, $\fs{inr}$, and $\fs{glue}$ are stable, then the local weak unstable eliminator is definable and pushouts are stable under pullbacks.
 \end{prop}
 \begin{proof}
 % TODO
