@@ -1471,7 +1471,7 @@ The canonical indexing of a dependent type theory over itself always has depende
 \begin{prop}[coprod-sigma]
 Dependent coproducts commute with $\Sigma$-types.
 More precisely, the following map is an equivalence for every dependent type $\Gamma, i : I \mid \Delta, d : D \vdash B \ob$:
-\[ \lambda z. \coprod\text{-}\fs{elim}(z. \sum_{d : D} \coprod_{i : I} B, i p. (\pi_1(p),\fs{in}_i(x)[\pi_2(p)/x])) : \Hom(\coprod_{i : I} \sum_{d : D} B, \sum_{d : D} \coprod_{i : I} B). \]
+\[ \lambda z. \coprod\text{-}\fs{elim}(z. \sum_{d : D} \coprod_{i : I} B, i p. (\pi_1(p),\fs{in}_i(x)[\pi_2(p)/x])) : \Hom_\Delta(\coprod_{i : I} \sum_{d : D} B, \sum_{d : D} \coprod_{i : I} B). \]
 \end{prop}
 \begin{proof}
 The inverse of this map is defined as follows:
@@ -1647,6 +1647,8 @@ The theory of \emph{(unstable) weak dependent pushouts} consists of the followin
 \end{center}
 \medskip
 
+To simplify the notation, we will write $\fs{inl}(b)$, $\fs{inr}(c)$, and $\fs{glue}(a)$ instead of $\fs{inl}(y)[b/y]$, $\fs{inr}(z)[c/z]$, and $\fs{glue}(x)[a/x]$, respectively.
+
 \begin{center}
 \def\extraVskip{1pt}
 \Axiom$\fCenter \Gamma \mid \Delta, w : B \amalg_A C \vdash D \ob$
@@ -1663,71 +1665,164 @@ The theory of \emph{(unstable) weak dependent pushouts} consists of the followin
 \medskip
 
 \begin{align*}
-h_1(b) & : \Id(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inl}(y)[b/y]/w], d_1[b/y]) \\
-h_2(c) & : \Id(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inr}(z)[c/z]/w], d_2[c/z])
+h_1(b) & : \Id(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inl}(b)/w], d_1[b/y]) \\
+h_2(c) & : \Id(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inr}(c)/w], d_2[c/z])
 \end{align*}
 
-\[ \xymatrix{ \fs{glue}(a)_*(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inl}(y)[f\,a/y]/w]) \ar@{=}[r] \ar@{=}[d] & d_1'[a/w] \ar@{=}[d]^{d_3[a/x]} \\
-              \amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inr}(z)[g\,a/z]/w] \ar@{=}[r]_-{h_2(g\,a)} & d_2[g\,a/z]
+\[ \xymatrix{ \fs{glue}(a)_*(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inl}(f\,a)/w]) \ar@{=}[r] \ar@{=}[d] & \fs{glue}(a)_*(d_1[f\,a/y]) \ar@{=}[d]^{d_3[a/x]} \\
+              \amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inr}(g\,a)/w] \ar@{=}[r]_-{h_2(g\,a)} & d_2[g\,a/z]
             } \]
 The last square must commute up to a homotopy $h_3(a)$.
-The top arrow in this square is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a)[\rho(\fs{glue}(a))])$ and the left arrow is defined by path induction on $\fs{glue}(a)$.
+The top arrow in this square is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a))$ and the left arrow is defined by path induction on $\fs{glue}(a)$.
+
+\begin{prop}[pushout-sigma]
+Dependent pushouts commute with $\Sigma$-types.
+More precisely, the following map is an equivalence for all maps $f : \Hom_\Delta(A,B)$ and $g : \Hom_\Delta(A,C)$:
+\begin{align*}
+& \Hom_\Delta((\sum_{d : D} B) \amalg_{(\sum_{d : D} A)} (\sum_{d : D} C), \sum_{d : D} B \amalg_A C) \\
+& \lambda w. \amalg\text{-}\fs{elim}(w. \sum_{d : D} B \amalg_A C, (d,y).(d,\fs{inl}(y)), (d,z).(d,\fs{inr}(z)), (d,x).d_3),
+\end{align*}
+where $d_3 = (d,\pmap(w.(d,w),\fs{glue}(x)))$.
+\end{prop}
+\begin{proof}
+The inverse of this map is defined as follows:
+\[ \lambda (d,w). \amalg\text{-}\fs{elim}(w. (\sum_{d : D} B) \amalg_{(\sum_{d : D} A)} (\sum_{d : D} C), y.(d,y), z.(d.z), x.\pmap(w.(d,w),\fs{glue}(x))). \]
+It is easy to show that these maps are mutually inverse using the eliminator for pushouts.
+\end{proof}
+
+\begin{lem}[dep-pushouts]
+Suppose that an indexed dependent type theory has $\Sigma$-types and extensional identity types.
+Let $B \amalg_A C$, $\fs{inl}$, $\fs{inr}$, and $\fs{glue}$ be unstable constructions as defined above.
+Then the eliminator is definable if and only if the following square is a pushout:
+\[ \xymatrix{ \Sigma(\Delta,A) \ar[rr]^-{T(f)} \ar[d]_{T(g)}        & & \Sigma(\Delta,B) \ar[d]^{T(\lambda y.\fs{inl}(y))} \\
+              \Sigma(\Delta,C) \ar[rr]_-{T(\lambda z.\fs{inr}(z))}  & & \Sigma(\Delta, B \amalg_A C)
+            } \]
+where $T(h) = \lambda x_1 \ldots x_n x.\,(x_1, \ldots x_n, h\,x)$.
+\end{lem}
+\begin{proof}
+First, suppose that the eliminator is definable.
+Then we need to show that the following canonical map is an equivalence:
+\[ \Hom(\Sigma(\Delta, B \amalg_A C), D) \to \Hom(\Sigma(\Delta,B),D) \times_{\Hom(\Sigma(\Delta,A),D)} \Hom(\Sigma(\Delta,C),D). \]
+The domain of this map is equivalent to $\Hom_\Delta(B \amalg_A C, D)$ and the codomain is equivalent to $\Sigma_{b : \Hom_\Delta(B,D)} \Sigma_{c : \Hom_\Delta(C,D)} \Id_{\Hom_\Delta(A,D)}(\lambda \overline{x} x.\,b\,\overline{x}\,(f\,x), \lambda \overline{x} x.\,c\,\overline{x}\,(g\,x))$.
+It follows that this map is an equivalence if and only if the following one is:
+\begin{align*}
+F & : \Hom_\Delta(B \amalg_A C, D) \to \sum_{b : \Hom_\Delta(B,D)} \sum_{c : \Hom_\Delta(C,D)} \Id(\lambda \overline{x} x.\,b\,\overline{x}\,(f\,x), \lambda \overline{x} x.\,c\,\overline{x}\,(g\,x)) \\
+F & = \lambda h.\,(\lambda \overline{x} y.\,h\,\overline{x}\,(\fs{inl}(y)), \lambda \overline{x} z.\,h\,\overline{x}\,(\fs{inr}(z)), \fs{Idext}(\overline{x} x.\,\pmap(h\,\overline{x},\fs{glue}(x))))
+\end{align*}
+The inverse of this function is defined as follows:
+\begin{align*}
+G & : \sum_{b : \Hom_\Delta(B,D)} \sum_{c : \Hom_\Delta(C,D)} \Id(\lambda \overline{x} x.\,b\,\overline{x}\,(f\,x), \lambda \overline{x} x.\,c\,\overline{x}\,(g\,x)) \to \Hom_\Delta(B \amalg_A C, D) \\
+G & = \lambda (b,c,p).\,\lambda \overline{x} w.\,\amalg\text{-}\fs{elim}(w.D, y.\,b\,\overline{x}\,y, z.\,c\,\overline{x}\,z, x.\,\fs{hap}(p,\overline{x},x))
+\end{align*}
+For every triple $(b,c,p)$, we need to show that $F\,(G\,(b,c,p)) \sim (b,c,p)$.
+It is easy to construct this homotopy using $h_1$, $h_2$, and $h_3$.
+For every map $h : \Hom_\Delta(B \amalg_A C, D)$, we need to show that $G\,(F\,h) \sim h$.
+We have the following homotopy:
+\[ G\,(F\,h) \sim \lambda \overline{x} w.\,\amalg\text{-}\fs{elim}(w.D, y.\,h\,\overline{x}\,(\fs{inl}(y)), z.\,h\,\overline{x}\,(\fs{inr}(z)), x.\,\pmap(h\,\overline{x}, \fs{glue}(x))). \]
+Let us denote the latter function by $h'$.
+We can define a homotopy $h'$ and $h$ as follows:
+\[ \fs{Idext}(\overline{x} w.\,\amalg\text{-}\fs{elim}(w.\,\Id(h'\,\overline{x}\,w,h\,\overline{x}\,w), y.\,h_1(y), z.\,h_2(z), x.\,h_3'(x))), \]
+where $h_3'(x)$ is a homotopy between $\fs{glue}(x)_*(h_1(f\,x))$ and $h_2(g\,x)$.
+Since the former term is homotopic to $\sym{\pmap(h'\,\overline{x},\fs{glue}(x))} \ct h_1(f\,x) \ct \pmap(h\,\overline{x},\fs{glue}(x))$, we can construct $h_3'(x)$ using $h_3(x)$.
+
+Now, let us prove the converse.
+Let $D$, $d_1$, $d_2$, and $d_3$ be arguments of $\amalg\text{-}\fs{elim}$.
+Then we have the following commutative square:
+\[ \xymatrix{ \Sigma(\Delta,A) \ar[rrr]^-{T(f)} \ar[d]_{T(g)}               & & & \Sigma(\Delta,B) \ar[d]^{T(\lambda y.(\fs{inl}(y),d_1))} \\
+              \Sigma(\Delta,C) \ar[rrr]_-{T(\lambda z.(\fs{inr}(z),d_2))}   & & & \Sigma(\Delta, w : B \amalg_A C, D)
+            } \]
+The commutativity of the square is witnessed by the following term:
+\[ \fs{Idext}((x_1, \ldots x_n, x).\,\pmap(p.(x_1, \ldots x_n, p), \Sigma\fs{ext}(\fs{glue}(x),d_3))). \]
+By the universal property of pushouts, we have the following terms:
+\begin{align*}
+\Delta, w : B \amalg_A C & \vdash s(w) : \Sigma(\Delta, w : B \amalg_A C, D) \\
+\Delta, y : B & \vdash h_1'(y) : \Id(s(\fs{inl}(y)),(\overline{x},\fs{inl}(y),d_1)) \\
+\Delta, z : C & \vdash h_2'(z) : \Id(s(\fs{inr}(z)),(\overline{x},\fs{inr}(z),d_2))
+\end{align*}
+and term $h_3'(x)$ which witnesses the commutativity of the following square:
+\[ \xymatrix{ s(\fs{inl}(f\,x)) \ar@{=}[r]^-{h_1'(f\,x)} \ar@{=}[d]_{\pmap(w.s(w),\fs{glue}(x))} & (\overline{x},\fs{inl}(f\,x),d_1[f\,x/y]) \ar@{=}[d]^{\pmap(p.(\overline{x},p),\Sigma\fs{ext}(\fs{glue}(x),d_3))} \\
+              s(\fs{inr}(g\,x)) \ar@{=}[r]_-{h_2'(g\,x)} & (\overline{x},\fs{inr}(g\,x),d_2[g\,x/z])
+            } \]
+Let $\pi_0$ be the obvious projection $\Hom(\Sigma(\Delta, w : B \amalg_A C, D), \Sigma(\Delta, B \amalg_A C))$.
+By the uniqueness, we have the following terms:
+\begin{align*}
+\Delta, w : B \amalg_A C & \vdash q(w) : \Id(\pi_0(s(w)),(\overline{x},w)) \\
+\Delta, y : B & \vdash q_1(y) : \Id(h(\fs{inl}(y)),\pmap(\pi_0,h_1'(y))) \\
+\Delta, z : C & \vdash q_2(z) : \Id(h(\fs{inr}(z)),\pmap(\pi_0,h_2'(z)))
+\end{align*}
+and $q_3(x)$ which is a homotopy between two terms witnessing the commutativity of the following square:
+\[ \xymatrix{ \pi_0(s(\fs{inl}(f\,x))) \ar@{=}[rr]^-{q(\fs{inl}(f\,x))} \ar@{=}[d]_{\pmap(w.\pi_0(s(w)),\fs{glue}(x))} & & (\overline{x},\fs{inl}(f\,x)) \ar@{=}[d]^{\pmap(p.(\overline{x},p),\fs{glue}(x))} \\
+              \pi_0(s(\fs{inr}(g\,x))) \ar@{=}[rr]_-{q(\fs{inr}(g\,x))} & & (\overline{x},\fs{inr}(g\,x))
+            } \]
+One of this term is define by path induction on $\fs{glue}(x)$ and the other one is obtained from $h_3'(x)$, $q_1(f\,x)$, and $q_2(g\,x)$.
+We define $\amalg\text{-}\fs{elim}(w.D, y.d_1, z.d_2, x.d_3)$ as $q_*(\pi_{n+2}(s))$.
+Maps $h_1$, $h_2$, and $h_3$ can be defined using $h_1'$ and $q_1$, $h_2'$ and $q_2$, and $h_3'$ and $q_3$, respectively.
+\end{proof}
 
 \begin{prop}
 If an indexed dependent type theory has $\Sigma$-types and extensional identity types, then it has weak dependent pushouts if and only if it has pushouts.
 \end{prop}
 \begin{proof}
-% TODO
+\Rlem{dep-pushouts} implies that the theory with weak dependent pushouts has pushouts.
+Conversely, suppose that the theory has pushouts.
+Let $\Gamma \mid \Delta \vdash f : \Hom(A,B)$ and $\Gamma \mid \Delta \vdash g : \Hom(A,C)$ be a pair of maps.
+If $\Delta$ is empty, then an extensional dependent pushout of $f$ and $g$ exists by \rlem{dep-pushouts}.
+Thus, we may assume that $\Delta$ is not empty.
+Since we have $\Sigma$-types, we may also assume that it consists of a single type, that is $\Delta = (u : U)$.
+
+By the universal property of pushouts, there exists a map $p : \Hom(B \amalg_A C, U)$ such that $p \circ \fs{inl} \sim \pi_1$ and $p \circ \fs{inr} \sim \pi_1$.
+We define $B \amalg_A' C$ as $\Gamma \mid \Delta \vdash \Sigma_{w : B \amalg_A C} \Id(p\,w,u)$.
+By \rlem{dep-pushouts}, to prove that $B \amalg_A' C$ is a pushouts of $f$ and $g$, it is enough to show that $\Sigma(\Delta, B \amalg_A' C)$ is a pushout of $T(f)$ and $T(g)$.
+This follows from the fact that $\Sigma(\Delta, B \amalg_A' C)$ is equivalent to $B \amalg_A C$.
 \end{proof}
 
 We will say that pushouts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $f : \Hom(A,B)$, $g : \Hom(A,C)$, $p : \Hom(B \amalg_A C, D)$, and $r : \Hom(E,D)$,
 the canonical map from $r^*(B) \amalg_{r^*(A)} r^*(C)$ to $r^*(B \amalg_A C)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
-
+If dependent pushouts are stable, then we can define the local version of their eliminator:
 \begin{center}
 \def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \mid \Delta, z : B \amalg_A C, E \vdash D \ob$
+\Axiom$\fCenter \Gamma \mid \Delta, w : B \amalg_A C, E \vdash D \ob$
 \noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, x : B, E[\fs{inl}(x)/z] \vdash d_1 : D[\fs{inl}(x)/z]$
+\UnaryInf$\fCenter \Gamma \mid \Delta, y : B, E[\fs{inl}(y)/w] \vdash d_1 : D[\fs{inl}(y)/w]$
 \noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, y : C, E[\fs{inr}(y)/z] \vdash d_2 : D[\fs{inr}(y)/z]$
+\UnaryInf$\fCenter \Gamma \mid \Delta, z : C, E[\fs{inr}(z)/w] \vdash d_2 : D[\fs{inr}(z)/w]$
 \noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, w : A, E[\fs{inr}(y)/z] \vdash d_3 : \Id(d_1', d_2[g\,w/y])$
+\UnaryInf$\fCenter \Gamma \mid \Delta, x : A, E[\fs{inr}(g\,x)/w] \vdash d_3 : \Id(d_1', d_2[g\,x/z])$
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter \Gamma \mid \Delta, z : B \amalg_A C, E \vdash \amalg\text{-}\fs{elim}(z E.D, x E.d_1, y E.d_2, w E.d_3) : D$
+\UnaryInf$\fCenter \Gamma \mid \Delta, w : B \amalg_A C, E \vdash \amalg\text{-}\fs{elim}(z E.D, x E.d_1, y E.d_2, w E.d_3) : D$
 \DisplayProof
 \end{center}
-\medskip
-where $E = z_1 : E_1, \ldots z_n : E_n$, $d_1' = \fs{glue}(w)_*(d_1[\rho(\fs{glue}(w)), f\,w/x])$, and $\rho(p) = \overline{\sym{p}_*(z_i)/z_i}$.
-We will omit contexts in the arguments of $\amalg\text{-}\fs{elim}$.
-
-\begin{align*}
-h_1(b) & : \Id(\amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inl}(b)/z], d_1[b/x]) \\
-h_2(c) & : \Id(\amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inr}(c)/z], d_2[c/x])
-\end{align*}
-
-\[ \xymatrix{ \fs{glue}(a)_*(\amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inl}(f\,a)/z,\rho(\fs{glue}(a))]) \ar@{=}[r] \ar@{=}[d] & d_1'[a/w] \ar@{=}[d]^{d_3[a/w]} \\
-              \amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inr}(g\,a)/z] \ar@{=}[r]_-{h_2(g\,a)} & d_2[g\,a/y]
-            } \]
-The last square must commute up to a homotopy $h_3(a)$.
-The left arrow is
-\[ J(\fs{inl}(f\,a), v p.\,\Id(p_*(\amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[\fs{inl}(f\,a)/z,\rho(p)]), \amalg\text{-}\fs{elim}(D,d_1,d_2,d_3)[v/z]), \refl, \fs{inr}(g\,a), \fs{glue}(a)). \]
-The top arrow is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a)[\rho(\fs{glue}(a))])$.
-
-% The eliminator that we described will be called \emph{local}.
-% The \emph{global} eliminator is its special case for $E = \cdot$.
-% If the theory has weak dependent pushouts with either local or global eliminator, then it has pushouts which are stable under pullbacks.
-% The converse is not true since weak dependent pushouts are stable under substitution which is a stricter condition than being closed under pullbacks.
-% But we can show that the existence of pushouts implies the existence of the eliminator which is not stable under substitutions:
+where $E = z_1 : E_1, \ldots z_n : E_n$, $d_1' = \fs{glue}(x)_*(d_1[\rho(\fs{glue}(x)), f\,x/w])$, and $\rho(p) = \overline{\sym{p}_*(z_i)/z_i}$.
+The definitions of $h_1$, $h_2$, and $h_3$ are modified appropriately.
 
 \begin{prop}
 Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, and dependent pushouts.
 If $B \amalg_A C$, $\fs{inl}$, $\fs{inr}$, and $\fs{glue}$ are stable, then the local weak unstable eliminator is definable and pushouts are stable under pullbacks.
 \end{prop}
 \begin{proof}
-% TODO
+First, let us prove that pushouts are stable under pullbacks.
+Suppose that we have the following maps: $f : \Hom(A,B)$, $g : \Hom(A,C)$, $p : \Hom(B \amalg_A C, D)$, and $r : \Hom(E,D)$.
+We define $d : D \vdash A' \ob$ as the fiber of $A$ over $d$.
+Types $B'$ and $C'$ and maps $f' : \Hom_{d : D}(A',B')$ and $g' : \Hom_{d : D}(A',C')$ are defined similarly.
+Then we have the following pullback squares:
+\[ \xymatrix{ r^*(B) \amalg_{r^*(A)} r^*(C) \ar[r] \ar[d]_\simeq \pb & B \amalg_A C \ar[d]^\simeq \\
+              (\Sigma_{e : E} B'[r\,e/d]) \amalg_{(\Sigma_{e : E} A'[r\,e/d])} (\Sigma_{e : E} C'[r\,e/d]) \ar[r] \ar[d]_\simeq \pb & (\Sigma_{d : D} B') \amalg_{(\Sigma_{d : D} A')} (\Sigma_{d : D} C') \ar[d]^\simeq \\
+              \Sigma_{e : E} (B' \amalg_{A'} C')[r\,e/d] \ar[r] \ar[d] \pb & \Sigma_{d : D} B' \amalg_{A'} C' \ar[d] \\
+              E \ar[r] & D
+            } \]
+The bottom square is a pullback since substitutions correspond to pullbacks.
+Vertical maps in the second row are equivalences by \rprop{pushout-sigma}.
+
+Now, let us prove the existence of the local weak unstable eliminator.
+By \rlem{dep-pushouts}, it is enough to prove that $\Sigma(w : B \amalg_A C, E)$ is a pushout of the following maps:
+\begin{align*}
+\lambda (x, \overline{z}).\,(f\,x, \overline{z}) & : \Hom_\Delta(\Sigma(x : A, E[\fs{inl}(f\,x)/w]), \Sigma(y : B, E[\fs{inl}(y)])) \\
+\lambda (x, \overline{z}).\,(g\,x, \overline{\fs{glue}(x)_*(z)}) & : \Hom_\Delta(\Sigma(x : A, E[\fs{inl}(f\,x)/w]), \Sigma(z : C, E[\fs{inr}(z)]))
+\end{align*}
+This follows from the fact that pushouts are stable under pullbacks since $\Sigma(w : B \amalg_A C, E)$ is a pullback of $\id_{B \amalg_A C}$ along the obvious projection from $\Sigma(w : B \amalg_A C, E)$ to $B \amalg_A C$.
 \end{proof}
 
-\section{General adjoint functor theorem}
+\section{Weakly initial family of types}
 
 % TODO: Prove it.
 
