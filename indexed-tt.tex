@@ -1919,7 +1919,82 @@ Any $h$-initial type in a locally small indexed unary type theory with extension
 
 \subsection{Split idempotents}
 
-\subsection{The initial type theorems}
+An idempotent in a 1-category is a map $h : B \to B$ such that $h \circ h = h$.
+In the setting of $\infty$-categories an idempotent consists of a map and an infinite amount of coherence data.
+Lurie proved in \cite[Lemma~7.3.5.14]{lurie-algebra} that if $h$ is a map such that there exists a homotopy between $h \circ h$ and $h$ satisfying one additional coherence condition, then $h$ can be extended to an idempotent.
+
+An idempotent $h$ in a 1-category is split if there are maps $f : A \to B$ and $g : B \to A$ such that $g \circ f = \id_A$ and $f \circ g = h$.
+If the category is finitely complete, then every idempotent is split since $f$ can be defined as the equalizer of $h$ and $\id_B$ and $g$ exists by the universal property.
+It is no longer true that the splitting of an idempotent in an $\infty$-category can be constructed as a limit of a finite diagram, but it is a limit of a countable diagram.
+This question in the context of ordinary homotopy type theory was discussed by Shulman in \cite{split-idemp}.
+We can repeat this argument in the setting of indexed type theories.
+
+\begin{defn}
+A map $h : \Hom(B,B)$ in an indexed unary type theory consists is \emph{idempotent} if there are the following terms:
+\begin{align*}
+I & : \Id_{\Hom(B,B)}(h, h \circ h) \\
+J & : \Id_{\Id(h \circ h, h \circ h \circ h)}(\pmap(- \circ h, I), \pmap(h \circ -, I))
+\end{align*}
+\end{defn}
+
+\begin{defn}
+An idempotent map $h : \Hom(B,B)$ is \emph{split} if there exist maps $f : \Hom(A,B)$ and $g : \Hom(B,A)$ such that $g \circ f \sim \id_A$ and $f \circ g \sim h$.
+\end{defn}
+
+\begin{prop}
+If the base theory of a locally small indexed unary type theory has natural numbers $\mathbb{N}$ and the indexed theory has equalizers and extensional powers $B^\mathbb{N}$ for some type $B$, then every idempotent on $B$ is split.
+\end{prop}
+\begin{proof}
+We define the splitting of an idempotent map $h : \Hom(B,B)$ as the limit of the following sequence:
+\[ \ldots \xrightarrow{h} B \xrightarrow{h} B \xrightarrow{h} B. \]
+More precisely, let $e : \Hom(A,B^\mathbb{N})$ be the equalizer of $\id, h \circ - \circ \mathrm{suc} : \Hom(B^\mathbb{N},B^\mathbb{N})$.
+Let $d : \Id(e, h \circ e(-) \circ \mathrm{suc})$ be the witness of the fact that $e$ equalizes these maps.
+Let $f : \Hom(A,B)$ be the following composite:
+\[ A \xrightarrow{e} B^\mathbb{N} \xrightarrow{\lambda f.\,f\,0} B. \]
+By the universal property of equalizers, to define a map $g : \Hom(B,A)$, it is enough to define a map $g' : \Hom(B,B^\mathbb{N})$ and a homotopy $p : \Id(g', h \circ g'(-) \circ \mathrm{suc})$.
+Let $g' = \lambda b. \lambda n.\,h\,b$.
+Since powers are extensional, to define $p$, it is enough to define a homotopy between $h$ and $h \circ h$, which we define as $I$.
+It is easy to see that $f \circ g \sim h$.
+Thus, we just need to prove that $g \circ f \sim \id_A$.
+
+By the universal properties of equalizers, to construct this homotopy, it is enough to prove that for every $n : \mathbb{N}$, terms $(e,d)$ and $(e',d')$ of type $\Sigma_{r : \Hom(A,B^\mathbb{N})} \Id(r, h \circ r(-) \circ \mathrm{suc})$ are homotopic,
+where $e' = \lambda a. \lambda n.\,h\,(e\,a\,0)$ and $d'$ is the homotopy between $e'$ and $\lambda a. \lambda n.\,h\,(h\,(e\,a\,0)))$ obtained from $I$.
+First, we will construct a homotopy between $e$ and $e'$.
+By the universal property of extensional powers, it is enough to prove that for every $n : \mathbb{N}$, maps $\lambda a.\,e\,a\,n$ and $\lambda a.\,h\,(e\,a\,0)$ are homotopic.
+Let $s(n)$ be the homotopy between $\lambda a.e\,a\,n$ and $\lambda a.\,h\,(e\,a\,(n+1))$ obtained from $d$.
+Then we define a homotopy between $\lambda a.\,e\,a\,n$ and $\lambda a.\,h\,(e\,a\,0)$ as $s(n) \ct T(n)$, where $T(n) : \Id(\lambda a.\,h\,(e\,a\,(n+1)), \lambda a.\,h\,(e\,a\,0))$ is defined by induction.
+Let us write $I(a.t) : \Id(h \circ \lambda a.t, h \circ h \circ \lambda a.t)$ for $\pmap(\lambda f.\,\lambda a.\,f \circ t, I)$.
+Then we define $T$ as follows:
+\begin{align*}
+T(0) & = I(a.\,e\,a\,1) \ct \pmap(h \circ -, \sym{s(0)}) \\
+T(n+1) & = I(a.\,e\,a\,(n+2)) \ct \pmap(h \circ -, \sym{s(n+1)}) \ct T(n)
+\end{align*}
+
+Now, we need to construct a homotopy between the second components of pairs $(e,d)$ and $(e',d')$.
+By the universal property of extensional powers, it is enough to prove that for every $n : \mathbb{N}$, the following square commutes:
+\[ \xymatrix{ \lambda a.\,h\,(e\,a\,(n+1)) \ar@{=}[rr]^-{\pmap(h \circ -, s(n+1))} \ar@{=}[d]_{T(n)}    & & \lambda a.\,h\,(h\,(e\,a\,(n+2))) \ar@{=}[d]^{\pmap(h \circ -, T(n+1))} \\
+              \lambda a.\,h\,(e\,a\,0) \ar@{=}[rr]_-{I(a.\,e\,a\,0)}                                    & & \lambda a.\,h\,(h\,(e\,a\,0))
+            } \]
+By the definition of $T(n+1)$, the top path is homotopic to $\pmap(h \circ -, s(n+1) \ct I(a.\,e\,a\,(n+2)) \ct \pmap(h \circ -, \sym{s(n+1)}) \ct T(n))$.
+By $J$, we have a homotopy $\pmap(h \circ -, I(a.\,e\,a\,(n+2))) \sim I(a.\,h\,(e\,a\,(n+2)))$.
+By path induction, we have a homotopy $\pmap(h \circ -, s(n+1)) \ct I(a.\,h\,(e\,a\,(n+2))) \ct \pmap(h \circ h \circ -, \sym{s(n+1)}) \sim I(a.\,e\,a\,(n+1))$.
+Thus, we just need to prove that the following square is commutative:
+\[ \xymatrix{ \lambda a.\,h\,(e\,a\,(n+1)) \ar@{=}[rr]^-{I(a.\,e\,a\,(n+1))} \ar@{=}[d]_{T(n)}  & & \lambda a.\,h\,(h\,(e\,a\,(n+1))) \ar@{=}[d]^{\pmap(h \circ -, T(n))} \\
+              \lambda a.\,h\,(e\,a\,0) \ar@{=}[rr]_-{I(a.\,e\,a\,0)}                            & & \lambda a.\,h\,(h\,(e\,a\,0))
+            } \]
+We do this by induction on $n$.
+If $n = 0$, then $I(a.\,e\,a\,1) \ct \pmap(h \circ -, T(0)) \sim I(a.\,e\,a\,1) \ct I(a.\,h\,(e\,a\,1)) \ct \pmap(h \circ -, \sym{s(0)})$ and $T(0) \ct I(a.\,e\,a\,0) = I(a.\,e\,a\,1) \ct \pmap(h \circ -, \sym{s(0)}) \ct I(a.\,e\,a\,0)$.
+By path induction on $s(0)$, these terms are homotopic.
+If $n = n' + 1$, then the top and the bottom paths in the diagram are homotopic to the following terms:
+\begin{align*}
+& I(a.\,e\,a\,(n+1)) \ct I(a.\,h\,(e\,a\,(n+1))) \ct \pmap(h \circ h \circ -, \sym{s(n)}) \ct \pmap(h \circ -, T(n')) \\
+& I(a.\,e\,a\,(n+1)) \ct \pmap(h \circ -, \sym{s(n)}) \ct T(n') \ct I(a.\,e\,a\,0)
+\end{align*}
+By the induction hypothesis, we have a homotopy $T(n') \ct I(a.\,e\,a\,0) \sim I(a.\,e\,a\,n) \ct \pmap(h \circ -, T(n'))$.
+Thus, we just need to prove that terms $I(a.\,h\,(e\,a\,(n+1))) \ct \pmap(h \circ h \circ -, \sym{s(n)})$ and $\pmap(h \circ -, \sym{s(n)}) \ct I(a.\,e\,a\,n)$ are homotopic, which follows by path induction on $s(n)$.
+\end{proof}
+
+\subsection{The initial type theorem}
 
 \section{Classifying morphisms}
 \label{sec:class}
