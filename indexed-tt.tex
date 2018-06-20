@@ -1822,9 +1822,76 @@ By \rlem{dep-pushouts}, it is enough to prove that $\Sigma(w : B \amalg_A C, E)$
 This follows from the fact that pushouts are stable under pullbacks since $\Sigma(w : B \amalg_A C, E)$ is a pullback of $\id_{B \amalg_A C}$ along the obvious projection from $\Sigma(w : B \amalg_A C, E)$ to $B \amalg_A C$.
 \end{proof}
 
-\section{Weakly initial family of types}
+\section{The initial type theorem}
 
-% TODO: Prove it.
+The general adjoint functor theorem holds in the context of indexed categories \cite[IV.1]{indexed-cats} and in the context of $\infty$-categories \cite{infty-gaft}.
+Thus, it is natural to assume that it also should hold in the context of indexed type theories.
+To properly state this theorem, we need to define the notion of adjoint functors between models of such theories.
+This paper focuses on internal properties of a single model of an indexed type theory.
+So, we only consider the first step in the proof of the adjoint functor theorems, which is known as \emph{the initial object theorem} or \emph{the initial type theorem} in our case.
+This theorem is proved in \cite[IV.1.1]{indexed-cats} for indexed categories and in \cite[Proposition~2.3.2]{infty-gaft} for $\infty$-categories.
+
+\subsection{$h$-initial types}
+
+In this subsection, we will prove an analogue of \cite[Proposition~2.2.2]{infty-gaft}.
+This proposition states that $h$-initial objects are initial in finitely complete $\infty$-categories.
+An object $Z$ is $h$-initial if the space $\Hom(Z,X)$ is connected (and inhabited) for all $X$.
+This proposition has two problems in the context of indexed type theories.
+The first one is that it seems that it is not enough to assume the existence of finite limits since this only implies that homotopy groups of $\Hom(Z,X)$ vanish which might be not enough to conclude that this type is contractible.
+For this reason, we replace this condition with the condition that all powers exist.
+The second problem is that the definition of $h$-initial objects involves propositional trunctions, but they might not exist in general.
+We solve this problem by replacing the condition of connectedness by a weaker condition which can be formulated without propositional trunctions.
+
+First, for every type $X$, we define a weakening of the condition that $X$ is inhabited.
+Similar condition was defined in \cite[Definition~5]{gen-hedberg}: a type $X$ is \emph{populated}, written $\mathrm{isPop}(X)$, if every constant endofunction on $X$ has a fixed point.
+We will say that $X$ is \emph{weakly populated}, written $\mathrm{isWPop}(X)$, if $\mathrm{isProp}(X) \to X$, that is if $X$ is inhabited whenever it is a proposition.
+Clearly, $\mathrm{isWPop}(X)$ is a proposition.
+
+\begin{prop}
+We have the following sequence of implications:
+\[ X \to \| X \| \to \mathrm{isPop}(X) \to \mathrm{isWPop}(X) \to \neg \neg X. \]
+\end{prop}
+\begin{proof}
+The first implication is obvious and the second follows from the fact that $\mathrm{isPop}(X)$ is a proposition.
+Suppose that $X$ is populated.
+To prove that it is weakly populated, we may assume that it is a proposition.
+Then the identity endofunction on $X$ is constant.
+Thus, there exists a point in $X$ (namely, the fixed point of $\id_X$).
+Finally, suppose that $X$ is weakly populated and let us prove that $\neg \neg X$.
+Assume that $\neg X$.
+This implies that $X$ is a proposition.
+Since $X$ is weakly populated, it is inhabited, which is a contradiction.
+\end{proof}
+
+We will say that a type $X$ is \emph{weakly connected} if, for all $x, x' : X$, the type $\Id(x,x')$ is weakly populated.
+We will say that an indexed type $Z$ is \emph{$h$-initial} if, for every indexed type $X$, the type $\Hom(Z,X)$ is weakly connected and inhabited.
+
+\begin{prop}
+Let $0$ be an indexed type in a locally small indexed unary type theory such that, for every indexed type $X$, the type $\Hom(0,X)$ is weakly connected.
+If the theory has extensional powers, then $\Hom(0,X)$ is a proposition for every $X$.
+\end{prop}
+\begin{proof}
+Since the theory has powers, there is a type $X^{\Hom(0,X)}$ such that the type $\Hom(0,X^{\Hom(0,X)})$ is equivalent to $\Hom(0,X) \to \Hom(0,X)$.
+This implies that the type $\Hom(0,X) \to \Hom(0,X)$ is weakly populated.
+Let $f,g : \Hom(0,X)$ be a pair of maps.
+We need to construct a homotopy between them.
+
+First, let us prove the type $\Id_{\Hom(0,X) \to \Hom(0,X)}(\id, \lambda x.g)$ is a proposition.
+Since powers are extensional, the functional extensionality holds for the type $\Hom(0,X) \to \Hom(0,X)$.
+Thus, we just need to prove that, for all $x : \Hom(0,X) \vdash p : \Id(x,g)$ and $x : \Hom(0,X) \vdash q : \Id(x,g)$, there is a homotopy $x : X \vdash h : \Id(p,q)$.
+It is enough to prove that, for all $x$ and $q$, there is a homotopy between $q$ and $p \ct \sym{p[g/x]}$, which follows by path induction.
+
+Now, since $\Hom(0,X) \to \Hom(0,X)$ is weakly populated and $\Id(\id_{\Hom(0,X)}, \lambda x.g)$ is a proposition, the latter type is inhabited.
+If $h$ is a homotopy between $\id$ and $\lambda x.g$, then $\fs{hap}(h,f)$ is a homotopy between $f$ and $g$.
+\end{proof}
+
+\begin{cor}
+Any $h$-initial type in a locally small indexed unary type theory with extensional powers is initial.
+\end{cor}
+
+\subsection{Split idempotents}
+
+\subsection{The initial type theorems}
 
 \section{Classifying morphisms}
 
