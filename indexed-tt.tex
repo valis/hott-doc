@@ -87,30 +87,52 @@ We also prove that these constructions are equivalent to their type theoretic co
 \section{Introduction}
 
 Indexed categories were defined in \cite{indexed-cats} (see also \cite[B1]{elephant}).
-% Мы определяем аналог этой штукенции на языке теории типов.
-% В отличие от обычной HoTT это позволяет нам обсуждать свойства произвольных категорий, а не только lccc.
-% Даже для топосов это может быть полезно. Например, классификатор объектов нормально можно только здесь определить.
-% Другой пример -- это локально ортогональные системы факторизации. В HoTT условие может быть слишком сильным.
-% Все эти проблемы возникают когда мы пытаемся определить направленную HoTT.
+We define an analogue of this notion using the language of type theory.
+Ordinary homotopy type theory is an internal language of $\infty$-categories with some additional structure dependeing on constructions that we assume in the theory.
+Often we need to assume that the $\infty$-category is at least locally cartesian closed.
+Indexed type theories allows us to discuss properties of arbitrary (indexed) $\infty$-categories.
 
-% Мы определим два вида индексированных теорий типов: унарные и зависимые.
-% Первые позволяют обсуждать произвольные категориальные конструкции.
-% Вторые имеют более привичный теоретико-типов синтаксис, но подразумевают существование конечных пределов.
-% Мы определим ряд различных категориальных конструкций в обоих стилях:
-% 1. Finite limits / $\Sigma$-types, unit type, and identity types.
-% 2. Finite colimits / finite HITs.
-% 3. Exponents / $\Pi$-types.
-% 4. Object classifiers / univalent universes.
-% 5. Orthogonal factorization systems / higher modalities.
-% Мы докажем эквивалентность всех этих пар.
+Indexed type theories can be useful even when applied to $\infty$-categories which have all the required structure such as $\infty$-toposes.
+One problem of ordinary homotopy type theory is that every construction must be stable under pullbacks.
+For example, we will define orthogonal factorization systems in section~\ref{sec:refl-fib}.
+In ordinary homotopy type theory only the stable factorization systems can be defined (which was done in \cite{modality-hott}).
 
-% Рассказать подробнее про проблемы со вселенными и системами факторизаций.
+Similar problem occurs when we try to describe certain universes.
+For example, we could try to add a universe $\mathcal{U}_\mathrm{cov}$ of discrete Segal types and covariant maps between them to the theory decsribed in \cite{riehl-dhott}.
+A naive definition of such a universe postulates that we have an equivalence between the type of functions $X \to \mathcal{U}_\mathrm{cov}$ and the type of covariant fibrations over $X$.
+This is not a correct definition since this condition is too strong.
+The correct definition requires only an equivalence between the space of maps from $X$ to $\mathcal{U}_\mathrm{cov}$ and the space of covariant fibrations over $X$.
+It is impossible to formulate this condition in ordinary homotopy type theory, but it is easy to do in an indexed type theory as we will see in section~\ref{sec:class}.
 
-% Сказать еще где-то, что работа в индексированной теории типов похожа на работу в категории, обагащенной в типах.
+We will define two kinds of indexed type theories: unary and dependent.
+Indexed unary type theories allow us to discuss properties of aribtrary categories.
+Such a theory has two levels: the base theory and the indexed theory.
+The base theory has the usual type-theoretic syntax and the language of the indexed theory can be described informally as the language of type-enriched categories.
+Indexed dependent type theories also have two levels.
+The first one is the same as for unary theories, but the second has type-theoretic syntax, so it is more convenient to use such theories, but it applies only to finitely complete theories.
 
-% План.
+We will define several categorical constructions in both styles and prove that they are equivalent:
+\begin{enumerate}
+\item Finite limis in unary theories and $\Sigma$-types, unit types, and identity types in dependent theories.
+\item Finite colimits in unary theories and finite higher inductive types in dependent theories.
+\item Exponents in unary theories and $\Pi$-types in dependent theories.
+\item Object classifiers in unary theories and univalent universes in dependent theories.
+\item Orthogonal factorization systems in unary theories and higher modalities in dependent theories.
+\end{enumerate}
+
+The paper is organized as follows.
+In section~\ref{sec:unary}, we define indexed unary type theories.
+In section~\ref{sec:equivalence}, we define the notion of an equivalence in unary theories.
+In section~\ref{sec:colimits}, we define limits and colimits in unary theories.
+In section~\ref{sec:dependent}, we define indexed dependent type theories.
+In section~\ref{sec:lccc}, we define exponent and $\Pi$-types in indexed theories.
+In section~\ref{sec:colimits-dep}, we define limits and colimits in dependent theories.
+In section~\ref{sec:initial}, we prove the initial type theorem, which is the first step in the proof of the general adjoint functor theorem.
+In section~\ref{sec:class}, we defined object classifiers.
+In section~\ref{sec:refl-fib}, we define orthogonal factorization systems.
 
 \section{Indexed unary type theories}
+\label{sec:unary}
 
 We can think about an indexed type theory as a syntactic representation of indexed $\infty$-categories, that is a functor $F$ from an $\infty$-category $\mathcal{B}$ to the large $\infty$-category of $\infty$-categories.
 An indexed type theory consists of two levels.
@@ -349,6 +371,7 @@ A map $g : \Hom(B[a'/x],B[a/x])$ is constructed similarly: $\lambda y.\,J(a, x p
 To prove that $g \circ f$ and $f \circ g$ are homotopic to identity morphisms, it is enough to eliminate $h$ using $J$ and then both $g \circ f$ and $f \circ g$ become identity morphisms.
 
 \section{Equivalences}
+\label{sec:equivalence}
 
 In this section, we define types that express the property of a map $f : \Hom(A,B)$ of being an equivalence and prove that they are equivalent.
 We also prove a few simple properties of equivalences.
@@ -474,6 +497,7 @@ $f \circ j \circ h \circ k \sim m \circ g \circ h \circ k \sim m \circ \id_D \ci
 \end{proof}
 
 \section{Limits and colimits}
+\label{sec:colimits}
 
 In this section, we will work in a locally small indexed unary type theory.
 We will define specific finite (co)limits and arbitrary (co)products.
@@ -776,6 +800,7 @@ Then the product of a family $\Gamma, x : S^1 \mid \cdot \vdash B$ is the equali
 \end{example}
 
 \section{Indexed dependent type theories}
+\label{sec:dependent}
 
 In this section, we define the dependent version of indexed type theories.
 
@@ -1039,6 +1064,7 @@ It is straightforward to check that if identity types are extensional, then the 
 \end{align*}
 
 \section{Locally cartesian closed indexed theories}
+\label{sec:lccc}
 
 In this section, we will define locally cartesian closed unary type theories and discuss the relationship between them and indexed dependent type theories with $\Pi$-types.
 
@@ -1265,6 +1291,7 @@ Then $\beta$ and $\eta$ equivalences follow from the fact that $r$ is the invers
 \end{proof}
 
 \section{Limits and colimits in dependent theories}
+\label{sec:colimits-dep}
 
 In this section, we discuss the concepts of limits and colimits in indexed dependent type theories.
 
@@ -1823,6 +1850,7 @@ This follows from the fact that pushouts are stable under pullbacks since $\Sigm
 \end{proof}
 
 \section{The initial type theorem}
+\label{sec:initial}
 
 The general adjoint functor theorem holds in the context of indexed categories \cite[IV.1]{indexed-cats} and in the context of $\infty$-categories \cite{infty-gaft}.
 Thus, it is natural to assume that it also should hold in the context of indexed type theories.
@@ -1894,6 +1922,7 @@ Any $h$-initial type in a locally small indexed unary type theory with extension
 \subsection{The initial type theorems}
 
 \section{Classifying morphisms}
+\label{sec:class}
 
 In this section, we will define the notion of classifying morphisms, discuss its relationship to the notions of universes and factorization systems.
 
@@ -2280,6 +2309,7 @@ This implies that it is homotopic to $\lambda h.\,\pmap(f \circ -, h)$, but this
 \end{proof}
 
 \section{Locally reflective classes of fibrations}
+\label{sec:refl-fib}
 
 In this section, we discuss the notion of modalities in indexed type theories.
 Several equivalent definitions of modalities were defined in \cite{modality-hott} in the context of ordinary homotopy type theory.
