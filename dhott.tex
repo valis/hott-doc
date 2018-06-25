@@ -107,7 +107,9 @@ Since it requires little additional effort, we will define more general contextu
 
 \subsection{Change of base}
 
-The local universes construction defined in \cite{local-universes}, for every category $\scat{C}$ with a chosen pullbacks, terminal object, and a class of maps, called fibrations,
+Let $\scat{C}$ be a category with a chosen class of maps, called fibrations, such that the terminal object exists and pullbacks of fibrations exist and are fibrations.
+Such categories will be called \emph{categories with fibrations}.
+The local universes construction defined in \cite{local-universes}, for every category with fibrations $\scat{C}$,
 gives us a contextual category $\scat{C}_!$ whose types over $\Gamma$ are diagrams of the form
 \[ \xymatrix{                       & E_A \ar@{->>}[d]^{p_A} \\
               \Gamma \ar[r]_-{r_A}  & V_A
@@ -180,27 +182,36 @@ The fact that these constructions are stable under substitution follows from the
 \subsection{Type-theoretic semi-fibration categories}
 
 The notion of a type-theoretic fibration category was defined in \cite[Definition~2.1]{shul-inv}.
-We define a slight generalization of this notion:
+We define a generalization of this notion:
 \begin{defn}
 A \emph{type-theoretic semi-fibration category} consists of a category $\scat{C}$ with a chosen class of maps, called fibrations, a chosen terminal object, and chosen pullbacks of fibrations such that the following conditions hold:
 \begin{enumerate}
+\item For every fibration $f : A \to B$, the pullback functor $f^* : \scat{C}/B \to \scat{C}/A$ has a partial right adjoint $\Pi_f : \scat{C}/A \to \scat{C}/B$, defined for all fibraitons over $A$.
+\item The class of fibrations contains all isomorphisms and is closed under compositions and pullbacks.
+\item Let $f : A \to B$ be a trivial cofibration (that is, a map with the left lifting property with respect to fibrations) that fits in the diagram
+\[ \xymatrix{ A \ar[rr]^f \ar@{->>}[dr] &   & B \ar@{->>}[dl] \\
+                                        & C
+            } \]
+where $A \to C$ and $B \to C$ are fibrations. Then pullbacks of $f$ along fibrations are trivial cofibrations.
 \item Let $f : A \to B$ be a map that fits in the diagram
 \[ \xymatrix{ A \ar[rr]^f \ar@{->>}[dr] &   & B \ar@{->>}[dl] \\
                                         & C
             } \]
-where $A \to C$ and $B \to C$ are fibrations. Then $f$ factors as a trivial cofibration (that is, a map with the left lifting property with respect to fibrations) followed by a fibration.
-\item For every diagram of the form
-\[ \xymatrix{ A \times_\Gamma \Delta \ar[r] \ar[d] \pb & B \times_\Gamma \Delta \ar[d] \ar@{->>}[r] \pb & \Delta \ar[d] \\
-              A \ar[r] & B \ar@{->>}[r] & \Gamma
+where $A \to C$ and $B \to C$ are fibrations. Then $f$ factors as a trivial cofibration followed by a fibration.
+\item Let $f : A \to B$ be a trivial cofibration that fits in the diagram
+\[ \xymatrix{ A \ar[rr]^f \ar@{->>}[dr] &   & B \ar@{->>}[dl] \\
+                                        & C
             } \]
-if $A \to \Gamma$ and $B \to \Gamma$ are fibrations and $A \to B$ is a trivial cofibration, then $A \times_\Gamma \Delta \to B \times_\Gamma \Delta$ is also a trivial cofibration.
-\item For every fibration $f : A \to B$, the pullback functor $f^* : \scat{C}/B \to \scat{C}/A$ has a partial right adjoint $\Pi_f : \scat{C}/A \to \scat{C}/B$, defined for all fibraitons over $A$, and whose values are fibrations over $B$.
+where $A \to C$ and $B \to C$ are fibrations. Then, for every map $r : D \to C$, the pullback map $r^*(A) \to r^*(B)$ is a trivial cofibration.
 \end{enumerate}
 \end{defn}
 
-The third condition implies the existence of $\Pi$-types and $\Sigma$-types in $\scat{C}_!$.
-The first two conditions imply the existence of identity types.
-We will say that a type-theoretic semi-fibration category is \emph{extensional} if $\Pi_f$ preserves trivial fibrations (that is, fibrations which are also homotopy equivalences).
+The first condition is a technical assumption required by the local universes construction.
+The second condition implies the existence of $\Sigma$-types and unit types.
+The third condition is a technical assumption that guarantees that the category is homotopically well-behaved.
+The last two conditions imply the existence of identity types.
+We will say that a type-theoretic semi-fibration category is \emph{right proper} if $\Pi_f$ preserves fibrations (equivalently, if trivial cofibrations are stable under pullbacks along fibrations).
+We will say that a type-theoretic semi-fibration category is \emph{extensional} if $\Pi_f$ preserves fibrations and trivial fibrations (that is, fibrations which are also homotopy equivalences).
 
 \begin{remark}
 A type-theoretic fibration category is precisely a type-theoretic semi-fibration category in which all objects are fibrant.
@@ -214,24 +225,40 @@ The full subcategory of a type-theoretic semi-fibration category on fibrant obje
 Slice categories of a type-theoretic semi-fibration category are also type-theoretic semi-fibration categories.
 \end{remark}
 
+\begin{example}
+Let $\scat{M}$ be a model category in which cofibrations are stable under pullbacks and such that the pullback functor $g^* : \scat{M}/B \to \scat{M}/A$ has a right adjoint $\Pi_g$ for every fibration $g : A \to B$.
+Then $\scat{M}$ is a type-theoretic semi-fibration category.
+We will call such a model category \emph{type-theoretic model category}.
+This is a slightly more general notion than the one defined in \cite[Definition~2.12]{shul-inv}.
+
+A type-theoretic model category is right proper as a type-theoretic semi-fibration category if and only if it is right proper as a model category.
+If trivial fibrations in a type-theoretic model category $\scat{M}$ are homotopy equivalences, then $\scat{M}$ is extensional.
+In particular, every right proper locally Cartesian closed model category in which cofibrations are precisely monomorphisms is an extensional type-theoretic semi-fibration category.
+\end{example}
+
+\begin{example}
+If $\scat{M}$ is a type-theoretic model category and $\scat{J}$ is a small category, then $\scat{M}^\scat{J}$ with the injective model structure (if it exists) is a type-theoretic model category.
+Trivial cofibrations in $\scat{M}$ are stable under pullbacks since they are precisely objectwise trivial cofibrations.
+The right adjoint to pullback functors exists by \cite[Theorem~2.12]{comp-fact-tor}.
+If $\scat{M}$ is right proper and all objects of $\scat{M}$ are cofibrant, then $\scat{M}^\scat{J}$ is extensional.
+\end{example}
+
 \begin{defn}
 A \emph{Quillen adjunction} between type-theoretic semi-fibration categories is an adjunction such that the right adjoint preserves fibrations and trivial fibrations.
-If $F \dashv G$ is a Quillen adjunction, then $F$ (resp., $G$) will be called left (resp., right) Quillen functor.
+If $F \dashv G$ is a Quillen adjunction, then $F$ (resp., $G$) will be called \emph{left (resp., right) Quillen functor}.
 \end{defn}
 
-\begin{prop}
+\begin{prop}[indexed-locally-small]
 Let $F$ be a left Quillen functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$.
-Then $F^*(\scat{C}_!)$ is a model of a locally small indexed dependent type theory satisfying the following conditions:
-\begin{enumerate}
-\item The base theory has unit types, $\Sigma$-types, identity types, and $\Pi$-types.
-\item The indexed theory has unit types, $\Sigma$-types, identity types, $\Pi$-types, and dependent $\Hom$-types.
-\end{enumerate}
-If $\scat{C}$ is extensional, then indexed $\Pi$-types and identity types are extensional.
+Then $F^*(\scat{C}_!)$ is a contextually indexed contextual category with unit types, $\Sigma$-types, and identity types.
+If $\scat{C}$ is right proper, then $F^*(\scat{C}_!)$ has $\Pi$-types and dependent $\Hom$-types.
+In particular, it is locally small.
+If $\scat{C}$ is extensional, then $\Pi$-types and identity types are extensional.
 \end{prop}
 \begin{proof}
-The existence of $\Sigma$-types, identity types, and $\Pi$-types in the base theory and in the indexed theory follows from \cite{local-universes}.
-The functional extensionality holds by \cite[Lemma~5.9]{shul-inv}.
+The existence of unit types, $\Sigma$-types, identity types, and $\Pi$-types follows from \cite{local-universes}.
 The existence of dependent $\Hom$-types is proved in \rprop{locally-small}.
+The functional extensionality holds by \cite[Lemma~5.9]{shul-inv}.
 Thus, we just need to prove that identity types are extensional.
 
 We need to prove that the canonical function
@@ -260,7 +287,7 @@ Since the map $G(E_A) \to P_{G(V_A)}(G(E_A))$ is a trivial cofiration, we have a
               P_{G(V_A)}(G(E_A)) \ar@{->>}[r]_-q \ar@{-->}[urr]^s   & G(E_A) \times_{G(V_A)} G(E_A) \ar[r]_-\simeq  & G(E_A \times_{V_A} E_A)
             } \]
 This lift is the interpretation of $\fs{hap}_A$.
-To prove that pullback of $s$ over $\Gamma$ is an equivalence which is stable under pullbacks, it is enough to show that $s$ is an equivalence.
+To prove that the pullback of $s$ over $\Gamma$ is an equivalence which is stable under pullbacks, it is enough to show that $s$ is an equivalence.
 
 There is a fibration $G(E_A \times_{V_A} E_A) \to G(E_A)$.
 Moreover, the induced maps $X \to G(E_A)$ for every object in the diagram above are also fibrations.
@@ -271,6 +298,14 @@ By the 2-out-of-3 property, the map $P_{V_A}(E_A) \to E_A$ is a trivial fibratio
 Since $G$ preserves trivial fibrations, the 2-out-of-3 property implies that $G(r')$ is an equivalence.
 Finally, by the 2-out-of-3 property, $s$ is an equivalence.
 \end{proof}
+
+% Now, we are ready to describe our main example of a contextually indexed contextual category:
+
+\begin{example}
+If $\scat{M}$ is a type-theoretic model category and $\scat{J}$ is a small category, then the diagonal functor $\scat{M} \to \scat{M}^\scat{J}$ satisfies the conditions of \rprop{indexed-locally-small}.
+If $\scat{M}$ is right proper and all objects of $\scat{M}$ are cofibrant, then this is also true for $\scat{M}^\scat{J}$, which implies that it is extensional.
+% In particular, this is true for the diagonal functor $\sSet \to \sSet^{\Delta^\fs{op}}$.
+\end{example}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
