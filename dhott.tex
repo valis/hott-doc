@@ -51,6 +51,7 @@
 \newcommand{\scat}[1]{\mathcal{#1}}
 \newcommand{\sSet}{\cat{sSet}}
 \newcommand{\Hom}{\fs{Hom}}
+\newcommand{\Id}{\fs{Id}}
 
 \numberwithin{figure}{section}
 
@@ -106,12 +107,12 @@ Since it requires little additional effort, we will define more general contextu
 
 \subsection{Change of base}
 
-The local universes construction defined in \cite{local-universes}, for every category $\scat{C}$ with a chosen pullbacks, terminal object, and a class of maps called fibrations,
+The local universes construction defined in \cite{local-universes}, for every category $\scat{C}$ with a chosen pullbacks, terminal object, and a class of maps, called fibrations,
 gives us a contextual category $\scat{C}_!$ whose types over $\Gamma$ are diagrams of the form
-\[ \xymatrix{               & E_A \ar@{->>}[d] \\
-              \Gamma \ar[r] & V_A
+\[ \xymatrix{                       & E_A \ar@{->>}[d]^{p_A} \\
+              \Gamma \ar[r]_-{r_A}  & V_A
             } \]
-where $E_A \to V_A$ is a fibration.
+where $p_A$ is a fibration.
 Terms of this type are sections $\Gamma \to E_A$.
 For every type $\Gamma \vdash A$, the extended context $\Gamma, x : A$ is the pullback of this diagram.
 If $\scat{C}$ satisfies additional conditions listed in \cite[Definition~4.2.1]{local-universes}, then $\scat{C}_!$ models unit types, identity types, $\Sigma$-types, and $\Pi$-types.
@@ -126,27 +127,150 @@ We showed above that if the image of $F$ consists of fibrant objects, then we ca
 Actually, we can define this contextual category for arbitrary $F$.
 This is a straightforward generalization of the local universes model.
 Closed indexed types in context $\Gamma$ are diagrams of the form
-\[ \xymatrix{                   & E_A \ar@{->>}[d] \\
-              F(\Gamma) \ar[r]  & V_A
+\[ \xymatrix{                           & E_A \ar@{->>}[d]^{p_A} \\
+              F(\Gamma) \ar[r]_-{r_A}   & V_A
             } \]
-where $E_A \to V_A$ is a fibration.
+where $p_A$ is a fibration.
 Contexts, terms, and non-closed types are defined as before.
 
 We are mainly interested in locally small contextually indexed categories since most of the constructions in \cite{indexed-tt} use this property.
 In general, local smallness of $\scat{C}$ does not imply local smallness of $F^*(\scat{C})$.
 We consider a special case when it does:
 
-\begin{prop}
-Let $\scat{B}$ be a contextual category, let $\scat{C}$ be a category with fibrations, and let $F : \scat{B} \to \scat{C}$ be a functor with a right adjoint $G : \scat{C} \to \scat{B}$.
-Suppose that, for every fibration $f : A \to B$, the pullback functor $f^* : \scat{C}/B \to \scat{C}/A$ has a right adjoint $\Pi_f : \scat{C}/A \to \scat{C}/B$ and this functor preserves fibrations.
-Then $F^*(\scat{C}_!)$ is locally Cartesian closed and has dependent $\Hom$-types.
+\begin{prop}[locally-small]
+Let $F : \scat{B} \to \scat{C}$ be a functor between categories with fibrations (which might not preserve any structure).
+Suppose that, for every fibration $f : A \to B$ in $\scat{C}$, the pullback functor $f^* : \scat{C}/B \to \scat{C}/A$ has a partial right adjoint $\Pi_f : \scat{C}/A \to \scat{C}/B$, defined for all fibraitons over $A$, and whose values are fibrations over $B$.
+Then $F^*(\scat{C}_!)$ has $\Pi$-types.
+If $F$ has a right adjoint $G : \scat{C} \to \scat{B}$ which preserves fibrations, then $F^*(\scat{C}_!)$ has dependent $\Hom$-types.
 In particular, it is locally small.
 \end{prop}
 \begin{proof}
-% TODO
+The fact that $F^*(\scat{C}_!)$ has $\Pi$-types was proved in \cite{local-universes}.
+Since we have $\Pi$-types, it is enough to define dependent $\Hom$-types for closed types:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
+\UnaryInfC{$\Gamma \vdash \Hom(\cdot.B) \type$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \cdot \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda(b) : \Hom(\cdot.B)$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash f : \Hom(\cdot.B)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash f\,() : B$}
+\DisplayProof
+\end{center}
+
+\begin{align*}
+\lambda(b)\,() & = b \\
+\lambda(f\,()) & = f
+\end{align*}
+
+If $B$ is a closed type, then we define $\Gamma \vdash \Hom(\cdot.B)$ as the following diagram:
+\[ \xymatrix{                               & G(E_B) \ar@{->>}[d]^{G(p_B)} \\
+              \Gamma \ar[r]_-{\varphi(r_B)} & G(V_B)
+            } \]
+where $\varphi(r_B)$ is the map corresponding to $r_B$ by adjointness.
+A term $\Gamma \mid \cdot \vdash b : B)$ corresponds to a section $b : F(\Gamma) \to E_B$ of $p_B$.
+We define $\lambda(b)$ as $\varphi(b) : \Gamma \to G(E_B)$.
+Conversely, if $f : \Gamma \to G(E_B)$ is a section of $G(p_B)$, then we define $f\,()$ as $\varphi^{-1}(f) : F(\Gamma) \to E_B$.
+The fact that these constructions are stable under substitution follows from the naturality of $\varphi$.
 \end{proof}
 
-\subsection{Contextually indexed categories of diagrams}
+\subsection{Type-theoretic semi-fibration categories}
+
+The notion of a type-theoretic fibration category was defined in \cite[Definition~2.1]{shul-inv}.
+We define a slight generalization of this notion:
+\begin{defn}
+A \emph{type-theoretic semi-fibration category} consists of a category $\scat{C}$ with a chosen class of maps, called fibrations, a chosen terminal object, and chosen pullbacks of fibrations such that the following conditions hold:
+\begin{enumerate}
+\item Let $f : A \to B$ be a map that fits in the diagram
+\[ \xymatrix{ A \ar[rr]^f \ar@{->>}[dr] &   & B \ar@{->>}[dl] \\
+                                        & C
+            } \]
+where $A \to C$ and $B \to C$ are fibrations. Then $f$ factors as a trivial cofibration (that is, a map with the left lifting property with respect to fibrations) followed by a fibration.
+\item For every diagram of the form
+\[ \xymatrix{ A \times_\Gamma \Delta \ar[r] \ar[d] \pb & B \times_\Gamma \Delta \ar[d] \ar@{->>}[r] \pb & \Delta \ar[d] \\
+              A \ar[r] & B \ar@{->>}[r] & \Gamma
+            } \]
+if $A \to \Gamma$ and $B \to \Gamma$ are fibrations and $A \to B$ is a trivial cofibration, then $A \times_\Gamma \Delta \to B \times_\Gamma \Delta$ is also a trivial cofibration.
+\item For every fibration $f : A \to B$, the pullback functor $f^* : \scat{C}/B \to \scat{C}/A$ has a partial right adjoint $\Pi_f : \scat{C}/A \to \scat{C}/B$, defined for all fibraitons over $A$, and whose values are fibrations over $B$.
+\end{enumerate}
+\end{defn}
+
+The third condition implies the existence of $\Pi$-types and $\Sigma$-types in $\scat{C}_!$.
+The first two conditions imply the existence of identity types.
+We will say that a type-theoretic semi-fibration category is \emph{extensional} if $\Pi_f$ preserves trivial fibrations (that is, fibrations which are also homotopy equivalences).
+
+\begin{remark}
+A type-theoretic fibration category is precisely a type-theoretic semi-fibration category in which all objects are fibrant.
+\end{remark}
+
+\begin{remark}[semi-fib]
+The full subcategory of a type-theoretic semi-fibration category on fibrant objects is a type-theoretic fibration category.
+\end{remark}
+
+\begin{remark}[semi-over]
+Slice categories of a type-theoretic semi-fibration category are also type-theoretic semi-fibration categories.
+\end{remark}
+
+\begin{defn}
+A \emph{Quillen adjunction} between type-theoretic semi-fibration categories is an adjunction such that the right adjoint preserves fibrations and trivial fibrations.
+If $F \dashv G$ is a Quillen adjunction, then $F$ (resp., $G$) will be called left (resp., right) Quillen functor.
+\end{defn}
+
+\begin{prop}
+Let $F$ be a left Quillen functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$.
+Then $F^*(\scat{C}_!)$ is a model of a locally small indexed dependent type theory satisfying the following conditions:
+\begin{enumerate}
+\item The base theory has unit types, $\Sigma$-types, identity types, and $\Pi$-types.
+\item The indexed theory has unit types, $\Sigma$-types, identity types, $\Pi$-types, and dependent $\Hom$-types.
+\end{enumerate}
+If $\scat{C}$ is extensional, then indexed $\Pi$-types and identity types are extensional.
+\end{prop}
+\begin{proof}
+The existence of $\Sigma$-types, identity types, and $\Pi$-types in the base theory and in the indexed theory follows from \cite{local-universes}.
+The functional extensionality holds by \cite[Lemma~5.9]{shul-inv}.
+The existence of dependent $\Hom$-types is proved in \rprop{locally-small}.
+Thus, we just need to prove that identity types are extensional.
+
+We need to prove that the canonical function
+\[ \Id_{\Hom(\Delta.B)}(f,g) \to \Hom(\Delta.\,\Id_B(f\,\overline{x},g\,\overline{x})) \] is an equivalence, where $\Delta = x_1 : A_1, \ldots x_n : A_n$.
+Since we have $\Pi$-types this function is equivalent to the canonical function $\Id_{\Hom(\cdot . \Pi(\Delta,B))(\lambda(\lambda \overline{x}.f\overline{x}),\lambda(\lambda \overline {x}.g\overline{x}))} \to \Hom(\cdot . \Pi(\Delta, \Id(f\,\overline{x},g\,\overline{x})))$.
+This function factors through the canonical function $\Hom(\cdot . \Id_{\Pi(\Delta,B)}(\lambda \overline{x}. f\,\overline{x}, \lambda \overline{x}. g\,\overline{x})) \to \Hom(\cdot . \Pi(\Delta, \Id(f\,\overline{x},g\,\overline{x})))$.
+Since $\Pi$-types are extensional, we just need to show that the map $\Id_{\Hom(\cdot . \Pi(\Delta,B))(\lambda(\lambda \overline{x}.f\overline{x}),\lambda(\lambda \overline {x}.g\overline{x}))} \to \Hom(\cdot . \Id_{\Pi(\Delta,B)}(\lambda \overline{x}. f\,\overline{x}, \lambda \overline{x}. g\,\overline{x}))$ is an equivalence.
+We prove that, more generally, for every closed type $A$ and terms $\Gamma \vdash a : \Hom(\cdot.A)$ and $\Gamma \vdash a' : \Hom(\cdot.A)$, the canonical function $\Id_{\Hom(\cdot . A)}(a,a') \to \Hom(\cdot . \Id_A(a\,(),a'\,()))$ is an equivalence.
+This function will be denoted by $\fs{hap}_A$.
+
+The type $A$ correspond to a diagram of the form
+\[ \xymatrix{                           & E_A \ar@{->>}[d]^{p_A} \\
+              F(\Gamma) \ar[r]_-{r_A}   & V_A
+            } \]
+and terms $a$ and $a'$ correspond to section $a,a' : F(\Gamma) \to E_A$ of $p_A$.
+Types $\Id_{\Hom(\cdot . A)}(a,a')$ and $\Hom(\cdot . \Id_A(a\,(),a'\,()))$ are interpreted as the following diagrams:
+\[ \xymatrix{                                                           & & P_{G(V_A)}(G(E_A)) \ar@{->>}[d]^q \\
+              \Gamma \ar[rr]_-{\langle \varphi(a), \varphi(a') \rangle} & & G(E_A) \times_{G(V_A)} G(E_A)
+            } \qquad
+   \xymatrix{                                                   & & G(P_{V_A}(E_A)) \ar@{->>}[d]^{G(q')} \\
+              \Gamma \ar[rr]_-{\varphi(\langle a, a' \rangle)}  & & G(E_A \times_{V_A} E_A)
+            } \]
+where $P_{X}(Y)$ is the path object for the diagonal $Y \to Y \times_{X} Y$.
+Since the map $G(E_A) \to P_{G(V_A)}(G(E_A))$ is a trivial cofiration, we have a lift in the following diagram:
+\[ \xymatrix{ G(E_A) \ar[d]_r \ar[rr]^-{G(r')}                      &                                               & G(P_{V_A}(E_A)) \ar@{->>}[d]^{G(q')} \\
+              P_{G(V_A)}(G(E_A)) \ar@{->>}[r]_-q \ar@{-->}[urr]^s   & G(E_A) \times_{G(V_A)} G(E_A) \ar[r]_-\simeq  & G(E_A \times_{V_A} E_A)
+            } \]
+This lift is the interpretation of $\fs{hap}_A$.
+To prove that pullback of $s$ over $\Gamma$ is an equivalence which is stable under pullbacks, it is enough to show that $s$ is an equivalence.
+
+There is a fibration $G(E_A \times_{V_A} E_A) \to G(E_A)$.
+Moreover, the induced maps $X \to G(E_A)$ for every object in the diagram above are also fibrations.
+By \rremark{semi-fib} and \rremark{semi-over}, we can think of this diagram as a diagram in the type-theoretic fibration category of fibrations over $G(E_A)$.
+Since $r$ is trivial cofibration, \cite[Lemma~3.6]{shul-inv} implies that it is an equivalence.
+The map $r'$ is also an equivalence for the same reasons.
+By the 2-out-of-3 property, the map $P_{V_A}(E_A) \to E_A$ is a trivial fibration.
+Since $G$ preserves trivial fibrations, the 2-out-of-3 property implies that $G(r')$ is an equivalence.
+Finally, by the 2-out-of-3 property, $s$ is an equivalence.
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
