@@ -52,6 +52,7 @@
 \newcommand{\sSet}{\cat{sSet}}
 \newcommand{\Hom}{\fs{Hom}}
 \newcommand{\Id}{\fs{Id}}
+\newcommand{\id}{\fs{id}}
 
 \numberwithin{figure}{section}
 
@@ -302,10 +303,111 @@ Finally, by the 2-out-of-3 property, $s$ is an equivalence.
 % Now, we are ready to describe our main example of a contextually indexed contextual category:
 
 \begin{example}
-If $\scat{M}$ is a type-theoretic model category and $\scat{J}$ is a small category, then the diagonal functor $\scat{M} \to \scat{M}^\scat{J}$ satisfies the conditions of \rprop{indexed-locally-small}.
+If $\scat{M}$ is a type-theoretic model category and $\scat{J}$ is a small category, then the diagonal functor $D: \scat{M} \to \scat{M}^\scat{J}$ satisfies the conditions of \rprop{indexed-locally-small}.
 If $\scat{M}$ is right proper and all objects of $\scat{M}$ are cofibrant, then this is also true for $\scat{M}^\scat{J}$, which implies that it is extensional.
 % In particular, this is true for the diagonal functor $\sSet \to \sSet^{\Delta^\fs{op}}$.
 \end{example}
+
+\subsection{(Co)limits}
+
+Let $F$ be a left Quillen functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$.
+We will say that a map of $\scat{C}$ is an \emph{$F$-fibration} if it is a pullback of the map $F(f)$ for some fibration $f$.
+
+\begin{prop}
+Let $F$ be a left Quillen functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$.
+Suppose that $F$ preserves pullbacks along fibrations and that, for every $F$-fibration $g : A \to B$, pullbacks of $g$ exist and the pullback functor $g^* : \scat{C}/B \to \scat{C}/A$ has a right adjoint $\Pi_g$ which preserves fibrations.
+Then $F^*(\scat{C}_!)$ has products.
+\end{prop}
+\begin{proof}
+First, we need to describe the interpretation of the following rule:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash B \ob$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \prod_{i : I} B \ob$}
+\DisplayProof
+\end{center}
+Suppose that we have diagrams depicted below which correspond to types $\Gamma \vdash I$ and $\Gamma, i : I \mid \Delta \vdash B$.
+\[ \xymatrix{                       & E_I \ar[d]^{p_I} \\
+              \Gamma \ar[r]_{r_I}   & V_I
+            } \qquad
+   \xymatrix{                               & E_B \ar[d]^{p_B} \\
+              \Gamma.I.\Delta \ar[r]_{r_B}  & V_B
+            } \]
+where $\Gamma.I.\Delta$ is the following pullback:
+\[ \xymatrix{ \Gamma.I.\Delta \ar[r] \ar@{->>}[d] \pb   & \Delta \ar@{->>}[d]^{p_\Delta} \\
+              F(\Gamma.I) \ar[r] \ar[d] \pb             & F(\Gamma) \ar[d]^{F(r_I)} \\
+              F(E_I) \ar[r]_{F(p_I)}                    & F(V_I)
+            } \]
+We define $V_\Pi$ as $\Pi_{F(p_I)}(F(E_I) \times V_B)$.
+Consider the following diagrams:
+\[ \xymatrix{ V_\Pi \times_{F(V_I)} F(E_I) \ar[r] \ar[d]_p \pb  & F(E_I) \ar[d]^{F(p_I)} \\
+              V_\Pi \ar[r]                                      & F(V_I)
+            } \qquad
+   \xymatrix{ Z \ar[r] \ar@{->>}[d]_q \pb                       & F(E_I) \times E_B \ar@{->>}[d]^{\id_{F(E_I)} \times p_B} \\
+              V_\Pi \times_{F(V_I)} F(E_I) \ar[r]_-{\fs{ev}}    & F(E_I) \times V_B
+            } \]
+We define $p_\Pi : E_\Pi \to V_\Pi$ as $\Pi_p(Z)$.
+To define a map $\Delta \to V_\Pi$, it is enough to specify a map $r_I' : \Delta \to F(V_I)$ together with a map $r_B' : \Delta.I \to V_B$, where $\Delta.I$ is the pullback of $r_I'$ and $F(p_I)$.
+Let $r_I' = F(r_I) \circ p_\Delta$ and $r_B' = r_B$.
+These maps determine a map $[r_I',r_B] : \Delta \to V_\Pi$.
+We define the interpretation of $\prod_{i : I} B$ as the following diagram:
+\[ \xymatrix{                               & E_\Pi \ar[d]^{p_\Pi} \\
+              \Delta \ar[r]_{[r_I',r_B]}    & V_\Pi
+            } \]
+
+Now, let us decribe the interpretation of the following rule:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash b : B$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \lambda i.\,b : \prod_{i : I} B$}
+\DisplayProof
+\end{center}
+The interpretation of $b$ is a section $b : \Gamma.I.\Delta \to E_B$ of $p_B$.
+Note that we have the following diagram in which the composition of bottom maps equals to $r_I'$:
+\[ \xymatrix{ \Gamma.I.\Delta \ar[r]^-s \ar[d] \pb  & V_\Pi \times_{F(V_I)} F(E_I) \ar[r] \ar[d]_p \pb  & F(E_I) \ar[d]^{F(p_I)} \\
+              \Delta \ar[r]_{[r_I',r_B]}            & V_\Pi \ar[r]                                      & F(V_I)
+            } \]
+An interpretation of $\lambda i.\,b$ is a section of $\Delta \to E_\Pi$ of $p_\Pi$.
+To define such a section, it is enough to specify a section $b' : \Gamma.I.\Delta \to Z$ of $q$ over $s$.
+Since $q$ is a pullback of $p_B$, this is equivalent to specifying a section of $p_B$ and we can take this section to be $b$.
+
+Finally, we need to define the interpretation of the application:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash f : \prod_{i : I} B$}
+\AxiomC{$\Gamma \vdash j : I$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash f\,j : B[j/i]$}
+\DisplayProof
+\end{center}
+Let $f : \Delta \to E_\Pi$ be a section of $p_\Pi$ and let $j : \Gamma \to E_I$ be a section of $p_I$.
+We define the interpretation of $f\,j$ as $f' \circ j''$, where $f' : \Gamma.I.\Delta \to E_B$ is a section of $p_B$ corresponding to $f$ as discussed before and $j''$ is the following pullback:
+\[ \xymatrix{ \Delta \ar[r]^-{j''} \ar@{->>}[d]_{p_\Delta} \pb  & \Gamma.I.\Delta \ar[r] \ar@{->>}[d] \pb   & \Delta \ar@{->>}[d]^{p_\Delta} \\
+              F(\Gamma) \ar[r]_{F(j')}                          & F(\Gamma.I) \ar[r]                        & F(\Gamma)
+            } \]
+where $j' : \Gamma \to \Gamma.I$ is a section of $\Gamma.I \to \Gamma$ corresponding to $j$.
+
+It is easy to verify the stability under substitutions of the constructions that we decsribed.
+We also need to prove that $\beta$ and $\eta$ equivalences hold, but this follows from the fact that functions that we used to go from sections of $p_\Pi$ and $p_B$ and back are mutually inverse.
+\end{proof}
+
+\begin{example}
+If $\scat{M}$ is a type-theoretic model category and $\scat{J}$ is a small category, then $D^*((\scat{M}^\scat{J})_!)$ has products.
+Since $D$ is a right adjoint, it preserves all limits.
+Since $D$-fibrations are objectwise fibrations, the right adjoint to the pullback functor $g^*$ for a $D$-fibration $g$ exists by \cite[Theorem~2.12]{comp-fact-tor}.
+The fact that this right adjoint preserves fibrations is equivalent to the fact that trivial cofibrations are stable under pullbacks along $D$-fibrations.
+This follows from the fact that $D$-fibrations and trivial cofibrations are objectwise fibrations and trivial cofibrations, respectively.
+\end{example}
+
+\subsection{Factorization systems}
+
+% TODO
+
+\subsection{Universes}
+
+% TODO
+
+\subsection{Full subcategories}
+
+% TODO
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
