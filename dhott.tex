@@ -470,7 +470,7 @@ We will say that a map $f : X \to Z$ in a category with fibrations is a \emph{ps
 the map $i'$ is a trivial cofibration.
 Oviously, every fibration is a pseudo-fibration.
 
-\begin{lem}
+\begin{lem}[proj-pseudo]
 Let $\scat{C}$ be a combinatorial type-theoretic semi-fibration category and let $\scat{J}$ be a small category.
 Then every projective fibration of $\scat{C}^\scat{J}$ is a pseudo-fibration.
 \end{lem}
@@ -510,7 +510,6 @@ It follows that we have a lift in the following diagram:
               V_D \times R(0) \ar[r]_-{\pi_1} \ar@{-->}[ur]^s   & V_D
             } \]
 Then the interpretation of $0\text{-}\fs{elim'}$ is defined as $\Delta \xrightarrow{\langle r_D, a \rangle} V_D \times R(0) \xrightarrow{s} E_D$.
-This interpretation is obviously stable under substitutions.
 \end{proof}
 
 \begin{remark}
@@ -526,7 +525,7 @@ Indeed, the constant functor $D(0)$ is obviously a strict initial object.
 The previous remark implies that $D(0)$ is injectively fibrant.
 \end{example}
 
-\begin{prop}
+\begin{prop}[coproducts]
 Let $F : \scat{B} \to \scat{C}$ be a functor between categories with fibrations.
 Suppose that the following conditions hold:
 \begin{enumerate}
@@ -534,11 +533,110 @@ Suppose that the following conditions hold:
 \item Fibrations and $F$-fibrations are exponentiable.
 \item The composition of a fibration and an $F$-fibration is a pseudo-fibration.
 \end{enumerate}
-Then $F^*(\scat{C}_!)$ has dependent coproducts.
+Then $F^*(\scat{C}_!)$ has stable dependent coproducts.
 \end{prop}
 \begin{proof}
-% TODO
+Suppose that we have diagrams depicted below which correspond to types $\Gamma \vdash I$ and $\Gamma, i : I \mid \Delta \vdash B$.
+\[ \xymatrix{                       & E_I \ar@{->>}[d]^{p_I} \\
+              \Gamma \ar[r]_{r_I}   & V_I
+            } \qquad
+   \xymatrix{                               & E_B \ar@{->>}[d]^{p_B} \\
+              \Gamma.I.\Delta \ar[r]_{r_B}  & V_B
+            } \]
+where $\Gamma.I.\Delta$ is the following pullback:
+\[ \xymatrix{ \Gamma.I.\Delta \ar[r] \ar@{->>}[d] \pb   & \Delta \ar@{->>}[d]^{p_\Delta} \\
+              F(\Gamma.I) \ar[r] \ar[d] \pb             & F(\Gamma) \ar[d]^{F(r_I)} \\
+              F(E_I) \ar[r]_{F(p_I)}                    & F(V_I)
+            } \]
+We define $V_\amalg$ as $\Pi_{F(p_I)}(F(E_I) \times V_B)$.
+Consider the following diagrams:
+\[ \xymatrix{ V_\Pi \times_{F(V_I)} F(E_I) \ar[r] \ar[d]_p \pb  & F(E_I) \ar[d]^{F(p_I)} \\
+              V_\Pi \ar[r]                                      & F(V_I)
+            } \qquad
+   \xymatrix{ Z \ar[r] \ar@{->>}[d]_q \pb                       & F(E_I) \times E_B \ar@{->>}[d]^{\id_{F(E_I)} \times p_B} \\
+              V_\Pi \times_{F(V_I)} F(E_I) \ar[r]_-{\fs{ev}}    & F(E_I) \times V_B
+            } \]
+Since $p \circ q$ is a pseudo-fibration, we can factor it into a trivial cofibration $t : Z \to E_\amalg$ followed by a fibration $p_\amalg : E_\amalg \twoheadrightarrow V_\amalg$.
+To define a map $\Delta \to V_\Pi$, it is enough to specify a map $r_I' : \Delta \to F(V_I)$ together with a map $r_B' : \Delta.I \to V_B$, where $\Delta.I$ is the pullback of $r_I'$ and $F(p_I)$.
+Let $r_I' = F(r_I) \circ p_\Delta$ and $r_B' = r_B$.
+These maps determine a map $[r_I',r_B] : \Delta \to V_\amalg$.
+We define the interpretation of $\coprod_{i : I} B$ as the following diagram:
+\[ \xymatrix{                               & E_\amalg \ar@{->>}[d]^{p_\amalg} \\
+              \Delta \ar[r]_{[r_I',r_B]}    & V_\amalg
+            } \]
+
+Now, let us describe the interpretation of the following rule:
+\begin{center}
+\AxiomC{$\Gamma \vdash j : I$}
+\AxiomC{$\Gamma \mid \Delta \vdash b : B_j$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash (j,b) : \coprod_{i : I} B_i$}
+\DisplayProof
+\end{center}
+The interpretation of $j$ is a section $j : \Gamma \to E_I$ of $p_I$ over $r_I$.
+This map determines a section $j' : \Gamma \to \Gamma.I$ of the map $\Gamma.I \to \Gamma$.
+The pullback of $F(j')$ along $p_\Delta$ will be denoted by $j'' : \Delta \to \Gamma.I.\Delta$.
+The interpretation of $b$ is a section $b : \Gamma.I.\Delta \to E_B$ of $p_B$.
+This map determines a section $b' : \Gamma.I.\Delta \to Z$ of $q$:
+\[ \xymatrix{                                                   & Z \ar[r] \ar@{->>}[d]^q \pb                                   & F(E_I) \times E_B \ar@{->>}[d]^{\id_{F(E_I) \times p_B}}  &                           \\
+              \Gamma.I.\Delta \ar[r] \ar[d] \ar[ur]^{b'} \pb    & V_\Pi \times_{F(V_I)} F(E_I) \ar[r]_-{\fs{ev}} \ar[d]^p \pb   & F(E_I) \times V_B \ar[r]_-{\pi_1}                         & F(E_I) \ar[d]^{F(p_I)}    \\
+              \Delta \ar[r]_{[r_I',r_B]}                        & V_\amalg \ar[rr]                                              &                                                           & F(V_I)
+            } \]
+We define the interpretation of $(j,b)$ as $t \circ b' \circ j''$.
+
+Finally, let us describe the interpretation of the eliminator:
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \mid \Delta, z : \coprod_{i : I} B_i \vdash D \ob$
+\noLine
+\UnaryInf$\fCenter \Gamma, i : I \mid \Delta, x : B_i \vdash d : D[(i,x)/z]$
+\Axiom$\fCenter \Gamma \mid \Delta \vdash c : \coprod_{i : I} B_i$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \coprod\text{-}\fs{elim}(z.D, i x.d, c) : D$}
+\DisplayProof
+\end{center}
+The interpretation of $D$ consists of a map $r_\amalg : \Delta \to V_\amalg$ together with a map $r_D : \Delta.\amalg \to V_D$ and a fibration $p_D : E_D \twoheadrightarrow V_D$, where $\Delta.\amalg$ is the pullback of $r_\amalg$ and $p_\amalg$.
+The interpretation of $d$ is a section $d : \Gamma.I.\Delta.B \to E_D$ of $p_D$, where $\Gamma.I.\Delta.B$ is the pullback of $r_B$ and $p_B$.
+The interpretation of $c$ is a section $c : \Delta \to E_\amalg$ of $p_\amalg$ over $r_\amalg$.
+
+Let $s$ be the pullback of $p \circ q$:
+\[ \xymatrix{ \Pi_{p_\amalg}(E_\amalg \times V_D) \times_{V_\amalg} Z \ar[r] \ar[d]_s \pb   & Z \ar[d]^{p \circ q} \\
+              \Pi_{p_\amalg}(E_\amalg \times V_D) \ar[r]                                    & V_\amalg
+            } \]
+Let $X$ be the following pullback:
+\[ \xymatrix{ X \ar[rr] \ar@{->>}[d] \pb                                                            &                                                                                   & E_\amalg \times E_D \ar@{->>}[d]^{\id \times p_D} \\
+              \Pi_{p_\amalg}(E_\amalg \times V_D) \times_{V_\amalg} Z \ar[r]_-{\id \times_\id t}    & \Pi_{p_\amalg}(E_\amalg \times V_D) \times_{V_\amalg} E_\amalg \ar[r]_-{\fs{ev}}  & E_\amalg \times V_D
+            } \]
+Maps $p$ and $q$ are exponentiable by assumption.
+By \cite[Corollary~2.6]{comp-fact-tor}, $s$ is also exponentiable.
+Let $t'$ be the pullback of $t$:
+\[ \xymatrix{ \Pi_s(X) \times_{V_\amalg} Z \ar[r] \ar[d]_{t'} \pb           & Z \ar[d]^t                        \\
+              \Pi_s(X) \times_{V_\amalg} E_\amalg \ar[r] \ar@{->>}[d] \pb   & E_\amalg \ar@{->>}[d]^{p_\amalg}  \\
+              \Pi_s(X) \ar[r]                                               & V_\amalg
+            } \]
+Since $p \circ q$ is a pseudo-fibration, $t'$ is a trivial cofibration.
+It follows that we have a lift in the following diagram:
+\[ \xymatrix{ \Pi_s(X) \times_{V_\amalg} Z \ar[r]^-{\fs{ev}} \ar[d]_{t'}    & X \ar[rr]                                                                         &                                       & E_D \ar@{->>}[d]^{p_D} \\
+              \Pi_s(X) \times_{V_\amalg} E_\amalg \ar[r] \ar@{-->}[urrr]^e  & \Pi_{p_\amalg}(E_\amalg \times V_D) \times_{V_\amalg} E_\amalg \ar[r]_-{\fs{ev}}  & E_\amalg \times V_D \ar[r]_-{\pi_2}   & V_D
+            } \]
+We define the interpretation of the eliminator as the composite $\Delta \to \Pi_s(X) \times_{V_\amalg} E_\amalg \xrightarrow{e} E_D$, where the first map is defined below.
+To define such a map, it is enough to specify maps $\Delta \to \Pi_s(X)$ and $\Delta \to E_\amalg$ which are equal over $V_\amalg$.
+We define the latter map as $c : \Delta \to E_\amalg$.
+To define the former map, it is enough to specify two maps:
+\begin{itemize}
+\item A map $\Delta \to \Pi_{p_\amalg}(E_\amalg \times V_D)$ such that its composition with the map $\Pi_{p_\amalg}(E_\amalg \times V_D) \to V_\amalg$ equals to $r_\amalg$.
+To define such a map, it is enough to specify a map $\Delta.\amalg \to V_D$.
+We define it as $r_D$.
+\item A section $\Gamma.I.\Delta.B \to E_D$ of $p_D$.
+We define this section as $d$.
+\end{itemize}
+This completes the definition of the interpretation of the eliminator.
 \end{proof}
+
+\begin{example}
+If $\scat{C}$ is a combinatorial type-theoretic semi-fibration category and $\scat{J}$ is a small category, then $D^*((\scat{C}^\scat{J})_!)$ satisfies the conditions of \rprop{coproducts}.
+Indeed, both injective fibrations and $F$-fibrations are objectwise fibrations which implies that they are exponentiable.
+Moreover, \rlem{proj-pseudo} implies that their composition is a pseudo-fibration.
+\end{example}
 
 \subsection{Pushouts}
 
