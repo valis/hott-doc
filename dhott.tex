@@ -51,6 +51,7 @@
 \newcommand{\scat}[1]{\mathcal{#1}}
 \newcommand{\Fib}{\mathcal{F}}
 \newcommand{\sSet}{\cat{sSet}}
+\newcommand{\Set}{\cat{Set}}
 \newcommand{\Hom}{\fs{Hom}}
 \newcommand{\Id}{\fs{Id}}
 \newcommand{\id}{\fs{id}}
@@ -89,8 +90,8 @@ In this section, we discuss several examples of models of indexed type theories.
 Indexed type theories are defined in \cite{indexed-tt} as certain essentially algebraic theory.
 Thus, we have a notion of a model of such a theory.
 We will call models of indexed unary (resp., dependent) type theories \emph{contextually indexed categories} (resp., \emph{contextually indexed contextual categories}).
-A contextually indexed category is a contextual category $B$ together with a category indexed over $B$, that is a functor $B^\fs{op} \to \cat{Cat}$.
-A contextually indexed contextual category is a contextual category $B$ together with a contextual category indexed over $B$, that is a functor $B^\fs{op} \to \cat{ConCat}$.
+A contextually indexed category is a contextual category $\scat{B}$ together with a category indexed over $\scat{B}$, that is a functor $\scat{B}^\fs{op} \to \cat{Cat}$.
+A contextually indexed contextual category is a contextual category $\scat{B}$ together with a contextual category indexed over $\scat{B}$, that is a functor $\scat{B}^\fs{op} \to \cat{ConCat}$.
 
 One class of contextually indexed contextual categories was already defined in \cite{indexed-tt}.
 An indexed type theory can be interpreted in an appropriate homotopy type theory.
@@ -105,7 +106,7 @@ If $F$ and $G$ are isomorphic functors between categories underlying contextual 
 Our aim in this section is to define models for simplicial spaces, Segal spaces, and complete Segal spaces.
 These models can be roughly described as full subcategories of the contextually indexed category $\sSet^{\Delta^\fs{op}}$,
 where $\sSet$ is the canonical indexing of the category of simplicial set (considered as a contextual category as described in \cite{kap-lum-voe}) over itself.
-Since it requires little additional effort, we will define more general contextually indexed category $\scat{C}^\scat{J}$ over $\scat{C}$ for all appropriate categories $\scat{C}$ and $\scat{J}$.
+Since it requires little additional effort, we will define a contextually indexed contextual category $\scat{C}^\scat{J}$ over $\scat{C}^\scat{I}$ for all appropriate categories $\scat{C}$, $\scat{J}$, and $\scat{I}$.
 
 \subsection{Change of base}
 
@@ -144,19 +145,36 @@ We consider a special case when it does:
 
 \begin{prop}[locally-small]
 Let $F : \scat{B} \to \scat{C}$ be a functor between categories with fibrations (which might not preserve any structure).
-Suppose that, for every fibration $f : A \twoheadrightarrow B$ in $\scat{C}$, the pullback functor $f^* : \scat{C}/B \to \scat{C}/A$ has a right adjoint $\Pi_f : \scat{C}/A \to \scat{C}/B$ which maps fibrations over $A$ to fibrations over $B$.
-Then $F^*(\scat{C}_!)$ has $\Pi$-types.
-If $F$ has a right adjoint $G : \scat{C} \to \scat{B}$ which preserves fibrations, then $F^*(\scat{C}_!)$ has dependent $\Hom$-types.
+Suppose that, for every fibration $f : A \twoheadrightarrow B$ in $\scat{C}$, the pullback functor $f^* : \scat{C}/B \to \scat{C}/A$ has a right adjoint $\Pi_f : \scat{C}/A \to \scat{C}/B$
+Then
+\begin{enumerate}
+\item If $\Pi_f$ maps fibrations over $A$ to fibrations over $B$, then $F^*(\scat{C}_!)$ has $\Pi$-types.
+\item If $F$ has a right adjoint $G : \scat{C} \to \scat{B}$ and $G(\Pi_f(g))$ is a fibration over $G(B)$ for every fibration $g$ over $A$, then $F^*(\scat{C}_!)$ has dependent $\Hom$-types.
 In particular, it is locally small.
+\end{enumerate}
 \end{prop}
 \begin{proof}
-The fact that $F^*(\scat{C}_!)$ has $\Pi$-types was proved in \cite{local-universes}.
-Since we have $\Pi$-types, it is enough to define dependent $\Hom$-types for closed types:
+The first claim was proved in \cite{local-universes}.
+Let us prove the second one.
+First, we need to describe the interpretation of the following rule:
 \begin{center}
-\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
-\UnaryInfC{$\Gamma \vdash \Hom(\cdot.B) \type$}
+\AxiomC{$\Gamma \mid \Delta \vdash B \ob$}
+\UnaryInfC{$\Gamma \vdash \Hom(\Delta.B) \type$}
 \DisplayProof
-\qquad
+\end{center}
+We almost have $\Pi$-types, which means that we can interpret $\Pi(\Delta.B)$ as the following diagram:
+\[ \xymatrix{                           & E_B \ar[d]^{p_B} \\
+              F(\Gamma) \ar[r]_-{r_B}   & V_B
+            } \]
+where $p_B$ is defined as $\Pi_f(g)$ for some fibrations $f$ and $g$.
+This map might not be a fibration, but $G(p_B)$ is, so we can define the interpretation of $\Gamma \vdash \Hom(\Delta.B)$ as follows:
+\[ \xymatrix{                               & G(E_B) \ar@{->>}[d]^{G(p_B)} \\
+              \Gamma \ar[r]_-{\varphi(r_B)} & G(V_B)
+            } \]
+where $\varphi(r_B)$ is the map corresponding to $r_B$ by adjointness.
+
+Since we have the abstraction and the application operations for $\Pi$-types, it is enough to define corresponding operations for dependent $\Hom$-types for closed types:
+\begin{center}
 \AxiomC{$\Gamma \mid \cdot \vdash b : B$}
 \UnaryInfC{$\Gamma \vdash \lambda(b) : \Hom(\cdot.B)$}
 \DisplayProof
@@ -171,15 +189,28 @@ Since we have $\Pi$-types, it is enough to define dependent $\Hom$-types for clo
 \lambda(f\,()) & = f
 \end{align*}
 
-If $B$ is a closed type, then we define $\Gamma \vdash \Hom(\cdot.B)$ as the following diagram:
-\[ \xymatrix{                               & G(E_B) \ar@{->>}[d]^{G(p_B)} \\
-              \Gamma \ar[r]_-{\varphi(r_B)} & G(V_B)
-            } \]
-where $\varphi(r_B)$ is the map corresponding to $r_B$ by adjointness.
 A term $\Gamma \mid \cdot \vdash b : B$ corresponds to a section $b : F(\Gamma) \to E_B$ of $p_B$.
 We define $\lambda(b)$ as $\varphi(b) : \Gamma \to G(E_B)$.
 Conversely, if $f : \Gamma \to G(E_B)$ is a section of $G(p_B)$, then we define $f\,()$ as $\varphi^{-1}(f) : F(\Gamma) \to E_B$.
 The fact that these constructions are stable under substitution follows from the naturality of $\varphi$.
+\end{proof}
+
+Many examples of categories with fibrations that we are interested in can be constructed as localizations of larger categories.
+If $\scat{M}$ is a combinatorial model category, then left Bousfield localizations of $\scat{M}$ can be described model structures on $\scat{M}$ that have the same class of cofibrations, but less fibrations.
+The following proposition implies that every such localization preserves various nice properties of $\scat{M}_!$:
+
+\begin{prop}[localized]
+Let $\scat{B}$ be a contextual category, let $\scat{C}$ be a category, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
+Let $(\scat{C},\Fib)$ and $(\scat{C},\Fib')$ be two categories with fibrations such that $\Fib' \subseteq \Fib$.
+Then
+\begin{enumerate}
+\item If $F^*((\scat{C},\Fib)_!)$ is locally small or has dependent $\Hom$-types, then this is also true for $F^*((\scat{C},\Fib')_!)$.
+\item If $F^*((\scat{C},\Fib)_!)$ has extensional identity types, then identity types are also extensional in $F^*((\scat{C},\Fib')_!)$ if they exist there.
+\item If $F^*((\scat{C},\Fib)_!)$ has extensional $\Pi$-types, then $\Pi$-types are also extensional in $F^*((\scat{C},\Fib')_!)$ if they exist there.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+% TODO
 \end{proof}
 
 \subsection{Type-theoretic semi-fibration categories}
@@ -236,7 +267,7 @@ Slice categories of a type-theoretic semi-fibration category are also type-theor
 Let $p : X \twoheadrightarrow Y$ be a fibration in a type-theoretic semi-fibration category.
 We will say that $p$ is \emph{trivial} if there is a map $s : Y \to X$ such that $p \circ s = \id_Y$ and a homotopy $h : X \to P(X)$ between $s \circ p$ and $\id_X$,
 where $P(X)$ is a factorization of $\langle \id_X, \id_X \rangle : X \to X \times_Y X$ into a trivial cofibration followed by a fibration.
-We will say that $\scat{C}$ is \emph{extensional} if it is right proper and $\Pi_p$ preserves trivial fibrations.
+We will say that $\scat{C}$ is \emph{extensional} if $\Pi_p$ maps trivial fibrations over $X$ to trivial fibrations over $Y$.
 
 \begin{example}
 Let $\scat{M}$ be a model category in which fibrations are exponentiable and pullbacks of trivial cofibrations are cofibrations.
@@ -251,75 +282,19 @@ In particular, every right proper locally Cartesian closed model category in whi
 Every cofibrantly generated (resp., combinatorial) type-theoretic model category is cofibrantly generated (resp., combinatorial) as a type-theoretic semi-fibration category.
 \end{example}
 
-Let $\scat{C}$ be a category with fibrations and let $\scat{J}$ be a small category.
-A map of $\scat{C}^\scat{J}$ is a \emph{projective fibration} (resp., \emph{injective trivial cofibration}) if it is objectwise fibration (resp., objectwise trivial cofibration).
-A map of $\scat{C}^\scat{J}$ is an \emph{injective fibration} if it has the right lifting property with respect to injective trivial cofibrations.
-The \emph{injective} structure of a category with fibrations on $\scat{C}^\scat{J}$ has all injective fibrations as its fibrations.
-
-\begin{lem}[inj-proj]
-Let $\scat{C}$ be a cofibrantly generated category with fibrations and let $\scat{J}$ be a small category.
-Then every injective fibration of $\scat{C}^\scat{J}$ is a projective fibration.
-\end{lem}
-\begin{proof}
-Let $j$ be an object of $\scat{J}$.
-Then the functor $E_j : \scat{C}^\scat{J} \to \scat{C}$ of evaluating at $j$ has a left adjoint $F : \scat{C} \to \scat{C}^\scat{J}$, which is defined as $F(X) = \Hom(j,-) \cdot X$.
-If $f : A \to B$ is a trivial cofibration of $\scat{C}$, then $F(f)$ is an injective trivial cofiration.
-Thus, every injective ibration $p : X \twoheadrightarrow Y$ has the right lifting property with respect to $F(f)$.
-By adjointness, $p_j : X_j \to E_j$ has the right lifting property with respect to $f$.
-Since $\scat{C}$ is cofibrantly generated, fibrations are precisely the maps which have the right lifting property with respect to trivial cofibrations.
-Thus, $p_j$ is a fibration.
-\end{proof}
-
-\begin{prop}[injective]
-Let $\scat{C}$ be a complete cofibrantly generated type-theoretic semi-fibration category and let $\scat{J}$ be a small category.
-Let $\Fib$ be a class of injective fibrations closed under pullbacks, identity morphisms, and compositions such that every map in $(\scat{C}^\scat{J}/\Gamma)_\fs{f}$ for every $\Gamma$ factors into an injective trivial cofibration followed by a fibration in $\Fib$.
-Then $(\scat{C}^\scat{J},\Fib)$ is a type-theoretic semi-fibration category.
-\end{prop}
-\begin{proof}
-By \rlem{inj-proj}, fibrations in $\Fib$ are projective fibrations.
-Since $\scat{C}$ is complete, fibrations in $\Fib$ are projective fibrations, and fibrations of $\scat{C}$ are exponentiable, \cite[Theorem~2.12]{comp-fact-tor} implies that fibrations of $\scat{C}^\scat{J}$ are also exponentiable.
-Since fibrations in $\Fib$ are projective fibrations, to prove that other conditions hold, it is enough to prove that a map in $(\scat{C}^\scat{J}/\Gamma)_\fs{f}$ is a trivial cofibration if and only if it is an injective trivial cofibration.
-The ``if'' direction holds by the assumption that fibrations are injective.
-Coversely, if $i : A \to B$ is a map in $(\scat{C}^\scat{J}/\Gamma)_\fs{f}$ that has the left lifting property with respect to fibrations, then we can factor it into an injective trivial cofibration $i' : A \to A'$ followed by a fibration $A' \twoheadrightarrow B$.
-Then $i$ is a retract of $i'$ which implies that it is also an injective trivial cofibration.
-\end{proof}
-
-\begin{cor}
-Let $\scat{C}$ be a combinatorial type-theoretic semi-fibration category and let $\scat{J}$ be a small category.
-Then $\scat{C}^\scat{J}$ is a combinatorial injective type-theoretic semi-fibration category.
-If $\scat{C}$ is right proper, then so is $\scat{C}^\scat{J}$.
-If $\scat{C}$ is a right proper type-theoretic combinatorial model category in which all object are cofibrant, then $\scat{C}^\scat{J}$ with its injective model structure is an extensional combinatorial type-theoretic model category.
-\end{cor}
-\begin{proof}
-By \rprop{injective}, it is enough to prove that every map factors into an injective trivial cofibration followed by an injective fibration which is true by \cite[Lemma~A.2.8.3]{lurie-topos}.
-If $\scat{C}$ is right proper, then the fact that $\scat{C}^\scat{J}$ is also right proper follows from the fact that injective trivial cofibrations are stable under pullbacks along fibrations which is true since injective fibrations are objectwise fibrations and pullbacks of trivial cofibrations are stable under pullbacks along fibrations in $\scat{C}$ by the right properness.
-Finally, if $\scat{C}$ is a model category in which all objects are cofibrant, then objects of $\scat{C}^\scat{J}$ are also cofibrant.
-It follows that trivial fibrations are precisely maps with the right lifting property with respect to cofibrations.
-Thus, $\Pi$ preserves trivial fibrations whenever cofibrations are stable under pullbacks which is true since cofibrations are precisely objectwise cofibrations.
-\end{proof}
-
-\begin{example}
-If $\scat{M}$ is right proper type-theoretic model category and all objects of $\scat{M}$ are cofibrant, then this is also true for $\scat{M}^\scat{J}$, which implies that it is extensional.
-\end{example}
-
 \begin{defn}
 A \emph{Quillen adjunction} between type-theoretic semi-fibration categories is an adjunction such that the right adjoint preserves fibrations.
 If $F \dashv G$ is a Quillen adjunction, then $F$ (resp., $G$) will be called \emph{left (resp., right) Quillen functor}.
-We will say that a Quillen adjunction $F \dashv G$ is \emph{proper} if $G$ preserves trivial fibrations.
+We will say that a Quillen adjunction is \emph{extensional} if the right adjoint also preserves trivial fibrations.
 \end{defn}
-
-\begin{example}
-% TODO: Generalize D to arbitrary functor of the form F^* : \scat{C}^\scat{I} \to \scat{C}^\scat{J} for a functor F : \scat{J} \to \scat{I}?
-If $\scat{C}$ is a combinatorial type-theoretic semi-fibration category and $\scat{J}$ is a small category, then the diagonal functor $D : \scat{C} \to \scat{C}^\scat{J}$ is a left Quillen functor.
-If $\scat{C}$ is also a model category in which all objects are cofibrant, then this adjunction is proper.
-\end{example}
 
 \begin{prop}[indexed-locally-small]
 Let $F$ be a left Quillen functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$.
 Then $F^*(\scat{C}_!)$ is a contextually indexed contextual category with unit types, $\Sigma$-types, and identity types.
-If $\scat{C}$ is right proper and the adjunction is proper, then $F^*(\scat{C}_!)$ has $\Pi$-types and dependent $\Hom$-types.
+If $\scat{C}$ is right proper, then $F^*(\scat{C}_!)$ has $\Pi$-types and dependent $\Hom$-types.
 In particular, it is locally small.
-If $\scat{C}$ is extensional, then $\Pi$-types and identity types are extensional.
+If $\scat{C}$ is right proper and extensional and the adjunction is extensional, then $\Pi$-types and identity types are extensional.
+% It should be possible to prove that identity types are extensional even if $\scat{C}$ is not right proper.
 \end{prop}
 \begin{proof}
 The existence of unit types, $\Sigma$-types, identity types, and $\Pi$-types follows from \cite{local-universes}.
@@ -365,30 +340,90 @@ Since $G$ preserves trivial fibrations, the 2-out-of-3 property implies that $G(
 Finally, by the 2-out-of-3 property, $s$ is an equivalence.
 \end{proof}
 
-We are interested in models that obtained form localizations of the injective model structure on $\sSet^{\Delta^\fs{op}}$.
-We will consider left Bousfield localizations of a model category $\scat{M}$ which do not change the underlying category.
-The following proposition implies that every such localization preserves various nice properties of $\scat{M}_!$:
+\begin{example}
+A \emph{Cisinski model structure} on a Grothendieck topos $\scat{C}$ is any cofibrantly generated model structure in which cofibrations are precisely monomorphisms.
+For every such model structure and every left Quillen functor $F : \scat{B} \to \scat{C}$,
+the contextually indexed contextual category $F^*(\scat{C}_!)$ has dependent $\Hom$-types, unit types, $\Sigma$-types, and extensional identity types.
 
-\begin{prop}
-Let $\scat{B}$ be a contextual category, let $\scat{C}$ be a category, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
-Let $(\scat{C},\Fib)$ and $(\scat{C},\Fib')$ be two categories with fibrations such that $\Fib' \subseteq \Fib$.
-If $F^*((\scat{C},\Fib)_!)$ is locally small or has dependent $\Hom$-types, then so is $F^*((\scat{C},\Fib')_!)$.
-If both of these contextually indexed contextual categories have identity types which are extensional in $F^*((\scat{C},\Fib)_!)$, then they are also extensional in $F^*((\scat{C},\Fib')_!)$.
+The existence of unit types, $\Sigma$-types, and identity types follows from \rprop{indexed-locally-small}.
+By \rprop{localized}, it is enough to prove that any Cisinski model structure is a left Bousfield localization of a right proper model structure.
+Every such model structure is indeed a left Bousfield localization of the minimal model structure in which weak equivalences are generated by the empty set in an appropriate sense \cite[Th\'{e}or\`{e}me~3.9]{cisinski}.
+The minimal model structure is right proper by \cite[Remarque~4.9]{cisinski}.
+\end{example}
+
+\subsection{Categories of functors}
+
+Let $\scat{C}$ be a category with fibrations and let $\scat{J}$ be a small category.
+A map of $\scat{C}^\scat{J}$ is a \emph{projective fibration} (resp., \emph{injective trivial cofibration}) if it is objectwise fibration (resp., objectwise trivial cofibration).
+A map of $\scat{C}^\scat{J}$ is an \emph{injective fibration} if it has the right lifting property with respect to injective trivial cofibrations.
+The \emph{injective} structure of a category with fibrations on $\scat{C}^\scat{J}$ has all injective fibrations as its fibrations.
+
+\begin{lem}[inj-proj]
+Let $\scat{C}$ be a cofibrantly generated category with fibrations and let $\scat{J}$ be a small category.
+Then every injective fibration of $\scat{C}^\scat{J}$ is a projective fibration.
+\end{lem}
+\begin{proof}
+Let $j$ be an object of $\scat{J}$.
+Then the functor $E_j : \scat{C}^\scat{J} \to \scat{C}$ of evaluating at $j$ has a left adjoint $F : \scat{C} \to \scat{C}^\scat{J}$, which is defined as $F(X) = \Hom(j,-) \cdot X$.
+If $f : A \to B$ is a trivial cofibration of $\scat{C}$, then $F(f)$ is an injective trivial cofiration.
+Thus, every injective ibration $p : X \twoheadrightarrow Y$ has the right lifting property with respect to $F(f)$.
+By adjointness, $p_j : X_j \to E_j$ has the right lifting property with respect to $f$.
+Since $\scat{C}$ is cofibrantly generated, fibrations are precisely the maps which have the right lifting property with respect to trivial cofibrations.
+Thus, $p_j$ is a fibration.
+\end{proof}
+
+\begin{prop}[injective]
+Let $\scat{C}$ be a complete cofibrantly generated type-theoretic semi-fibration category and let $\scat{J}$ be a small category.
+Let $\Fib$ be a class of injective fibrations closed under pullbacks, identity morphisms, and compositions such that every map in $(\scat{C}^\scat{J}/\Gamma)_\fs{f}$ for every $\Gamma$ factors into an injective trivial cofibration followed by a fibration in $\Fib$.
+Then $(\scat{C}^\scat{J},\Fib)$ is a type-theoretic semi-fibration category.
 \end{prop}
 \begin{proof}
-% TODO
+By \rlem{inj-proj}, fibrations in $\Fib$ are projective fibrations.
+Since $\scat{C}$ is complete, fibrations in $\Fib$ are projective fibrations, and fibrations of $\scat{C}$ are exponentiable, \cite[Theorem~2.12]{comp-fact-tor} implies that fibrations of $\scat{C}^\scat{J}$ are also exponentiable.
+Since fibrations in $\Fib$ are projective fibrations, to prove that other conditions hold, it is enough to prove that a map in $(\scat{C}^\scat{J}/\Gamma)_\fs{f}$ is a trivial cofibration if and only if it is an injective trivial cofibration.
+The ``if'' direction holds by the assumption that fibrations are injective.
+Coversely, if $i : A \to B$ is a map in $(\scat{C}^\scat{J}/\Gamma)_\fs{f}$ that has the left lifting property with respect to fibrations, then we can factor it into an injective trivial cofibration $i' : A \to A'$ followed by a fibration $A' \twoheadrightarrow B$.
+Then $i$ is a retract of $i'$ which implies that it is also an injective trivial cofibration.
 \end{proof}
+
+\begin{cor}[injective-combinatorial]
+Let $\scat{C}$ be a combinatorial type-theoretic semi-fibration category and let $\scat{J}$ be a small category.
+Then $\scat{C}^\scat{J}$ is a combinatorial injective type-theoretic semi-fibration category.
+If $\scat{C}$ is right proper, then so is $\scat{C}^\scat{J}$.
+If $\scat{C}$ is a right proper type-theoretic combinatorial model category in which all object are cofibrant, then $\scat{C}^\scat{J}$ with its injective model structure is an extensional combinatorial type-theoretic model category.
+\end{cor}
+\begin{proof}
+By \rprop{injective}, it is enough to prove that every map factors into an injective trivial cofibration followed by an injective fibration which is true by \cite[Lemma~A.2.8.3]{lurie-topos}.
+If $\scat{C}$ is right proper, then the fact that $\scat{C}^\scat{J}$ is also right proper follows from the fact that injective trivial cofibrations are stable under pullbacks along fibrations which is true since injective fibrations are objectwise fibrations and pullbacks of trivial cofibrations are stable under pullbacks along fibrations in $\scat{C}$ by the right properness.
+Finally, if $\scat{C}$ is a model category in which all objects are cofibrant, then objects of $\scat{C}^\scat{J}$ are also cofibrant.
+It follows that trivial fibrations are precisely maps with the right lifting property with respect to cofibrations.
+Thus, $\Pi$ preserves trivial fibrations whenever cofibrations are stable under pullbacks which is true since cofibrations are precisely objectwise cofibrations.
+\end{proof}
+
+\begin{example}
+If $\scat{M}$ is right proper type-theoretic model category and all objects of $\scat{M}$ are cofibrant, then this is also true for $\scat{M}^\scat{J}$, which implies that it is extensional.
+\end{example}
+
+\begin{example}
+If $\scat{C}$ is a combinatorial type-theoretic semi-fibration category and $F : \scat{J} \to \scat{I}$ is a functor between small categories,
+then the functor $F^* : \scat{C}^\scat{I} \to \scat{C}^\scat{J}$ (defined by postcomposition with $F$) is a left Quillen functor between combinatorial type-theoretic semi-fibration categories with injective structures.
+If $\scat{C}$ is also a model category in which all objects are cofibrant, then this adjunction is extensional.
+We will denote the contextually indexed contextual category $(F^*)^*((\scat{C}^\scat{J})_!)$ simply by $F^*((\scat{C}^\scat{J})_!)$.
+\end{example}
 
 The following theorem provides the main class of examples of contextually indexed contextual categories.
 We will see in later sections that these categories support other categorical structures such as products and colimits.
 
 \begin{thm}
-Let $\scat{C}$ be a right proper combinatorial type-theoretic semi-fibration category, let $\scat{J}$ be a small category, and let $D : \scat{C} \to \scat{C}^\scat{J}$ be the diagonal functor.
+Let $\scat{C}$ be a right proper combinatorial type-theoretic semi-fibration category in which all objects are cofibrant and let $F : \scat{J} \to \scat{I}$ be a functor between small categories.
 Let $\Fib$ be a class of injective fibrations such that $(\scat{C}^\scat{J},\Fib)$ is a type-theoretic semi-fibration category.
-Then $D^*((\scat{C}^\scat{J},\Fib)_!)$ is a locally small contextually indexed contextual category with dependent $\Hom$-types, unit types, $\Sigma$-types, and extensional identity types.
+Then $F^*((\scat{C}^\scat{J},\Fib)_!)$ is a locally small contextually indexed contextual category with dependent $\Hom$-types, unit types, $\Sigma$-types, and extensional identity types.
+% If $\scat{C}$ is not right proper, but $F$ has a left adjoint, then the conclusion of the theorem still should be true.
 \end{thm}
 \begin{proof}
-% TODO
+Unit types, $\Sigma$-types, and identity types exist by \rprop{indexed-locally-small}.
+By \rcor{injective-combinatorial}, $(\scat{C}^\scat{J},\Fib)$ is a localization of a right proper extensional type-theoretic semi-fibration category.
+By \rprop{localized}, it has dependent $\Hom$-types and extensional identity types.
 \end{proof}
 
 \section{(Co)limits}
