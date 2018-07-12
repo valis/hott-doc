@@ -2786,6 +2786,29 @@ An \emph{(unstable) higher modality} consists of a class of fibrations $\Fib$ cl
 \DisplayProof
 \end{center}
 
+\begin{lem}[fib-dep-unst]
+The class of fibrations of a higher modality is locally reflective and the universal factorization is given by $\| - \|$ and $\eta$.
+\end{lem}
+\begin{proof}
+Let $B$ be a fibrant type over $\Delta$.
+We need to prove that the type of lifts in the following diagram is contractible:
+\[ \xymatrix{ A \ar[r]^b \ar[d]_{\eta_A} & B \\
+              \| A \| \ar@{-->}[ur]
+            } \]
+We can define a lift in this diagram as $\lambda z.\,\| A \|\text{-}\fs{elim}(z.B, x.\,b\,x)$.
+The commutativity of the triangle is witnessed by the term $\lambda x.\,\| A \|\text{-}\fs{elim_h}(z.B, x.\,b\,x)$.
+
+Let $\Delta, z : \| A \| \vdash f_i : B$, $\Delta, x : A \vdash h_i : \Id(f_i[|x|/z],\,b\,x)$ be lifts in this diagram for $i \in \{1,2\}$.
+We need to construct a homotopy between them.
+Since $\Fib$ is closed under identity types, the type $\Id(f_1,f_2)$ is fibrant over $\Delta, z : \| A \|$.
+Thus, we have a homotopy between $f_1$ and $f_2$:
+\[ \Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(f_1, f_2). \]
+Let us denote this homotopy by $H$.
+We need to prove that $\sym{H[|x|/z]} \ct h_1$ is homotopic to $h_2$.
+This homotopy can be constructed from the following one:
+\[ \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(H[|x|/z], h_1 \ct \sym{h_2}). \]
+\end{proof}
+
 The following proposition shows that unstable higher modalities are the same as locally reflective classes of fibrations:
 
 \begin{prop}[fib-dep-unst]
@@ -2807,27 +2830,8 @@ Since $j$ is connected, we have a lift in this square.
 This lift determines a term $\Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.D, x.d) : D$.
 The commutativity of the upper triangle implies the existence of a term $\Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.D, x.d) : \Id(\| A \|\text{-}\fs{elim}(z.D, x.d)[\eta_A(x)/z],d)$.
 
-Now, suppose that $\Fib$ extends to a higher modality.
-First, let us prove that it is locally reflective.
-Let $B$ be a fibrant type over $\Delta$.
-We need to prove that the type of lifts in the following diagram is contractible:
-\[ \xymatrix{ A \ar[r]^b \ar[d]_{\eta_A} & B \\
-              \| A \| \ar@{-->}[ur]
-            } \]
-We can define a lift in this diagram as $\lambda z.\,\| A \|\text{-}\fs{elim}(z.B, x.\,b\,x)$.
-The commutativity of the triangle is witnessed by the term $\lambda x.\,\| A \|\text{-}\fs{elim_h}(z.B, x.\,b\,x)$.
-
-Let $\Delta, z : \| A \| \vdash f_i : B$, $\Delta, x : A \vdash h_i : \Id(f_i[|x|/z],\,b\,x)$ be lifts in this diagram for $i \in \{1,2\}$.
-We need to construct a homotopy between them.
-Since $\Fib$ is closed under identity types, the type $\Id(f_1,f_2)$ is fibrant over $\Delta, z : \| A \|$.
-Thus, we have a homotopy between $f_1$ and $f_2$:
-\[ \Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(f_1, f_2). \]
-Let us denote this homotopy by $H$.
-We need to prove that $\sym{H[|x|/z]} \ct h_1$ is homotopic to $h_2$.
-This homotopy can be constructed from the following one:
-\[ \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(H[|x|/z], h_1 \ct \sym{h_2}). \]
-
-Finally, let us prove that $\Fib$ is closed under $\Sigma$-types if it extends to a higher modality.
+By \rlem{fib-dep-unst}, if $\| - \|$, $\eta$ extends to a higher modality, then they make $\Fib$ into a locally reflective class.
+Let us prove that $\Fib$ is also closed under $\Sigma$-types.
 Let $A$ be a fibrant type over $\Delta$ and let $B$ be a fibrant type over $\Delta, x : A$.
 We need to prove that $\Sigma_{x : A} B$ is (equivalent to) a fibrant type over $\Delta$.
 First, let us define a map $f : \| \Sigma_{x : A} B \| \to A$ as $\lambda z.\,\| \Sigma_{x : A} B \|\text{-}\fs{elim}(z.A,p.\pi_1(p))$.
@@ -2875,7 +2879,7 @@ If a higher modality is stable, then we can define the local version of its elim
 where $d' = \| A \|\text{-}\fs{elim}(z E.D, x E.d)$.
 
 \begin{prop}[fib-dep-st]
-Let $\Fib$ be a class of fibrations closed under substitutions and let $\| - \|$, $| - |$ be a pair of stable constructions as described above.
+Let $\Fib$ be a class of fibrations and let $\| - \|$, $| - |$ be a pair of stable constructions as described above.
 Then the following conditions are equivalent:
 \begin{enumerate}
 \item \label{it:fib-non-dep} The pair $\| - \|$, $| - |$ makes $\Fib$ into a (stably) locally reflective class and $\Fib$ is closed under $\Sigma$-types.
@@ -2884,7 +2888,10 @@ Then the following conditions are equivalent:
 \end{enumerate}
 \end{prop}
 \begin{proof}
-The equivalence between \eqref{it:fib-non-dep} and \eqref{it:fib-dep} holds by \rprop{fib-dep-unst}.
+By \rlem{fib-dep-unst}, \eqref{it:fib-dep} implies that $\Fib$ is stably locally reflective.
+Thus, if either \eqref{it:fib-non-dep} or \eqref{it:fib-dep} holds, then $\Fib$ is closed under substitutions by \rlem{fib-pullback}.
+Now, \Rprop{fib-dep-unst} implies that \eqref{it:fib-non-dep} and \eqref{it:fib-dep} are equivalent.
+
 Obviously, \eqref{it:fib-dep-local} implies \eqref{it:fib-dep} since the (global) eliminator is a special case of the local one.
 Let us prove that \eqref{it:fib-non-dep} implies the existence of the unstable local eliminator.
 Consider the following pullback square:
