@@ -437,7 +437,7 @@ We will say that a map of $\scat{C}$ is an \emph{$F$-fibration} if it is a pullb
 
 \begin{prop}
 Let $F : \scat{B} \to \scat{C}$ be a functor between categories with fibrations.
-Suppose that $F$ preserves pullbacks along fibrations and that, for every $F$-fibration $g : A \to B$, pullbacks of $g$ exist and the pullback functor $g^* : \scat{C}/B \to \scat{C}/A$ has an adjoint $\Pi_g : \scat{C}/A \to \scat{C}/B$ which maps fibrations over $A$ to fibrations over $B$
+Suppose that $F$ preserves pullbacks along fibrations and that, for every $F$-fibration $g : A \to B$, pullbacks of $g$ exist and the pullback functor $g^* : \scat{C}/B \to \scat{C}/A$ has a right adjoint $\Pi_g : \scat{C}/A \to \scat{C}/B$ which maps fibrations over $A$ to fibrations over $B$
 Then $F^*(\scat{C}_!)$ has dependent products.
 \end{prop}
 \begin{proof}
@@ -512,24 +512,30 @@ We also need to prove that $\beta$ and $\eta$ equivalences hold, but this follow
 \end{proof}
 
 \begin{example}
-Let $\scat{C}$ be a complete right proper category with fibrations.
-Then, for every small category $\scat{J}$, the contextually indexed contextual category $D^*((\scat{C}^\scat{J})_!)$ has dependent products, where $D : \scat{C} \to \scat{C}^\scat{J}$ is the diagonal functor and $\scat{C}^\scat{J}$ is equipped with the class of injective fibrations.
+Let $\scat{C}$ be a complete right proper cofibrantly generated category with fibrations.
+Then, for every functor $F : \scat{J} \to \scat{I}$ between small categories, the contextually indexed contextual category $F^*((\scat{C}^\scat{J})_!)$ has dependent products,
+where $\scat{C}^\scat{J}$ and $\scat{C}^\scat{I}$ are equipped with the injective structures.
 
-Indeed, $D$ preserves all limits.
-Since $D$-fibrations are objectwise fibrations, the right adjoint to the pullback functor $g^*$ for a $D$-fibration $g$ exists by \cite[Theorem~2.12]{comp-fact-tor}.
-The fact that this right adjoint preserves fibrations is equivalent to the fact that injective trivial cofibrations are stable under pullbacks along $D$-fibrations.
-This follows from the facts that $\scat{C}$ is right proper and that $D$-fibrations are objectwise fibrations.
+Indeed, $F^* : \scat{C}^\scat{I} \to \scat{C}^\scat{J}$ preserves all limits.
+By \rlem{inj-proj}, $F^*$-fibrations are objectwise fibrations.
+It follows that the right adjoint to the pullback functor $g^*$ for a $F^*$-fibration $g$ exists by \cite[Theorem~2.12]{comp-fact-tor}.
+The fact that this right adjoint preserves fibrations is equivalent to the fact that injective trivial cofibrations are stable under pullbacks along $F^*$-fibrations.
+This follows from the facts that $\scat{C}$ is right proper and that $F^*$-fibrations are objectwise fibrations.
 \end{example}
 
-\subsection{Initial types}
+\subsection{Colimits}
 
+For the discussion of colimits, it will be convenient to use the notion of a pseudo-fibration which we now define.
 We will say that a map $f : X \to Z$ in a category with fibrations is a \emph{pseudo-fibration} if it factors as a trivial cofibration $i : X \to Y$ followed by a fibration $p : Y \twoheadrightarrow Z$ and, for every diagram of the form
 \[ \xymatrix{ X' \ar[r] \ar[d]_{i'} \pb         & X \ar[d]^i \\
               Y' \ar[r] \ar@{->>}[d]_{p'} \pb   & Y \ar@{->>}[d]^p \\
               Z' \ar[r]                         & Z
             } \]
 the map $i'$ is a trivial cofibration.
-Clearly, every fibration is a pseudo-fibration.
+
+\begin{example}
+Every fibration is a pseudo-fibration.
+\end{example}
 
 \begin{lem}[proj-pseudo]
 Let $\scat{C}$ be a combinatorial type-theoretic semi-fibration category and let $\scat{J}$ be a small category.
@@ -537,11 +543,18 @@ Then every projective fibration of $\scat{C}^\scat{J}$ is a pseudo-fibration in 
 \end{lem}
 \begin{proof}
 Let $f : X \to Z$ be a projective fibration.
-The factorization of $f$ into an injective trivial cofibration $i : X \to Y$ followed by an injective fibration $p : Y \twoheadrightarrow Z$ exists since $\scat{C}$ is combinatorial.
+The factorization of $f$ into an injective trivial cofibration $i : X \to Y$ followed by an injective fibration $p : Y \twoheadrightarrow Z$ exists by \cite[Lemma~A.2.8.3]{lurie-topos}.
 By \rlem{inj-proj}, injective fibrations are projective.
 Thus, for every $j \in \scat{J}$, the map $i_j : X_j \to Y_j$ is a trivial cofibration between fibrant objects in $\scat{C}/Z$.
 It follows that its pullbacks along maps $Z' \to Z$ are trivial cofibrations by the definition of a type-theoretic semi-fibration category.
 \end{proof}
+
+The following lemma was proved in \cite[Theorem~3.3]{lum-shul-hits}.
+We just extract the minimal set of conditions that was used in the proof.
+
+\begin{lem}[pseudo-fib]
+In a right proper type-theoretic model category, stable under pullbacks coproducts of fibrations over a fixed base are pseudo-fibrations.
+\end{lem}
 
 \begin{prop}
 Let $\scat{B}$ be a contextual category, let $\scat{C}$ be a category with fibrations, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
@@ -549,7 +562,7 @@ If $\scat{C}$ has a strict pseudo-fibrant initial object, then $F^*(\scat{C})$ h
 \end{prop}
 \begin{proof}
 Factor the map $0 \to 1$ into a trivial cofibration $0 \to R(0)$ followed by a fibration $R(0) \twoheadrightarrow 1$.
-We define the initial type in any context as tihs fibration:
+We define the initial type in any context as follows:
 \[ \xymatrix{               & R(0) \ar@{->>}[d] \\
               \Delta \ar[r] & 1
             } \]
@@ -582,11 +595,35 @@ The converse holds if the class of fibrations is saturated.
 \begin{example}
 Let $\scat{C}$ be a category with fibrations and let $\scat{J}$ be a small category.
 If $\scat{C}$ has a strict fibrant initial object $0$, then $\scat{C}^\scat{J}$ has a strict injectively fibrant initial object.
-Indeed, the constant functor $D(0)$ is obviously a strict initial object.
-The previous remark implies that $D(0)$ is injectively fibrant.
+Indeed, the constant functor on $0$ is a strict initial object.
+The previous remark implies that it is injectively fibrant.
 \end{example}
 
-\subsection{Coproducts}
+\begin{example}
+If $\scat{C}$ is a right proper type-theoretic model category with a strict initial object, then $\scat{C}^\scat{J}$ has a strict injectively pseudo-fibrant initial object.
+This follows from \rlem{pseudo-fib} and the fact that $\scat{C}^\scat{J}$ is right proper.
+\end{example}
+
+Since the definition of pushouts in indexed type theories does not involve the base context, we can use the same construction as in ordinary type theory.
+Such a construction was described in \cite{lum-shul-hits}.
+The only difference between pushouts in contextual categories and indexed contextual categories is that not all context are fibrant in the indexed case;
+it is only true that context are fibrant over $F(\Gamma)$, where $\Gamma$ is a base context, and $F(\Gamma)$ is usually not fibrant.
+This condition was not used in \cite{lum-shul-hits}, so we can apply theorem from this paper.
+
+\begin{prop}[pushouts]
+Let $\scat{B}$ be a category with fibrations, let $\scat{C}$ be a simplicial right proper type-theoretic model category, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
+Then $F^*(\scat{C}_!)$ has dependent pushouts.
+\end{prop}
+\begin{proof}
+The construction is essentially the same as the construction of pushouts in sections 4, 5, and 6 of \cite{lum-shul-hits}.
+\end{proof}
+
+\begin{example}
+If $\scat{M}$ is the category of simplicial presheaves on a small category with its Cisinski model structure \cite{cisinski-presheaf,cisinski} and $\scat{J}$ is a small category,
+then the injective model structure on $\scat{M}^\scat{J}$ satisfies the conditions of \rprop{pushouts}.
+\end{example}
+
+Finally, let us construct indexed coproducts:
 
 \begin{prop}[coproducts]
 Let $F : \scat{B} \to \scat{C}$ be a functor between categories with fibrations.
@@ -696,28 +733,13 @@ This completes the definition of the interpretation of the eliminator.
 \end{proof}
 
 \begin{example}
-If $\scat{C}$ is a combinatorial type-theoretic semi-fibration category and $\scat{J}$ is a small category, then $D^*((\scat{C}^\scat{J})_!)$ satisfies the conditions of \rprop{coproducts}, where $\scat{C}^\scat{J}$ is equipped with the injective structure.
+If $\scat{C}$ is a combinatorial type-theoretic semi-fibration category and $F : \scat{J} \to \scat{I}$ is a functor between small categories
+then $F^*((\scat{C}^\scat{J})_!)$ satisfies the conditions of \rprop{coproducts}, where $\scat{C}^\scat{J}$ is equipped with the injective structure.
 Indeed, both injective fibrations and $F$-fibrations are objectwise fibrations which implies that they are exponentiable.
 Moreover, \rlem{proj-pseudo} implies that their composition is a pseudo-fibration.
 \end{example}
 
-\subsection{Pushouts}
-
-Since the definition of pushouts does not involve the base context, we can use the interpretation of pushouts for ordinary homotopy type theory in categories with fibration.
-The only difference is that not all contexts are fibrant in our case; they are fibrant only over $F(\Gamma)$, where $\Gamma$ is the base context, and $F$ usually does not preserve fibrant objects.
-The construction of the interpretation of pushouts in \cite[Section~6]{lum-shul-hits} does not use this assumption, so we can apply it in our case.
-Thus, we obtain the following proposition:
-
-\begin{prop}
-Let $\scat{B}$ be a category with fibrations, let $\scat{C}$ be a good model category as defined in \cite[Definition~2.1]{lum-shul-hits}, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
-Then $F^*(\scat{C}_!)$ has dependent pushouts.
-\end{prop}
-
-\begin{example}
-If $\scat{M}$ is the category of simplicial presheaves on a small category with its Cisinski model structure \cite{cisinski-presheaf,cisinski} and $\scat{J}$ is a small category, then $\scat{M}^\scat{J}$ with its injective model structure is a good model category.
-\end{example}
-
-\section{Cofibrations}
+\section{Extension types}
 
 % TODO
 
