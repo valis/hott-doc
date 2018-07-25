@@ -415,7 +415,7 @@ In this section, we give sufficient conditions for a model $F^*(\scat{C})$ to ha
 Let $F$ be a functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$.
 We will say that a map of $\scat{C}$ is an \emph{$F$-fibration} if it is a pullback of the map $F(f)$ for some fibration $f$.
 
-\begin{prop}
+\begin{prop}[products]
 Let $F : \scat{B} \to \scat{C}$ be a functor between categories with fibrations.
 Suppose that $F$ preserves pullbacks along fibrations and that, for every $F$-fibration $g : A \to B$, pullbacks of $g$ exist and the pullback functor $g^* : \scat{C}/B \to \scat{C}/A$ has a right adjoint $\Pi_g : \scat{C}/A \to \scat{C}/B$ which maps fibrations over $A$ to fibrations over $B$
 Then $F^*(\scat{C}_!)$ has dependent products.
@@ -828,8 +828,14 @@ Moreover, a map between fibrant objects is a weak equivalence in the localized m
 Thus, by \rlem{subfib}, $\Fib'$ is closed under identity types.
 \end{proof}
 
+\begin{defn}
+Let $\scat{C}$ be a combinatorial left proper model category and let $S$ be a set of maps of $\scat{C}$.
+We define the \emph{localization} of $\scat{C}$ at $S$ as the type-theoretic semi-fibration category $(\scat{C},\Fib)$, where $\Fib$ consists of fibrations that have the right lifting property with respect to $\Lambda(S)$.
+The localization of $\scat{C}$ at $S$ will be denoted by $L_S(\scat{C})$.
+\end{defn}
+
 \begin{remark}
-The class of fibrations constructed in the previous proposition may differ from the class of fibration of the localized model structure.
+The class of fibrations defined in in the previous definition may be bigger than the class of fibration of the localized model structure.
 This smaller class is also closed under identity types, but we prefer to work with the larger class since it can be described more explicitly.
 This will allow us to prove that it is closed under other type-theoretic constructions.
 \end{remark}
@@ -874,7 +880,49 @@ Let $Q(X)$ be a cofibrant replacement of $X$.
 Factor the map $Q(X) \to X \xrightarrow{f} Y$ into a cofibration $Q(f) : Q(X) \to Q(Y)$ followed by a weak equivalence $Q(Y) \to Y$.
 Then $n \mapsto Q(X) \times \Delta^n \to Q(Y) \times \Delta^n$ is a cosimplicial resolution of $f$.
 
-% TODO: Prove the existence of products.
+Let $D : \scat{C} \to \scat{C}^\scat{J}$ be the diagonal functor.
+We will say that a functor $F : \scat{J} \to \scat{C}$ is \emph{anticonstant} if, for every constant functor $D(X) : \scat{J} \to \scat{C}$, every map $F \to D(X)$ factor through the map $D(1) \to D(X)$ for some map $1 \to X$.
+
+\begin{lem}[anticonstant-coproduct]
+If the category $\fs{el}(F)$ of elements of a functor $F : \scat{J} \to \Set$ is non-empty, then the functor $F(-) \cdot 1 : \scat{J} \to \scat{C}$ is anticonstant if and only if $\fs{el}(F)$ is connected.
+\end{lem}
+\begin{proof}
+By the universal property of coproducts, there is a bijection between the set of maps $p : F(-) \cdot 1 \to D(X)$ and the set of collections of maps $\{ p_{j,a} : 1 \to X \}_{j \in \scat{J}, a \in F(j)}$ such that,
+for every map $f : j \to j'$, it is true that $p_{j,a} = p_{j',F(f)(a)}$.
+On the other hand, the set of such collections is the set of maps between constant functors on $1$ and $X$ in the category $\scat{C}^{\fs{el}(F)}$.
+A map $p : F(-) \cdot 1 \to D(X)$ factors through $D(c)$ for some $c : 1 \to X$ if and only if $p_{j,a} = c$ for all $j$ and $a$.
+Since $\fs{el}(F)$ is non-empty, a map of the form $c : 1 \to X$ exists.
+The assertion follows from the fact that every map between constant functors $D(Y), D(X) : \scat{I} \to \scat{C}$ equals to $D(c)$ for some fixed $c : Y \to X$ if and only if the category $\scat{I}$ is connected.
+\end{proof}
+
+\begin{example}
+If $F : \scat{J} \to \Set$ is a representable functor on an object $j \in \scat{J}$, then the functor $F(-) \cdot 1$ is anticonstant.
+This follows from \rlem{anticonstant-coproduct} since the category of elements of $F$ is equivalent to the category $j/\scat{J}$ which is non-empty and connected since it has an initial object.
+\end{example}
+
+\begin{example}
+If $F$ is a non-empty simplicial set, then $F(-) \cdot 1 : \Delta^\fs{op} \to \scat{C}$ is anticonstant if and only if $F$ is connected as a simplicial set.
+This follows from \rlem{anticonstant-coproduct} and the fact that a simplicial set is connected if and only if its category of elements is connected.
+\end{example}
+
+\begin{lem}[anticonstant-factor]
+Let $\scat{C}$ be a Cartesian closed category and let $F : \scat{J} \to \scat{C}$ be an anticonstant functor.
+Then every map of the form $F \times D(X) \to D(Y)$ factors as the projection $\pi_2 : F \times D(X) \to D(X)$ followed by a map $D(g)$ for some $g : X \to Y$.
+\end{lem}
+\begin{proof}
+First, it is easy to see that the diagonal functor $D$ preserves exponential objects.
+Then a map $f : F \times D(X) \to D(Y)$ corresponds to a map $F \to D(Y^X)$.
+Since $F$ is anticonstant, the latter map factors through a map $D(c)$ for some $c : 1 \to Y^X$.
+The map $c$ corresponds to a map $g : X \to Y$ such that $D(g) \circ \pi_2 = f$.
+\end{proof}
+
+\begin{prop}
+Let $\scat{C}$ be a proper combinatorial model category, let $\scat{J}$ be a small category, and let $S$ be a set of maps of $\scat{C}^\scat{J}$.
+Then $D^*(L_S(\scat{C}^\scat{J}))$ has dependent products, where $D : \scat{C} \to \scat{C}^\scat{J}$ is the diagonal functor.
+\end{prop}
+\begin{proof}
+% TODO
+\end{proof}
 
 \section{Extension types}
 
