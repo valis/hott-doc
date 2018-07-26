@@ -55,6 +55,12 @@
 \newcommand{\Hom}{\fs{Hom}}
 \newcommand{\Id}{\fs{Id}}
 \newcommand{\id}{\fs{id}}
+\newcommand{\cof}{\fs{id}}
+
+\newcommand{\class}[2]{#1\text{-}\mathrm{#2}}
+\newcommand{\I}{\mathrm{I}}
+\newcommand{\Icof}[1][\I]{\class{#1}{cof}}
+\newcommand{\Iinj}[1][\I]{\class{#1}{inj}}
 
 \numberwithin{figure}{section}
 
@@ -491,15 +497,15 @@ It is easy to verify the stability under substitutions of the constructions that
 We also need to prove that $\beta$ and $\eta$ equivalences hold, but this follows from the fact that functions that we used to go from sections of $p_\Pi$ and $p_B$ and back are mutually inverse.
 \end{proof}
 
-\begin{example}
-Let $\scat{C}$ be a complete right proper cofibrantly generated category with fibrations.
+\begin{example}[products]
+Let $\scat{C}$ be a complete right proper cofibrantly generated type-theoretic semi-fibration.
 Then, for every functor $F : \scat{J} \to \scat{I}$ between small categories, the contextually indexed contextual category $F^*((\scat{C}^\scat{J})_!)$ has dependent products,
 where $\scat{C}^\scat{J}$ and $\scat{C}^\scat{I}$ are equipped with the injective structures.
 
 Indeed, $F^* : \scat{C}^\scat{I} \to \scat{C}^\scat{J}$ preserves all limits.
 By \rlem{inj-proj}, $F^*$-fibrations are objectwise fibrations.
-It follows that the right adjoint to the pullback functor $g^*$ for a $F^*$-fibration $g$ exists by \cite[Theorem~2.12]{comp-fact-tor}.
-The fact that this right adjoint preserves fibrations is equivalent to the fact that injective trivial cofibrations are stable under pullbacks along $F^*$-fibrations.
+Since fibrations are exponentiable in $\scat{C}$, \cite[Theorem~2.12]{comp-fact-tor} and \cite[Corollary~2.6]{comp-fact-tor} imply that $F^*$-fibrations are also exponentiable in $\scat{C}^\scat{J}$.
+The fact that $\Pi_g$ preserves fibrations is equivalent to the fact that injective trivial cofibrations are stable under pullbacks along $F^*$-fibrations.
 This follows from the facts that $\scat{C}$ is right proper and that $F^*$-fibrations are objectwise fibrations.
 \end{example}
 
@@ -741,7 +747,7 @@ If we know that a contextually indexed contextual category of the form $F^*((\sc
 % Let $D : \scat{C} \to \scat{C}^\scat{J}$ be the diagonal functor.
 % We will prove under some mild additional hypotheses on $\scat{C}$ that $D^*((\scat{C}^\scat{J},\Fib')_!)$ has many categorical constructions that $D^*((\scat{C}^\scat{J},\Fib)_!)$ has.
 
-\subsection{Finite limits}
+\subsection{Identity types}
 
 Let $(\scat{C},\Fib)$ be a type-theoretic semi-fibration category and let $\Fib'$ be a subclass of $\Fib$.
 We will say that $\Fib'$ is \emph{closed under identity types} if every map in $((\scat{C},\Fib')/\Gamma)_\fs{f}$ factors into a trivial cofibration of $(\scat{C},\Fib)$ followed by a fibration in $\Fib'$.
@@ -813,9 +819,26 @@ Then the class of fibrations that have the right lifting property with respect t
 % \begin{proof}
 % \end{proof}
 
+A \emph{cosimplicial resolution} of an object $X$ of $\scat{C}$ is a cofibrant replacement of the constant functor on $X$ in the Reedy model structure on $\scat{C}^\Delta$.
+Let $\Delta$ be a fibrant cofibrant replacement of the terminal object of $\scat{C}^\Delta$.
+That is, $\Delta$ is a functor $\Delta \to \scat{C}$ such that $\Delta^n \to 1$ is a trivial fibration for all $n$ and $\partial \Delta^n \to \Delta^n$ is a cofibration in $\scat{C}$.
+Then $n \mapsto Q(X) \times \Delta^n$ is a cosimplicial resolution of $X$, where $Q(X)$ is any cofibrant replacement of $X$.
+
+\begin{remark}[good-cyl]
+Every Cartesian model category has good cylinder objects (\rdefn{good-cyl}) defined as $X \times \Delta^1$.
+\end{remark}
+
+A \emph{cosimplicial resolution} of a map $f : X \to Y$ consists of cosimplicial resolution of its domain and codomain and a map between them such that the obvious square commutes.
+Let $Q(X)$ be a cofibrant replacement of $X$.
+Factor the map $Q(X) \to X \xrightarrow{f} Y$ into a cofibration $Q(f) : Q(X) \to Q(Y)$ followed by a weak equivalence $Q(Y) \to Y$.
+Then $n \mapsto Q(X) \times \Delta^n \to Q(Y) \times \Delta^n$ is a cosimplicial resolution of $f$.
+
+For a class $S$ of maps of a model category, a class $\Lambda(S)$ of \emph{horns on $S$} \cite[Definition~3.3.8]{hirschhorn} is defined as the class of maps of the form
+\[ X \otimes \Delta^n \amalg_{X \otimes \partial \Delta^n} Y \otimes \partial \Delta^n \to Y \otimes \Delta^n, \]
+where $X \otimes \Delta^n \to Y \otimes \Delta^n$ is a cosimplicial resolution of a map $X \to Y$ from $S$.
+
 \begin{prop}
-Let $S$ be a set of maps of a left proper combinatorial model category $\scat{C}$.
-Let $\Lambda(S)$ be a set of horns on $S$ as defined in \cite[Definition~3.3.8]{hirschhorn}.
+Let $S$ be a set of maps of a left proper combinatorial model category $\scat{C}$ and let $\Lambda(S)$ be a set of horns on $S$.
 Then the class of fibrations that have the right lifting property with respect to $\Lambda(S)$ is closed under identity types.
 \end{prop}
 \begin{proof}
@@ -848,37 +871,6 @@ The only new part is that $F^*(\scat{C}_!)$ has extensional identity types which
 \end{example}
 
 \subsection{Products}
-
-The notion of a Cartesian model category is a special case of a monoidal model category \cite[Definition~A.3.1.2]{lurie-topos}, \cite[Definition~4.2.6]{hovey}, \cite[Subsection~2.5]{segal-spaces}.
-We will need only a weak version of this notion:
-
-\begin{defn}
-A model category is \emph{semi-Cartesian} if it is Cartesian closed as a category and, for every pair of cofibrations $f : A \to B$ and $g : C \to D$,
-the canonical map $f \square g : A \times D \amalg_{A \times C} B \times C \to B \times D$ is a cofibration.
-\end{defn}
-
-\begin{remark}[cartesian]
-A model category is \emph{Cartesian} if it is semi-Cartesian, the terminal object is cofibrant, and $f \square g$ is a trivial cofibration whenever $f$ is a cofibration and $g$ is a trivial cofibration.
-\end{remark}
-
-\begin{example}
-If a model category $\scat{C}$ is semi-Cartesian (resp., Cartesian), then $\scat{C}^\scat{J}$ with the injective structure is also semi-Cartesian (resp., Cartesian).
-\end{example}
-
-The main feature of semi-Cartesian model categories is that they have nice cosimplicial resolutions of objects and maps \cite[Definition~16.1.2, Definition~16.1.20]{hirschhorn}.
-A \emph{cosimplicial resolution} of an object $X$ of $\scat{C}$ is a cofibrant replacement of the constant functor on $X$ in the Reedy model structure on $\scat{C}^\Delta$.
-Let $\Delta$ be a fibrant cofibrant replacement of the terminal object of $\scat{C}^\Delta$.
-That is, $\Delta$ is a functor $\Delta \to \scat{C}$ such that $\Delta^n \to 1$ is a trivial fibration for all $n$ and $\partial \Delta^n \to \Delta^n$ is a cofibration in $\scat{C}$.
-Then $n \mapsto Q(X) \times \Delta^n$ is a cosimplicial resolution of $X$, where $Q(X)$ is any cofibrant replacement of $X$.
-
-\begin{remark}[good-cyl]
-Every Cartesian model category has good cylinder objects (\rdefn{good-cyl}) defined as $X \times \Delta^1$.
-\end{remark}
-
-A \emph{cosimplicial resolution} of a map $f : X \to Y$ consists of cosimplicial resolution of its domain and codomain and a map between them such that the obvious square commutes.
-Let $Q(X)$ be a cofibrant replacement of $X$.
-Factor the map $Q(X) \to X \xrightarrow{f} Y$ into a cofibration $Q(f) : Q(X) \to Q(Y)$ followed by a weak equivalence $Q(Y) \to Y$.
-Then $n \mapsto Q(X) \times \Delta^n \to Q(Y) \times \Delta^n$ is a cosimplicial resolution of $f$.
 
 Let $D : \scat{C} \to \scat{C}^\scat{J}$ be the diagonal functor.
 We will say that a functor $F : \scat{J} \to \scat{C}$ is \emph{anticonstant} if, for every constant functor $D(X) : \scat{J} \to \scat{C}$, every map $F \to D(X)$ factor through the map $D(1) \to D(X)$ for some map $1 \to X$.
@@ -916,13 +908,46 @@ Since $F$ is anticonstant, the latter map factors through a map $D(c)$ for some 
 The map $c$ corresponds to a map $g : X \to Y$ such that $D(g) \circ \pi_2 = f$.
 \end{proof}
 
-\begin{prop}
-Let $\scat{C}$ be a proper combinatorial model category, let $\scat{J}$ be a small category, and let $S$ be a set of maps of $\scat{C}^\scat{J}$.
-Then $D^*(L_S(\scat{C}^\scat{J}))$ has dependent products, where $D : \scat{C} \to \scat{C}^\scat{J}$ is the diagonal functor.
+\begin{prop}[localized-products]
+Let $\scat{J}$ be a small category and let $S$ be a set of maps of $\sSet^\scat{J}$.
+Then $D^*(L_S(\sSet^\scat{J}))$ has dependent products, where $D : \sSet \to \sSet^\scat{J}$ is the diagonal functor.
 \end{prop}
 \begin{proof}
-% TODO
+The functor $D : \sSet \to \sSet^\scat{J}$ satisfies most of the conditions of \rprop{products} as discussed in \rexample{products}.
+We just need to prove that $\Pi_g$ preserves fibrations for all $D$-fibrations $g$.
+This is true if and only if (generating) trivial cofibrations are stable under pullbacks along $D$-fibrations.
+Maps that are trivial cofibrations in the injective model structure on $\sSet^\scat{J}$ are stable under pullbacks since $\sSet$ is right proper and $D$-fibrations are objectwise fibrations.
+Thus, we just need to prove that maps in $\Lambda(S)$ are stable under pullbacks along $D$-fibraions.
+We will use the cosimplicial resolution of the form $Q(X) \times D(\Delta^n) \to Q(Y) \times D(\Delta^n)$.
+Consider the following diagram:
+\[ \xymatrix{ W \ar[r] \ar[d] \pb & Q(X) \times D(\Delta^n) \amalg_{Q(X) \times D(\partial \Delta^n)} Q(Y) \times D(\partial \Delta^n) \ar[d] \\
+              V \ar[r] \ar[d] \pb & Q(Y) \times D(\Delta^n) \ar[d] \\
+              D(B) \ar[r]_{D(p)} & D(A)
+            } \]
+where $p : B \to A$ is a fibration and $Q(f) : Q(X) \to Q(Y)$ is a cofibrant replacement of a map $f \in S$.
+We need to prove that $W \to V$ is a trivial cofibration in $L_S(\scat{C}^\scat{J})$.
+\Rlem{anticonstant-factor} implies that the map $Q(Y) \times D(\Delta^n) \to D(A)$ factor as the second projection followed by a map of the form $D(\Delta^n) \to D(A)$ for some map $c : \Delta^n \to A$.
+Let us denote by $T$ the pullback of $p$ and $c$.
+Then $V \simeq Q(Y) \times D(T)$.
+
+Since $\sSet^\scat{J}$ is locally Cartesian closed, pullbacks along the map $Q(Y) \times D(T) \to Q(Y) \times D(\Delta^n)$ preserve colimits.
+Thus, $W \to V$ is the following map:
+\[ (Q(X) \times D(T)) \amalg_{(Q(X) \times D(T \times_{\Delta^n} \partial \Delta^n))} (Q(Y) \times D(T \times_{\Delta^n} \partial \Delta^n)) \to Q(Y) \times D(T). \]
+That is, this map is $Q(f) \square D(g)$, where $g$ is the map $T \times_{\Delta^n} \partial \Delta^n \to T$.
+
+The set $\Lambda(S)$ consists of maps of the form $Q(f) \square D(i)$ for all $f \in S$ and $i : \partial \Delta^n \to \Delta^n$.
+By the usual argument, maps of the form $Q(f) \square i'$ belong to $\Icof[\Lambda(S)]$, where $i' \in \Icof[D(i)]$ and
+$\Icof$ is the class of maps that have the left lifting property with respect to $\Iinj$ and $\Iinj$ is the class of maps that have the right lifting property with respect to $I$.
+Thus, we just need to prove that $D(g) \in \Icof[D(\I)]$, where $\I = \{ \partial \Delta^n \to \Delta^n \}$, but this follows from the fact that $g \in \Icof$ and $D(\Icof) \subseteq \Icof[D(\I)]$ since $D$ is a left adjoint.
 \end{proof}
+
+% This might be false unless we assume some additional hypotheses on $\scat{C}$ or weaken the conclusion.
+% \begin{remark}
+% Let $\scat{C}$ be a proper type-theoretic combinatorial model category and let $S$ be a set of maps of $\scat{C}$.
+% Then $L_S(\scat{C})$ is right proper if and only if pullbacks of maps in $\Lambda(S)$ along fibrations in $L_S(\scat{C})$ are trivial cofibrations in $L_S(\scat{C})$.
+% An argument similar to the one that we used in the proof of \rprop{localized-products} shows that if $\scat{C}$ is semi-Cartesian closed, then $L_S(\scat{C})$ is right proper if and only if
+% each map in $S$ has a cofibrant replacement such that its pullbacks along fibrations in $L_S(\scat{C})$ are trivial cofibrations in $L_S(\scat{C})$.
+% \end{remark}
 
 \section{Extension types}
 
