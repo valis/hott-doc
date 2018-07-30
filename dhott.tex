@@ -749,15 +749,15 @@ If we know that a contextually indexed contextual category of the form $F^*((\sc
 
 \subsection{Identity types}
 
-Let $(\scat{C},\Fib)$ be a type-theoretic semi-fibration category and let $\Fib'$ be a subclass of $\Fib$.
+Let $(\scat{C},\Fib)$ be a category with fibrations and let $\Fib'$ be a subclass of $\Fib$.
 We will say that $\Fib'$ is \emph{closed under identity types} if every map in $((\scat{C},\Fib')/\Gamma)_\fs{f}$ factors into a trivial cofibration of $(\scat{C},\Fib)$ followed by a fibration in $\Fib'$.
 
 \begin{lem}[subfib]
-Let $(\scat{C},\Fib)$ be a type-theoretic semi-fibration category and let $\Fib'$ be a subclass of $\Fib$.
+Let $(\scat{C},\Fib)$ be a category with fibrations and let $\Fib'$ be a subclass of $\Fib$.
 Then $\Fib'$ is closed under identity types if and only if the following conditions hold:
 \begin{enumerate}
-\item Every map in $((\scat{C},\Fib')/\Gamma)_\fs{f}$ factors into a trivial cofibration of $(\scat{C},\Fib')$ followed by a fibration in $\Fib'$.
-\item A map in $((\scat{C},\Fib')/\Gamma)_\fs{f}$ is a trivial cofibration of $(\scat{C},\Fib')$ if and only if it is a trivial cofibration of $(\scat{C},\Fib)$.
+\item \label{it:subfib-factor} Every map in $((\scat{C},\Fib')/\Gamma)_\fs{f}$ factors into a trivial cofibration of $(\scat{C},\Fib')$ followed by a fibration in $\Fib'$.
+\item \label{it:subfib-we} A map in $((\scat{C},\Fib')/\Gamma)_\fs{f}$ is a trivial cofibration of $(\scat{C},\Fib')$ if and only if it is a trivial cofibration of $(\scat{C},\Fib)$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
@@ -771,8 +771,51 @@ To prove the converse, it is enough to factor a map into a trivial cofibration i
 Then the second condition implies that the first map is also a trivial cofibration of $(\scat{C},\Fib)$.
 \end{proof}
 
+\begin{lem}[subfib-model-cats]
+Let $(\scat{C},\Fib)$ be either a type-theoretic semi-fibration category or a model category and let $\Fib'$ be a subclass of $\Fib$ which is closed under retracts, compositions, and pullbacks and contains all trivial fibrations.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:subfib-model-id} The class $\Fib'$ is closed under identity types.
+\item \label{it:subfib-model-fib} A map in $((\scat{C},\Fib')/\Gamma)_\fs{f}$ belongs to $\Fib$ if and only if it belongs to $\Fib'$.
+\item \label{it:subfib-model-path} For every fibration $p : Y \twoheadrightarrow \Gamma$ in $\Fib'$,
+the diagonal $Y \to Y \times_\Gamma Y$ factors as a trivial cofibration $Y \to P(Y)$ of $\scat{C}$ followed by a fibration $P(Y) \twoheadrightarrow Y \times_\Gamma Y$ in $\Fib'$.
+\end{enumerate}
+\end{lem}
+\begin{proof}
+\eqref{it:subfib-model-id} $\implies$ \eqref{it:subfib-model-fib}
+Since $\Fib' \subseteq \Fib$, we just need to prove that every map in $((\scat{C},\Fib')/\Gamma)_\fs{f}$ which belongs to $\Fib$ also belongs to $\Fib'$.
+Let $f : X \to Y$ be such a map.
+Factor it into a trivial cofibration $i : X \to Z$ followed by a fibration $p : Z \twoheadrightarrow Y$ in $\Fib'$.
+Since $i$ has the left lifting property with respect to $f$, the standard argument implies that $f$ is a retract of $p$.
+Since $\Fib'$ is closed under retracts, $f$ belongs to $\Fib'$.
+
+\eqref{it:subfib-model-fib} $\implies$ \eqref{it:subfib-model-path}
+Let $p : Y \twoheadrightarrow \Gamma$ be a fibration in $\Fib'$.
+Factor the diagonal $Y \to Y \times_\Gamma Y$ into a trivial cofibration $Y \to P(Y)$ of $\scat{C}$ followed by a fibration $q : P(Y) \to Y \times_\Gamma Y$ in $\Fib$.
+Since $\Fib'$ is closed under pullbacks, the projection $\pi_1 : Y \times_\Gamma Y \to Y$ belongs to $\Fib'$.
+Since $\Fib'$ contains all trivial fibrations, the map $\pi_1 \circ q$ also belongs to $\Fib'$.
+It follows that $q$ belongs to $\Fib'$.
+
+\eqref{it:subfib-model-path} $\implies$ \eqref{it:subfib-model-id}
+Let $f : X \to Y$ be a map in $((\scat{C},\Fib')/\Gamma)_\fs{f}$.
+We can factor $f$ as usual as $X \to Z \xrightarrow{q} X \times_\Gamma Y \xrightarrow{\pi_2} Y$, where $q$ is a pullback of $P(Y) \twoheadrightarrow Y \times_\Gamma Y$:
+\[ \xymatrix{ Z \ar[r] \ar@{->>}[d]_q \pb                       & P(Y) \ar@{->>}[d] \\
+              X \times_\Gamma Y \ar[r] \ar@{->>}[d]_{\pi_1} \pb & Y \times_\Gamma Y \ar@{->>}[d]^{\pi_1} \\
+              X \ar[r]_f                                        & Y
+            } \]
+Since $\Fib'$ is closed under pullbacks, $q$ belongs to $\Fib'$.
+The projection $\pi_2 : X \times_\Gamma Y \to Y$ also belongs to $\Fib'$ since it is a pullback of the map $X \twoheadrightarrow \Gamma$ which belongs to $\Fib'$.
+Since $\Fib'$ is closed under compositions, the map $\pi_2 \circ q$ belongs to $\Fib'$.
+Thus, we just need to prove that the map $X \to Z$ factors into a trivial cofibration followed by a fibration in $\Fib'$.
+Since $\pi_1 \circ q$ is a pullback of the trivial fibration $P(Y) \twoheadrightarrow Y$, it is also a trivial fibration.
+Thus, $X \to Z$ is a weak equivalence by 2-out-of-3.
+Factor it into a trivial cofibration $X \to Z'$ followed by a fibration $Z' \to Z$.
+By 2-out-of-3, $Z' \to Z$ is a trivial fibration.
+Hence, it belongs to $\Fib'$.
+\end{proof}
+
 \begin{prop}[localized-fib]
-Let $(\scat{C},\Fib)$ be a type-theoretic semi-fibration category and let $\Fib'$ be a subclass of $\Fib$ which contains identity morphisms and closed under compositions and pullbacks.
+Let $(\scat{C},\Fib)$ be a type-theoretic semi-fibration category and let $\Fib'$ be a subclass of $\Fib$ which contains identity morphisms and closed under compositions, pullbacks, and identity types.
 Then $(\scat{C},\Fib')$ is also a type-theoretic semi-fibration category.
 Moreover $(\scat{C},\Fib')$ is closed under identity types in the sense that identity types in this category are equivalent to identity types in $(\scat{C},\Fib)$.
 \end{prop}
@@ -786,7 +829,7 @@ Since identity types are unique up to an equivalence, this implies that they are
 
 \begin{cor}[localized-con-fib]
 Let $F$ be a left Quillen functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$ such that $F^*(\scat{C}_!)$ has extensional identity types.
-Let $\Fib'$ be a subclass of fibrations of $\scat{C}$ closed under identity types.
+Let $\Fib'$ be a subclass of fibrations of $\scat{C}$ which contains identity morphisms and closed under compositions, pullbacks, and identity types.
 Then $F^*((\scat{C},\Fib')_!)$ is a contextually indexed contextual category with unit types, $\Sigma$-types, and extensional identity types.
 \end{cor}
 \begin{proof}
@@ -797,7 +840,7 @@ The following theorem provides the main class of examples of contextually indexe
 
 \begin{thm}
 Let $\scat{C}$ be a right proper combinatorial type-theoretic semi-fibration category in which all objects are cofibrant and let $F : \scat{J} \to \scat{I}$ be a functor between small categories.
-Let $\Fib$ be a class of injective fibrations closed under identity types.
+Let $\Fib$ be a class of injective fibrations which contains identity morphisms and closed under compositions, pullbacks, and identity types.
 Then $F^*((\scat{C}^\scat{J},\Fib)_!)$ is a locally small contextually indexed contextual category with dependent $\Hom$-types, unit types, $\Sigma$-types, and extensional identity types.
 \end{thm}
 \begin{proof}
@@ -810,14 +853,16 @@ By \rprop{localized-hom}, it has dependent $\Hom$-types.
 
 Let $S$ be a class of maps of a model category $\scat{C}$.
 Then the class of fibrations that have the right lifting property with respect to $S$ is not necessarily closed under identity types, but if $S$ satisfies certain closure conditions, then this is true.
-% We will say that $S$ is closed under \emph{coidentity types} if, for every map $f : X \to Y$ in $S$, there exist cylinder objects $C(X)$ for $X$ and $C(Y)$ for $Y$ such that the map $C(X) \amalg_{(X \amalg X)} (Y \amalg Y) \to C(Y)$ belongs to $S$.
+We will say that $S$ is closed under \emph{coidentity types} if, for every map $f : X \to Y$ in $S$, there exist cylinder objects $C(X)$ for $X$ and $C(Y)$ for $Y$ such that the map $C(X) \amalg_{(X \amalg X)} (Y \amalg Y) \to C(Y)$ belongs to $S$.
 
-% \begin{prop}
-% Let $S$ be a class of maps of a model category closed under coidentity types.
-% Then the class of fibrations that have the right lifting property with respect to $S$ is closed under identity types.
-% \end{prop}
-% \begin{proof}
-% \end{proof}
+\begin{lem}
+Let $S$ be a class of cofibrations of a model category $\scat{C}$ closed under coidentity types.
+Suppose that either the domains of maps in $S$ are cofibrant or $\scat{C}$ is left proper.
+Then the class of fibrations that have the right lifting property with respect to $S$ is closed under identity types.
+\end{lem}
+\begin{proof}
+% TODO
+\end{proof}
 
 A \emph{cosimplicial resolution} of an object $X$ of $\scat{C}$ is a cofibrant replacement of the constant functor on $X$ in the Reedy model structure on $\scat{C}^\Delta$.
 Let $\Delta$ be a fibrant cofibrant replacement of the terminal object of $\scat{C}^\Delta$.
@@ -911,6 +956,7 @@ The map $c$ corresponds to a map $g : X \to Y$ such that $D(g) \circ \pi_2 = f$.
 \begin{prop}[localized-products]
 Let $\scat{J}$ be a small category and let $S$ be a set of cofibrations of $\sSet^\scat{J}$ such that the domains of maps in $S$ are cofibrant and the codomains are anticonstant.
 Then $D^*(L_S(\sSet^\scat{J}))$ has dependent products, where $D : \sSet \to \sSet^\scat{J}$ is the diagonal functor.
+Moreover, products in $D^*(L_S(\sSet^\scat{J}))$ are computed as products in $D^*(\sSet^\scat{J})$.
 \end{prop}
 \begin{proof}
 The functor $D : \sSet \to \sSet^\scat{J}$ satisfies most of the conditions of \rprop{products} as discussed in \rexample{products}.
@@ -947,10 +993,12 @@ To prove it in this generality, we need to assume that $\scat{C}$ has a cosimpli
 such that projections $A \times \Delta^n \to A$ are weak equivalences for all cofibrant $A$ and one of the following conditions hold:
 \begin{enumerate}
 \item Maps $\partial \Delta^n \to \Delta^n$ generate all cofibrations of $\scat{C}$, that is every cofibration belongs to $\Icof$, where $\I$ is the set of such maps.
-\item The set $S$ is closed under the function $- \square D(i)$ for every cofibration $i$ of $\scat{C}$.
+\item The set $S$ is closed under the functions $- \square D(i)$ for all cofibrations $i$ of $\scat{C}$.
 \end{enumerate}
 The second condition is weaker than the first one in the sense that if the first condition holds, then we can enlarge $S$ so that the second condition also holds and the resulting localized structure does not change.
 \end{remark}
+
+\subsection{Coproducts}
 
 \section{Extension types}
 
