@@ -59,6 +59,7 @@
 
 \newcommand{\class}[2]{#1\text{-}\mathrm{#2}}
 \newcommand{\I}{\mathrm{I}}
+\newcommand{\J}{\mathrm{J}}
 \newcommand{\Icof}[1][\I]{\class{#1}{cof}}
 \newcommand{\Iinj}[1][\I]{\class{#1}{inj}}
 
@@ -851,31 +852,37 @@ By \rprop{localized-hom}, it has dependent $\Hom$-types.
 
 \subsection{Localization of model categories}
 
+Let $S$ be a class of maps of a model category $\scat{C}$.
+Then the class of fibrations that have the right lifting property with respect to $S$ is not necessarily closed under identity types, but if $S$ satisfies certain closure conditions, then this is true.
+If $\Gamma$ is an object of $\scat{C}$, we will write $S/\Gamma$ for the class of maps $\scat{C}/\Gamma$ which consists of maps such that their underlying maps in $\scat{C}$ belong to $S$.
+We will say that $S$ is closed under \emph{coidentity types} if, for every object $\Gamma$ and every map $i : U \to V$ in $S/\Gamma$, there exist cylinder objects $C(U)$ for $U$ and $C(V)$ for $V$
+and a map of cylinder objects $C(i) : C(U) \to C(V)$ such that the map $i' : C(U) \amalg_{(U \amalg U)} (V \amalg V) \to C(V)$
+has the left lifting property with respect to every fibrant object of $\scat{C}/\Gamma$ which has the right lifting property with respect to $S$ as a map in $\scat{C}$.
+
+\begin{remark}[coidentity]
 Let $S$ be a class of maps of a category $\scat{C}$.
 We will write $\Iinj[S]$ for the class of maps of $\scat{C}$ that have the right lifting property with respect to $S$.
 We will write $\Icof[S]$ for the class of maps of $\scat{C}$ that have the left lifting property with respect to $\Iinj[S]$.
 
-Let $S$ be a class of maps of a model category $\scat{C}$.
-Then the class of fibrations that have the right lifting property with respect to $S$ is not necessarily closed under identity types, but if $S$ satisfies certain closure conditions, then this is true.
-We will say that $S$ is closed under \emph{coidentity types} if, for every map $i : U \to V$ in $S$, there exist cylinder objects $C(U)$ for $U$ and $C(V)$ for $V$
-and a map of cylinder objects $C(i) : C(U) \to C(V)$ such that the map $C(U) \amalg_{(U \amalg U)} (V \amalg V) \to C(V)$ belongs to $\Icof[S]$.
+If $\J$ is the class of trivial cofibrations of $\scat{C}$ and $S$ is a class of maps of $\scat{C}$ such that, for every $i \in S$, there exists a map $i'$ as described above which belongs to $\Icof[(S \cup \J)]$, then $S$ is closed under coidentity types.
+\end{remark}
 
-\begin{lem}
+\begin{lem}[coidentity]
 Let $S$ be a class of cofibrations of a model category $\scat{C}$ closed under coidentity types.
 Suppose that either the domains of maps in $S$ are cofibrant or $\scat{C}$ is left proper.
 Then the class of fibrations that have the right lifting property with respect to $S$ is closed under identity types.
 \end{lem}
 \begin{proof}
-Let $P(Y)$ be a path object for a fibration $Y \twoheadrightarrow \Gamma$ which belongs to $\Iinj[S]$.
-By \rlem{subfib-model-cats}, we just need to prove that the fibration $P(Y) \twoheadrightarrow Y \times_\Gamma Y$ belongs to $\Iinj[S]$.
+Let $P(Y)$ be a path object for a fibration $Y \twoheadrightarrow \Gamma$ which has the right lifting property with respect to $S$.
+By \rlem{subfib-model-cats}, we just need to prove that the fibration $P(Y) \twoheadrightarrow Y \times_\Gamma Y$ also has this property.
 Suppose that we have a commutative square as below, where $i \in S$.
 \[ \xymatrix{ U \ar[r]^-h \ar[d]_i                  & P(Y) \ar@{->>}[d] \\
               V \ar[r]_-{\langle y_0, y_1 \rangle}  & Y \times_\Gamma Y
             } \]
 We need to construct a lift in this square.
 
-Let $U \amalg U \xrightarrow{[i_0^U,i_1^U]} C(U) \xrightarrow{s^U} U$ and $V \amalg V \xrightarrow{[i_0^V,i_1^V]} C(V) \xrightarrow{s^V} V$ be cylinder objects
-such that the map $i' : W \to C(V)$ belongs to $\Icof[S]$, where $W = C(U) \amalg_{(U \amalg U)} (V \amalg V)$.
+Let $U \amalg U \xrightarrow{[i_0^U,i_1^U]} C(U) \xrightarrow{s^U} U$ and $V \amalg V \xrightarrow{[i_0^V,i_1^V]} C(V) \xrightarrow{s^V} V$ be cylinder objects,
+let $W = C(U) \amalg_{(U \amalg U)} (V \amalg V)$, aand let $i' : W \to C(V)$ be the map described in the definition of the closure under coidentity types.
 Consider the following diagram:
 \[ \xymatrix{                            & U \ar[d] \ar[r]^i        & V \ar[d]                                             &                                            &                \\
                                          & U \amalg U \ar[r] \ar[d] & \po V \amalg U \ar[r]^-{[t_0, h]} \ar[d]             & P(Y) \ar@{->>}[r]^{p_1} \ar@{->>}[d]^{p_0} & Y \ar@{->>}[d] \\
@@ -890,7 +897,7 @@ The map $p_1 \circ h'$ extends to a map $h'' : W \to Y$ such that its compositio
               C(U) \amalg_U V \ar[d] \ar[ur]^{h'}  &                                    & \Gamma         \\
               W \ar[r]_-{i'} \ar@{-->}[uurr]^{h''} & C(V) \ar[ur] \ar@{-->}[uur]^{h'''} &
             } \]
-Since $i'$ belongs to $\Icof[S]$ and $Y \twoheadrightarrow \Gamma$ belongs to $\Iinj[S]$, we have a lift $h''' : C(V) \to Y$.
+Since $Y \twoheadrightarrow \Gamma$ is a fibration which has the right lifting property with respect to $S$, we have a lift $h''' : C(V) \to Y$ by the definition of $i'$.
 Now, consider the following diagram:
 \[ \xymatrix{ U \ar[r]^{i_1^U} \ar[d]_i & C(U) \ar[r]   & C(U) \amalg_U V \ar[r]^-{h'} \ar[d]_j                            & P(Y) \ar@{->>}[d] \\
               V \ar[r]                  & W \ar[r]_{i'} & C(V) \ar[r]_-{\langle y_0 \circ s, h''' \rangle} \ar@{-->}[ur]^q & Y \times_\Gamma Y
@@ -912,41 +919,39 @@ Let $\Delta$ be a fibrant cofibrant replacement of the terminal object of $\scat
 That is, $\Delta$ is a functor $\Delta \to \scat{C}$ such that $\Delta^n \to 1$ is a trivial fibration for all $n$ and $\partial \Delta^n \to \Delta^n$ is a cofibration in $\scat{C}$.
 Then $n \mapsto Q(X) \times \Delta^n$ is a cosimplicial resolution of $X$, where $Q(X)$ is any cofibrant replacement of $X$.
 
-\begin{remark}[good-cyl]
-Every Cartesian model category has good cylinder objects (\rdefn{good-cyl}) defined as $X \times \Delta^1$.
-\end{remark}
-
-A \emph{cosimplicial resolution} of a map $f : X \to Y$ consists of cosimplicial resolution of its domain and codomain and a map between them such that the obvious square commutes.
-Let $Q(X)$ be a cofibrant replacement of $X$.
-Factor the map $Q(X) \to X \xrightarrow{f} Y$ into a cofibration $Q(f) : Q(X) \to Q(Y)$ followed by a weak equivalence $Q(Y) \to Y$.
-Then $n \mapsto Q(X) \times \Delta^n \to Q(Y) \times \Delta^n$ is a cosimplicial resolution of $f$.
-
+A \emph{cofibrant cosimplicial resolution} of a map $f : X \to Y$ consists of cosimplicial resolution of its domain and codomain and a cofibration between them such that the obvious square commutes.
 For a class $S$ of maps of a model category, a class $\Lambda(S)$ of \emph{horns on $S$} \cite[Definition~3.3.8]{hirschhorn} is defined as the class of maps of the form
 \[ X \otimes \Delta^n \amalg_{X \otimes \partial \Delta^n} Y \otimes \partial \Delta^n \to Y \otimes \Delta^n, \]
-where $X \otimes \Delta^n \to Y \otimes \Delta^n$ is a cosimplicial resolution of a map $X \to Y$ from $S$.
+where $X \otimes \Delta^n \to Y \otimes \Delta^n$ is a cofibrant cosimplicial resolution of a map $X \to Y$ from $S$.
 
-\begin{prop}
-Let $S$ be a set of maps of a left proper combinatorial model category $\scat{C}$ and let $\Lambda(S)$ be a set of horns on $S$.
-Then the class of fibrations that have the right lifting property with respect to $\Lambda(S)$ is closed under identity types.
-\end{prop}
+\begin{lem}
+Let $S$ be a class of maps of a model category $\scat{C}$.
+Then any class of horns $\Lambda(S)$ on $S$ is closed under coidentity types and consists of cofibrations between cofibrant objects.
+\end{lem}
 \begin{proof}
-Let $J$ be a set of generating trivial cofibrations of $\scat{C}$.
-Then a map has the right lifting property with respect to $\overline{\Lambda(S)} = \Lambda(S) \cup J$ if and only if it is a fibration and has the right lifting property with respect to $\Lambda(S)$.
-We will denote this class of fibrations by $\Fib'$.
+The class $\Lambda(S)$ consists of cofibrations between cofibrant objects by \cite[Corollary~16.3.11]{hirschhorn}.
+Let $i : Q(U) \otimes \Delta^n \amalg_{Q(U) \otimes \partial \Delta^n} Q(V) \otimes \partial \Delta^n \to Q(V) \otimes \Delta^n$ be a map in $\Lambda(S)$.
+Note that $(X \otimes K) \amalg (X \otimes K) \simeq X \otimes (K \times \partial \Delta^1)$ and that $X \otimes (K \times \Delta^1)$ is a cylinder object for $X \otimes K$.
+The second statement follows from the first one and \cite[Lemma~16.4.4]{hirschhorn}.
+This lemma and \cite[Proposition~16.5.6]{hirschhorn} imply that maps $Q(U) \otimes K \to Q(U) \otimes L$ and $Q(U) \otimes K \to Q(V) \otimes K$ are cofibrations between cofibrant objects for all cofibrations $K \to L$.
+This implies that $Q(U) \otimes (\Delta^n \times \Delta^1) \amalg_{Q(U) \otimes (\partial \Delta^n \times \Delta^1)} Q(V) \otimes (\partial \Delta^n \times \Delta^1)$ is a cylinder object
+for $Q(U) \otimes \Delta^n \amalg_{Q(U) \otimes \partial \Delta^n} Q(V) \otimes \partial \Delta^n$.
 
-Since $S$ is a small set and $\scat{C}$ is combinatorial and left proper, there exists a left Bousfield localization of $\scat{C}/\Gamma$ such that its fibrant objects are precisely maps in $\Fib'$.
-Moreover, a map between fibrant objects is a weak equivalence in the localized model structure if and only if it is a weak equivalence in $\scat{C}$.
-Thus, by \rlem{subfib}, $\Fib'$ is closed under identity types.
+By \rremark{coidentity}, it is enough to prove that $i'$ belongs to $\Icof[S]$.
+By \cite[Proposition~16.4.3]{hirschhorn}, $X \otimes -$ preserves colimits.
+It follows that $i'$ is isomorphic to the map $Q(U) \otimes (\Delta^n \times \Delta^1) \amalg_{(Q(U) \otimes \partial(\Delta^n \times \Delta^1))} Q(V) \otimes \partial(\Delta^n \times \Delta^1) \to Q(V) \otimes (\Delta^n \times \Delta^1)$,
+where $\partial(\Delta^n \times \Delta^1) = \partial \Delta^n \times \Delta^1 \amalg_{(\partial \Delta^n \times \partial \Delta^1)} \Delta^n \times \partial \Delta^1$.
+Since $\partial(\Delta^n \times \Delta^1) \to \Delta^n \times \Delta^1$ is a cofibration, \cite[Proposition~16.4.5]{hirschhorn} implies that $i'$ belongs to $\Icof[S]$.
 \end{proof}
 
 \begin{defn}
-Let $\scat{C}$ be a combinatorial left proper model category and let $S$ be a set of maps of $\scat{C}$.
-We define the \emph{localization} of $\scat{C}$ at $S$ as the type-theoretic semi-fibration category $(\scat{C},\Fib)$, where $\Fib$ consists of fibrations that have the right lifting property with respect to $\Lambda(S)$.
+Let $\scat{C}$ be a type-theoretic model category and let $S$ be a class of maps of $\scat{C}$.
+We define the \emph{localization} of $\scat{C}$ at $S$ as the type-theoretic semi-fibration category $(\scat{C},\Iinj[\Lambda(S)])$.
 The localization of $\scat{C}$ at $S$ will be denoted by $L_S(\scat{C})$.
 \end{defn}
 
 \begin{remark}
-The class of fibrations defined in in the previous definition may be bigger than the class of fibration of the localized model structure.
+The class of fibrations defined in in the previous definition may be bigger than the class of fibration of the left Bousfield localization of $\scat{C}$ (if it exists).
 This smaller class is also closed under identity types, but we prefer to work with the larger class since it can be described more explicitly.
 This will allow us to prove that it is closed under other type-theoretic constructions.
 \end{remark}
@@ -959,6 +964,35 @@ The only new part is that $F^*(\scat{C}_!)$ has extensional identity types which
 \end{example}
 
 \subsection{Products}
+
+The notion of a Cartesian model category is a special case of a monoidal model category \cite[Definition~A.3.1.2]{lurie-topos}, \cite[Definition~4.2.6]{hovey}, \cite[Subsection~2.5]{segal-spaces}.
+We will need only a weak version of this notion:
+
+\begin{defn}
+A model category is \emph{semi-Cartesian} if, for every pair of cofibrations $f : A \to B$ and $g : C \to D$,
+the canonical map $f \square g : A \times D \amalg_{A \times C} B \times C \to B \times D$ is a cofibration.
+A model category is \emph{semi-Cartesian closed} if it is semi-Cartesian and Cartesian closed as a category.
+\end{defn}
+
+\begin{remark}[cartesian]
+A model category is \emph{Cartesian (resp., Cartesian closed)} if it is semi-Cartesian (resp., semi-Cartesian closed), the terminal object is cofibrant, and $f \square g$ is a trivial cofibration whenever $f$ is a cofibration and $g$ is a trivial cofibration.
+\end{remark}
+
+\begin{example}
+If a model category $\scat{C}$ is semi-Cartesian (resp., Cartesian, semi-Cartesian closed, Cartesian closed), then $\scat{C}^\scat{J}$ with the injective structure is also semi-Cartesian (resp., Cartesian, semi-Cartesian closed, Cartesian closed).
+\end{example}
+
+The main feature of semi-Cartesian closed model categories is that they have nice cosimplicial resolutions of objects and maps \cite[Definition~16.1.2, Definition~16.1.20]{hirschhorn}.
+Let $\Delta$ be a fibrant cofibrant replacement of the terminal object of $\scat{C}^\Delta$.
+That is, $\Delta$ is a functor $\Delta \to \scat{C}$ such that $\Delta^n \to 1$ is a trivial fibration for all $n$ and $\partial \Delta^n \to \Delta^n$ is a cofibration in $\scat{C}$.
+Then $n \mapsto Q(X) \times \Delta^n$ is a cosimplicial resolution of $X$, where $Q(X)$ is any cofibrant replacement of $X$.
+Let $f : X \to Y$ be a map and let $Q(X)$ be a cofibrant replacement of $X$.
+Factor the map $Q(X) \to X \xrightarrow{f} Y$ into a cofibration $Q(f) : Q(X) \to Q(Y)$ followed by a weak equivalence $Q(Y) \to Y$.
+Then $n \mapsto Q(X) \times \Delta^n \to Q(Y) \times \Delta^n$ is a cosimplicial resolution of $f$.
+
+\begin{remark}[good-cyl]
+Every Cartesian model category has good cylinder objects (\rdefn{good-cyl}) defined as $X \times \Delta^1$.
+\end{remark}
 
 Let $D : \scat{C} \to \scat{C}^\scat{J}$ be the diagonal functor.
 We will say that a functor $F : \scat{J} \to \scat{C}$ is \emph{anticonstant} if, for every constant functor $D(X) : \scat{J} \to \scat{C}$, every map $F \to D(X)$ factor through the map $D(1) \to D(X)$ for some map $1 \to X$.
