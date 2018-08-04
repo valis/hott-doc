@@ -851,9 +851,14 @@ By \rprop{localized-hom}, it has dependent $\Hom$-types.
 
 \subsection{Localization of model categories}
 
+Let $S$ be a class of maps of a category $\scat{C}$.
+We will write $\Iinj[S]$ for the class of maps of $\scat{C}$ that have the right lifting property with respect to $S$.
+We will write $\Icof[S]$ for the class of maps of $\scat{C}$ that have the left lifting property with respect to $\Iinj[S]$.
+
 Let $S$ be a class of maps of a model category $\scat{C}$.
 Then the class of fibrations that have the right lifting property with respect to $S$ is not necessarily closed under identity types, but if $S$ satisfies certain closure conditions, then this is true.
-We will say that $S$ is closed under \emph{coidentity types} if, for every map $f : X \to Y$ in $S$, there exist cylinder objects $C(X)$ for $X$ and $C(Y)$ for $Y$ such that the map $C(X) \amalg_{(X \amalg X)} (Y \amalg Y) \to C(Y)$ belongs to $S$.
+We will say that $S$ is closed under \emph{coidentity types} if, for every map $i : U \to V$ in $S$, there exist cylinder objects $C(U)$ for $U$ and $C(V)$ for $V$
+and a map of cylinder objects $C(i) : C(U) \to C(V)$ such that the map $C(U) \amalg_{(U \amalg U)} (V \amalg V) \to C(V)$ belongs to $\Icof[S]$.
 
 \begin{lem}
 Let $S$ be a class of cofibrations of a model category $\scat{C}$ closed under coidentity types.
@@ -861,7 +866,45 @@ Suppose that either the domains of maps in $S$ are cofibrant or $\scat{C}$ is le
 Then the class of fibrations that have the right lifting property with respect to $S$ is closed under identity types.
 \end{lem}
 \begin{proof}
-% TODO
+Let $P(Y)$ be a path object for a fibration $Y \twoheadrightarrow \Gamma$ which belongs to $\Iinj[S]$.
+By \rlem{subfib-model-cats}, we just need to prove that the fibration $P(Y) \twoheadrightarrow Y \times_\Gamma Y$ belongs to $\Iinj[S]$.
+Suppose that we have a commutative square as below, where $i \in S$.
+\[ \xymatrix{ U \ar[r]^-h \ar[d]_i                  & P(Y) \ar@{->>}[d] \\
+              V \ar[r]_-{\langle y_0, y_1 \rangle}  & Y \times_\Gamma Y
+            } \]
+We need to construct a lift in this square.
+
+Let $U \amalg U \xrightarrow{[i_0^U,i_1^U]} C(U) \xrightarrow{s^U} U$ and $V \amalg V \xrightarrow{[i_0^V,i_1^V]} C(V) \xrightarrow{s^V} V$ be cylinder objects
+such that the map $i' : W \to C(V)$ belongs to $\Icof[S]$, where $W = C(U) \amalg_{(U \amalg U)} (V \amalg V)$.
+Consider the following diagram:
+\[ \xymatrix{                            & U \ar[d] \ar[r]^i        & V \ar[d]                                             &                                            &                \\
+                                         & U \amalg U \ar[r] \ar[d] & \po V \amalg U \ar[r]^-{[t_0, h]} \ar[d]             & P(Y) \ar@{->>}[r]^{p_1} \ar@{->>}[d]^{p_0} & Y \ar@{->>}[d] \\
+              U \ar[r]^-{i^U_1} \ar[d]_i & C(U) \ar[r]              & \po C(U) \amalg_U V \ar[r] \ar[d] \ar@{-->}[ur]^{h'} & Y \ar@{->>}[r]                             & \Gamma         \\
+              V \ar[rr]                  &                          & \po W \ar[r]_-{i'} & C(V) \ar[ur]                    &                                            &
+            } \]
+where the vertical map $U \to C(U)$ is $i_0^U$, the map $C(V) \to \Gamma$ is the composite $C(V) \xrightarrow{s^V} V \to \Gamma$,
+the map $C(U) \to Y$ is the composite $C(U) \xrightarrow{s^U} U \xrightarrow{i} V \xrightarrow{y_0} Y$, and $t_0 : V \to P(Y)$ is the composite $V \xrightarrow{y_0} Y \to P(Y)$.
+Since $V \amalg U \to C(U) \amalg_U V$ is a cofibration and $p_0 : P(Y) \twoheadrightarrow Y$ is a trivial fibration, we have a lift $h' : C(U) \amalg_U V \to P(Y)$.
+The map $p_1 \circ h'$ extends to a map $h'' : W \to Y$ such that its composition with $V \to W$ equals to $y_1$:
+\[ \xymatrix{                                      & P(Y) \ar@{->>}[r]^{p_1}            & Y \ar@{->>}[d] \\
+              C(U) \amalg_U V \ar[d] \ar[ur]^{h'}  &                                    & \Gamma         \\
+              W \ar[r]_-{i'} \ar@{-->}[uurr]^{h''} & C(V) \ar[ur] \ar@{-->}[uur]^{h'''} &
+            } \]
+Since $i'$ belongs to $\Icof[S]$ and $Y \twoheadrightarrow \Gamma$ belongs to $\Iinj[S]$, we have a lift $h''' : C(V) \to Y$.
+Now, consider the following diagram:
+\[ \xymatrix{ U \ar[r]^{i_1^U} \ar[d]_i & C(U) \ar[r]   & C(U) \amalg_U V \ar[r]^-{h'} \ar[d]_j                            & P(Y) \ar@{->>}[d] \\
+              V \ar[r]                  & W \ar[r]_{i'} & C(V) \ar[r]_-{\langle y_0 \circ s, h''' \rangle} \ar@{-->}[ur]^q & Y \times_\Gamma Y
+            } \]
+The map $j$ is the composite of $C(U) \amalg_U V \to W$ and $i' : W \to C(V)$.
+Both of these maps are cofibrations.
+Moreover, $j$ is a weak equivalence.
+To prove this, it is enough to prove that the map $V \to C(U) \amalg_U V$ is a weak equivalence since the map $i_0^V : V \to C(V)$ is a weak equivalence.
+The map $V \to C(U) \amalg_U V$ is the pushout of $U \to C(U)$ along $i : U \to V$.
+If $U$ is cofibrant, then $i_0^U : U \to C(U)$ is a trivial cofibration, so $V \to C(U) \amalg_U V$ is also a trivial cofibration.
+If $\scat{C}$ is left proper, then $V \to C(U) \amalg_U V$ is a weak equivalence since it is a pushout of a weak equivlaence along a cofibration.
+
+Since $j$ is a trivial cofibration and $P(Y) \to Y \times_\Gamma Y$ is a fibration, we have a lift $q : C(V) \to P(Y)$ in the diagram above.
+The map $V \to W \xrightarrow{i'} C(V) \xrightarrow{q} P(Y)$ is a lift in the original square.
 \end{proof}
 
 A \emph{cosimplicial resolution} of an object $X$ of $\scat{C}$ is a cofibrant replacement of the constant functor on $X$ in the Reedy model structure on $\scat{C}^\Delta$.
