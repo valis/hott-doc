@@ -591,11 +591,34 @@ If $\scat{C}$ is a right proper type-theoretic model category with a strict init
 This follows from \rlem{pseudo-fib} and the fact that $\scat{C}^\scat{J}$ is right proper.
 \end{example}
 
-Since the definition of pushouts in indexed type theories does not involve the base context, we can use the same construction as in ordinary type theory.
+Since the definition of binary coproducts and pushouts in indexed type theories does not involve the base context, we can use the same construction as in ordinary type theory.
 Such a construction was described in \cite{lum-shul-hits}.
-The only difference between pushouts in contextual categories and indexed contextual categories is that not all context are fibrant in the indexed case;
+The only difference between contextual categories and indexed contextual categories is that not all context are fibrant in the indexed case;
 it is only true that context are fibrant over $F(\Gamma)$, where $\Gamma$ is a base context, and $F(\Gamma)$ is usually not fibrant.
-This condition was not used in \cite{lum-shul-hits}, so we can apply theorem from this paper.
+This condition was not used in \cite{lum-shul-hits}, so we can apply theorems from this paper.
+
+\begin{prop}[binary-coproducts]
+Let $\scat{B}$ be a contextual category, let $\scat{C}$ be a category with fibrations, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
+Suppose that, for every pair of fibrations $A \twoheadrightarrow \Gamma$ and $B \twoheadrightarrow \Gamma$ of $\scat{C}$,
+there exists the coproduct $A \amalg B$ and the induced map $A \amalg B \to \Gamma$ is a pseudo-fibration.
+Then $F^*(\scat{C}_!)$ has stable dependent coproducts.
+\end{prop}
+\begin{proof}
+The construction is essentially the same as the construction of coproducts in \cite[Theorem~3.3]{lum-shul-hits}.
+\end{proof}
+
+\begin{example}
+Let $\scat{C}$ be a category with fibrations.
+Suppose that there is a class $S$ of maps of $\scat{C}$ such that the following conditions hold:
+\begin{enumerate}
+\item A map is a fibration if and only if it has the right lifting property with respect to $S$.
+\item Binary coproducts exist in $\scat{C}$ and the domains of maps in $S$ are connected in the sense that maps from them to a coproduct $A \amalg B$ factor through either $A$ or $B$.
+\end{enumerate}
+Then fibrations over $\Gamma$ are closed under coproducts.
+Thus, \rprop{binary-coproducts} implies that $F^*(\scat{C}_!)$ has stable dependent coproducts for every functor $F : \scat{B} \to \scat{C}$.
+\end{example}
+
+To construct pushouts in $F^*(\scat{C}_!)$, we need to assume that $\scat{C}$ has good cylinder objects:
 
 \begin{defn}[good-cyl]
 We will say that a model category has \emph{good cylinder objects} if, for every object $A$, there is a functorial cylinder object $A \amalg A \to A \otimes \Delta^1 \to A$ which is stable under pullbacks and,
@@ -607,7 +630,7 @@ We will give another example of model categories with good cylinder objects in \
 
 \begin{prop}[pushouts]
 Let $\scat{B}$ be a category with fibrations, let $\scat{C}$ be a locally Cartesian closed right proper type-theoretic model category which has good cylinder objects, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
-Then $F^*(\scat{C}_!)$ has dependent pushouts.
+Then $F^*(\scat{C}_!)$ has stable dependent pushouts.
 \end{prop}
 \begin{proof}
 The construction is essentially the same as the construction of pushouts in sections 4, 5, and 6 of \cite{lum-shul-hits}.
@@ -645,14 +668,14 @@ where $\Gamma.I.\Delta$ is the following pullback:
             } \]
 We define $V_\amalg$ as $\Pi_{F(p_I)}(F(E_I) \times V_B)$.
 Consider the following diagrams:
-\[ \xymatrix{ V_\Pi \times_{F(V_I)} F(E_I) \ar[r] \ar[d]_p \pb  & F(E_I) \ar[d]^{F(p_I)} \\
-              V_\Pi \ar[r]                                      & F(V_I)
+\[ \xymatrix{ V_\amalg \times_{F(V_I)} F(E_I) \ar[r] \ar[d]_p \pb   & F(E_I) \ar[d]^{F(p_I)} \\
+              V_\amalg \ar[r]                                       & F(V_I)
             } \qquad
    \xymatrix{ Z \ar[r] \ar@{->>}[d]_q \pb                       & F(E_I) \times E_B \ar@{->>}[d]^{\id_{F(E_I)} \times p_B} \\
-              V_\Pi \times_{F(V_I)} F(E_I) \ar[r]_-{\fs{ev}}    & F(E_I) \times V_B
+              V_\amalg \times_{F(V_I)} F(E_I) \ar[r]_-{\fs{ev}} & F(E_I) \times V_B
             } \]
 Since $p \circ q$ is a pseudo-fibration, we can factor it into a trivial cofibration $t : Z \to E_\amalg$ followed by a fibration $p_\amalg : E_\amalg \twoheadrightarrow V_\amalg$.
-To define a map $\Delta \to V_\Pi$, it is enough to specify a map $r_I' : \Delta \to F(V_I)$ together with a map $r_B' : \Delta.I \to V_B$, where $\Delta.I$ is the pullback of $r_I'$ and $F(p_I)$.
+To define a map $\Delta \to V_\amalg$, it is enough to specify a map $r_I' : \Delta \to F(V_I)$ together with a map $r_B' : \Delta.I \to V_B$, where $\Delta.I$ is the pullback of $r_I'$ and $F(p_I)$.
 Let $r_I' = F(r_I) \circ p_\Delta$ and $r_B' = r_B$.
 These maps determine a map $[r_I',r_B] : \Delta \to V_\amalg$.
 We define the interpretation of $\coprod_{i : I} B$ as the following diagram:
@@ -672,9 +695,9 @@ This map determines a section $j' : \Gamma \to \Gamma.I$ of the map $\Gamma.I \t
 The pullback of $F(j')$ along $p_\Delta$ will be denoted by $j'' : \Delta \to \Gamma.I.\Delta$.
 The interpretation of $b$ is a section $b : \Gamma.I.\Delta \to E_B$ of $p_B$.
 This map determines a section $b' : \Gamma.I.\Delta \to Z$ of $q$:
-\[ \xymatrix{                                                   & Z \ar[r] \ar@{->>}[d]^q \pb                                   & F(E_I) \times E_B \ar@{->>}[d]^{\id_{F(E_I) \times p_B}}  &                           \\
-              \Gamma.I.\Delta \ar[r] \ar[d] \ar[ur]^{b'} \pb    & V_\Pi \times_{F(V_I)} F(E_I) \ar[r]_-{\fs{ev}} \ar[d]^p \pb   & F(E_I) \times V_B \ar[r]_-{\pi_1}                         & F(E_I) \ar[d]^{F(p_I)}    \\
-              \Delta \ar[r]_{[r_I',r_B]}                        & V_\amalg \ar[rr]                                              &                                                           & F(V_I)
+\[ \xymatrix{                                                   & Z \ar[r] \ar@{->>}[d]^q \pb                                       & F(E_I) \times E_B \ar@{->>}[d]^{\id_{F(E_I) \times p_B}}  &                           \\
+              \Gamma.I.\Delta \ar[r] \ar[d] \ar[ur]^{b'} \pb    & V_\amalg \times_{F(V_I)} F(E_I) \ar[r]_-{\fs{ev}} \ar[d]^p \pb    & F(E_I) \times V_B \ar[r]_-{\pi_1}                         & F(E_I) \ar[d]^{F(p_I)}    \\
+              \Delta \ar[r]_{[r_I',r_B]}                        & V_\amalg \ar[rr]                                                  &                                                           & F(V_I)
             } \]
 We define the interpretation of $(j,b)$ as $t \circ b' \circ j''$.
 
@@ -953,7 +976,7 @@ The localization of $\scat{C}$ at $S$ will be denoted by $L_S(\scat{C})$.
 \begin{remark}
 The class of fibrations defined in in the previous definition may be bigger than the class of fibration of the left Bousfield localization of $\scat{C}$ (if it exists).
 This smaller class is also closed under identity types, but we prefer to work with the larger class since it can be described more explicitly.
-This will allow us to prove that it is closed under other type-theoretic constructions.
+This will allow us to prove that it is closed under products.
 \end{remark}
 
 \begin{example}
@@ -1082,6 +1105,10 @@ Thus, we just need to prove that $\Icof[\Lambda(S)] = \Icof[\overline{S}]$.
 The class $\Lambda(S)$ consists of maps of the form $f \square D(i)$, where $f \in S$ and $i : \partial \Delta^n \to \Delta^n$.
 Thus, $\Lambda(S) \subseteq \overline{S}$ and $\overline{S} \subseteq \Icof[\Lambda(S)]$ since maps $\partial \Delta^n \to \Delta^n$ generate all cofibrations.
 \end{proof}
+
+\subsection{Pushouts}
+
+% TODO
 
 \subsection{Coproducts}
 
