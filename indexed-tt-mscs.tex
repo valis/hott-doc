@@ -1,4 +1,4 @@
-\documentclass[reqno]{amsart}
+\documentclass[reqno]{mscs}
 
 \usepackage{amssymb}
 \usepackage{hyperref}
@@ -33,12 +33,9 @@
 \newref{prop}{Proposition}{Proposition}
 \newref{cor}{Corollary}{Corollary}
 \newref{cond}{Condition}{Condition}
-
-\theoremstyle{definition}
+\newref{conj}{Conjecture}{Conjecture}
 \newref{defn}{Definition}{Definition}
 \newref{example}{Example}{Example}
-
-\theoremstyle{remark}
 \newref{remark}{Remark}{Remark}
 
 \newcommand{\type}{}
@@ -70,19 +67,19 @@
 \newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
 \newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
 
-\begin{document}
-
 \title{Indexed type theories}
 
 \author{Valery Isaev}
+
+\begin{document}
+
+\maketitle
 
 \begin{abstract}
 In this paper, we define indexed type theories which are related to indexed ($\infty$-)categories in the same way as (homotopy) type theories are related to ($\infty$-)categories.
 We define several standard constructions for such theories including finite (co)limits, arbitrary (co)products, exponents, object classifiers, and orthogonal factorization systems.
 We also prove that these constructions are equivalent to their type theoretic counterparts such as $\Sigma$-types, unit types, identity types, finite higher inductive types, $\Pi$-types, univalent universes, and higher modalities.
 \end{abstract}
-
-\maketitle
 
 \section{Introduction}
 
@@ -1201,7 +1198,7 @@ Let $r(f',g')$ be its inverse.
 
 If $\Gamma \mid \Delta, x : A \vdash p : \Id(f\,x,g\,x)$, then we define $\fs{funext}(x.p)$ as follows:
 \[ \Gamma \mid \Delta \vdash r(\lambda \overline{y}.f,\lambda \overline{y}.g)\,(\lambda \overline{y} x.p)\,\overline{y} : \Id_{\Pi_{x : A} B}(f,g). \]
-It is easy to define $\fs{funext_h}$ and $\fs{funext_h'}$ using the fact that $r$ is an inverse of $\lambda s.\,\lambda \overline{y} x.\,\pmap(f.\,f\,x,s\,\overline{y})$.
+It is easy to define $\fs{funext_h}$ and $\fs{funext_h'}$ using the fact that $r$ is an inverse of the function $\lambda s.\,\lambda \overline{y} x.\,\pmap(f.\,f\,x,s\,\overline{y})$.
 \end{proof}
 
 \begin{prop}[lccc]
@@ -1508,7 +1505,9 @@ It is easy to show that these maps are mutually inverse using the eliminator for
 
 \begin{lem}[dep-coprod-coprod]
 Suppose that an indexed dependent type theory has $\Sigma$-types, extensional identity types, and dependent coproducts.
-Then the map $\Gamma, i : I \vdash \fs{in}_i' : \Hom(\Sigma(\Delta,B_i), \Sigma(\Delta, \coprod_{i : I} B_i))$ induced by $\fs{in}_i$ makes $\Sigma(\Delta, \coprod_{i : I} B_i)$ into a coproduct of the family $\Gamma, i : I \mid \cdot \vdash \Sigma(\Delta,B_i)$.
+Then the map
+\[ \Gamma, i : I \vdash \fs{in}_i' : \Hom(\Sigma(\Delta,B_i), \Sigma(\Delta, \coprod_{i : I} B_i)) \]
+induced by $\fs{in}_i$ makes $\Sigma(\Delta, \coprod_{i : I} B_i)$ into a coproduct of the family $\Gamma, i : I \mid \cdot \vdash \Sigma(\Delta,B_i)$.
 \end{lem}
 \begin{proof}
 Let $\Delta = x_1 : A_1, \ldots x_n : A_n$.
@@ -1572,7 +1571,7 @@ The extensionality of dependent coproducts is equivalent to the extensionality o
 If an indexed dependent type theory has $\Sigma$-types and extensional identity types, then it has weak extensional dependent coproducts if and only if it has extensional coproducts.
 \end{prop}
 \begin{proof}
-If the theory has weak dependent coproducts, then it has coproducts by \rlem{dep-coprod-coprod}.
+If the theory has weak dependent coproducts, then \rlem{dep-coprod-coprod} implies that it has coproducts.
 If dependent coproducts are extensional, then coproducts are also extensional since the latter is the special case of the former.
 Conversely, suppose that the theory has extensional coproducts.
 Let $\Gamma, i : I \mid \Delta \vdash B_i \ob$ be a dependent type.
@@ -1900,7 +1899,7 @@ If the theory has extensional powers, then $\Hom(0,X)$ is a proposition for ever
 \end{prop}
 \begin{proof}
 Since the theory has powers, there is a type $X^{\Hom(0,X)}$ such that the type $\Hom(0,X^{\Hom(0,X)})$ is equivalent to $\Hom(0,X) \to \Hom(0,X)$.
-This implies that the type $\Hom(0,X) \to \Hom(0,X)$ is weakly populated.
+This implies that the type $\Hom(0,X) \to \Hom(0,X)$ is weakly connected.
 Let $f,g : \Hom(0,X)$ be a pair of maps.
 We need to construct a homotopy between them.
 
@@ -1909,7 +1908,7 @@ Since powers are extensional, the functional extensionality holds for the type $
 Thus, we just need to prove that, for all $x : \Hom(0,X) \vdash p : \Id(x,g)$ and $x : \Hom(0,X) \vdash q : \Id(x,g)$, there is a homotopy $x : X \vdash h : \Id(p,q)$.
 It is enough to prove that, for all $x$ and $q$, there is a homotopy between $q$ and $p \ct \sym{p[g/x]}$, which follows by path induction.
 
-Now, since $\Hom(0,X) \to \Hom(0,X)$ is weakly populated and $\Id(\id_{\Hom(0,X)}, \lambda x.g)$ is a proposition, the latter type is inhabited.
+Now, since $\Hom(0,X) \to \Hom(0,X)$ is weakly connected and $\Id(\id_{\Hom(0,X)}, \lambda x.g)$ is a proposition, the latter type is inhabited.
 If $h$ is a homotopy between $\id$ and $\lambda x.g$, then $\fs{hap}(h,f)$ is a homotopy between $f$ and $g$.
 \end{proof}
 
@@ -2171,7 +2170,9 @@ Now, suppose that $\Fib$ is closed under $\Sigma$-types.
 Let $f : \Hom(A,B)$ and $g : \Hom(B,C)$ be fibrations.
 These maps correspond to the types $y : B \vdash \Sigma_{x : A} \Id(f\,x,y)$ and $z : C \vdash \Sigma_{y : B} \Id(g\,y,z)$.
 The first type is equivalent to the type $z : C, p : \Sigma_{y : B} \Id(g\,y,z) \vdash \Sigma_{x : A} \Id(f\,x,\pi_1(p))$.
-Since fibrations are closed under $\Sigma$-types, the type $z : C \vdash \Sigma_{(p : \Sigma_{y : B} \Id(g y, z))} \sum_{x : A} \Id(f\,x,\pi_1(p))$ is a fibration.
+Since fibrations are closed under $\Sigma$-types, the type
+\[ z : C \vdash \Sigma_{(p : \Sigma_{y : B} \Id(g y, z))} \sum_{x : A} \Id(f\,x,\pi_1(p)) \]
+is a fibration.
 This type corresponds to the following map:
 \[ \pi_1 : \Hom(\sum_{z : C} \sum_{(p : \sum_{y : B} \Id(g y, z))} \sum_{x : A} \Id(f\,x,\pi_1(p)), C). \]
 Since this map is equivalent to $g \circ f$, the composite is a fibration.
@@ -2917,7 +2918,67 @@ The commutativity of the upper triangle implies the existence of a term $\Delta,
 Since the class of $n$-truncated maps is closed under identity types, it is locally reflective if and only if we have the weak version of the $n$-truncation operation.
 \end{example}
 
-\bibliographystyle{amsplain}
-\bibliography{ref}
+\section{Final remarks}
+
+In this paper, we defined the notion of an indexed type theory.
+Such theories allow us to work with arbitrary ($\infty$-)categories and, more generally, indexed ($\infty$-)categories using a type-theoretic language.
+We also defined several categorical constructions in this setting and prove their properties.
+
+\begin{thebibliography}{}
+
+\bibitem[Isaev 2016]{alg-tt}
+V.~{Isaev}, \emph{{Algebraic Presentations of Dependent Type Theories}},
+  (2016), \href {http://arxiv.org/abs/1602.08504} {\path{arXiv:1602.08504}}.
+
+\bibitem[Johnstone 2002]{elephant}
+Peter~T. Johnstone, \emph{Sketches of an elephant : a topos theory compendium},
+  Oxford Logic Guides, Clarendon Press, Oxford, 2002, Autre tirage : 2008.
+
+\bibitem[Kraus \emph{et al.} 2013]{gen-hedberg}
+Nicolai Kraus, Mart{\'i}n Escard{\'o}, Thierry Coquand, and Thorsten
+  Altenkirch, \emph{Generalizations of hedberg's theorem}, Typed Lambda Calculi
+  and Applications (Berlin, Heidelberg) (Masahito Hasegawa, ed.), Springer
+  Berlin Heidelberg, 2013, pp.~173--188.
+
+\bibitem[Lurie 2017]{lurie-algebra}
+Jacob Lurie, \emph{Higher algebra}, Unpublished.
+
+\bibitem[Lurie 2009]{lurie-topos}
+Jacob Lurie, \emph{Higher topos theory}, Annals of mathematics studies, Princeton
+  University Press, Princeton, N.J., Oxford, 2009.
+
+\bibitem[Nguyen \emph{et al.} 2018]{infty-gaft}
+H.~K. {Nguyen}, G.~{Raptis}, and C.~{Schrade}, \emph{{Adjoint functor theorems
+  for $\infty$-categories}},  (2018), \href {http://arxiv.org/abs/1803.01664}
+  {\path{arXiv:1803.01664}}.
+
+\bibitem[Par{\'e} and Schumacher 1978]{indexed-cats}
+Robert Par{\'e} and Dietmar Schumacher, \emph{Abstract families and the adjoint
+  functor theorems}, Indexed Categories and Their Applications (Berlin,
+  Heidelberg), Springer Berlin Heidelberg, 1978, pp.~1--125.
+
+\bibitem[Rasekh 2018]{rasekh-eht}
+N.~{Rasekh}, \emph{{A Theory of Elementary Higher Toposes}},  (2018), \href
+  {http://arxiv.org/abs/1805.03805} {\path{arXiv:1805.03805}}.
+
+\bibitem[Riehl and Shulman 2017]{riehl-dhott}
+E.~{Riehl} and M.~{Shulman}, \emph{A type theory for synthetic
+  $\infty$-categories}, Higher Structures \textbf{1} (2017), no.~1, 147--224.
+
+\bibitem[Rijke \emph{et al.} 2017]{modality-hott}
+E.~{Rijke}, M.~{Shulman}, and B.~{Spitters}, \emph{{Modalities in homotopy type
+  theory}},  (2017), \href {http://arxiv.org/abs/1706.07526}
+  {\path{arXiv:1706.07526}}.
+
+\bibitem[Shulman 2014]{split-idemp}
+M.~{Shulman}, \emph{Splitting idempotents}, December 2014,
+  \url{https://homotopytypetheory.org/2014/12/08/splitting-idempotents/}.
+
+\bibitem[The {Univalent Foundations Program} 2013]{hottbook}
+The {Univalent Foundations Program}, \emph{Homotopy type theory: Univalent
+  foundations of mathematics}, \url{https://homotopytypetheory.org/book},
+  Institute for Advanced Study, 2013.
+
+\end{thebibliography}
 
 \end{document}
