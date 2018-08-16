@@ -1,0 +1,1170 @@
+\documentclass[reqno]{mscs}
+
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{turnstile}
+\usepackage{etex}
+
+\hypersetup{colorlinks=true,linkcolor=blue}
+
+\newcommand{\axlabel}[1]{(#1) \phantomsection \label{ax:#1}}
+\newcommand{\axtag}[1]{\label{ax:#1} \tag{#1}}
+\newcommand{\axref}[1]{(\hyperref[ax:#1]{#1})}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname n#2\endcsname[1]{\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{Theorem}{Theorem}
+\newref{lem}{Lemma}{Lemma}
+\newref{prop}{Proposition}{Proposition}
+\newref{cor}{Corollary}{Corollary}
+\newref{cond}{Condition}{Condition}
+\newref{conj}{Conjecture}{Conjecture}
+\newref{defn}{Definition}{Definition}
+\newref{example}{Example}{Example}
+\newref{remark}{Remark}{Remark}
+
+\newcommand{\type}{}
+\newcommand{\ob}{}
+\newcommand{\term}{1}
+\newcommand{\unit}{()}
+
+\newcommand{\fs}[1]{\mathrm{#1}}
+\newcommand{\subst}{\fs{subst}}
+\newcommand{\Hom}{\fs{Hom}}
+\newcommand{\Id}{\fs{Id}}
+\newcommand{\refl}{\fs{refl}}
+\newcommand{\sym}[1]{#1^{-1}}
+\newcommand{\id}{\fs{id}}
+\newcommand{\pmap}{\fs{ap}}
+\newcommand{\Fib}{\fs{Fib}}
+\newcommand{\fib}{\ \fs{fib}}
+\newcommand{\El}{\fs{El}}
+
+\numberwithin{figure}{section}
+
+\newcommand{\ct}{%
+  \mathchoice{\mathbin{\raisebox{0.25ex}{$\displaystyle\centerdot$}}}%
+             {\mathbin{\raisebox{0.25ex}{$\centerdot$}}}%
+             {\mathbin{\raisebox{0.25ex}{$\scriptstyle\,\centerdot\,$}}}%
+             {\mathbin{\raisebox{0.25ex}{$\scriptscriptstyle\,\centerdot\,$}}}
+}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\title{Fibrations in indexed type theories}
+
+\author{Valery Isaev}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+In this paper, we study properties of classes of maps (which we call fibrations) in indexed type theories.
+We define object classifiers and prove that they correspond to univalent universes in dependent theories.
+We also define orthogonal factorization systems and prove that they correspond to higher modalities in dependent theories.
+\end{abstract}
+
+\section{Introduction}
+
+Indexed categories were defined in \cite{indexed-cats} (see also \cite[B1]{elephant}).
+We defined an analogue of this notion using the language of type theory in \cite{indexed-tt}.
+Ordinary homotopy type theory is an internal language of $\infty$-categories with some additional structure depending on constructions that we assume in the theory.
+Often we need to assume that the $\infty$-category is at least locally Cartesian closed.
+Indexed type theories allows us to discuss properties of arbitrary (indexed) $\infty$-categories.
+
+Indexed type theories can be useful even when applied to $\infty$-categories which have all the required structure such as $\infty$-toposes.
+One problem of ordinary homotopy type theory is that every construction must be stable under pullbacks.
+For example, we will define orthogonal factorization systems in section~\ref{sec:orth}.
+In ordinary homotopy type theory only the stable factorization systems can be defined (which was done in \cite{modality-hott}).
+We will also prove that such systems correspond to higher modalities in dependent theories.
+
+Similar problem occurs when we try to describe certain universes.
+For example, we could try to add a universe $\mathcal{U}_\mathrm{cov}$ of discrete Segal types and covariant maps between them to the theory described in \cite{riehl-dhott}.
+A naive definition of such a universe postulates that we have an equivalence between the type of functions $X \to \mathcal{U}_\mathrm{cov}$ and the type of covariant fibrations over $X$.
+This is not a correct definition since this condition is too strong.
+The correct definition requires only an equivalence between the space of maps from $X$ to $\mathcal{U}_\mathrm{cov}$ and the space of covariant fibrations over $X$.
+It is impossible to formulate this condition in ordinary homotopy type theory, but it is easy to do in an indexed type theory as we will see in section~\ref{sec:class}.
+We will define the notion of an object classifier their and prove that it is equivalent to the notion of a univalent universe in dependent theories.
+
+The paper is organized as follows.
+In section~\ref{sec:indexed-tt}, we recall the definition of indexed type theories.
+In section~\ref{sec:truncated}, we define the notion of truncated maps and prove their basic properties.
+In section~\ref{sec:fib}, we define the notion of fibrations and prove their various properties.
+In section~\ref{sec:class}, we defined object classifiers.
+In section~\ref{sec:refl-fib}, we define the notion of locally reflective classes of fibrations.
+In section~\ref{sec:orth}, we define orthogonal factorization systems and show that they are closely related to locally reflective classes of fibrations.
+In section~\ref{sec:refl-fib-dep}, we prove that locally reflective classes of fibrations correspond to higher modalities in dependent theories.
+
+\section{Indexed type theories}
+\label{sec:indexed-tt}
+
+Indexed type theories were defined in \cite{indexed-tt}.
+We can think about an indexed type theory as a syntactic representation of indexed $\infty$-categories, that is a functor $F$ from an $\infty$-category $\mathcal{B}$ to the large $\infty$-category of $\infty$-categories.
+An indexed type theory consists of two levels.
+The first level is just an ordinary type theory and it represents $\mathcal{B}$
+The second level of the theory represents $\infty$-categories $F(\Gamma)$ for various objects $\Gamma$ of $\mathcal{B}$.
+
+There are two kinds of indexed type theories: unary and dependent.
+A unary type theory is a non-dependent type theory in which contexts consist of exactly one type.
+Such theories represent arbitrary 1-categories.
+Indexed unary type theories have four kinds of judgments:
+\[ \Gamma \vdash A \type \qquad \Gamma \vdash a : A \qquad \Gamma \mid \cdot \vdash B \ob \qquad \Gamma \mid x : A \vdash b : B \]
+
+In each of these judgments, $\Gamma$ is a context, that is a sequence of the form $x_1 : A_1, \ldots x_n : A_n$, where $A_1$, \ldots $A_n$ are types and $x_1$, \ldots $x_n$ are pairwise distinct variables.
+Judgments $\Gamma \vdash A \type$ and $\Gamma \vdash a : A$ represent types and terms of the first level of the theory.
+We will call such types and terms \emph{base types} and \emph{base terms}, respectively.
+The collection of rules that involve only judgments for base types and base terms will be called the base (sub)theory.
+When we say that the base theory has some construction such as $\Pi$-types or universes, this means that there are usual rules for these constructions formulated in terms of these judgments.
+
+Judgments $\Gamma \mid \cdot \vdash A \ob$ represent types of the second level of the theory.
+We will call these types \emph{indexed types} to distinguish them from base types.
+In a judgment $\Gamma \mid x : A \vdash b : B$, $x$ is a variable which is distinct from the variables in $\Gamma$, $A$ and $B$ are indexed types, and $b$ is a term of the second level of the theory.
+We will call such terms \emph{indexed terms}.
+Indexed types represent objects indexed by $\Gamma$ and indexed an indexed term $\Gamma \mid x : A \vdash b : B$ represents a morphism between $A$ and $B$.
+
+An indexed type theory is \emph{locally small} if there is a type of its morphisms.
+That is, it must contain the following rules and equations:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
+\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
+\BinaryInfC{$\Gamma \vdash \Hom(A,B) \type$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid x : A \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda x.\,b : \Hom(A,B)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Hom(A,B)$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash f\,a : B$}
+\DisplayProof
+\end{center}
+
+\begin{align*}
+(\lambda x.\,b)\,a & = b[a/x] \\
+\lambda x.\,f\,x & = f
+\end{align*}
+
+We will work mostly with locally small theories.
+If the indexed theory is locally small, then indexed types must carry the structure of an $\infty$-category.
+We cannot construct this structure internally due to coherence issues, but we can at least construct lower levels of this structure.
+Morphisms between indexed types $A$ and $B$ are terms of type $\Hom(A,B)$.
+The identity morphism $\id_A$ on an indexed type $A$ is $\lambda x.\,x : \Hom(A,A)$.
+Composition of morphisms $f : \Hom(A,B)$ and $g : \Hom(B,C)$ is defined as $\lambda x.\,g\,(f\,x) : \Hom(A,C)$ and denoted by $g \circ f$.
+Composition is strictly associative and identity morphisms are strictly unital.
+
+If $f,g : \Hom(A,B)$ are morphisms, then a 2-morphism between them is a term $p : \Id_{\Hom(A,B)}(f,g)$.
+Vertical composition $p \ct q$ of 2-morphisms $p$ and $q$ is defined as the usual operation of path concatenation.
+The identity 2-morphism on $f : \Hom(A,B)$ is $\refl(f)$.
+Vertical composition is associative, identity 2-morphisms are unital, and every 2-morphism is invertible.
+These facts are true in a weak sense, that is up to a 3-morphism.
+Let $f,g : \Hom(A,B)$ and $h,i : \Hom(B,C)$ be morphisms and let $p : \Id_{\Hom(A,B)}(f,g)$ and $q : \Id_{\Hom(B,C)}(h,i)$ be 2-morphisms.
+The horizontal composition of $p$ and $q$ is a term $p * q$ of type $\Id_{\Hom(A,C)}(\lambda x.\,h\,(f\,x), \lambda x.\,i\,(g\,x))$.
+To define $p * q$, we just need to eliminate $p$ and $q$ and then define $\refl(f) * \refl(h)$ as $\refl(\lambda x.\,h\,(f\,x))$.
+It is easy to prove that usual properties of this operation hold.
+Expressions $\refl(f) * q$, $p * \refl(g)$, and $\refl(f) * \refl(g)$ will be denoted by $f * q$, $p * g$, and $f * g$, respectively.
+
+\emph{Indexed dependent type theories} have four kinds of judgments:
+\[ \Gamma \vdash A \type \qquad \Gamma \vdash a : A \qquad \Gamma \mid \Delta \vdash B \ob \qquad \Gamma \mid \Delta \vdash b : B \]
+In each of these judgments, $\Delta$ is an indexed context, that is a sequence of the form $y_1 : B_1, \ldots y_k : B_k$, where $B_1$, \ldots $B_k$ are indexed types and $y_1$, \ldots $y_k$ are pairwise distinct variables.
+Since the second level of an indexed dependent type theory is also a dependent type theory,
+we can add standard type-theoretic construction to it.
+When we add such a construction, we always assume that it is defined in every base context.
+
+Indexed dependent type theories have the same rules as indexed unary type theories.
+This means that indexed unary type theories can be interpreted in indexed dependent type theories.
+This implies that every model of an indexed dependent type theory is a model of corresponding unary theory
+(that is, there is a forgetful functor from the category of models of an indexed dependent theory to the category of models of an indexed unary theory).
+Every model of an ordinary dependent type theory (as defined in \cite{alg-tt}) is a model of an indexed dependent type theory.
+This follows from the fact that indexed type theories can be interpreted in ordinary dependent type theories.
+Judgments $\Gamma \mid \Delta \vdash A \ob$ and $\Gamma \mid \Delta \vdash a : A$ are interpreted as $\Gamma, \Delta \vdash A \type$ and $\Gamma, \Delta \vdash a : A$, respectively.
+All the rules of indexed dependent type theories correspond to some rules of ordinary dependent type theories.
+
+We can define various categorical constructions in both unary and dependent type theories.
+For example, a pullback of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is an indexed type $A \times_C B$ together with maps $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \times_C B, B)$, and $\pi_3 : \Id(f \circ \pi_1, g \circ \pi_2)$
+such that the following function is an equivalence for every indexed type $P$:
+\[ \lambda h.\,(\pi_1 \circ h, \pi_2 \circ h, h * \pi_3) : \Hom(P, A \times_C B) \to \Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B), \]
+where the pullback of base types $\Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B)$ is defined as usual:
+\[ \sum_{\pi_1' : \Hom(P,A)} \sum_{\pi_2' : \Hom(P,B)} \Id(f \circ \pi_1', g \circ \pi_2'). \]
+
+This definition of pullbacks makes sense in the indexed unary type theory.
+In the indexed dependent type theory, pullbacks can be defined as usual in terms of $\Sigma$-types and identity types.
+Since pullbacks are unique up to equivalence, any type $A \times_C B$ that satisfies the universal property described above is equivalent to the dependent version.
+
+Constructions in the indexed unary type theory are closer to their categorical counterparts.
+Constructions in the indexed dependent type theory tend to be more strict than the unary versions,
+but it usually can be proved that a weak version (in which computational rules hold only propositionally) of a construction in the dependent theory is equivalent to a construction in the unary theory.
+We will see several examples of this phenomenon in this paper.
+
+\section{Truncated maps}
+\label{sec:truncated}
+
+In this section, we will define the notion of truncated maps and prove their basic properties.
+
+Let $f : \Hom(A,B)$ be a map in an indexed unary type theory and let $n$ be an integer $\geq -2$.
+We will say that $f$ is \emph{$n$-truncated} if the map $f \circ - : \Hom(X,A) \to \Hom(X,B)$ is $n$-truncated for all indexed types $X$.
+This definition makes sense in models of indexed unary type theories, but the problem is that it is not algebraic since it quantifies over indexed types.
+That is, we cannot define a predicate on $\Hom(A,B)$ which corresponds to the notion of $n$-truncated maps in models.
+But we can fix this problem if the indexed theory has pullbacks.
+
+First, let us prove a few technical lemmas:
+
+\begin{lem}[trunc-pb]
+In an indexed unary type theory, $n$-truncated maps are closed under pullbacks.
+\end{lem}
+\begin{proof}
+Suppose that we have a pullback square in which the right arrow is $n$-truncated:
+\[ \xymatrix{ A \ar[r] \ar[d] \pb   & C \ar[d] \\
+              B \ar[r]              & D.
+            } \]
+Since $\Hom(X,-)$ preserves pullbacks, the following square is also pullback and the right arrow is $n$-truncated by the definition of $n$-truncated maps in indexed type theories:
+\[ \xymatrix{ \Hom(X,A) \ar[r] \ar[d] \pb   & \Hom(X,C) \ar[d] \\
+              \Hom(X,B) \ar[r]              & \Hom(X,D).
+            } \]
+
+Thus, we just need to prove that $n$-truncated maps are closed under pullbacks in the base theory.
+Suppose that we have the following pullback square:
+\[ \xymatrix{ \sum_{b : B} P(f(b)) \ar[r] \ar[d] \pb    & \sum_{d : D} P(d) \ar[d] \\
+              B \ar[r]_f                                & D.
+            } \]
+If the right arrow is $n$-truncated, then its fibers $P(d)$ are $n$-types for all $d : D$, but this implies that fibers of the left arrow are also $n$-types; hence, it is also $n$-truncated.
+\end{proof}
+
+\begin{lem}[trunc-total]
+Let $B$ and $C$ be base types over $x : A$.
+Then a function $f : B \to C$ is $n$-truncated if and only if the induced function $f' : \Sigma_{x : A} B \to \Sigma_{x : A} C$ is $n$-truncated.
+\end{lem}
+\begin{proof}
+By \cite[Theorem~4.7.6]{hottbook}, the fiber of $f'$ over a point $(x,c)$ is equivalent to the fiber of $f$ over $c$.
+Thus, fibers of $f'$ are $n$-truncated if and only if fibers of $f$ are $n$-truncated.
+\end{proof}
+
+The following lemma is similar to \cite[Lemma~5.5.6.15]{lurie-topos}, which is proved in the context of $\infty$-categories.
+
+\begin{lem}[trunc-id]
+A map $f : \Hom(A,B)$ is $n$-truncated if and only if the map $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$ is $(n-1)$-truncated.
+\end{lem}
+\begin{proof}
+Since $\Hom(X,-)$ preserves and reflects $n$-truncatedness and pullbacks, it is enough to prove this fact for base types.
+By \cite[Lemma~7.6.2]{hottbook}, a function $f : A \to B$ is $n$-truncated if and only if, for all $a,a' : A$, the function $\pmap(f,-) : \Id(a,a') \to \Id(f\,a,f\,a')$ is $(n-1)$-truncated.
+By \rlem{trunc-total}, the latter function is $n$-truncated if and only if the induced function $\Sigma_{a : A} \Sigma_{a' : A} \Id(a,a') \to \Sigma_{a : A} \Sigma_{a' : A} \Id(f\,a,f\,a')$ is $(n-1)$-truncated.
+The latter function is equivalent to $\lambda a.\,(a,a,\refl) : A \to \Sigma_{a : A} \Sigma_{a' : A} \Id(f\,a,f\,a')$, which is equivalent to $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$.
+\end{proof}
+
+The last lemma implies that if the theory has pullbacks, then we can define a predicate on maps that corresponds to the notion of $n$-truncated maps by induction on $n$.
+
+\section{Fibrations}
+\label{sec:fib}
+
+In this section, we define the notion of fibrations and prove their various properties.
+
+Suppose that we have a class of families of propositions over all indexed morphisms:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
+\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
+\AxiomC{$\Gamma \vdash f : \Hom(A,B)$}
+\TrinaryInfC{$\Gamma \vdash \Fib(f) \type$}
+\DisplayProof
+\end{center}
+We will call maps $f$ together with an element of $\Fib(f)$ \emph{fibrations} and denote them by $\twoheadrightarrow$.
+We will assume that $\Fib$ is closed under equivalences, that is if $f : \Hom(A,B)$ is a fibration and $e_1 : \Hom(A',A)$ and $e_2 : \Hom(B,B')$ are equivalences, then $e_2 \circ f \circ e_1$ is a fibration.
+
+Sometimes $\Fib(f)$ is not a type, but a finite number of judgments of the form $\Gamma, \Delta_i \vdash A_i \type$.
+For example, we might want to define $\Fib(f)$ as $\fs{isEquiv}(C(f))$ for some morphism $C(f)$.
+In general, this is not a type, but a collection of four judgments.
+If the base theory has $\Pi$-types, then we can always replace such a collection of judgments with a single type.
+Even if the base theory does not have $\Pi$-types, we still can work with such definitions of $\Fib(f)$;
+we just need to replace judgments of the form $\Gamma \vdash b : \Fib(f)$ with a finite collection of judgments of the form $\Gamma, \Delta_i \vdash a_i : A_i$.
+For notational convenience, we will always assume that $\Fib(f)$ is a single type.
+
+We can also define the dependent version of classes of fibrations:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash B \ob$}
+\UnaryInfC{$\Gamma \vdash \Fib(\Delta.B) \type$}
+\DisplayProof
+\end{center}
+We will also call dependent types $B$ together with an element of $\Fib(\Delta.B)$ fibrations.
+It is often more convenient to work with the dependent version of this definition.
+If the indexed theory has $\Sigma$-types and unit types, then, for every class of fibrations $\Fib$, we can define its dependent version as follows:
+\[ \Fib(\Delta.B) = \Fib(\pi_1 : \Hom(\sum_{p : \Sigma(\Delta)} B[\pi_1(p)/x_1, \ldots \pi_n(p)/x_n],\Sigma(\Delta))). \]
+Conversely, if the indexed theory also has identity types, then, for every dependent class of fibrations $\Fib$, we can define its non-dependent version:
+\[ \Fib(f : \Hom(A,B)) = \Fib((y : B).\,\sum_{x : A} \Id(f\,x,y)). \]
+
+\begin{example}
+If the indexed theory has finite limits, then we can define a class of fibrations consisting of $n$-truncated maps (or $n$-truncated indexed types) as was explained in the previous section.
+\end{example}
+
+For every dependent class of fibrations $\Fib$, we can add a new sort of dependent types $\Gamma \mid \Delta \vdash A \fib$ consisting of types satisfying the predicate $\Fib$:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash A \fib$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \El(A) \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \Delta \vdash A \fib$}
+\UnaryInfC{$\Gamma \vdash \fs{fp}(\Delta.A) : \Fib(\Delta.\,\El(A))$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
+\AxiomC{$\Gamma \vdash p : \Fib(\Delta.A)$}
+\AxiomC{$\Gamma \mid E \vdash b_i : B_i[b_1/x_1, \ldots b_{i-1}/x_{i-1}]$}
+\TrinaryInfC{$\Gamma \mid E \vdash \fs{rf}(\Delta.A, p, b_1, \ldots b_k) \fib$}
+\DisplayProof
+\end{center}
+where $\Delta = x_1 : B_1, \ldots x_k : B_k$.
+\[ \El(\fs{rf}(\Delta.A, p, b_1, \ldots b_k)) = A[b_1/x_1, \ldots b_k/x_k]. \]
+We define equivalences between fibrations $\Gamma \mid \Delta \vdash A \fib$ and $\Gamma \mid \Delta \vdash B \fib$ as equivalences between underlying types $\El(A)$ and $\El(B)$.
+We will often omit the function symbol $\El$.
+
+We can assume various closure conditions on the class of fibrations in the usual way.
+For example, we can assume that $\Fib$ is closed under contractible types.
+This is true if and only if it contains all identity morphisms.
+Similarly, $\Fib$ is closed under $n$-types (as a dependent class) if and only if it contains all $n$-truncated maps (as a non-dependent class).
+
+\begin{prop}[fib-sigma]
+A class of fibrations is closed under $\Sigma$-types if and only if the corresponding non-dependent class is closed under composition.
+\end{prop}
+\begin{proof}
+First, suppose that $\Fib$ is closed under composition.
+If we have fibrations $\Gamma \mid \Delta \vdash A$ and $\Gamma \mid \Delta, x : A \vdash B$, then the type $\Sigma_{x : A} B$ corresponds to the following map:
+\[ \Sigma(\Delta, A, B) \xrightarrow{\simeq} \sum_{p : \Sigma(\Delta, A)} B[\overline{\pi_i(p)/x_i}] \xrightarrow{\pi_1} \Sigma(\Delta, A) \xrightarrow{\simeq} \sum_{p : \Sigma(\Delta)} A[\overline{\pi_i(p)/x_i}] \xrightarrow{\pi_1} \Sigma(\Delta). \]
+The first and the third maps are equivalences and the second and the fourth maps are fibrations by assumption.
+Thus, the type $\Sigma_{x : A} B$ is also a fibration.
+
+Now, suppose that $\Fib$ is closed under $\Sigma$-types.
+Let $f : \Hom(A,B)$ and $g : \Hom(B,C)$ be fibrations.
+These maps correspond to the types $y : B \vdash \Sigma_{x : A} \Id(f\,x,y)$ and $z : C \vdash \Sigma_{y : B} \Id(g\,y,z)$.
+The first type is equivalent to the type $z : C, p : \Sigma_{y : B} \Id(g\,y,z) \vdash \Sigma_{x : A} \Id(f\,x,\pi_1(p))$.
+Since fibrations are closed under $\Sigma$-types, the type
+\[ z : C \vdash \Sigma_{(p : \Sigma_{y : B} \Id(g y, z))} \sum_{x : A} \Id(f\,x,\pi_1(p)) \]
+is a fibration.
+This type corresponds to the following map:
+\[ \pi_1 : \Hom(\sum_{z : C} \sum_{(p : \sum_{y : B} \Id(g y, z))} \sum_{x : A} \Id(f\,x,\pi_1(p)), C). \]
+Since this map is equivalent to $g \circ f$, the composite is a fibration.
+\end{proof}
+
+\begin{prop}[fib-id]
+Let $\Fib$ be a class of fibrations closed under pullbacks.
+Then it is closed under identity types if and only if, for every fibration $p : \Hom(A,B)$, the map $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$ is also a fibration.
+\end{prop}
+\begin{proof}
+First, suppose that $\Fib$ is closed under identity types.
+Let $a_1 : A, a_2 : A, h : \Id(p\,a_1,p\,a_2)$ be an element of $A \times_B A$.
+The fiber over this element is the following type:
+\begin{align*}
+\sum_{a : A} \sum_{h_1 : \Id(a_1,a)} \sum_{h_2 : \Id(a,a_2)} \Id(\pmap(p, h_1 \ct h_2), h) & \simeq \\
+\sum_{h' : \Id(a_1,a_2)} \Id(\pmap(p,h'),h) & \simeq \\
+\Id_{\sum_{a : A} \Id(p a_1, p a)}((a_1,\refl), (a_2,h)) & .
+\end{align*}
+Since $\Fib$ is closed under identity types, it is enough to show that $\sum_{a : A} \Id(p\,a_1,p\,a)$ is a fibration over $a_1,a_2,h$.
+This follows from the fact that this type is a pullback of the type $\sum_{a : A} \Id(b,p\,a)$ over $b : B$ which is a fibration since it is the fiber of $p$ over $b$.
+
+Now, let us prove the converse.
+Let $\Gamma \mid \Delta \vdash c_1 : C$ and $\Gamma \mid \Delta \vdash c_2 : C$ be a pair of terms.
+Then the following square is a pullback:
+\[ \xymatrix{ \Sigma_{p : \Sigma(\Delta)} \Id(c_1',c_2') \ar[r]^-{c_1' \circ \pi_1} \ar@{->>}[d]_{\pi_1} \pb    & C' \ar@{->>}[d]^{\langle \id_{C'}, \id_{C'} \rangle} \\
+              \Sigma(\Delta) \ar[r]_-{\langle c_1', c_2' \rangle}                                               & C' \times_{\Sigma(\Delta)} C'
+            } \]
+where $C' = \Sigma_{p : \Sigma(\Delta)} C[\overline{\pi_i(p)/x_i}]$ and $c_i' = c_i[\overline{\pi_i(p)/x_i}]$.
+Since $\Gamma \mid \Delta \vdash \Id(c_1,c_2)$ is equivalent to $\Gamma \mid p : \Sigma(\Delta) \vdash \Id(c_1',c_2')$, it follows that $\Id(c_1,c_2)$ is a fibration.
+\end{proof}
+
+The following proposition shows that if the class of fibrations is closed under pullbacks and composition, then there is another characterization of the condition that it is closed under identity types.
+
+\begin{prop}[fib-id-comp]
+Let $\Fib$ be a class of fibrations in an indexed unary type theory.
+If $\Fib$ is closed under pullbacks and composition, then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:fib-pb} For every fibration $p : \Hom(A,B)$, the map $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$ is also a fibration.
+\item \label{it:fib-over} For every commutative diagram as below in which $p$ and $q$ are fibrations, $f$ is also a fibration.
+\[ \xymatrix{ A \ar[rr]^f \ar@{->>}[dr]_p &   & C \ar@{->>}[dl]^q \\
+                                          & B &
+            }\]
+\end{enumerate}
+\end{prop}
+\begin{proof}
+First, suppose that \eqref{it:fib-pb} holds.
+Consider the following diagram:
+\[ \xymatrix{ A \ar[r]^f \ar@{->>}[d]_r \pb             & C \ar@{->>}[d]^{\langle \id_C, \id_C \rangle} & \\
+              A \times_B C \ar[r]^{f'} \ar@{->>}[d] \pb & C \times_B C \ar[r]^-{q'} \ar@{->>}[d] \pb    & C \ar@{->>}[d]^q \\
+              A \ar[r]_f                                & C \ar[r]_q                                    & B
+            } \]
+The map $q' \circ f'$ is a pullback of $q \circ f = p$, so it is a fibration.
+The map $r$ is a fibration since it is a pullback of $\langle \id_C, \id_C \rangle$, which is a fibration by \eqref{it:fib-pb}.
+Since fibrations are closed under composition, $q' \circ f' \circ r$ is also a fibration.
+Finally, $f$ is a fibration since $f \sim q' \circ \langle \id_C, \id_C \rangle \circ f \sim q' \circ f' \circ r$.
+
+Now, suppose that \eqref{it:fib-over} holds.
+Let $f : \Hom(A,B)$ be a fibration.
+Let $q$ be the composite $A \times_B A \xrightarrow{\pi_1} A \xrightarrow{f} B$.
+Since fibrations are closed under pullbacks, the first map is a fibration.
+Since they are closed under composition, $q$ is also a fibration.
+Since $q \circ \langle \id_A, \id_A \rangle = f$ is a fibration, $\langle \id_A, \id_A \rangle$ is also a fibration by \eqref{it:fib-over}.
+\end{proof}
+
+\begin{lem}[fib-id-idm]
+Let $\Fib$ be a class of fibrations in an indexed unary type theory.
+If $\Fib$ is closed under pullbacks and contains all identity morphisms, then \eqref{it:fib-over} implies \eqref{it:fib-pb}.
+\end{lem}
+\begin{proof}
+Let $f : \Hom(A,B)$ be a fibration.
+Since $\pi_1 : \Hom(A \times_B A, A)$ is a pullback of $f$, it is also a fibration.
+Moreover, $\id_A$ is a fibration by assumption.
+Now, the claim follows from the fact that $\pi_1 \circ \langle \id_A, \id_A \rangle \sim \id_A$.
+\end{proof}
+
+\begin{example}
+The class of $n$-truncated maps is closed under composition, pullbacks, $m$-types for $m \leq n$, $\Sigma$-types, and identity types.
+This follows from \rlem{trunc-pb}, \rprop{fib-sigma}, \rprop{fib-id}, and \rlem{trunc-id}.
+\end{example}
+
+An \emph{external universe} is a base type $\mathcal{U}(\Delta)$ defined for all indexed context $\Delta$ together with an indexed type $\El(c)$ over $\Delta$ for all $c : \mathcal{U}(\Delta)$:
+\begin{center}
+\AxiomC{$\Gamma \vdash c : \mathcal{U}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \El(c) \ob$}
+\DisplayProof
+\end{center}
+We have a function from $\Id_{\mathcal{U}(\Delta)}(c,c')$ to the type of equivalences between $\El(c)$ and $\El(c')$ over $\Delta$ defined as the transport of the identity morphism along the homotopy $\Id_{\mathcal{U}(\Delta)}(c,c')$.
+We will say that the universe $\mathcal{U}(\Delta)$ is \emph{univalent} if this function is an equivalence.
+We will say that a universe \emph{classifies} fibrations $\Fib$ if it is univalent, the family $\El(c)$ satisfies $\Fib$ for all $c$, and every fibration is equivalent to a fibration of the form $\El(c)$ for some $c$.
+
+If a universe classifying $\Fib$ exists, then it is unique up to a canonical equivalence.
+Indeed, let $\mathcal{U}$ and $\mathcal{U}'$ be two universes classifying $\Fib$.
+Then, for every indexed context $\Delta$ over a base context $\Gamma$, we have a fibration $\El(x)$ over $\Delta$ in the context $\Gamma, x : \mathcal{U}$.
+This fibration is equivalent to a fibration of the form $\El'(c')$ for some $\Gamma, x : \mathcal{U} \vdash c' : \mathcal{U}'$.
+Thus, we have a map $\lambda x.\,c' : \mathcal{U} \to \mathcal{U}'$.
+Similarly, we have a map $\lambda y.\,c : \mathcal{U}' \to \mathcal{U}$.
+We need to construct a homotopy $\Gamma, x : \mathcal{U} \vdash h : \Id(c[c'/y],x)$.
+By univalence, it is enough to prove that $\El(c[c'/y])$ is equivalent to $\El(x)$ over $\Delta$.
+By definition of $c$, we have an equivalence $\Gamma, y : \mathcal{U}' \mid \Delta \vdash e : \El(c) \simeq \El'(y)$.
+It follows that we have the following equivalence: $\Gamma, x : \mathcal{U} \mid \Delta \vdash e[c'/y] : \El(c[c'/y]) \simeq \El'(c')$.
+By definition of $c'$, $\El'(c')$ is equivalent to $\El(x)$ over $\Delta$.
+The composition of these two equivalences gives us the required equivalence between $\El(c[c'/y])$ and $\El(x)$ over $\Delta$.
+A homotopy between $c'[c/x]$ and $y$ is constructed similarly.
+
+\begin{defn}
+We will say that a class $\Fib$ is \emph{locally small} if it is classified by an external universe.
+\end{defn}
+
+\begin{example}
+An indexed type theory is called \emph{well-powered} if the class of monomorphisms (that is, $(-1)$-truncated maps) is locally small.
+This definition is analogous to the definition of well-powered indexed categories \cite[Example~B1.3.14]{elephant}.
+\end{example}
+
+\section{Object classifiers}
+\label{sec:class}
+
+In this section, we define object classifiers and prove that they correspond to univalent universes in dependent theories.
+
+Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be a map in an indexed unary type theory such that its pullbacks along all maps exist.
+Then we can define a map from $\Id_{\Hom(\Delta,\mathcal{U})}(f,g)$ to the type of equivalences over $\Delta$ between pullbacks of $p$ along $f$ and $g$ as the transport of the identity map along the homotopy between $f$ and $g$.
+An \emph{object classifier} is a map $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ such that its pullbacks exist and the map defined above is an equivalence.
+We will say that an object classifier \emph{classifies} a class of fibrations if this class is closed under pullbacks, $p$ is a fibration, and every fibration is a pullback of $p$.
+
+\begin{example}
+A subobject classifier is an object classifier for monomorphisms.
+\end{example}
+
+Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be any map.
+We can think of such a map as a (non-univalent) universe.
+We will say that the universe $\mathcal{U}$ \emph{contains a type $A$} if there is a map $a : \Hom(1,\mathcal{U})$ and an equivalence between $A$ and the pullback of $p$ along $a$.
+We will say that $\mathcal{U}$ is \emph{closed under coproducts} if, for all maps $a,b : \Hom(\Delta,\mathcal{U})$, there is a map $a + b : \Hom(\Delta,\mathcal{U})$
+and an equivalence over $\Delta$ between the pullback of $p$ along $a + b$ and the sum of pullbacks of $p$ along $a$ and $b$.
+Similarly, we will say that $\mathcal{U}$ is \emph{closed under $\Sigma$-types} if, for every map $a : \Hom(\Delta,\mathcal{U})$
+and every map $b : \Hom(\Delta \times_\mathcal{U} \widehat{\mathcal{U}}, \mathcal{U})$, there is a map $\Sigma(a,b) : \Hom(\Delta,\mathcal{U})$
+together with an equivalence over $\Delta$ between the pullback of $p$ along $\Sigma(a,b)$ and the composition of pullbacks of $p$ along $b$ and $a$.
+The closure under other constructions is defined similarly.
+
+In general, being closed under different construction is not a property of a map but additional data on it.
+The following proposition shows that it is a property if the map $p$ is an object classifier:
+
+\begin{prop}
+Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be an object classifier.
+Then the types corresponding to the closure conditions listed above are propositions.
+\end{prop}
+\begin{proof}
+Such types consist of a map $c : \Hom(\Delta,\mathcal{U})$ for some fixed type $\Delta$ together with an equivalence between the fiber of $p$ over $c$ and some fixed type over $\Delta$.
+Let $(c_1,e_1)$ and $(c_2,e_2)$ be two such pairs.
+Since $p$ is an object classifier, to define a homotopy between these pairs, it is enough to define a homotopy $e$ between fibers of $p$ over $c_1$ and $c_2$ together with a homotopy between $e \circ e_1$ and $e_2$.
+We can define $e$ as $e_2 \circ e_1^{-1}$.
+\end{proof}
+
+An \emph{(internal) universe} in an indexed dependent type theory is an indexed type $\mathcal{U}$ together with an indexed type $\El(c)$ for all $c : \mathcal{U}$:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \mathcal{U} \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \Delta \vdash c : \mathcal{U}$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \El(c) \ob$}
+\DisplayProof
+\end{center}
+An internal universe is \emph{univalent} if the obvious map from $\Id_{\mathcal{U}}(c,c')$ to the type of equivalences between $\El(c)$ and $\El(c')$ is an equivalence.
+Internal universes in a theory with $\Sigma$-types and identity types correspond to maps $\Hom(\widehat{\mathcal{U}},\mathcal{U})$ via the construction $\pi_1 : \Hom(\Sigma_{x : \mathcal{U}} \El(x), \mathcal{U})$.
+Such a map is an object classifier if and only if the corresponding universe is univalent.
+
+Every internal universe $\mathcal{U}$ gives rise to an external one, namely $\Hom(\Delta.\mathcal{U})$.
+An internal universe is univalent if and only if the corresponding external one is.
+Moreover, a class of fibration is classified by an internal universe if and only if it is classified by the corresponding external one.
+An internal universe classifying a given class of fibrations is also unique up to a canonical equivalence.
+The proof is the same as for external universes.
+
+A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) contains a type $A$} if there is an element $a : \mathcal{U}$ such that $\El(a)$ is propositionally (resp., judgmentally) equivalent to $A$. 
+A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under coproducts} if, for all elements $a,b : \mathcal{U}$, there exists an element $a + b : \mathcal{U}$ such that $\El(a + b)$ is propositionally (resp., judgmentally) equivalent to the coproduct of $\El(a)$ and $\El(b)$.
+A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under $\Sigma$-types} if, for every element $a : \mathcal{U}$ and every function $b : \El(a) \to \mathcal{U}$, there exists an element $\Sigma(a,x.b(x)) : \mathcal{U}$ such that $\El(\Sigma(a,x.b(x)))$ is propositionally (resp., judgmentally) equivalent to $\Sigma_{x : \El(a)} \El(b(x))$.
+
+\begin{prop}
+A universe $\mathcal{U}$ is weakly closed under one of the constructions listed above if and only if the map $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ is closed under this construction.
+\end{prop}
+\begin{proof}
+This follows from the fact that elements of $\mathcal{U}$ in a context $\Delta$ correspond to maps $\Hom(\Delta, \mathcal{U})$ and
+types of the form $\El(c)$ over $\Delta$ correspond to pullbacks of $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ along $c$.
+\end{proof}
+
+The following propositions discuss $n$-truncated object classifiers.
+
+\begin{prop}
+If $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ is an $n$-truncated map which is also an object classifier, then $\mathcal{U}$ and $\widehat{\mathcal{U}}$ are $(n+1)$-truncated.
+\end{prop}
+\begin{proof}
+First, let us prove that $\mathcal{U}$ is $(n+1)$-truncated.
+This is true if and only if $\Hom(B,\mathcal{U})$ is $(n+1)$-truncated for all $B$, which is true if and only if the type $\Id(f,f')$ is $n$-truncated for all $f,f' : \Hom(B,\mathcal{U})$.
+Since $p$ is an object classifier, the type $\Id(f,f')$ is equivalent to the type of equivalences over $B$ between pullbacks of $p$ along $f$ and $f'$.
+By \rlem{trunc-pb}, pullbacks of $p$ are $n$-truncated.
+Since the type of equivalences over $B$ is embedded into the type of maps over $B$, we just need to prove that the type of such maps between $n$-truncated maps is $n$-truncated.
+
+Let $s : \Hom(E,B)$ and $s' : \Hom(E',B)$ be $n$-truncated maps.
+The type of maps over $B$ is defined as $\Sigma_{f : \Hom(E,E')} \Id(s' \circ f, s)$.
+This type is the fiber of $s' \circ -$ over $s$, which is $n$-truncated since $s' \circ -$ is $n$-truncated.
+
+Finally, since both $p$ and $\mathcal{U}$ are $(n+1)$-truncated, $\widehat{\mathcal{U}}$ is also $(n+1)$-truncated.
+\end{proof}
+
+\begin{prop}
+If $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ is an object classifier which is also a monomorphism, then $\widehat{\mathcal{U}}$ is subterminal.
+It is terminal if and only if identity morphisms are classified by $p$.
+\end{prop}
+\begin{proof}
+Any commutative square of the form
+\[ \xymatrix{ B \ar[r]^s \ar[d]_{\id_B} & \widehat{\mathcal{U}} \ar[d]^p \\
+              B \ar[r]_t                & \mathcal{U}
+            } \]
+is a pullback.
+To prove this, we need to show that the canonical map
+\[ r : \Hom(X,B) \to \sum_{f : \Hom(X,B)} \sum_{g : \Hom(X,\widehat{\mathcal{U}})} \Id(t \circ f, p \circ g). \]
+is an equivalence for all $X$.
+Since $t$ is homotopic to $p \circ s$, the type $\Id(t \circ f, p \circ g)$ is equivalent to $\Id(p \circ s \circ f, p \circ g)$.
+Since $p$ is a monomorphism, it is equivalent to $\Id(s \circ f, g)$.
+Since the type $\Sigma_{g : \Hom(X,\widehat{\mathcal{U}})} \Id(s \circ f, g)$ is contractible, $r$ is indeed an equivalence.
+
+To prove that $\widehat{\mathcal{U}}$ is subterminal, we need to show that any two maps $f_1,f_2 : \Hom(B,\widehat{\mathcal{U}})$ are homotopic.
+Since $p$ is a monomorphism, it is enough to construct a homotopy between $p \circ f_1$ and $p \circ f_2$.
+We have two pullback squares as above with $s = f_i$ and $t = p \circ f_i$.
+Since $p$ is an object classifier, we have an equivalence between $\Id(p \circ f_1, p \circ f_2)$ and the type of equivalences between pullbacks of $p$ along $p \circ f_1$ and $p \circ f_2$.
+Since both pullbacks are just $\id_B$, they are equivalent; so, we have a homotopy between $p \circ f_1$ and $p \circ f_2$.
+
+If $p$ classifies identity morphisms, then, for every $B$, the map $\id_B$ is a pullback of $p$.
+In particular, there exists a map from $B$ to $\widehat{\mathcal{U}}$.
+Thus, $\widehat{\mathcal{U}}$ is terminal.
+Conversely, if $\widehat{\mathcal{U}}$ is terminal, then, for every type $B$, we have a commutative square as depicted at the beginning of the proof.
+Since this square is a pullback, $p$ classifies $\id_B$.
+\end{proof}
+
+Finally, let us prove another simple but useful result.
+Analogous result in the context of higher categories was proved in \cite[Theorem~3.28]{rasekh-eht}.
+
+\begin{prop}
+Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be an object classifier and let $f : \Hom(\mathcal{U}',\mathcal{U})$ be any map.
+Then the pullback of $p$ along $f$ is an object classifier if and only if $f$ is a monomorphism.
+\end{prop}
+\begin{proof}
+Let us denote the pullback of $p$ along $f$ by $p' : \Hom(\widehat{\mathcal{U}'},\mathcal{U}')$.
+Then the pullback of $p'$ along a map $g : \Hom(\Delta,\mathcal{U}')$ is equivalent to the pullback of $p$ along $f \circ g$.
+Thus, we have an equivalence between the type of equivalences between $g_1^*(p')$ and $g_2^*(p')$ and the type of equivalences between $(f \circ g_1)^*(p)$ and $(f \circ g_2)^*(p)$.
+Since $p$ is an object classifier, the latter type is equivalent to $\Id(f \circ g_1, f \circ g_2)$.
+Thus, $p'$ is an object classifier if and only if the canonical function $\Id(g_1,g_2) \to \Id(f \circ g_1, f \circ g_2)$ is an equivalence.
+This function maps $\refl(g)$ to $\refl(f \circ g)$.
+This implies that it is homotopic to $\lambda h.\,\pmap(f \circ -, h)$, but this map is an equivalence if and only if $f$ is a monomorphism.
+\end{proof}
+
+\section{Locally reflective classes of fibrations}
+\label{sec:refl-fib}
+
+In this section, we discuss the notion of modalities in indexed type theories.
+Several equivalent definitions of modalities were defined in \cite{modality-hott} in the context of ordinary homotopy type theory.
+We define the notion of locally reflective classes of fibrations which is similar to the notion of a reflective subuniverse.
+This definition makes sense in an indexed unary type theory.
+
+Let $\Fib$ be a class of fibrations in an indexed unary type theory as defined in the previous section.
+We will say that it is \emph{locally reflective} if every map $f : \Hom(A,B)$ factors through a fibration $p : \Hom(C,B)$
+such that, for every factorization of $f$ through any fibration $p' : \Hom(C',B)$, the type of lifts in the following square is contractible:
+\[ \xymatrix{ A \ar[r] \ar[d]                   & C' \ar@{->>}[d]^{p'} \\
+              C \ar@{->>}[r]_p \ar@{-->}[ur]    & B
+            } \]
+The factorization $A \to C \twoheadrightarrow B$ will be called \emph{the universal factorization} of $f$.
+We will say that $\Fib$ is \emph{stably} locally reflective if the universal factorization of any map is stable under pullbacks.
+
+\begin{lem}[fib-refl]
+If $A \xrightarrow{i} C \overset{p}\twoheadrightarrow B$ is the universal factorization of $f$, then the following conditions are equivalent:
+\begin{enumerate}
+\item $i$ is an equivalence.
+\item $f$ is a fibration.
+\item $i$ has a retraction over $B$.
+\end{enumerate}
+\end{lem}
+\begin{proof}
+If $i$ is an equivalence, then $f$ is a fibration since fibrations are closed under equivalences and $p$ is a fibration.
+If $f$ is a fibration, then the lift in the following square is a retraction of $i$ over $B$.
+\[ \xymatrix{ A \ar@{=}[r] \ar[d]_i             & A \ar@{->>}[d]^{f} \\
+              C \ar@{->>}[r]_p \ar@{-->}[ur]^r  & B
+            } \]
+Let $r$ be a retraction of $i$ over $B$.
+Consider the following commutative square:
+\[ \xymatrix{ A \ar[r]^i \ar[d]_i                                                           & C \ar@{->>}[d]^{p} \\
+              C \ar@{->>}[r]_p \ar@{-->}@<-0.5ex>[ur]_{i \circ r} \ar@{-->}@<0.5ex>[ur]^\id & B
+            } \]
+It is easy to see that $\id_C$ and $i \circ r$ are lifts in this square.
+Since lifts are unique up to a homotopy, these maps are homotopic.
+Thus, $i$ is an equivalence.
+\end{proof}
+
+\begin{lem}[fib-idm]
+Any locally reflective class of fibrations contains all identity morphisms
+\end{lem}
+\begin{proof}
+Let $A \xrightarrow{i} B \overset{p}\twoheadrightarrow A$ be the universal factorization of $\id_A$.
+Then $p$ is a retraction of $i$ over $A$.
+By \rlem{fib-refl}, $\id_A$ is a fibration.
+\end{proof}
+
+\begin{lem}[fib-pullback]
+Any stably locally reflective class of fibrations is closed under pullbacks.
+\end{lem}
+\begin{proof}
+Let $f$ be a fibration and let $f = p \circ i$ be its universal factorization.
+Since the class of fibrations is stably locally reflective, the pullbacks of $p$ and $i$ constitute the universal factorization of a pullback of $f$.
+By \rlem{fib-refl}, $i$ is an equivalence.
+Hence, its pullback is also an equivalence.
+Since the pullback of $p$ is a fibration and fibrations are closed under equivalences, the pullback of $f$ is also a fibration.
+\end{proof}
+
+\begin{lem}[pullback-lift]
+Suppose that we have the following diagram, where the right square is a pullback.
+\[ \xymatrix{ A \ar[r]^{c} \ar[d]_i & C \ar[r]^e \ar[d]_p \pb   & E \ar[d]^q \\
+              B \ar[r]_d            & D \ar[r]_f                & F
+            } \]
+Then the type of lifts in the left square is equivalent to the type of lifts in the outer rectangle.
+\end{lem}
+\begin{proof}
+Let $H_1$ and $H_2$ be the homotopies witnessing the commutativity of the left and right square, respectively.
+By the universal property of pullbacks, the type of lifts in the left square is equivalent to the following type:
+\begin{align*}
+& \sum_{r_1 : \Hom(B,D)} \sum_{r_2 : \Hom(B,E)} \sum_{r_3 : \Id(f \circ r_1, q \circ r_2)} \sum_{h : \Id(d,r_1)} \\
+& \sum_{h_1 : \Id(r_1 \circ i, p \circ c)} \sum_{h_2 : \Id(e \circ c, r_2 \circ i)} \sum_{h_3 : \Id((h_1 * f) \ct (c * H_2) \ct (h_2 * q), i * r_3)} \Id(h_1,h_*(H_1)).
+\end{align*}
+After reducing $r_1$, $h$, $h_1$, and the last homotopy we get the following equivalent type:
+\[ \sum_{r_2 : \Hom(B,E)} \sum_{r_3 : \Id(f \circ d, q \circ r_2)} \sum_{h_2 : \Id(e \circ c, r_2 \circ i)} \Id((H_1 * f) \ct (c * H_2) \ct (h_2 * q), i * r_3). \]
+This type is equivalent to the type of lifts in the outer rectangle.
+\end{proof}
+
+\begin{lem}[fib-refl-lift]
+Let $\Fib$ be a locally reflective class of fibrations closed under pullbacks.
+Let $A \xrightarrow{i} C \overset{p}\twoheadrightarrow B$ be the universal factorization of a map $f : \Hom(A,B)$.
+Then the type of lifts in every commutative square as below is contractible if $v$ factors through $p$.
+\[ \xymatrix{ A \ar[r] \ar[d]_i & D \ar@{->>}[d] \\
+              C \ar[r]_v        & E
+            } \]
+\end{lem}
+\begin{proof}
+By assumption, $v$ equals to $C \overset{p}\twoheadrightarrow B \xrightarrow{u} E$ for some map $u$.
+Consider the following diagram:
+\[ \xymatrix{ A \ar[r] \ar[d]_i & C' \ar[r] \ar@{->>}[d] \pb    & D \ar@{->>}[d] \\
+              C \ar@{->>}[r]_p  & B \ar[r]_u                    & E
+            } \]
+The type of lift in the left square is contractible and \rlem{pullback-lift} implies that this type is equivalent to the type of lifts in the original square.
+\end{proof}
+
+\begin{prop}[fib-refl-id]
+Any locally reflective class of fibrations closed under pullbacks satisfies the equivalent conditions of \rprop{fib-id}.
+\end{prop}
+\begin{proof}
+By \rlem{fib-id-idm} and \rlem{fib-idm}, it is enough to prove condition~\eqref{it:fib-over} of \rprop{fib-id-comp}.
+Let $f : \Hom(A,D)$ be a map and let $q : \Hom(D,B)$ be a fibration such that $q \circ f$ is also a fibration.
+We need to prove that $f$ is a fibration.
+Let $A \xrightarrow{i} C \overset{p}\twoheadrightarrow D$ be the universal factorization of $f$.
+By \rlem{fib-refl}, it is enough to show that $i$ has a retraction over $D$.
+By \rlem{fib-refl-lift}, we have a lift in the following square:
+\[ \xymatrix{ A \ar@{=}[r] \ar[d]_i                 & A \ar@{->>}[d]^{q \circ f} \\
+              C \ar[r]_{q \circ p} \ar@{-->}[ur]^r  & B
+            } \]
+Both maps $p$ and $f \circ r$ are lifts in the following square:
+\[ \xymatrix{ A \ar[r]^f \ar[d]_i   & D \ar@{->>}[d]^q \\
+              C \ar[r]_{q \circ p}  & B
+            } \]
+By \rlem{fib-refl-lift}, we have a homotopy $h$ between $p$ and $f \circ r$ such that $i * h$ is homotopic to the canonical homotopy between $p \circ i$ and $f \circ r \circ i$.
+This implies that $r$ is a retraction of $i$ over $D$.
+\end{proof}
+
+\section{Orthogonal factorization systems}
+\label{sec:orth}
+
+In this section, we defined connected maps and orthogonal factorization systems and prove that they are equivalent to locally reflective classes of fibrations.
+Similar equivalence was proved in \cite{modality-hott}, but our proof is more general since it applies to any (indexed) unary theory.
+Moreover, the proof in \cite{modality-hott} applies only to stable orthogonal factorization systems and stably locally reflective classes of fibrations.
+The reason is that it is done in the internal language of the theory and everything must be stable in this language.
+We prove a more general equivalence between (non-stable) orthogonal factorization systems and (non-stable) locally reflective classes of fibrations.
+
+\begin{defn}
+Let $\Fib$ be a locally reflective class of fibrations in an indexed unary type theory.
+A map $f$ is \emph{connected} if the fibration in the universal factorization of $f$ is an equivalence.
+\end{defn}
+
+\begin{lem}[uni-conn]
+Let $\Fib$ be a locally reflective class of fibrations closed under composition.
+If $A \xrightarrow{i} B \overset{p}\twoheadrightarrow C$ is the universal factorization of some map, then $i$ is connected.
+\end{lem}
+\begin{proof}
+Let $A \xrightarrow{j} B' \overset{q}\twoheadrightarrow B$ be the universal factorization of $i$.
+We need to prove that $q$ is an equivalence.
+Since fibrations are closed under composition, $p \circ q$ is a fibration.
+It follows that we have a lift in the following square:
+\[ \xymatrix{ A \ar[r]^j \ar[d]_i               & B' \ar@{->>}[d]^{p \circ q} \\
+              B \ar@{->>}[r]_p \ar@{-->}[ur]^k  & C
+            } \]
+Let $h_1 : \Id(j, k \circ i)$ and $h_2 : \Id(p \circ q \circ k, p)$ be the homotopies witnessing the commutativity of triangles in the diagram above.
+
+Let us show that $q \circ k$ is a lift in the following square:
+\[ \xymatrix{ A \ar[r]^i \ar[d]_i                   & B \ar@{->>}[d]^p \\
+              B \ar@{->>}[r]_p \ar[ur]^{q \circ k}  & C
+            } \]
+Let $h_0$ be the homotopy between $i$ and $q \circ j$.
+The homotopy between $i$ and $q \circ k \circ i$ is defined as $h_0 \ct (h_1 * q)$.
+The homotopy between $p \circ q \circ k$ and $p$ is simply $h_2$.
+The fact that the combination of these homotopies is homotopic to the trivial homotopy on $p \circ i$ follows from the fact that the combination of $h_1$ and $h_2$ is homotopic to $\sym{h_0} * p$.
+Since both $\id_B$ and $q \circ k$ are lifts in the square above, there is a homotopy $h_3$ between them such that $i * h_3$ is homotopic to $h_0 \ct (h_1 * q)$.
+
+Let us show that $k \circ q$ is a lift in the following square:
+\[ \xymatrix{ A \ar[r]^j \ar[d]_j                   & B' \ar@{->>}[d]^q \\
+              B' \ar@{->>}[r]_q \ar[ur]^{k \circ q} & B
+            } \]
+The homotopy between $j$ and $k \circ q \circ j$ is defined as $h_1 \ct (h_0 * k)$.
+The homotopy between $q \circ k \circ q$ and $q$ is defined as $q * \sym{h_3}$.
+The fact that the combination of these homotopies is homotopic to the trivial homotopy on $q \circ j$ follows from the fact that $i * h_3$ is homotopic to $h_0 \ct (h_1 * q)$.
+Since both $\id_{B'}$ and $k \circ q$ are lifts in the square above, these maps are homotopic.
+It follows that $q$ is an equivalence.
+Hence, $i$ is connected.
+\end{proof}
+
+\begin{lem}[conn-pullback]
+Let $\Fib$ be a stably locally reflective class of fibrations.
+Then connected maps are closed under pullbacks.
+\end{lem}
+\begin{proof}
+Let $f : \Hom(A,C)$ be a connected map and let $g : \Hom(D,C)$ be an arbitrary map.
+We need to prove that the pullback of $f$ along $g$ is connected.
+Let $A \xrightarrow{i} B \overset{p}\twoheadrightarrow C$ be the universal factorization of $f$.
+Then we have the following diagram:
+\[ \xymatrix{ A' \ar[r] \ar[d] \pb  & A \ar[d]^i \\
+              B' \ar[r] \ar[d] \pb  & B \ar@{->>}[d]^p \\
+              D  \ar[r]_g           & C
+            } \]
+Since $\Fib$ is stably locally reflective, $A' \to B' \to D$ is the universal factorization of $A' \to D$.
+Since $f$ is connected, $p$ is an equivalence.
+Hence, $B' \to D$ is also an equivalence.
+Thus, $A' \to D$ is connected.
+\end{proof}
+
+\begin{defn}
+Let $f : \Hom(A,B)$ and $g : \Hom(C,D)$ be maps in an indexed unary type theory.
+We will say that $f$ is \emph{left orthogonal} to $g$ and $g$ is \emph{right orthogonal} to $f$ if the type of lifts in squares of the form depicted below is contractible.
+\[ \xymatrix{ A \ar[r] \ar[d]_f         & C \ar[d]^g \\
+              B \ar[r] \ar@{-->}[ur]    & D
+            } \]
+\end{defn}
+
+\begin{lem}[conn-orth]
+Let $\Fib$ be a locally reflective class of fibrations closed under pullbacks.
+Then connected maps are left orthogonal to fibrations.
+\end{lem}
+\begin{proof}
+Let $i : \Hom(A,B)$ be a connected map and let $p : \Hom(C,D)$ be a fibration.
+Consider a commutative square of the following form:
+\[ \xymatrix{ A \ar[d]_i \ar[r]^f   & C \ar[d]^p \\
+              B \ar[r]_g            & D
+            } \]
+The type of lifts in this square is
+\[ \sum_{r : \Hom(B,C)} \sum_{h_1 : \Id(f, r \circ i)} \sum_{h_2 : \Id(p \circ r, g)} \Id((h_1 * p) \ct (i * h_2), H), \]
+where $H$ is the homotopy witnessing the commutativity of the square.
+Let us denote this type by $L$.
+We need to prove that $L$ is contractible.
+
+Let $A \xrightarrow{i'} B' \overset{q}\twoheadrightarrow B$ be the universal factorization of $i$.
+By \rlem{fib-refl-lift}, the type of lifts in the following square is contractible:
+\[ \xymatrix{ A \ar[d]_{i'} \ar[rr]^f       &               & C \ar[d]^p \\
+              B' \ar[r]_q \ar@{-->}[urr]    & B \ar[r]_g    & D
+            } \]
+The type of lifts in this square is defined as follows:
+\[ \sum_{r' : \Hom(B',C)} \sum_{h_1' : \Id(f, r' \circ i')} \sum_{h_2 : \Id(p \circ r', g \circ q)} \Id((h_1' * p) \ct (i' * h_2'), H \ct (H' * g)), \]
+where $H'$ is the homotopy between $i$ and $q \circ i'$.
+Let us denote this type by $L'$.
+It is enough to prove that $L$ and $L'$ are equivalent.
+
+We have an obvious map $s : L \to L'$ which maps $(r,h_1,h_2,h_3)$ to $(r \circ q, h_1 \ct (H' * r), q * h_2, h_3')$, where $h_3'$ is the following homotopy:
+\begin{align*}
+((h_1 \ct (H' * r)) * p) \ct (i' * q * h_2) & \sim \\
+((h_1 * p) \ct (H' * r * p)) \ct (i' * q * h_2) & \sim \\
+(h_1 * p) \ct (H' * h_2) & \sim \\
+((h_1 * p) \ct (i * h_2)) \ct (H' * g) & \sim \\
+H \ct (H' * g) & ,
+\end{align*}
+where we use $h_3$ at the last step and other steps are usual interchange laws.
+
+To prove that this map is an equivalence, it is enough to show that it is an equivalence on each component.
+Since $i$ is connected, $q$ is an equivalence.
+This implies that functions $- \circ q$ and $q * -$ are equivalences and these functions are the first and the third component of $s$, respectively.
+The second component of $s$ is $- \ct (H' * r)$, which is also an equivalence.
+Finally, the third component of $s$ is an equivalence since it is a function that concatenates its argument with fixed homotopies.
+\end{proof}
+
+Let $\mathcal{L}$ and $\mathcal{R}$ be a pair of classes of maps closed under equivalences such that maps in $\mathcal{L}$ are left orthogonal to maps in $\mathcal{R}$.
+Then a factorization of a map into a map in $\mathcal{L}$ followed by a map in $\mathcal{R}$ is essentially unique.
+The pair $(\mathcal{L},\mathcal{R})$ is called an \emph{orthogonal factorization system} if such a factorization exists for every map.
+
+\begin{lem}[orth-refl]
+If $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system, then $\mathcal{R}$ is a locally reflective class of maps.
+Moreover, if $A \xrightarrow{i} B \twoheadrightarrow C$ is the universal factorization of some map, then $i$ belongs to $\mathcal{L}$.
+\end{lem}
+\begin{proof}
+Obviously, any factorization of a map into a map in $\mathcal{L}$ followed by a map in $\mathcal{R}$ is a universal factorization.
+The second assertion follows from the facts that the universal factorization is essentially unique and $\mathcal{L}$ is closed under equivalences.
+\end{proof}
+
+\begin{prop}
+If $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system, then $\mathcal{L}$ and $\mathcal{R}$ contain all identity morphisms.
+\end{prop}
+\begin{proof}
+By \rlem{orth-refl} and \rlem{fib-idm}, $\mathcal{R}$ contains all identity morphisms.
+Since $A \xrightarrow{\id_A} A \xrightarrow{\id_A} A$ is the universal factorization of $\id_A$, \rlem{orth-refl} implies that $\id_A$ belongs to $\mathcal{L}$.
+\end{proof}
+
+\begin{prop}[orth-char]
+If $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system, then
+$\mathcal{R}$ is precisely the class of maps which are right orthogonal to $\mathcal{L}$ and
+$\mathcal{L}$ is precisely the class of maps which are left orthogonal to $\mathcal{R}$.
+\end{prop}
+\begin{proof}
+We prove the first assertion; the other one follows by a dual argument.
+Maps in $\mathcal{R}$ are right orthogonal to $\mathcal{L}$ by definition.
+Let $f : \Hom(A,C)$ be a map which is right orthogonal to $\mathcal{L}$.
+We need to prove that $f$ belongs to $\mathcal{R}$.
+By \rlem{orth-refl}, $\mathcal{R}$ is a locally reflective class of maps.
+Let $A \xrightarrow{i} B \xrightarrow{p} C$ be the universal factorization of $f$.
+By \rlem{orth-refl}, $i$ belongs to $\mathcal{L}$.
+Hence, we have a lift in the following square:
+\[ \xymatrix{ A \ar@{=}[r] \ar[d]_i     & A \ar[d]^f \\
+              B \ar[r]_p \ar@{-->}[ur]  & C
+            } \]
+By \rlem{fib-refl}, $f$ belongs to $\mathcal{R}$.
+\end{proof}
+
+\begin{cor}[orth-unique]
+Let $\mathcal{R}$ be a class of maps.
+Then a class of maps $\mathcal{L}$ such that $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system is essentially unique.
+That is, if $\mathcal{L}_1$ and $\mathcal{L}_2$ is two such classes, then a map belongs to one of them if and only if it belongs to the other.
+Dually, a class of maps $\mathcal{R}$ such that $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system for a fixed $\mathcal{L}$ is essentially unique.
+\end{cor}
+
+\begin{prop}[orth-comp]
+If $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system, then $\mathcal{R}$ and $\mathcal{L}$ are closed under composition.
+\end{prop}
+\begin{proof}
+We prove this for $\mathcal{R}$; the assertion about $\mathcal{L}$ follows by a dual argument.
+Let $f : \Hom(A,B)$ and $g : \Hom(B,C)$ be maps in $\mathcal{R}$.
+By \rlem{orth-refl}, there exists a universal factorization $A \xrightarrow{i} D \xrightarrow{p} C$ of $g \circ f$ such that $i \in \mathcal{L}$.
+By \rlem{fib-refl}, to prove that $g \circ f$ belongs to $\mathcal{R}$, it is enough to show that $i$ has a retraction over $C$.
+Since $i \in \mathcal{L}$, we have two lifts in the following diagram:
+\[ \xymatrix{ A \ar@{=}[r] \ar[dd]_i                    & A \ar@{->>}[d]^f \\
+                                                        & B \ar@{->>}[d]^g \\
+              D \ar[r]_p \ar@{-->}[ur] \ar@{-->}[uur]^r & C
+            } \]
+Then $r$ is a retraction of $i$ over $C$.
+\end{proof}
+
+\begin{prop}[orth-pullback]
+If $(\mathcal{L},\mathcal{R})$ is an orthogonal factorization system, then $\mathcal{R}$ is closed under pullbacks and $\mathcal{L}$ is closed under pushouts.
+\end{prop}
+\begin{proof}
+We prove this for $\mathcal{R}$; the assertion about $\mathcal{L}$ follows by a dual argument.
+Let $f$ be a pullback of a map $g \in \mathcal{R}$.
+Since $g$ is right orthogonal to $\mathcal{L}$, \rlem{pullback-lift} implies that $f$ is also right orthogonal to $\mathcal{L}$.
+\rprop{orth-char} implies that $f \in \mathcal{R}$.
+\end{proof}
+
+Now, we are ready to prove that orthogonal factorization systems are equivalent to locally reflective classes of maps which are closed under composition and pullbacks:
+
+\begin{thm}[refl-orth]
+Let $\Fib$ be a class of fibrations.
+If $\Fib$ is locally reflective and closed under composition and pullbacks, then $(\mathcal{C},\Fib)$ is an orthogonal factorization system, where $\mathcal{C}$ is the class of connected maps.
+The converse is also true in the sense that if $(\mathcal{L},\Fib)$ is an orthogonal factorization system for some class of maps $\mathcal{L}$, then $\Fib$ is locally reflective and closed under composition and pullbacks.
+\end{thm}
+\begin{proof}
+If $\Fib$ is locally reflective and closed under composition and pullbacks, then connected maps are left orthogonal to fibrations by \rlem{conn-orth} and the factorization exists by \rlem{uni-conn}.
+Thus, $(\mathcal{C},\Fib)$ is an orthogonal factorization system.
+Conversely, if we have an orthogonal factorization system $(\mathcal{L},\Fib)$, then $\Fib$ is locally reflective by \rlem{orth-refl} and it is closed under composition and pullbacks by \rprop{orth-comp} and \rprop{orth-pullback}, respectively.
+\end{proof}
+
+\section{Locally reflective classes in dependent theories}
+\label{sec:refl-fib-dep}
+
+In this section, we prove that locally reflective classes of fibrations correspond to higher modalities in dependent theories.
+
+We can reformulate the definition of locally reflective class of fibrations in dependent theories with identity types, $\Sigma$-types, and unit types.
+Let $\Fib$ be a dependent class of fibrations.
+A factorization of a map in a unary theory can be turned into a factorization of a dependent type $\Delta \vdash A \ob$, which consists of a dependent type $\Delta \vdash \| A \| \ob$ and a map $\eta_A : \Hom_\Delta(A, \| A \|)$.
+Then $\Fib$ is locally reflective if and only if, for every dependent type $A$, there exists its factorization such that the following function is an equivalence for every fibrant type $\Delta \vdash B \ob$:
+\[ \lambda f.\, f \circ \eta_A : \Hom_\Delta(\| A \|, B) \to \Hom_\Delta(A, B). \]
+This condition holds if and only if the type of lifts in the following diagram is contractible for every fibrant type $\Delta \vdash B \ob$ and every map $\Hom_\Delta(A,B)$:
+\[ \xymatrix{ A \ar[r] \ar[d]_{\eta_A} & B \\
+              \| A \| \ar@{-->}[ur]
+            } \]
+
+The constructions $\| - \|$ and $\eta$ are unstable, that is they are not stable under substitutions.
+An \emph{(unstable) higher modality} consists of a class of fibrations $\Fib$ closed under identity types together with the following unstable rules:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \| A \| \fib$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
+\UnaryInfC{$\Gamma \mid \Delta, x : A \vdash \eta_A(x) : \|A\|$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, z : \| A \| \vdash D \fib$}
+\AxiomC{$\Gamma \mid \Delta, x : A \vdash d : D[\eta_A(x)/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.D, x.d) : D$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, z : \| A \| \vdash D \fib$}
+\AxiomC{$\Gamma \mid \Delta, x : A \vdash d : D[\eta_A(x)/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.D, x.d) : \Id(\| A \|\text{-}\fs{elim}(z.D, x.d)[\eta_A(x)/z], d)$}
+\DisplayProof
+\end{center}
+
+\begin{lem}[fib-dep-unst]
+The class of fibrations of a higher modality is locally reflective and the universal factorization is given by $\| - \|$ and $\eta$.
+\end{lem}
+\begin{proof}
+Let $B$ be a fibrant type over $\Delta$.
+We need to prove that the type of lifts in the following diagram is contractible:
+\[ \xymatrix{ A \ar[r]^b \ar[d]_{\eta_A} & B \\
+              \| A \| \ar@{-->}[ur]
+            } \]
+We can define a lift in this diagram as $\lambda z.\,\| A \|\text{-}\fs{elim}(z.B, x.\,b\,x)$.
+The commutativity of the triangle is witnessed by the term $\lambda x.\,\| A \|\text{-}\fs{elim_h}(z.B, x.\,b\,x)$.
+
+Let $\Delta, z : \| A \| \vdash f_i : B$, $\Delta, x : A \vdash h_i : \Id(f_i[|x|/z],\,b\,x)$ be lifts in this diagram for $i \in \{1,2\}$.
+We need to construct a homotopy between them.
+Since $\Fib$ is closed under identity types, the type $\Id(f_1,f_2)$ is fibrant over $\Delta, z : \| A \|$.
+Thus, we have a homotopy between $f_1$ and $f_2$:
+\[ \Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(f_1, f_2). \]
+Let us denote this homotopy by $H$.
+We need to prove that $\sym{H[|x|/z]} \ct h_1$ is homotopic to $h_2$.
+This homotopy can be constructed from the following one:
+\[ \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(H[|x|/z], h_1 \ct \sym{h_2}). \]
+\end{proof}
+
+The following proposition shows that unstable higher modalities are the same as locally reflective classes of fibrations:
+
+\begin{prop}[fib-dep-unst]
+Let $\Fib$ be a class of fibrations closed under substitutions and let $\| - \|$, $\eta$ be a pair of unstable constructions as described above.
+Then this pair extends to a higher modality if and only if it makes $\Fib$ into a locally reflective class and $\Fib$ is closed under $\Sigma$-types.
+\end{prop}
+\begin{proof}
+First, suppose that $\Fib$ is locally reflective class that closed under $\Sigma$-types.
+By \rprop{fib-refl-id}, $\Fib$ is closed under identity types.
+Let $j : \Hom(\Sigma(\Delta, x : A), \Sigma(\Delta, z : \| A \|))$ be the obvious map defined in terms of $\eta$.
+Since $\Fib$ is closed under $\Sigma$-types, \rprop{fib-sigma} implies that it is also closed under composition.
+Then \rlem{uni-conn} implies that $j$ is connected.
+A term $\Delta, x : A \vdash d : D[\eta_A(x)/z]$ determines the top map in the following diagram:
+\[ \xymatrix{ \Sigma(\Delta, x : A) \ar[r] \ar[d]_j                  & \Sigma(\Delta, z : \| A \|, D) \ar@{->>}[d] \\
+              \Sigma(\Delta, z : \| A \|) \ar@{-->}[ur] \ar@{=}[r]  & \Sigma(\Delta, z : \| A \|)
+            } \]
+The right map is the obvious projection, which is a fibration since $D$ is fibrant over $\Delta, z : \| A \|$.
+Since $j$ is connected, we have a lift in this square.
+This lift determines a term $\Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.D, x.d) : D$.
+The commutativity of the upper triangle implies the existence of a term $\Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.D, x.d) : \Id(\| A \|\text{-}\fs{elim}(z.D, x.d)[\eta_A(x)/z],d)$.
+
+By \rlem{fib-dep-unst}, if $\| - \|$, $\eta$ extends to a higher modality, then they make $\Fib$ into a locally reflective class.
+Let us prove that $\Fib$ is also closed under $\Sigma$-types.
+Let $A$ be a fibrant type over $\Delta$ and let $B$ be a fibrant type over $\Delta, x : A$.
+We need to prove that $\Sigma_{x : A} B$ is (equivalent to) a fibrant type over $\Delta$.
+First, let us define a map $f : \| \Sigma_{x : A} B \| \to A$ as $\lambda z.\,\| \Sigma_{x : A} B \|\text{-}\fs{elim}(z.A,p.\pi_1(p))$.
+Then, for every $z : \| \Sigma_{x : A} B \|$, we define a term $g\,z : B[f\,z/x]$ as follows:
+\[ \| \Sigma_{x : A} B \|\text{-}\fs{elim}(z.\,B[f\,z/x], p.\,\sym{(\| \Sigma_{x : A} B\|\text{-}\fs{elim_h}(z.A,p.\pi_1(p)))}_*(\pi_2(p))). \]
+Thus, we have a map $r = \lambda z.(f\,z,g\,z) : \| \Sigma_{x : A} B \| \to \Sigma_{x : A} B$ and $\| \Sigma_{x : A} B\|\text{-}\fs{elim_h}$ implies that $r \circ \eta_{\Sigma_{x : A} B}$ is homotopic to the identity map.
+To prove that $\eta_{\Sigma_{x : A} B} \circ r$ is also homotopic to the identity map, we can apply $\| \Sigma_{x : A} B\|\text{-}\fs{elim_h}$.
+Then it is enough to prove that $\eta_{\Sigma_{x : A} B} \circ r \circ \eta_{\Sigma_{x : A} B}$ is homotopic to $\eta_{\Sigma_{x : A} B}$ which follows from the fact that $r \circ \eta_{\Sigma_{x : A} B} \sim \id$.
+\end{proof}
+
+\begin{cor}
+A class of fibrations closed under substitutions extends to a higher modality if and only if it is locally reflective and is closed $\Sigma$-types.
+\end{cor}
+
+If we assume the stability condition for $\eta$, then we can replace it with the following stable rule:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash | a | : \| A \|$}
+\DisplayProof
+\end{center}
+\medskip
+Indeed, $\eta_A(x)$ can be defined as $| x |$.
+Conversely, $| a |$ can be defined in terms of $\eta_A$ as $\eta_A(x)[a/x]$.
+Since $|-|$ is stable, these constructions are mutually inverse.
+
+We will say that a higher modality is \emph{stable} if $\| - \|$ and $| - |$ are stable.
+The underlying class of fibrations of a stable higher modality is stably locally reflective.
+The converse does not hold since the stability under substitutions is a stricter condition, then the stability under pullbacks.
+
+If a higher modality is stable, then we can define the local version of its eliminator:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$}
+\AxiomC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, z : \| A \|, E \vdash \| A \|\text{-}\fs{elim}(z E .D, x E.d) : D$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$}
+\AxiomC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[| x | / z]$}
+\BinaryInfC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash \| A \|\text{-}\fs{elim_h}(z E.D, x E.d) : \Id(d'[|x|/z], d)$}
+\DisplayProof
+\end{center}
+where $d' = \| A \|\text{-}\fs{elim}(z E.D, x E.d)$.
+
+\begin{prop}[fib-dep-st]
+Let $\Fib$ be a class of fibrations and let $\| - \|$, $| - |$ be a pair of stable constructions as described above.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:fib-non-dep} The pair $\| - \|$, $| - |$ makes $\Fib$ into a (stably) locally reflective class and $\Fib$ is closed under $\Sigma$-types.
+\item \label{it:fib-dep} The pair $\| - \|$, $| - |$ makes $\Fib$ into a (stable) higher modality.
+\item \label{it:fib-dep-local} The class $\Fib$ is closed under identity types and the unstable local eliminator is definable.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+By \rlem{fib-dep-unst}, \eqref{it:fib-dep} implies that $\Fib$ is stably locally reflective.
+Thus, if either \eqref{it:fib-non-dep} or \eqref{it:fib-dep} holds, then $\Fib$ is closed under substitutions by \rlem{fib-pullback}.
+Now, \Rprop{fib-dep-unst} implies that \eqref{it:fib-non-dep} and \eqref{it:fib-dep} are equivalent.
+
+Obviously, \eqref{it:fib-dep-local} implies \eqref{it:fib-dep} since the (global) eliminator is a special case of the local one.
+Let us prove that \eqref{it:fib-non-dep} implies the existence of the unstable local eliminator.
+Consider the following pullback square:
+\[ \xymatrix{ \Sigma(\Delta, x : A, E[|x|/z]) \ar[r] \ar[d]_i \pb   & \Sigma(\Delta, x : A) \ar[d]^j \\
+              \Sigma(\Delta, z : \| A \|, E) \ar[r]                 & \Sigma(\Delta, z : \| A \|),
+            } \]
+where the bottom and top maps are the obvious projection and the left and right maps are defined in terms of $| - |$.
+Since $\Fib$ is closed under $\Sigma$-types, \rprop{fib-sigma} implies that it is also closed under composition.
+Then \rlem{uni-conn} implies that $j$ is connected.
+Since $\Fib$ is stably locally reflective, \rlem{conn-pullback} implies that $i$ is also connected.
+
+Any term $\Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$ determines the top map in the following diagram:
+\[ \xymatrix{ \Sigma(\Delta, x : A, E[|x|/z]) \ar[r] \ar[d]_i           & \Sigma(\Delta, z : \| A \|, E, D) \ar@{->>}[d] \\
+              \Sigma(\Delta, z : \| A \|, E) \ar@{-->}[ur] \ar@{=}[r]   & \Sigma(\Delta, z : \| A \|, E)
+            } \]
+The right map is the obvious projection, which is a fibration since $D$ is fibrant over $\Delta, z : \| A \|, E$.
+Since $i$ is connected, we have a lift in this square.
+This lift determines a term $\Delta, z : \| A \|, E \vdash \| A \|\text{-}\fs{elim}(z E. D, x E. d) : D$.
+The commutativity of the upper triangle implies the existence of a term $\Delta, x : A, E[|x|/z] \vdash \| A \|\text{-}\fs{elim_h}(z E. D, x E .d) : \Id(\| A \|\text{-}\fs{elim}(z E. D, x E. d)[|x|/z],d)$.
+\end{proof}
+
+\begin{example}
+Since the class of $n$-truncated maps is closed under identity types, it is locally reflective if and only if we have the weak version of the $n$-truncation operation.
+\end{example}
+
+\section{Final remarks}
+
+In this paper, we studied properties of classes of maps in indexed type theories.
+In particular, we proved that many results of \cite{modality-hott} hold in indexed theories.
+We believe that other results from this paper and results of \cite{localization-hott} also should hold in this context.
+We also discussed the notion of object classifiers and univalent universes which should be useful in the context of (flagged) $\infty$-categories
+since the $\infty$-category of (flagged) $\infty$-categories has interesting universes.
+This $\infty$-category is not locally Cartesian closed, so it is not a model of ordinary homotopy type theory, but it is a model of the indexed type theory.
+Thus we still can use synthetic reasoning to study it.
+
+\begin{thebibliography}{}
+
+\bibitem[Isaev 2016]{alg-tt}
+V.~{Isaev}, \emph{{Algebraic Presentations of Dependent Type Theories}},
+  (2016), \href {http://arxiv.org/abs/1602.08504} {\path{arXiv:1602.08504}}.
+
+\bibitem[Isaev 2018]{indexed-tt}
+V.~{Isaev}, \emph{Indexed type theories},  (2018), \href
+  {http://arxiv.org/abs/1806.08038} {\path{arXiv:1806.08038}}.
+
+\bibitem[Johnstone 2002]{elephant}
+Peter~T. Johnstone, \emph{Sketches of an elephant : a topos theory compendium},
+  Oxford Logic Guides, Clarendon Press, Oxford, 2002, Autre tirage : 2008.
+
+\bibitem[Lurie 2009]{lurie-topos}
+Jacob Lurie, \emph{Higher topos theory}, Annals of mathematics studies, Princeton
+  University Press, Princeton, N.J., Oxford, 2009.
+
+\bibitem[Par{\'e} and Schumacher 1978]{indexed-cats}
+Robert Par{\'e} and Dietmar Schumacher, \emph{Abstract families and the adjoint
+  functor theorems}, Indexed Categories and Their Applications (Berlin,
+  Heidelberg), Springer Berlin Heidelberg, 1978, pp.~1--125.
+
+\bibitem[Rasekh 2018]{rasekh-eht}
+N.~{Rasekh}, \emph{{A Theory of Elementary Higher Toposes}},  (2018), \href
+  {http://arxiv.org/abs/1805.03805} {\path{arXiv:1805.03805}}.
+
+\bibitem[Riehl and Shulman 2017]{riehl-dhott}
+E.~{Riehl} and M.~{Shulman}, \emph{A type theory for synthetic
+  $\infty$-categories}, Higher Structures \textbf{1} (2017), no.~1, 147--224.
+
+\bibitem[Rijke \emph{et al.} 2017]{modality-hott}
+E.~{Rijke}, M.~{Shulman}, and B.~{Spitters}, \emph{{Modalities in homotopy type
+  theory}},  (2017), \href {http://arxiv.org/abs/1706.07526}
+  {\path{arXiv:1706.07526}}.
+
+\bibitem[The {Univalent Foundations Program} 2013]{hottbook}
+The {Univalent Foundations Program}, \emph{Homotopy type theory: Univalent
+  foundations of mathematics}, \url{https://homotopytypetheory.org/book},
+  Institute for Advanced Study, 2013.
+
+\bibitem[Christensen \emph{et al.} 2018]{localization-hott}
+J.~D. {Christensen}, M.~{Opie}, E.~{Rijke}, and L.~{Scoccola},
+  \emph{{Localization in Homotopy Type Theory}},  (2018), \href
+  {http://arxiv.org/abs/1807.04155} {\path{arXiv:1807.04155}}.
+
+\end{thebibliography}
+
+\end{document}
