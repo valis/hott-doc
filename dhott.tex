@@ -110,10 +110,12 @@ Let $F$ be a functor between underlying categories of contextual categories $\sc
 If $\scat{C}$ is a contextual category over $\scat{B}$, then \emph{change of base} of $\scat{C}$ along $F$ is defined as $\scat{C} \circ F^\fs{op}$ and denoted by $F^*(\scat{C})$.
 If $F$ and $G$ are isomorphic functors between categories underlying contextual categories $\scat{B}'$ and $\scat{B}$, then $F^*(\scat{C})$ and $G^*(\scat{C})$ are also isomorphic for every contextuall indexed (contextual) category $\scat{C}$.
 
-Our aim in this section is to define models for simplicial spaces, Segal spaces, and complete Segal spaces.
-These models can be roughly described as full subcategories of the contextually indexed category $\sSet^{\Delta^\fs{op}}$,
-where $\sSet$ is the canonical indexing of the category of simplicial set (considered as a contextual category as described in \cite{kap-lum-voe}) over itself.
-Since it requires little additional effort, we will define a contextually indexed contextual category $\scat{C}^\scat{J}$ over $\scat{C}^\scat{I}$ for all appropriate categories $\scat{C}$, $\scat{J}$, and $\scat{I}$.
+We will define a large class of contextually indexed contextual categories constructed from type-theoretic semi-fibration categories.
+We will also consider a more concrete example of contextual categories $\scat{C}^\scat{J}$ contextually indexed over $\scat{C}^\scat{I}$ for all appropriate categories $\scat{C}$, $\scat{J}$, and $\scat{I}$.
+
+% Our aim in this section is to define models for simplicial spaces, Segal spaces, and complete Segal spaces.
+% These models can be roughly described as full subcategories of the contextually indexed category $\sSet^{\Delta^\fs{op}}$,
+% where $\sSet$ is the canonical indexing of the category of simplicial set (considered as a contextual category as described in \cite{kap-lum-voe}) over itself.
 
 \subsection{Change of base}
 
@@ -150,57 +152,80 @@ We are mainly interested in locally small contextually indexed categories since 
 In general, local smallness of $\scat{C}$ does not imply local smallness of $F^*(\scat{C})$.
 We consider a special case when it does:
 
-\begin{prop}[locally-small]
-Let $F : \scat{B} \to \scat{C}$ be a functor between categories with fibrations (which might not preserve any structure).
-Suppose that, for every fibration $f : A \twoheadrightarrow B$ in $\scat{C}$, the pullback functor $f^* : \scat{C}/B \to \scat{C}/A$ has a right adjoint $\Pi_f : \scat{C}/A \to \scat{C}/B$
+\begin{lem}[cartesian-closed]
+Let $F : \scat{B} \to \scat{C}$ be a functor between categories with fibrations.
+Suppose that, for every fibration $f : A \twoheadrightarrow B$ in $\scat{C}$, the pullback functor $f^* : \scat{C}/B \to \scat{C}/A$ has a right adjoint $\Pi_f : \scat{C}/A \to \scat{C}/B$.
 Then
 \begin{enumerate}
 \item If $\Pi_f$ maps fibrations over $A$ to fibrations over $B$, then $F^*(\scat{C}_!)$ has $\Pi$-types.
-\item If $F$ has a right adjoint $G : \scat{C} \to \scat{B}$ and $G(\Pi_f(g))$ is a fibration over $G(B)$ for every fibration $g$ over $A$, then $F^*(\scat{C}_!)$ has dependent $\Hom$-types.
-In particular, it is locally small.
+\item Suppose that there is a full subcategory $\scat{C}'$ of $\scat{C}$ such that $\Pi_f$ maps fibrations over $A$ to fibrations over $B$ whenever $B$ belongs to $\scat{C}'$.
+Suppose that, for every object $X \in \scat{C}$, there is a map $\varepsilon_X : X' \to X$ such that $X' \in \scat{C}'$ and,
+for every fibrant object $\Gamma \in \scat{B}$, every map of the form $F(\Gamma) \to X$ factors through $\varepsilon_X$ and the factorization is natural in $\Gamma$.
+Then $F^*(\scat{C}_!)$ has $\Pi$-types in the empty (indexed) context, that is $F^*(\scat{C}_!)$ is Cartesian closed.
 \end{enumerate}
-\end{prop}
+\end{lem}
 \begin{proof}
 The first claim was proved in \cite{local-universes}.
-Let us prove the second one.
-First, we need to describe the interpretation of the following rule:
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta \vdash B \ob$}
-\UnaryInfC{$\Gamma \vdash \Hom(\Delta.B) \type$}
-\DisplayProof
-\end{center}
-We almost have $\Pi$-types, which means that we can interpret $\Pi(\Delta.B)$ as the following diagram:
-\[ \xymatrix{                           & E_B \ar[d]^{p_B} \\
-              F(\Gamma) \ar[r]_-{r_B}   & V_B
-            } \]
-where $p_B$ is defined as $\Pi_f(g)$ for some fibrations $f$ and $g$.
-This map might not be a fibration, but $G(p_B)$ is, so we can define the interpretation of $\Gamma \vdash \Hom(\Delta.B)$ as follows:
-\[ \xymatrix{                               & G(E_B) \ar@{->>}[d]^{G(p_B)} \\
-              \Gamma \ar[r]_-{\varphi(r_B)} & G(V_B)
-            } \]
-where $\varphi(r_B)$ is the map corresponding to $r_B$ by adjointness.
+The proof of the second one is a minor modification of this proof.
+A type $\Gamma \mid \cdot \vdash A$ corresponds to a map $r_A : F(\Gamma) \to V_A$ and a fibration $p_A : E_A \twoheadrightarrow V_A$.
+A type $\Gamma \mid x : A \vdash B$ corresponds to a map $r_B : \Gamma.A \to V_B$ and a fibration $p_B : E_B \twoheadrightarrow V_B$, where $\Gamma.A = F(\Gamma) \times_{V_A} E_A$.
+Let $V_\Pi^u = \Pi_{p_A}(E_A \times V_B)$, let $p_A^u : E_A^u \twoheadrightarrow V_\Pi^u$ be the pullback of $p_A$ along the map $V_\Pi^u \to V_A$,
+and let $p_B^u : E_B^u \twoheadrightarrow E_A^u$ be the pullback of $p_B$ along the map $E_A^u \xrightarrow{\fs{ev}} E_A \times V_B \xrightarrow{\pi_2} V_B$.
 
-Since we have the abstraction and the application operations for $\Pi$-types, it is enough to define corresponding operations for dependent $\Hom$-types for closed types:
+The maps $r_A : F(\Gamma) \to V_A$ and $r_B : \Gamma.A \to V_B$ give us a map $r_\Pi : F(\Gamma) \to V_\Pi^u$.
+By assumption, this map factors through a map $\varepsilon_{V_\Pi^u} : V_\Pi^{u'} \to V_\Pi^u$.
+Let $p_A^{u'} : E_A^{u'} \twoheadrightarrow V_\Pi^{u'}$ and $p_B^{u'} : E_B^{u'} \twoheadrightarrow E_A^{u'}$ be pullbacks of $p_A^u$ and $p_B^u$ along $\varepsilon_{V_\Pi^u}$, respectively.
+By assumption, $\Pi_{p_A^{u'}}(p_B^{u'})$ is a fibration over $V_\Pi^{u'}$.
+We define the interpretation of $\Pi_{x : A} B$ as the map $F(\Gamma) \to V_\Pi^{u'}$ together with the fibration $\Pi_{p_A^{u'}}(p_B^{u'})$.
+Since the factorization is natural in $\Gamma$, this interpretation is stable under substitution.
+The interpretation of abstraction and application is defined in the same way as in the proof of the first claim.
+\end{proof}
+
+Cartesian closed contextually indexed categories are often locally small.
+This is true for $F^*(\scat{C}_!)$ if $F$ has a right adjoint.
+It is actuall enough to assume that it has a relative right adjoint \cite{dense-relative}.
+Let $\scat{B}'$ be a full subcategory.
+Then a functor $G : \scat{C} \to \scat{B}$ is right adjoint to $F : \scat{B} \to \scat{C}$ relative to $\scat{B}'$ if, for every $X \in \scat{B}'$ and every $Y \in \scat{C}$,
+there is a bijection $\varphi : \Hom_\scat{C}(F(X),Y) \simeq \Hom_\scat{B}(X,G(Y))$ natural in $X$ and $Y$ (actually, we only need to assume that it is natural in $X$).
+Of course, any right adjoint is a right adjoint relative to any subcategory.
+We will later see an example of a relative right adjoint which is not a right adjoint.
+
+\begin{lem}[locally-small]
+Let $F : \scat{B} \to \scat{C}$ be a functor between categories with fibrations which has a right adjoint $G$ relative to fibrant objects of $\scat{B}$ which preserves fibrations.
+If $F^*(\scat{C}_!)$ has the $\Pi$-type $\Pi(\Delta.B)$ for some type $\Gamma \mid \Delta \vdash B$, then it has the dependent $\Hom$-type $\Hom(\Delta.B)$.
+In particular, if it is Cartesian closed, then it is locally small.
+\end{lem}
+\begin{proof}
+Let $r_\Pi : F(\Gamma) \to V_\Pi$, $p_\Pi : E_\Pi \twoheadrightarrow V_\Pi$ be the interpretation of $\Pi(\Delta.B)$.
+We define $\Hom(\Delta.B)$ as $\varphi(r_\Pi) : \Gamma \to G(V_\Pi)$, $G(p_\Pi) : G(E_\Pi) \twoheadrightarrow G(V_\Pi)$.
+We can apply $\varphi$ since $\Gamma$ is a context of $\scat{B}$ and contexts are always fibrant.
+
+Since we have the abstraction and the application operations for $\Pi$-types, it is enough to define the interpretation of the following operations:
 \begin{center}
-\AxiomC{$\Gamma \mid \cdot \vdash b : B$}
-\UnaryInfC{$\Gamma \vdash \lambda(b) : \Hom(\cdot.B)$}
+\AxiomC{$\Gamma \mid \cdot \vdash b : \Pi(\Delta.B)$}
+\UnaryInfC{$\Gamma \vdash \lambda(b) : \Hom(\Delta.B)$}
 \DisplayProof
 \qquad
-\AxiomC{$\Gamma \vdash f : \Hom(\cdot.B)$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash f\,() : B$}
+\AxiomC{$\Gamma \vdash f : \Hom(\Delta.B)$}
+\UnaryInfC{$\Gamma \mid \cdot \vdash f\,() : \Pi(\Delta.B)$}
 \DisplayProof
-\end{center}
-
 \begin{align*}
 \lambda(b)\,() & = b \\
 \lambda(f\,()) & = f
 \end{align*}
+\end{center}
 
-A term $\Gamma \mid \cdot \vdash b : B$ corresponds to a section $b : F(\Gamma) \to E_B$ of $p_B$.
-We define $\lambda(b)$ as $\varphi(b) : \Gamma \to G(E_B)$.
-Conversely, if $f : \Gamma \to G(E_B)$ is a section of $G(p_B)$, then we define $f\,()$ as $\varphi^{-1}(f) : F(\Gamma) \to E_B$.
-The fact that these constructions are stable under substitution follows from the naturality of $\varphi$.
+A term $\Gamma \mid \cdot \vdash b : \Pi(\Delta.B)$ corresponds to a section $b : F(\Gamma) \to E_\Pi$ of $p_\Pi$.
+We define $\lambda(b)$ as $\varphi(b) : \Gamma \to G(E_\Pi)$.
+Conversely, if $f : \Gamma \to G(E_\Pi)$ is a section of $G(p_\Pi)$, then we define $f\,()$ as $\varphi^{-1}(f) : F(\Gamma) \to E_\Pi$.
+The fact that these constructions are stable under substitution follows from the naturality of $\varphi$ in $\Gamma$.
 \end{proof}
+
+\begin{remark}
+If $F^*(\scat{C}_!)$ is not Cartesian closed, it might be possible to use the argument from \rlem{cartesian-closed} to prove that it is locally small directly.
+If the second condition of this lemma holds except for the part that $\Pi_f$ preserves fibrations,
+but it is true that $F$ has a right adjoint $G$ relative to fibrant objects such that $G(\Pi_f(g))$ is a fibration for every fibration $g$, then $F^*(\scat{C}_!)$ has dependent $\Hom$-types.
+\end{remark}
 
 Many examples of categories with fibrations that we are interested in can be constructed as localizations of larger categories.
 If $\scat{M}$ is a combinatorial model category, then left Bousfield localizations of $\scat{M}$ can be described model structures on $\scat{M}$ that have the same class of cofibrations, but less fibrations.
@@ -224,7 +249,7 @@ We will say that a map of $\scat{C}$ is a \emph{trivial cofibration} if it has t
 Then a map in each of the categories $\scat{C}_\fs{f}$, $\scat{C}/\Gamma$, and $(\scat{C}/\Gamma)_\fs{f}$ is a trivial cofibration if and only if it is a trivial cofibration in $\scat{C}$.
 
 Let $\scat{C}$ be a category with fibrations.
-We will say that $\scat{C}$ is \emph{right proper} if, for every fibration $p : A \twoheadrightarrow B$, the right adjoint $\Pi_p : \scat{C}/A \to \scat{C}/B$ to the pullback functor $p^* : \scat{C}/B \to \scat{C}$ exists and maps fibrations over $A$ to fibrations over $B$.
+We will say that $\scat{C}$ is \emph{right proper} if, for every fibration $p : A \twoheadrightarrow B$, the right adjoint $\Pi_p : \scat{C}/A \to \scat{C}/B$ to the pullback functor $p^* : \scat{C}/B \to \scat{C}/A$ exists and maps fibrations over $A$ to fibrations over $B$.
 We will say that $\scat{C}$ is \emph{cofibrantly generated} if it is cocomplete and fibrations are precisely the maps with the right lifting property with respect to a small set of maps permiting the small object argument.
 We will say that $\scat{C}$ is \emph{combinatorial} if it is locally presentable and cofibrantly generated.
 We will say that the class of fibrations of $\scat{C}$ is \emph{saturated} if every map that has the right lifting property with respect to trivial cofibrations is a fibration.
@@ -286,21 +311,25 @@ Every cofibrantly generated (resp., combinatorial) type-theoretic model category
 \end{example}
 
 \begin{defn}
-A \emph{Quillen adjunction} between type-theoretic semi-fibration categories is an adjunction such that the right adjoint preserves fibrations.
-If $F \dashv G$ is a Quillen adjunction, then $F$ (resp., $G$) will be called \emph{left (resp., right) Quillen functor}.
-We will say that a Quillen adjunction is \emph{extensional} if the right adjoint also preserves trivial fibrations.
+A \emph{(resp., relative) Quillen adjunction} between type-theoretic semi-fibration categories is an adjunction (resp., relative to fibrant objects) such that the right adjoint preserves fibrations.
+If $F \dashv G$ is a (resp., relative) Quillen adjunction, then $F$ will be called \emph{left (resp., relative) Quillen functor} and $G$ will be called \emph{right (resp., relative) Quillen functor}.
+We will say that a (relative) Quillen adjunction is \emph{extensional} if the right adjoint also preserves trivial fibrations.
 \end{defn}
 
 \begin{prop}[indexed-locally-small]
-Let $F$ be a left Quillen functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$.
+Let $F : \scat{B} \to \scat{B}$ be a functor between type-theoretic semi-fibration categories.
 Then $F^*(\scat{C}_!)$ is a contextually indexed contextual category with unit types, $\Sigma$-types, and identity types.
-If $\scat{C}$ is right proper, then $F^*(\scat{C}_!)$ has $\Pi$-types and dependent $\Hom$-types.
+Moreover, if $\scat{C}$ is right proper, then
+\begin{enumerate}
+\item $F^*(\scat{C}_!)$ has $\Pi$-types which are extensional if $\scat{C}$ is extensional.
+\item If $F$ is a left relative Quillen functor, then $F^*(\scat{C}_!)$ has dependent $\Hom$-types.
 In particular, it is locally small.
-If $\scat{C}$ is right proper and extensional and the adjunction is extensional, then $\Pi$-types and identity types are extensional.
+If $\scat{C}$ is extensional and the relative adjunction is extensional, then identity types are extensional.
+\end{enumerate}
 \end{prop}
 \begin{proof}
-The existence of unit types, $\Sigma$-types, identity types, and $\Pi$-types follows from \cite{local-universes}.
-The existence of dependent $\Hom$-types is proved in \rprop{locally-small}.
+The existence of unit types, $\Sigma$-types, and identity types follows from \cite{local-universes}.
+The existence of $\Pi$-types and dependent $\Hom$-types is proved in \rlem{cartesian-closed} and \rlem{locally-small}.
 The functional extensionality holds by \cite[Lemma~5.9]{shul-inv}.
 Thus, we just need to prove that identity types are extensional.
 
@@ -344,7 +373,7 @@ Finally, by the 2-out-of-3 property, $s$ is an equivalence.
 
 \begin{example}[cisinski]
 A \emph{Cisinski model structure} on a Grothendieck topos $\scat{C}$ is any cofibrantly generated model structure in which cofibrations are precisely monomorphisms.
-For every such model structure and every left Quillen functor $F : \scat{B} \to \scat{C}$,
+For every such model structure and every left relative Quillen functor $F : \scat{B} \to \scat{C}$,
 the contextually indexed contextual category $F^*(\scat{C}_!)$ has dependent $\Hom$-types, unit types, $\Sigma$-types, and identity types.
 
 The existence of unit types, $\Sigma$-types, and identity types follows from \rprop{indexed-locally-small}.
@@ -852,7 +881,7 @@ Since identity types are unique up to an equivalence, this implies that they are
 \end{proof}
 
 \begin{cor}[localized-con-fib]
-Let $F$ be a left Quillen functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$ such that $F^*(\scat{C}_!)$ has extensional identity types.
+Let $F$ be a left relative Quillen functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$ such that $F^*(\scat{C}_!)$ has extensional identity types.
 Let $\Fib'$ be a subclass of fibrations of $\scat{C}$ which contains identity morphisms and closed under compositions, pullbacks, and identity types.
 Then $F^*((\scat{C},\Fib')_!)$ is a contextually indexed contextual category with unit types, $\Sigma$-types, and extensional identity types.
 \end{cor}
@@ -980,7 +1009,7 @@ This will allow us to prove that it is closed under products.
 \end{remark}
 
 \begin{example}
-If $F : \scat{B} \to \scat{C}$ is a left Quillen functor and $\scat{C}$ is a Cisinski model category, then 
+If $F : \scat{B} \to \scat{C}$ is a left relative Quillen functor and $\scat{C}$ is a Cisinski model category, then 
 the contextually indexed contextual category $F^*(\scat{C}_!)$ has dependent $\Hom$-types, unit types, $\Sigma$-types, and extensional identity types.
 This example was discussed in \rexample{cisinski}.
 The only new part is that $F^*(\scat{C}_!)$ has extensional identity types which follows from \rcor{localized-con-fib}.
