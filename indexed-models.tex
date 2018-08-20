@@ -535,6 +535,7 @@ This follows from the facts that $\scat{C}$ is right proper and that $F^*$-fibra
 \end{example}
 
 \section{Extension types}
+\label{sec:ext}
 
 Extension types were defined in \cite{riehl-dhott}.
 In this section, we describe an analogous construction in ordinary homotopy type theory and in indexed type theory.
@@ -612,28 +613,55 @@ Let us just give the first rule as an example (we use the version with the singl
 
 To describe the interpretation of extension types, we need to introduce a new notion.
 We will say that a category with fibrations satisfies \emph{the pushout-product axiom} with respect to a map $j : U \to V$ if $U$ and $V$ are exponentiable and,
-for every fibration $p : A \twoheadrightarrow \Gamma \times V$, the map $\Pi_{\pi_1}(p) \to \Pi_{\pi_1}(q)$ is a fibration,
-where $q : A' \twoheadrightarrow \Gamma \times U$ is the pullback of $p$ along the map $\id_\Gamma \times j : \Gamma \times U \to \Gamma \times V$.
+for every fibration $X \twoheadrightarrow Y$, the map $X^V \to Y^V \times_{Y^U} X^U$ is a fibration.
 
 \begin{remark}
-A category with fibrations $\scat{C}$ satisfies the pushout-product axiom with respect to a map $j : U \to V$ if the class of fibrations of $\scat{C}$ is saturated, objects $U$ and $V$ are exponentiable and,
-for every trivial cofibration $i : A \to B$, the map $B \times U \amalg_{A \times U} A \times V \to B \times V$ is a trivial cofibration.
-This conditions hold if $\scat{C}$ is a Cartesian closed model category (\rremark{cartesian}) and $j$ is a cofibration.
+Suppose that the class of fibrations of $\scat{C}$ is saturated and objects $U$ and $V$ are exponentiable.
+Then $\scat{C}$ satisfies the pushout-product axiom with respect to a map $j : U \to V$ if and only if,
+for every trivial cofibration $i : A \to B$, the map $B \times U \amalg_{A \times U} A \times V \to B \times V$ is also a trivial cofibration.
+This condition holds if $\scat{C}$ is a Cartesian closed model category (\rremark{cartesian}) and $j$ is a cofibration.
 \end{remark}
 
-\begin{prop}
+\begin{prop}[extension-types]
 If a category with fibrations $\scat{C}$ satisfies the pushout-product axiom with respect to a map $j : U \to V$, then it has extension types along $j$.
-If moreover $U = \fs{colim}_{i \in \scat{I}} U_i$ and functors $X \times -$ preserve this colimit for every object $X$, then $\scat{C}$ has the modified version of extension types base on this decomposition of $U$.
+If moreover $U = \fs{colim}_{i \in \scat{I}} U_i$ and the functor $X \times -$ preserves this colimit for every object $X$, then $\scat{C}$ has the modified version of extension types based on this decomposition of $U$.
 \end{prop}
 \begin{proof}
-% TODO
+The premises of the introduction rule for $\langle \Pi_{y : V} A \mid_{x.a} \rangle$ give us the following commutative square:
+\[ \xymatrix{ \Gamma \times U \ar[r]^a \ar[d]_{\id \times j}    & E_A \ar@{->>}[d]^{p_A} \\
+              \Gamma \times V \ar[r]_{r_A}                      & V_A
+            } \]
+The extension type $\langle \Pi_{y : V} A \mid_{x.a} \rangle$ must be interpreted as the object of lifts in this square.
+Thus, we define $p_\Pi : E_\Pi \twoheadrightarrow V_\Pi$ as the map $E_A^V \to V_A^V \times_{V_A^U} E_A^U$ which is a fibration by assumption.
+Maps $a : \Gamma \times U \to E_A$ and $r_A : \Gamma \times V \to V_A$ determine a map $r_\Pi : \Gamma \to V_\Pi$.
+This gives us the interpretation of the extension type.
+It is easy to describe the interpretation of abstraction and application.
+
+If $U = \fs{colim}_{i \in \scat{I}} U_i$, then we have a collection of maps $a_i : \Gamma \times U_i \to E_A$ for every $i \in \mathcal{I}$
+which determine a map $\fs{colim}_{i \in \mathcal{I}}(\Gamma \times U_i) \to E_A$.
+Since $\Gamma \times -$ preserves the colimit $\fs{colim}_{i \in \mathcal{I}} U_i$, this gives us a map $\Gamma \times U \to E_A$.
+Now, we can use the previous construction.
 \end{proof}
+
+\begin{prop}[indexed-extension-types]
+Let $F : \scat{B} \to \scat{C}$ be a functor between categories with firbations which preserves binary products.
+Let $j : U \to V$ be a map of $\scat{B}$.
+If $\scat{C}$ satisfies the pushout-product axiom with respect to the map $F(j)$, then it has indexed extension types along $j$.
+\end{prop}
+\begin{proof}
+The proof is the same as the proof of the previous proposition.
+\end{proof}
+
+\begin{remark}
+The interpretation of the indexed version of extension types is defined in the same way.
+We only need to know that $F$ preserves products and that $\scat{C}$ satisfies the pushout-product axiom with respect to the map $F(j) : F(U) \to F(V)$.
+\end{remark}
 
 \section{Colimits}
 
 In this section, we give sufficient conditions for a model $F^*(\scat{C})$ to have initial types, binary coproducts, arbitrary coproducts, and pushouts.
 
-\subsection{Coproducts}
+\subsection{Quasifibrations}
 
 For the discussion of colimits, it will be convenient to use the notion of a quasifibration which we now define.
 We will say that a map $f : X \to Z$ in a category with fibrations is a \emph{quasifibration} if it factors as a trivial cofibration $i : X \to Y$ followed by a fibration $p : Y \twoheadrightarrow Z$ and, for every diagram of the form
@@ -668,6 +696,31 @@ We just extract the minimal set of conditions that was used in the proof.
 \begin{lem}[quasifib]
 In a right proper type-theoretic model category, stable under pullbacks coproducts of fibrations over a fixed base are quasifibrations.
 \end{lem}
+
+Finally, let us prove an easy but useful lemma:
+
+\begin{lem}
+Let $\scat{C}$ be a type-theoretic model category and let $\scat{C}'$ be a full subcategory of $\scat{C}$.
+Suppose that, for every fibration $p : X \twoheadrightarrow Z$ with $Z \in \scat{C}'$, every trivial cofibration $U \to V$, and every map $V \to Z$, the induced map $U \times_Z X \to V \times_Z X$ is a trivial cofibration.
+Let $f : X \to Z$ be a map such that $Z \in \scat{C}'$ and, for every trivial cofibration $U \to V$ with $U \in \scat{C}'$ and every map $V \to Z$, the induced map $U \times_Z X \to V \times_Z X$ is a trivial cofibration.
+Then $f$ is a quasifibration relative to $\scat{C}'$.
+\end{lem}
+\begin{proof}
+Factor $f$ it into a trivial cofibration $X \to Y$ followed by a fibration $Y \twoheadrightarrow Z$.
+Let $Z' \to Z$ be a map such that $Z' \in \scat{C}'$.
+Factor $Z' \to Z$ into a trivial cofibration $Z' \to Z''$ followed by a fibration $Z'' \twoheadrightarrow Z$:
+\[ \xymatrix{ X' \ar[r] \ar[d] \pb          & X'' \ar@{->>}[r] \ar[d] \pb       & X \ar[d] \\
+              Y' \ar[r] \ar@{->>}[d] \pb    & Y'' \ar@{->>}[r] \ar@{->>}[d] \pb & Y \ar@{->>}[d] \\
+              Z' \ar[r]                     & Z'' \ar@{->>}[r]                  & Z
+            } \]
+The maps $X'' \to Y''$ and $Y' \to Y''$ are trivial cofibrations by assumption.
+The map $X' \to X''$ is also a trivial cofibration by assumption on $f$.
+Thus, by the 2-out-of-3 property, the map $X' \to Y'$ is also a trivial cofibration.
+\end{proof}
+
+\subsection{Coproducts}
+
+In this subsection, we describe the interpretation of the initial type, binary coproducts, and arbitrary coproducts.
 
 \begin{prop}
 Let $\scat{B}$ be a contextual category, let $\scat{C}$ be a category with fibrations, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
@@ -935,22 +988,12 @@ We define the interpretation of the eliminator as the composite $\Gamma.\amalg \
 
 \subsection{Pushouts}
 
-To construct pushouts in $F^*(\scat{C}_!)$, we need to assume that $\scat{C}$ has good cylinder objects:
-
-\begin{defn}[good-cyl]
-We will say that a model category has \emph{good cylinder objects} if, for every object $A$, there is a functorial cylinder object $A \amalg A \to A \otimes \Delta^1 \to A$ which is stable under pullbacks and,
-for every trivial cofibration $A \to B$, the canonical map $A \otimes \Delta^1 \amalg_{A \amalg A} B \amalg B \to B \otimes \Delta^1$ is a trivial cofibration.
-\end{defn}
-
-Every simplicial locally Cartesian closed model category has good cylinder objects.
-We will give another example of model categories with good cylinder objects in \rremark{good-cyl}.
-
 The construction of pushouts was described in \cite{lum-shul-hits}.
 It will be convenient to split it into two parts.
 
 \begin{lem}[pushouts]
-Let $\scat{B}$ be a category with fibrations, let $\scat{C}$ be a type-theoretic model category which has good cylinder objects, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
-Suppose that, for every pair of maps $f : A \to B$ and $g : A \to C$ over an object $\Gamma$ of $\scat{C}$, the map $A \otimes \Delta^1 \amalg_{A \amalg A} B \amalg C \to \Gamma$ is a quasifibration.
+Let $\scat{B}$ be a category with fibrations, let $\scat{C}$ be a category with fibrations which has path types (as defined in Section~\ref{sec:ext}), and let $F : \scat{B} \to \scat{C}$ be a functor.
+Suppose that, for every pair of maps $f : A \to B$ and $g : A \to C$ over an object $\Gamma$ of $\scat{C}$, the map $A \times \Delta^1 \amalg_{A \amalg A} B \amalg C \to \Gamma$ is a quasifibration.
 Then $F^*(\scat{C}_!)$ has stable dependent pushouts.
 \end{lem}
 \begin{proof}
@@ -958,10 +1001,11 @@ The construction is essentially the same as the construction of pushouts in sect
 \end{proof}
 
 \begin{lem}[pushouts-proper]
-If $\scat{C}$ is a locally Cartesian closed right proper type-theoretic model category which has good cylinder objects, then it satisfies the conditions of \rlem{pushouts}.
+If $\scat{C}$ is a locally Cartesian closed right proper type-theoretic model category which has path types, then it satisfies the conditions of \rlem{pushouts}.
 \end{lem}
 \begin{proof}
 This was proved in \cite[Theorem~4.2]{lum-shul-hits}.
+The category $\scat{C}$ is assumed to be a locally Cartesian closed simplicial type-theoretic model category there, but every such category has path types and the existence of path types is enough for this proof to go through.
 \end{proof}
 
 \begin{example}
@@ -972,10 +1016,10 @@ then the injective model structure on $\scat{M}^\scat{J}$ satisfies the conditio
 Finally, let us state the unstable version of \rlem{pushouts}:
 
 \begin{lem}[unstable-pushouts]
-Let $\scat{B}$ be a category with fibrations, let $\scat{C}$ be a type-theoretic model category which has good cylinder objects, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
+Let $\scat{B}$ be a category with fibrations, let $\scat{C}$ be a category with fibrations which has path types, and let $F : \scat{B} \to \scat{C}$ be a functor between them.
 Suppose that $\scat{C}$ has a full subcategory $\scat{C}'$ such that, for every object $X \in \scat{C}$, there is a map $\varepsilon_X : X' \to X$ such that $X' \in \scat{C}'$ and,
 for every fibrant object $\Gamma \in \scat{B}$, every map of the form $F(\Gamma) \to X$ factors through $\varepsilon_X$ and the factorization is natural in $\Gamma$.
-Suppose that, for every pair of maps $f : A \to B$ and $g : A \to C$ over an object $\Gamma$ of $\scat{C}'$, the map $A \otimes \Delta^1 \amalg_{A \amalg A} B \amalg C \to \Gamma$ is a quasifibration relative to $\scat{C}'$.
+Suppose that, for every pair of maps $f : A \to B$ and $g : A \to C$ over an object $\Gamma$ of $\scat{C}'$, the map $A \times \Delta^1 \amalg_{A \amalg A} B \amalg C \to \Gamma$ is a quasifibration relative to $\scat{C}'$.
 Then $F^*(\scat{C}_!)$ has pushouts.
 \end{lem}
 \begin{proof}
@@ -1237,10 +1281,6 @@ Then $n \mapsto Q(X) \times \Delta^n$ is a cosimplicial resolution of $X$, where
 Let $f : X \to Y$ be a map and let $Q(X)$ be a cofibrant replacement of $X$.
 Factor the map $Q(X) \to X \xrightarrow{f} Y$ into a cofibration $Q(f) : Q(X) \to Q(Y)$ followed by a weak equivalence $Q(Y) \to Y$.
 Then $n \mapsto Q(X) \times \Delta^n \to Q(Y) \times \Delta^n$ is a cosimplicial resolution of $f$.
-
-\begin{remark}[good-cyl]
-Every Cartesian model category has good cylinder objects (\rdefn{good-cyl}) defined as $X \times \Delta^1$.
-\end{remark}
 
 Let $D : \scat{C} \to \scat{C}^\scat{J}$ be the diagonal functor.
 We will say that a functor $F : \scat{J} \to \scat{C}$ is \emph{anticonstant} if, for every constant functor $D(X) : \scat{J} \to \scat{C}$, every map $F \to D(X)$ factors through the map $D(1) \to D(X)$ for some map $1 \to X$.
