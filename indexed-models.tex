@@ -441,10 +441,6 @@ If $\scat{C}$ is also a model category in which all objects are cofibrant, then 
 We will denote the contextually indexed contextual category $(F^*)^*((\scat{C}^\scat{J})_!)$ simply by $F^*((\scat{C}^\scat{J})_!)$.
 \end{example}
 
-\section{(Co)limits}
-
-In this section, we give sufficient conditions for a model $F^*(\scat{C})$ to have products, initial types, coproducts, and pushouts.
-
 \subsection{Products}
 
 Let $F$ be a functor between type-theoretic semi-fibration categories $\scat{B}$ and $\scat{C}$.
@@ -537,6 +533,105 @@ Since fibrations are exponentiable in $\scat{C}$, \cite[Theorem~2.12]{comp-fact-
 The fact that $\Pi_g$ preserves fibrations is equivalent to the fact that injective trivial cofibrations are stable under pullbacks along $F^*$-fibrations.
 This follows from the facts that $\scat{C}$ is right proper and that $F^*$-fibrations are objectwise fibrations.
 \end{example}
+
+\section{Extension types}
+
+Extension types were defined in \cite{riehl-dhott}.
+In this section, we describe an analogous construction in ordinary homotopy type theory and in indexed type theory.
+
+Extension types generalize $\Pi$-types (and products in the indexed case).
+Semantically, if $j : U \to V$ is a map, $p : A \twoheadrightarrow V$ is a fibration, and $a : U \to A$ is a section of $p$ over $j$,
+then the extension object $\langle \Pi_V(p)\!\!\mid^j_a \rangle$ is the object of sections of $p$ which restrict to $a$.
+It is easy to describe their syntax in ordinary type theory:
+\begin{center}
+\AxiomC{$\Gamma, y : V \vdash A$}
+\AxiomC{$\Gamma, x : U \vdash a : A[j\,x/y]$}
+\BinaryInfC{$\Gamma \vdash \langle \Pi_{y : V} A \mid_{x.a} \rangle$}
+\DisplayProof
+\end{center}
+\smallskip
+
+\begin{center}
+\AxiomC{$\Gamma, y : V \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash \lambda y.a : \langle \Pi_{y : V} A \mid_{x.a[ix/y]} \rangle$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash f : \langle \Pi_{y : V} A \mid_{x.a} \rangle$}
+\AxiomC{$\Gamma \vdash v : V$}
+\BinaryInfC{$\Gamma \vdash \fs{app}_{x.a}(f,v) : A[v/y]$}
+\DisplayProof
+\begin{align*}
+\fs{app}_{x.a'}(\lambda y.a,v) & = a[v/y] \\
+\lambda y.\,\fs{app}_{x.a}(f,y) & = f \\
+\fs{app}_{x.a}(f,j\,u) & = a[u/x]
+\end{align*}
+\end{center}
+
+The problem is that the object $U$ is often not representable in the syntax.
+Of course, we might add it explicitly to the syntax, but it might be impossible to capture its universal property strictly.
+This problem can be solved if $U$ is a finite colimit in which all objects and arrows are representable and equality between arrows holds strictly in the syntax.
+Let $U$ be such a colimit $\fs{colim}_{i \in \scat{I}} U_i$ and suppose that, for every $i \in \scat{I}$, the composite $U_i \to \fs{colim}_{i \in \scat{I}} \xrightarrow{j} V$, denoted by $j_i$, is also representable in the syntax.
+Then the extension type is written as $\langle \Pi_{y : V} A \mid_{x_1.a_1, \ldots x_n.a_n} \rangle$, where $n$ is the number of objects of $\scat{I}$.
+Similarly, $\fs{app}_{x.a}(f,v)$ is replaced with $\fs{app}_{x_1.a_1, \ldots x_n.a_n}(f,v)$.
+The single premise $\Gamma, x : U \vdash a : A[j\,x/y]$ in the first rule is replaced with premises $\Gamma, x_i : U_i \vdash a_i : A[j_i\,x_i/y]$ for each $i \in \scat{I}$.
+We also put the condition that terms $a_i$ agree with each other, that is, for every map $f : i \to i'$ of $\scat{I}$, we have a strict equality in the premise $\Gamma, x_i : U_i \vdash a_i \equiv a_{i'}[f\,x_i/x_{i'}] : A[j_i\,x_i/y]$.
+The final equation is replaced with equations $\fs{app}_{x_1.a_1, \ldots x_n.a_n}(f,j_i\,u_i) = a_i[u_i/x_i]$ for each $i \in \scat{I}$.
+Other rules and equations do not change.
+
+One example of an extension type is the type of extensions along a map of the form $1 \amalg 1 \to \Delta^1$, where $1$ is the terminal object and $\Delta^1$ is some object.
+The type of extensions in $A$ along such a map is the type of morphisms in the simplicial space (or $\infty$-category) $A$ in a version of the type theory described in \cite{riehl-dhott} if $\Delta^1$ is interpreted appropriately.
+On the other hand, we can interpret $\Delta^1$ as a contractible type and add a rule to the syntax which implies that it is contractible.
+Then extension types along $1 \amalg 1 \to \Delta^1$ are equivalent to (heterogeneous) identity types.
+Such extension types were defined and studied in \cite[Subsection~3.2]{alg-models}.
+We will call them \emph{path types} since they are literally types of paths (that is, maps from the interval) between two specified points.
+
+Path types can be used to give a convenient description of higher inductive types.
+For example, let $f : A \to B$ and $g : A \to C$ be a pair of maps.
+Then their pushout $B \amalg_A C$ has three constructors: $\fs{inl} : B \to B \amalg_A C$, $\fs{inr} : C \to B \amalg_A C$, and $\fs{glue} : A \to \Delta^1 \to B \amalg_A C$.
+The last constructor satisfies equations $\fs{glue}\,a\,j_0 = f\,a$ and $\fs{glue}\,a\,j_1 = g\,a$, where $[j_0,j_1] = j : 1 \amalg 1 \to \Delta^1$.
+The eliminator is also easy to describe:
+given a dependent type $D$ over $w : B \amalg_A C$ and functions $d_1 : \Pi_{y : B} D[\fs{inl}\,y/w]$, $d_2 : \Pi_{z : C} D[\fs{inr}\,z/w]$,
+and $d_3 : \Pi_{x : A} \Pi_{i : \Delta^1} D[\fs{glue}\,x\,i/w]$ satisfying equations $d_3\,a\,j_0 = d_1\,(f\,a)$ and $d_3\,a\,j_1 = d_2\,(g\,a)$,
+there is a section of $D$.
+It is easy to show that this description of pushouts is equivalent to the standard one.
+
+Now, after this digression, let us go back to the discussion of extension types.
+Of course, we can use them in the indexed type theory.
+We can add them to the base theory and to the indexed theory, but there is a third option.
+We can add the type of extension in an indexed type along a base map.
+If ordinary extension types generalize $\Pi$-types, then these extension types generalize products.
+It should be clear how to modify the rules to get such extension types.
+Let us just give the first rule as an example (we use the version with the single type $U$ to simplify the notation):
+\begin{center}
+\AxiomC{$\Gamma, y : V \mid \Delta \vdash A$}
+\AxiomC{$\Gamma, x : U \mid \Delta \vdash a : A[j\,x/y]$}
+\RightLabel{, $x,y \notin \mathrm{FV}(\Delta)$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \langle \prod_{y : V} A \mid_{x.a} \rangle$}
+\DisplayProof
+\end{center}
+
+To describe the interpretation of extension types, we need to introduce a new notion.
+We will say that a category with fibrations satisfies \emph{the pushout-product axiom} with respect to a map $j : U \to V$ if $U$ and $V$ are exponentiable and,
+for every fibration $p : A \twoheadrightarrow \Gamma \times V$, the map $\Pi_{\pi_1}(p) \to \Pi_{\pi_1}(q)$ is a fibration,
+where $q : A' \twoheadrightarrow \Gamma \times U$ is the pullback of $p$ along the map $\id_\Gamma \times j : \Gamma \times U \to \Gamma \times V$.
+
+\begin{remark}
+A category with fibrations $\scat{C}$ satisfies the pushout-product axiom with respect to a map $j : U \to V$ if the class of fibrations of $\scat{C}$ is saturated, objects $U$ and $V$ are exponentiable and,
+for every trivial cofibration $i : A \to B$, the map $B \times U \amalg_{A \times U} A \times V \to B \times V$ is a trivial cofibration.
+This conditions hold if $\scat{C}$ is a Cartesian closed model category (\rremark{cartesian}) and $j$ is a cofibration.
+\end{remark}
+
+\begin{prop}
+If a category with fibrations $\scat{C}$ satisfies the pushout-product axiom with respect to a map $j : U \to V$, then it has extension types along $j$.
+If moreover $U = \fs{colim}_{i \in \scat{I}} U_i$ and functors $X \times -$ preserve this colimit for every object $X$, then $\scat{C}$ has the modified version of extension types base on this decomposition of $U$.
+\end{prop}
+\begin{proof}
+% TODO
+\end{proof}
+
+\section{Colimits}
+
+In this section, we give sufficient conditions for a model $F^*(\scat{C})$ to have initial types, binary coproducts, arbitrary coproducts, and pushouts.
 
 \subsection{Coproducts}
 
@@ -1241,10 +1336,6 @@ Thus, $\Lambda(S) \subseteq \overline{S}$ and $\overline{S} \subseteq \Icof[\Lam
 % TODO
 
 \subsection{Coproducts}
-
-\section{Extension types}
-
-% TODO
 
 \section{Factorization systems}
 
