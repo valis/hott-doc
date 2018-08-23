@@ -1587,3 +1587,124 @@ Then $\varphi'' \sststile{T_1}{V'} e_p(c'') = B''$, where $\varphi''$ is the fol
 \[ \bigwedge_{1 \leq i \leq j} e_{p_i}(x_i) = A_i \land \bigwedge_{j < i \leq n} e_{p_i}(x_i) = A_i[\coe(H^{-1},\coe(H,x_j))/x_j], \]
 $c'' = c'[\coe(H,x_j)/x_j']$, and $B'' = B[\coe(H^{-1},\coe(H,x_j))/x_j]$.
 \end{proof}
+
+% 10. Доказательство, что в некоторых локалзациях есть индексированные произведения.
+
+\subsection{Products and exponential objects}
+
+In this subsection, we will prove that certain localizations of the injective structure on $\scat{C}^\scat{J}$ are Cartesian closed and locally small and have products.
+
+The notion of a Cartesian model category is a special case of a monoidal model category \cite[Definition~A.3.1.2]{lurie-topos}, \cite[Definition~4.2.6]{hovey}, \cite[Subsection~2.5]{segal-spaces}.
+We will need only a weak version of this notion:
+
+\begin{defn}
+A model category is \emph{semi-Cartesian} if, for every pair of cofibrations $f : A \to B$ and $g : C \to D$,
+the canonical map $f \square g : A \times D \amalg_{A \times C} B \times C \to B \times D$ is a cofibration.
+A model category is \emph{semi-Cartesian closed} if it is semi-Cartesian and Cartesian closed as a category.
+\end{defn}
+
+\begin{remark}[cartesian]
+A model category is \emph{Cartesian (resp., Cartesian closed)} if it is semi-Cartesian (resp., semi-Cartesian closed), the terminal object is cofibrant, and $f \square g$ is a trivial cofibration whenever $f$ is a cofibration and $g$ is a trivial cofibration.
+\end{remark}
+
+\begin{example}
+If a model category $\scat{C}$ is semi-Cartesian (resp., Cartesian, semi-Cartesian closed, Cartesian closed), then $\scat{C}^\scat{J}$ with the injective structure is also semi-Cartesian (resp., Cartesian, semi-Cartesian closed, Cartesian closed).
+\end{example}
+
+The main feature of semi-Cartesian closed model categories is that they have nice cosimplicial resolutions of objects and maps \cite[Definition~16.1.2, Definition~16.1.20]{hirschhorn}.
+Let $\Delta$ be a fibrant cofibrant replacement of the terminal object of $\scat{C}^\Delta$.
+That is, $\Delta$ is a functor $\Delta \to \scat{C}$ such that $\Delta^n \to 1$ is a trivial fibration for all $n$ and $\partial \Delta^n \to \Delta^n$ is a cofibration in $\scat{C}$.
+Then $n \mapsto Q(X) \times \Delta^n$ is a cosimplicial resolution of $X$, where $Q(X)$ is any cofibrant replacement of $X$.
+Let $f : X \to Y$ be a map and let $Q(X)$ be a cofibrant replacement of $X$.
+Factor the map $Q(X) \to X \xrightarrow{f} Y$ into a cofibration $Q(f) : Q(X) \to Q(Y)$ followed by a weak equivalence $Q(Y) \to Y$.
+Then $n \mapsto Q(X) \times \Delta^n \to Q(Y) \times \Delta^n$ is a cosimplicial resolution of $f$.
+
+Let $D : \scat{C} \to \scat{C}^\scat{J}$ be the diagonal functor.
+We will say that a functor $F \in \scat{C}^\scat{J}$ is \emph{anticonstant} if, for every functor $R : \scat{C}^\scat{J}$ and every constant functor $D(X) \scat{C}^\scat{J}$,
+every map $F \times R \to D(X)$ factors through the projection $\pi_2 : F \times R \to R$.
+
+\begin{lem}[anticonstant-coproduct]
+If the category $\fs{el}(F)$ of elements of a functor $F : \scat{J} \to \Set$ is non-empty, then the functor $F(-) \cdot 1 : \scat{J} \to \scat{C}$ is anticonstant if and only if $\fs{el}(F)$ is connected.
+\end{lem}
+\begin{proof}
+By the universal property of coproducts, there is a bijection between the set of maps $p : F(-) \cdot 1 \to D(X)$ and the set of collections of maps $\{ p_{j,a} : 1 \to X \}_{j \in \scat{J}, a \in F(j)}$ such that,
+for every map $f : j \to j'$, it is true that $p_{j,a} = p_{j',F(f)(a)}$.
+On the other hand, the set of such collections is the set of maps between constant functors on $1$ and $X$ in the category $\scat{C}^{\fs{el}(F)}$.
+A map $p : F(-) \cdot 1 \to D(X)$ factors through a map $c : R \to D(X)$ if and only if $p_{j,a} = c$ for all $j$ and $a$.
+Since $\fs{el}(F)$ is non-empty, a map of the form $c : 1 \to X$ exists.
+The assertion follows from the fact that every map between constant functors $D(Y), D(X) : \scat{I} \to \scat{C}$ equals to $D(c)$ for some fixed $c : Y \to X$ if and only if the category $\scat{I}$ is connected.
+\end{proof}
+
+\begin{example}
+If $F : \scat{J} \to \Set$ is a representable functor on an object $j \in \scat{J}$, then the functor $F(-) \cdot 1$ is anticonstant.
+This follows from \rlem{anticonstant-coproduct} since the category of elements of $F$ is equivalent to the category $j/\scat{J}$ which is non-empty and connected since it has an initial object.
+\end{example}
+
+\begin{example}
+If $F$ is a non-empty simplicial set, then $F(-) \cdot 1 : \Delta^\fs{op} \to \scat{C}$ is anticonstant if and only if $F$ is connected as a simplicial set.
+This follows from \rlem{anticonstant-coproduct} and the fact that a simplicial set is connected if and only if its category of elements is connected.
+\end{example}
+
+\begin{lem}[anticonstant-factor]
+Let $\scat{C}$ be a Cartesian closed category and let $F : \scat{J} \to \scat{C}$ be an anticonstant functor.
+Then every map of the form $F \times D(X) \to D(Y)$ factors as the projection $\pi_2 : F \times D(X) \to D(X)$ followed by a map $D(g)$ for some $g : X \to Y$.
+\end{lem}
+\begin{proof}
+First, it is easy to see that the diagonal functor $D$ preserves exponential objects.
+Then a map $f : F \times D(X) \to D(Y)$ corresponds to a map $F \to D(Y^X)$.
+Since $F$ is anticonstant, the latter map factors through a map $D(c)$ for some $c : 1 \to Y^X$.
+The map $c$ corresponds to a map $g : X \to Y$ such that $D(g) \circ \pi_2 = f$.
+\end{proof}
+
+\begin{prop}[localized-products]
+Let $\scat{C}$ be a right proper semi-Cartesian closed combinatorial type-theoretic model category in which all objects are cofibrant.
+Let $\scat{J}$ be a small category and let $S$ be a class of cofibrations of $\scat{C}^\scat{J}$ such that the codomains of maps in $S$ are anticonstant.
+Let $\overline{S}$ be the class of maps of the form $f \square D(i)$, where $f \in S$ and $i$ is a cofibration of $\scat{C}$.
+Then $\Lambda(\overline{S}) = \overline{S}$ and $D^*(L_{\overline{S}}(\scat{C}^\scat{J}))$ has dependent products.
+Moreover, products in $D^*(L_{\overline{S}}(\scat{C}^\scat{J}))$ are computed as products in $D^*(\scat{C}^\scat{J})$.
+\end{prop}
+\begin{proof}
+The functor $D : \scat{C} \to \scat{C}^\scat{J}$ satisfies most of the conditions of \rprop{products} as discussed in \rexample{products}.
+We just need to prove that $\Pi_g$ preserves fibrations for all $D$-fibrations $g$.
+This is true if and only if (generating) trivial cofibrations are stable under pullbacks along $D$-fibrations.
+Maps that are trivial cofibrations in the injective model structure on $\scat{C}^\scat{J}$ are stable under pullbacks since $\scat{C}$ is right proper and $D$-fibrations are objectwise fibrations.
+Thus, we just need to prove that maps in $\Lambda(\overline{S})$ are stable under pullbacks along $D$-fibraions.
+We will use the cosimplicial resolution of the form $X \times D(\Delta^n) \to Y \times D(\Delta^n)$,
+where $\Delta^n$ is any fibrant cosimplicial resolution of the terminal object in $\scat{C}$.
+This is a cosimplicial resolution since $D$ preserves colimits, $\scat{C}$ is semi-Cartesian closed, and $\pi_1 : X \times D(\Delta^n) \to X$ is a weak equivalence.
+The last statement is true since, for every $j \in J$, the map $\pi_1 : X_j \times \Delta^n \to X_j$ is a trivial fibration.
+
+The class $\Lambda(\overline{S})$ consists of the maps $(f \square D(i)) \square D(j)$, where $f \in S$, $i$ is a cofibration of $\scat{C}$ and $j : \partial \Delta^n \to \Delta^n$.
+Since $\square$ is associative and $D$ preserves $\square$, the map $(f \square D(i)) \square D(j)$ is isomorphic to the map $f \square D(i \square j)$.
+Since $\scat{C}$ is semi-Cartesian, $i \square j$ is a cofibration, so $f \square D(i \square j)$ belongs to $\overline{S}$.
+Thus, $\Lambda(\overline{S}) = \overline{S}$.
+
+Consider the following diagram:
+\[ \xymatrix{ W \ar[r] \ar[d] \pb & X \times D(R) \amalg_{X \times D(P)} Y \times D(P) \ar[d] \\
+              V \ar[r] \ar[d] \pb & Y \times D(R) \ar[d] \\
+              D(B) \ar[r]_{D(p)} & D(A)
+            } \]
+where $p : B \twoheadrightarrow A$ is a fibration, $f : X \to Y$ is a map in $S$, and $i : P \to R$ is a cofibration of $\scat{C}$.
+We need to prove that $W \to V$ belongs to $\overline{S}$.
+\Rlem{anticonstant-factor} implies that the map $Y \times D(R) \to D(A)$ factor as the second projection followed by a map of the form $D(R) \to D(A)$ for some map $c : R \to A$.
+Let us denote by $T$ the pullback of $p$ and $c$.
+Then $V \simeq Y \times D(T)$.
+
+Since $D$-fibrations are exponentiable and exponentiable maps are stable under pullbacks, pullbacks along the map $Y \times D(T) \to Y \times D(R)$ preserve colimits.
+Thus, $W \to V$ is the following map:
+\[ (X \times D(T)) \amalg_{(X \times D(T \times_R P))} (Y \times D(T \times_R P)) \to Y \times D(T). \]
+That is, this map is $f \square D(j)$, where $j$ is the map $T \times_R P \to T$.
+Since $i$ is a cofibration and cofibrations are stable under pullback, $j$ is also a cofibration.
+Thus, $f \square D(j)$ belongs to $\overline{S}$.
+\end{proof}
+
+\begin{cor}
+Let $\scat{J}$ be a small category and let $S$ be a class of cofibrations of $\sSet^\scat{J}$ such that the codomains of maps in $S$ are anticonstant.
+Then $D^*(L_S(\sSet^\scat{J}))$ has dependent products which are computed as products in $D^*(\sSet^\scat{J})$.
+\end{cor}
+\begin{proof}
+The category of simplicial sets satisfies the conditions of \rprop{localized-products}.
+Thus, we just need to prove that $\Icof[\Lambda(S)] = \Icof[\overline{S}]$.
+The class $\Lambda(S)$ consists of maps of the form $f \square D(i)$, where $f \in S$ and $i : \partial \Delta^n \to \Delta^n$.
+Thus, $\Lambda(S) \subseteq \overline{S}$ and $\overline{S} \subseteq \Icof[\Lambda(S)]$ since maps $\partial \Delta^n \to \Delta^n$ generate all cofibrations.
+\end{proof}
