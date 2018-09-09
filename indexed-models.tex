@@ -75,26 +75,76 @@
 
 \begin{document}
 
-\title{Contextually indexed categories and complete Segal objects}
+\title{Contextually indexed contextual categories}
 
 \author{Valery Isaev}
 
 \begin{abstract}
-% TODO
+In this paper, we define a generalization of indexed categories and contextual categories which we call contextually indexed (contextual) categories.
+While contextual categories are models of ordinary type theories, contextually indexed (contextual) categories are models of indexed type theories.
+We also define type-theoretic semi-fibration categories which generalize type-theoretic fibration categories.
+Every model category in which cofibrations are stable under pullbacks is a type-theoretic semi-fibration category.
+We show that type-theoretic semi-fibration category gives rise to a contextually indexed contextual category with finite limits.
+Finally, we prove that the category of simplicial sets with the Joyal model structure gives rise to a locally small Cartesian closed contextually indexed contextual category with indexed limits and colimits.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
 
-% TODO
+Indexed categories were defined in \cite{indexed-cats} (see also \cite[B1]{elephant}).
+We defined an analogue of this notion using the language of indexed type theories which were defined in \cite{indexed-tt} as certain algebraic theories.
+A contextually indexed contextual category is a model of such a theory.
+We will show how to construct such a model from a category with fibrations and some additional structure.
+Our construction is based on constructions from \cite{shul-inv,local-universes} which were defined for ordinary type theory.
 
-\section{Models of indexed type theories}
+We use the local universes construction to make constructions stable under substitution and reindexing.
+To get an unstable interpretation, we use the notion of a type-theoretic semi-fibration category.
+This is a category with fibrations with additional structure which allows us to interpret unit types, $\Sigma$-types, and identity types.
+We do not require that all objects of a type-theoretic semi-fibration category are fibrant and we also do not require right properness.
+The reason is that right properness implies that corresponding contextually indexed category is locally Cartesian closed and we want to work with models which are not.
+Without right properness we cannot require all objects to be
+We do not require all objects to be fibrant since we need to work with objects of the form $\Pi_p(q)$, where $p$ and $q$ are fibrations, and such an object is fibrant only if the category is right proper.
 
-In this section, we discuss several examples of models of indexed type theories.
+We also show how to construct extension types, products, and stable and unstable colimits.
+Extension types were defined in \cite{riehl-dhott}.
+They generalize $\Pi$-types and identity types.
+We use them to give a description of pushouts and other higher inductive types which is based on constructions from \cite{lum-shul-hits}.
+To construct unstable pushouts (and other colimits), we need to modify this argument.
+We proved in \cite{indexed-tt} that the existence of pushouts in the empty context implies the existence of unstable pushouts.
+A minor modification of the construction from \cite{lum-shul-hits} gives us pushouts in the empty context.
+
+We will prove that localizations of model categories are closed under identity types.
+This implies that if identity types are extensional in a model category, then they are also extensional in its localizations.
+This gives us many examples of contextually indexed contextual categories with finite limits since extensionality of identity types implies the existence of equalizers as was proved in \cite{indexed-tt}.
+
+Finally, we give one example of a type-theoretic semi-fibration category: namely, the category of simplicial sets with the Joyal model structure.
+We will show that it gives rise to a locally small Cartesian closed contextually indexed contextual category with dependent limits and colimits.
+To prove that it is Cartesian closed and has pushouts in the empty context, we define a functor $G : \sSet \to \sSet$.
+Every edge in a simplicial set of the form $G(X)$ is invertible.
+This implies that if $X$ is a quasicategory, then $G(X)$ is a Kan complex.
+In general, $G(X)$ might not be a Kan complex, but it has many useful properties of Kan complexes.
+For example, every categorical fibration of the form $Y \to G(X)$ is a Cartesian fibration and every map of the form $G(Y) \to G(X)$ factors into a categorical trivial cofibration followed by a Kan fibration.
+
+The paper is organized as follows.
+In section~\ref{sec:cicc}, we define contextually indexed contextual categories and show how to construct such categories from categories with fibrations.
+In section~\ref{sec:ttsfc}, we define type-theoretic semi-fibration categories and prove that corresponding contextually indexed contextual categories have unit types, $\Sigma$-types, and identity types.
+In section~\ref{sec:ext}, we discuss extension types.
+In section~\ref{sec:colimits}, we construct dependent coproducts, pushouts, binary coproducts, and initial types.
+In section~\ref{sec:loc}, we show that localizations of model categories are closed under identity types.
+In section~\ref{sec:quasicats}, we discuss the contextually indexed contextual category constructed from quasicategories.
+
+\section{Contextually indexed contextual categories}
+\label{sec:cicc}
+
+In this section, we define contextually indexed contextual categories and type-theoretic semi-fibration categories and show how to construct the former from the latter.
+
+\subsection{Definition}
+
 Indexed type theories are defined in \cite{indexed-tt} as certain essentially algebraic theory.
 Thus, we have a notion of a model of such a theory.
 We will call models of indexed unary (resp., dependent) type theories \emph{contextually indexed categories} (resp., \emph{contextually indexed contextual categories}).
+We can also define them explicitly.
 A contextually indexed category is a contextual category $\scat{B}$ together with a category indexed over $\scat{B}$, that is a functor $\scat{B}^\fs{op} \to \cat{Cat}$.
 A contextually indexed contextual category is a contextual category $\scat{B}$ together with a contextual category indexed over $\scat{B}$, that is a functor $\scat{B}^\fs{op} \to \cat{ConCat}$.
 
@@ -104,18 +154,110 @@ This implies that there is a forgetful functor $U$ from the category of contextu
 If $M$ is a contextual category, then $U(M)$ will be called \emph{the canonical indexing of $M$ over itself}.
 The underlying contextual category of $U(M)$ is indeed $M$ itself.
 
-Let $F$ be a functor between underlying categories of contextual categories $\scat{B}'$ and $\scat{B}$.
-If $\scat{C}$ is a contextual category over $\scat{B}$, then \emph{change of base} of $\scat{C}$ along $F$ is defined as $\scat{C} \circ F^\fs{op}$ and denoted by $F^*(\scat{C})$.
-If $F$ and $G$ are isomorphic functors between categories underlying contextual categories $\scat{B}'$ and $\scat{B}$, then $F^*(\scat{C})$ and $G^*(\scat{C})$ are also isomorphic for every contextuall indexed (contextual) category $\scat{C}$.
+We will use the terminology introduced in \cite{indexed-tt}, so let us recall a few relevant definitions.
+A contextually indexed category $\scat{C} : \scat{B}^\fs{op} \to \cat{Cat}$ is \emph{locally small} if, for every context $\Gamma$ of $\scat{B}$ and every pair of objects $A,B \in \scat{C}(\Gamma)$,
+there is a type $\Hom(A,B)$ over $\Gamma$ of maps between $A$ and $B$.
+To be more precise, $\Hom(A,B)$ is a type equipped with a bijection between the set of terms of this type and the set of maps between $A$ and $B$ stable under reindexing.
+Syntactically, local smallness is defined by the following rules:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A$}
+\AxiomC{$\Gamma \mid \cdot \vdash B$}
+\BinaryInfC{$\Gamma \vdash \Hom(A,B)$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid x : A \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda x.\,b : \Hom(A,B)$}
+\DisplayProof
+\end{center}
+\medskip
 
-We will define a large class of contextually indexed contextual categories constructed from type-theoretic semi-fibration categories.
-We will also consider a more concrete example of contextual categories $\scat{C}^\scat{J}$ contextually indexed over $\scat{C}^\scat{I}$ for all appropriate categories $\scat{C}$, $\scat{J}$, and $\scat{I}$.
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Hom(A,B)$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash f\,a : B$}
+\DisplayProof
+\end{center}
 
-% Our aim in this section is to define models for simplicial spaces, Segal spaces, and complete Segal spaces.
-% These models can be roughly described as full subcategories of the contextually indexed category $\sSet^{\Delta^\fs{op}}$,
-% where $\sSet$ is the canonical indexing of the category of simplicial set (considered as a contextual category as described in \cite{kap-lum-voe}) over itself.
+\begin{align*}
+(\lambda x.\,b)\,a & = b[a/x] \\
+\lambda x.\,f\,x & = f
+\end{align*}
+
+If $\scat{C}$ is a contextually indexed contextual category, then there is a stronger version of $\Hom$-types which we call \emph{dependent $\Hom$-types}.
+If $B$ is an indexed type in an indexed context $\Delta$ over a base context $\Gamma$,
+then a dependent $\Hom$-type $\Hom(\Delta.B)$ is a type over $\Gamma$ such that there is a bijection between the set of its terms and the set of terms of $B$ stable under reindexing.
+
+We will say that a contextually indexed contextual category $\scat{C} : \scat{B}^\fs{op} \to \cat{ConCat}$ has some type-theoretic construction (such as $\Sigma$-types, $\Pi$-types, pushouts, and so on)
+if contextual category $\scat{C}(\Gamma)$ has this construction for every context $\Gamma$ of $\scat{B}$ and this construction is stable under reindexing.
+Sometimes $\scat{C}$ has some construction, but it is not stable under substitution in $\scat{C}(\Gamma)$.
+In this case, we will say that $\scat{C}$ has the \emph{unstable} version of this construction.
+For example, many contextually indexed contextual categories have pushouts which are not stable.
+Note that we always assume that constructions are stable under reindexing, that is substitution of the base terms.
+
+We will say that a contextually indexed contextual category has \emph{dependent products} if the following rules can be interpreted in it:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash B$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \prod_{i : I} B$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash b : B$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \lambda i.\,b : \prod_{i : I} B$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash f : \prod_{i : I} B$}
+\AxiomC{$\Gamma \vdash j : I$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash f\,j : B[j/i]$}
+\DisplayProof
+\end{center}
+
+\begin{align*}
+(\lambda i.\,b)\,j & = b[j/i] \\
+\lambda i.\,f\,i & = f
+\end{align*}
+
+We will say that a contextually indexed contextual category has \emph{unstable dependent coproducts} if the following rules can be interpreted in it:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \Delta \vdash B_i$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \coprod_{i : I} B_i$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash j : I$}
+\UnaryInfC{$\Gamma \mid \Delta, x : B_j \vdash \fs{in}_j(x) : \coprod_{i : I} B_i$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B \vdash D$}
+\AxiomC{$\Gamma, i : I \mid \Delta, x : B \vdash d : D[\fs{in}_i(x)/z]$}
+\BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B \vdash \coprod\text{-}\fs{elim}(z.D, i x.d) : D$}
+\DisplayProof
+\end{center}
+\medskip
+
+\[ \coprod\text{-}\fs{elim}(z.D, i x.d)[\fs{in}_j(x)[b/x]/z] = d[j/i,b/x] \]
+
+We will say that dependent coproducts are \emph{stable} if these rules are stable under substitution.
+If coproducts are stable, then we can replace $\fs{in}$ with the following rule:
+\begin{center}
+\AxiomC{$\Gamma \vdash j : I$}
+\AxiomC{$\Gamma \mid \Delta \vdash b : B_j$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash (j,b) : \coprod_{i : I} B_i$}
+\DisplayProof
+\end{center}
+\medskip
 
 \subsection{Change of base}
+
+Let $F$ be a functor between underlying categories of contextual categories $\scat{B}'$ and $\scat{B}$.
+If $\scat{C}$ is a contextual category over $\scat{B}$, then \emph{change of base} of $\scat{C}$ along $F$ is defined as $\scat{C} \circ F^\fs{op}$ and denoted by $F^*(\scat{C})$.
+If $F$ and $G$ are isomorphic functors between categories underlying contextual categories $\scat{B}'$ and $\scat{B}$, then $F^*(\scat{C})$ and $G^*(\scat{C})$ are also isomorphic for every contextually indexed (contextual) category $\scat{C}$.
 
 Let $\scat{C}$ be a category with a chosen class of maps $\Fib$, called fibrations, such that the terminal object exists and pullbacks of fibrations exist and are fibrations.
 The pair $(\scat{C},\Fib)$ will be called a \emph{category with fibrations}.
@@ -181,7 +323,7 @@ The interpretation of abstraction and application is defined in the same way as 
 
 Cartesian closed contextually indexed categories are often locally small.
 This is true for $F^*(\scat{C}_!)$ if $F$ has a right adjoint.
-It is actuall enough to assume that it has a relative right adjoint \cite{dense-relative}.
+It is actually enough to assume that it has a relative right adjoint \cite{dense-relative}.
 Let $\scat{B}'$ be a full subcategory.
 Then a functor $G : \scat{C} \to \scat{B}$ is right adjoint to $F : \scat{B} \to \scat{C}$ relative to $\scat{B}'$ if, for every $X \in \scat{B}'$ and every $Y \in \scat{C}$,
 there is a bijection $\varphi : \Hom_\scat{C}(F(X),Y) \simeq \Hom_\scat{B}(X,G(Y))$ natural in $X$ and $Y$ (actually, we only need to assume that it is natural in $X$).
@@ -239,7 +381,12 @@ Since types of $(\scat{C},\Fib')_!$ are also types of $F^*((\scat{C},\Fib)_!)$ a
 we can define $\Hom$-types between types of $(\scat{C},\Fib')_!$ as $\Hom$-types in $F^*((\scat{C},\Fib)_!)$.
 \end{proof}
 
-\subsection{Type-theoretic semi-fibration categories}
+\section{Type-theoretic semi-fibration categories}
+\label{sec:ttsfc}
+
+In this section, we define type-theoretic semi-fibration categories which generalize type-theoretic fibration categories defined in \cite[Definition~2.1]{shul-inv}.
+
+\subsection{Definition}
 
 Let $\scat{C}$ be a category with fibrations.
 Then over categories $\scat{C}/\Gamma$ are also categories with fibrations.
@@ -248,13 +395,11 @@ Then a map in each of the categories $\scat{C}_\fs{f}$, $\scat{C}/\Gamma$, and $
 
 Let $\scat{C}$ be a category with fibrations.
 We will say that $\scat{C}$ is \emph{right proper} if, for every fibration $p : A \twoheadrightarrow B$, the right adjoint $\Pi_p : \scat{C}/A \to \scat{C}/B$ to the pullback functor $p^* : \scat{C}/B \to \scat{C}/A$ exists and maps fibrations over $A$ to fibrations over $B$.
-We will say that $\scat{C}$ is \emph{cofibrantly generated} if it is cocomplete and fibrations are precisely the maps with the right lifting property with respect to a small set of maps permiting the small object argument.
+We will say that $\scat{C}$ is \emph{cofibrantly generated} if it is cocomplete and fibrations are precisely the maps with the right lifting property with respect to a small set of maps permitting the small object argument.
 We will say that $\scat{C}$ is \emph{combinatorial} if it is locally presentable and cofibrantly generated.
 We will say that the class of fibrations of $\scat{C}$ is \emph{saturated} if every map that has the right lifting property with respect to trivial cofibrations is a fibration.
 The class of fibrations in every cofibrantly generated category is saturated.
 
-The notion of a type-theoretic fibration category was defined in \cite[Definition~2.1]{shul-inv}.
-We define a generalization of this notion:
 \begin{defn}[ttsfc]
 A \emph{type-theoretic semi-fibration category} consists of a category $\scat{C}$ with a chosen class of maps, called fibrations, a chosen terminal object, and chosen pullbacks of fibrations such that the following conditions hold:
 \begin{enumerate}
@@ -352,7 +497,7 @@ Types $\Id_{\Hom(\cdot . A)}(a,a')$ and $\Hom(\cdot . \Id_A(a\,(),a'\,()))$ are 
               \Gamma \ar[rr]_-{\varphi(\langle a, a' \rangle)}  & & G(E_A \times_{V_A} E_A)
             } \]
 where $P_{X}(Y)$ is the path object for the diagonal $Y \to Y \times_{X} Y$.
-Since the map $G(E_A) \to P_{G(V_A)}(G(E_A))$ is a trivial cofiration, we have a lift in the following diagram:
+Since the map $G(E_A) \to P_{G(V_A)}(G(E_A))$ is a trivial cofibration, we have a lift in the following diagram:
 \[ \xymatrix{ G(E_A) \ar[d]_r \ar[rr]^-{G(r')}                      &                                               & G(P_{V_A}(E_A)) \ar@{->>}[d]^{G(q')} \\
               P_{G(V_A)}(G(E_A)) \ar@{->>}[r]_-q \ar@{-->}[urr]^s   & G(E_A) \times_{G(V_A)} G(E_A) \ar[r]_-\simeq  & G(E_A \times_{V_A} E_A)
             } \]
@@ -394,8 +539,8 @@ Then every injective fibration of $\scat{C}^\scat{J}$ is a projective fibration.
 \begin{proof}
 Let $j$ be an object of $\scat{J}$.
 Then the functor $E_j : \scat{C}^\scat{J} \to \scat{C}$ of evaluating at $j$ has a left adjoint $F : \scat{C} \to \scat{C}^\scat{J}$, which is defined as $F(X) = \Hom(j,-) \cdot X$.
-If $f : A \to B$ is a trivial cofibration of $\scat{C}$, then $F(f)$ is an injective trivial cofiration.
-Thus, every injective ibration $p : X \twoheadrightarrow Y$ has the right lifting property with respect to $F(f)$.
+If $f : A \to B$ is a trivial cofibration of $\scat{C}$, then $F(f)$ is an injective trivial cofibration.
+Thus, every injective fibration $p : X \twoheadrightarrow Y$ has the right lifting property with respect to $F(f)$.
 By adjointness, $p_j : X_j \to E_j$ has the right lifting property with respect to $f$.
 Since $\scat{C}$ is cofibrantly generated, fibrations are precisely the maps which have the right lifting property with respect to trivial cofibrations.
 Thus, $p_j$ is a fibration.
@@ -411,7 +556,7 @@ By \rlem{inj-proj}, fibrations in $\Fib$ are projective fibrations.
 Since $\scat{C}$ is complete, fibrations in $\Fib$ are projective fibrations, and fibrations of $\scat{C}$ are exponentiable, \cite[Theorem~2.12]{comp-fact-tor} implies that fibrations of $\scat{C}^\scat{J}$ are also exponentiable.
 Since fibrations in $\Fib$ are projective fibrations, to prove that other conditions hold, it is enough to prove that a map in $(\scat{C}^\scat{J}/\Gamma)_\fs{f}$ is a trivial cofibration if and only if it is an injective trivial cofibration.
 The ``if'' direction holds by the assumption that fibrations are injective.
-Coversely, if $i : A \to B$ is a map in $(\scat{C}^\scat{J}/\Gamma)_\fs{f}$ that has the left lifting property with respect to fibrations, then we can factor it into an injective trivial cofibration $i' : A \to A'$ followed by a fibration $A' \twoheadrightarrow B$.
+Conversely, if $i : A \to B$ is a map in $(\scat{C}^\scat{J}/\Gamma)_\fs{f}$ that has the left lifting property with respect to fibrations, then we can factor it into an injective trivial cofibration $i' : A \to A'$ followed by a fibration $A' \twoheadrightarrow B$.
 Then $i$ is a retract of $i'$ which implies that it is also an injective trivial cofibration.
 \end{proof}
 
@@ -451,7 +596,7 @@ Suppose that $F$ preserves pullbacks along fibrations and that, for every $F$-fi
 Then $F^*(\scat{C}_!)$ has dependent products.
 \end{prop}
 \begin{proof}
-First, we need to describe the interpretation of the following rule:
+First, we need to describe the interpretation of the formation rule:
 \begin{center}
 \AxiomC{$\Gamma, i : I \mid \Delta \vdash B$}
 \RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
@@ -487,7 +632,7 @@ We define the interpretation of $\prod_{i : I} B$ as the following diagram:
               \Delta \ar[r]_{[r_I',r_B]}    & V_\Pi
             } \]
 
-Now, let us decribe the interpretation of the following rule:
+Now, let us describe the interpretation of the introduction rule:
 \begin{center}
 \AxiomC{$\Gamma, i : I \mid \Delta \vdash b : B$}
 \RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
@@ -517,7 +662,7 @@ We define the interpretation of $f\,j$ as $f' \circ j''$, where $f' : \Gamma.I.\
             } \]
 where $j' : \Gamma \to \Gamma.I$ is a section of $\Gamma.I \twoheadrightarrow \Gamma$ corresponding to $j$.
 
-It is easy to verify the stability under substitutions of the constructions that we decsribed.
+It is easy to verify the stability under substitutions of the constructions that we described.
 We also need to prove that $\beta$ and $\eta$ equivalences hold, but this follows from the fact that functions that we used to go from sections of $p_\Pi$ and $p_B$ and back are mutually inverse.
 \end{proof}
 
@@ -643,7 +788,7 @@ Now, we can use the previous construction.
 \end{proof}
 
 \begin{prop}[indexed-extension-types]
-Let $F : \scat{B} \to \scat{C}$ be a functor between categories with firbations which preserves binary products.
+Let $F : \scat{B} \to \scat{C}$ be a functor between categories with fibrations which preserves binary products.
 Let $j : U \to V$ be a map of $\scat{B}$.
 If $\scat{C}$ satisfies the pushout-product axiom with respect to the map $F(j)$, then it has indexed extension types along $j$.
 \end{prop}
@@ -657,6 +802,7 @@ We only need to know that $F$ preserves products and that $\scat{C}$ satisfies t
 \end{remark}
 
 \section{Colimits}
+\label{sec:colimits}
 
 In this section, we give sufficient conditions for a model $F^*(\scat{C})$ to have initial types, binary coproducts, arbitrary coproducts, and pushouts.
 
@@ -731,7 +877,7 @@ We define the initial type in any context as follows:
 \[ \xymatrix{               & R(0) \ar@{->>}[d] \\
               \Delta \ar[r] & 1
             } \]
-By \cite[Proposition~7.4]{indexed-tt}, we just need to described the interpretation of the following rule:
+By \cite[Proposition~7.4]{indexed-tt}, we just need to described the interpretation of the elimination rule:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta \vdash D$}
 \AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
@@ -835,7 +981,7 @@ Let $r_I' = F(r_I) \circ p_\Delta$ and $r_B' = r_B$.
 These maps determine a map $r_\amalg = [r_I',r_B] : \Delta \to V_\amalg$.
 We define the interpretation of $\coprod_{i : I} B$ as the pair $r_\amalg$, $p_\amalg$.
 
-Now, let us describe the interpretation of the following rule:
+Now, let us describe the interpretation of the introduction rule:
 \begin{center}
 \AxiomC{$\Gamma \vdash j : I$}
 \AxiomC{$\Gamma \mid \Delta \vdash b : B_j$}
@@ -853,7 +999,7 @@ This map determines a section $b' : \Gamma.I.\Delta \to Z$ of $q$:
             } \]
 We define the interpretation of $(j,b)$ as $t \circ b' \circ j''$.
 
-Finally, let us describe the interpretation of the eliminator:
+Finally, let us describe the interpretation of the elimination rule:
 \begin{center}
 \def\extraVskip{1pt}
 \Axiom$\fCenter \Gamma \mid \Delta, z : \coprod_{i : I} B_i \vdash D$
@@ -943,7 +1089,7 @@ We have a map $[F(r_I),r_B] : F(\Gamma) \to V_\amalg$ as before.
 This map factors as a map $r_\amalg' : F(\Gamma) \to V_\amalg'$ followed by $\varepsilon_{V_\amalg}$.
 We define the interpretation of $\coprod_{i : I} B$ as the pair $r_\amalg'$, $p_\amalg'$
 
-Now, let us describe the interpretation of the following rule:
+Now, let us describe the interpretation of the introduction rule:
 \begin{center}
 \AxiomC{$\Gamma \vdash j : I$}
 \UnaryInfC{$\Gamma \mid x : B_j \vdash \fs{in}_j(x) : \coprod_{i : I} B_i$}
@@ -958,7 +1104,7 @@ Let $\Gamma.B_j$ be the following pullback:
 The map $\Gamma.B_j \to E_B$ induces a map $b' : \Gamma.B_j \to Z'$.
 We define the interpretation of $\fs{in}_j$ as $t \circ b'$.
 
-Finally, let us describe the interpretation of the eliminator:
+Finally, let us describe the interpretation of the elimination rule:
 \begin{center}
 \AxiomC{$\Gamma \mid z : \coprod_{i : I} B_i \vdash D$}
 \AxiomC{$\Gamma, i : I \mid x : B_i \vdash d : D[\fs{in}_i(x)/z]$}
@@ -1109,7 +1255,7 @@ Then $(\scat{C},\Fib')$ is also a type-theoretic semi-fibration category.
 Moreover, $(\scat{C},\Fib')$ is closed under identity types in the sense that identity types in this category are equivalent to identity types in $(\scat{C},\Fib)$.
 \end{prop}
 \begin{proof}
-The fact that $(\scat{C},\Fib')$ is a type-thereotic semi-fibration category easily follows from \rlem{subfib}.
+The fact that $(\scat{C},\Fib')$ is a type-theoretic semi-fibration category easily follows from \rlem{subfib}.
 The interpretation of identity types is defined as a factorization of the map $E_A \to E_A \times_{V_A} E_A$ into a trivial cofibration followed by a fibration.
 We can factor this map into a trivial cofibration of $(\scat{C},\Fib)$ followed by a fibration in $\Fib'$.
 Then this type is an interpretation of the identity type in both $(\scat{C},\Fib)$ and $(\scat{C},\Fib')$.
@@ -1170,7 +1316,7 @@ Suppose that we have a commutative square as below, where $i \in S$.
 We need to construct a lift in this square.
 
 Let $U \amalg U \xrightarrow{[i_0^U,i_1^U]} C(U) \xrightarrow{s^U} U$ and $V \amalg V \xrightarrow{[i_0^V,i_1^V]} C(V) \xrightarrow{s^V} V$ be cylinder objects,
-let $W = C(U) \amalg_{(U \amalg U)} (V \amalg V)$, aand let $i' : W \to C(V)$ be the map described in the definition of the closure under coidentity types.
+let $W = C(U) \amalg_{(U \amalg U)} (V \amalg V)$, and let $i' : W \to C(V)$ be the map described in the definition of the closure under coidentity types.
 Consider the following diagram:
 \[ \xymatrix{                            & U \ar[d] \ar[r]^i        & V \ar[d]                                             &                                            &                \\
                                          & U \amalg U \ar[r] \ar[d] & \po V \amalg U \ar[r]^-{[t_0, h]} \ar[d]             & P(Y) \ar@{->>}[r]^{p_1} \ar@{->>}[d]^{p_0} & Y \ar@{->>}[d] \\
@@ -1196,7 +1342,7 @@ Moreover, $j$ is a weak equivalence.
 To prove this, it is enough to prove that the map $V \to C(U) \amalg_U V$ is a weak equivalence since the map $i_0^V : V \to C(V)$ is a weak equivalence.
 The map $V \to C(U) \amalg_U V$ is the pushout of $U \to C(U)$ along $i : U \to V$.
 If $U$ is cofibrant, then $i_0^U : U \to C(U)$ is a trivial cofibration, so $V \to C(U) \amalg_U V$ is also a trivial cofibration.
-If $\scat{C}$ is left proper, then $V \to C(U) \amalg_U V$ is a weak equivalence since it is a pushout of a weak equivlaence along a cofibration.
+If $\scat{C}$ is left proper, then $V \to C(U) \amalg_U V$ is a weak equivalence since it is a pushout of a weak equivalence along a cofibration.
 
 Since $j$ is a trivial cofibration and $P(Y) \to Y \times_\Gamma Y$ is a fibration, we have a lift $q : C(V) \to P(Y)$ in the diagram above.
 The map $V \to W \xrightarrow{i'} C(V) \xrightarrow{q} P(Y)$ is a lift in the original square.
@@ -1249,6 +1395,7 @@ The only new part is that $F^*(\scat{C}_!)$ has extensional identity types which
 \end{example}
 
 \section{Quasicategories}
+\label{sec:quasicats}
 
 In this section, we describe a contextually indexed contextual category based on quasicategories.
 
@@ -1274,7 +1421,7 @@ The following lemma shows that this is also true for objects of the form $G(Y)$:
 For every simplicial set $X$, the following conditions are equivalent:
 \begin{enumerate}
 \item Every edge of $X$ is invertible.
-\item $X$ has the right lifting propert with respect to the map $\Delta^1 \to \bDelta^1$.
+\item $X$ has the right lifting property with respect to the map $\Delta^1 \to \bDelta^1$.
 \item $G(X) = X$.
 \item $X$ is isomorphic to $G(Y)$ for some simplicial set $Y$.
 \end{enumerate}
@@ -1367,7 +1514,7 @@ Thus, $i$ is a categorical equivalence by 2-out-of-3.
 If edges of simplicial sets $X$ and $Y$ are invertible, then every map $X \to Y$ factors into a categorical trivial cofibration $X \to Z$ followed by a Kan fibration $Z \to Y$.
 \end{prop}
 \begin{proof}
-Let $J$ be the set of maps of the form $b(\Lambda^n_k) \to b(\Delta^n)$.
+Let $J$ be the set of maps of the form $b(\Lambda^n_k) \to b(\Delta^n)$ for all $0 \leq k \leq n$.
 Let $f : X \to Y$ be a map.
 We can apply the small object argument to the set $J$ to factor $f$ into a map $X \to Z$ in $\Icell[J]$ followed by a map $Z \to Y$ in $\Iinj[J]$.
 The class $\Icell[J]$ consists of relative $J$-cell complexes, that is transfinite compositions of pushouts of maps in $J$.
@@ -1388,9 +1535,7 @@ Consider a commutative square of the form
             } \]
 Since every edge of $Z$ is invertible, the map $\Lambda^n_k \to Z$ factors through the map $\Lambda^n_k \to b(\Lambda^n_k)$.
 Let $D$ be the pushouts of $\Lambda^n_k \to b(\Lambda^n_k)$ and $\Lambda^n_k \to \Delta^n$.
-It is enough to prove that $Z \to Y$ has the right lifting property with respect to the map $b(\Lambda^n_k) \to D$.
-If $n > 2$, then $D = b(\Delta^n)$ and $Z \to Y$ has this property by the construction.
-If $n < 2$, then the map $D \to Y$ factors through the map $D \to b(\Delta^n)$ since every edge of $Y$ is invertible.
+The map $D \to Y$ factors through the map $D \to b(\Delta^n)$ since every edge of $Y$ is invertible.
 Thus, we can define a lift as follows:
 \[ \xymatrix{ \Lambda^n_k \ar[r] \ar[d] & b(\Lambda^n_k) \ar[rr] \ar[d] &                                   & Z \ar[d] \\
               \Delta^n \ar[r]           & \po D \ar[r]                  & b(\Delta^n) \ar@{-->}[ur] \ar[r]  & Y
@@ -1423,16 +1568,16 @@ Thus, $G(f) = p \circ i$ is a retract of $p$:
 Since $p$ is a Kan fibration, $G(f)$ is also a Kan fibration.
 \end{proof}
 
-Now, we are ready to prove that $\Id^*(\sSet_J)$ has various categorical constructions:
+Now, we are ready to prove that $\Id^*((\sSet_J)_!)$ has various categorical constructions:
 
 \begin{thm}
 Let $\Id : \sSet_K \to \sSet_J$ be the identity functor, where $\sSet_K$ is equipped with the Kan model structure and $\sSet_J$ is equipped with the Joyal model structure.
-Then the contextually indexed contextual category $\Id^*(\sSet_J)$ is locally small and Cartesian closed.
+Then the contextually indexed contextual category $\Id^*((\sSet_J)_!)$ is locally small and Cartesian closed.
 Moreover, it has $\Pi$-types in the empty context and dependent $\Hom$-types.
 It also has $\Sigma$-types, unit types, extensional identity types, dependent products, stable dependent coproducts, strict initial types, stable binary coproducts, unstable pushouts, and (indexed) extension types with respect to cofibrations.
 \end{thm}
 \begin{proof}
-First, let us show that $\Id^*(\sSet_J)$ has $\Pi$-types in the empty context.
+First, let us show that $\Id^*((\sSet_J)_!)$ has $\Pi$-types in the empty context.
 This follows from \rlem{cartesian-closed}.
 We can take $\scat{C}'$ to be the subcategory of $\sSet$ consisting of simplicial sets with invertible edges.
 Let $\varepsilon_X$ be the map $\varepsilon_X : G(X) \to X$.
@@ -1442,7 +1587,7 @@ This is true if and only if categorical equivalences are closed under pullbacks 
 By \rprop{G-Cart}, pullbacks of $f$ are Cartesian fibrations.
 By \cite[Proposition~3.3.1.3]{lurie-topos}, categorical equivalences are closed under pullbacks along Cartesian fibrations.
 
-The fact that $\Id^*(\sSet_J)$ has dependent $\Hom$-types, $\Sigma$-types, unit types, and extensional identity types follows from \rexample{cisinski}.
+The fact that $\Id^*((\sSet_J)_!)$ has dependent $\Hom$-types, $\Sigma$-types, unit types, and extensional identity types follows from \rexample{cisinski}.
 The existence of dependent products follows from \rprop{products}.
 Indeed, $\Pi_g$ maps categorical fibrations over $A$ to categorical fibrations over $B$ for every Kan fibration $g : A \to B$ since every Kan fibration is a Cartesian fibration.
 
