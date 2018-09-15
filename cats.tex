@@ -80,7 +80,8 @@
 \section{Basic category theory}
 
 In this section, we recall the definition of categories and basic constructions on them in homotopy type theory.
-We also prove a few simple standard propositions.
+We also give definitions of a few constructions.
+All of them are standard categorical constructions and their definitions can be found, for example, in \cite{maclane}.
 
 \subsection{Definitions}
 
@@ -163,6 +164,123 @@ If $\scat{D}$ is small, then the equivalences defined in the previous lemma rest
 
 % In general, we do not have a type of full subprecategories of a given precategory, but we do have a type of full subcategories of a given category if we have a subtype classifier
 % (that is, a univalent universe $\Prop$ consisting of propositions such that, for every proposition $P$, there exists an element $\chi_P : \Prop$ such that $\El(\chi_P)$ is equivalent to $P$).
+
+Adjoint functors are defined as usual.
+If $\scat{C}$ is a category and $F : \scat{C} \to \scat{D}$ is a functor, then there is a unique left (or right) adjoint to $F$ if it exists.
+We will say that a subprecategory $P$ of a precategory $\scat{D}$ is \emph{reflective} if the corresponding embedding $F_P : \scat{C}_P \to \scat{D}$ has a left adjoint.
+If $\scat{D}$ is a category and $P$ is a subcategory, then this is a property of $P$, but in general this is an additional structure on $P$.
+Equivalently, a reflective subprecategory of $\scat{D}$ can be described as a reflector $R : \ob{\scat{D}} \to \ob{\scat{D}}$
+together with a proof $P(R(x))$ and a map $\eta_x : \hom(x,R(x))$ for every $x : \ob{\scat{D}}$ satisfying the following universal property.
+For every $y : \scat{D}_0$ such that $P(y)$ and every map $f : \hom(x,y)$, there is a unique map $\widehat{f} : \hom(R(x),y)$ such that $\widehat{f} \circ \eta_x = f$.
+
+\subsection{Kan extensions}
+
+Kan extensions are defined as usual.
+Let $p : \scat{J} \to \scat{J}'$ be a functor between precategories.
+A \emph{left Kan extension} of a functor $F : \scat{J} \to \scat{D}$ along $p$ is a functor $\fs{Lan}_p(F) : \scat{J}' \to \scat{D}$
+together with a natural transformation $\alpha : \hom_{\scat{D}^\scat{J}}(F, \fs{Lan}_p(F) \circ p)$ such that the following function is a bijection:
+\begin{align*}
+\varphi_G & : \hom_{\scat{D}^{\scat{J}'}}(\fs{Lan}_p(F),G) \simeq \hom_{\scat{D}^\scat{J}}(F, G \circ p) \\
+\varphi_G(\beta)_j & = \beta_{p(j)} \circ \alpha_j
+\end{align*}
+\emph{Right Kan extensions} are defined dually.
+
+A \emph{limit} (resp., \emph{colimit}) of a functor $F : \scat{J} \to \scat{D}$ is a right (resp., left) Kan extension of $F$ along the unique functor $\scat{J} \to 1$.
+A \emph{cone} (resp., \emph{cocone}) over $F$ is an object $d : \scat{D}$ together with a natural transformation $\alpha : \Delta(d) \to F$ (resp., $\alpha : F \to \Delta(d)$), where $\Delta(d)$ is the constant functor on $d$.
+Thus, limits and colimits are cones and cocones satisfying a universal property.
+It is easy to prove that left adjoints preserve colimits and right adjoints preserve limits.
+As usual, (co)limits indexed by a precategory $\scat{J}$ can be defined in terms of (co)equalizers and (co)products indexed by $\ob{\scat{J}}$ and $\hom(\scat{J}) = \Sigma_{x y : \ob{\scat{J}}} \hom(x,y)$.
+Note that (co)products indexed by a type are more general than (co)products indexed by a set.
+For example, a (co)product of a diagram $F : S^1 \to \scat{C}$ is a (co)equalizer of $\id_{F(*)} : \hom(F(*),F(*))$ and the map corresponding to $F(\fs{loop}) : \Id(F(*),F(*))$.
+
+\begin{example}
+The category $\Set$ has small products if $\uSet$ is closed under $\Pi$-types.
+It has equalizers if $\uSet$ is closed under $\Sigma$-types and identity types.
+It has small coproducts if $\uType$ is closed under $\Sigma$-types and set truncations.
+It has coequalizers if $\uType$ is closed under pushouts and set truncations.
+\end{example}
+
+Let $F : \scat{J}^\fs{op} \times \scat{J} \to \scat{C}$ be a functor.
+A \emph{dinatural transformation} is a collection of maps $\alpha_j : \hom(F(j,j),c_0)$ defined for all $j : \scat{J}$ such that the following square commutes for every map $f : \hom(j,j')$:
+\[ \xymatrix{ F(j',j) \ar[r]^{F(f,\id_j)} \ar[d]_{F(\id_{j'},f)}    & F(j,j) \ar[d]^{\alpha_j} \\
+              F(j',j') \ar[r]_-{\alpha_{j'}}                        & c_0
+            } \]
+A \emph{coend} of a functor $F : \scat{J}^\fs{op} \times \scat{J} \to \scat{C}$ is an object $c_0$ together with a dinatural transformation $\alpha$ such that,
+for every $c : \scat{C}$ and every dinatural transformation $\beta_j : \hom(F(j,j),c)$, there is a unique map $f : \hom(c_0,c)$ such that $f \circ \alpha_j = \beta_j$.
+\emph{Ends} are defined dually.
+As usual, (co)ends can be described in terms of (co)limits.
+An end (resp. coend) of a functor $F : \scat{J}^\fs{op} \times \scat{J} \to \scat{C}$ will be denoted by $\int_{j : \scat{J}} F(j,j)$ (resp., $\int^{j : \scat{J}} F(j,j)$).
+
+\begin{remark}
+Kan extensions, (co)limits, and (co)ends in a precategory $\scat{D}$ are unique only when $\scat{D}$ is a category.
+\end{remark}
+
+A left Kan extension of $F : \scat{J} \to \scat{D}$ along $p : \scat{J} \to \scat{J}'$ can be defined as a coend if it exists: $\fs{Lan}_p(F)(j') = \int^{j : \scat{J}} \hom(p(j),j') \cdot F(j)$.
+In particular, if $F = \cat{y} : \scat{J} \to \Set^{\scat{J}^\fs{op}}$ is the Yoneda embedding, then $\fs{Lan}_p(\cat{y})(X) = \int^{j : \scat{J}} X(j) \cdot F(j)$.
+
+\subsection{Final functors}
+
+Let $F_1 : \scat{J}_1 \to \scat{C}$ and $F_2 : \scat{J}_2 \to \scat{C}$ be functors between precategories.
+Then the \emph{comma precategory} $F_1 \downarrow F_2$ is defined as usual.
+Its objects are triples $\Sigma_{j_1 : \scat{J}_1} \Sigma_{j_2 : \scat{J}_2} \hom(F_1(j_1),F_2(j_2))$.
+Maps between $(j_1,j_2,f)$ and $(j_1',j_2',f')$ are pairs of maps $g_1 : \hom(j_1,j_1')$ and $g_2 : \hom(j_2,j_2')$ such that the obvious square commutes.
+If $\scat{C}$ is a category, then $F_1 \downarrow F_2$ is also a category.
+If $c$ is an object of $\scat{C}$ and $F : \scat{J} \to \scat{C}$ is a functor, then we will write $j \downarrow F$ for the comma category of the functor $1 \to \scat{C}$ that picks $c$ and $F$.
+
+We will say that a precategory is \emph{inhabited} if it merely has an object.
+We will say that a precategory $\scat{C}$ is \emph{connected} if, for evevy pair of objects $c$ and $c'$, there merely exists a sequence of objects $c_1$, \ldots $c_n$ and a sequence of maps $f_1$, \ldots $f_{n-1}$
+such that $c_1 = c$, $c_n = c'$, and, for every $1 \leq i < n$, either $\fs{dom}(f_i) = c_i$ and $\fs{cod}(f_i) = c_{i+1}$ or $\fs{dom}(f_i) = c_{i+1}$ and $\fs{cod}(f_i) = c_i$.
+A functor $L : \scat{I} \to \scat{J}$ is \emph{final} if, for every $j : \scat{J}$, the comma category $j \downarrow L$ is inhabited and connected.
+
+\begin{lem}
+Let $L : \scat{I} \to \scat{J}$ be a final functor and let $F : \scat{J} \to \scat{C}$ be a functor.
+Then $\fs{colim}(F)$ exists if and only if $\fs{colim}(F \circ L)$ exists and the canonical map $\hom_\scat{C}(\fs{colim}(F \circ L),\fs{colim}(F))$ is an isomorphism.
+\end{lem}
+\begin{proof}
+% TODO
+\end{proof}
+
+\begin{prop}
+Let $L : \scat{I} \to \scat{J}$ be a functor between locally small categories.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item $L$ is final.
+\item For every functor $F : \scat{J} \to \scat{C}$, a colimit $\fs{colim}(F)$ exists if and only if $\fs{colim}(F \circ L)$ exists and the canonical map $\hom_\scat{C}(\fs{colim}(F \circ L),\fs{colim}(F))$ is an isomorphism.
+\item For every functor $F : \scat{J} \to \cat{Set}$, the canonical map $\fs{colim}(F \circ L) \to \fs{colim}(F)$ is an isomorphism.
+\item For every $j : \scat{J}$, the set $\fs{colim}_{i : I} \hom_\scat{J}(j,L(i))$ is contractible.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+% TODO
+\end{proof}
+
+% TODO: Directed and filtered colimits.
+
+\subsection{Dense subcategories and generators}
+
+Let $F : \scat{C} \to \scat{D}$ be a functor between precategories, let $d$ be an object of $\scat{D}$, and let $D_F$ be the diagram $F \downarrow d \to \scat{C} \xrightarrow{F} \scat{D}$.
+Then we have a canonical cocone $\alpha^d : D_F \to \Delta(d)$ defined by $\alpha^d_{(X,f)} = f$.
+A functor $F : \scat{C} \to \scat{D}$ is \emph{dense} if, for every $d : \scat{D}$, the cocone $\alpha^d$ is the colimit of $D_F$.
+The following proposition follows from the usual easy formal argument:
+
+\begin{prop}
+Let $\scat{D}$ be a locally small precategory.
+Then a functor $F : \scat{C} \to \scat{D}$ is dense if and only if the nerve functor $N_F : \scat{D} \to \Set^{\scat{C}^\fs{op}}$, defined by $N_F(d) = \hom_\scat{D}(F(-),d)$, is fully faithful.
+\end{prop}
+% \begin{proof}
+% A natural transformation between $N_F(d)$ and $N_F(d')$ is a function $\alpha_c : \hom_\scat{D}(F(c),d) \to \hom_\scat{D}(F(c),d')$ such that,
+% for all $f : \hom_\scat{C}(c,c')$ and $g : \hom_\scat{D}(F(c'),d)$, it is true that $\alpha_{c'}(g) \circ F(f) = \alpha_c(g \circ F(f))$.
+% Thus, there is a bijection between such natural tranformations and cocones of the form $D_F \to \Delta(d')$.
+% Then $d$ is a colimit if and only if, for every $d' : \scat{D}$, the map from $\hom_\scat{D}(d,d')$ to the set of cocones is a bijections,
+% which is true if and only if the map from $\hom_\scat{D}(d,d')$ to the set of natural transformations between $N_F(d)$ and $N_F(d')$ is a bijection.
+% \end{proof}
+
+We will say that a full subprecategory is dense if the corresponding embedding is dense.
+A weaker notion than that of a dense subprecategory is the notion of an (extremal) generator.
+A \emph{generator} of a precategory $\scat{C}$ is a subprecategory $\scat{G}$ such that two maps $f,g : \hom_\scat{C}(X,Y)$ are equal whenever $f \circ x = g \circ x$ for all $G : \scat{G}$ and $x : \hom_\scat{C}(G,X)$.
+An \emph{extremal generator} of a precategory $\scat{C}$ is a subprecategory $\scat{G}$ such that a monomorphism $m$ is an isomorphism whenever every map with a domain that belongs to $\scat{G}$ factors through $m$.
+Every dense subprecategory is a generator and an extremal generator.
+If a precategory has equalizers, then every extremal generator is a generator.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
