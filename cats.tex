@@ -104,10 +104,19 @@ For every precategory $\scat{C}$, there exists a category $\widehat{\scat{C}}$ t
 The category $\widehat{\scat{C}}$ is called \emph{the Rezk completion of $\scat{C}$}.
 It satisfies a universal property: for every category $\scat{D}$ and every functor $F : \scat{C} \to \scat{D}$, there is a unique functor $\widehat{F} : \widehat{\scat{C}} \to \scat{D}$ such that $\widehat{F} \circ i_\scat{C} = F$.
 
-Let $\uType$ be a universe of types and let $\uSet$ be its subuniverse of sets.
+Let $\uType$ be a universe closed under unit types, identity types, $\Sigma$-types, $\Pi$-types, empty types, pushouts, set trunctions, and 1-truncations.
+Let $\uSet$ be its subuniverse of sets.
 Then we have the category $\Set$ whose types are elements of $\uSet$ and maps are functions.
 A precategory $\scat{C}$ is \emph{locally small} (with respect to $\uSet$) if the set of maps $\hom_\scat{C}(x,y)$ is equivalent to a set in $\uSet$ for all $x$ and $y$.
 A precategory $\scat{C}$ is \emph{small} (with respect to $\uType$) if it is locally small and the type of objects of $\scat{C}$ is equivalent to a type in $\uType$.
+
+\begin{example}
+The category $\Set$ is locally small since $\uSet$ is closed under function types.
+\end{example}
+
+\begin{example}
+The Rezk completion of a small precategory is a small category.
+\end{example}
 
 The \emph{opposite} of a (pre)category $\scat{C}$ is the (pre)category $\scat{C}^\fs{op}$ with the same type of objects in which the set of maps is defined as follows: $\hom_{\scat{C}^\fs{op}}(x,y) = \hom_\scat{C}(y,x)$.
 For every locally small precategory $\scat{C}$, there is an embedding $\cat{y} : \scat{C} \to \Set^{\scat{C}^\fs{op}}$ called \emph{Yoneda embedding}.
@@ -189,16 +198,28 @@ A \emph{limit} (resp., \emph{colimit}) of a functor $F : \scat{J} \to \scat{D}$ 
 A \emph{cone} (resp., \emph{cocone}) over $F$ is an object $d : \scat{D}$ together with a natural transformation $\alpha : \Delta(d) \to F$ (resp., $\alpha : F \to \Delta(d)$), where $\Delta(d)$ is the constant functor on $d$.
 Thus, limits and colimits are cones and cocones satisfying a universal property.
 It is easy to prove that left adjoints preserve colimits and right adjoints preserve limits.
-As usual, (co)limits indexed by a precategory $\scat{J}$ can be defined in terms of (co)equalizers and (co)products indexed by $\ob{\scat{J}}$ and $\hom(\scat{J}) = \Sigma_{x y : \ob{\scat{J}}} \hom(x,y)$.
-Note that (co)products indexed by a type are more general than (co)products indexed by a set.
-For example, a (co)product of a diagram $F : S^1 \to \scat{C}$ is a (co)equalizer of $\id_{F(*)} : \hom(F(*),F(*))$ and the map corresponding to $F(\fs{loop}) : \Id(F(*),F(*))$.
 
 \begin{example}
-The category $\Set$ has small products if $\uSet$ is closed under $\Pi$-types.
-It has equalizers if $\uSet$ is closed under $\Sigma$-types and identity types.
-It has small coproducts if $\uType$ is closed under $\Sigma$-types and set truncations.
-It has coequalizers if $\uType$ is closed under pushouts and set truncations.
+The category $\Set$ has small products since $\uType$ is closed under $\Pi$-types.
+It has equalizers since $\uSet$ is closed under identity types and $\Sigma$-types.
+It has small coproducts and coequalizers since $\uType$ is closed under empty types, pushouts, and set truncations.
 \end{example}
+
+We will say that a precategory is \emph{(co)complete} if it has (co)limits indexed by small precategories.
+If $\scat{C}$ is a category that has (co)limits indexed by small categories, then $\scat{C}$ is (co)complete.
+Indeed, every functor $F : \scat{J} \to \scat{C}$ factors through the Rezk completion of $\scat{J}$ and the (co)limit of the corresponding functor $\widehat{\scat{J}} \to \scat{C}$ coincides with the colimit of $F$.
+
+We can also define (co)limits of diagrams indexed by types in the obivous way.
+We call such (co)limits \emph{(co)products}.
+For every type $\scat{J}$, we can define a precategory $\scat{J}'$ that has $\scat{J}$ as the type of objects and $\| \Id(j,j') \|_0$ as the set of maps from $j$ to $j'$.
+Since $\uType$ is closed under identity types, $\scat{J}'$ is small whenever $\scat{J}$ is.
+Every diagram $F : \scat{J} \to \scat{C}$ factors through $\scat{J}'$.
+The (co)product of $F$ coincides with the (co)limit of the corresponding functor $\scat{J}' \to \scat{C}$.
+
+As usual, (co)limits indexed by a precategory $\scat{J}$ can be defined in terms of (co)equalizers and (co)products indexed by $\ob{\scat{J}}$ and $\hom(\scat{J}) = \Sigma_{x y : \ob{\scat{J}}} \hom(x,y)$.
+In general, $\ob{\scat{J}}$ and $\hom(\scat{J})$ are arbitrary types.
+Note that (co)products indexed by a type are more general than (co)products indexed by a set.
+For example, a (co)product of a diagram $F : S^1 \to \scat{C}$ is a (co)equalizer of $\id_{F(*)} : \hom(F(*),F(*))$ and the map corresponding to $F(\fs{loop}) : \Id(F(*),F(*))$.
 
 Let $F : \scat{J}^\fs{op} \times \scat{J} \to \scat{C}$ be a functor.
 A \emph{dinatural transformation} is a collection of maps $\alpha_j : \hom(F(j,j),c_0)$ defined for all $j : \scat{J}$ such that the following square commutes for every map $f : \hom(j,j')$:
@@ -224,11 +245,11 @@ Let $F_1 : \scat{J}_1 \to \scat{C}$ and $F_2 : \scat{J}_2 \to \scat{C}$ be funct
 Then the \emph{comma precategory} $F_1 \downarrow F_2$ is defined as usual.
 Its objects are triples $\Sigma_{j_1 : \scat{J}_1} \Sigma_{j_2 : \scat{J}_2} \hom(F_1(j_1),F_2(j_2))$.
 Maps between $(j_1,j_2,f)$ and $(j_1',j_2',f')$ are pairs of maps $g_1 : \hom(j_1,j_1')$ and $g_2 : \hom(j_2,j_2')$ such that the obvious square commutes.
-If $\scat{C}$ is a category, then $F_1 \downarrow F_2$ is also a category.
-If $c$ is an object of $\scat{C}$ and $F : \scat{J} \to \scat{C}$ is a functor, then we will write $j \downarrow F$ for the comma category of the functor $1 \to \scat{C}$ that picks $c$ and $F$.
+If $\scat{J}_1$ and $\scat{J}_2$ are categories, then $F_1 \downarrow F_2$ is also a category.
+If $c$ is an object of $\scat{C}$ and $F : \scat{J} \to \scat{C}$ is a functor, then we will write $c \downarrow F$ for the comma category of the functor $1 \to \scat{C}$ that picks $c$ and $F$.
 
 We will say that a precategory is \emph{inhabited} if it merely has an object.
-We will say that a precategory $\scat{C}$ is \emph{connected} if, for evevy pair of objects $c$ and $c'$, there merely exists a sequence of objects $c_1$, \ldots $c_n$ and a sequence of maps $f_1$, \ldots $f_{n-1}$
+We will say that a precategory $\scat{C}$ is \emph{connected} if, for every pair of objects $c$ and $c'$, there merely exists a sequence of objects $c_1$, \ldots $c_n$ and a sequence of maps $f_1$, \ldots $f_{n-1}$
 such that $c_1 = c$, $c_n = c'$, and, for every $1 \leq i < n$, either $\fs{dom}(f_i) = c_i$ and $\fs{cod}(f_i) = c_{i+1}$ or $\fs{dom}(f_i) = c_{i+1}$ and $\fs{cod}(f_i) = c_i$.
 A functor $L : \scat{I} \to \scat{J}$ is \emph{final} if, for every $j : \scat{J}$, the comma category $j \downarrow L$ is inhabited and connected.
 
@@ -246,7 +267,7 @@ Then the following conditions are equivalent:
 \begin{enumerate}
 \item $L$ is final.
 \item For every functor $F : \scat{J} \to \scat{C}$, a colimit $\fs{colim}(F)$ exists if and only if $\fs{colim}(F \circ L)$ exists and the canonical map $\hom_\scat{C}(\fs{colim}(F \circ L),\fs{colim}(F))$ is an isomorphism.
-\item For every functor $F : \scat{J} \to \cat{Set}$, the canonical map $\fs{colim}(F \circ L) \to \fs{colim}(F)$ is an isomorphism.
+\item For every functor $F : \scat{J} \to \Set$, the canonical map $\fs{colim}(F \circ L) \to \fs{colim}(F)$ is an isomorphism.
 \item For every $j : \scat{J}$, the set $\fs{colim}_{i : I} \hom_\scat{J}(j,L(i))$ is contractible.
 \end{enumerate}
 \end{prop}
@@ -281,6 +302,47 @@ A \emph{generator} of a precategory $\scat{C}$ is a subprecategory $\scat{G}$ su
 An \emph{extremal generator} of a precategory $\scat{C}$ is a subprecategory $\scat{G}$ such that a monomorphism $m$ is an isomorphism whenever every map with a domain that belongs to $\scat{G}$ factors through $m$.
 Every dense subprecategory is a generator and an extremal generator.
 If a precategory has equalizers, then every extremal generator is a generator.
+
+\subsection{Adjoint functor theorems}
+
+First, we need to state the initial object theorem:
+
+\begin{lem}[initial]
+Let $\scat{C}$ be a locally small complete precategory.
+Then it has an initial object if and only if there is a small family of objects $\{ w_i \}_{i : I}$ of $\scat{C}$ such that, for every $c : \scat{C}$, there merely exists $i : I$ and a map from $w_i$ to $c$.
+If $\scat{C}$ is a category, then it is enough to assume that there merely exists such a family.
+\end{lem}
+\begin{proof}
+See, for example, \cite[Theorem~V.6.1]{maclane}.
+The proof there applies verbatim.
+\end{proof}
+
+Now, we can prove the general adjoint functor theorem:
+
+\begin{thm}
+Let $\scat{D}$ be a locally small complete precategory and let $\scat{C}$ be a precategory.
+Suppose that either $\uSet$ contains all propositions or $\scat{C}$ is locally small.
+The a functor $G : \scat{D} \to \scat{C}$ has a left adjoint if and only if it preserves limits and, for every $c : \scat{C}$, there is a small family of maps $\{ f_i : \hom_\scat{C}(c,G(d_i)) \}_{i : I}$
+such that, for every map $h : \hom_\scat{C}(c,G(d))$, there merely exists $i : I$ and a map $t : \hom_\scat{D}(d_i,d)$ such that $h = G(t) \circ f_i$.
+If $\scat{D}$ is a category, then it is enough to assume that there merely exists such a family for every $c : \scat{C}$.
+\end{thm}
+\begin{proof}
+The ``only if'' direction is obvious.
+To prove the converse, we can apply \rlem{initial} to the precategory $c \downarrow G$ since a left adjoint to $G$ exists if and only if this precategory has an initial object for every $c : \scat{C}$.
+The assumptions on $\scat{D}$ imply that $c \downarrow G$ is locally small and complete as proved in \cite[Theorem~V.6.2]{maclane}.
+\end{proof}
+
+A precategory is \emph{well-powered} if the type of subobjects (that is, equivalences classes of monomorphisms) of every object is small.
+The special adjoint functor theorem can be proved as usual:
+
+\begin{thm}
+Let $G : \scat{D} \to \scat{C}$ be a functor between locally small precategories.
+Suppose that $\scat{D}$ is well-powered, complete, and has a small cogenerating set.
+Then $G$ has a left adjoint if and only if it preserves limits.
+\end{thm}
+\begin{proof}
+The proof is the same as in \cite[Theorem~V.8.2]{maclane}.
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
