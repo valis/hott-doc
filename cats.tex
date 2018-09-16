@@ -82,6 +82,7 @@
 In this section, we recall the definition of categories and basic constructions on them in homotopy type theory.
 We also give definitions of a few constructions.
 All of them are standard categorical constructions and their definitions can be found, for example, in \cite{maclane}.
+We will only state most of the theorems since their proofs are identical to the standard ones.
 
 \subsection{Definitions}
 
@@ -167,7 +168,7 @@ Since $P_F(x)$ is a fiber of $\fob{F}$ over $x$ and $\fob{F}$ is an embedding, i
 This completes the proof.
 \end{proof}
 
-A full subprecategory $P$ (or a subcategory) is \emph{small} with respect to a universe $\uType$ if $P(x)$ is equivalent to a type in $\uType$ for every $x : \ob{\scat{D}}$.
+A full subprecategory $P$ is \emph{small} with respect to a universe $\uType$ if $P(x)$ is equivalent to a type in $\uType$ for every $x : \ob{\scat{D}}$.
 Thus, a full subprecategory of $\scat{D}$ is simply a map $\ob{\scat{D}} \to \uType$.
 If $\scat{D}$ is small, then the equivalences defined in the previous lemma restrict to equivalences between small full sub(pre)categories of $\scat{D}$ and small (pre)categories embedded in $\scat{D}$.
 
@@ -319,7 +320,7 @@ The proof there applies verbatim.
 
 Now, we can prove the general adjoint functor theorem:
 
-\begin{thm}
+\begin{thm}[gaft]
 Let $\scat{D}$ be a locally small complete precategory and let $\scat{C}$ be a precategory.
 Suppose that either $\uSet$ contains all propositions or $\scat{C}$ is locally small.
 The a functor $G : \scat{D} \to \scat{C}$ has a left adjoint if and only if it preserves limits and, for every $c : \scat{C}$, there is a small family of maps $\{ f_i : \hom_\scat{C}(c,G(d_i)) \}_{i : I}$
@@ -335,7 +336,7 @@ The assumptions on $\scat{D}$ imply that $c \downarrow G$ is locally small and c
 A precategory is \emph{well-powered} if the type of subobjects (that is, equivalences classes of monomorphisms) of every object is small.
 The special adjoint functor theorem can be proved as usual:
 
-\begin{thm}
+\begin{thm}[saft]
 Let $G : \scat{D} \to \scat{C}$ be a functor between locally small precategories.
 Suppose that $\scat{D}$ is well-powered, complete, and has a small cogenerating set.
 Then $G$ has a left adjoint if and only if it preserves limits.
@@ -343,6 +344,36 @@ Then $G$ has a left adjoint if and only if it preserves limits.
 \begin{proof}
 The proof is the same as in \cite[Theorem~V.8.2]{maclane}.
 \end{proof}
+
+Finally, let us prove yet another version of the adjoint functor theorem:
+
+\begin{thm}[yaraft]
+Let $G : \scat{D} \to \scat{C}$ be a functor between locally small precategories.
+Suppose that $\scat{D}$ is complete and has a small full subprecategry $\scat{D}'$ such that every object of $\scat{D}$ is merely a limit of objects in $\scat{D}'$.
+Then $G$ has a left adjoint if and only if it preserves limits.
+\end{thm}
+\begin{proof}
+By \rthm{gaft}, it is enough to show that, for every $c : \scat{C}$, there is a map $f : \hom(c,G(d_0))$ such that every map $h : \hom(c,G(d))$ merely factors through $f$.
+Let $I$ be the embedding $c \downarrow G|_{\scat{D}'} \to c \downarrow G$.
+Since $\scat{D}'$ is small and $\scat{C}$ is locally small, the precategory $c \downarrow G|_{\scat{D}'}$ is small.
+Let $f : \hom(c,G(d_0))$ be the limit of $I$ (the fact that $c \downarrow G$ is complete is proved in \cite[Theorem~V.6.2]{maclane}).
+Let $h : \hom(c,G(d))$ be a map.
+By assumption, $d \simeq \fs{lim}_{j : \scat{J}} d_j$, where objects $d_j$ belong to $\scat{D}'$.
+Since $G$ preserves limits, we may assume that $h$ is of the form $\hom(c,\fs{lim}_{j : \scat{J}} G(d_j))$.
+Since $f$ is a limit of objects of the form $\hom(c,G(d'))$, we have a cone $\alpha_j : \hom(G(d_0),G(d_j))$ under $c$.
+It follows that there is a map $\hom(G(d_0), \fs{lim}_{j : \scat{J}} d_j)$ under $c$.
+Thus, $h$ factors through $f$.
+\end{proof}
+
+The previous theorem is useful in its dual form:
+
+\begin{cor}[yalaft]
+Let $F : \scat{C} \to \scat{D}$ be a functor between locally small precategories.
+Suppose that $\scat{C}$ is cocomplete and has a small full subprecategry $\scat{C}'$ such that every object of $\scat{C}$ is merely a colimit of objects in $\scat{C}'$.
+Then $F$ has a right adjoint if and only if it preserves colimits.
+\end{cor}
+
+In particular, if $\scat{C}$ is locally small, cocomplete, and has a small dense subprecategory, then every functor from $\scat{C}$ to a locally small category preserving colimits has a right adjoint.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
