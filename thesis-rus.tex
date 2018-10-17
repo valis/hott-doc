@@ -1,0 +1,510 @@
+\documentclass[reqno]{amsart}
+
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}
+\usepackage{cmap}
+\usepackage{amsfonts}
+\usepackage{upgreek}
+\usepackage{xargs}
+\usepackage{ifthen}
+\usepackage[all]{xy}
+\usepackage{hyperref}
+\usepackage{etex}
+\usepackage{bussproofs}
+\usepackage{turnstile}
+
+\hypersetup{colorlinks=true,linkcolor=blue}
+
+\renewcommand{\turnstile}[6][s]
+    {\ifthenelse{\equal{#1}{d}}
+        {\sbox{\first}{$\displaystyle{#4}$}
+        \sbox{\second}{$\displaystyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{t}}
+        {\sbox{\first}{$\textstyle{#4}$}
+        \sbox{\second}{$\textstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{s}}
+        {\sbox{\first}{$\scriptstyle{#4}$}
+        \sbox{\second}{$\scriptstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{ss}}
+        {\sbox{\first}{$\scriptscriptstyle{#4}$}
+        \sbox{\second}{$\scriptscriptstyle{#5}$}}{}
+    \setlength{\dashthickness}{0.111ex}
+    \setlength{\ddashthickness}{0.35ex}
+    \setlength{\leasturnstilewidth}{2em}
+    \setlength{\extrawidth}{0.2em}
+    \ifthenelse{%
+      \equal{#3}{n}}{\setlength{\tinyverdistance}{0ex}}{}
+    \ifthenelse{%
+      \equal{#3}{s}}{\setlength{\tinyverdistance}{0.5\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{d}}{\setlength{\tinyverdistance}{0.5\ddashthickness}
+        \addtolength{\tinyverdistance}{\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{t}}{\setlength{\tinyverdistance}{1.5\dashthickness}
+        \addtolength{\tinyverdistance}{\ddashthickness}}{}
+        \setlength{\verdistance}{0.4ex}
+        \settoheight{\lengthvar}{\usebox{\first}}
+        \setlength{\raisedown}{-\lengthvar}
+        \addtolength{\raisedown}{-\tinyverdistance}
+        \addtolength{\raisedown}{-\verdistance}
+        \settodepth{\raiseup}{\usebox{\second}}
+        \addtolength{\raiseup}{\tinyverdistance}
+        \addtolength{\raiseup}{\verdistance}
+        \setlength{\lift}{0.8ex}
+        \settowidth{\firstwidth}{\usebox{\first}}
+        \settowidth{\secondwidth}{\usebox{\second}}
+        \ifthenelse{\lengthtest{\firstwidth = 0ex}
+            \and
+            \lengthtest{\secondwidth = 0ex}}
+                {\setlength{\turnstilewidth}{\leasturnstilewidth}}
+                {\setlength{\turnstilewidth}{2\extrawidth}
+        \ifthenelse{\lengthtest{\firstwidth < \secondwidth}}
+            {\addtolength{\turnstilewidth}{\secondwidth}}
+            {\addtolength{\turnstilewidth}{\firstwidth}}}
+        \ifthenelse{\lengthtest{\turnstilewidth < \leasturnstilewidth}}{\setlength{\turnstilewidth}{\leasturnstilewidth}}{}
+    \setlength{\turnstileheight}{1.5ex}
+    \sbox{\turnstilebox}
+    {\raisebox{\lift}{\ensuremath{
+        \makever{#2}{\dashthickness}{\turnstileheight}{\ddashthickness}
+        \makehor{#3}{\dashthickness}{\turnstilewidth}{\ddashthickness}
+        \hspace{-\turnstilewidth}
+        \raisebox{\raisedown}
+        {\makebox[\turnstilewidth]{\usebox{\first}}}
+            \hspace{-\turnstilewidth}
+            \raisebox{\raiseup}
+            {\makebox[\turnstilewidth]{\usebox{\second}}}
+        \makever{#6}{\dashthickness}{\turnstileheight}{\ddashthickness}}}}
+        \mathrel{\usebox{\turnstilebox}}}
+
+\newcommand{\axlabel}[1]{(#1) \phantomsection \label{ax:#1}}
+\newcommand{\axtag}[1]{\label{ax:#1} \tag{#1}}
+\newcommand{\axref}[1]{(\hyperref[ax:#1]{#1})}
+
+\newcommand{\newref}[5][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname p#2\endcsname[1]{#5~\ref{#2:##1}}
+\expandafter\newcommand\csname n#2\endcsname[1]{\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{теорема}{Теорема}{теореме}
+\newref{lem}{лемма}{Лемма}{лемме}
+\newref{prop}{утверждение}{Утверждение}{утверждении}
+\newref{cor}{следствие}{Следствие}{следствии}
+
+\theoremstyle{definition}
+\newref{defn}{определение}{Определение}{определении}
+\newref{example}{пример}{Пример}{примере}
+
+\theoremstyle{remark}
+\newref{remark}{замечание}{Замечание}{замечании}
+
+\newcommand{\bcat}[1]{\mathbf{#1}}
+\newcommand{\cat}[1]{\mathcal{#1}}
+\newcommand{\Set}{\bcat{Set}}
+\newcommand{\fs}[1]{\mathrm{#1}}
+
+\newenvironment{tolerant}[1]{\par\tolerance=#1\relax}{\par}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+
+\begin{document}
+
+\title{Title}
+
+\author{Valery Isaev}
+
+\maketitle
+
+\section{Введение}
+
+\section{Частичные хорновские теории}
+
+В данной диссертации мы будем работать с определенным классом логических теорий, которые известны под разными названиями, но наиболее распространенный термин -- это \emph{существенно алгебраические теории}.
+Существует несколько эквивалентных способов определить такие теории:
+\begin{enumerate}
+\item Декартовы теории \cite[Definition~D1.3.4]{elephant} -- это специальный вид теорий в логике первого порядка, где единственные логческие связки -- это конъюнкция и квантор существования.
+Кроме того, множество аксиом должно удовлетворять определенному условию.
+Мы не будем использовать это понятие, поэтому точное определение нам не понадобится.
+\item Существенно алгебраическая теория \cite[Definition~3.34]{LPC} -- это теория, в которой некоторые функциональные символы могут интерпретироваться как \emph{частичные} функции.
+Мы не будем использовать это понятие, поэтому точное определение нам не понадобится.
+\item Частичные хорновские теории \cite{PHL} являются обобщением существенно алгебраических теорий.
+Это основное понятие с которым мы будем работать.
+Его определение будет дано в следующем подразделе.
+\item Категорное определение теорий является самым простым.
+Согласно нему существенно алгебраическая теория -- это просто конечно полная малая категория.
+Модель такой теории $\cat{C}$ -- это просто функтор $\cat{C} \to \Set$, сохраняющий конечные пределы.
+Другое преимущество этого определения заключается в том, что легко определить структуру категории (и даже 2-категории) на классе теорий.
+\end{enumerate}
+
+В этом разделе мы приведем определение частичных хорновских теорий, зададим структуру 2-категории на них и докажем, что она эквивалентна 2-категории конечно полных малых категорий.
+
+\subsection{Определение}
+
+В этом подразделе мы преведем основные определения из \cite{PHL}.
+\emph{Сигнатура} -- это тройка $(\mathcal{S},\mathcal{F},\mathcal{P})$, где $\mathcal{S}$ -- множество сортов, $\mathcal{F}$ -- множество функциональных символов, и $\mathcal{P}$ -- множество предикатных символов.
+Каждому функциональному символу $\sigma$ сопоставляется непустой список сортов $s_1$, \ldots $s_n$, $s$, что записывается как $\sigma : s_1 \times \ldots \times s_n \to s$.
+Каждому предикатному символу $R$ сопоставляется список сортов $s_1$, \ldots $s_n$, что записывается как $R : s_1 \times \ldots \times s_n$.
+
+Мы как обычно для каждого сорта фиксируем счетное множество переменных этого сорта.
+Множество \emph{термов} определяется как обычно индуктивно:
+\begin{enumerate}
+\item Любая переменная сорта $s$ является термом этого сорта.
+\item Если $\sigma : s_1 \times \ldots \times s_n \to s$ -- функциональный символ, и $t_i$ -- терм сорта $s_i$ для всех $1 \leq i \leq n$, то $\sigma(t_1, \ldots t_n)$ -- терм сорта $s$.
+\end{enumerate}
+
+\emph{Атомарная формула} -- это выражение вида $t_1 = t_2$, где $t_1$ и $t_2$ -- термы одного и того же сорта, либо вида $R(t_1, \ldots t_n)$, где $R : s_1 \times \ldots \times s_n$ -- предикатный символ, а $t_i$ -- терм сорта $s_i$ для любого $1 \leq i \leq n$.
+\emph{(Хорновская) формула} -- это выражение вида $\varphi_1 \land \ldots \land \varphi_n$, где $\varphi_i$ -- атомарные формулы.
+Конъюнкция пустого множества формул будет обозначаться как $\top$.
+Выражение $t\!\downarrow$ является сокращением для $t = t$.
+Функциональные символы интерпретируются как частичные функции.
+Формула $t\!\downarrow$ означает, что все подвыражения в $t$ определены.
+\emph{Секвенция} -- это выражение вида $\varphi \sststile{}{x_1, \ldots x_n} \psi$, где $\varphi$ и $\psi$ -- формулы, такие что все переменные, встречающиеся в них, принадлежат множеству $\{ x_1, \ldots x_n \}$.
+Множество переменных, встречающихся в формуле или терме $\varphi$ будет обозначаться как $\mathrm{FV}(\varphi)$.
+Вместо $\varphi_1 \land \ldots \land \varphi_n \sststile{}{x_1, \ldots x_n} \psi$ мы будем часто писать $\varphi_1, \ldots \varphi_n \sststile{}{x_1, \ldots x_n} \psi$.
+
+Мы будем использовать следующие сокращения:
+\begin{align*}
+\varphi \sststile{}{V} t \cong s & \Longleftrightarrow \varphi \land t\!\downarrow\,\sststile{}{V} t = s \text{ и } \varphi \land s\!\downarrow\,\sststile{}{V} t = s \\
+\varphi \ssststile{}{V} \psi & \Longleftrightarrow \varphi \sststile{}{V} \psi \text{ и } \psi \sststile{}{V} \varphi
+\end{align*}
+
+\begin{defn}
+\emph{Частичная хорновская теория} -- это четверка $(\mathcal{S},\mathcal{F},\mathcal{P},\mathcal{A})$, где $(\mathcal{S},\mathcal{F},\mathcal{P})$ -- это сигнатура, а $\mathcal{A}$ -- множество секвенций.
+Элементы $\mathcal{A}$ мы будем называть аксиомами.
+\end{defn}
+
+\begin{remark}
+Так как частичные хорновские теории -- это единственный вид теорий, с которым мы будем работать, то мы их будем называть просто теориями.
+\end{remark}
+
+Если $\mathcal{S}$ -- множество сортов, то $\mathcal{S}$-множество $M$ -- это коллекция множеств $\{ M_s \}_{s \in \mathcal{S}}$.
+\emph{Интерпретация} сигнатуры $(\mathcal{S},\mathcal{F},\mathcal{P})$ -- это $\mathcal{S}$-множество $M$
+вместе с коллекцией частичных функций $M(\sigma) : M_{s_1} \times \ldots \times M_{s_n} \to M_s$ для каждого функционального символа $\sigma : s_1 \times \ldots \times s_n \to s$
+и коллекцией отношений $M(R) \subseteq M_{s_1} \times \ldots \times M_{s_n}$ для каждого предикатного символа $R : s_1 \times \ldots \times s_n$.
+
+Пусть $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ -- некоторое конечное множество переменных.
+Если $t$ -- терм сорта $s$ в сигнатуре $\Sigma$ такой, что $\mathrm{FV}(t) \subseteq V$, и $M$ -- интерпретация $\Sigma$, то мы можем определить частичную функцию $M(t) : M_{s_1} \times \ldots \times M_{s_n} \to M_s$ рекурсией по структуре $t$.
+Если $t = x_i$, то $M(t)$ -- это просто проекция на $i$-ую координату.
+Если $t = \sigma(t_1, \ldots t_k)$, то $M(t)(a_1, \ldots a_n) = M(\sigma)(M(t_1)(a_1, \ldots a_n), \ldots M(t_k)(a_1, \ldots a_n))$.
+Если $\varphi$ -- формула в сигнатуре $\Sigma$ такая, что $\mathrm{FV}(t) \subseteq V$, и $M$ -- интерпретация $\Sigma$, то мы можем определить отношение $M(\varphi) \subseteq M_{s_1} \times \ldots \times M_{s_n}$.
+Если $\varphi$ -- формула вида $t_1 = t_2$, то $M(\varphi)$ состоит из таких $(a_1, \ldots a_n)$, что $M(t_1)$ и $M(t_2)$ определены на этих значениях и $M(t_1)(a_1, \ldots a_n) = M(t_2)(a_1, \ldots a_n)$.
+Если $\varphi$ -- формула вида $R(t_1, \ldots t_k)$, то $M(\varphi)$ состоит из таких $(a_1, \ldots a_n)$, что функция $M(t_i)$ определена на этих значениях для всех $1 \leq i \leq k$ и $(M(t_1)(a_1, \ldots a_n), \ldots M(t_k)(a_1, \ldots a_n)) \in M(R)$.
+Секвенция $\varphi \sststile{}{x_1, \ldots x_n} \psi$ верна в интерпретации $M$ если $M(\varphi) \subseteq M(\psi)$.
+
+\begin{defn}
+\emph{Модель} теории -- это интерпретация $M$ ее сигнатуры такая, что все аксиомы теории верны в этой интерпретации.
+\end{defn}
+
+\begin{example}
+Теория категорий состоит из двух сортов $\fs{ob}$ и $\fs{hom}$, функциональных символов $d,c : \fs{hom} \to \fs{ob}$, $\fs{id} : \fs{ob} \to \fs{hom}$, $\circ : \fs{hom} \times \fs{hom} \to \fs{hom}$ и следующих аксиом:
+\begin{align*}
+& \sststile{}{f} d(f)\!\downarrow \land c(f)\!\downarrow \\
+& \sststile{}{x} d(\fs{id}(x)) = x \land c(\fs{id}(x)) = x \\
+c(f) = d(g) & \ssststile{}{f,g} \circ(g,f)\!\downarrow \\
+c(f) = d(g) & \sststile{}{f,g} d(\circ(g,f)) = d(f) \land c(\circ(g,f)) = c(g) \\
+& \sststile{}{f} \circ(\fs{id}(c(f)),f) = f \land \circ(f,\fs{id}(d(f))) = f \\
+c(f) = d(g) \land c(g) = d(h) & \sststile{}{f,g,h} \circ(\circ(h,g),f) = \circ(h,\circ(g,f))
+\end{align*}
+Первые две аксиомы говорят, что функции $c$, $d$ и $\fs{id}$ тотальны и описывают домен и кодомен морфизма $\fs{id}(x)$.
+Третья аксиома говорит, что функция $\circ(g,f)$ определена тогда и только тогда, когда домен $g$ совпадает с кодоменом $f$.
+Четвертая аксиома описывает домен и кодомен морфизма $\circ(g,f)$.
+Последние две аксиомы говорят, что $\circ$ ассоциативна и $\fs{id}$ является единицей для $\circ$.
+Модели этой теории -- это в точности малые категории.
+\end{example}
+
+\begin{example}[fc-cats]
+Теория конечно полных категорий является расширением теории категорий.
+Мы добавляем функциональные символы $1 : \fs{ob}$, $! : \fs{ob} \to \fs{hom}$, $\pi_1,\pi_2 : \fs{hom} \times \fs{hom} \to \fs{hom}$, $\fs{pair} : \fs{hom} \times \fs{hom} \times \fs{hom} \times \fs{hom} \to \fs{hom}$ и следующие аксиомы:
+\begin{align*}
+& \sststile{}{x} d(!(x)) = x \land c(!(x)) = 1 \\
+c(f) = 1 & \sststile{}{f} f = !(d(f)) \\
+c(f) = c(g) & \ssststile{}{f,g} \pi_1(f,g)\!\downarrow \\
+c(f) = c(g) & \ssststile{}{f,g} \pi_2(f,g)\!\downarrow \\
+c(f) = c(g) & \sststile{}{f,g} c(\pi_1(f,g)) = d(f) \land c(\pi_2(f,g)) = d(g) \\
+c(f) = c(g) & \sststile{}{f,g} d(\pi_1(f,g)) = d(\pi_2(f,g)) \\
+\fs{pair}(a,b,f,g)\!\downarrow & \ssststile{}{f,g,a,b} d(a) = d(b) \land c(a) = d(f) \land c(b) = d(g) \land c(f) = c(g) \\
+\fs{pair}(a,b,f,g)\!\downarrow & \sststile{}{f,g,a,b} \circ(\pi_1(f,g),\fs{pair}(a,b,f,g)) = a \\
+\fs{pair}(a,b,f,g)\!\downarrow & \sststile{}{f,g,a,b} \circ(\pi_2(f,g),\fs{pair}(a,b,f,g)) = b \\
+c(h) = d(\pi_1(f,g)) & \sststile{}{f,g,h} h = \fs{pair}(\circ(\pi_1(f,g),h),\circ(\pi_2(f,g),h),f,g)
+\end{align*}
+Модели этой теории -- это в точности конечно полные малые категории.
+\end{example}
+
+Правила вывода \emph{частичной хорновской логики} приведены ниже.
+\emph{Теорема} теории -- это секвенция, выводимая из аксиом этой теории при помощи этих правил вывода.
+Мы будем писать $\varphi \sststile{T}{V} \psi$ для обозначения того факта, что $\varphi \sststile{}{V} \psi$ является теоремой теории $T$.
+
+\begin{center}
+$\varphi \sststile{}{V} \varphi$ \axlabel{b1}
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\AxiomC{$\psi \sststile{}{V} \chi$}
+\RightLabel{\axlabel{b2}}
+\BinaryInfC{$\varphi \sststile{}{V} \chi$}
+\DisplayProof
+\qquad
+$\varphi \sststile{}{V} \top$ \axlabel{b3}
+\end{center}
+
+\medskip
+\begin{center}
+$\varphi \land \psi \sststile{}{V} \varphi$ \axlabel{b4}
+\qquad
+$\varphi \land \psi \sststile{}{V} \psi$ \axlabel{b5}
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\AxiomC{$\varphi \sststile{}{V} \chi$}
+\RightLabel{\axlabel{b6}}
+\BinaryInfC{$\varphi \sststile{}{V} \psi \land \chi$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+$\sststile{}{V} x\!\downarrow$ \axlabel{a1}
+\qquad
+$x = y \land \varphi \sststile{}{V} \varphi[y/x]$ \axlabel{a2}
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V,x} \psi$}
+\RightLabel{, $x \in FV(\varphi)$ \axlabel{a3}}
+\UnaryInfC{$\varphi[t/x] \sststile{}{V,V'} \psi[t/x]$}
+\DisplayProof
+\end{center}
+\medskip
+
+Эти правила немного отличаются от тех, что приведены в \cite{PHL}.
+Правило вывода \axref{a3} там заменено на следующие правила вывода:
+\begin{align*}
+R(t_1, \ldots t_k) & \sststile{}{V} t_i\!\downarrow \axtag{a4} \\
+t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
+\sigma(t_1, \ldots t_k)\!\downarrow & \sststile{}{V} t_i\!\downarrow \axtag{a5}
+\end{align*}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{x_1, \ldots x_n} \psi$}
+\RightLabel{\axlabel{a3'}}
+\UnaryInfC{$t_1\!\downarrow \land \ldots \land t_n\!\downarrow \land \varphi[t_1/x_1, \ldots t_n/x_n] \sststile{}{V} \psi[t_1/x_1, \ldots t_n/x_n]$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{prop}
+В присутствии остальных правил вывода, правило \axref{a3} эквивалентно правилам \axref{a3'}, \axref{a4}, \axref{a4'} и \axref{a5}.
+\end{prop}
+\begin{proof}
+Так как секвенции $R(x_1, \ldots x_k) \sststile{}{V} x_i\!\downarrow$, $x_1 = x_2 \sststile{}{V} x_i\!\downarrow$ и $\sigma(x_1, \ldots x_k)\!\downarrow \sststile{}{V} x_i\!\downarrow$ выводимы из \axref{b2}, \axref{b3} и \axref{a1},
+то \axref{a3} влечет \axref{a4}, \axref{a4'} и \axref{a5}.
+Мы можем доказать, что \axref{a3'} выводимо индукцией по $n$.
+Для этого достаточно показать, что следующее правило выводимо:
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V,x} \psi$}
+\UnaryInfC{$t\!\downarrow \land \varphi[t/x] \sststile{}{V} \psi[t/x]$}
+\DisplayProof
+\end{center}
+\medskip
+Для этого в правиле \axref{a3} достаточно в качестве $\varphi$ взять $x\!\downarrow \land \varphi$.
+
+Теперь покажем, что \axref{a3} выводимо из правил \axref{a3'}, \axref{a4}, \axref{a4'} и \axref{a5}.
+По \axref{a3'} из $\varphi \sststile{}{x_1, \ldots x_n, x} \psi$ выводится $x_1\!\downarrow \land \ldots \land x_n\!\downarrow \land t\!\downarrow \land \varphi[t/x] \sststile{}{x_1, \ldots x_n, V'} \psi[t/x]$.
+По \axref{b2} и \axref{b6} нам достаточно показать, что $\varphi[t/x] \sststile{}{x_1, \ldots x_n, V'} x_i\!\downarrow$, $\varphi[t/x] \sststile{}{x_1, \ldots x_n, V'} t\!\downarrow$ и $\varphi[t/x] \sststile{}{x_1, \ldots x_n, V'} \varphi[t/x]$.
+Первая секвенция следует из \axref{a1}, \axref{b2} и \axref{b3}, а последняя из \axref{b1}.
+Докажем, что вторая секвенция выводится.
+Если $\varphi$ -- это формула вида $R(t_1, \ldots t_k)$, то $x \in \mathrm{FV}(t_i)$ для некоторого $1 \leq i \leq k$.
+По \axref{a4} верно, что $R(t_1[t/x], \ldots t_k[t/x]) \sststile{}{x_1, \ldots x_n, V'} t_i[t/x]\!\downarrow$
+Если $\varphi$ -- это формула вида $t_1 = t_2$, то $x \in \mathrm{FV}(t_i)$ для некоторого $1 \leq i \leq 2$.
+По \axref{a4'} верно, что $t_1[t/x] = t_2[t/x] \sststile{}{x_1, \ldots x_n, V'} t_i[t/x]\!\downarrow$.
+По \axref{b2} достаточно доказать, что секвенция $t'[t/x]\!\downarrow\ \sststile{}{V} t\!\downarrow$ выводима для любого терма $t'$ такого, что $x \in \mathrm{FV}(t')$.
+Это легко сделать индукцией по $t'$.
+Если $t' = x$, то это верно по \axref{b1}.
+Если $t' = \sigma(t_1, \ldots t_k)$, то $x \in \mathrm{FV}(t_i)$ для некоторого $1 \leq i \leq k$.
+По \axref{a5} секвенция $\sigma(t_1[t/x], \ldots t_k[t/x])\!\downarrow\ \sststile{}{V} t_i[t/x]\!\downarrow$ выводима.
+По индукционной гипотезе $t_i[t/x]\!\downarrow\ \sststile{}{V} t\!\downarrow$.
+\end{proof}
+
+\subsection{Естественный вывод}
+
+Позже мы встретим несколько утверждений, которые доказываются индукцией по выводу секвенции.
+Мы будем работать с секвенциями, левая сторона которых обладает некоторым свойством, но в выводе секвенции в частичной хорновской логике левая сторона может варьироваться произвольным образом.
+Таким образом, нам нужно описать эквивалентный набор правил вывода, в котором левая формула не менялась бы.
+Мы будем называть эти правила \emph{естественным выводом}.
+В этой системе правая сторона секвенций всегда является атомарной формулой.
+
+\begin{center}
+\AxiomC{}
+\RightLabel{\axlabel{nv}}
+\UnaryInfC{$\varphi \sststile{}{V} x\!\downarrow$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} t_1 = t_2$}
+\RightLabel{\axlabel{ns}}
+\UnaryInfC{$\varphi \sststile{}{V} t_2 = t_1$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{}
+\RightLabel{\axlabel{nh}}
+\UnaryInfC{$\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \varphi_i$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} t_1 = t_2$}
+\AxiomC{$\varphi \sststile{}{V} \psi[t_1/x]$}
+\RightLabel{\axlabel{nl}}
+\BinaryInfC{$\varphi \sststile{}{V} \psi[t_2/x]$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} R(t_1, \ldots t_n)$}
+\RightLabel{\axlabel{np}}
+\UnaryInfC{$\varphi \sststile{}{V} t_i\!\downarrow$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \sigma(t_1, \ldots t_n)\!\downarrow$}
+\RightLabel{\axlabel{nf}}
+\UnaryInfC{$\varphi \sststile{}{V} t_i\!\downarrow$}
+\DisplayProof
+\end{center}
+где $R$ -- это предикатный символ теории, а $\sigma$ -- функциональный символ.
+
+Наконец, для каждой аксиомы $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k} \chi_1 \land \ldots \land \chi_m$
+и всех термов $t_1 : s_1$, \ldots $t_k : s_k$ мы добавляем следующее правило для всех $1 \leq j \leq m$:
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} t_i\!\downarrow$, $1 \leq i \leq k$}
+\AxiomC{$\varphi \sststile{}{V} \psi_i[t_1/x_1, \ldots t_k/x_k]$, $1 \leq i \leq n$}
+\RightLabel{\axlabel{na}}
+\BinaryInfC{$\varphi \sststile{}{V} \chi_j[t_1/x_1, \ldots t_k/x_k]$}
+\DisplayProof
+\end{center}
+
+\begin{prop}
+Секвенция $\varphi \sststile{}{V} \psi_1 \land \ldots \land \psi_n$ выводима из правил \axref{b1}-\axref{b6}, \axref{a1}-\axref{a3} тогда и только тогда, когда
+секвенции $\varphi \sststile{}{V} \psi_1$, \ldots $\varphi \sststile{}{V} \psi_n$ выводимы из правил естественного вывода.
+\end{prop}
+\begin{proof}
+Легко доказать ``только тогда'' направление.
+Наоборот, правила \axref{b1}, \axref{b4} и \axref{b5} следуют из \axref{nh},
+правила \axref{b3} и \axref{b6} верны тривиально,
+правило \axref{a1} следует из \axref{nv},
+правило \axref{a2} следует из \axref{nl} и \axref{nh},
+и аксиомы выводимы по \axref{na}.
+
+Чтобы доказать правило \axref{b2}, нам достаточно показать, что если секвенции $\varphi \sststile{}{V} \psi_1$, \ldots $\varphi \sststile{}{V} \psi_n$
+и $\psi_1 \land \ldots \land \psi_n \sststile{}{V} \chi$ выводимы в естественном выводе, то $\varphi \sststile{}{V} \chi$ также выводима.
+Мы можем сконструировать дерево вывода для этой секвенции как дерево вывода для $\psi_1 \land \ldots \land \psi_n \sststile{}{V} \chi$,
+в котором левая сторона каждой секвенции заменена на $\varphi$ и правила \axref{nh} заменены на деревья вывода для $\varphi \sststile{}{V} \psi_i$.
+
+Чтобы доказать правило \axref{a3}, рассмотрим дерево вывода для секвенции $\varphi \sststile{}{V} \psi$.
+Чтобы сконструировать дерево вывода для $\varphi[t/x] \sststile{}{V,V'} \psi[t/x]$, нам достаточно применить подстановку $t/x$ к каждой секвенции в этом дереве вывода.
+Единственное правило, которое не замкнуто относительно подстановки, -- это \axref{nv}.
+По предположению $x \in FV(\varphi)$.
+Это влечет, что $\varphi[t/x] \sststile{}{V,V'} t\!\downarrow$ выводима из \axref{np}, \axref{nf} и следующих правил:
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} t_1 = t_2$}
+\RightLabel{\axlabel{ne1}}
+\UnaryInfC{$\varphi \sststile{}{V} t_1\!\downarrow$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} t_1 = t_2$}
+\RightLabel{\axlabel{ne2}}
+\UnaryInfC{$\varphi \sststile{}{V} t_2\!\downarrow$}
+\DisplayProof
+\end{center}
+Правило \axref{ne2} следует из \axref{nl} если мы возьмем $\psi(x)$ равным $x = b$.
+Правило \axref{ne1} следует из \axref{ne2} и \axref{ns}.
+\end{proof}
+
+\subsection{Синтаксическая категория теории}
+
+В этом подразделе для каждой теории $T$ мы определим конечно полную категорию $\cat{C}_T$, которая называется \emph{синтаксической категорией} этой теории.
+
+\emph{Производный сорт} теории -- это пара, состоящая из упорядоченного конечного множества переменных $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и формулы $\varphi$ такой, что $\mathrm{FV}(\varphi) \subseteq V$.
+Мы будем записывать сорт, соответствующий такой паре как $\{ \overline{x} : \overline{s} \mid \varphi \}$ или более коротко как $\{ \overline{x} \mid \varphi \}$.
+
+Каждой теории $T$ можно сопоставить ее \emph{синтаксическую категорию} $\cat{C}_T$.
+Объекты этой категории -- это производные сорта $T$.
+Морфизм между объектами $\{ (x_1, \ldots x_n) \mid \varphi \}$ и $\{ (y_1, \ldots y_k) : \overline{s} \mid \psi \}$ -- это класс эквивалентности списков термов $(t_1, \ldots t_k)$ таких,
+что $t_i$ имеет сорт $s_i$, $\mathrm{FV}(t_i) \subseteq \{ x_1, \ldots x_n \}$ и $\varphi \sststile{T}{\overline{x}} \psi[\overline{t}/\overline{y}] \land t_1\!\downarrow \land \ldots \land t_k\!\downarrow$.
+Два списка $(t_1, \ldots t_k)$ и $(t_1', \ldots t_k')$ эквивалентны, если $\varphi \sststile{T}{\overline{x}} t_1 = t_1' \land \ldots \land t_k = t_k'$.
+
+Тождественный морфизм на объекте $\{ \overline{x} \mid \varphi \}$ -- это список $\overline{x}$.
+Композиция морфизмов $(t_1, \ldots t_k) : \{ \overline{x} \mid \varphi \} \to \{ \overline{y} \mid \psi \}$
+и $(t_1', \ldots t_m') : \{ \overline{y} \mid \psi \} \to \{ \overline{z} \mid \chi \}$ -- это список $(t_1'[\rho], \ldots t_m'[\rho])$, где $\rho(y_i) = t_i$.
+Легко видеть, что это определение корректно и действительно задает категорию.
+
+\begin{remark}
+Можно модифицировать определение $\cat{C}_T$, объединив объекты, эквивалентные с точностью до переименования переменных и эквивалентности формул в теории $T$.
+Легко видеть, что такая категория будет эквивалентна $\cat{C}_T$.
+Иногда мы будем отождествлять эквивалентные объекты $\cat{C}_T$.
+\end{remark}
+
+В \cite{PHL} приводится другое определение синтаксической категории.
+Она определяется как начальный объект теории $\mathrm{Cart} \overline{\omega} T$.
+Эта теория является расширением теории, описанной в \pexample{fc-cats}.
+Для каждого сорта $s$ теории $T$ мы добавляем константу $\upgamma^s : \fs{ob}$.
+Для каждого предикатного символа $R : s_1 \times \ldots \times s_n$ теории $T$ мы добавляем константу $\upgamma^R : \fs{hom}$ и аксиому $\sststile{}{} c(\upgamma^R) = \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \land \fs{Mon}(\upgamma^R)$,
+где $X \times Y$ -- декартово произведение объектов, которое определяется очевидным образом в теории конечно полных категорий, и $\fs{Mon}(f)$ -- предикат, утверждающий, что $f$ является мономорфизмом (это верно тогда и только тогда, когда $\pi_1(f,f) = \pi_2(f,f)$).
+Для каждого функционального символа $\sigma : s_1 \times \ldots \times s_n \to s$ теории $T$ мы добавляем константы $\upgamma^\sigma_d, \upgamma^\sigma_m : \fs{hom}$
+и аксиому $\sststile{}{} c(\upgamma^\sigma_m) = \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \land c(\upgamma^\sigma_d) = \upgamma^s \land d(\upgamma^\sigma_d) = d(\upgamma^\sigma_m) \land \fs{Mon}(\upgamma^\sigma_m)$.
+Идея заключается в том, что $\upgamma^\sigma_m$ задает некоторый подобъект домена $\sigma$, а $\upgamma^\sigma_d$ является морфизмом из этого подобъекта в кодомен $\sigma$.
+То есть такая пара морфизмов -- это в точности частичный морфизм из домена $\sigma$ в его кодомен.
+
+В \cite[Section~8]{PHL} описана категориальная семантика частичных хорновских теорий.
+В частности, она описывает интерпретацию термов и формул.
+Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ -- упорядоченное множество переменных, а $t$ -- терм сорта $s$ такой, что $\mathrm{FV}(t) \subseteq V$,
+то категориальная семантика дает нам пару морфизмов $\upgamma^t_d$ и $\upgamma^t_m$, задающих частичный морфизм из $\upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \to \upgamma^s$.
+Если $\varphi$ -- формула такая, что $\mathrm{FV}(\varphi) \subseteq V$, то по категориальной семантике мы получаем мономорфизм $\gamma^\varphi$, задающий подобъект $\upgamma^{s_1} \times \ldots \times \upgamma^{s_n}$.
+
+Для каждой аксиомы $a$ вида $\varphi \sststile{}{V} \psi$ мы добавляем константу $\upgamma^a : \fs{hom}$ и аксиому $\sststile{}{} \upgamma^\varphi = \upgamma^\psi \circ \upgamma^a$.
+Это завершает определение теории $\mathrm{Cart} \overline{\omega} T$.
+Начальную модель этой теории мы будем обозначать $\cat{C}_T'$.
+Мы покажем, что эта категория эквивалентна $\cat{C}_T$.
+
+\begin{prop}
+Категории $\cat{C}_T$ и $\cat{C}_T'$ эквивалентны.
+\end{prop}
+\begin{proof}
+Во-первых, покажем, что $\cat{C}_T$ является моделью $\mathrm{Cart} \overline{\omega} T$.
+Эта категория конечно полная.
+Действительно, $\{ () \mid \top \}$ является терминальным объектом.
+Если $(t_1, \ldots t_k) : \{ \overline{x} \mid \varphi \} \to \{ \overline{z} \mid \chi \}$ и $(t_1', \ldots t_k') : \{ \overline{y} \mid \psi \} \to \{ \overline{z} \mid \chi \}$ -- два морфизма в $\cat{C}_T$,
+то их послойное определение можно определить как $\{ \overline{x}, \overline{y} \mid \varphi \land \psi \land t_1 = t_1' \land \ldots \land t_k = t_k' \}$.
+Легко видеть, что этот объект обладает необходимым универсальным свойством.
+
+Константа $\upgamma^s$ интерпретируется как $\{ x : s \mid \top \}$.
+Константа $\upgamma^R$ интерпретируется как $(x_1, \ldots x_n) : \{ (x_1, \ldots x_n) \mid R(x_1, \ldots x_n) \} \to \{ (x_1, \ldots x_n) \mid \top \}$.
+Константа $\upgamma^\sigma_m$ интерпретируется как $(x_1, \ldots x_n) : \{ (x_1, \ldots x_n) \mid \sigma(x_1, \ldots x_n)\!\downarrow \} \to \{ (x_1, \ldots x_n) \mid \top \}$.
+Константа $\upgamma^\sigma_d$ интерпретируется как $\sigma(x_1, \ldots x_n) : \{ (x_1, \ldots x_n) \mid \sigma(x_1, \ldots x_n)\!\downarrow \} \to \{ y \mid \top \}$.
+Чтобы проинтерпретировать константу $\upgamma^a$, соответствующую аксиоме $\varphi \sststile{}{V} \psi$, достаточно показать, что подобъект $\upgamma^\varphi$ вкладывается в $\upgamma^\psi$.
+Для этого достаточно показать, что для любой формулы $\varphi$ подобъекты $\overline{x} : \{ \overline{x} \mid \varphi \} \to \{ \overline{x} \mid \top \}$ и $\upgamma^\varphi$ эквивалентны.
+Легко индукцией по структуре терма $t$ показать, что подобъекты $\upgamma^t_m$ и $\overline{x} : \{ \overline{x} \mid t\!\downarrow \} \to \{ \overline{x} \mid \top \}$ эквивалентны
+и $\upgamma^t_d$ соответствует морфизму $t : \{ \overline{x} \mid t\!\downarrow \} \to \{ y \mid \top \}$.
+Используя этот факт, легко показать необходимое свойство формул.
+
+Таким образом, $\cat{C}_T$ действительно является моделью $\mathrm{Cart} \overline{\omega} T$.
+Следовательно существует уникальный функтор $\cat{C}_T' \to \cat{C}_T$, являющийся морфизмом моделей.
+\end{proof}
+
+\subsection{Категория теорий}
+
+В этом подразделе мы дадим первое определение категории теорий.
+В следующем подразделе мы дадим более явное описание морфизмов этой категории.
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
