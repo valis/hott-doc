@@ -144,7 +144,9 @@
 \end{enumerate}
 
 Мы будем работать с частичными хорновскими теориями, определение которых мы приведем в следующем подразделе.
-Кроме того, в этом разделе мы зададим структуру 2-категории на них и докажем, что она эквивалентна 2-категории конечно полных малых категорий.
+Часто аксиомы теории пораждаются отношением, которое обладает различными хорошими свойствами такими, как сильная нормализация и конфлюэнтность.
+Мы изучим такие теории в этом разделе.
+Кроме того, мы зададим структуру 2-категории на них и докажем, что она эквивалентна 2-категории конечно полных малых категорий.
 
 \subsection{Определение}
 
@@ -334,6 +336,18 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 По индукционной гипотезе $t_i[t/x]\!\downarrow\ \sststile{}{V} t\!\downarrow$.
 \end{proof}
 
+Позже нам понадобится следующая лемма:
+
+\begin{lem}[mcf]
+Секвенция $\varphi \sststile{}{x_1, \ldots x_n} \psi$ доказуема в теории $T$ тогда и только тогда,
+когда секвенция $\sststile{}{} \psi[c_1/x_1, \ldots c_n/x_n]$ доказуема в теории $T \cup \{ \sststile{}{} c_i\!\downarrow\ \mid 1 \leq i \leq n \} \cup \{ \sststile{}{} \varphi[c_1/x_1, \ldots c_n/x_n] \}$, где $c_1$, \ldots $c_n$ -- новые константы.
+\end{lem}
+\begin{proof}
+Это следует из \cite[Theorem~10, Theorem~11]{PHL}.
+\end{proof}
+
+Мы будем говорить, что две теории \emph{эквивалентны}, если их множества функциональных символов, предикатных символов и теорем совпадают.
+
 \subsection{Естественный вывод}
 
 Позже мы встретим несколько утверждений, которые доказываются индукцией по выводу секвенции.
@@ -427,6 +441,122 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 \end{center}
 Правило \axref{ne2} следует из \axref{nl} если мы возьмем $\psi(x)$ равным $x = b$.
 Правило \axref{ne1} следует из \axref{ne2} и \axref{ns}.
+\end{proof}
+
+\subsection{Разделение аксиом}
+
+Многие теории содержат аксиомы вида
+\[ \sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \varphi \]
+и зачастую эти аксиомы можно убрать из теории, не сильно ее меняя.
+Конкретно, мы докажем, что если отсальные аксиомы удовлетворяют простому естественному условию, то теоремы определенного вида выводимы без этих аксиом.
+
+Мы будем говорить, что аксиомы теории \emph{разделены}, если множество аксиом состоит из двух подмножеств $\mathcal{A}_f$ и $\mathcal{A}_e$, удовлетворяющих следующим условиям:
+\begin{enumerate}
+\item \label{it:sep-f} Секвенции в $\mathcal{A}_f$ имеют вид $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$.
+\item \label{it:sep-e} Для каждой аксиомы $\varphi \sststile{}{V} \psi$ в $\mathcal{A}_e$, каждой аксиомы $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$ в $\mathcal{A}_f$, каждого подтерма вида $\sigma(t_1, \ldots t_k)$ формулы $\psi$,
+секвенция $\varphi \sststile{}{V} \chi[t_1/x_1, \ldots t_k/x_k]$ выводима из аксиом $\mathcal{A}_e$.
+\end{enumerate}
+
+Большинство теорий, встречающихся на практике, эквивалентны теориям с разделенными аксиомами.
+Например, это верно для теорий категорий и конечно полных категорий.
+
+\begin{lem}[der-separated-closed]
+Пусть $T$ -- теория с разделенными аксиомами.
+Если секвенция $\sststile{}{} \psi$ выводима в $T$, то она выводима и из аксиом $\mathcal{A}_e$.
+\end{lem}
+\begin{proof}
+Во-первых, докажем следующий факт.
+Если секвенция $\sststile{}{} \psi$ выводима из $\mathcal{A}_e$, то для любой аксиомы $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$ из $\mathcal{A}_f $ и любого подтерма $\sigma(t_1, \ldots t_k)$ формулы $\psi$
+секвенция $\sststile{}{} \chi[t_1/x_1, \ldots t_k/x_k]$ выводима из $\mathcal{A}_e$.
+Мы докажем это индукцией по выводу $\sststile{}{} \psi$ в системе естественного вывода.
+Для большинства правил это очевидно.
+Для правила \axref{na} это верно по поредположению.
+Единственный нетривиальный случай -- это \axref{nl}:
+\begin{center}
+\AxiomC{$\sststile{}{} a = b$}
+\AxiomC{$\sststile{}{} \psi[a/x]$}
+\RightLabel{\axref{nl}}
+\BinaryInfC{$\sststile{}{} \psi[b/x]$}
+\DisplayProof
+\end{center}
+Если $\sigma(t_1, \ldots t_k)$ является подтермом $b$, то необходимое свойство следует из индукционной гипотезы для $\sststile{}{} a = b$.
+Иначе $\sigma$ принадлежит $\psi$ и существуют термы $t_1'$, \ldots $t_k'$ и формула $\psi'$ такие, что $t_i = t_i'[b/x]$, $\psi = \psi'[\sigma(t_1', \ldots t_k')/y]$.
+По индукционной гипотезе секвенция $\sststile{}{} \chi[t_1'[a/x]/x_1, \ldots t_k'[a/x]/x_k]$ выводима.
+Так как секвенция $\sststile{}{} a = b$ выводима, это влечет, что секвенция $\sststile{}{} \chi[t_1/x_1, \ldots t_k/x_k]$ также выводима.
+
+Теперь мы можем доказать утверждение леммы индукцией по выводу $\sststile{}{} \psi$.
+Единственный нетривиальный случай -- это правило вывода для аксиом из $\mathcal{A}_f$:
+\smallskip
+\begin{center}
+\AxiomC{$\sststile{}{} t_i\!\downarrow$, $1 \leq i \leq k$}
+\AxiomC{$\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$}
+\RightLabel{\axlabel{na}}
+\BinaryInfC{$\sststile{}{} \chi[t_1/x_1, \ldots t_k/x_k]$}
+\DisplayProof
+\end{center}
+По индукционной гипотезе секвенция $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ выводима из $\mathcal{A}_e$.
+Только что доказанный факт влечет, что секвенция $\sststile{}{} \chi[t_1/x_1, \ldots t_k/x_k]$ также выводима из $\mathcal{A}_e$.
+\end{proof}
+
+Предыдущую лемму можно усилить.
+Для этого нам понадобится ввести новое определение.
+Пусть $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi$ -- секвенция в некоторой теории $T$.
+Мы будем говорить, что \emph{функциональные символы посылки этой секвенции определены} в $T$,
+если секвенция $\varphi_1 \land \ldots \land \varphi_i \sststile{}{V} t\!\downarrow$ выводима для любого подтерма $t$ формулы $\varphi_{i+1}$.
+Мы будем говорить, что \emph{функциональные символы этой секвенции определены} в $T$,
+если функциональные символы ее посылки определены и $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} t\!\downarrow$ выводима для любого подтерма $t$ формулы $\psi$.
+
+\begin{prop}[der-separated]
+Пусть $T$ -- теория с разделенными аксиомами.
+Если секвенция $\varphi \sststile{}{V} \psi$ выводима в $T$ и функциональные символы ее посылки определены в $T$, то она выводима из $\mathcal{A}_e$.
+\end{prop}
+\begin{proof}
+Пусть $V = \{ x_1, \ldots x_m \}$ и $\varphi = \varphi_1 \land \ldots \land \varphi_n$.
+Пусть $T_j = T \cup \{ \sststile{}{} c_i\!\downarrow\ \mid 1 \leq i \leq m \} \cup \{ \sststile{}{} \varphi_i[c_1/x_1, \ldots c_m/x_m]\ \mid 1 \leq i < j \}$.
+Мы докажем индукцией по $j$, что аксиомы $T_j$ разделены.
+Для $T_0$ это очевидно.
+Докажем, что если аксиомы $T_j$ разделены, то это верно и для $T_{j+1}$.
+Единственная новая аксиома $T_{j+1}$ -- это $\sststile{}{} \varphi_j[c_1/x_1, \ldots c_m/x_m]$.
+Пусть $\sigma(y_1, \ldots y_k) \sststile{}{y_1, \ldots y_k} \chi$ -- аксиома из $\mathcal{A}_f$, и $\sigma(t_1, \ldots t_k)$ -- подтерм $\varphi_j[c_1/x_1, \ldots c_m/x_m]$.
+Так как функциональные символы $\varphi$ определены, то по \dlem{mcf} секвенция $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ выводима в $T_j$.
+Так как аксиомы $T_j$ разделены, то секвенция $\sststile{}{} \chi[t_1/y_1, \ldots t_k/y_k]$ выводима в $T_j \setminus \mathcal{A}_f$.
+
+Теперь мы можем доказать, что $\varphi \sststile{}{V} \psi$ выводима из $\mathcal{A}_e$.
+По \dlem{mcf} для этого достаточно доказать, что секвенция $\sststile{}{} \psi[c_1/x_1, \ldots c_m/x_m]$ выводима в $T_{n+1} \setminus \mathcal{A}_f$.
+По \dlem{mcf} она выводима в $T_{n+1}$, и по \dlem{der-separated-closed} она выводима и в $T_{n+1} \setminus \mathcal{A}_f$.
+\end{proof}
+
+Многие теории с разделенными аксиомами удовлетворяют более сильному условию, сформулированному в следующем утверждении.
+Оно говорит, что все функциональные символы, которые используются в некоторой аксиоме, должны быть определены при помощи заданных ранее аксиом.
+Мы будем говорить, что \emph{аксиомы теории фундированы}, если это условие выполнено.
+
+\begin{prop}[wf-sep]
+Пусть аксиомы некоторой теории $T$ состоят из трех подмножеств $\mathcal{A}_f$, $\mathcal{A}_d$ и $\mathcal{A}_c$, удовлетворяющих следующим условиям:
+\begin{itemize}
+\item Секвенции в $\mathcal{A}_f$ имеют вид $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$.
+\item Множество $\mathcal{A}_d$ состоит из секвенций вида $\chi \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ таких,
+что если $\mathcal{A}_f$ содержит аксиому вида $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi'$, то $\chi = \chi'$.
+\item Множество $\mathcal{A}_c$ фундировано, и функциональные символы каждой аксиомы $\mathrm{ax}$ из $\mathcal{A}_c$ определены в $\mathcal{A}_f \cup \mathcal{A}_d \cup \mathcal{A}_c|_{\mathrm{ax}}$,
+где $\mathcal{A}_c|_{\mathrm{ax}}$ -- это множество аксиом из $\mathcal{A}_c$, меньших $\mathrm{ax}$.
+\end{itemize}
+Тогда аксиомы $T$ разделены на множества $\mathcal{A}_f$ и $\mathcal{A}_e = \mathcal{A}_d \cup \mathcal{A}_c$.
+\end{prop}
+\begin{proof}
+Если $X$ -- фундированное множество, то множество подмножеств $X$ тоже фундировано в следующем порядке.
+Подмножество $S$ меньше, чем $S'$, если в $S'$ существует элемент, больший, чем все элементы в $S$.
+Мы докажем утверждение индукцией по подмножествам $\mathcal{A}_c$.
+Пусть $S$ -- подмножество $\mathcal{A}_c$.
+Мы хотим доказать, что множества $\mathcal{A}_f$ и $\mathcal{A}_d \cup S$ разделяют теорию $\mathcal{A}_f \cup \mathcal{A}_d \cup S$.
+Условие \eqref{it:sep-f} верно по предположению.
+Условие \eqref{it:sep-e} верно для аксиом из $\mathcal{A}_d$ так как левая часть аксиомы из $\mathcal{A}_d$ и правая часть соответствующей ей аксиомы из $\mathcal{A}_f$ совпадают по предположению.
+
+Докажем, что \eqref{it:sep-e} верно для аксиом из $\mathcal{A}_c$.
+Пусть $\varphi \sststile{}{V} \psi$ -- аксиома из $\mathcal{A}_c$, которую мы будем обозначать $\mathrm{ax}$
+Пусть $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$ -- аксиома в $\mathcal{A}_f$, и $\sigma(t_1, \ldots t_k)$ -- подтерм $\psi$.
+Тогда секвенция $\varphi \sststile{}{V} \sigma(t_1, \ldots t_k)\!\downarrow$ выводима в $\mathcal{A}_f \cup \mathcal{A}_d \cup \mathcal{A}_c|_{\mathrm{ax}}$, так как функциональные символы $\mathrm{ax}$ определены в этой теории.
+По индукционному предположению аксиомы этой теории разделены.
+Следовательно в этой теории выводима секвенция $\varphi \sststile{}{V} \chi[t_1/x_1, \ldots t_k/x_k]$.
+По \dprop{der-separated} эта секвенция выводима в $\mathcal{A}_d \cup \mathcal{A}_c|_{\mathrm{ax}}$, что и требовалось доказать.
 \end{proof}
 
 \subsection{Синтаксическая категория теории}
