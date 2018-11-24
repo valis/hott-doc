@@ -13,6 +13,8 @@
 \usepackage{etex}
 \usepackage{bussproofs}
 \usepackage{turnstile}
+\usepackage{amssymb}
+\usepackage{verbatim}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
 
@@ -110,6 +112,10 @@
 \newcommand{\cat}[1]{\mathcal{#1}}
 \newcommand{\Set}{\bcat{Set}}
 \newcommand{\fs}[1]{\mathrm{#1}}
+\newcommand{\nf}{\mathrm{nf}}
+\newcommand{\FV}{\fs{FV}}
+\newcommand{\repl}{:=}
+\newcommand{\Term}{\mathrm{Term}}
 
 \newenvironment{tolerant}[1]{\par\tolerance=#1\relax}{\par}
 
@@ -169,7 +175,7 @@
 Функциональные символы интерпретируются как частичные функции.
 Формула $t\!\downarrow$ означает, что все подвыражения в $t$ определены.
 \emph{Секвенция} -- это выражение вида $\varphi \sststile{}{x_1, \ldots x_n} \psi$, где $\varphi$ и $\psi$ -- формулы, такие что все переменные, встречающиеся в них, принадлежат множеству $\{ x_1, \ldots x_n \}$.
-Множество переменных, встречающихся в формуле или терме $\varphi$ будет обозначаться как $\mathrm{FV}(\varphi)$.
+Множество переменных, встречающихся в формуле или терме $\varphi$ будет обозначаться как $\FV(\varphi)$.
 Вместо $\varphi_1 \land \ldots \land \varphi_n \sststile{}{x_1, \ldots x_n} \psi$ мы будем часто писать $\varphi_1, \ldots \varphi_n \sststile{}{x_1, \ldots x_n} \psi$.
 
 Мы будем использовать следующие сокращения:
@@ -193,10 +199,10 @@
 и коллекцией отношений $M(R) \subseteq M_{s_1} \times \ldots \times M_{s_n}$ для каждого предикатного символа $R : s_1 \times \ldots \times s_n$.
 
 Пусть $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ -- некоторое конечное множество переменных.
-Если $t$ -- терм сорта $s$ в сигнатуре $\Sigma$ такой, что $\mathrm{FV}(t) \subseteq V$, и $M$ -- интерпретация $\Sigma$, то мы можем определить частичную функцию $M(t) : M_{s_1} \times \ldots \times M_{s_n} \to M_s$ рекурсией по структуре $t$.
+Если $t$ -- терм сорта $s$ в сигнатуре $\Sigma$ такой, что $\FV(t) \subseteq V$, и $M$ -- интерпретация $\Sigma$, то мы можем определить частичную функцию $M(t) : M_{s_1} \times \ldots \times M_{s_n} \to M_s$ рекурсией по структуре $t$.
 Если $t = x_i$, то $M(t)$ -- это просто проекция на $i$-ую координату.
 Если $t = \sigma(t_1, \ldots t_k)$, то $M(t)(a_1, \ldots a_n) = M(\sigma)(M(t_1)(a_1, \ldots a_n), \ldots M(t_k)(a_1, \ldots a_n))$.
-Если $\varphi$ -- формула в сигнатуре $\Sigma$ такая, что $\mathrm{FV}(t) \subseteq V$, и $M$ -- интерпретация $\Sigma$, то мы можем определить отношение $M(\varphi) \subseteq M_{s_1} \times \ldots \times M_{s_n}$.
+Если $\varphi$ -- формула в сигнатуре $\Sigma$ такая, что $\FV(t) \subseteq V$, и $M$ -- интерпретация $\Sigma$, то мы можем определить отношение $M(\varphi) \subseteq M_{s_1} \times \ldots \times M_{s_n}$.
 Если $\varphi$ -- формула вида $t_1 = t_2$, то $M(\varphi)$ состоит из таких $(a_1, \ldots a_n)$, что $M(t_1)$ и $M(t_2)$ определены на этих значениях и $M(t_1)(a_1, \ldots a_n) = M(t_2)(a_1, \ldots a_n)$.
 Если $\varphi$ -- формула вида $R(t_1, \ldots t_k)$, то $M(\varphi)$ состоит из таких $(a_1, \ldots a_n)$, что функция $M(t_i)$ определена на этих значениях для всех $1 \leq i \leq k$ и $(M(t_1)(a_1, \ldots a_n), \ldots M(t_k)(a_1, \ldots a_n)) \in M(R)$.
 Секвенция $\varphi \sststile{}{x_1, \ldots x_n} \psi$ верна в интерпретации $M$ если $M(\varphi) \subseteq M(\psi)$.
@@ -224,18 +230,19 @@ c(f) = d(g) \land c(g) = d(h) & \sststile{}{f,g,h} \circ(\circ(h,g),f) = \circ(h
 
 \begin{example}[fc-cats]
 Теория конечно полных категорий является расширением теории категорий.
-Мы добавляем функциональные символы $1 : \fs{ob}$, $! : \fs{ob} \to \fs{hom}$, $\pi_1,\pi_2 : \fs{hom} \times \fs{hom} \to \fs{hom}$, $\fs{pair} : \fs{hom} \times \fs{hom} \times \fs{hom} \times \fs{hom} \to \fs{hom}$ и следующие аксиомы:
+Мы добавляем функциональные символы $1 : \fs{ob}$, $! : \fs{ob} \to \fs{hom}$, $\times : \fs{hom} \times \fs{hom} \to \fs{ob}$, $\pi_1,\pi_2 : \fs{hom} \times \fs{hom} \to \fs{hom}$, $\fs{pair} : \fs{hom} \times \fs{hom} \times \fs{hom} \times \fs{hom} \to \fs{hom}$ и следующие аксиомы:
 \begin{align*}
 & \sststile{}{x} d(!(x)) = x \land c(!(x)) = 1 \\
-c(f) = 1 & \sststile{}{f} f = !(d(f)) \\
+c(f) = 1 & \sststile{}{f} f =\ !(d(f)) \\
+c(f) = c(g) & \ssststile{}{f,g} \times(f,g)\!\downarrow \\
 c(f) = c(g) & \ssststile{}{f,g} \pi_1(f,g)\!\downarrow \\
 c(f) = c(g) & \ssststile{}{f,g} \pi_2(f,g)\!\downarrow \\
 c(f) = c(g) & \sststile{}{f,g} c(\pi_1(f,g)) = d(f) \land c(\pi_2(f,g)) = d(g) \\
-c(f) = c(g) & \sststile{}{f,g} d(\pi_1(f,g)) = d(\pi_2(f,g)) \\
+c(f) = c(g) & \sststile{}{f,g} d(\pi_1(f,g)) = \times(f,g) \land d(\pi_2(f,g)) = \times(f,g) \\
 \fs{pair}(a,b,f,g)\!\downarrow & \ssststile{}{f,g,a,b} d(a) = d(b) \land c(a) = d(f) \land c(b) = d(g) \land c(f) = c(g) \\
 \fs{pair}(a,b,f,g)\!\downarrow & \sststile{}{f,g,a,b} \circ(\pi_1(f,g),\fs{pair}(a,b,f,g)) = a \\
 \fs{pair}(a,b,f,g)\!\downarrow & \sststile{}{f,g,a,b} \circ(\pi_2(f,g),\fs{pair}(a,b,f,g)) = b \\
-c(h) = d(\pi_1(f,g)) & \sststile{}{f,g,h} h = \fs{pair}(\circ(\pi_1(f,g),h),\circ(\pi_2(f,g),h),f,g)
+c(h) = \times(f,g) & \sststile{}{f,g,h} \fs{pair}(\circ(\pi_1(f,g),h),\circ(\pi_2(f,g),h),f,g) = h
 \end{align*}
 Модели этой теории -- это в точности конечно полные малые категории.
 \end{example}
@@ -279,7 +286,7 @@ $x = y \land \varphi \sststile{}{V} \varphi[y/x]$ \axlabel{a2}
 \medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V,x} \psi$}
-\RightLabel{, $x \in FV(\varphi)$ \axlabel{a3}}
+\RightLabel{, $x \in \FV(\varphi)$ \axlabel{a3}}
 \UnaryInfC{$\varphi[t/x] \sststile{}{V,V'} \psi[t/x]$}
 \DisplayProof
 \end{center}
@@ -324,14 +331,14 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 По \axref{b2} и \axref{b6} нам достаточно показать, что $\varphi[t/x] \sststile{}{x_1, \ldots x_n, V'} x_i\!\downarrow$, $\varphi[t/x] \sststile{}{x_1, \ldots x_n, V'} t\!\downarrow$ и $\varphi[t/x] \sststile{}{x_1, \ldots x_n, V'} \varphi[t/x]$.
 Первая секвенция следует из \axref{a1}, \axref{b2} и \axref{b3}, а последняя из \axref{b1}.
 Докажем, что вторая секвенция выводится.
-Если $\varphi$ -- это формула вида $R(t_1, \ldots t_k)$, то $x \in \mathrm{FV}(t_i)$ для некоторого $1 \leq i \leq k$.
+Если $\varphi$ -- это формула вида $R(t_1, \ldots t_k)$, то $x \in \FV(t_i)$ для некоторого $1 \leq i \leq k$.
 По \axref{a4} верно, что $R(t_1[t/x], \ldots t_k[t/x]) \sststile{}{x_1, \ldots x_n, V'} t_i[t/x]\!\downarrow$
-Если $\varphi$ -- это формула вида $t_1 = t_2$, то $x \in \mathrm{FV}(t_i)$ для некоторого $1 \leq i \leq 2$.
+Если $\varphi$ -- это формула вида $t_1 = t_2$, то $x \in \FV(t_i)$ для некоторого $1 \leq i \leq 2$.
 По \axref{a4'} верно, что $t_1[t/x] = t_2[t/x] \sststile{}{x_1, \ldots x_n, V'} t_i[t/x]\!\downarrow$.
-По \axref{b2} достаточно доказать, что секвенция $t'[t/x]\!\downarrow\ \sststile{}{V} t\!\downarrow$ выводима для любого терма $t'$ такого, что $x \in \mathrm{FV}(t')$.
+По \axref{b2} достаточно доказать, что секвенция $t'[t/x]\!\downarrow\ \sststile{}{V} t\!\downarrow$ выводима для любого терма $t'$ такого, что $x \in \FV(t')$.
 Это легко сделать индукцией по $t'$.
 Если $t' = x$, то это верно по \axref{b1}.
-Если $t' = \sigma(t_1, \ldots t_k)$, то $x \in \mathrm{FV}(t_i)$ для некоторого $1 \leq i \leq k$.
+Если $t' = \sigma(t_1, \ldots t_k)$, то $x \in \FV(t_i)$ для некоторого $1 \leq i \leq k$.
 По \axref{a5} секвенция $\sigma(t_1[t/x], \ldots t_k[t/x])\!\downarrow\ \sststile{}{V} t_i[t/x]\!\downarrow$ выводима.
 По индукционной гипотезе $t_i[t/x]\!\downarrow\ \sststile{}{V} t\!\downarrow$.
 \end{proof}
@@ -426,7 +433,7 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 Чтобы доказать правило \axref{a3}, рассмотрим дерево вывода для секвенции $\varphi \sststile{}{V} \psi$.
 Чтобы сконструировать дерево вывода для $\varphi[t/x] \sststile{}{V,V'} \psi[t/x]$, нам достаточно применить подстановку $t/x$ к каждой секвенции в этом дереве вывода.
 Единственное правило, которое не замкнуто относительно подстановки, -- это \axref{nv}.
-По предположению $x \in FV(\varphi)$.
+По предположению $x \in \FV(\varphi)$.
 Это влечет, что $\varphi[t/x] \sststile{}{V,V'} t\!\downarrow$ выводима из \axref{np}, \axref{nf} и следующих правил:
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} t_1 = t_2$}
@@ -453,12 +460,50 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 Мы будем говорить, что аксиомы теории \emph{разделены}, если множество аксиом состоит из двух подмножеств $\mathcal{A}_f$ и $\mathcal{A}_e$, удовлетворяющих следующим условиям:
 \begin{enumerate}
 \item \label{it:sep-f} Секвенции в $\mathcal{A}_f$ имеют вид $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$.
-\item \label{it:sep-e} Для каждой аксиомы $\varphi \sststile{}{V} \psi$ в $\mathcal{A}_e$, каждой аксиомы $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$ в $\mathcal{A}_f$, каждого подтерма вида $\sigma(t_1, \ldots t_k)$ формулы $\psi$,
-секвенция $\varphi \sststile{}{V} \chi[t_1/x_1, \ldots t_k/x_k]$ выводима из аксиом $\mathcal{A}_e$.
+\item \label{it:sep-e} Если секвенция вида $\sststile{}{} \varphi$ выводима в $\mathcal{A}_f \cup \mathcal{A}_e$, то она выводима и в $\mathcal{A}_e$.
 \end{enumerate}
 
-Большинство теорий, встречающихся на практике, эквивалентны теориям с разделенными аксиомами.
+Разумеется, мы всегда можем взять пустое множество в качестве $\mathcal{A}_f$, но, чем оно больше, тем лучше.
+Зачастую в качестве $\mathcal{A}_f$ можно взять максимальное возможное множество.
 Например, это верно для теорий категорий и конечно полных категорий.
+Это следует из следующей леммы.
+Пусть множество аксиом некоторой теории состоит из двух подмножеств $\mathcal{A}_f$ и $\mathcal{A}_e$.
+Мы будем говорить, что подтермы некоторой формулы $\varphi$ определены в $\mathcal{A}_e$, если для любой аксиомы $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$ в $\mathcal{A}_f$
+и любого подтерма вида $\sigma(t_1, \ldots t_k)$ формулы $\varphi$ секвенция $\sststile{}{} \chi[t_1/x_1, \ldots t_k/x_k]$ выводима из $\mathcal{A}_e$.
+
+\begin{lem}[der-separated-closed]
+Пусть $\mathcal{A}_f$ -- подмножество множества аксиом некоторой теории, удовлетворяющее условию~\eqref{it:sep-f}.
+Тогда аксиомы этой теории разделены тогда и только тогда, когда выполнено следующее условие.
+Для каждой аксиомы $\varphi \sststile{}{V} \psi$ и каждой замкнутой подстановки $\rho$, если секвенция $\sststile{}{} \varphi[\rho] \land \rho\!\downarrow$ выводима из $\mathcal{A}_e$,
+и подтермы $\varphi[\rho]$ определены, то подтермы $\psi[\rho]$ тоже определены.
+\end{lem}
+\begin{proof}
+Допустим аксиомы разделены.
+Тогда, если секвенция $\sststile{}{} \varphi[\rho] \land \rho\!\downarrow$ выводима из $\mathcal{A}_e$, то секвенция $\sststile{}{} \psi[\rho]$ выводима из $\mathcal{A}_e \cup \mathcal{A}_f$.
+Отсюда следует, что подтермы $\psi$ определены в $\mathcal{A}_f \cup \mathcal{A}_e$ относительно $\rho$.
+По предположению они определены и в $\mathcal{A}_e$.
+
+Теперь предположим, что условие леммы выполнено.
+Сначала мы докажем, что для любой замкнутой формулы $\varphi$ такой, что секвенция $\sststile{}{} \varphi$ выводима в $\mathcal{A}_e$, ее подтермы определены в $\mathcal{A}_e$,
+Мы докажем это индукцией по выводу $\sststile{}{} \varphi$ в системе естественного вывода.
+Для большинства правил это очевидно.
+Для правила \axref{na} это верно по предположению.
+Единственный нетривиальный случай -- это \axref{nl}:
+\begin{center}
+\AxiomC{$\sststile{}{} a = b$}
+\AxiomC{$\sststile{}{} \psi[a/x]$}
+\RightLabel{\axref{nl}}
+\BinaryInfC{$\sststile{}{} \psi[b/x]$}
+\DisplayProof
+\end{center}
+Если $\sigma(t_1, \ldots t_k)$ является подтермом $b$, то необходимое свойство следует из индукционной гипотезы для $\sststile{}{} a = b$.
+Иначе $\sigma$ принадлежит $\psi$ и существуют термы $t_1'$, \ldots $t_k'$ и формула $\psi'$ такие, что $t_i = t_i'[b/x]$, $\psi = \psi'[\sigma(t_1', \ldots t_k')/y]$.
+По индукционной гипотезе секвенция $\sststile{}{} \chi[t_1'[a/x]/x_1, \ldots t_k'[a/x]/x_k]$ выводима.
+Так как секвенция $\sststile{}{} a = b$ выводима, это влечет, что секвенция $\sststile{}{} \chi[t_1/x_1, \ldots t_k/x_k]$ также выводима.
+
+Теперь, если некоторая секвенция $\sststile{}{} \varphi$ выводима в $\mathcal{A}_f \cup \mathcal{A}_e$, то мы докажем индукцией по ее естественному выводу, что она выводится и в $\mathcal{A}_e$.
+Единственный нетривиальный случай -- это правило \axref{na} для аксиом из $\mathcal{A}_f$, которое следует из только что доказанного факта.
+\end{proof}
 
 \begin{lem}[der-separated-closed]
 Пусть $T$ -- теория с разделенными аксиомами.
@@ -466,11 +511,11 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 \end{lem}
 \begin{proof}
 Во-первых, докажем следующий факт.
-Если секвенция $\sststile{}{} \psi$ выводима из $\mathcal{A}_e$, то для любой аксиомы $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$ из $\mathcal{A}_f $ и любого подтерма $\sigma(t_1, \ldots t_k)$ формулы $\psi$
+Если секвенция $\sststile{}{} \psi$ выводима из $\mathcal{A}_e$, то для любой аксиомы $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$ из $\mathcal{A}_f$ и любого подтерма $\sigma(t_1, \ldots t_k)$ формулы $\psi$
 секвенция $\sststile{}{} \chi[t_1/x_1, \ldots t_k/x_k]$ выводима из $\mathcal{A}_e$.
 Мы докажем это индукцией по выводу $\sststile{}{} \psi$ в системе естественного вывода.
 Для большинства правил это очевидно.
-Для правила \axref{na} это верно по поредположению.
+Для правила \axref{na} это следует из \eqref{it:sep-e}.
 Единственный нетривиальный случай -- это \axref{nl}:
 \begin{center}
 \AxiomC{$\sststile{}{} a = b$}
@@ -498,17 +543,15 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 Только что доказанный факт влечет, что секвенция $\sststile{}{} \chi[t_1/x_1, \ldots t_k/x_k]$ также выводима из $\mathcal{A}_e$.
 \end{proof}
 
-Предыдущую лемму можно усилить.
+Условие в определении разделения аксиом можно усилить.
 Для этого нам понадобится ввести новое определение.
 Пусть $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi$ -- секвенция в некоторой теории $T$.
-Мы будем говорить, что \emph{функциональные символы посылки этой секвенции определены} в $T$,
-если секвенция $\varphi_1 \land \ldots \land \varphi_i \sststile{}{V} t\!\downarrow$ выводима для любого подтерма $t$ формулы $\varphi_{i+1}$.
-Мы будем говорить, что \emph{функциональные символы этой секвенции определены} в $T$,
-если функциональные символы ее посылки определены и $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} t\!\downarrow$ выводима для любого подтерма $t$ формулы $\psi$.
+Мы будем говорить, что \emph{подтермы посылки этой секвенции определены} в $T$,
+если секвенция $\varphi_1 \land \ldots \land \varphi_i \sststile{}{V} t\!\downarrow$ выводима в $T$ для любого подтерма $t$ формулы $\varphi_{i+1}$.
 
 \begin{prop}[der-separated]
 Пусть $T$ -- теория с разделенными аксиомами.
-Если секвенция $\varphi \sststile{}{V} \psi$ выводима в $T$ и функциональные символы ее посылки определены в $T$, то она выводима из $\mathcal{A}_e$.
+Если секвенция $\varphi \sststile{}{V} \psi$ выводима в $T$ и подтермы ее посылки определены в $T$, то она выводима из $\mathcal{A}_e$.
 \end{prop}
 \begin{proof}
 Пусть $V = \{ x_1, \ldots x_m \}$ и $\varphi = \varphi_1 \land \ldots \land \varphi_n$.
@@ -518,7 +561,7 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 Докажем, что если аксиомы $T_j$ разделены, то это верно и для $T_{j+1}$.
 Единственная новая аксиома $T_{j+1}$ -- это $\sststile{}{} \varphi_j[c_1/x_1, \ldots c_m/x_m]$.
 Пусть $\sigma(y_1, \ldots y_k) \sststile{}{y_1, \ldots y_k} \chi$ -- аксиома из $\mathcal{A}_f$, и $\sigma(t_1, \ldots t_k)$ -- подтерм $\varphi_j[c_1/x_1, \ldots c_m/x_m]$.
-Так как функциональные символы $\varphi$ определены, то по \dlem{mcf} секвенция $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ выводима в $T_j$.
+Так как подтермы $\varphi$ определены, то по \dlem{mcf} секвенция $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ выводима в $T_j$.
 Так как аксиомы $T_j$ разделены, то секвенция $\sststile{}{} \chi[t_1/y_1, \ldots t_k/y_k]$ выводима в $T_j \setminus \mathcal{A}_f$.
 
 Теперь мы можем доказать, что $\varphi \sststile{}{V} \psi$ выводима из $\mathcal{A}_e$.
@@ -526,50 +569,146 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 По \dlem{mcf} она выводима в $T_{n+1}$, и по \dlem{der-separated-closed} она выводима и в $T_{n+1} \setminus \mathcal{A}_f$.
 \end{proof}
 
-Многие теории с разделенными аксиомами удовлетворяют более сильному условию, сформулированному в следующем утверждении.
-Оно говорит, что все функциональные символы, которые используются в некоторой аксиоме, должны быть определены при помощи заданных ранее аксиом.
-Мы будем говорить, что \emph{аксиомы теории фундированы}, если это условие выполнено.
+\subsection{Конфлюэнтные теории}
 
-\begin{prop}[wf-sep]
-Пусть аксиомы некоторой теории $T$ состоят из трех подмножеств $\mathcal{A}_f$, $\mathcal{A}_d$ и $\mathcal{A}_c$, удовлетворяющих следующим условиям:
-\begin{itemize}
-\item Секвенции в $\mathcal{A}_f$ имеют вид $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$.
-\item Множество $\mathcal{A}_d$ состоит из секвенций вида $\chi \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ таких,
-что если $\mathcal{A}_f$ содержит аксиому вида $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi'$, то $\chi = \chi'$.
-\item Множество $\mathcal{A}_c$ фундировано, и функциональные символы каждой аксиомы $\mathrm{ax}$ из $\mathcal{A}_c$ определены в $\mathcal{A}_f \cup \mathcal{A}_d \cup \mathcal{A}_c|_{\mathrm{ax}}$,
-где $\mathcal{A}_c|_{\mathrm{ax}}$ -- это множество аксиом из $\mathcal{A}_c$, меньших $\mathrm{ax}$.
-\end{itemize}
-Тогда аксиомы $T$ разделены на множества $\mathcal{A}_f$ и $\mathcal{A}_e = \mathcal{A}_d \cup \mathcal{A}_c$.
-\end{prop}
-\begin{proof}
-Если $X$ -- фундированное множество, то множество подмножеств $X$ тоже фундировано в следующем порядке.
-Подмножество $S$ меньше, чем $S'$, если в $S'$ существует элемент, больший, чем все элементы в $S$.
-Мы докажем утверждение индукцией по подмножествам $\mathcal{A}_c$.
-Пусть $S$ -- подмножество $\mathcal{A}_c$.
-Мы хотим доказать, что множества $\mathcal{A}_f$ и $\mathcal{A}_d \cup S$ разделяют теорию $\mathcal{A}_f \cup \mathcal{A}_d \cup S$.
-Условие \eqref{it:sep-f} верно по предположению.
-Условие \eqref{it:sep-e} верно для аксиом из $\mathcal{A}_d$ так как левая часть аксиомы из $\mathcal{A}_d$ и правая часть соответствующей ей аксиомы из $\mathcal{A}_f$ совпадают по предположению.
+Зачастую можно выбрать направление для аксиом, постулирующих равенства, так, чтобы получившееся отношение обладало свойством конфлюэнтности.
+Для таких теорий можно доказать несколько полезных утверждений.
+В этом разделе мы определим понятие конфлюэнтных теорий, обладающих этим свойством, и докажем их свойства.
+Для этого нам понадобится определить несколько понятий из теории абстрактных систем редукций \cite{Terese,klop-trs,ohlebusch-advanced}:
 
-Докажем, что \eqref{it:sep-e} верно для аксиом из $\mathcal{A}_c$.
-Пусть $\varphi \sststile{}{V} \psi$ -- аксиома из $\mathcal{A}_c$, которую мы будем обозначать $\mathrm{ax}$
-Пусть $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$ -- аксиома в $\mathcal{A}_f$, и $\sigma(t_1, \ldots t_k)$ -- подтерм $\psi$.
-Тогда секвенция $\varphi \sststile{}{V} \sigma(t_1, \ldots t_k)\!\downarrow$ выводима в $\mathcal{A}_f \cup \mathcal{A}_d \cup \mathcal{A}_c|_{\mathrm{ax}}$, так как функциональные символы $\mathrm{ax}$ определены в этой теории.
-По индукционному предположению аксиомы этой теории разделены.
-Следовательно в этой теории выводима секвенция $\varphi \sststile{}{V} \chi[t_1/x_1, \ldots t_k/x_k]$.
-По \dprop{der-separated} эта секвенция выводима в $\mathcal{A}_d \cup \mathcal{A}_c|_{\mathrm{ax}}$, что и требовалось доказать.
-\end{proof}
+\begin{enumerate}
+\item \emph{Абстрактная система редукций} -- это множество $A$ вместе с бинарным отношением $\Rightarrow$ на нем.
+Мы будем обозначать $\Rightarrow^*$ рефлексивное и транзитивное замыкание отношения $\Rightarrow$.
+Если $\Rightarrow_1$ и $\Rightarrow_2$ -- два отношения, то мы будем писать $\Rightarrow_1 \Rightarrow_2$ для обозначения следующего отношения:
+$t \Rightarrow_1 \Rightarrow_2 t'$ тогда и только тогда, когда существует терм $s$ такой, что $t \Rightarrow_1 s$ и $s \Rightarrow_2 t'$.
+\item Элемент $a$ \emph{редуцируется} к элементу $a'$ если $a \Rightarrow^* a'$.
+\emph{Последовательность редукций} -- это конечная или бесконечная последовательность элементов $a_i$ таких, что $a_0 \Rightarrow a_1 \Rightarrow a_2 \Rightarrow \ldots$.
+\item Два элемента $a$ и $b$ \emph{соединимы} если существует элемент $c$ такой, что $a \Rightarrow^* c$ и $b \Rightarrow^* c$.
+Мы будем также говорить, что $a$ и $b$ соединимы отношением $\Rightarrow$ если оно не ясно из контекста.
+Элемент $a$ \emph{конфлюэнтен} если $a \Rightarrow^* b$ и $a \Rightarrow^* c$ влечет, что термы $b$ и $c$ соединимы.
+Система \emph{конфлюэнтна} если все ее элементы конфлюэнтны.
+Эквивалентно, система конфлюэнтны если любая пара ее элементов соединима.
+\item Два элемента $a$ и $b$ называются \emph{$\Rightarrow$-эквивалентными}, если существует последовательность элементов $a_1$, \ldots $a_n$ такая, что $a = a_1$, $b = a_n$,
+и для всех $1 \leq i < n$ либо $a_i \Rightarrow a_{i+1}$, либо $a_{i+1} \Rightarrow a_i$.
+\item Элемент $a$ называется \emph{нормальной формой} если не существует элемента $a'$ такого, что $a \Rightarrow a'$.
+Мы будем писать $a \Rightarrow^\nf b$ когда $a \Rightarrow^* b$ и $b$ является нормальной формой.
+Мы будем говорить, что элемент $a$ \emph{имеет нормальную форму} (или, что оно \emph{слабо нормализуем}), если $a \Rightarrow^\nf b$ для некоторого $b$.
+Система является \emph{слабо нормализующей}, если все ее элементы имеют нормальную форму.
+\item Элемент $a$ \emph{сильно нормалищуем}, если не существует бесконечной последовательности редукций, начинающейся в $a$.
+Система является \emph{сильно нормалиющей}, если все ее элементы сильно нормализуемы.
+\item Подмножество $A'$ множества $A$ \emph{замкнуто} относительно $\Rightarrow$, если $a' \in A'$ и $a' \Rightarrow a$ влечет, что $a \in A'$.
+\end{enumerate}
+
+\emph{Система переписывания термов} -- это бинарное множество $R$ на множестве термов некоторой теории, удовлетворяющее следующим условиям:
+\begin{enumerate}
+\item Если $R(t,s)$, то $\FV(s) \subseteq \FV(t)$.
+\item Если $R(t,s)$, то $t$ не является переменной.
+\end{enumerate}
+Система переписываения термов $R$ называется \emph{лево-линейной}, если для всех термов $t$ и $s$ таких, что $R(t,s)$, каждая переменная встречается в $t$ не более одного раза.
+
+Для каждой системы переписывания термов $R$ мы можем определить отношение $\Rightarrow_R$ на множестве термов следующим образом: если $R(t,s)$, то
+\[ c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow_R c[x \repl s[x_1 \repl t_1, \ldots x_k \repl t_k]] \]
+для всех $c$, $x_1$, \ldots $x_k$ и $t_1$, \ldots $t_k$.
+Мы будем обозначать $\Term_T$ множество термов теории $T$.
+Таким образом, у любой системы переписывания термов есть подлежащая абстрактная система редукций $(\Term_T,\Rightarrow_R)$.
+
+Пусть $V$ -- множество переменных, а $\varphi$ -- формула такая, что $\FV(\varphi) \subseteq V$.
+Мы будем говорить, что терм $t$ некоторой теории $T$ \emph{определен} по отношению к паре $(V,\varphi)$, если секвенция $\varphi \sststile{}{V} t\!\downarrow$ выводима в $T$.
+Мы будем писать $\Term_{T,V,\varphi}^d$ для обозначения множества термов, определенных по отношению к $(V,\varphi)$.
+Мы будем писать $\Term_T^d$ для обозначения множества $\Term_{T,\varnothing,\top}^d$.
+
+\begin{defn}[directed]
+Пусть $T$ -- теория с разделенными аксиомами.
+\emph{Система редукций} на $T$ -- это абстрактная система редукций $\Rightarrow_T$ на $\Term^d_T$ такая, что следующие условие выполнены:
+\begin{enumerate}
+\item \label{it:dir-first} Для каждой пары термов $t$ и $s$ таких, что $t \Rightarrow_T s$, секвенция $\sststile{}{} t = s$ выводима.
+\item \label{it:dir-second} Для каждой подстановки $\rho$, каждого терма $c$ и каждой аксиомы вида $\psi \sststile{}{V} t = s$ в $\mathcal{A}_e$ таких,
+что секвенция $\sststile{}{} \psi[\rho] \land c[t[\rho]/x] = c[s[\rho]/x]$ выводима,
+термы $c[t[\rho]/x]$ и $c[s[\rho]/x]$ эквивалентны в системе $(\Term_T^d,\Rightarrow_T)$.
+\end{enumerate}
+\end{defn}
+
+\begin{remark}[trs-theory]
+Зачастую система редукций на теории $T$ определена как сужение $\Rightarrow_R$ на множество $\Term^d_T$ для некоторой системы переписывания термов $R$.
+В этом случае условия \eqref{it:dir-first} и \eqref{it:dir-second} эквивалентны следующим условиям:
+\begin{enumerate}
+\item \label{it:trs-dir-first} Для каждой подстановки $\rho$ и каждой пары термов $t$ и $s$ таких, что $(t,s) \in R$, если $\sststile{T}{} t[\rho]\!\downarrow$, то $\sststile{T}{} t[\rho] = s[\rho]$.
+\item \label{it:trs-dir-second} Для каждой подстановки $\rho$ и каждой аксиомы вида $\psi \sststile{}{V} t = s$ в $\mathcal{A}_e$ таких,
+что секвенция $\sststile{}{} \psi[\rho]$ выводима, термы $t[\rho]$ и $s[\rho]$ эквивалентны в системе $(\Term_T^d,\Rightarrow_T)$.
+\end{enumerate}
+\end{remark}
+
+\begin{example}[dir-ax]
+Пусть $\mathcal{A}_f$ -- множество аксиом в некоторой теории $T$, удовлетворяющее условию~\eqref{it:sep-f}.
+Пусть $\mathcal{A}_d$ -- множество аксиом в $T$ вида $\varphi \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ такое,
+что для любой такой аксиомы в $\mathcal{A}_d$ и любой аксиомы вида $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \chi$ верно, что $\varphi = \chi$.
+
+Пусть $R$ -- система переписывания термов на $T$, сохраняющая сорта термов.
+Пусть $\mathcal{A}_c$ -- множество аксиом вида $t\!\downarrow\ \sststile{}{\FV(t)} t = s$ для каждой пары $(t,s) \in R$.
+Если аксиомы $\mathcal{A}_f \cup (\mathcal{A}_d \cup \mathcal{A}_c)$ разделены, то $R$ задает систему редукций на $\mathcal{A}_f \cup \mathcal{A}_d \cup \mathcal{A}_c$ как описано в \premark{trs-theory}.
+\end{example}
+
+\begin{example}
+Теорию категорий можно представить в виде, описаном в \pexample{dir-ax}.
+Аксиомы $\mathcal{A}_f \cup \mathcal{A}_d$ эквивалентны следующему набору аксиом:
+\begin{align*}
+& \sststile{}{f} d(f)\!\downarrow \land c(f)\!\downarrow \\
+& \sststile{}{x} \fs{id}(x)\!\downarrow \\
+c(f) = d(g) & \ssststile{}{f,g} \circ(g,f)\!\downarrow
+\end{align*}
+Отношение $R$ состоит из следующих пар:
+\begin{align*}
+d(\fs{id}(x)) & \Rightarrow_R x \\
+c(\fs{id}(x)) & \Rightarrow_R x \\
+d(\circ(g,f)) & \Rightarrow_R d(f) \\
+c(\circ(g,f)) & \Rightarrow_R c(g) \\
+\circ(\fs{id}(c(f)),f) & \Rightarrow_R f \\
+\circ(f,\fs{id}(d(f))) & \Rightarrow_R f \\
+\circ(\circ(h,g),f) & \Rightarrow_R \circ(h,\circ(g,f))
+\end{align*}
+\end{example}
+
+\begin{comment}
+\begin{example}
+На теории конечно полных категорий тоже есть естественная система редукций.
+Мы расширяем множество $\mathcal{A}_f \cup \mathcal{A}_d$ следующими аксиомами:
+\begin{align*}
+& \sststile{}{} 1\!\downarrow \\
+& \sststile{}{x}\ !(x)\!\downarrow \\
+c(f) = c(g) & \ssststile{}{f,g} \times(f,g)\!\downarrow \\
+c(f) = c(g) & \ssststile{}{f,g} \pi_1(f,g)\!\downarrow \\
+c(f) = c(g) & \ssststile{}{f,g} \pi_2(f,g)\!\downarrow \\
+\fs{pair}(a,b,f,g)\!\downarrow & \ssststile{}{f,g,a,b} d(a) = d(b) \land c(a) = d(f) \land c(b) = d(g) \land c(f) = c(g) \\
+\end{align*}
+Отношение $R$ расширяется следующими парами:
+\begin{align*}
+d(!(x)) & \Rightarrow_R x \\
+c(!(x)) & \Rightarrow_R 1 \\
+c(\pi_1(f,g)) & \Rightarrow_R d(f) \\
+c(\pi_2(f,g)) & \Rightarrow_R d(g) \\
+d(\pi_1(f,g)) & \Rightarrow_R \times(f,g) \\
+d(\pi_2(f,g)) & \Rightarrow_R \times(f,g) \\
+d(\fs{pair}(a,b,f,g)) & \Rightarrow_R d(a) \\
+c(\fs{pair}(a,b,f,g)) & \Rightarrow_R d(\pi_1(f,g)) \\
+\circ(\pi_1(f,g),\fs{pair}(a,b,f,g)) & \Rightarrow_R a \\
+\circ(\pi_2(f,g),\fs{pair}(a,b,f,g)) & \Rightarrow_R b \\
+\fs{pair}(\circ(\pi_1(f,g),h),\circ(\pi_2(f,g),h),f,g) & \Rightarrow_R h
+\end{align*}
+% Если $c(f) \Rightarrow_T^* 1$, то $f = !(d(f))$.
+\end{example}
+\end{comment}
 
 \subsection{Синтаксическая категория теории}
 
 В этом подразделе для каждой теории $T$ мы определим конечно полную категорию $\cat{C}_T$, которая называется \emph{синтаксической категорией} этой теории.
 
-\emph{Производный сорт} теории -- это пара, состоящая из упорядоченного конечного множества переменных $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и формулы $\varphi$ такой, что $\mathrm{FV}(\varphi) \subseteq V$.
+\emph{Производный сорт} теории -- это пара, состоящая из упорядоченного конечного множества переменных $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и формулы $\varphi$ такой, что $\FV(\varphi) \subseteq V$.
 Мы будем записывать сорт, соответствующий такой паре как $\{ \overline{x} : \overline{s} \mid \varphi \}$ или более коротко как $\{ \overline{x} \mid \varphi \}$.
 
 Каждой теории $T$ можно сопоставить ее \emph{синтаксическую категорию} $\cat{C}_T$.
 Объекты этой категории -- это производные сорта $T$.
 Морфизм между объектами $\{ (x_1, \ldots x_n) \mid \varphi \}$ и $\{ (y_1, \ldots y_k) : \overline{s} \mid \psi \}$ -- это класс эквивалентности списков термов $(t_1, \ldots t_k)$ таких,
-что $t_i$ имеет сорт $s_i$, $\mathrm{FV}(t_i) \subseteq \{ x_1, \ldots x_n \}$ и $\varphi \sststile{T}{\overline{x}} \psi[\overline{t}/\overline{y}] \land t_1\!\downarrow \land \ldots \land t_k\!\downarrow$.
+что $t_i$ имеет сорт $s_i$, $\FV(t_i) \subseteq \{ x_1, \ldots x_n \}$ и $\varphi \sststile{T}{\overline{x}} \psi[\overline{t}/\overline{y}] \land t_1\!\downarrow \land \ldots \land t_k\!\downarrow$.
 Два списка $(t_1, \ldots t_k)$ и $(t_1', \ldots t_k')$ эквивалентны, если $\varphi \sststile{T}{\overline{x}} t_1 = t_1' \land \ldots \land t_k = t_k'$.
 
 Тождественный морфизм на объекте $\{ \overline{x} \mid \varphi \}$ -- это список $\overline{x}$.
@@ -596,25 +735,25 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 
 В \cite[Section~8]{PHL} описана категориальная семантика частичных хорновских теорий.
 В частности, она описывает интерпретацию термов и формул.
-Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ -- упорядоченное множество переменных, а $t$ -- терм сорта $s$ такой, что $\mathrm{FV}(t) \subseteq V$,
+Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ -- упорядоченное множество переменных, а $t$ -- терм сорта $s$ такой, что $\FV(t) \subseteq V$,
 то категориальная семантика дает нам пару морфизмов $\upgamma^t_d$ и $\upgamma^t_m$, задающих частичный морфизм из $\upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \to \upgamma^s$.
-Если $\varphi$ -- формула такая, что $\mathrm{FV}(\varphi) \subseteq V$, то по категориальной семантике мы получаем мономорфизм $\gamma^\varphi$, задающий подобъект $\upgamma^{s_1} \times \ldots \times \upgamma^{s_n}$.
+Если $\varphi$ -- формула такая, что $\FV(\varphi) \subseteq V$, то по категориальной семантике мы получаем мономорфизм $\gamma^\varphi$, задающий подобъект $\upgamma^{s_1} \times \ldots \times \upgamma^{s_n}$.
 Нам понадобятся следующие леммы, доказанные в \cite[Lemma~39]{PHL} и \cite[Lemma~40]{PHL}:
 
 \begin{lem}[term-subst]
-Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и $V' = \{ y_1 : s_1', \ldots y_k : s_k' \}$ -- два упорядоченных множества переменных, $t'$ -- терм такой, что $\mathrm{FV}(t') \subseteq V'$,
-и $(t_1, \ldots t_k)$ -- список термов таких, что $\mathrm{FV}(t_i) \subseteq V$ и $t_i$ имеет сорт $s_i'$.
+Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и $V' = \{ y_1 : s_1', \ldots y_k : s_k' \}$ -- два упорядоченных множества переменных, $t'$ -- терм такой, что $\FV(t') \subseteq V'$,
+и $(t_1, \ldots t_k)$ -- список термов таких, что $\FV(t_i) \subseteq V$ и $t_i$ имеет сорт $s_i'$.
 Тогда ограничение частичного морфизма $\upgamma^{t'[t_1/y_1, \ldots t_k/y_k] \land t_1 \land \ldots \land t_k}$ на пересечение подобъектов $\upgamma^{t_i}_m$ изоморфно композиции частичных морфизмов $\gamma^{\langle t_1, \ldots t_k \rangle}$ и $\gamma^{t'}$,
 где $\gamma^{\langle t_1, \ldots t_k \rangle}$ -- это морфизм из пересечения подобъектов $\upgamma^{t_i}_m$, который задается как $\langle t_1, \ldots t_k \rangle$.
 \end{lem}
 
 \begin{lem}[form-subst]
-Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и $V' = \{ y_1 : s_1', \ldots y_k : s_k' \}$ -- два упорядоченных множества переменных, $\psi$ -- формула такая, что $\mathrm{FV}(\psi) \subseteq V'$,
-и $(t_1, \ldots t_k)$ -- список термов таких, что $\mathrm{FV}(t_i) \subseteq V$ и $t_i$ имеет сорт $s_i'$.
+Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и $V' = \{ y_1 : s_1', \ldots y_k : s_k' \}$ -- два упорядоченных множества переменных, $\psi$ -- формула такая, что $\FV(\psi) \subseteq V'$,
+и $(t_1, \ldots t_k)$ -- список термов таких, что $\FV(t_i) \subseteq V$ и $t_i$ имеет сорт $s_i'$.
 Тогда подобъект $\upgamma^{\psi[t_1/y_1, \ldots t_k/y_k] \land t_1 \land \ldots \land t_k}$ изоморфен $j \circ p$, где $j$ -- пересечение подобъектов $\upgamma^{t_i}_m$, а $p$ -- прообраз $\upgamma^\psi$ вдоль $\langle t_1, \ldots t_k \rangle$.
 \end{lem}
 
-Для каждой аксиомы $a$ вида $\varphi \sststile{}{V} \psi$ мы добавляем константу $\upgamma^a : \fs{hom}$ и аксиому $\sststile{}{} \upgamma^\varphi = \upgamma^\psi \circ \upgamma^a$.
+дЛя каждой аксиомы $a$ вида $\varphi \sststile{}{V} \psi$ мы добавляем константу $\upgamma^a : \fs{hom}$ и аксиому $\sststile{}{} \upgamma^\varphi = \upgamma^\psi \circ \upgamma^a$.
 Это завершает определение теории $\mathrm{Cart} \overline{\omega} T$.
 Начальную модель этой теории мы будем обозначать $\cat{C}_T'$.
 Мы покажем, что эта категория эквивалентна $\cat{C}_T$.
@@ -655,8 +794,8 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 Для этого мы определим частичную функцию $\alpha$ на замкнутых термах $t$ теории $\mathrm{Cart} \overline{\omega} T$ таких, что $\sststile{T}{} t\!\downarrow$.
 Эта функция будет удовлетворять следующим условиям:
 \begin{itemize}
-\item Если $t$ имеет сорт $\fs{ob}$ и $\alpha_t$ определена, то $\alpha_t$ -- это изоморфизм $GF(t) \to t$, то есть терм сорта $\fs{hom}$ такой, что $\sststile{T}{} d(\alpha_t) = GF(t) \land c(\alpha_t) = t$ и что существует обратный к нему морфизм.
-\item Если $t$ имеет сорт $\fs{hom}$ и $\alpha_t$ определена, то $\alpha_t$ -- это пара изоморфизмов $\alpha_t^d : GF(d(t)) \to d(t)$ и $\alpha_t^c : GF(c(t)) \to c(t)$.
+\item Если $t$ имеет сорт $\fs{ob}$ и определен, то $\alpha_t$ -- это изоморфизм $GF(t) \to t$, то есть терм сорта $\fs{hom}$ такой, что $\sststile{T}{} d(\alpha_t) = GF(t) \land c(\alpha_t) = t$ и что существует обратный к нему морфизм.
+\item Если $t$ имеет сорт $\fs{hom}$ и определен, то $\alpha_t$ -- это пара изоморфизмов $\alpha_t^d : GF(d(t)) \to d(t)$ и $\alpha_t^c : GF(c(t)) \to c(t)$.
 \end{itemize}
 
 Функция $\alpha_t$ определяется рекурсией по $t$.
