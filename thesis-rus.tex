@@ -593,11 +593,22 @@ $t \Rightarrow_1 \Rightarrow_2 t'$ тогда и только тогда, ког
 \item Элемент $a$ называется \emph{нормальной формой} если не существует элемента $a'$ такого, что $a \Rightarrow a'$.
 Мы будем писать $a \Rightarrow^\nf b$ когда $a \Rightarrow^* b$ и $b$ является нормальной формой.
 Мы будем говорить, что элемент $a$ \emph{имеет нормальную форму} (или, что оно \emph{слабо нормализуем}), если $a \Rightarrow^\nf b$ для некоторого $b$.
-Система является \emph{слабо нормализующей}, если все ее элементы имеют нормальную форму.
+Система является \emph{слабо нормализующей} (WN), если все ее элементы имеют нормальную форму.
 \item Элемент $a$ \emph{сильно нормалищуем}, если не существует бесконечной последовательности редукций, начинающейся в $a$.
-Система является \emph{сильно нормалиющей}, если все ее элементы сильно нормализуемы.
+Система является \emph{сильно нормалиющей} (SN), если все ее элементы сильно нормализуемы.
 \item Подмножество $A'$ множества $A$ \emph{замкнуто} относительно $\Rightarrow$, если $a' \in A'$ и $a' \Rightarrow a$ влечет, что $a \in A'$.
 \end{enumerate}
+
+Лемма Ньюмана говорит, что для того, чтобы проверить, что сильно нормализующая система конфлюэнтна, достаточно проверить более слабое условие, которое называется \emph{локальной конфлюэнтностью}:
+
+\begin{lem}[newman][Лемма Ньюмана]
+Пусть $A$ -- сильно нормализующая абстрактная система редукций.
+Допустим, что для любых $a,b,c \in A$ таких, что $a \Rightarrow b$ и $a \Rightarrow c$, существует $d \in A$ такой, что $b \Rightarrow^* d$ и $c \Rightarrow^* d$.
+Тогда $A$ конфлюэнтна.
+\end{lem}
+\begin{proof}
+Доказательство приведено, например, в \cite[Lemma~2.2.5]{ohlebusch-advanced}.
+\end{proof}
 
 \emph{Система переписывания термов} -- это бинарное множество $R$ на множестве термов некоторой теории, удовлетворяющее следующим условиям:
 \begin{enumerate}
@@ -623,7 +634,7 @@ $t \Rightarrow_1 \Rightarrow_2 t'$ тогда и только тогда, ког
 \begin{enumerate}
 \item \label{it:dir-first} Для каждой пары термов $t$ и $s$ таких, что $t \Rightarrow_T s$, секвенция $\sststile{}{} t = s$ выводима.
 \item \label{it:dir-second} Для каждой подстановки $\rho$, каждого терма $c$ и каждой аксиомы вида $\psi \sststile{}{V} t = s$ в $\mathcal{A}_e$ таких,
-что секвенция $\sststile{}{} \psi[\rho] \land c[t[\rho]/x] = c[s[\rho]/x]$ выводима,
+что секвенция $\sststile{}{} \psi[\rho] \land \rho\!\downarrow \land c[t[\rho]/x]\!\downarrow$ выводима,
 термы $c[t[\rho]/x]$ и $c[s[\rho]/x]$ эквивалентны в системе $(\Term_T^d,\Rightarrow_T)$.
 \end{enumerate}
 \end{defn}
@@ -632,9 +643,9 @@ $t \Rightarrow_1 \Rightarrow_2 t'$ тогда и только тогда, ког
 Зачастую система редукций на теории $T$ определена как сужение $\Rightarrow_R$ на множество $\Term^d_T$ для некоторой системы переписывания термов $R$.
 В этом случае условия \eqref{it:dir-first} и \eqref{it:dir-second} эквивалентны следующим условиям:
 \begin{enumerate}
-\item \label{it:trs-dir-first} Для каждой подстановки $\rho$ и каждой пары термов $t$ и $s$ таких, что $(t,s) \in R$, если $\sststile{T}{} t[\rho]\!\downarrow$, то $\sststile{T}{} t[\rho] = s[\rho]$.
+\item \label{it:trs-dir-first} Для каждой подстановки $\rho$ и каждой пары термов $t$ и $s$ таких, что $(t,s) \in R$, если $\sststile{T}{} t[\rho]\!\downarrow \land s[\rho]\!\downarrow$, то $\sststile{T}{} t[\rho] = s[\rho]$.
 \item \label{it:trs-dir-second} Для каждой подстановки $\rho$ и каждой аксиомы вида $\psi \sststile{}{V} t = s$ в $\mathcal{A}_e$ таких,
-что секвенция $\sststile{}{} \psi[\rho]$ выводима, термы $t[\rho]$ и $s[\rho]$ эквивалентны в системе $(\Term_T^d,\Rightarrow_T)$.
+что секвенция $\sststile{}{} \psi[\rho] \land \rho\!\downarrow$ выводима, термы $t[\rho]$ и $s[\rho]$ эквивалентны в системе $(\Term_T^d,\Rightarrow_T)$.
 \end{enumerate}
 \end{remark}
 
@@ -648,7 +659,7 @@ $t \Rightarrow_1 \Rightarrow_2 t'$ тогда и только тогда, ког
 Если аксиомы $\mathcal{A}_f \cup (\mathcal{A}_d \cup \mathcal{A}_c)$ разделены, то $R$ задает систему редукций на $\mathcal{A}_f \cup \mathcal{A}_d \cup \mathcal{A}_c$ как описано в \premark{trs-theory}.
 \end{example}
 
-\begin{example}
+\begin{example}[cat-red]
 Теорию категорий можно представить в виде, описаном в \pexample{dir-ax}.
 Аксиомы $\mathcal{A}_f \cup \mathcal{A}_d$ эквивалентны следующему набору аксиом:
 \begin{align*}
@@ -662,15 +673,14 @@ d(\fs{id}(x)) & \Rightarrow_R x \\
 c(\fs{id}(x)) & \Rightarrow_R x \\
 d(\circ(g,f)) & \Rightarrow_R d(f) \\
 c(\circ(g,f)) & \Rightarrow_R c(g) \\
-\circ(\fs{id}(c(f)),f) & \Rightarrow_R f \\
-\circ(f,\fs{id}(d(f))) & \Rightarrow_R f \\
+\circ(\fs{id}(x),f) & \Rightarrow_R f \\
+\circ(f,\fs{id}(x)) & \Rightarrow_R f \\
 \circ(\circ(h,g),f) & \Rightarrow_R \circ(h,\circ(g,f))
 \end{align*}
 \end{example}
 
-\begin{comment}
-\begin{example}
-На теории конечно полных категорий тоже есть естественная система редукций.
+\begin{example}[fcat-red]
+На теории конечно полных категорий тоже можно задать систему редукций.
 Мы расширяем множество $\mathcal{A}_f \cup \mathcal{A}_d$ следующими аксиомами:
 \begin{align*}
 & \sststile{}{} 1\!\downarrow \\
@@ -680,23 +690,30 @@ c(f) = c(g) & \ssststile{}{f,g} \pi_1(f,g)\!\downarrow \\
 c(f) = c(g) & \ssststile{}{f,g} \pi_2(f,g)\!\downarrow \\
 \fs{pair}(a,b,f,g)\!\downarrow & \ssststile{}{f,g,a,b} d(a) = d(b) \land c(a) = d(f) \land c(b) = d(g) \land c(f) = c(g) \\
 \end{align*}
-Отношение $R$ расширяется следующими парами:
+Отношение $R$ из предыдущего примера удобно разбить на два подмножества.
+Все пары вида $(d(t),s)$ и $(c(t),s)$ будут принадлежать подмножеству $R_1$, а остальные пары подмножеству $R_0$.
+Мы добавляем следующие пары к $R_1$:
 \begin{align*}
-d(!(x)) & \Rightarrow_R x \\
-c(!(x)) & \Rightarrow_R 1 \\
-c(\pi_1(f,g)) & \Rightarrow_R d(f) \\
-c(\pi_2(f,g)) & \Rightarrow_R d(g) \\
-d(\pi_1(f,g)) & \Rightarrow_R \times(f,g) \\
-d(\pi_2(f,g)) & \Rightarrow_R \times(f,g) \\
-d(\fs{pair}(a,b,f,g)) & \Rightarrow_R d(a) \\
-c(\fs{pair}(a,b,f,g)) & \Rightarrow_R d(\pi_1(f,g)) \\
-\circ(\pi_1(f,g),\fs{pair}(a,b,f,g)) & \Rightarrow_R a \\
-\circ(\pi_2(f,g),\fs{pair}(a,b,f,g)) & \Rightarrow_R b \\
-\fs{pair}(\circ(\pi_1(f,g),h),\circ(\pi_2(f,g),h),f,g) & \Rightarrow_R h
+d(!(x)) & \Rightarrow_{R_1} x \\
+c(!(x)) & \Rightarrow_{R_1} 1 \\
+c(\pi_1(f,g)) & \Rightarrow_{R_1} d(f) \\
+c(\pi_2(f,g)) & \Rightarrow_{R_1} d(g) \\
+d(\pi_1(f,g)) & \Rightarrow_{R_1} \times(f,g) \\
+d(\pi_2(f,g)) & \Rightarrow_{R_1} \times(f,g) \\
+d(\fs{pair}(a,b,f,g)) & \Rightarrow_{R_1} d(a) \\
+c(\fs{pair}(a,b,f,g)) & \Rightarrow_{R_1} \times(f,g)
 \end{align*}
-% Если $c(f) \Rightarrow_T^* 1$, то $f = !(d(f))$.
+Множество $R_0$ расширяется следующими парами:
+\begin{align*}
+\circ(\pi_1(f,g),\fs{pair}(a,b,f,g)) & \Rightarrow_{R_0} a \\
+\circ(\pi_2(f,g),\fs{pair}(a,b,f,g)) & \Rightarrow_{R_0} b \\
+\circ(\pi_1(f,g),\circ(\fs{pair}(a,b,f,g),h)) & \Rightarrow_{R_0} \circ(a,h) \\
+\circ(\pi_2(f,g),\circ(\fs{pair}(a,b,f,g),h)) & \Rightarrow_{R_0} \circ(b,h) \\
+\fs{pair}(\circ(\pi_1(f,g),h),\circ(\pi_2(f,g),h),f,g) & \Rightarrow_{R_0} h
+\end{align*}
+Кроме того, мы добавляем следующую редукцию к $R_0$ для всех термов $f$ и $x$ таких, что $c(f) \Rightarrow_{R_1}^* 1$ и $d(f) \Rightarrow_{R_1}^\nf x$:
+\[ f \Rightarrow_{R_0} !(x) \]
 \end{example}
-\end{comment}
 
 Теперь мы докажем техническую лемму, которая говорит, что секвенция $\varphi \sststile{}{V} t = s$ доказуема в теории $T$ тогда и только тогда,
 когда термы $t$ и $s$ эквивалентны в отношении, которое пораждается правой стороной аксиом и равенствами в $\varphi$.
@@ -706,6 +723,7 @@ c(\fs{pair}(a,b,f,g)) & \Rightarrow_R d(\pi_1(f,g)) \\
 для некоторых термов $a$, $b$ и $c$ таких, что переменная $x$ встречается в $c$ ровно один раз, и одно из следующих условий выполнено:
 \begin{enumerate}
 \item Существует применение правила \axref{na}, в котором посылка выводима и заключение имеет вид либо $\varphi \sststile{}{V} a = b$, либо $\varphi \sststile{}{V} b = a$.
+Кроме того, естественный вывод этого заключения является подвыводом вывода секвенции $\varphi \sststile{}{V} t = s$.
 \item $\varphi = \varphi_1 \land \ldots \land \varphi_k$, и существует $j$ такой, что $\varphi_j$ равно либо $a = b$, либо $b = a$.
 \end{enumerate}
 \end{lem}
@@ -752,7 +770,7 @@ c(\fs{pair}(a,b,f,g)) & \Rightarrow_R d(\pi_1(f,g)) \\
 Если $t$ и $s$ такие термы, что $\sststile{T}{} t = s$, то эта секвенция выводима из аксиом $\mathcal{A}_e$.
 Тогда \rlem{der-eq} влечет, что существует последовательность $t_1$, \ldots $t_n$ элементов $\Term^d_T$ такая, что $t = t_1$, $s = t_n$ и для всех $1 \leq i < n$
 существуют аксиома $\psi \sststile{}{V} a = b$ в $\mathcal{A}_e$, подстановка $\rho$ и терм $c$ такие,
-что секвенция $\sststile{}{} \psi[\rho]$ выводима, $t_i = c[a[\rho]/y]$ и $t_{i+1} = c[b[\rho]/y]$ (или наоборот).
+что секвенция $\sststile{}{} \psi[\rho] \land \rho\!\downarrow$ выводима, $t_i = c[a[\rho]/y]$ и $t_{i+1} = c[b[\rho]/y]$ (или наоборот).
 Условие~\eqref{it:dir-second} определения~\ndefn{directed} влечет, что $t_i$ и $t_{i+1}$ эквивалентны в системе $(\Term_T^d,\Rightarrow_T)$.
 \end{proof}
 
@@ -760,6 +778,14 @@ c(\fs{pair}(a,b,f,g)) & \Rightarrow_R d(\pi_1(f,g)) \\
 Пусть $T$ -- теория с системой редукций.
 Тогда система $(\Term_T^d,\Rightarrow_T)$ конфлюэнтна тогда и только тогда, когда любая пара термов $t$ и $s$ таких, что $\sststile{T}{} t = s$, соединима в этой системе.
 \end{cor}
+
+\begin{example}
+Теория категорий конфлюэнтна.
+Легко видеть, что она SN.
+По \dlem{newman} достаточно проверить локальную конфлюэнтность, что легко сделать, перебрав варианты.
+\end{example}
+
+В следующем подразделе мы увидим, что теория конечно полных категорй тоже конфлюэнтна.
 
 \subsection{Синтаксическая категория теории}
 
@@ -789,10 +815,12 @@ c(\fs{pair}(a,b,f,g)) & \Rightarrow_R d(\pi_1(f,g)) \\
 Она определяется как начальный объект теории $\mathrm{Cart} \overline{\omega} T$.
 Эта теория является расширением теории, описанной в \pexample{fc-cats}.
 Для каждого сорта $s$ теории $T$ мы добавляем константу $\upgamma^s : \fs{ob}$ и аксиому $\sststile{}{} \upgamma^s\!\downarrow$.
-Для каждого предикатного символа $R : s_1 \times \ldots \times s_n$ теории $T$ мы добавляем константу $\upgamma^R : \fs{hom}$ и аксиому $\sststile{}{} c(\upgamma^R) = \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \land \fs{Mon}(\upgamma^R)$,
-где $X \times Y$ -- декартово произведение объектов, которое определяется очевидным образом в теории конечно полных категорий, и $\fs{Mon}(f)$ -- предикат, утверждающий, что $f$ является мономорфизмом (это верно тогда и только тогда, когда $\pi_1(f,f) = \pi_2(f,f)$).
-Для каждого функционального символа $\sigma : s_1 \times \ldots \times s_n \to s$ теории $T$ мы добавляем константы $\upgamma^\sigma_d, \upgamma^\sigma_m : \fs{hom}$
-и аксиому $\sststile{}{} c(\upgamma^\sigma_m) = \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \land c(\upgamma^\sigma_d) = \upgamma^s \land d(\upgamma^\sigma_d) = d(\upgamma^\sigma_m) \land \fs{Mon}(\upgamma^\sigma_m)$.
+Для каждого предикатного символа $R : s_1 \times \ldots \times s_n$ теории $T$ мы добавляем константы $\upgamma^R_o : \fs{ob}$ и $\upgamma^R_m : \fs{hom}$
+и аксиому $\sststile{}{} d(\upgamma^R_m) = \upgamma^R_o \land c(\upgamma^R_m) = \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \land \fs{Mon}(\upgamma^R_m)$,
+где $X \times Y$ -- декартово произведение объектов, которое определяется очевидным образом в теории конечно полных категорий, и $\fs{Mon}(f)$ -- предикат,
+утверждающий, что $f$ является мономорфизмом (это верно тогда и только тогда, когда $\pi_1(f,f) = \pi_2(f,f)$).
+Для каждого функционального символа $\sigma : s_1 \times \ldots \times s_n \to s$ теории $T$ мы добавляем константы $\upgamma^\sigma_o : \fs{ob}$ и $\upgamma^\sigma_d, \upgamma^\sigma_m : \fs{hom}$ и аксиому
+$\sststile{}{} c(\upgamma^\sigma_m) = \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \land c(\upgamma^\sigma_d) = \upgamma^s \land d(\upgamma^\sigma_d) = \upgamma^\sigma_o \land d(\upgamma^\sigma_m) = \upgamma^\sigma_o \land \fs{Mon}(\upgamma^\sigma_m)$.
 Идея заключается в том, что $\upgamma^\sigma_m$ задает некоторый подобъект домена $\sigma$, а $\upgamma^\sigma_d$ является морфизмом из этого подобъекта в кодомен $\sigma$.
 То есть такая пара морфизмов -- это в точности частичный морфизм из домена $\sigma$ в его кодомен.
 
@@ -816,10 +844,60 @@ c(\fs{pair}(a,b,f,g)) & \Rightarrow_R d(\pi_1(f,g)) \\
 Тогда подобъект $\upgamma^{\psi[t_1/y_1, \ldots t_k/y_k] \land t_1 \land \ldots \land t_k}$ изоморфен $j \circ p$, где $j$ -- пересечение подобъектов $\upgamma^{t_i}_m$, а $p$ -- прообраз $\upgamma^\psi$ вдоль $\langle t_1, \ldots t_k \rangle$.
 \end{lem}
 
-дЛя каждой аксиомы $a$ вида $\varphi \sststile{}{V} \psi$ мы добавляем константу $\upgamma^a : \fs{hom}$ и аксиому $\sststile{}{} \upgamma^\varphi = \upgamma^\psi \circ \upgamma^a$.
+Для каждой аксиомы $a$ вида $\varphi \sststile{}{V} \psi$ мы добавляем константу $\upgamma^a : \fs{hom}$ и аксиому $\sststile{}{} \upgamma^\varphi = \circ(\upgamma^\psi,\upgamma^a)$.
 Это завершает определение теории $\mathrm{Cart} \overline{\omega} T$.
 Начальную модель этой теории мы будем обозначать $\cat{C}_T'$.
-Мы покажем, что эта категория эквивалентна $\cat{C}_T$.
+
+Ниже мы покажем, что категории $\cat{C}_T'$ и $\cat{C}_T$ эквивалентны.
+Для этого нам нужно доказать, что $\mathrm{Cart} \overline{\omega} T$ конфлюэнтна.
+Мы определяем систему редукций на этой теории как расширение системы, приведенной в \pexample{fcat-red}.
+Мы добавляем следующие аксиомы к $\mathcal{A}_f \cup \mathcal{A}_d$:
+$\sststile{}{} \upgamma^s\!\downarrow$,
+$\sststile{}{} \upgamma^R_o\!\downarrow$,
+$\sststile{}{} \upgamma^R_m\!\downarrow$,
+$\sststile{}{} \upgamma^\sigma_o\!\downarrow$,
+$\sststile{}{} \upgamma^\sigma_m\!\downarrow$,
+$\sststile{}{} \upgamma^\sigma_d\!\downarrow$.
+$\sststile{}{} \upgamma^a\!\downarrow$.
+Отношение $R_1$ расширяется следующими парами:
+\begin{align*}
+d(\upgamma^R_m) & \Rightarrow_{R_1} \upgamma^R_o \\
+c(\upgamma^R_m) & \Rightarrow_{R_1} \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \\
+d(\upgamma^\sigma_m) & \Rightarrow_{R_1} \upgamma^\sigma_o \\
+c(\upgamma^\sigma_m) & \Rightarrow_{R_1} \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \\
+d(\upgamma^\sigma_d) & \Rightarrow_{R_1} \upgamma^\sigma_o \\
+c(\upgamma^\sigma_d) & \Rightarrow_{R_1} \upgamma^s
+\end{align*}
+Наконец, отношение $R_0$ расширяется следующим образом:
+\begin{align*}
+\pi_2(\upgamma^R_m,\upgamma^R_m) & \Rightarrow_{R_0} \pi_1(\upgamma^R_m,\upgamma^R_m) \\
+\pi_2(\upgamma^\sigma_m,\upgamma^\sigma_m) & \Rightarrow_{R_0} \pi_1(\upgamma^\sigma_m,\upgamma^\sigma_m) \\
+\circ(\upgamma^\psi,\upgamma^a) & \Rightarrow_{R_0} \upgamma^\varphi \\
+\circ(\upgamma^\psi,\circ(\upgamma^a,h)) & \Rightarrow_{R_0} \circ(\upgamma^\varphi,h) \\
+\fs{pair}(\circ(\pi_1(\upgamma^R_m,\upgamma^R_m),h),\circ(\pi_1(\upgamma^R_m,\upgamma^R_m),h),\upgamma^R_m,\upgamma^R_m) & \Rightarrow_{R_0} h \\
+\fs{pair}(\circ(\pi_1(\upgamma^\sigma_m,\upgamma^\sigma_m),h),\circ(\pi_1(\upgamma^\sigma_m,\upgamma^\sigma_m),h),\upgamma^\sigma_m,\upgamma^\sigma_m) & \Rightarrow_{R_0} h
+\end{align*}
+Эти правила добавляются для всех предикатных символов $R$, функциональных символов $\sigma$ и аксиом $a$, где мы используем те же обозначение, что и в определении теории.
+
+\begin{lem}
+Для любой теории $T$ теория $\mathrm{Cart} \overline{\omega} T$ конфлюэнтна и является SN.
+\end{lem}
+\begin{proof}
+Легко видеть, что теория $\mathrm{Cart} \overline{\omega} T$ является SN.
+Действительно, мы можем сопоставить каждому терму $t$ ординал $|t|$, меньший $\omega^3$ так, чтобы $t \Rightarrow_{R_0 \cup R_1} s$ влекло, что $|t| > |s|$.
+Пусть $|\!\circ\!(f,g)| = |f| \oplus |f| \oplus |g| \oplus 1$, $|\pi_2(f,g)| = |f| \oplus |g| \oplus 2$, $|\upgamma^R_m| = |\upgamma^\sigma_m| = \omega$, $|\upgamma^a| = \omega^2$, и для остальных функциональных символов $\sigma$ мы определим $|\sigma(t_1, \ldots t_k)|$ как $|t_1| \oplus \ldots \oplus |t_k| \oplus 1$.
+
+Тогда $|\upgamma^{s_1} \times \ldots \times \upgamma^{s_n}| < \omega$.
+Следовательно для правил $c(\upgamma^R_m) \Rightarrow_{R_1} \upgamma^{s_1} \times \ldots \times \upgamma^{s_n}$ и $c(\upgamma^\sigma_m) \Rightarrow_{R_1} \upgamma^{s_1} \times \ldots \times \upgamma^{s_n}$ неравенство выполнено.
+Кроме того, термам вида $\upgamma^\varphi$ соответствуют ординалы, меньшие $\omega^2$.
+Следовательно неравенства верны и для правил $ \circ(\upgamma^\psi,\upgamma^a) \Rightarrow_{R_0} \upgamma^\varphi$ и $\circ(\upgamma^\psi,\circ(\upgamma^a,h)) \Rightarrow_{R_0} \circ(\upgamma^\varphi,h)$.
+Для остальных правил неравенства также очевидны верны.
+
+Чтобы доказать конфлюэнтность, определим вспомогательное отношение $\Rightarrow_{R_0}'$, которое будет подмножеством $\Rightarrow_{R_0}$.
+В конечном итоге мы покажем, что эти отношения совпадают.
+Так как $\Rightarrow_{R_0}'$ является подмножеством $\Rightarrow_{R_0 \cup R_1}$ и второе отношение является SN, то это верно и для первого отношения.
+Чтобы доказать, что $\Rightarrow_{R_0}'$ конфлюэнтно, по \dlem{newman} достаточно проверить локальную конфлюэнтность.
+\end{proof}
 
 \begin{prop}
 Категории $\cat{C}_T$ и $\cat{C}_T'$ эквивалентны.
