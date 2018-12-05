@@ -230,19 +230,18 @@ c(f) = d(g) \land c(g) = d(h) & \sststile{}{f,g,h} \circ(\circ(h,g),f) = \circ(h
 
 \begin{example}[fc-cats]
 Теория конечно полных категорий является расширением теории категорий.
-Мы добавляем функциональные символы $1 : \fs{ob}$, $! : \fs{ob} \to \fs{hom}$, $\times : \fs{hom} \times \fs{hom} \to \fs{ob}$, $\pi_1,\pi_2 : \fs{hom} \times \fs{hom} \to \fs{hom}$, $\fs{pair} : \fs{hom} \times \fs{hom} \times \fs{hom} \times \fs{hom} \to \fs{hom}$ и следующие аксиомы:
+Мы добавляем функциональные символы $1 : \fs{ob}$, $! : \fs{ob} \to \fs{hom}$, $\pi_1,\pi_2 : \fs{hom} \times \fs{hom} \to \fs{hom}$, $\fs{pair} : \fs{hom} \times \fs{hom} \times \fs{hom} \times \fs{hom} \to \fs{hom}$ и следующие аксиомы:
 \begin{align*}
 & \sststile{}{x} d(!(x)) = x \land c(!(x)) = 1 \\
 c(f) = 1 & \sststile{}{f} f =\ !(d(f)) \\
-c(f) = c(g) & \ssststile{}{f,g} \times(f,g)\!\downarrow \\
 c(f) = c(g) & \ssststile{}{f,g} \pi_1(f,g)\!\downarrow \\
 c(f) = c(g) & \ssststile{}{f,g} \pi_2(f,g)\!\downarrow \\
 c(f) = c(g) & \sststile{}{f,g} c(\pi_1(f,g)) = d(f) \land c(\pi_2(f,g)) = d(g) \\
-c(f) = c(g) & \sststile{}{f,g} d(\pi_1(f,g)) = \times(f,g) \land d(\pi_2(f,g)) = \times(f,g) \\
+c(f) = c(g) & \sststile{}{f,g} d(\pi_1(f,g)) = d(\pi_2(f,g)) \\
 \fs{pair}(a,b,f,g)\!\downarrow & \ssststile{}{f,g,a,b} d(a) = d(b) \land c(a) = d(f) \land c(b) = d(g) \land c(f) = c(g) \\
 \fs{pair}(a,b,f,g)\!\downarrow & \sststile{}{f,g,a,b} \circ(\pi_1(f,g),\fs{pair}(a,b,f,g)) = a \\
 \fs{pair}(a,b,f,g)\!\downarrow & \sststile{}{f,g,a,b} \circ(\pi_2(f,g),\fs{pair}(a,b,f,g)) = b \\
-c(h) = \times(f,g) & \sststile{}{f,g,h} \fs{pair}(\circ(\pi_1(f,g),h),\circ(\pi_2(f,g),h),f,g) = h
+c(h) = d(\pi_1(f,g)) & \sststile{}{f,g,h} \fs{pair}(\circ(\pi_1(f,g),h),\circ(\pi_2(f,g),h),f,g) = h
 \end{align*}
 Модели этой теории -- это в точности конечно полные малые категории.
 \end{example}
@@ -449,6 +448,141 @@ t_1 = t_2 & \sststile{}{V} t_i\!\downarrow \axtag{a4'} \\
 Правило \axref{ne2} следует из \axref{nl} если мы возьмем $\psi(x)$ равным $x = b$.
 Правило \axref{ne1} следует из \axref{ne2} и \axref{ns}.
 \end{proof}
+
+\subsection{Синтаксическая категория теории}
+
+В этом подразделе для каждой теории $T$ мы определим конечно полную категорию $\cat{C}_T$, которая называется \emph{синтаксической категорией} этой теории.
+
+\emph{Производный сорт} теории -- это пара, состоящая из упорядоченного конечного множества переменных $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и формулы $\varphi$ такой, что $\FV(\varphi) \subseteq V$.
+Мы будем записывать сорт, соответствующий такой паре как $\{ \overline{x} : \overline{s} \mid \varphi \}$ или более коротко как $\{ \overline{x} \mid \varphi \}$.
+
+Каждой теории $T$ можно сопоставить ее \emph{синтаксическую категорию} $\cat{C}_T$.
+Объекты этой категории -- это производные сорта $T$.
+Морфизм между объектами $\{ (x_1, \ldots x_n) \mid \varphi \}$ и $\{ (y_1, \ldots y_k) : \overline{s} \mid \psi \}$ -- это класс эквивалентности списков термов $(t_1, \ldots t_k)$ таких,
+что $t_i$ имеет сорт $s_i$, $\FV(t_i) \subseteq \{ x_1, \ldots x_n \}$ и $\varphi \sststile{T}{\overline{x}} \psi[\overline{t}/\overline{y}] \land t_1\!\downarrow \land \ldots \land t_k\!\downarrow$.
+Два списка $(t_1, \ldots t_k)$ и $(t_1', \ldots t_k')$ эквивалентны, если $\varphi \sststile{T}{\overline{x}} t_1 = t_1' \land \ldots \land t_k = t_k'$.
+
+Тождественный морфизм на объекте $\{ \overline{x} \mid \varphi \}$ -- это список $\overline{x}$.
+Композиция морфизмов $(t_1, \ldots t_k) : \{ \overline{x} \mid \varphi \} \to \{ \overline{y} \mid \psi \}$
+и $(t_1', \ldots t_m') : \{ \overline{y} \mid \psi \} \to \{ \overline{z} \mid \chi \}$ -- это список $(t_1'[\rho], \ldots t_m'[\rho])$, где $\rho(y_i) = t_i$.
+Легко видеть, что это определение корректно и действительно задает категорию.
+
+\begin{remark}
+Можно модифицировать определение $\cat{C}_T$, объединив объекты, эквивалентные с точностью до переименования переменных и эквивалентности формул в теории $T$.
+Легко видеть, что такая категория будет эквивалентна $\cat{C}_T$.
+Иногда мы будем отождествлять эквивалентные объекты $\cat{C}_T$.
+\end{remark}
+
+В \cite{PHL} приводится другое определение синтаксической категории.
+Она определяется как начальный объект теории $\mathrm{Cart} \overline{\omega} T$.
+Эта теория является расширением теории, описанной в \pexample{fc-cats}.
+Для каждого сорта $s$ теории $T$ мы добавляем константу $\upgamma^s : \fs{ob}$ и аксиому $\sststile{}{} \upgamma^s\!\downarrow$.
+Для каждого предикатного символа $R : s_1 \times \ldots \times s_n$ теории $T$ мы добавляем константу $\upgamma^R : \fs{hom}$
+и аксиому $\sststile{}{} c(\upgamma^R) = \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \land \fs{Mon}(\upgamma^R)$,
+где $X \times Y$ -- декартово произведение объектов, которое определяется очевидным образом в теории конечно полных категорий, и $\fs{Mon}(f)$ -- предикат,
+утверждающий, что $f$ является мономорфизмом (это верно тогда и только тогда, когда $\pi_1(f,f) = \pi_2(f,f)$).
+Для каждого функционального символа $\sigma : s_1 \times \ldots \times s_n \to s$ теории $T$ мы добавляем константы $\upgamma^\sigma_d, \upgamma^\sigma_m : \fs{hom}$ и аксиому
+$\sststile{}{} c(\upgamma^\sigma_m) = \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \land c(\upgamma^\sigma_d) = \upgamma^s \land d(\upgamma^\sigma_d) = d(\upgamma^\sigma_m) \land \fs{Mon}(\upgamma^\sigma_m)$.
+Идея заключается в том, что $\upgamma^\sigma_m$ задает некоторый подобъект домена $\sigma$, а $\upgamma^\sigma_d$ является морфизмом из этого подобъекта в кодомен $\sigma$.
+То есть такая пара морфизмов -- это в точности частичный морфизм из домена $\sigma$ в его кодомен.
+
+В \cite[Section~8]{PHL} описана категориальная семантика частичных хорновских теорий.
+В частности, она описывает интерпретацию термов и формул.
+Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ -- упорядоченное множество переменных, а $t$ -- терм сорта $s$ такой, что $\FV(t) \subseteq V$,
+то категориальная семантика дает нам пару морфизмов $\upgamma^t_d$ и $\upgamma^t_m$, задающих частичный морфизм из $\upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \to \upgamma^s$.
+Если $\varphi$ -- формула такая, что $\FV(\varphi) \subseteq V$, то по категориальной семантике мы получаем мономорфизм $\gamma^\varphi$, задающий подобъект $\upgamma^{s_1} \times \ldots \times \upgamma^{s_n}$.
+Нам понадобятся следующие леммы, доказанные в \cite[Lemma~39]{PHL} и \cite[Lemma~40]{PHL}:
+
+\begin{lem}[term-subst]
+Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и $V' = \{ y_1 : s_1', \ldots y_k : s_k' \}$ -- два упорядоченных множества переменных, $t'$ -- терм такой, что $\FV(t') \subseteq V'$,
+и $(t_1, \ldots t_k)$ -- список термов таких, что $\FV(t_i) \subseteq V$ и $t_i$ имеет сорт $s_i'$.
+Тогда ограничение частичного морфизма $\upgamma^{t'[t_1/y_1, \ldots t_k/y_k] \land t_1 \land \ldots \land t_k}$ на пересечение подобъектов $\upgamma^{t_i}_m$ изоморфно композиции частичных морфизмов $\gamma^{\langle t_1, \ldots t_k \rangle}$ и $\gamma^{t'}$,
+где $\gamma^{\langle t_1, \ldots t_k \rangle}$ -- это морфизм из пересечения подобъектов $\upgamma^{t_i}_m$, который задается как $\langle t_1, \ldots t_k \rangle$.
+\end{lem}
+
+\begin{lem}[form-subst]
+Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и $V' = \{ y_1 : s_1', \ldots y_k : s_k' \}$ -- два упорядоченных множества переменных, $\psi$ -- формула такая, что $\FV(\psi) \subseteq V'$,
+и $(t_1, \ldots t_k)$ -- список термов таких, что $\FV(t_i) \subseteq V$ и $t_i$ имеет сорт $s_i'$.
+Тогда подобъект $\upgamma^{\psi[t_1/y_1, \ldots t_k/y_k] \land t_1 \land \ldots \land t_k}$ изоморфен $j \circ p$, где $j$ -- пересечение подобъектов $\upgamma^{t_i}_m$, а $p$ -- прообраз $\upgamma^\psi$ вдоль $\langle t_1, \ldots t_k \rangle$.
+\end{lem}
+
+Для каждой аксиомы $a$ вида $\varphi \sststile{}{V} \psi$ мы добавляем константу $\upgamma^a : \fs{hom}$ и аксиому $\sststile{}{} \upgamma^\varphi = \circ(\upgamma^\psi,\upgamma^a)$.
+Это завершает определение теории $\mathrm{Cart} \overline{\omega} T$.
+Начальную модель этой теории мы будем обозначать $\cat{C}_T'$.
+
+\begin{prop}
+Категории $\cat{C}_T$ и $\cat{C}_T'$ эквивалентны.
+\end{prop}
+\begin{proof}
+Во-первых, покажем, что $\cat{C}_T$ является моделью $\mathrm{Cart} \overline{\omega} T$.
+Эта категория конечно полная.
+Действительно, $\{ () \mid \top \}$ является терминальным объектом.
+Если $(t_1, \ldots t_k) : \{ \overline{x} \mid \varphi \} \to \{ \overline{z} \mid \chi \}$ и $(t_1', \ldots t_k') : \{ \overline{y} \mid \psi \} \to \{ \overline{z} \mid \chi \}$ -- два морфизма в $\cat{C}_T$,
+то их послойное произведение можно определить как $\{ \overline{x}, \overline{y} \mid \varphi \land \psi \land t_1 = t_1' \land \ldots \land t_k = t_k' \}$.
+Легко видеть, что этот объект обладает необходимым универсальным свойством.
+
+Константа $\upgamma^s$ интерпретируется как $\{ x : s \mid \top \}$.
+Константа $\upgamma^R$ интерпретируется как $(x_1, \ldots x_n) : \{ (x_1, \ldots x_n) \mid R(x_1, \ldots x_n) \} \to \{ (x_1, \ldots x_n) \mid \top \}$.
+Константа $\upgamma^\sigma_m$ интерпретируется как $(x_1, \ldots x_n) : \{ (x_1, \ldots x_n) \mid \sigma(x_1, \ldots x_n)\!\downarrow \} \to \{ (x_1, \ldots x_n) \mid \top \}$.
+Константа $\upgamma^\sigma_d$ интерпретируется как $\sigma(x_1, \ldots x_n) : \{ (x_1, \ldots x_n) \mid \sigma(x_1, \ldots x_n)\!\downarrow \} \to \{ y \mid \top \}$.
+Чтобы проинтерпретировать константу $\upgamma^a$, соответствующую аксиоме $\varphi \sststile{}{V} \psi$, достаточно показать, что подобъект $\upgamma^\varphi$ вкладывается в $\upgamma^\psi$.
+Для этого достаточно показать, что для любой формулы $\varphi$ подобъекты $\overline{x} : \{ \overline{x} \mid \varphi \} \to \{ \overline{x} \mid \top \}$ и $\upgamma^\varphi$ эквивалентны.
+Легко индукцией по структуре терма $t$ показать, что подобъекты $\upgamma^t_m$ и $\overline{x} : \{ \overline{x} \mid t\!\downarrow \} \to \{ \overline{x} \mid \top \}$ эквивалентны
+и $\upgamma^t_d$ соответствует морфизму $t : \{ \overline{x} \mid t\!\downarrow \} \to \{ y \mid \top \}$.
+Используя этот факт, легко показать необходимое свойство формул.
+
+Таким образом, $\cat{C}_T$ действительно является моделью $\mathrm{Cart} \overline{\omega} T$.
+Следовательно существует уникальный функтор $F : \cat{C}_T' \to \cat{C}_T$, являющийся морфизмом моделей.
+Постороим функтор $G$ в обратную сторону.
+Объект $\{ \overline{x} \mid \varphi \}$ отображается в $d(\gamma^\varphi)$.
+Если $(t_1, \ldots t_k) : \{ \overline{x} \mid \varphi \} \to \{ \overline{y} \mid \psi \}$ -- морфизм, то у нас есть стрелка $d(\upgamma^\varphi) \to d(\psi[t_1/y_1, \ldots t_k/y_k] \land t_1\!\downarrow \land \ldots \land t_k\!\downarrow)$.
+По \dlem{form-subst} у нас есть стрелка $d(\psi[t_1/y_1, \ldots t_k/y_k] \land t_1\!\downarrow \land \ldots \land t_k\!\downarrow) \to d(\psi)$.
+Мы определяем $G(t_1, \ldots t_k)$ как композицию этих двух стрелок.
+Легко видеть, что $G$ сохраняет тождественные морфизмы.
+\Rlem{term-subst} влечет, что $G$ сохраняет композицию.
+
+Мы не можем воспользоваться универсальным свойством $\cat{C}_T'$, чтобы доказать, что $G \circ F = \fs{Id}$, так как $G$ не является морфизмом моделей $\mathrm{Cart} \overline{\omega} T$.
+Вместо этого мы построим естественный изоморфизм между этими функторами.
+Для этого мы определим частичную функцию $\alpha$ на замкнутых термах $t$ теории $\mathrm{Cart} \overline{\omega} T$ таких, что $\sststile{T}{} t\!\downarrow$.
+Эта функция будет удовлетворять следующим условиям:
+\begin{itemize}
+\item Если $t$ имеет сорт $\fs{ob}$ и определен, то $\alpha_t$ -- это морфизм $GF(t) \to t$.
+\item Если $t$ имеет сорт $\fs{hom}$ и определен, то $\alpha_t$ -- это пара морфизмов $\alpha_t^d : GF(d(t)) \to d(t)$ и $\alpha_t^c : GF(c(t)) \to c(t)$.
+\end{itemize}
+Функция $\alpha_t$ определяется рекурсией по $t$:
+\begin{itemize}
+\item $\alpha_{d(f)} = \alpha^d_f$ и $\alpha_{c(f)} = \alpha^c_f$.
+\item $\alpha^d_{\mathrm{id}(x)} = \alpha^c_{\mathrm{id}(x)} = \alpha_x$.
+\item $\alpha^d_{\circ(g,f)}$ и $\alpha^c_{\circ(g,f)}$ определены если $\sststile{\mathrm{Cart} \overline{\omega} T}{} \alpha^c_f = \alpha^d_g$.
+В этом случае $\alpha^d_{\circ(g,f)} = \alpha^d_f$ и $\alpha^c_{\circ(g,f)} = \alpha^c_g$.
+\item $\alpha^d_{!(x)} = \alpha_x$ и $\alpha^c_{!(x)} = \alpha_1 =\ !(GF(1))$.
+\item $\alpha_{\pi_i(f_1,f_2)}$ определено если $\sststile{\mathrm{Cart} \overline{\omega} T}{} \alpha^c_{f_1} = \alpha^c_{f_2}$.
+В этом случае $\alpha^d_{\pi_i(f_1,f_2)} = \fs{pair}(\circ(\alpha^d_{f_1},GF(\pi_1(f_1,f_2))),\circ(\alpha^d_{f_2},GF(\pi_2(f_1,f_2))),f_1,f_2)$ и $\alpha^c_{\pi_i(f_1,f_2)} = \alpha^d_{f_i}$.
+\item $\alpha_{\fs{pair}(a,b,f,g)}$ определено если $\sststile{\mathrm{Cart} \overline{\omega} T}{} \alpha^d_a = \alpha^d_b \land \alpha^c_a = \alpha^d_f \land \alpha^c_b = \alpha^d_g \land \alpha^c_f = \alpha^c_g$.
+В этом случае $\alpha^d_{\fs{pair}(a,b,f,g)} = \alpha^d_a$ и $\alpha^c_{\fs{pair}(a,b,f,g)} = \alpha^d_{\pi_1(f_1,f_2)}$.
+\item Так как $GF(\upgamma^s) = \upgamma^s$, то мы можем определить $\alpha_{\upgamma^s}$ как $\mathrm{id}(\upgamma^s)$.
+\item $GF(d(\upgamma^R)) = d(\upgamma^{R(x_1, \ldots x_n)})$. Этот объект изоморфен $d(\upgamma^R)$, так что мы можем определить $\alpha^d_{\upgamma^R}$ как этот изоморфизм.
+Кроме того, мы определяем $\alpha^c_{\upgamma^R}$ как $\alpha_{\upgamma^{s_1} \times \ldots \times \upgamma^{s_n}}$.
+\item Мы определяем $\alpha^d_{\upgamma^\sigma_m}$ и $\alpha^d_{\upgamma^\sigma_d}$ как изоморфизм между $d(\upgamma^{\sigma(x_1, \ldots x_n) \downarrow})$ и $d(\upgamma^\sigma)$.
+Мы определяем $\alpha^c_{\upgamma^\sigma_m}$ как $\alpha_{\upgamma^{s_1} \times \ldots \times \upgamma^{s_n}}$ и $\alpha^c_{\upgamma^\sigma_d}$ как $\alpha_{\upgamma^s}$.
+\item $\alpha^d_{\upgamma^a} = \alpha^d_{\upgamma^\varphi}$ и $\alpha^c_{\upgamma^a} = \alpha^d_{\upgamma^\psi}$.
+\end{itemize}
+Индукцией по естественному выводу секвенции $\sststile{}{} t = s$ легко показать, что $\alpha_t$ и $\alpha_s$ определены, если $t$ и $s$ имеют сорт $\fs{ob}$, то секвенция $\sststile{}{} \alpha_t = \alpha_s$ выводима,
+и если $t$ и $s$ имеют сорт $\fs{hom}$, то секвенция $\sststile{}{} \alpha^d_t = \alpha^d_s \land \alpha^c_t = \alpha^c_s \land \circ(t,\alpha^d_t) = \circ(\alpha^c_t,GF(t))$ выводима.
+Это влечет, что $\alpha$ задает естественное преобразование между функторами $G \circ F$ и $\fs{Id}$.
+Легко видеть, что это преобразование является изоморфизмом.
+
+Нам осталось доказать, что $F \circ G$ изоморфен $\fs{Id}$.
+Пусть $X = \{ \overline{x} : \overline{s} \mid \varphi \}$ -- объект $\cat{C}_T$.
+Тогда $FG(X) = F(d(\upgamma_\varphi))$.
+Мы уже видели в начале доказательства, что этот объект изоморфен исходному объекту $X$.
+Легко видеть, что этот изоморфизм естественен.
+\end{proof}
+
+\subsection{Категория теорий}
+
+В этом подразделе мы дадим первое определение категории теорий.
+В следующем подразделе мы дадим более явное описание морфизмов этой категории.
 
 \subsection{Разделение аксиом}
 
@@ -679,42 +813,6 @@ c(\circ(g,f)) & \Rightarrow_R c(g) \\
 \end{align*}
 \end{example}
 
-\begin{example}[fcat-red]
-На теории конечно полных категорий тоже можно задать систему редукций.
-Мы расширяем множество $\mathcal{A}_f \cup \mathcal{A}_d$ следующими аксиомами:
-\begin{align*}
-& \sststile{}{} 1\!\downarrow \\
-& \sststile{}{x}\ !(x)\!\downarrow \\
-c(f) = c(g) & \ssststile{}{f,g} \times(f,g)\!\downarrow \\
-c(f) = c(g) & \ssststile{}{f,g} \pi_1(f,g)\!\downarrow \\
-c(f) = c(g) & \ssststile{}{f,g} \pi_2(f,g)\!\downarrow \\
-\fs{pair}(a,b,f,g)\!\downarrow & \ssststile{}{f,g,a,b} d(a) = d(b) \land c(a) = d(f) \land c(b) = d(g) \land c(f) = c(g) \\
-\end{align*}
-Отношение $R$ из предыдущего примера удобно разбить на два подмножества.
-Все пары вида $(d(t),s)$ и $(c(t),s)$ будут принадлежать подмножеству $R_1$, а остальные пары подмножеству $R_0$.
-Мы добавляем следующие пары к $R_1$:
-\begin{align*}
-d(!(x)) & \Rightarrow_{R_1} x \\
-c(!(x)) & \Rightarrow_{R_1} 1 \\
-c(\pi_1(f,g)) & \Rightarrow_{R_1} d(f) \\
-c(\pi_2(f,g)) & \Rightarrow_{R_1} d(g) \\
-d(\pi_1(f,g)) & \Rightarrow_{R_1} \times(f,g) \\
-d(\pi_2(f,g)) & \Rightarrow_{R_1} \times(f,g) \\
-d(\fs{pair}(a,b,f,g)) & \Rightarrow_{R_1} d(a) \\
-c(\fs{pair}(a,b,f,g)) & \Rightarrow_{R_1} \times(f,g)
-\end{align*}
-Множество $R_0$ расширяется следующими парами:
-\begin{align*}
-\circ(\pi_1(f,g),\fs{pair}(a,b,f,g)) & \Rightarrow_{R_0} a \\
-\circ(\pi_2(f,g),\fs{pair}(a,b,f,g)) & \Rightarrow_{R_0} b \\
-\circ(\pi_1(f,g),\circ(\fs{pair}(a,b,f,g),h)) & \Rightarrow_{R_0} \circ(a,h) \\
-\circ(\pi_2(f,g),\circ(\fs{pair}(a,b,f,g),h)) & \Rightarrow_{R_0} \circ(b,h) \\
-\fs{pair}(\circ(\pi_1(f,g),h),\circ(\pi_2(f,g),h),f,g) & \Rightarrow_{R_0} h
-\end{align*}
-Кроме того, мы добавляем следующую редукцию к $R_0$ для всех термов $f$ и $x$ таких, что $c(f) \Rightarrow_{R_1}^* 1$ и $d(f) \Rightarrow_{R_1}^\nf x$:
-\[ f \Rightarrow_{R_0} !(x) \]
-\end{example}
-
 Теперь мы докажем техническую лемму, которая говорит, что секвенция $\varphi \sststile{}{V} t = s$ доказуема в теории $T$ тогда и только тогда,
 когда термы $t$ и $s$ эквивалентны в отношении, которое пораждается правой стороной аксиом и равенствами в $\varphi$.
 
@@ -784,186 +882,6 @@ c(\fs{pair}(a,b,f,g)) & \Rightarrow_{R_1} \times(f,g)
 Легко видеть, что она SN.
 По \dlem{newman} достаточно проверить локальную конфлюэнтность, что легко сделать, перебрав варианты.
 \end{example}
-
-В следующем подразделе мы увидим, что теория конечно полных категорй тоже конфлюэнтна.
-
-\subsection{Синтаксическая категория теории}
-
-В этом подразделе для каждой теории $T$ мы определим конечно полную категорию $\cat{C}_T$, которая называется \emph{синтаксической категорией} этой теории.
-
-\emph{Производный сорт} теории -- это пара, состоящая из упорядоченного конечного множества переменных $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и формулы $\varphi$ такой, что $\FV(\varphi) \subseteq V$.
-Мы будем записывать сорт, соответствующий такой паре как $\{ \overline{x} : \overline{s} \mid \varphi \}$ или более коротко как $\{ \overline{x} \mid \varphi \}$.
-
-Каждой теории $T$ можно сопоставить ее \emph{синтаксическую категорию} $\cat{C}_T$.
-Объекты этой категории -- это производные сорта $T$.
-Морфизм между объектами $\{ (x_1, \ldots x_n) \mid \varphi \}$ и $\{ (y_1, \ldots y_k) : \overline{s} \mid \psi \}$ -- это класс эквивалентности списков термов $(t_1, \ldots t_k)$ таких,
-что $t_i$ имеет сорт $s_i$, $\FV(t_i) \subseteq \{ x_1, \ldots x_n \}$ и $\varphi \sststile{T}{\overline{x}} \psi[\overline{t}/\overline{y}] \land t_1\!\downarrow \land \ldots \land t_k\!\downarrow$.
-Два списка $(t_1, \ldots t_k)$ и $(t_1', \ldots t_k')$ эквивалентны, если $\varphi \sststile{T}{\overline{x}} t_1 = t_1' \land \ldots \land t_k = t_k'$.
-
-Тождественный морфизм на объекте $\{ \overline{x} \mid \varphi \}$ -- это список $\overline{x}$.
-Композиция морфизмов $(t_1, \ldots t_k) : \{ \overline{x} \mid \varphi \} \to \{ \overline{y} \mid \psi \}$
-и $(t_1', \ldots t_m') : \{ \overline{y} \mid \psi \} \to \{ \overline{z} \mid \chi \}$ -- это список $(t_1'[\rho], \ldots t_m'[\rho])$, где $\rho(y_i) = t_i$.
-Легко видеть, что это определение корректно и действительно задает категорию.
-
-\begin{remark}
-Можно модифицировать определение $\cat{C}_T$, объединив объекты, эквивалентные с точностью до переименования переменных и эквивалентности формул в теории $T$.
-Легко видеть, что такая категория будет эквивалентна $\cat{C}_T$.
-Иногда мы будем отождествлять эквивалентные объекты $\cat{C}_T$.
-\end{remark}
-
-В \cite{PHL} приводится другое определение синтаксической категории.
-Она определяется как начальный объект теории $\mathrm{Cart} \overline{\omega} T$.
-Эта теория является расширением теории, описанной в \pexample{fc-cats}.
-Для каждого сорта $s$ теории $T$ мы добавляем константу $\upgamma^s : \fs{ob}$ и аксиому $\sststile{}{} \upgamma^s\!\downarrow$.
-Для каждого предикатного символа $R : s_1 \times \ldots \times s_n$ теории $T$ мы добавляем константы $\upgamma^R_o : \fs{ob}$ и $\upgamma^R_m : \fs{hom}$
-и аксиому $\sststile{}{} d(\upgamma^R_m) = \upgamma^R_o \land c(\upgamma^R_m) = \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \land \fs{Mon}(\upgamma^R_m)$,
-где $X \times Y$ -- декартово произведение объектов, которое определяется очевидным образом в теории конечно полных категорий, и $\fs{Mon}(f)$ -- предикат,
-утверждающий, что $f$ является мономорфизмом (это верно тогда и только тогда, когда $\pi_1(f,f) = \pi_2(f,f)$).
-Для каждого функционального символа $\sigma : s_1 \times \ldots \times s_n \to s$ теории $T$ мы добавляем константы $\upgamma^\sigma_o : \fs{ob}$ и $\upgamma^\sigma_d, \upgamma^\sigma_m : \fs{hom}$ и аксиому
-$\sststile{}{} c(\upgamma^\sigma_m) = \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \land c(\upgamma^\sigma_d) = \upgamma^s \land d(\upgamma^\sigma_d) = \upgamma^\sigma_o \land d(\upgamma^\sigma_m) = \upgamma^\sigma_o \land \fs{Mon}(\upgamma^\sigma_m)$.
-Идея заключается в том, что $\upgamma^\sigma_m$ задает некоторый подобъект домена $\sigma$, а $\upgamma^\sigma_d$ является морфизмом из этого подобъекта в кодомен $\sigma$.
-То есть такая пара морфизмов -- это в точности частичный морфизм из домена $\sigma$ в его кодомен.
-
-В \cite[Section~8]{PHL} описана категориальная семантика частичных хорновских теорий.
-В частности, она описывает интерпретацию термов и формул.
-Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ -- упорядоченное множество переменных, а $t$ -- терм сорта $s$ такой, что $\FV(t) \subseteq V$,
-то категориальная семантика дает нам пару морфизмов $\upgamma^t_d$ и $\upgamma^t_m$, задающих частичный морфизм из $\upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \to \upgamma^s$.
-Если $\varphi$ -- формула такая, что $\FV(\varphi) \subseteq V$, то по категориальной семантике мы получаем мономорфизм $\gamma^\varphi$, задающий подобъект $\upgamma^{s_1} \times \ldots \times \upgamma^{s_n}$.
-Нам понадобятся следующие леммы, доказанные в \cite[Lemma~39]{PHL} и \cite[Lemma~40]{PHL}:
-
-\begin{lem}[term-subst]
-Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и $V' = \{ y_1 : s_1', \ldots y_k : s_k' \}$ -- два упорядоченных множества переменных, $t'$ -- терм такой, что $\FV(t') \subseteq V'$,
-и $(t_1, \ldots t_k)$ -- список термов таких, что $\FV(t_i) \subseteq V$ и $t_i$ имеет сорт $s_i'$.
-Тогда ограничение частичного морфизма $\upgamma^{t'[t_1/y_1, \ldots t_k/y_k] \land t_1 \land \ldots \land t_k}$ на пересечение подобъектов $\upgamma^{t_i}_m$ изоморфно композиции частичных морфизмов $\gamma^{\langle t_1, \ldots t_k \rangle}$ и $\gamma^{t'}$,
-где $\gamma^{\langle t_1, \ldots t_k \rangle}$ -- это морфизм из пересечения подобъектов $\upgamma^{t_i}_m$, который задается как $\langle t_1, \ldots t_k \rangle$.
-\end{lem}
-
-\begin{lem}[form-subst]
-Если $V = \{ x_1 : s_1, \ldots x_n : s_n \}$ и $V' = \{ y_1 : s_1', \ldots y_k : s_k' \}$ -- два упорядоченных множества переменных, $\psi$ -- формула такая, что $\FV(\psi) \subseteq V'$,
-и $(t_1, \ldots t_k)$ -- список термов таких, что $\FV(t_i) \subseteq V$ и $t_i$ имеет сорт $s_i'$.
-Тогда подобъект $\upgamma^{\psi[t_1/y_1, \ldots t_k/y_k] \land t_1 \land \ldots \land t_k}$ изоморфен $j \circ p$, где $j$ -- пересечение подобъектов $\upgamma^{t_i}_m$, а $p$ -- прообраз $\upgamma^\psi$ вдоль $\langle t_1, \ldots t_k \rangle$.
-\end{lem}
-
-Для каждой аксиомы $a$ вида $\varphi \sststile{}{V} \psi$ мы добавляем константу $\upgamma^a : \fs{hom}$ и аксиому $\sststile{}{} \upgamma^\varphi = \circ(\upgamma^\psi,\upgamma^a)$.
-Это завершает определение теории $\mathrm{Cart} \overline{\omega} T$.
-Начальную модель этой теории мы будем обозначать $\cat{C}_T'$.
-
-Ниже мы покажем, что категории $\cat{C}_T'$ и $\cat{C}_T$ эквивалентны.
-Для этого нам нужно доказать, что $\mathrm{Cart} \overline{\omega} T$ конфлюэнтна.
-Мы определяем систему редукций на этой теории как расширение системы, приведенной в \pexample{fcat-red}.
-Мы добавляем следующие аксиомы к $\mathcal{A}_f \cup \mathcal{A}_d$:
-$\sststile{}{} \upgamma^s\!\downarrow$,
-$\sststile{}{} \upgamma^R_o\!\downarrow$,
-$\sststile{}{} \upgamma^R_m\!\downarrow$,
-$\sststile{}{} \upgamma^\sigma_o\!\downarrow$,
-$\sststile{}{} \upgamma^\sigma_m\!\downarrow$,
-$\sststile{}{} \upgamma^\sigma_d\!\downarrow$.
-$\sststile{}{} \upgamma^a\!\downarrow$.
-Отношение $R_1$ расширяется следующими парами:
-\begin{align*}
-d(\upgamma^R_m) & \Rightarrow_{R_1} \upgamma^R_o \\
-c(\upgamma^R_m) & \Rightarrow_{R_1} \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \\
-d(\upgamma^\sigma_m) & \Rightarrow_{R_1} \upgamma^\sigma_o \\
-c(\upgamma^\sigma_m) & \Rightarrow_{R_1} \upgamma^{s_1} \times \ldots \times \upgamma^{s_n} \\
-d(\upgamma^\sigma_d) & \Rightarrow_{R_1} \upgamma^\sigma_o \\
-c(\upgamma^\sigma_d) & \Rightarrow_{R_1} \upgamma^s
-\end{align*}
-Наконец, отношение $R_0$ расширяется следующим образом:
-\begin{align*}
-\pi_2(\upgamma^R_m,\upgamma^R_m) & \Rightarrow_{R_0} \pi_1(\upgamma^R_m,\upgamma^R_m) \\
-\pi_2(\upgamma^\sigma_m,\upgamma^\sigma_m) & \Rightarrow_{R_0} \pi_1(\upgamma^\sigma_m,\upgamma^\sigma_m) \\
-\circ(\upgamma^\psi,\upgamma^a) & \Rightarrow_{R_0} \upgamma^\varphi \\
-\circ(\upgamma^\psi,\circ(\upgamma^a,h)) & \Rightarrow_{R_0} \circ(\upgamma^\varphi,h) \\
-\fs{pair}(\circ(\pi_1(\upgamma^R_m,\upgamma^R_m),h),\circ(\pi_1(\upgamma^R_m,\upgamma^R_m),h),\upgamma^R_m,\upgamma^R_m) & \Rightarrow_{R_0} h \\
-\fs{pair}(\circ(\pi_1(\upgamma^\sigma_m,\upgamma^\sigma_m),h),\circ(\pi_1(\upgamma^\sigma_m,\upgamma^\sigma_m),h),\upgamma^\sigma_m,\upgamma^\sigma_m) & \Rightarrow_{R_0} h
-\end{align*}
-Эти правила добавляются для всех предикатных символов $R$, функциональных символов $\sigma$ и аксиом $a$, где мы используем те же обозначение, что и в определении теории.
-
-\begin{lem}
-Для любой теории $T$ теория $\mathrm{Cart} \overline{\omega} T$ конфлюэнтна и является SN.
-\end{lem}
-\begin{proof}
-Легко видеть, что теория $\mathrm{Cart} \overline{\omega} T$ является SN.
-Действительно, мы можем сопоставить каждому терму $t$ ординал $|t|$, меньший $\omega^3$ так, чтобы $t \Rightarrow_{R_0 \cup R_1} s$ влекло, что $|t| > |s|$.
-Пусть $|\!\circ\!(f,g)| = |f| \oplus |f| \oplus |g| \oplus 1$, $|\pi_2(f,g)| = |f| \oplus |g| \oplus 2$, $|\upgamma^R_m| = |\upgamma^\sigma_m| = \omega$, $|\upgamma^a| = \omega^2$, и для остальных функциональных символов $\sigma$ мы определим $|\sigma(t_1, \ldots t_k)|$ как $|t_1| \oplus \ldots \oplus |t_k| \oplus 1$.
-
-Тогда $|\upgamma^{s_1} \times \ldots \times \upgamma^{s_n}| < \omega$.
-Следовательно для правил $c(\upgamma^R_m) \Rightarrow_{R_1} \upgamma^{s_1} \times \ldots \times \upgamma^{s_n}$ и $c(\upgamma^\sigma_m) \Rightarrow_{R_1} \upgamma^{s_1} \times \ldots \times \upgamma^{s_n}$ неравенство выполнено.
-Кроме того, термам вида $\upgamma^\varphi$ соответствуют ординалы, меньшие $\omega^2$.
-Следовательно неравенства верны и для правил $ \circ(\upgamma^\psi,\upgamma^a) \Rightarrow_{R_0} \upgamma^\varphi$ и $\circ(\upgamma^\psi,\circ(\upgamma^a,h)) \Rightarrow_{R_0} \circ(\upgamma^\varphi,h)$.
-Для остальных правил неравенства также очевидны верны.
-
-Чтобы доказать конфлюэнтность, определим вспомогательное отношение $\Rightarrow_{R_0}'$, которое будет подмножеством $\Rightarrow_{R_0}$.
-В конечном итоге мы покажем, что эти отношения совпадают.
-Так как $\Rightarrow_{R_0}'$ является подмножеством $\Rightarrow_{R_0 \cup R_1}$ и второе отношение является SN, то это верно и для первого отношения.
-Чтобы доказать, что $\Rightarrow_{R_0}'$ конфлюэнтно, по \dlem{newman} достаточно проверить локальную конфлюэнтность.
-\end{proof}
-
-\begin{prop}
-Категории $\cat{C}_T$ и $\cat{C}_T'$ эквивалентны.
-\end{prop}
-\begin{proof}
-Во-первых, покажем, что $\cat{C}_T$ является моделью $\mathrm{Cart} \overline{\omega} T$.
-Эта категория конечно полная.
-Действительно, $\{ () \mid \top \}$ является терминальным объектом.
-Если $(t_1, \ldots t_k) : \{ \overline{x} \mid \varphi \} \to \{ \overline{z} \mid \chi \}$ и $(t_1', \ldots t_k') : \{ \overline{y} \mid \psi \} \to \{ \overline{z} \mid \chi \}$ -- два морфизма в $\cat{C}_T$,
-то их послойное произведение можно определить как $\{ \overline{x}, \overline{y} \mid \varphi \land \psi \land t_1 = t_1' \land \ldots \land t_k = t_k' \}$.
-Легко видеть, что этот объект обладает необходимым универсальным свойством.
-
-Константа $\upgamma^s$ интерпретируется как $\{ x : s \mid \top \}$.
-Константа $\upgamma^R$ интерпретируется как $(x_1, \ldots x_n) : \{ (x_1, \ldots x_n) \mid R(x_1, \ldots x_n) \} \to \{ (x_1, \ldots x_n) \mid \top \}$.
-Константа $\upgamma^\sigma_m$ интерпретируется как $(x_1, \ldots x_n) : \{ (x_1, \ldots x_n) \mid \sigma(x_1, \ldots x_n)\!\downarrow \} \to \{ (x_1, \ldots x_n) \mid \top \}$.
-Константа $\upgamma^\sigma_d$ интерпретируется как $\sigma(x_1, \ldots x_n) : \{ (x_1, \ldots x_n) \mid \sigma(x_1, \ldots x_n)\!\downarrow \} \to \{ y \mid \top \}$.
-Чтобы проинтерпретировать константу $\upgamma^a$, соответствующую аксиоме $\varphi \sststile{}{V} \psi$, достаточно показать, что подобъект $\upgamma^\varphi$ вкладывается в $\upgamma^\psi$.
-Для этого достаточно показать, что для любой формулы $\varphi$ подобъекты $\overline{x} : \{ \overline{x} \mid \varphi \} \to \{ \overline{x} \mid \top \}$ и $\upgamma^\varphi$ эквивалентны.
-Легко индукцией по структуре терма $t$ показать, что подобъекты $\upgamma^t_m$ и $\overline{x} : \{ \overline{x} \mid t\!\downarrow \} \to \{ \overline{x} \mid \top \}$ эквивалентны
-и $\upgamma^t_d$ соответствует морфизму $t : \{ \overline{x} \mid t\!\downarrow \} \to \{ y \mid \top \}$.
-Используя этот факт, легко показать необходимое свойство формул.
-
-Таким образом, $\cat{C}_T$ действительно является моделью $\mathrm{Cart} \overline{\omega} T$.
-Следовательно существует уникальный функтор $F : \cat{C}_T' \to \cat{C}_T$, являющийся морфизмом моделей.
-Постороим функтор $G$ в обратную сторону.
-Объект $\{ \overline{x} \mid \varphi \}$ отображается в $d(\gamma^\varphi)$.
-Если $(t_1, \ldots t_k) : \{ \overline{x} \mid \varphi \} \to \{ \overline{y} \mid \psi \}$ -- морфизм, то у нас есть стрелка $d(\upgamma^\varphi) \to d(\psi[t_1/y_1, \ldots t_k/y_k] \land t_1\!\downarrow \land \ldots \land t_k\!\downarrow)$.
-По \dlem{form-subst} у нас есть стрелка $d(\psi[t_1/y_1, \ldots t_k/y_k] \land t_1\!\downarrow \land \ldots \land t_k\!\downarrow) \to d(\psi)$.
-Мы определяем $G(t_1, \ldots t_k)$ как композицию этих двух стрелок.
-Легко видеть, что $G$ сохраняет тождественные морфизмы.
-\Rlem{term-subst} влечет, что $G$ сохраняет композицию.
-
-Мы не можем воспользоваться универсальным свойством $\cat{C}_T'$, чтобы доказать, что $G \circ F = \fs{Id}$, так как $G$ не является морфизмом моделей $\mathrm{Cart} \overline{\omega} T$.
-Вместо этого мы построим естественный изоморфизм между этими функторами.
-Для этого мы определим частичную функцию $\alpha$ на замкнутых термах $t$ теории $\mathrm{Cart} \overline{\omega} T$ таких, что $\sststile{T}{} t\!\downarrow$.
-Эта функция будет удовлетворять следующим условиям:
-\begin{itemize}
-\item Если $t$ имеет сорт $\fs{ob}$ и определен, то $\alpha_t$ -- это изоморфизм $GF(t) \to t$, то есть терм сорта $\fs{hom}$ такой, что $\sststile{T}{} d(\alpha_t) = GF(t) \land c(\alpha_t) = t$ и что существует обратный к нему морфизм.
-\item Если $t$ имеет сорт $\fs{hom}$ и определен, то $\alpha_t$ -- это пара изоморфизмов $\alpha_t^d : GF(d(t)) \to d(t)$ и $\alpha_t^c : GF(c(t)) \to c(t)$.
-\end{itemize}
-
-Функция $\alpha_t$ определяется рекурсией по $t$.
-TODO
-
-% сопоставляет терм $\alpha_t$ сорта $\fs{hom}$ такой, что, если $t$ имеет сорт $\fs{ob}$, то $\sststile{T}{} d(\alpha_t) = GF(t) \land c(\alpha_t) = t$, и, если $t$ имеет сорт $\fs{hom}$, то $\sststile{T}{} 1$.
-% Мы покажем, что если $x$ имеет сорт $\fs{ob}$, то $\sststile{T}{} d(\alpha_x) = GF(x) \land c(\alpha_x) = x$, и если $f$ имеет сорт $\fs{hom}$, то $\sststile{T}{} \alpha_f = \circ(f,\alpha_{d(f)}) \land \alpha_f = \circ(\alpha_{c(f)}, GF(f))$.
-% Мы определим $\alpha_t$ рекурсией по $t$ одновременно с доказательством факта, приведенного выше.
-% Значения $\alpha_{d(f)}$ и $\alpha_{c(f)}$ мы определим рекурсией по $f$.
-% Другими словами, для каждого терма $f$ сорта $\fs{hom}$ нам достаточно определить пару термов $\alpha_{d(f)}$ и $\alpha_{c(f)}$ таких, что $\sststile{T}{} \circ(f,\alpha_{d(f)} = \circ(\alpha_{c(f)}, GF(f))$.
-
-% Для этого мы сначала определим частичную функцию $\alpha$, которая терму $x$ теории $\mathrm{Cart} \overline{\omega} T$ сорта $\fs{ob}$ сопоставляет терм $\alpha_x$ сорта $\fs{hom}$,
-% а терму $f$ сорта $\fs{hom}$ сопоставляет пару термов $\alpha_f^d$ и $\alpha_f^c$ этого же сорта.
-% Идея в том, что каждому объекту $x$ эта функция сопоставляется изоморфизм $\alpha_x : GF(x) \to x$, а каждому морфизму $f : x \to y$ она сопоставляет пару изоморфизмов $\alpha_x$ и $\alpha_y$.
-% Истинность этого утверждения мы докажем позже.
-
-Нам осталось доказать, что $F \circ G$ изоморфен $\fs{Id}$.
-Пусть $X = \{ \overline{x} : \overline{s} \mid \varphi \}$ -- объект $\cat{C}_T$.
-Тогда $FG(X) = F(d(\upgamma_\varphi))$.
-Мы уже использовали тот факт, что этот объект изоморфен исходному объекту $X$.
-Легко видеть, что этот изоморфизм естественен.
-\end{proof}
-
-\subsection{Категория теорий}
-
-В этом подразделе мы дадим первое определение категории теорий.
-В следующем подразделе мы дадим более явное описание морфизмов этой категории.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
