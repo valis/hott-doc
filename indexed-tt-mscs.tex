@@ -792,7 +792,7 @@ The last equivalence follows from previous since spheres are defined in terms of
 \end{proof}
 
 \begin{example}
-Let $S^1$ be the pushout of $1 \amalg 1$ in the base theory, that is a higher inductive type with two point constructors $N,S : S^1$ and two path constructors $L,R : \Id_{S^1}(N,S)$.
+Let $S^1$ be the suspension of $1 \amalg 1$ in the base theory, that is a higher inductive type with two point constructors $N,S : S^1$ and two path constructors $L,R : \Id_{S^1}(N,S)$.
 Then the product of a family $\Gamma, x : S^1 \mid \cdot \vdash B$ is the equalizer of the maps $L_*(-),R_*(-) : B[N/x] \to B[S/x]$.
 \end{example}
 
@@ -913,7 +913,7 @@ It is analogous to the canonical indexing of a Cartesian category over itself.
 
 \subsection{Dependent $\Hom$-types}
 
-Since every indexed dependent type theory is an indexed unary type theory, the extensions that we discussed in the context of unary theories also applies to dependent versions.
+Since every indexed dependent type theory has an underlying indexed unary type theory, the extensions that we discussed in the context of unary theories also applies to dependent versions.
 Note that these constructions apply only to closed indexed types.
 Sometimes we can extend the notion, so that it applies to indexed types in a non-empty context.
 
@@ -965,7 +965,9 @@ If we have such dependent $\Hom$-types, then we can define the following operati
 Indeed, we define $J(a, x p \Delta E.\,D, \Delta E.\,d, a', t)$ as follows:
 \[ J(a, x p \Delta.\,\Hom(E.D), \Delta.\,\lambda E.\,d, a', t)\,y_1\,\ldots\,y_k, \]
 where $E = y_1 : B_1, \ldots y_k : B_k$.
-If we do not assume the existence dependent $\Hom$-types, then we need to add this operation explicitly.
+If we do not assume the existence of dependent $\Hom$-types, then we need to add this operation explicitly.
+It allows us to define $\pmap$ and transport in the same way as usual.
+
 If the indexed theory has identity types, then we can define the following operation:
 \begin{center}
 \AxiomC{$\Gamma \vdash p : \Id_{\Hom(A,B)}(f,g)$}
@@ -976,8 +978,10 @@ If the indexed theory has identity types, then we can define the following opera
 It is defined as follows:
 \[ \fs{hap}(p,a) = \pmap(f.\,f\,a,p). \]
 
-We will say that identity types are \emph{extensional} if $\fs{hap}$ is an equivalence.
-More precisely, the theory of extensional identity types has the following constructions:
+If we have dependent $\Hom$-types, then we can define the following function:
+\[ \lambda p.\,\lambda x.\,\fs{hap}(p,x) : \Id_{\Hom(A,B)}(f,g) \to \Hom(A, x.\,\Id_B(f\,x,g\,x)). \]
+We will say that identity types are \emph{extensional} if this function is an equivalence.
+If we do not have dependent $\Hom$-types, we can replace this condition with the following constructions:
 \begin{center}
 \AxiomC{$\Gamma \mid x : A \vdash p : \Id_{B}(f\,x,g\,x)$}
 \UnaryInfC{$\Gamma \vdash \fs{Idext}(x.\,p) : \Id_{\Hom(A,B)}(f,g)$}
@@ -998,8 +1002,8 @@ The standard argument implies that we also have the following homotopy:
 \UnaryInfC{$\Gamma \mid \Delta \vdash \fs{hap_h'}(p) : \Id(\fs{Idext}(x.\,\fs{hap}(p,x)),p)$}
 \DisplayProof
 \end{center}
-If we have dependent $\Hom$-types, then identity types are extensional if and only if the following function is an equivalence:
-\[ \lambda p.\,\lambda x.\,\fs{hap}(p,x) : \Id_{\Hom(A,B)}(f,g) \to \Hom(A, x.\,\Id_B(f\,x,g\,x)). \]
+Thus, in the absence of dependent $\Hom$-types, we will say that identity types are extensional if these rules are derivable.
+Clearly, the two conditions are equivalent when we do have dependent $\Hom$-types.
 
 \begin{example}
 The canonical indexing of a dependent type theory over itself is locally small if and only if it has non-dependent function types.
@@ -1920,7 +1924,8 @@ Any $h$-initial type in a locally small indexed unary type theory with extension
 
 An idempotent in a 1-category is a map $h : B \to B$ such that $h \circ h = h$.
 In the setting of $\infty$-categories an idempotent consists of a map and an infinite amount of coherence data.
-Lurie proved in \cite[Lemma~7.3.5.14]{lurie-algebra} that if $h$ is a map such that there exists a homotopy between $h \circ h$ and $h$ satisfying one additional coherence condition, then $h$ can be extended to an idempotent.
+Lurie proved in \cite[Lemma~7.3.5.14]{lurie-algebra} (this lemma is available in the version dated September 14, 2014, but was removed in later versions)
+that if $h$ is a map such that there exists a homotopy between $h \circ h$ and $h$ satisfying one additional coherence condition, then $h$ can be extended to an idempotent.
 
 An idempotent $h$ in a 1-category is split if there are maps $f : A \to B$ and $g : B \to A$ such that $g \circ f = \id_A$ and $f \circ g = h$.
 If the category is finitely complete, then every idempotent is split since $f$ can be defined as the equalizer of $h$ and $\id_B$ and $g$ exists by the universal property.
@@ -2932,16 +2937,16 @@ V.~{Isaev}, \emph{{Algebraic Presentations of Dependent Type Theories}},
 
 \bibitem[Johnstone 2002]{elephant}
 Peter~T. Johnstone, \emph{Sketches of an elephant : a topos theory compendium},
-  Oxford Logic Guides, Clarendon Press, Oxford, 2002, Autre tirage : 2008.
+  Oxford Logic Guides, Clarendon Press, Oxford, 2002.
 
 \bibitem[Kraus \emph{et al.} 2013]{gen-hedberg}
 Nicolai Kraus, Mart{\'i}n Escard{\'o}, Thierry Coquand, and Thorsten
-  Altenkirch, \emph{Generalizations of hedberg's theorem}, Typed Lambda Calculi
+  Altenkirch, \emph{Generalizations of Hedberg's theorem}, Typed Lambda Calculi
   and Applications (Berlin, Heidelberg) (Masahito Hasegawa, ed.), Springer
   Berlin Heidelberg, 2013, pp.~173--188.
 
 \bibitem[Lurie 2017]{lurie-algebra}
-Jacob Lurie, \emph{Higher algebra}, Unpublished.
+Jacob Lurie, \emph{Higher algebra}, (2017), Unpublished, \href{http://www.math.harvard.edu/~lurie/papers/HA.pdf} {\path{http://www.math.harvard.edu/~lurie/papers/HA.pdf}}.
 
 \bibitem[Lurie 2009]{lurie-topos}
 Jacob Lurie, \emph{Higher topos theory}, Annals of mathematics studies, Princeton
@@ -2971,8 +2976,8 @@ E.~{Rijke}, M.~{Shulman}, and B.~{Spitters}, \emph{{Modalities in homotopy type
   {\path{arXiv:1706.07526}}.
 
 \bibitem[Shulman 2014]{split-idemp}
-M.~{Shulman}, \emph{Splitting idempotents}, December 2014,
-  \url{https://homotopytypetheory.org/2014/12/08/splitting-idempotents/}.
+Michael Shulman, \emph{Idempotents in intensional type theory}, Logical Methods
+  in Computer Science \textbf{12} (2017).
 
 \bibitem[The {Univalent Foundations Program} 2013]{hottbook}
 The {Univalent Foundations Program}, \emph{Homotopy type theory: Univalent
