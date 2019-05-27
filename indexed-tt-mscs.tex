@@ -44,6 +44,7 @@
 \newcommand{\unit}{()}
 
 \newcommand{\fs}[1]{\mathrm{#1}}
+\newcommand{\cat}[1]{\mathcal{#1}}
 \newcommand{\subst}{\fs{subst}}
 \newcommand{\Hom}{\fs{Hom}}
 \newcommand{\Id}{\fs{Id}}
@@ -54,6 +55,8 @@
 \newcommand{\Fib}{\fs{Fib}}
 \newcommand{\fib}{\ \fs{fib}}
 \newcommand{\El}{\fs{El}}
+\newcommand{\qCat}{\fs{qCat}}
+\newcommand{\Cat}{\fs{qCat}}
 
 \numberwithin{figure}{section}
 
@@ -87,28 +90,36 @@ Indexed categories were defined in \cite{indexed-cats} (see also \cite[B1]{eleph
 We define an analogue of this notion using the language of type theory.
 Ordinary homotopy type theory is an internal language of $\infty$-categories with some additional structure depending on constructions that we assume in the theory.
 Often we need to assume that the $\infty$-category is at least locally Cartesian closed.
-Indexed type theories allows us to discuss properties of arbitrary (indexed) $\infty$-categories.
+Indexed type theories allows us to discuss properties of a larger class of (indexed) $\infty$-categories.
 
 Indexed type theories can be useful even when applied to $\infty$-categories which have all the required structure such as $\infty$-toposes.
-One problem of ordinary homotopy type theory is that every construction must be stable under pullbacks.
+One problem of ordinary homotopy type theory is that every construction must be characterized by an internal property.
 For example, we will define orthogonal factorization systems in section~\ref{sec:refl-fib}.
-In ordinary homotopy type theory only the stable factorization systems can be defined (which was done in \cite{modality-hott}).
+In ordinary homotopy type theory only internal factorization systems (which are a special case of the external ones) can been defined \cite{modality-hott}.
 
 Similar problem occurs when we try to describe certain universes.
 For example, we could try to add a universe $\mathcal{U}_\mathrm{cov}$ of discrete Segal types and covariant maps between them to the theory described in \cite{riehl-dhott}.
 A naive definition of such a universe postulates that we have an equivalence between the type of functions $X \to \mathcal{U}_\mathrm{cov}$ and the type of covariant fibrations over $X$.
 This is not a correct definition since this condition is too strong.
 The correct definition requires only an equivalence between the space of maps from $X$ to $\mathcal{U}_\mathrm{cov}$ and the space of covariant fibrations over $X$.
-It is impossible to formulate this condition in ordinary homotopy type theory, but it is easy to do in an indexed type theory as we will see in section~\ref{sec:class}.
+It is not clear whether it is possible to formulate this condition in ordinary homotopy type theory, but it is easy to do this in an indexed type theory as we will see in section~\ref{sec:class}.
 
-We will define two kinds of indexed type theories: unary and dependent.
-Indexed unary type theories allow us to discuss properties of arbitrary categories.
+There are several kinds of indexed type theories.
+The most basic one is indexed \emph{unary} type theories.
 Such a theory has two levels: the base theory and the indexed theory.
-The base theory might have the usual type-theoretic syntax and the language of the indexed theory can be described informally as the language of type-enriched categories.
-Indexed dependent type theories also have two levels.
-The first one is the same as for unary theories, but the second has type-theoretic syntax, so it is more convenient to use such theories, but it applies only to finitely complete theories.
+The base theory has the usual type-theoretic syntax and we can assume that it has all the usual constructions of homotopy type theory if necessary.
+On the other hand, the number of constructions available at the indexed level is very restricted (in general), but we can use the base theory to reason about objects living at the indexed level.
+Even though unary theories is the most basic version of indexed type theories, it is possible to develop the whole theory just within this limited context.
+To demonstrate this, we will consider various categorical constructions in unary theories such as limits, colimits, objects classifiers, and orthogonal factorization systems.
+Indexed unary type theories can be compared to the approach to higher category theory based on categories enriched in spaces with the difference that instead of spaces we have types of the base theory.
+Actually, we can think of models of indexed unary type theories as a particularly strict way of modeling indexed $\infty$-categories.
 
-We will define several categorical constructions in both styles and prove that they are equivalent:
+The second kind of indexed type theories that we will consider is indexed \emph{dependent} type theories.
+Such theories model only finitely complete indexed $\infty$-categories, but they are more convenient since we can use dependent types on both levels.
+In general, we do not assume that the second level is closed under all type-theoretic constructions such as $\Pi$-types and coproducts, but some of them might exists in particular models.
+We will consider each of this constructions separately and prove that their existence imply the existence of the corresponding categorical construction.
+Moreover, a categorical construction exists if and only if the \emph{weak} version of the corresponding type-theoretic construction does.
+We will prove this for the following constructions:
 \begin{enumerate}
 \item Finite limits in unary theories and $\Sigma$-types, unit types, and identity types in dependent theories.
 \item Finite colimits in unary theories and finite higher inductive types in dependent theories.
@@ -116,6 +127,9 @@ We will define several categorical constructions in both styles and prove that t
 \item Object classifiers in unary theories and univalent universes in dependent theories.
 \item Orthogonal factorization systems in unary theories and higher modalities in dependent theories.
 \end{enumerate}
+Note that it is impossible to give these characterizations in ordinary type theory since the categorical description can be given only in the internal language and such a description is stronger than the external one.
+The interpretation of our categorical descriptions in a model is almost immediately equivalent to the usual description of these constructions.
+Thus, the equivalences that we are going to prove fill the gap between categorical and type-theoretic descriptions of these constructions.
 
 The paper is organized as follows.
 In section~\ref{sec:unary}, we define indexed unary type theories.
@@ -131,20 +145,22 @@ In section~\ref{sec:refl-fib}, we define orthogonal factorization systems.
 \section{Indexed unary type theories}
 \label{sec:unary}
 
-We can think about an indexed type theory as a syntactic representation of indexed $\infty$-categories, that is a functor $F$ from an $\infty$-category $\mathcal{B}$ to the large $\infty$-category of $\infty$-categories.
+We can think about an indexed type theory as a syntactic representation of indexed $\infty$-categories, that is a contravariant functor $F$ from an $\infty$-category $\cat{B}$ to the $\infty$-category of small $\infty$-categories.
 An indexed type theory consists of two levels.
-The first level is just an ordinary type theory and it represents $\mathcal{B}$.
-Since we are mostly interested in the case when $\mathcal{B}$ is the $\infty$-category of spaces,
+The first level is just an ordinary type theory and it represents $\cat{B}$.
+Since we are mostly interested in the case when $\cat{B}$ is the $\infty$-category of spaces,
 we can assume that the first level has all usual constructions such as identity types, $\Sigma$-types, $\Pi$-types, (univalent) universes, and (higher) inductive types.
 Nevertheless, in general, we will assume that the base theory has only identity types and $\Sigma$-types; all additional assumptions will be explicitly specified.
 We will often talk about functions, but this is only for notational convenience and does not assume that function types exist.
 Terms of type $A \to B$ correspond to terms of type $B$ in context $x : A$, so we can talk about functions $A \to B$ as long as this type does not appear inside other types.
 
-The second level of the theory represents $\infty$-categories $F(\Gamma)$ for various objects $\Gamma$ of $\mathcal{B}$.
+The second level of the theory represents $\infty$-categories $F(\Gamma)$ for various objects $\Gamma$ of $\cat{B}$.
 In this section, we will discuss \emph{indexed unary type theories}, that is indexed type theories in which the second level consists of unary type theories.
 A unary type theory is a non-dependent type theory in which contexts consist of exactly one type.
 Such theories represent arbitrary 1-categories.
 We do not know whether indexed unary type theories represent all indexed $\infty$-categories over a given base, but it seems that this should be true at least for locally small indexed $\infty$-categories.
+
+\subsection{The definition}
 
 Indexed unary type theories have four kinds of judgments:
 \[ \Gamma \vdash A \type \qquad \Gamma \vdash a : A \qquad \Gamma \mid \cdot \vdash B \ob \qquad \Gamma \mid x : A \vdash b : B \]
@@ -354,7 +370,7 @@ To define $p * q$, we just need to eliminate $p$ and $q$ and then define $\refl(
 It is easy to prove that usual properties of this operation hold.
 Expressions $\refl(f) * q$, $p * \refl(g)$, and $\refl(f) * \refl(g)$ will be denoted by $f * q$, $p * g$, and $f * g$, respectively.
 
-\begin{defn}
+\begin{defn}[equiv]
 An equivalence between indexed types $A$ and $B$ is a morphism $f : \Hom(A,B)$ such that there is a morphism $g : \Hom(B,A)$ such that $g \circ f \sim \id_A$ and $f \circ g \sim \id_B$.
 \end{defn}
 
@@ -366,6 +382,54 @@ Then we can construct an equivalence between $B[a/x]$ and $B[a'/x]$.
 A map $f : \Hom(B[a/x],B[a'/x])$ is defined as $J(a, x p.\,\Hom(B[a/x],B), \id_{B[a/x]}, a', h)$.
 A map $g : \Hom(B[a'/x],B[a/x])$ is constructed similarly: $J(a, x p.\,\Hom(B,B[a/x]), \id_{B[a/x]}, a', h)$.
 To prove that $g \circ f$ and $f \circ g$ are homotopic to identity morphisms, it is enough to eliminate $h$ using $J$ and then both $g \circ f$ and $f \circ g$ become identity morphisms.
+
+\subsection{Remarks on terminology}
+
+An arbitrary extension of the theory presented in this section will be called \emph{an indexed unary type theory}.
+Such an extension may consist of several constructions (such as $\Pi$-types), inference rules, and computational rules.
+The same terminology will be applied to indexed dependent type theories defined in section~\ref{sec:dependent}.
+
+We will say that a theory has some construction (such as products or $\Pi$-types) if necessary operations on terms and types can be defined in the theory, necessary inference rules are derivable, and necessary computational rules hold.
+We do not assume that operations or inference rules are primitive.
+For example, if the theory has $\Sigma$-types, then it has binary products since they can be defined in terms of $\Sigma$-types (even though they are not primitive).
+A more complicated example is the theory of $\Pi$-types.
+If a theory has $\Id$-types, $\Sigma$-types and non-dependent function types, then it (almost) has $\Pi$-types.
+Indeed, $\Pi_{x : A} B$ can be defined as $\Sigma_{f : A \to \Sigma_{x : A} B} \pi_1 \circ f = \fs{id}_A$ and operations of abstraction and application can be easily defined so that necessary inference rules are derivable.
+The only problem is that $\eta$-equivalence holds only propositionally for this definition of $\Pi$-types.
+We will call $\Pi$-types in which computational rules hold only propositionally \emph{weak $\Pi$-types}.
+We will see many examples of weak versions of various constructions throughout this paper.
+
+When we say that something is true for every $x : A$ this should be interpreted in the internal sense (as customary in HoTT).
+The sentence "for every $x : A$ it is true that $B(x)$" is usually translated to the type $\Pi_{x : A} B(x)$ and it is said that the sentence is true when this type is inhabited.
+Since we do not assume the existence of $\Pi$-types, we will translate this sentence to the judgement $\Gamma, x : A \vdash B(x)$
+and we will say that the sentence is true if there is a term $b$ such that the judgement $\Gamma, x : A \vdash b : B (x)$ is derivable (from given assumptions, if any).
+We will sometime say "for every term $x$ (of type $A$) it is true that $B(x)$".
+This sentence means exactly the same as the previous one; here, the word "term" is not intended to mean that the sentence is true in the external sense,
+this word only stresses that we quantify over terms as opposed to types since the quantification over types works differently.
+
+A quantification over types usually means a quantification over some universe, but we do not assume universes exist and moreover we do want to quantify over all types.
+For this reason, the sentence "for every type $A$ it is true that $P(A)$" would mean that there is a term $p$ such that the following rule is derivable:
+\begin{center}
+\AxiomC{$\Gamma \vdash A$}
+\AxiomC{$J_1$}
+\AxiomC{\ldots}
+\AxiomC{$J_n$}
+\QuaternaryInfC{$\Gamma \vdash p : P(A)$}
+\DisplayProof
+\end{center}
+where $J_1$, \ldots $J_n$ are other given assumptions, if any.
+
+Constructions (such as products) in type theory are usually defined for all types, but we will often assume only that some construction is defined only for some specific types.
+This allows us to prove theorems in a more general form.
+For example, to prove that idempotents split (\rprop{split-idemp}), we only need to know that a very special kind of products exist.
+Another reason why we do not assume that constructions are defined for all types is that we might want to add these constructions with some restrictions.
+For example, the $\infty$-category of small $\infty$-categories does not have all $\Pi$-types, but a large class of $\Pi$-types still exists in this category.
+If we can express the property of being exponentiable in type theory, we can add the rules for $\Pi$-types with the restriction that the domain is exponentiable.
+
+We will often compare two different constructions (such as products and weak products).
+In this case, we will give a proposition of the following form: "Let $A$ and $B$ be two types. Then $P$ is their product if and only if it is their weak product".
+This proposition should be interpreted as follows.
+For every indexed type theory, every two specific types $A$ and $B$, and every $P$, the rules of products are derivable for $P$ if and only if the rules of weak products are derivable for $P$.
 
 \section{Equivalences}
 \label{sec:equivalence}
@@ -849,10 +913,9 @@ d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/
 \end{align*}
 where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
 
-We often assume that, for every construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_n)$ in the indexed theory, the following equation holds whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in $b_1$, \ldots $b_k$:
+We will say that some construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_n)$ is \emph{stable} if the following equation holds for all indexed terms $b_1$, \ldots $b_k$ whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in them:
 \[ \sigma(\ldots, \overline{z_i}.\,c_i, \ldots)[b_1/y_1, \ldots b_k/y_k] = \sigma(\ldots, \overline{z_i}.\,c_i[b_1/y_1, \ldots b_k/y_k], \ldots) \]
 We also have the weakening operation which is left implicit as usual.
-We will call a theory or a construction \emph{unstable} if this equation does not hold.
 
 We can also substitute base terms into indexed types and terms:
 \begin{center}
@@ -888,28 +951,101 @@ d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/
 \end{align*}
 where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
 
-These operations satisfy the following equations for all base terms $b_1$, \ldots $b_k$, $c_1$, \ldots $c_n$:
+These operations satisfy the following equations for all base terms $b_1$, \ldots $b_k$, $c$, $c_1$, \ldots $c_n$:
 \begin{align*}
 c[y_1/y_1, \ldots y_k/y_k] & = c \\
 d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/z_n],
 \end{align*}
 where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
 
-Since the second level of an indexed dependent type theory is also a dependent type theory,
-we can add standard type-theoretic construction to it.
+We always assume that all constructions are stable under substitution of base terms.
+Substitution of base terms corresponds to reindexing in indexed categories, so this means that all constructions are stable under reindexing.
+Substitution of indexed terms corresponds to pulling back along the morphism corresponding to these terms.
+Since not all constructions are stable under pullbacks, we do not assume that substitution of indexed terms commutes with all constructions.
+This might seem to be unusual since it requires explicit substitution, but we can always replace an unstable construction with a stable one with some restrictions.
+
+Let $\sigma$ be an unstable construction with the following inference rule:
+\begin{center}
+\AxiomC{$\Gamma, \Gamma_1 \mid \Delta, \Delta_1 \vdash A_1$}
+\AxiomC{\ldots}
+\AxiomC{$\Gamma, \Gamma_n \mid \Delta, \Delta_n \vdash A_n$}
+\TrinaryInfC{$\Gamma \mid \Delta \vdash \sigma(\Gamma_1 \Delta_1.\,A_1, \ldots \Gamma_n \Delta_n.\,A_n)$}
+\DisplayProof
+\end{center}
+Here each $A_i$ may be either a type or a term and $\sigma(\Gamma_1 \Delta_1.\,A_1, \ldots \Gamma_n \Delta_n.\,A_n)$ also can be either a type or a term.
+Such an unstable construction can be replaced with the following stable one:
+\begin{center}
+\AxiomC{$\Gamma, \Gamma_1 \mid \Delta, \Delta_1 \vdash A_1$}
+\AxiomC{\ldots}
+\AxiomC{$\Gamma, \Gamma_n \mid \Delta, \Delta_n \vdash A_n$}
+\AxiomC{$\Gamma \mid E \vdash \overline{d} : \Delta$}
+\QuaternaryInfC{$\Gamma \mid E \vdash \sigma'(\Gamma_1 \Delta \Delta_1.\,A_1, \ldots \Gamma_n \Delta \Delta_n.\,A_n, \overline{d})$}
+\DisplayProof
+\end{center}
+We need to add such a construction for every possible length of $\Delta$, but if we have $\Sigma$-types and unit types, then we can always assume that $|\Delta| = 1$.
+Thus, if we have $\Sigma$-types and unit types, we can replace an unstable construction $\sigma$ with a stable $\sigma'$.
+This construction is defined simply as $\sigma(\Gamma_1 \Delta_1.\,A_1, \ldots \Gamma_n \Delta_n,\,A_n)[\overline{d}/\Delta]$.
+The stability of this construction follows from the properties of substitution mentioned above.
+Conversely, $\sigma$ can be defined in terms of $\sigma'$ as $\sigma'(\Gamma_1 \Delta \Delta_1.\,A_1, \ldots \Gamma_n \Delta \Delta_n.\,A_n, \overline{y})$, where $\Delta = y_1 : B_1, \ldots y_k : B_k$.
+These constructions are mutually inverse.
+Note that $\sigma'$ is itself slightly unusual since the variables from the context can appear only in $\overline{d}$, but not in other arguments.
+This is also slightly unusual, but it is arguably better than the unstable construction since it does not require the explicit substitution and the additional restriction is easy to check.
+
+Since the second level of an indexed dependent type theory is also a dependent type theory, we can add standard type-theoretic construction to it.
 When we add such a construction, we always assume that it is defined in every base context.
 
-Indexed dependent type theories have the same rules as indexed unary type theories.
-This means that indexed unary type theories can be interpreted in indexed dependent type theories.
-This implies that every model of an indexed dependent type theory is a model of corresponding unary theory
+The rules of indexed unary type theories are true in indexed dependent type theories.
+This means that unary theories can be interpreted in dependent theories.
+This implies that every model of an indexed dependent type theory is a model of the corresponding unary theory
 (that is, there is a forgetful functor from the category of models of an indexed dependent theory to the category of models of an indexed unary theory).
-Every model of an ordinary dependent type theory (as defined in \cite{alg-tt}) is a model of an indexed dependent type theory.
+Every model of an ordinary dependent type theory (that is, a small contextual category) is a model of an indexed dependent type theory.
 This follows from the fact that indexed type theories can be interpreted in ordinary dependent type theories.
 
 Judgments $\Gamma \mid \Delta \vdash A \ob$ and $\Gamma \mid \Delta \vdash a : A$ are interpreted as $\Gamma, \Delta \vdash A \type$ and $\Gamma, \Delta \vdash a : A$, respectively.
 All the rules of indexed dependent type theories correspond to some rules of ordinary dependent type theories.
 This interpretation will be called \emph{the canonical indexing of a dependent type theory over itself}.
 It is analogous to the canonical indexing of a Cartesian category over itself.
+
+\subsection{Models}
+
+A \emph{model} of an indexed unary type theory is a model $\cat{B}$ of the underlying base theory (that is, a small contextual category) together with a contravariant functor from the underlying category of $\cat{B}$ to the category of small categories.
+A \emph{model} of an indexed dependent type theory is a model $\cat{B}$ of the underlying base theory together with a contravariant functor $F$ from the underlying category of $\cat{B}$ to the category of small contextual categories.
+We will show that every model of a locally small indexed dependent type theory with unit types, $\Sigma$-types, and identity types gives rise to an indexed $\infty$-category.
+
+\begin{remark}
+A \emph{model} of an indexed unary type theory is a model $\cat{B}$ of the underlying base theory together with a contravariant functor from the underlying category of $\cat{B}$ to the category of small categories.
+We believe that every model of a locally small indexed unary type theory also gives rise to an indexed $\infty$-category, but this is harder to prove.
+\end{remark}
+
+First, recall that a \emph{homotopical category} is a category equipped with a class of maps, called weak equivalences, containing identity morphisms and satisfying the 2-out-of-6 property.
+A standard way to construct an $\infty$-category out of a homotopical category is to apply the simplicial localization functor, the fibrant replacement functor, and the simplicial nerve functor.
+We will denote the composite of these three functors by $L$.
+A \emph{homotopical functor} is a functor between homotopical categories preserving weak equivalences.
+A homotopical functor $F : \cat{C} \to \cat{D}$ induces a functor $L(F) : L(\cat{C}) \to L(\cat{D})$.
+
+A fibration category is a homotopical category equipped with a class of maps, called \emph{fibrations}, satisfying certain axioms.
+It was shown in \cite{tt-fibr-cat} that the category of models of a dependent type theory with $\Sigma$-types and identity types carries the structure of a fibration category.
+An \emph{exact functor} is a functor between fibration categories preserving fibrations, terminal objects, and pullbacks along fibrations.
+An exact functor induces an equivalence of homotopy categories if and only if it induces an equivalence of simplicial localizations \cite[Th\'eor\`eme~3.25]{cis10b}.
+
+Now, let $F : \cat{B}^\fs{op} \to \fs{ConCat}$ be a model of an indexed dependent type theory with unit types, $\Sigma$-types, and identity types.
+The underlying category of $\cat{B}$ is a homotopical category.
+A map $f$ of $\cat{B}$ between types is a weak equivalence if it is an equivalence in the usual sense.
+For every object $\Gamma$ of $\cat{B}$, let $U(F(\Gamma))$ be the underlying homotopical category of $F(\Gamma)$.
+Then we have a functor $LUF : \cat{B}^\fs{op} \to \qCat$, where $\qCat$ is the category of small quasicategories.
+This category can be extended to a fibrant simplicial category by defining $\Hom_\qCat(X,Y)$ to be the largest Kan complex contained in $Y^X$.
+The quasicategory $\fs{Cat}_\infty$ of small quasicategories is defined as the simplicial nerve of $\qCat$.
+Then we have a functor $N(LUF) : N(\cat{B})^\fs{op} \to \fs{Cat}_\infty$.
+To prove that it extends to a functor $L(\cat{B})^\fs{op} \to \fs{Cat}_\infty$, it is enough show that every weak equivalence $f : X \to Y$ of $\cat{B}^\fs{op}$ is mapped to an equivalence of quasicategories $LUF(f) : LUF(X) \to LUF(Y)$.
+Since $F(f)$ is an exact functor between fibration categories, to prove that it induces an equivalence of localizations, it is enough to prove that it induces an equivalence of homotopy categories.
+This is obvious since $f$ has a homotopy inverse $f^{-1}$ and functor $F(f^{-1})$ is the inverse of $F(f)$ at the level of homotopy categories by the discussion after \rdefn{equiv}.
+
+A more detailed discussion of models is presented in \cite{indexed-models}.
+There we show how to construct a model of indexed type theories out of a functor between categories with some additional structure similar to the structure of a fibration category.
+In particular, it is shown that there is a model in which dependent types of the base theory are interpreted as Kan fibrations as usual and dependent types of the indexed theory are interpreted as categorical fibrations.
+We will denote this model by $\qCat$.
+We will use it throughout this paper to give examples of various constructions.
+The model of the base theory in $\qCat$ is the usual model of HoTT in simplicial sets and hence it supports all standard constructions.
 
 \subsection{Dependent $\Hom$-types}
 
@@ -1009,6 +1145,11 @@ Clearly, the two conditions are equivalent when we do have dependent $\Hom$-type
 The canonical indexing of a dependent type theory over itself is locally small if and only if it has non-dependent function types.
 It has dependent $\Hom$-types if and only if it has $\Pi$-types.
 It has extensional identity types if and only if it has identity types and the functional extensionality.
+\end{example}
+
+\begin{example}
+The model $\qCat$ has dependent $\Hom$-types and extensional identity types.
+It also has $\Sigma$-types and unit types.
 \end{example}
 
 \subsection{Weak dependent $\Hom$-types}
@@ -1136,6 +1277,11 @@ We will denote them by $\beta(x.b,a)$ and $\eta(f)$:
 \beta(x.b, a) & : \Id((\lambda x.\,b)\,a, b[a/x]) \\
 \eta(f) & : \Id(\lambda x.\,f\,x, f)
 \end{align*}
+
+\begin{example}
+The model $\qCat$ has $\Pi$-types in the empty context, that is it is Cartesian closed.
+It cannot have all $\Pi$-types since the $\infty$-category of small $\infty$-categories is not locally Cartesian closed.
+\end{example}
 
 \emph{Functional extensionality} for (weak) $\Pi$-types is defined as usual:
 \begin{center}
@@ -1318,7 +1464,7 @@ Thus, equalizers also can be constructed from $\Sigma$-types.
 \end{remark}
 
 The following proposition shows that $\Hom(x_1 \ldots x_n.\,-)$ commutes with $\Sigma$-types and identity types:
-\begin{prop}
+\begin{prop}[hom-sigma-id]
 If an indexed dependent type theory has extensional identity types and $\Sigma$-types, then it has the following canonical equivalences:
 \begin{align*}
 \Hom(x_1 \ldots x_n.\,\Id_A(a,a')) & \simeq \Id_{\Hom(x_1 \ldots x_n. A)}(\lambda x_1 \ldots x_n.\,a, \lambda x_1 \ldots x_n.\,a') \\
@@ -1415,6 +1561,10 @@ We also have a homotopy $h : \Id(\pi_1 \circ f, \id_B)$.
 Now, we can define $0\text{-}\fs{elim''}(x E.D, a)$ as $\fs{hap}(h,p)_*(\pi_2(f\,p))$, where $p = (x_1, \ldots x_m, a, y_1, \ldots y_n)$.
 \end{proof}
 
+\begin{example}
+The model $\qCat$ has strict initial types.
+\end{example}
+
 \subsection{Dependent products}
 
 We defined strict products in subsection~\ref{sec:products}.
@@ -1446,6 +1596,10 @@ We can define even stricter version of products which we call \emph{strict depen
 
 \begin{example}
 The canonical indexing of a dependent type theory over itself has strict dependent products if and only if it has $\Pi$-types.
+\end{example}
+
+\begin{example}
+The model $\qCat$ has strict dependent products.
 \end{example}
 
 \emph{Weak dependent products} are defined in the same way except for the last two equations which hold only propositionally.
@@ -1542,6 +1696,11 @@ g\,(x_1, \ldots x_n, \fs{in}_i(x)) & .
 
 This lemma implies that $\Hom_\Delta(\coprod_{i : I} B_i, C)$ is a weak $\Pi$-type $\Pi_{i : I} \Hom_\Delta(B_i,C)$.
 We will say that dependent coproducts are \emph{extensional} if this $\Pi$-type satisfies functional extensionality.
+
+\begin{example}
+The model $\qCat$ has \emph{stable} dependent coproducts.
+They are extensional since all $\Pi$-types of the base theory are extensional in this model.
+\end{example}
 
 \begin{lem}[coprod-dep-coprod]
 Suppose that an indexed dependent type theory has $\Sigma$-types and identity types.
@@ -1704,6 +1863,11 @@ h_2(c) & : \Id(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inr}(c)/w], d_
             } \]
 The last square must commute up to a homotopy $h_3(a)$.
 The top arrow in this square is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a))$ and the left arrow is defined by path induction on $\fs{glue}(a)$.
+
+\begin{example}
+The model $\qCat$ has \emph{unstable} dependent pushouts.
+Pushouts in $\qCat$ cannot be stable since pushouts of $\infty$-categories are not stable under pullbacks.
+\end{example}
 
 \begin{prop}[pushout-sigma]
 Dependent pushouts commute with $\Sigma$-types.
@@ -1945,7 +2109,7 @@ J & : \Id_{\Id(h \circ h, h \circ h \circ h)}(\pmap(- \circ h, I), \pmap(h \circ
 An idempotent map $h : \Hom(B,B)$ is \emph{split} if there exist maps $f : \Hom(A,B)$ and $g : \Hom(B,A)$ such that $g \circ f \sim \id_A$ and $f \circ g \sim h$.
 \end{defn}
 
-\begin{prop}
+\begin{prop}[split-idemp]
 If the base theory of a locally small indexed unary type theory has natural numbers $\mathbb{N}$ and the indexed theory has equalizers and extensional powers $B^\mathbb{N}$ for some type $B$, then every idempotent on $B$ is split.
 \end{prop}
 \begin{proof}
@@ -2132,6 +2296,11 @@ Conversely, if the indexed theory also has identity types, then, for every depen
 If the indexed theory has finite limits, then we can define a class of fibrations consisting of $n$-truncated maps (or $n$-truncated indexed types) as was explained in the previous subsection.
 \end{example}
 
+\begin{example}[qcat-fib]
+The model $\qCat$ has many interesting examples of fibrations: Cartesian, coCartesian, covariant, and contravariant.
+More examples of fibrations in this model can be found in \cite{fib-inf-cat}.
+\end{example}
+
 For every dependent class of fibrations $\Fib$, we can add a new sort of dependent types $\Gamma \mid \Delta \vdash A \fib$ consisting of types satisfying the predicate $\Fib$:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta \vdash A \fib$}
@@ -2266,7 +2435,7 @@ An \emph{external universe} is a base type $\mathcal{U}(\Delta)$ defined for all
 \end{center}
 We have a function from $\Id_{\mathcal{U}(\Delta)}(c,c')$ to the type of equivalences between $\El(c)$ and $\El(c')$ over $\Delta$ defined as the transport of the identity morphism along the homotopy $\Id_{\mathcal{U}(\Delta)}(c,c')$.
 We will say that the universe $\mathcal{U}(\Delta)$ is \emph{univalent} if this function is an equivalence.
-We will say that a universe \emph{classifies} fibrations $\Fib$ if it is univalent, the family $\El(c)$ satisfies $\Fib$ for all $c$, and every fibration is equivalent to a fibration of the form $\El(c)$ for some $c$.
+We will say that a universe \emph{classifies} fibrations $\Fib$ if it is univalent, the family $\El(c)$ satisfies $\Fib$ for all $c$, the class $\Fib$ is stable under substitution, and every fibration is equivalent to a fibration of the form $\El(c)$ for some $c$.
 
 If a universe classifying $\Fib$ exists, then it is unique up to a canonical equivalence.
 Indeed, let $\mathcal{U}$ and $\mathcal{U}'$ be two universes classifying $\Fib$.
@@ -2300,6 +2469,11 @@ We will say that an object classifier \emph{classifies} a class of fibrations if
 
 \begin{example}
 A subobject classifier is an object classifier for monomorphisms.
+\end{example}
+
+\begin{example}
+We believe that classes of small fibrations mentioned in \rexample{qcat-fib} should be classified by an object classifier.
+Verification of these facts is beyond the scope of this paper.
 \end{example}
 
 Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be any map.
@@ -2548,10 +2722,8 @@ This implies that $r$ is a retraction of $i$ over $D$.
 \subsection{Orthogonal factorization systems}
 
 In this subsection, we defined connected maps and orthogonal factorization systems and prove that they are equivalent to locally reflective classes of fibrations.
-Similar equivalence was proved in \cite{modality-hott}, but our proof is more general since it applies to any (indexed) unary theory.
-Moreover, the proof in \cite{modality-hott} applies only to stable orthogonal factorization systems and stably locally reflective classes of fibrations.
-The reason is that it is done in the internal language of the theory and everything must be stable in this language.
-We prove a more general equivalence between (non-stable) orthogonal factorization systems and (non-stable) locally reflective classes of fibrations.
+Similar equivalence for internal factorization systems was proved in \cite{modality-hott}.
+We will discuss the relationship between internal and external systems.
 
 \begin{defn}
 Let $\Fib$ be a locally reflective class of fibrations in an indexed unary type theory.
@@ -2752,6 +2924,31 @@ Thus, $(\mathcal{C},\Fib)$ is an orthogonal factorization system.
 Conversely, if we have an orthogonal factorization system $(\mathcal{L},\Fib)$, then $\Fib$ is locally reflective by \rlem{orth-refl} and it is closed under composition and pullbacks by \rprop{orth-comp} and \rprop{orth-pullback}, respectively.
 \end{proof}
 
+\begin{defn}
+Let $f : \Hom(A,B)$ and $g : \Hom(C,D)$ be maps in a Cartesian closed indexed unary type theory.
+We will say that $f$ is \emph{internally left orthogonal} to $g$ and $g$ is \emph{internally right orthogonal} to $f$ if the type of internal lifts in squares of the form depicted below is contractible.
+\[ \xymatrix{ A \ar[r]^u \ar[d]_f       & C \ar[d]^g \\
+              B \ar[r]_v \ar@{-->}[ur]  & D
+            } \]
+That is, the following indexed type should be contractible:
+\[ \sum_{l : B \to C} \sum_{s : \Id(u, l \circ f)} \sum_{t : \Id(g \circ l, v)} \Id((s * g) \cdot (f * t), q), \]
+where $q$ is the witness of commutativity of the original square.
+\end{defn}
+
+Let $f : \Hom(A,B)$ and $g : \Hom(C,D)$ be a pair of maps.
+An indexed type is contractible if and only if it is terminal.
+Thus, $f$ is internally left orthogonal to $g$ if and only if, for every indexed type $E$, the type following type is contractible:
+\[ \Hom(E,\sum_{l : B \to C} \sum_{s : \Id(u, l \circ f)} \sum_{t : \Id(g \circ l, v)} \Id((s * g) \cdot (f * t), q)). \]
+By \rprop{hom-sigma-id}, $\Hom$ commutes with $\Sigma$ and $\Id$.
+It follows that this type is equivalent to the following one:
+\[ \sum_{l : E \times B \to C} \sum_{s : \Id(u', l \circ f')} \sum_{t : \Id(g \circ l, v')} \Id((s * g) \cdot (f' * t), q'), \]
+where $u'$ is the composite $E \times A \xrightarrow{\pi_2} A \xrightarrow{u} C$, $v'$ is the composite $E \times B \xrightarrow{\pi_2} B \xrightarrow{v} D$, $f'$ is the map $E \times A \xrightarrow{\id_E \times f} E \times B$,
+and $q'$ is the witness of commutativity of the following square:
+\[ \xymatrix{ E \times A \ar[r]^-{u'} \ar[d]_{f'}   & C \ar[d]^g \\
+              E \times B \ar[r]_-{v'}               & D
+            } \]
+Thus, $f$ is internally left orthogonal to $g$ if and only if $\id_E \times f$ is left orthogonal to $g$ for all indexed types $E$.
+
 \subsection{Locally reflective classes in dependent theories}
 
 We can reformulate the definition of locally reflective class of fibrations in dependent theories with identity types, $\Sigma$-types, and unit types.
@@ -2849,7 +3046,7 @@ Then it is enough to prove that $\eta_{\Sigma_{x : A} B} \circ r \circ \eta_{\Si
 \end{proof}
 
 \begin{cor}
-A class of fibrations closed under substitutions extends to a higher modality if and only if it is locally reflective and is closed $\Sigma$-types.
+A class of fibrations closed under substitutions extends to a higher modality if and only if it is locally reflective and is closed under $\Sigma$-types.
 \end{cor}
 
 If we assume the stability condition for $\eta$, then we can replace it with the following stable rule:
@@ -2926,18 +3123,54 @@ Since the class of $n$-truncated maps is closed under identity types, it is loca
 \section{Final remarks}
 
 In this paper, we defined the notion of an indexed type theory.
-Such theories allow us to work with arbitrary ($\infty$-)categories and, more generally, indexed ($\infty$-)categories using a type-theoretic language.
+Such theories allow us to work with a larger class of $\infty$-categories and, more generally, indexed $\infty$-categories using the language of type theory.
 We also defined several categorical constructions in this setting and prove their properties.
+
+We believe there is a strong relationship between models of indexed dependent types theories and indexed categories.
+It was proved in \cite{kapulkin-szumilo-fin-comp} that the category of models of the dependent type theory with $\Sigma$-types, unit types, and identity types presents an $\infty$-category equivalent to the $\infty$-category of small finitely complete categories.
+We conjecture that a similar result should be true for indexed type theories.
+Since indexed $\infty$-categories do not have strict equalities, many equivalences between various levels of strictness of structures that we prove in this paper might be helpful.
+We might try to split the problem into three parts.
+First, we prove that indexed $\infty$-categories are equivalent to models of indexed types theories with corresponding categorical structure,
+which should be easier than establishing an equivalence with models of indexed type theories with type-theoretic structures since categorical structures are much weaker than their type-theoretical counterparts.
+Then we construct an equivalence between categorical and type-theoretic descriptions of various structures.
+This should easily follow from the results of this paper (although many theories should be modified since we usually require the existence of quasi-inverses of various functions on types instead of proper inverses).
+Finally, we need to prove that weak versions of type-theoretic constructions are equivalent to their strict versions.
+This might be possible to do with techniques presented in \cite{morita-equiv}.
 
 \begin{thebibliography}{}
 
-\bibitem[Isaev 2016]{alg-tt}
-V.~{Isaev}, \emph{{Algebraic Presentations of Dependent Type Theories}},
-  (2016), \href {http://arxiv.org/abs/1602.08504} {\path{arXiv:1602.08504}}.
+\bibitem[Avigad \emph{et al.} 2015]{tt-fibr-cat}
+Jeremy Avigad, Krzysztof Kapulkin, and Peter~LeFanu Lumsdaine, \emph{Homotopy
+  limits in type theory}, Mathematical Structures in Computer Science
+  \textbf{25} (2015), 1040--1070.
+
+\bibitem[Ayala and Francis 2017]{fib-inf-cat}
+David {Ayala} and John {Francis}, \emph{{Fibrations of $\infty$-categories}},
+  (2017), \href {http://arxiv.org/abs/1702.02681} {\path{arXiv:1702.02681}}.
+
+\bibitem[Cisinski 2010]{cis10b}
+Denis-Charles Cisinski, \emph{Invariance de la {K-Th\'eorie} par \'equivalences
+  d\'eriv\'ees}, Journal of K-theory: K-theory and its Applications to Algebra,
+  Geometry, and Topology \textbf{6} (2010), 505--546.
+
+\bibitem[Isaev 2018a]{morita-equiv}
+V.~{Isaev}, \emph{{Morita equivalences between algebraic dependent type
+  theories}},  (2018), \href {http://arxiv.org/abs/1804.05045}
+  {\path{arXiv:1804.05045}}.
+
+\bibitem[Isaev 2018b]{indexed-models}
+V.~{Isaev}, \emph{{Contextually indexed contextual categories}},
+  (2018), \href {http://arxiv.org/abs/1809.03002} {\path{arXiv:1809.03002}}.
 
 \bibitem[Johnstone 2002]{elephant}
 Peter~T. Johnstone, \emph{Sketches of an elephant : a topos theory compendium},
   Oxford Logic Guides, Clarendon Press, Oxford, 2002.
+
+\bibitem[Kapulkin and Szumi{\l}o 2017]{kapulkin-szumilo-fin-comp}
+C.~{Kapulkin} and K.~{Szumi{\l}o}, \emph{{Internal Language of Finitely
+  Complete $(\infty, 1)$-categories}},  (2017), \href
+  {http://arxiv.org/abs/1709.09519} {\path{arXiv:1709.09519}}.
 
 \bibitem[Kraus \emph{et al.} 2013]{gen-hedberg}
 Nicolai Kraus, Mart{\'i}n Escard{\'o}, Thierry Coquand, and Thorsten
@@ -2976,7 +3209,7 @@ E.~{Rijke}, M.~{Shulman}, and B.~{Spitters}, \emph{{Modalities in homotopy type
   {\path{arXiv:1706.07526}}.
 
 \bibitem[Shulman 2014]{split-idemp}
-Michael Shulman, \emph{Idempotents in intensional type theory}, Logical Methods
+M.~{Shulman}, \emph{Idempotents in intensional type theory}, Logical Methods
   in Computer Science \textbf{12} (2017).
 
 \bibitem[The {Univalent Foundations Program} 2013]{hottbook}
