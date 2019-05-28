@@ -104,6 +104,12 @@ This is not a correct definition since this condition is too strong.
 The correct definition requires only an equivalence between the space of maps from $X$ to $\mathcal{U}_\mathrm{cov}$ and the space of covariant fibrations over $X$.
 It is not clear whether it is possible to formulate this condition in ordinary homotopy type theory, but it is easy to do this in an indexed type theory as we will see in section~\ref{sec:class}.
 
+A similar problem with universes is considered in \cite{int-univ-hott}, where modal operators are used to solve it.
+Our approach uses a similar two-level system, but the details are different.
+We do not assume the existence of any modal operators.
+Moreover, in the context of spatial HoTT \cite{cohesive-hott}, the second level is assumed to have a rich type-theoretic structure; we do not assume it in general.
+A system similar to ours is considered in \cite{fib-fib-cats}, but this paper mostly discusses the semantics and contains only a basic version of the language.
+
 There are several kinds of indexed type theories.
 The most basic one is indexed \emph{unary} type theories.
 Such a theory has two levels: the base theory and the indexed theory.
@@ -157,7 +163,6 @@ Terms of type $A \to B$ correspond to terms of type $B$ in context $x : A$, so w
 The second level of the theory represents $\infty$-categories $F(\Gamma)$ for various objects $\Gamma$ of $\cat{B}$.
 In this section, we will discuss \emph{indexed unary type theories}, that is indexed type theories in which the second level consists of unary type theories.
 A unary type theory is a non-dependent type theory in which contexts consist of exactly one type.
-Such theories represent arbitrary 1-categories.
 We do not know whether indexed unary type theories represent all indexed $\infty$-categories over a given base, but it seems that this should be true at least for locally small indexed $\infty$-categories.
 
 \subsection{The definition}
@@ -419,10 +424,15 @@ For this reason, the sentence "for every type $A$ it is true that $P(A)$" would 
 \end{center}
 where $J_1$, \ldots $J_n$ are other given assumptions, if any.
 
-Constructions (such as products) in type theory are usually defined for all types, but we will often assume only that some construction is defined only for some specific types.
-This allows us to prove theorems in a more general form.
+Constructions (such as products) in type theory are usually defined for all types.
+We will also describe rules in this form, but we will often assume that some construction is defined only for some specific types.
+For example, we could write down usual rules for $\Pi$-types, but we do not actually assume that they exist for all types.
+Instead, we might assume that $\Pi_{x : A} B$ is defined only for some specific types $A$ and $B$.
+Formally, this means that we substitute these specific types in the rules for $\Pi$-types and assume that resulting rules are derivable in our theory.
+
+The reason why we do not assume that constructions are defined for all types is that it allows us to prove theorems in a more general form.
 For example, to prove that idempotents split (\rprop{split-idemp}), we only need to know that a very special kind of products exist.
-Another reason why we do not assume that constructions are defined for all types is that we might want to add these constructions with some restrictions.
+Another reason is that we might want to add these constructions with some restrictions.
 For example, the $\infty$-category of small $\infty$-categories does not have all $\Pi$-types, but a large class of $\Pi$-types still exists in this category.
 If we can express the property of being exponentiable in type theory, we can add the rules for $\Pi$-types with the restriction that the domain is exponentiable.
 
@@ -1103,8 +1113,7 @@ Indeed, we define $J(a, x p \Delta E.\,D, \Delta E.\,d, a', t)$ as follows:
 where $E = y_1 : B_1, \ldots y_k : B_k$.
 If we do not assume the existence of dependent $\Hom$-types, then we need to add this operation explicitly.
 It allows us to define $\pmap$ and transport in the same way as usual.
-
-If the indexed theory has identity types, then we can define the following operation:
+Moreover, we can define the following operation:
 \begin{center}
 \AxiomC{$\Gamma \vdash p : \Id_{\Hom(A,B)}(f,g)$}
 \AxiomC{$\Gamma \mid \Delta \vdash a : A$}
@@ -1217,12 +1226,14 @@ We will write $\Hom_\Delta(A,B)$ for the type $\Sigma_{f : \Hom(A,B)} \Id(p_B \c
 If we think of maps $\Hom(X,\Delta)$ as types over $\Delta$, then $\Hom_\Delta(A,B)$ is the type of morphisms between such types.
 We will identify elements of $\Hom_\Delta(A,B)$ with underlying morphisms $\Hom(A,B)$ and we will often omit the homotopy in $\Hom_\Delta(A,B)$ when constructing an element of this type.
 
+We will say that two maps are equivalent if there is an equivalence between their domains and an equivalence between their codomains such that the obvious square commutes.
+We will say that two dependent types $\Delta \vdash A$ and $\Delta' \vdash A'$ are equivalent if there is an equivalence of contexts $\Delta, x : A$ and $\Delta', x : A'$.
 If the theory has $\Sigma$-types and unit types, then, for every dependent types $\Delta \vdash B \ob$, we can define the following map:
 \[ \pi_1 : \Hom(\sum_{p : \Sigma(\Delta)} B[\pi_1(p)/x_1, \ldots \pi_k(p)/x_k]), \Sigma(\Delta)), \]
 where $\Delta = x_1 : A_1, \ldots x_k : A_k$.
 Conversely, if the theory also has identity types, then, for every map $f : \Hom(A,B)$, we can define the following dependent type:
 \[ y : B \vdash \sum_{x : A} \Id_B(f\,x,y). \]
-These constructions are mutually inverse.
+These constructions are mutually inverse up to equivalences described above.
 This implies that every dependent type in an arbitrary context is equivalent to a type in a context of size 1.
 
 If $A$ and $B$ are dependent types in a context $\Delta$ in an indexed dependent type theory, then we will write $\Hom_\Delta(A,B)$ for $\Hom((\Delta, x : A). B)$.
@@ -3178,6 +3189,11 @@ Nicolai Kraus, Mart{\'i}n Escard{\'o}, Thierry Coquand, and Thorsten
   and Applications (Berlin, Heidelberg) (Masahito Hasegawa, ed.), Springer
   Berlin Heidelberg, 2013, pp.~173--188.
 
+\bibitem[Licata \emph{et al.} 2018]{int-univ-hott}
+Daniel~R. {Licata}, Ian {Orton}, Andrew~M. {Pitts}, and Bas {Spitters},
+  \emph{{Internal Universes in Models of Homotopy Type Theory}},  (2018), \href
+  {http://arxiv.org/abs/1801.07664} {\path{arXiv:1801.07664}}.
+
 \bibitem[Lurie 2017]{lurie-algebra}
 Jacob Lurie, \emph{Higher algebra}, (2017), Unpublished, \href{http://www.math.harvard.edu/~lurie/papers/HA.pdf} {\path{http://www.math.harvard.edu/~lurie/papers/HA.pdf}}.
 
@@ -3211,6 +3227,15 @@ E.~{Rijke}, M.~{Shulman}, and B.~{Spitters}, \emph{{Modalities in homotopy type
 \bibitem[Shulman 2014]{split-idemp}
 M.~{Shulman}, \emph{Idempotents in intensional type theory}, Logical Methods
   in Computer Science \textbf{12} (2017).
+
+\bibitem[Shulman 2018]{cohesive-hott}
+Michael {Shulman}, \emph{Brouwer's fixed-point theorem in real-cohesive
+  homotopy type theory}, Mathematical Structures in Computer Science
+  \textbf{28} (2018), no.~6, 856–941.
+
+\bibitem[Uemura 2016]{fib-fib-cats}
+Taichi {Uemura}, \emph{{Fibred Fibration Categories}},  (2016), \href
+  {http://arxiv.org/abs/1602.08206} {\path{arXiv:1602.08206}}.
 
 \bibitem[The {Univalent Foundations Program} 2013]{hottbook}
 The {Univalent Foundations Program}, \emph{Homotopy type theory: Univalent
