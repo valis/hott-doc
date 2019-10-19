@@ -47,6 +47,8 @@
 \newcommand{\cat}[1]{\mathcal{#1}}
 \newcommand{\subst}{\fs{subst}}
 \newcommand{\Hom}{\fs{Hom}}
+\newcommand{\chom}{\fs{hom}}
+\newcommand{\Ob}{\fs{Ob}}
 \newcommand{\Id}{\fs{Id}}
 \newcommand{\refl}{\fs{refl}}
 \newcommand{\sym}[1]{#1^{-1}}
@@ -56,6 +58,8 @@
 \newcommand{\fib}{\ \fs{fib}}
 \newcommand{\El}{\fs{El}}
 \newcommand{\qCat}{\fs{qCat}}
+\newcommand{\sSpace}{\fs{sSpace}}
+\newcommand{\Idext}{\fs{Homext}}
 \newcommand{\Cat}{\fs{qCat}}
 
 \numberwithin{figure}{section}
@@ -88,7 +92,7 @@ We also prove that these constructions are equivalent to their type theoretic co
 
 Indexed categories were defined in \cite{indexed-cats} (see also \cite[B1]{elephant}).
 We define an analogue of this notion using the language of type theory.
-Ordinary homotopy type theory is an internal language of $\infty$-categories with some additional structure depending on constructions that we assume in the theory.
+Ordinary homotopy type theory is (conjecturally) an internal language of $\infty$-categories with some additional structure depending on constructions that we assume in the theory.
 Often we need to assume that the $\infty$-category is at least locally Cartesian closed.
 Indexed type theories allows us to discuss properties of a larger class of (indexed) $\infty$-categories.
 
@@ -97,7 +101,7 @@ One problem of ordinary homotopy type theory is that every construction must be 
 For example, we will define orthogonal factorization systems in section~\ref{sec:refl-fib}.
 In ordinary homotopy type theory only internal factorization systems (which are a special case of the external ones) can been defined \cite{modality-hott}.
 
-Similar problem occurs when we try to describe certain universes.
+A similar problem occurs when we try to describe certain universes.
 For example, we could try to add a universe $\mathcal{U}_\mathrm{cov}$ of discrete Segal types and covariant maps between them to the theory described in \cite{riehl-dhott}.
 A naive definition of such a universe postulates that we have an equivalence between the type of functions $X \to \mathcal{U}_\mathrm{cov}$ and the type of covariant fibrations over $X$.
 This is not a correct definition since this condition is too strong.
@@ -108,7 +112,7 @@ A similar problem with universes is considered in \cite{int-univ-hott}, where mo
 Our approach uses a similar two-level system, but the details are different.
 We do not assume the existence of any modal operators.
 Moreover, in the context of spatial HoTT \cite{cohesive-hott}, the second level is assumed to have a rich type-theoretic structure; we do not assume it in general.
-A system similar to ours is considered in \cite{fib-fib-cats}, but this paper mostly discusses the semantics and contains only a basic version of the language.
+A system similar to ours is considered in \cite{fib-fib-cats}, but that paper mostly discusses the semantics and contains only a basic version of the language.
 
 There are several kinds of indexed type theories.
 The most basic one is indexed \emph{unary} type theories.
@@ -117,13 +121,13 @@ The base theory has the usual type-theoretic syntax and we can assume that it ha
 On the other hand, the number of constructions available at the indexed level is very restricted (in general), but we can use the base theory to reason about objects living at the indexed level.
 Even though unary theories is the most basic version of indexed type theories, it is possible to develop the whole theory just within this limited context.
 To demonstrate this, we will consider various categorical constructions in unary theories such as limits, colimits, objects classifiers, and orthogonal factorization systems.
-Indexed unary type theories can be compared to the approach to higher category theory based on categories enriched in spaces with the difference that instead of spaces we have types of the base theory.
+Indexed unary type theories can be compared to the approach to higher category theory based on categories enriched in spaces, with the difference that instead of spaces we have types of the base theory.
 Actually, we can think of models of indexed unary type theories as a particularly strict way of modeling indexed $\infty$-categories.
 
 The second kind of indexed type theories that we will consider is indexed \emph{dependent} type theories.
-Such theories model only finitely complete indexed $\infty$-categories, but they are more convenient since we can use dependent types on both levels.
+Such theories have models only in finitely complete indexed $\infty$-categories, but they are more convenient since we can use dependent types on both levels.
 In general, we do not assume that the second level is closed under all type-theoretic constructions such as $\Pi$-types and coproducts, but some of them might exists in particular models.
-We will consider each of this constructions separately and prove that their existence imply the existence of the corresponding categorical construction.
+We will consider each of these constructions separately and prove that their existence imply the existence of the corresponding categorical construction.
 Moreover, a categorical construction exists if and only if the \emph{weak} version of the corresponding type-theoretic construction does.
 We will prove this for the following constructions:
 \begin{enumerate}
@@ -151,7 +155,7 @@ In section~\ref{sec:refl-fib}, we define orthogonal factorization systems.
 \section{Indexed unary type theories}
 \label{sec:unary}
 
-We can think about an indexed type theory as a syntactic representation of indexed $\infty$-categories, that is a contravariant functor $F$ from an $\infty$-category $\cat{B}$ to the $\infty$-category of small $\infty$-categories.
+We can think about an indexed type theory as a syntactic representation of indexed $\infty$-categories, that is a contravariant functor $F$ from a (small) $\infty$-category $\cat{B}$ to the $\infty$-category of (small) $\infty$-categories.
 An indexed type theory consists of two levels.
 The first level is just an ordinary type theory and it represents $\cat{B}$.
 Since we are mostly interested in the case when $\cat{B}$ is the $\infty$-category of spaces,
@@ -163,7 +167,6 @@ Terms of type $A \to B$ correspond to terms of type $B$ in context $x : A$, so w
 The second level of the theory represents $\infty$-categories $F(\Gamma)$ for various objects $\Gamma$ of $\cat{B}$.
 In this section, we will discuss \emph{indexed unary type theories}, that is indexed type theories in which the second level consists of unary type theories.
 A unary type theory is a non-dependent type theory in which contexts consist of exactly one type.
-We do not know whether indexed unary type theories represent all indexed $\infty$-categories over a given base, but it seems that this should be true at least for locally small indexed $\infty$-categories.
 
 \subsection{The definition}
 
@@ -180,7 +183,7 @@ Judgments $\Gamma \mid \cdot \vdash A \ob$ represent types of the second level o
 We will call these types \emph{indexed types} to distinguish them from base types.
 In a judgment $\Gamma \mid x : A \vdash b : B$, $x$ is a variable which is distinct from the variables in $\Gamma$, $A$ and $B$ are indexed types, and $b$ is a term of the second level of the theory.
 We will call such terms \emph{indexed terms}.
-Indexed types represent objects indexed by $\Gamma$ and indexed an indexed term $\Gamma \mid x : A \vdash b : B$ represents a morphism between $A$ and $B$.
+Indexed types represent objects indexed by $\Gamma$ and indexed terms $\Gamma \mid x : A \vdash b : B$ represent morphisms between $A$ and $B$.
 
 We have the usual rules for variables and substitutions for the base theory:
 \begin{center}
@@ -328,7 +331,7 @@ If $\Gamma \vdash p : \Id_A(a,a')$, $\Gamma, x : A \vdash B \type$, and $\Gamma 
 Operation $\pmap$ is defined in terms of $J$ and has the following type:
 if $\Gamma \vdash B \type$, $\Gamma, x : A \vdash b : B$, and $\Gamma \vdash p : \Id_A(a,a')$, then $\Gamma \vdash \pmap(x.b, p) : \Id_B(b[a/x],b[a'/x])$.
 
-An indexed type theory is \emph{locally small} if there is a type of its morphisms.
+An indexed type theory is \emph{locally small} if there is a base type of its morphisms.
 That is, it must contain the following rules and equations:
 \begin{center}
 \AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
@@ -399,21 +402,18 @@ We do not assume that operations or inference rules are primitive.
 For example, if the theory has $\Sigma$-types, then it has binary products since they can be defined in terms of $\Sigma$-types (even though they are not primitive).
 A more complicated example is the theory of $\Pi$-types.
 If a theory has $\Id$-types, $\Sigma$-types and non-dependent function types, then it (almost) has $\Pi$-types.
-Indeed, $\Pi_{x : A} B$ can be defined as $\Sigma_{f : A \to \Sigma_{x : A} B} \pi_1 \circ f = \fs{id}_A$ and operations of abstraction and application can be easily defined so that necessary inference rules are derivable.
+Indeed, $\Pi_{x : A} B$ can be defined as $\Sigma_{(f : A \to \Sigma_{x : A} B)} \Id(\pi_1 \circ f, \fs{id}_A)$ and operations of abstraction and application can be easily defined so that necessary inference rules are derivable.
 The only problem is that $\eta$-equivalence holds only propositionally for this definition of $\Pi$-types.
 We will call $\Pi$-types in which computational rules hold only propositionally \emph{weak $\Pi$-types}.
 We will see many examples of weak versions of various constructions throughout this paper.
 
 When we say that something is true for every $x : A$ this should be interpreted in the internal sense (as customary in HoTT).
-The sentence "for every $x : A$ it is true that $B(x)$" is usually translated to the type $\Pi_{x : A} B(x)$ and it is said that the sentence is true when this type is inhabited.
+The sentence ``for every $x : A$ it is true that $B(x)$'' is usually translated to the type $\Pi_{x : A} B(x)$ and it is said that the sentence is true when this type is inhabited.
 Since we do not assume the existence of $\Pi$-types, we will translate this sentence to the judgement $\Gamma, x : A \vdash B(x)$
 and we will say that the sentence is true if there is a term $b$ such that the judgement $\Gamma, x : A \vdash b : B (x)$ is derivable (from given assumptions, if any).
-We will sometime say "for every term $x$ (of type $A$) it is true that $B(x)$".
-This sentence means exactly the same as the previous one; here, the word "term" is not intended to mean that the sentence is true in the external sense,
-this word only stresses that we quantify over terms as opposed to types since the quantification over types works differently.
 
 A quantification over types usually means a quantification over some universe, but we do not assume universes exist and moreover we do want to quantify over all types.
-For this reason, the sentence "for every type $A$ it is true that $P(A)$" would mean that there is a term $p$ such that the following rule is derivable:
+For this reason, the sentence ``for every type $A$ it is true that $P(A)$'' would mean that there is a term $p$ such that the following rule is derivable:
 \begin{center}
 \AxiomC{$\Gamma \vdash A$}
 \AxiomC{$J_1$}
@@ -424,11 +424,26 @@ For this reason, the sentence "for every type $A$ it is true that $P(A)$" would 
 \end{center}
 where $J_1$, \ldots $J_n$ are other given assumptions, if any.
 
+It is also possible to interpret a sentence ``for every $a : A$ it is true that $B(a)$'' in the same way we interpret such a sentence for types.
+That is, we can interpret it as the statement that there is a term $b'(a)$, depending on $a$, such that the following rule is derivable:
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$J_1$}
+\AxiomC{\ldots}
+\AxiomC{$J_n$}
+\QuaternaryInfC{$\Gamma \vdash b' : B(a)$}
+\DisplayProof
+\end{center}
+where $J_1$, \ldots $J_n$ are other given assumptions, if any.
+This interpretation is equivalent to the previous one since we can define $b'$ as $b[a/x]$ and we can define $b$ as $b'(x)$.
+
 Constructions (such as products) in type theory are usually defined for all types.
 We will also describe rules in this form, but we will often assume that some construction is defined only for some specific types.
-For example, we could write down usual rules for $\Pi$-types, but we do not actually assume that they exist for all types.
-Instead, we might assume that $\Pi_{x : A} B$ is defined only for some specific types $A$ and $B$.
+For example, we could write down the usual rules for $\Pi$-types, but we do not actually assume that they exist for all types.
+Instead, we might assume that $\Pi_{x : A} B$ is defined only for some concrete types $A$ and $B$.
 Formally, this means that we substitute these specific types in the rules for $\Pi$-types and assume that resulting rules are derivable in our theory.
+For example, we could take $A$ to be the type of natural numbers and require the rules for $\Pi$-types to hold for all $B$ and for $A = \mathbb{N}$.
+If this is true in some specific indexed type theory, we may say that $\mathbb{N}$ is exponentiable in this theory.
 
 The reason why we do not assume that constructions are defined for all types is that it allows us to prove theorems in a more general form.
 For example, to prove that idempotents split (\rprop{split-idemp}), we only need to know that a very special kind of products exist.
@@ -436,10 +451,40 @@ Another reason is that we might want to add these constructions with some restri
 For example, the $\infty$-category of small $\infty$-categories does not have all $\Pi$-types, but a large class of $\Pi$-types still exists in this category.
 If we can express the property of being exponentiable in type theory, we can add the rules for $\Pi$-types with the restriction that the domain is exponentiable.
 
-We will often compare two different constructions (such as products and weak products).
-In this case, we will give a proposition of the following form: "Let $A$ and $B$ be two types. Then $P$ is their product if and only if it is their weak product".
-This proposition should be interpreted as follows.
-For every indexed type theory, every two specific types $A$ and $B$, and every $P$, the rules of products are derivable for $P$ if and only if the rules of weak products are derivable for $P$.
+\subsection{Models}
+\label{sec:unary-models}
+
+A \emph{model} of an indexed unary type theory is a model $\cat{B}$ of the underlying base theory (that is, a small contextual category with additional structure, depending on the constructions in the base theory)
+together with a contravariant functor from the underlying category of $\cat{B}$ to the category of small categories (with additional structure, depending on the constructions in the indexed theory).
+Models of indexed type theories are closely related to indexed $\infty$-categories.
+We will show that every model of an indexed dependent type theory determines an indexed $\infty$-categories in section~\ref{sec:models}.
+We believe that every model of a locally small indexed unary type theory also gives rise to an indexed $\infty$-category, but this is harder to prove.
+
+A general method of constructing models of indexed type theories is described in \cite{indexed-models}.
+It is shown there how to apply this method to construct several models.
+For example, there is a model in which base contexts are interpreted as simplicial sets, dependent types of the base theory are interpreted as Kan fibrations as usual,
+and indexed types are interpreted as categorical fibrations (in the quasicategorical sense) over the interpretation of the base context.
+We will denote this model by $\qCat$.
+We will see that many type-theoretic constructions can be interpreted in this models.
+This allows us to use a type-theoretic language to reason about $\infty$-categories.
+
+The model $\qCat$ is locally small.
+If $C$ and $D$ are quasicategories, then $\Hom(C,D)$ is interpreted as the maximal Kan complex contained in the quasicategory $D^C$ of functors between $C$ and $D$.
+That is, it is simply the underlying $\infty$-groupoid of this category presented as a Kan complex.
+In particular, if $C = 1$ is the terminal quasicategory, then $\Hom(1,D)$ is the underlying $\infty$-groupoid of $D$.
+
+Another example of a model of an indexed unary type theory is simplicial spaces.
+Base contexts are interpreted as simplicial sets, dependent types of the base theory are interpreted as Kan fibrations,
+and indexed types are interpreted as injective fibrations over the constant bisimplicial set corresponding to the interpretation of the base context.
+We will denote this model by $\sSpace$.
+Since bisimplicial sets form a sufficiently nice model category, this model supports all standard type-theoretic constructions at both base and indexed levels.
+This model also supports various non-standard constructions which make the theory similar to the one described in \cite{riehl-dhott}.
+
+The model $\sSpace$ is also locally small.
+If $C$ and $D$ are bisimplicial sets, then $\Hom(C,D)$ is interpreted as $(D^C)_{[0]}$.
+In particular, if $C = 1$ is the terminal bisimplicial set and $D$ is a complete Segal space, then $\Hom(1,D)$ is the underlying $\infty$-groupoid of $D$.
+Note that there is no analogous operation in \cite{riehl-dhott}.
+It seems that to describe it, either the theory should be two-level like the one presented in this paper or it should have modal operators like the theory presented in \cite{cohesive-hott}.
 
 \section{Equivalences}
 \label{sec:equivalence}
@@ -573,12 +618,129 @@ $f \circ j \circ h \circ k \sim m \circ g \circ h \circ k \sim m \circ \id_D \ci
 In this section, we will work in a locally small indexed unary type theory.
 We will define specific finite (co)limits and arbitrary (co)products.
 
-\subsection{Finite (co)limits}
+\subsection{Terminal and initial types}
+\label{sec:term-init}
 
 An indexed type $T$ is \emph{terminal} if, for every indexed type $X$, the type $\Hom(X,T)$ is contractible.
+Formally, this means that their exist terms $c(X)$ and $p(X)$ such that the following rules are derivable:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash X \ob$}
+\UnaryInfC{$\Gamma \vdash c(X) : \Hom(X,T)$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \cdot \vdash X \ob$}
+\UnaryInfC{$\Gamma, f : \Hom(X,T) \vdash p(X) : \Id(f,c(X))$}
+\DisplayProof
+\end{center}
+We will say that an indexed unary type theory \emph{has terminal types} if the following rule and the rules given above, in which $T$ is replaced with $1$, are derivable:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \cdot \vdash 1 \ob$}
+\DisplayProof
+\end{center}
+
 Dually, an indexed type $T$ is \emph{initial} if, for every indexed type $X$, the type $\Hom(T,X)$ is contractible.
 Terminal and initial types are unique up to unique equivalence, that is the type of equivalences between a pair of terminal or initial types is contractible.
-We will say that an indexed unary type theory \emph{has terminal (resp., initial) types} if, for every context $\Gamma$, there is a terminal (resp., initial) type $\Gamma \mid \cdot \vdash T \ob$.
+
+A type which is both terminal and initial is called a \emph{zero type}.
+This is an interesting example since a non-trivial $\infty$-category cannot be Cartesian closed and have a zero object at the same type.
+This means that we cannot use ordinary homotopy type theory as an internal language of such $\infty$-categories.
+
+For every nice enough model of the base theory, there is an obvious model of the theory of zero types in which indexed types over a base context $\Gamma$ are interpreted as pointed base types in this context.
+To make the theory match this model more closely, we can add an indexed type $S^0$.
+Then every indexed type $A$ has the underlying base type $\Hom(S^0,A)$.
+This base type is pointed with the base pointed given by the zero map, that is the map $S^0 \to 0 \to A$, where $0$ is the zero type.
+Moreover, for every map $f : \Hom(A,B)$, the map $f \circ - : \Hom(S^0,A) \to \Hom(S^0,B)$ preserves the base point.
+
+Finally, we can make the theory match the model exactly.
+For this, we assume that the base theory has $\Pi$-types.
+For every pair of pointed base types $X$ and $Y$, let $X \to_* Y$ be the type of pointed maps between them.
+We already defined a map $\Hom(A,B) \to (\Hom(S^0,A) \to_* \Hom(S^0,B))$.
+Now, we can require this map to be an equivalence.
+Also, for every pointed base type $(X,*)$, we can add an indexed type $R(X,*)$ together with a pointed equivalence between $\Hom(S^0,R(X,*))$ and $(X,*)$.
+The theory of zero types with these additional constructions will be called \emph{the theory of pointed types}.
+
+\subsection{Pullbacks and pushouts}
+
+A \emph{pullback} of a pair of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is a triple $\pi_1 : \Hom(P, A)$, $\pi_2 : \Hom(P, B)$, $\pi_3 : \Id(f \circ \pi_1, g \circ \pi_2)$
+such that the following function is an equivalence for every indexed type $P'$:
+\[ \lambda h.\,(\pi_1 \circ h, \pi_2 \circ h, h * \pi_3) : \Hom(P',P) \to \Hom(P',A) \times_{\Hom(P',C)} \Hom(P',B), \]
+where the pullback of types $\Hom(P',A) \times_{\Hom(P',C)} \Hom(P',B)$ is defined as usual:
+\[ \sum_{\pi_1' : \Hom(P',A)} \sum_{\pi_2' : \Hom(P',B)} \Id(f \circ \pi_1', g \circ \pi_2'). \]
+An indexed unary type theory \emph{has pullbacks} if a pullback exists for every pair of maps with a common codomain in every context.
+Formally, this means that the following rule is derivable and $A \times_C B$ is a pullback of $f$ and $g$ in the sense defined above.
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Hom(A,C)$}
+\AxiomC{$\Gamma \vdash g : \Hom(B,C)$}
+\BinaryInfC{$\Gamma \mid \cdot \vdash A \times_C B \ob$}
+\DisplayProof
+\end{center}
+\emph{Pushouts} $A \amalg_C B$ are defined dually.
+
+\begin{remark}
+Pullbacks and pushouts are unique up to unique equivalence.
+\end{remark}
+
+\begin{example}
+If an indexed unary type theory has a terminal type $\term$ with a point $\unit : \term$, then the \emph{loop space type} of a pointed type $Y$, $y_0 : \Hom(\term,Y)$ is the pullback of $y_0$ and $y_0$.
+Equivalently, the loop space type is the equalizer of $y_0$ and $y_0$.
+Thus, the loop space type is a type $\Omega(Y,y_0)$ together with a homotopy $\Id_{\Hom(\Omega(Y,y_0), Y)}(\lambda s.\,y_0\,\unit, \lambda s.\,y_0\,\unit)$ satisfying the universal property.
+Since $\Hom(X,-)$ preserves terminal types and pullbacks, we have the following equivalence:
+\[ \Hom(X, \Omega(Y,y_0)) \simeq \Omega(\Hom(X,Y), \lambda x.\,y_0\,\unit), \]
+where the second $\Omega$ is the usual loop space of a base type: $\Omega(S,s_0) = \Id_S(s_0,s_0)$.
+\end{example}
+
+\begin{example}
+The \emph{suspension} $\Sigma X$ of a type $X$ is the pushout of the maps $\lambda x.\,\unit, \lambda x.\,\unit : \Hom(X,\term)$.
+The \emph{$0$-sphere} $S^0$ is the coproduct $\term \amalg \term$.
+The \emph{$(n+1)$-sphere} $S^{n+1}$ is the suspension $\Sigma S^n$.
+\end{example}
+
+We will say that a theory is \emph{stable} if it has a zero type, pullbacks, and pushouts and, for every indexed type $A$, the canonical maps $A \to \Omega \Sigma A$ and $\Sigma \Omega A \to A$ are equivalences.
+This is just a reformulation of the definition of stable $\infty$-categories in the context of indexed type theories.
+An obvious example of a model of such a theory is the one in which indexed types over a base context $\Gamma$ are interpreted as spectra of base types in this context.
+We did not verify that this model exists, but we still can discuss stable theories from the syntactic perspective.
+
+Let $S$ be a fixed indexed type.
+Then, for every indexed type $A$, we can define a spectrum of base types $U_S(A)$.
+Let $U_S(A)_n = \Hom(S,\Sigma^n(A))$.
+We already saw in section~\ref{sec:term-init} that these types are pointed.
+Now, we can define an equivalence $\Omega(U_S(A)_{n+1}) = \Omega(\Hom(S,\Sigma^{n+1}(A))) \simeq \Hom(S,\Omega\Sigma^{n+1}(A)) \simeq \Hom(S,\Sigma^n(A)) = U_S(A)_n$.
+Thus, $U_S(A)$ is indeed a spectrum.
+Moreover, for every map $f : \Hom(A,B)$, the maps $\Sigma^n(f) \circ - : U_S(A)_n \to U_S(B)_n$ determine a morphism of spectra.
+
+The spectrum $U_S(A)$ is not indexed by the base type of natural numbers (we do not even assume that such a type exists).
+That is, $U_S(A)$ is just a sequence of base types together with a sequence of structure maps.
+To define $U_S(A)$ as an internal spectrum, we need to assume that the base theory has a type of natural numbers.
+Moreover, we need the following rule
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
+\AxiomC{$\Gamma \vdash n : \mathbb{N}$}
+\BinaryInfC{$\Gamma \mid \cdot \vdash \Sigma^n(A) \ob$}
+\DisplayProof
+\end{center}
+satisfying the following computation rules
+\begin{align*}
+\Sigma^0(A) & = A \\
+\Sigma^{\fs{suc}(n)}(A) & = \Sigma(\Sigma^n(A))
+\end{align*}
+Now, the definition of the spectrum $U_S(A)$ given above makes sense internally.
+
+We can also define the theory of spectra.
+For this, we assume that the base theory has $\Pi$-types, natural numbers, and the rules given above.
+For every pair of spectra $X$ and $Y$, let $\fs{Sp}(X,Y)$ be the type of morphisms between them.
+We already defined a map $\Hom(A,B) \to \fs{Sp}(U_S(A),U_S(B))$.
+Now, we can require this map to be an equivalence.
+Also, for every spectrum $X$, we can add an indexed type $R(X)$ together with an equivalence between $U_S(R(X))$ and $X$.
+The stable theory with these additional constructions will be called \emph{the theory of spectra}.
+
+The theory of spectra can be used to reason about spectra in a more convenient way.
+For example, composition of morphisms of spectra (presented as indexed types) is strictly associative.
+Moreover, we can apply a type-theoretic language to various constructions on spectra such as their coproduct.
+Finally, we can even consider an extension of indexed unary type theories in which the indexed level is a linear type theory.
+The theory of spectra extened in such a way would allow us to work with the smash product of spectra in a convenient way.
+
+\subsection{Finite (co)limits}
 
 A \emph{binary product} of indexed types $A$ and $B$ is an indexed type $A \times B$ together with a pair of maps $\pi_1 : \Hom(A \times B, A)$ and $\pi_2 : \Hom(A \times B, B)$
 such that the following function is an equivalence for every indexed type $C$:
@@ -593,26 +755,14 @@ such that the following function is an equivalence for every indexed type $E'$:
 An indexed unary type theory \emph{has equalizers} if an equalizer exists for every parallel pair of maps in every context.
 \emph{Coequalizers} are defined dually.
 
-A \emph{pullback} of a pair of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is a triple $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \times_C B, B)$, $\pi_3 : \Id(f \circ \pi_1, g \circ \pi_2)$
-such that the following function is an equivalence for every indexed type $P'$:
-\[ \lambda h.\,(\pi_1 \circ h, \pi_2 \circ h, h * \pi_3) : \Hom(P, A \times_C B) \to \Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B), \]
-where the pullback of types $\Hom(P,A) \times_{\Hom(P,C)} \Hom(P,B)$ is defined as usual:
-\[ \sum_{\pi_1' : \Hom(P,A)} \sum_{\pi_2' : \Hom(P,B)} \Id(f \circ \pi_1', g \circ \pi_2'). \]
-An indexed unary type theory \emph{has pullbacks} if a pullback exists for every pair of maps with a common codomain in every context.
-\emph{Pushouts} $A \amalg_C B$ are defined dually.
-
 \begin{remark}
-Binary (co)products, (co)equalizers, pullbacks, and pushouts are unique up to unique equivalence.
-\end{remark}
-
-\begin{remark}
-The function $\Hom(C,-)$ preserves binary products, equalizers, and pullbacks.
+Binary (co)products and (co)equalizers are unique up to unique equivalence.
 \end{remark}
 
 We have the following standard proposition:
 
 \begin{prop}[fin-lim]
-An indexed unary type theory with terminal types has pullbacks if and only if it has equalizers and binary products.
+An indexed unary type theory with a terminal type has pullbacks if and only if it has equalizers and binary products.
 \end{prop}
 \begin{proof}
 First, suppose that the theory has a terminal type $1$ and pullbacks.
@@ -645,22 +795,15 @@ The universal property of equalizers implies the universal property of pullbacks
 
 \begin{defn}[fin-lim]
 An indexed unary type theory \emph{has finite limits} if the equivalent conditions of \rprop{fin-lim} hold.
+Dually, it has finite colimits if it has an initial type and pushouts.
 \end{defn}
 
-\begin{example}
-If an indexed unary type theory has a terminal type $\term$ with a point $\unit : \term$, then the \emph{loop space type} of a pointed type $Y$, $y_0 : \Hom(\term,Y)$ is the pullback of $y_0$ and $y_0$.
-Equivalently, the loop space type is the equalizer of $y_0$ and $y_0$.
-Thus, the loop space type is a type $\Omega(Y,y_0)$ together with a homotopy $\Id_{\Hom(\Omega(Y,y_0), Y)}(\lambda s.\,y_0\,\unit, \lambda s.\,y_0\,\unit)$ satisfying the universal property.
-Since $\Hom(X,-)$ preserves terminal types and pullbacks, we have the following equivalence:
-\[ \Hom(X, \Omega(Y,y_0)) \simeq \Omega(\Hom(X,Y), \lambda x.\,y_0\,\unit), \]
-where the second $\Omega$ is the usual loop space base type: $\Omega(S,s_0) = \Id_S(s_0,s_0)$.
-\end{example}
-
-\begin{example}
-The \emph{suspension} $\Sigma X$ of a type $X$ is the pushout of the maps $\lambda x.\,\unit, \lambda x.\,\unit : \Hom(X,\term)$.
-The \emph{$0$-sphere} $S^0$ is the coproduct $\term \amalg \term$.
-The \emph{$(n+1)$-sphere} $S^{n+1}$ is the suspension $\Sigma S^n$.
-\end{example}
+The theory of spectra (and any stable theory) has all finite limits and finite colimits by definition.
+The theory of pointed types also has all finite limits.
+It has a terminal type by definition.
+Since the ``category'' of indexed types is equivalent to the ``category'' of pointed base types, to prove that it has pullbacks, it is enough to prove this for pointed base types.
+Pullbacks of pointed types computed as pullbacks of the underlying types.
+If the base theory has pushouts, then the theory of pointed types also has pushouts (and hence all finite colimits) since pushouts of pointed types are also computed as pushouts of the underlying types.
 
 \subsection{(Co)products}
 \label{sec:products}
@@ -675,8 +818,8 @@ such that the function $\pi \circ -$ has an inverse in the sense that there is a
 \end{center}
 and the following types are inhabited:
 \begin{align*}
-& \Id(\pi \circ \langle f \rangle_{i : I}, f) \\
-& \Id(\langle \pi \circ f \rangle_{i : I}, f).
+& \Id(\pi \circ \langle f \rangle_{i : I}, f), \\
+& \Id(\langle \pi \circ g \rangle_{i : I}, g).
 \end{align*}
 
 The theory of coproducts is defined dually.
@@ -691,7 +834,7 @@ such that the function $- \circ \fs{in}$ has an inverse in the sense that there 
 and the following types are inhabited:
 \begin{align*}
 & \Id([ f ]_{i : I} \circ \fs{in}, f) \\
-& \Id([ f \circ \fs{in} ]_{i : I}, f).
+& \Id([ g \circ \fs{in} ]_{i : I}, g).
 \end{align*}
 
 If the $\Pi$-type $\Pi_{i : I} \Hom(P',B)$ exists for all indexed types $\Gamma \mid \cdot \vdash P' \ob$, then a pair $P$, $\pi$ is a product of a family $B$ if and only if the following function is an equivalence for every indexed type $P'$:
@@ -708,6 +851,11 @@ Similarly, we will say that the coproduct $\coprod_{i : I} B$ is \emph{extension
 If $\Gamma \vdash I \type$ is a base type and $\Gamma \mid \cdot \vdash X \type$ is an indexed type, then the \emph{power} (or \emph{cotensor}) of $X$ by $I$ is the product $\prod_{i : I} X$.
 The \emph{copower} (or \emph{tensor}) of $X$ by $I$ is the coproduct $\coprod_{i : I} X$.
 The power will be denoted by $X^I$ and the tensor by $I \cdot X$.
+\end{example}
+
+\begin{example}
+Let $S^1$ be the suspension of $1 \amalg 1$ in the base theory, that is a higher inductive type with two point constructors $N,S : S^1$ and two path constructors $L,R : \Id_{S^1}(N,S)$.
+Then the product of a family $\Gamma, x : S^1 \mid \cdot \vdash B$ is the equalizer of the maps $L_*(-),R_*(-) : \Hom(B[N/x], B[S/x])$.
 \end{example}
 
 We can also define the theory of \emph{strict products}:
@@ -737,6 +885,7 @@ We can also define the theory of \emph{strict products}:
 
 The difference between weak and strict products is that the former requires types $\Hom(P',\prod_{i : I} B)$ and $\Pi_{i : I} \Hom(P',B)$ to be equivalent while the latter requires them to be \emph{isomorphic}.
 The theory of \emph{weak products} is defined in the same way as the theory of strict products with the difference that the last two equations hold only propositionally.
+This theory is simply a reformulation of the theory of products:
 
 \begin{prop}
 A type $\Gamma \mid \cdot \vdash \prod_{i : I} B$ is a product of a family $\Gamma, i : I \mid \cdot \vdash B \ob$ if and only if it is a weak product of this family.
@@ -762,6 +911,41 @@ The required homotopies can be constructed as follows:
 & \langle \pi \circ g \rangle_{i : I} = \lambda x.\,\lambda i.\,g\,x\,i \sim \lambda x.\,g\,x = g
 \end{align*}
 \end{proof}
+
+\begin{example}
+If functional extensionality holds in the base theory, then the theory of pointed types has extensional products.
+The product of a family $\Gamma, i : I \mid \cdot \vdash B_i$ is defined as $R(\prod_{i : I} \Hom(S^0,B_i), \lambda i.\,*_{B_i})$, where $*_{B_i}$ is the base point of $\Hom(S^0,B_i)$.
+\end{example}
+
+\begin{example}
+If the base theory has pushouts and functional extensionality holds in it, then the theory of pointed types has extensional coproducts.
+The coproduct of a family $\Gamma, i : I \mid \cdot \vdash B_i$ is defined as $R(\bigvee_{i : I} B_i, *)$, where $\bigvee_{i : I} B_i$ is the following pushouts:
+\[ \xymatrix{ I                           \ar[r] \ar[d]_{\lambda i.\,(i,*_{B_i})} & 1 \ar[d]^{*} \\
+              \sum_{i : I} \Hom(S^0, B_i) \ar[r]                                  & \po \bigvee_{i : I} B_i
+            } \]
+\end{example}
+
+\begin{example}
+Tensoring $I \cdot S^0$ is the free pointed type $I_* = R(I \amalg \{ * \}, *)$.
+More generally, $I \cdot B$ is the smash product $I_* \wedge B$.
+\end{example}
+
+\begin{example}
+If functional extensionality holds in the base theory, then the theory of spectra has extensional products.
+The product of a family of spectra is defined pointwise.
+\end{example}
+
+\begin{example}
+If the base theory has pushouts and functional extensionality holds in it, then the theory of spectra has extensional coproducts.
+Let $\Gamma, i : I \mid \cdot \vdash B_i$ be a family of indexed types.
+Then we can define a prespectrum $\Gamma, n : \mathbb{N} \vdash \bigvee_{i : I} U_S(B_i)_n$ with the structure maps induced by the structure maps of spectra $B_i$.
+A tedious but straightforward computation shows that (the indexed type corresponding to) the spectrification of this prespectrum is the coproduct of $B_i$.
+\end{example}
+
+\begin{example}
+Tensoring $I \cdot S$ is the suspension spectrum $\Sigma^\infty I_*$.
+More generally, $I \cdot B$ is the smash product $\Sigma^\infty I_* \wedge B$.
+\end{example}
 
 Let us prove a few properties of products and coproducts.
 To simplify the notation, we will assume that the base theory of an indexed theory with a product $\prod_{i : I} B$ has $\Pi$-types $\Pi_{i : I} \Hom(P,B)$ for all $P$.
@@ -865,17 +1049,13 @@ The equivalence for suspension follows from previous equations since suspension 
 The last equivalence follows from previous since spheres are defined in terms of suspensions, coproducts, and terminal types.
 \end{proof}
 
-\begin{example}
-Let $S^1$ be the suspension of $1 \amalg 1$ in the base theory, that is a higher inductive type with two point constructors $N,S : S^1$ and two path constructors $L,R : \Id_{S^1}(N,S)$.
-Then the product of a family $\Gamma, x : S^1 \mid \cdot \vdash B$ is the equalizer of the maps $L_*(-),R_*(-) : B[N/x] \to B[S/x]$.
-\end{example}
-
 \section{Indexed dependent type theories}
 \label{sec:dependent}
 
 In this section, we define the dependent version of indexed type theories.
 
 \subsection{Basic rules}
+\label{sec:dep-rules}
 
 \emph{Indexed dependent type theories} have four kinds of judgments:
 \[ \Gamma \vdash A \type \qquad \Gamma \vdash a : A \qquad \Gamma \mid \Delta \vdash B \ob \qquad \Gamma \mid \Delta \vdash b : B \]
@@ -923,10 +1103,6 @@ d[c_1/z_1, \ldots c_n/z_n][b_1/y_1, \ldots b_k/y_k] & = d[c_1'/z_1, \ldots c_n'/
 \end{align*}
 where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
 
-We will say that some construction $\sigma(\overline{z_1}.\,c_1, \ldots \overline{z_n}.\,c_n)$ is \emph{stable} if the following equation holds for all indexed terms $b_1$, \ldots $b_k$ whenever variables $\overline{z_1}$, \ldots $\overline{z_n}$ are not free in them:
-\[ \sigma(\ldots, \overline{z_i}.\,c_i, \ldots)[b_1/y_1, \ldots b_k/y_k] = \sigma(\ldots, \overline{z_i}.\,c_i[b_1/y_1, \ldots b_k/y_k], \ldots) \]
-We also have the weakening operation which is left implicit as usual.
-
 We can also substitute base terms into indexed types and terms:
 \begin{center}
 \def\extraVskip{1pt}
@@ -970,39 +1146,46 @@ where $c_i' = c_i[b_1/y_1, \ldots b_k/y_k]$.
 
 We always assume that all constructions are stable under substitution of base terms.
 Substitution of base terms corresponds to reindexing in indexed categories, so this means that all constructions are stable under reindexing.
-Substitution of indexed terms corresponds to pulling back along the morphism corresponding to these terms.
-Since not all constructions are stable under pullbacks, we do not assume that substitution of indexed terms commutes with all constructions.
-This might seem to be unusual since it requires explicit substitution, but we can always replace an unstable construction with a stable one with some restrictions.
+We will assume that all constructions (which are defined in every context) are stable under substitution of indexed terms.
+This operation corresponds to pulling back along the morphism corresponding to these terms.
 
-Let $\sigma$ be an unstable construction with the following inference rule:
+We will consider examples of models of indexed theories in which some of the constructions are not stable under pullbacks.
+For example, the initial type is not stable under pullbacks in models corresponding to stable $\infty$-categories (unless it is the trivial $\infty$-category).
+We still can use initial types, but the elimination principle should be restricted (see section~\ref{sec:dep-initial}).
+
+If we want to work with more complicated constructions which are not stable under pullbacks such as pushouts, then the type former itself should be restricted to the empty context.
+The substitution cannot be applied to such constructions, but the weakening is still available for them.
+This means that we can use such constructions in every context as usual, but the type former can be applied only to closed types and terms (that is, no indexed variables can appear in it, but base variables are still available).
+See section~\ref{sec:dep-pushouts} for an example of such a construction.
+
+We will always assume that the following rule is derivable:
 \begin{center}
-\AxiomC{$\Gamma, \Gamma_1 \mid \Delta, \Delta_1 \vdash A_1$}
-\AxiomC{\ldots}
-\AxiomC{$\Gamma, \Gamma_n \mid \Delta, \Delta_n \vdash A_n$}
-\TrinaryInfC{$\Gamma \mid \Delta \vdash \sigma(\Gamma_1 \Delta_1.\,A_1, \ldots \Gamma_n \Delta_n.\,A_n)$}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \vdash a : A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash a' : A$
+\noLine
+\UnaryInf$\fCenter \Gamma \vdash t : \Id_A(a,a')$
+\Axiom$\fCenter \Gamma, x : A, p : \Id_A(a,x), \Delta \mid E \vdash D \ob$
+\noLine
+\UnaryInf$\fCenter \Gamma, \Delta[a/x,\refl(a)/p] \mid E[a/x,\refl(a)/p] \vdash d : D[a/x,\refl(a)/p]$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma, \Delta[a'/x,t/p] \mid E[a'/x,t/p] \vdash J(a, x p \Delta E.\,D, \Delta E.\,d, a', t) : D[a'/x,t/p]$}
 \DisplayProof
 \end{center}
-Here each $A_i$ may be either a type or a term and $\sigma(\Gamma_1 \Delta_1.\,A_1, \ldots \Gamma_n \Delta_n.\,A_n)$ also can be either a type or a term.
-Such an unstable construction can be replaced with the following stable one:
+
+\[ J(a, x p \Delta E.\,D, \Delta E.\,d, a, \refl(a)) = d \]
+
+It allows us to define $\pmap$ and transport in the same way as usual.
+Moreover, we can define the following operation:
 \begin{center}
-\AxiomC{$\Gamma, \Gamma_1 \mid \Delta, \Delta_1 \vdash A_1$}
-\AxiomC{\ldots}
-\AxiomC{$\Gamma, \Gamma_n \mid \Delta, \Delta_n \vdash A_n$}
-\AxiomC{$\Gamma \mid E \vdash \overline{d} : \Delta$}
-\QuaternaryInfC{$\Gamma \mid E \vdash \sigma'(\Gamma_1 \Delta \Delta_1.\,A_1, \ldots \Gamma_n \Delta \Delta_n.\,A_n, \overline{d})$}
+\AxiomC{$\Gamma \vdash p : \Id_{\Hom(A,B)}(f,g)$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{hap}(p,a) : \Id_B(f\,a,g\,a)$}
 \DisplayProof
 \end{center}
-We need to add such a construction for every possible length of $\Delta$, but if we have $\Sigma$-types and unit types, then we can always assume that $|\Delta| = 1$.
-Thus, if we have $\Sigma$-types and unit types, we can replace an unstable construction $\sigma$ with a stable $\sigma'$.
-This construction is defined simply as $\sigma(\Gamma_1 \Delta_1.\,A_1, \ldots \Gamma_n \Delta_n,\,A_n)[\overline{d}/\Delta]$.
-The stability of this construction follows from the properties of substitution mentioned above.
-Conversely, $\sigma$ can be defined in terms of $\sigma'$ as $\sigma'(\Gamma_1 \Delta \Delta_1.\,A_1, \ldots \Gamma_n \Delta \Delta_n.\,A_n, \overline{y})$, where $\Delta = y_1 : B_1, \ldots y_k : B_k$.
-These constructions are mutually inverse.
-Note that $\sigma'$ is itself slightly unusual since the variables from the context can appear only in $\overline{d}$, but not in other arguments.
-This is also slightly unusual, but it is arguably better than the unstable construction since it does not require the explicit substitution and the additional restriction is easy to check.
-
-Since the second level of an indexed dependent type theory is also a dependent type theory, we can add standard type-theoretic construction to it.
-When we add such a construction, we always assume that it is defined in every base context.
+It is defined as follows:
+\[ \fs{hap}(p,a) = \pmap(f.\,f\,a,p). \]
 
 The rules of indexed unary type theories are true in indexed dependent type theories.
 This means that unary theories can be interpreted in dependent theories.
@@ -1017,13 +1200,12 @@ This interpretation will be called \emph{the canonical indexing of a dependent t
 It is analogous to the canonical indexing of a Cartesian category over itself.
 
 \subsection{Models}
+\label{sec:models}
 
-A \emph{model} of an indexed unary type theory is a model $\cat{B}$ of the underlying base theory (that is, a small contextual category) together with a contravariant functor from the underlying category of $\cat{B}$ to the category of small categories.
-A \emph{model} of an indexed dependent type theory is a model $\cat{B}$ of the underlying base theory together with a contravariant functor $F$ from the underlying category of $\cat{B}$ to the category of small contextual categories.
-We will show that every model of a locally small indexed dependent type theory with unit types, $\Sigma$-types, and identity types gives rise to an indexed $\infty$-category.
+A \emph{model} of an indexed dependent type theory is a model $\cat{B}$ of the underlying base theory together with a contravariant functor $F$ from the underlying category of $\cat{B}$ to the category of small contextual categories (with additional structure, depending on the constructions in the indexed theory).
+We will show that every model of an indexed dependent type theory with unit types, $\Sigma$-types, and identity types gives rise to an indexed $\infty$-category.
 
 \begin{remark}
-A \emph{model} of an indexed unary type theory is a model $\cat{B}$ of the underlying base theory together with a contravariant functor from the underlying category of $\cat{B}$ to the category of small categories.
 We believe that every model of a locally small indexed unary type theory also gives rise to an indexed $\infty$-category, but this is harder to prove.
 \end{remark}
 
@@ -1040,7 +1222,7 @@ An exact functor induces an equivalence of homotopy categories if and only if it
 
 Now, let $F : \cat{B}^\fs{op} \to \fs{ConCat}$ be a model of an indexed dependent type theory with unit types, $\Sigma$-types, and identity types.
 The underlying category of $\cat{B}$ is a homotopical category.
-A map $f$ of $\cat{B}$ between types is a weak equivalence if it is an equivalence in the usual sense.
+A map $f$ of $\cat{B}$ is a weak equivalence if it is an equivalence of contexts in the usual sense.
 For every object $\Gamma$ of $\cat{B}$, let $U(F(\Gamma))$ be the underlying homotopical category of $F(\Gamma)$.
 Then we have a functor $LUF : \cat{B}^\fs{op} \to \qCat$, where $\qCat$ is the category of small quasicategories.
 This category can be extended to a fibrant simplicial category by defining $\Hom_\qCat(X,Y)$ to be the largest Kan complex contained in $Y^X$.
@@ -1048,14 +1230,13 @@ The quasicategory $\fs{Cat}_\infty$ of small quasicategories is defined as the s
 Then we have a functor $N(LUF) : N(\cat{B})^\fs{op} \to \fs{Cat}_\infty$.
 To prove that it extends to a functor $L(\cat{B})^\fs{op} \to \fs{Cat}_\infty$, it is enough show that every weak equivalence $f : X \to Y$ of $\cat{B}^\fs{op}$ is mapped to an equivalence of quasicategories $LUF(f) : LUF(X) \to LUF(Y)$.
 Since $F(f)$ is an exact functor between fibration categories, to prove that it induces an equivalence of localizations, it is enough to prove that it induces an equivalence of homotopy categories.
-This is obvious since $f$ has a homotopy inverse $f^{-1}$ and functor $F(f^{-1})$ is the inverse of $F(f)$ at the level of homotopy categories by the discussion after \rdefn{equiv}.
+This is obvious since $f$ has a homotopy inverse $f^{-1}$ and functor $F(f^{-1})$ is the inverse of $F(f)$ at the level of homotopy categories.
 
-A more detailed discussion of models is presented in \cite{indexed-models}.
-There we show how to construct a model of indexed type theories out of a functor between categories with some additional structure similar to the structure of a fibration category.
-In particular, it is shown that there is a model in which dependent types of the base theory are interpreted as Kan fibrations as usual and dependent types of the indexed theory are interpreted as categorical fibrations.
-We will denote this model by $\qCat$.
-We will use it throughout this paper to give examples of various constructions.
-The model of the base theory in $\qCat$ is the usual model of HoTT in simplicial sets and hence it supports all standard constructions.
+A general method of constructing models of indexed type theories is described in \cite{indexed-models}.
+We already discussed two examples of models in section~\ref{sec:unary-models}.
+These models are actually models of an indexed dependent type theory.
+Indexed dependent types are interpreted as categorical fibrations (in the quasicategorical sense) in $\qCat$.
+Indexed dependent types are interpreted as injective fibrations in $\sSpace$.
 
 \subsection{Dependent $\Hom$-types}
 
@@ -1090,46 +1271,17 @@ where $\Delta = x_1 : A_1, \ldots x_k : A_k$.
 \end{align*}
 If $\Delta$ is empty, then we will write $\Hom(\Delta.B)$ as $\Hom(B)$, abstraction as $\lambda(b)$, and the application operation as $f\,()$.
 
-If we have such dependent $\Hom$-types, then we can define the following operation:
-\begin{center}
-\def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \vdash a : A$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash a' : A$
-\noLine
-\UnaryInf$\fCenter \Gamma \vdash t : \Id_A(a,a')$
-\Axiom$\fCenter \Gamma, x : A, p : \Id_A(a,x), \Delta \mid E \vdash D \ob$
-\noLine
-\UnaryInf$\fCenter \Gamma, \Delta[a/x,\refl(a)/p] \mid E[a/x,\refl(a)/p] \vdash d : D[a/x,\refl(a)/p]$
-\def\extraVskip{2pt}
-\BinaryInfC{$\Gamma, \Delta[a'/x,t/p] \mid E[a'/x,t/p] \vdash J(a, x p \Delta E.\,D, \Delta E.\,d, a', t) : D[a'/x,t/p]$}
-\DisplayProof
-\end{center}
-
-\[ J(a, x p \Delta E.\,D, \Delta E.\,d, a, \refl(a)) = d \]
-
-Indeed, we define $J(a, x p \Delta E.\,D, \Delta E.\,d, a', t)$ as follows:
+If a theory has dependent $\Hom$-types, then $J$ rule that we defined in section~\ref{sec:dep-rules} is derivable.
+Indeed, if $E = y_1 : B_1, \ldots y_k : B_k$, then we can define $J(a, x p \Delta E.\,D, \Delta E.\,d, a', t)$ in terms of $J$ for base types:
 \[ J(a, x p \Delta.\,\Hom(E.D), \Delta.\,\lambda E.\,d, a', t)\,y_1\,\ldots\,y_k, \]
-where $E = y_1 : B_1, \ldots y_k : B_k$.
-If we do not assume the existence of dependent $\Hom$-types, then we need to add this operation explicitly.
-It allows us to define $\pmap$ and transport in the same way as usual.
-Moreover, we can define the following operation:
-\begin{center}
-\AxiomC{$\Gamma \vdash p : \Id_{\Hom(A,B)}(f,g)$}
-\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
-\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{hap}(p,a) : \Id_B(f\,a,g\,a)$}
-\DisplayProof
-\end{center}
-It is defined as follows:
-\[ \fs{hap}(p,a) = \pmap(f.\,f\,a,p). \]
 
 If we have dependent $\Hom$-types, then we can define the following function:
 \[ \lambda p.\,\lambda x.\,\fs{hap}(p,x) : \Id_{\Hom(A,B)}(f,g) \to \Hom(A, x.\,\Id_B(f\,x,g\,x)). \]
-We will say that identity types are \emph{extensional} if this function is an equivalence.
+We will say that $\Hom$-types are \emph{extensional} if this function is an equivalence.
 If we do not have dependent $\Hom$-types, we can replace this condition with the following constructions:
 \begin{center}
 \AxiomC{$\Gamma \mid x : A \vdash p : \Id_{B}(f\,x,g\,x)$}
-\UnaryInfC{$\Gamma \vdash \fs{Idext}(x.\,p) : \Id_{\Hom(A,B)}(f,g)$}
+\UnaryInfC{$\Gamma \vdash \Idext(x.\,p) : \Id_{\Hom(A,B)}(f,g)$}
 \DisplayProof
 \end{center}
 \medskip
@@ -1137,33 +1289,31 @@ If we do not have dependent $\Hom$-types, we can replace this condition with the
 \begin{center}
 \AxiomC{$\Gamma \mid x : A \vdash p : \Id_{B}(f\,x,g\,x)$}
 \AxiomC{$\Gamma \mid \Delta \vdash a : A$}
-\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{hap_h}(x.\,p,a) : \Id_B(\fs{hap}(\fs{Idext}(x.\,p),a),p[a/x])$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{hap_h}(x.\,p,a) : \Id_B(\fs{hap}(\Idext(x.\,p),a),p[a/x])$}
 \DisplayProof
 \end{center}
 \medskip
 The standard argument implies that we also have the following homotopy:
 \begin{center}
 \AxiomC{$\Gamma \vdash p : \Id_{\Hom(A,B)}(f,g)$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{hap_h'}(p) : \Id(\fs{Idext}(x.\,\fs{hap}(p,x)),p)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{hap_h'}(p) : \Id(\Idext(x.\,\fs{hap}(p,x)),p)$}
 \DisplayProof
 \end{center}
-Thus, in the absence of dependent $\Hom$-types, we will say that identity types are \emph{extensional} if these rules are derivable.
+Thus, in the absence of dependent $\Hom$-types, we will say that $\Hom$-types are \emph{extensional} if these rules are derivable.
 Clearly, the two conditions are equivalent when we do have dependent $\Hom$-types.
 
 \begin{example}
 The canonical indexing of a dependent type theory over itself is locally small if and only if it has non-dependent function types.
-It has dependent $\Hom$-types if and only if it has $\Pi$-types.
-It has extensional identity types if and only if it has identity types and the functional extensionality.
+It has (extensional) dependent $\Hom$-types if and only if it has (extensional) $\Pi$-types.
 \end{example}
 
 \begin{example}
-The model $\qCat$ has dependent $\Hom$-types and extensional identity types.
-It also has $\Sigma$-types and unit types.
+The model $\qCat$ has extensional dependent $\Hom$-types, identity types, $\Sigma$-types, and unit types.
 \end{example}
 
 \subsection{Weak dependent $\Hom$-types}
 
-If the indexed theory is locally small and has extensional identity types, $\Sigma$-types, and the unit type, then we can define a weak version of dependent $\Hom$-types:
+If the indexed theory is locally small and has identity types, $\Sigma$-types, unit types, and extensional $\Hom$-types, then we can define a weak version of dependent $\Hom$-types:
 \[ \Hom(\Delta.B) = \sum_{f : \Hom(\Sigma(\Delta),\Sigma_{p : \Sigma(\Delta)} B[\pi_1(p)/x_1, \ldots \pi_k(p)/x_k])} \Id(\pi_1 \circ f, \id_{\Sigma(\Delta)}), \]
 where $\Delta = x_1 : A_1, \ldots x_k : A_k$ and $\Sigma(\Delta)$ is defined inductively:
 \begin{align*}
@@ -1181,7 +1331,7 @@ where $p' = (\pi_1(p), \ldots \pi_k(p))$.
 To prove that it is homotopic to $f$, we need to construct a homotopy of the following type:
 \[ h : \Id(\pi_1(f), \lambda p.\,(p,\fs{hap}(\pi_2(f),p')_*(\pi_2(\pi_1(f)\,p')))) \]
 such that $h * \pi_1$ is homotopic to $\pi_2(f)$.
-To construct such a homotopy, we can use $\fs{Idext}$.
+To construct such a homotopy, we can use $\Idext$.
 Then we need to define two homotopies for every $p : \Sigma(\Delta)$:
 \begin{align*}
 h_1 & : \Id(\pi_1(\pi_1(f)\,p),p) \\
@@ -1208,7 +1358,7 @@ We can define a dependent version of $\fs{hap}$:
 \end{center}
 It is defined as follows:
 \[ \fs{hap}(p, a_1, \ldots a_k) = J(f, h q.\,\Id(f\,a_1\,\ldots\,a_k,h\,a_1\,\ldots\,a_k), \refl(f\,a_1\,\ldots\,a_k), g, p). \]
-It is straightforward to check that if identity types are extensional, then the following function is an equivalence:
+It is straightforward to check that if $\Hom$-types are extensional, then the following function is an equivalence:
 \begin{align*}
 & \Id_{\Hom(x_1 \ldots x_k.B)}(f,g) \to \Hom(x_1 \ldots x_k.\,\Id_B(f\,x_1\,\ldots\,x_k,g\,x_1\,\ldots\,x_k)) \\
 & \lambda p.\,\lambda x_1 \ldots x_k.\,\fs{hap}(p, x_1, \ldots x_k).
@@ -1221,14 +1371,14 @@ In this section, we will define locally Cartesian closed unary type theories and
 
 \subsection{Types over contexts}
 
-Let $p_A : \Hom(A,\Delta)$ and $p_B : \Hom(B,\Delta)$ be a pair of maps with the same codomain.
-We will write $\Hom_\Delta(A,B)$ for the type $\Sigma_{f : \Hom(A,B)} \Id(p_B \circ f, p_A)$.
-If we think of maps $\Hom(X,\Delta)$ as types over $\Delta$, then $\Hom_\Delta(A,B)$ is the type of morphisms between such types.
-We will identify elements of $\Hom_\Delta(A,B)$ with underlying morphisms $\Hom(A,B)$ and we will often omit the homotopy in $\Hom_\Delta(A,B)$ when constructing an element of this type.
+Let $p_A : \Hom(A,D)$ and $p_B : \Hom(B,D)$ be a pair of maps with the same codomain.
+We will write $\Hom_D(A,B)$ for the type $\Sigma_{f : \Hom(A,B)} \Id(p_B \circ f, p_A)$.
+If we think of maps $\Hom(X,D)$ as types over $D$, then $\Hom_D(A,B)$ is the type of morphisms between such types.
+We will identify elements of $\Hom_D(A,B)$ with underlying morphisms $\Hom(A,B)$ and we will often omit the homotopy in $\Hom_D(A,B)$ when constructing an element of this type.
 
 We will say that two maps are equivalent if there is an equivalence between their domains and an equivalence between their codomains such that the obvious square commutes.
 We will say that two dependent types $\Delta \vdash A$ and $\Delta' \vdash A'$ are equivalent if there is an equivalence of contexts $\Delta, x : A$ and $\Delta', x : A'$.
-If the theory has $\Sigma$-types and unit types, then, for every dependent types $\Delta \vdash B \ob$, we can define the following map:
+If the theory has $\Sigma$-types and unit types, then, for every dependent type $\Delta \vdash B \ob$, we can define the following map:
 \[ \pi_1 : \Hom(\sum_{p : \Sigma(\Delta)} B[\pi_1(p)/x_1, \ldots \pi_k(p)/x_k]), \Sigma(\Delta)), \]
 where $\Delta = x_1 : A_1, \ldots x_k : A_k$.
 Conversely, if the theory also has identity types, then, for every map $f : \Hom(A,B)$, we can define the following dependent type:
@@ -1242,16 +1392,72 @@ This type corresponds to the previously defined type of maps over $\Delta$ throu
 \subsection{Exponentiable maps}
 
 Let $p_A : \Hom(A,D)$ be a morphism in an indexed unary type theory such that its pullbacks along any map exist.
-The \emph{exponent over $D$} of $p_A$ and a map $p_B : \Hom(B,D)$ is a map $p : \Hom(B^A,D)$ together with a map $\fs{ev} : \Hom_D(B^A \times_D A, B)$ such that the following function is an equivalence for every indexed type $X$:
+The \emph{exponent over $D$} of $p_A$ and a map $p_B : \Hom(B,D)$ is a map $p_{B^A} : \Hom(B^A,D)$ together with a map $\fs{ev} : \Hom_D(B^A \times_D A, B)$ such that the following function is an equivalence for every indexed type $X$:
 \[ \lambda f.\, \fs{ev} \circ (f \times_D A) : \Hom_D(X, B^A) \to \Hom_D(X \times_D A, B). \]
 We will say that $p_A$ is \emph{exponentiable} if the exponent $B^A$ exists for all maps $p_B$.
-We will say that the theory is \emph{locally Cartesian closed} if all maps are exponentiable.
+Formally, this means that the following rules (together with the rules asserting that the function given above is an equivalence) are derivable:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
+\AxiomC{$\Gamma \vdash p_B : \Hom(B,D)$}
+\BinaryInfC{$\Gamma \mid \cdot \vdash B^A \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
+\AxiomC{$\Gamma \vdash p_B : \Hom(B,D)$}
+\BinaryInfC{$\Gamma \vdash p_{B^A} : \Hom(B^A, D)$}
+\DisplayProof
+\end{center}
 
-Non-dependent function types in an indexed dependent type theory are defined as usual.
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
+\AxiomC{$\Gamma \vdash p_B : \Hom(B,D)$}
+\BinaryInfC{$\Gamma \vdash \fs{ev}(B,p_B) : \Hom_D(B^A \times_D A, B)$}
+\DisplayProof
+\end{center}
+Since $B^A$, $p_{B^A}$, and $\fs{ev}$ depends on $B$ and $p_B$, we should write each of these constructions with arguments as we did for $\fs{ev}$ in the rule above, but to simplify the notation, we will omit them.
+
+We will say that an indexed unary type theory is \emph{locally Cartesian closed} if it has finite limits and all maps are exponentiable.
+Formally, this means that the following modifications of the rules given above are derivable:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
+\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
+\AxiomC{$\Gamma \vdash p_A : \Hom(A,D)$}
+\AxiomC{$\Gamma \vdash p_B : \Hom(B,D)$}
+\QuaternaryInfC{$\Gamma \mid \cdot \vdash B^A \ob$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
+\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
+\AxiomC{$\Gamma \vdash p_A : \Hom(A,D)$}
+\AxiomC{$\Gamma \vdash p_B : \Hom(B,D)$}
+\QuaternaryInfC{$\Gamma \vdash p_{B^A} : \Hom(B^A, D)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
+\AxiomC{$\Gamma \mid \cdot \vdash B \ob$}
+\AxiomC{$\Gamma \vdash p_A : \Hom(A,D)$}
+\AxiomC{$\Gamma \vdash p_B : \Hom(B,D)$}
+\QuaternaryInfC{$\Gamma \vdash \fs{ev}(A,p_A,B,p_B) : \Hom_D(B^A \times_D A, B)$}
+\DisplayProof
+\end{center}
+
+We will say that an indexed type $A$ is \emph{exponentiable} if the unique map $!_A : \Hom(A,1)$ is exponentiable.
+We will say that an indexed unary type theory is \emph{Cartesian closed} if it has a terminal object and binary products and all objects are exponentiable.
+
+Dependent analogs of locally Cartesian closed theories are defined as usual.
+First, let us describe non-dependent function types.
 If $\Gamma \mid \Delta \vdash A \ob$ and $\Gamma \mid \Delta \vdash B \ob$ is a pair of indexed types, then the \emph{function type} $\Gamma \mid \Delta \vdash A \to B \ob$ is defined as follows:
 \begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash A \to B \ob$}
 \AxiomC{$\Gamma \mid \Delta, x : A \vdash b : B$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \lambda x.\,b : A \to B$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \lambda x.\,b : A \to B$}
 \DisplayProof
 \qquad
 \AxiomC{$\Gamma \mid \Delta \vdash f : A \to B$}
@@ -1266,8 +1472,9 @@ If $\Gamma \mid \Delta \vdash A \ob$ and $\Gamma \mid \Delta \vdash B \ob$ is a 
 \end{align*}
 The \emph{$\Pi$-type} $\Pi_{x : A} B$ of a family $\Gamma \vdash \Delta, x : A \vdash B \ob$ is defined similarly:
 \begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash \Pi_{x : A} B \ob$}
 \AxiomC{$\Gamma \mid \Delta, x : A \vdash b : B$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \lambda x.\,b : \Pi_{x : A} B$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \lambda x.\,b : \Pi_{x : A} B$}
 \DisplayProof
 \qquad
 \AxiomC{$\Gamma \mid \Delta \vdash f : \Pi_{x : A} B$}
@@ -1289,9 +1496,37 @@ We will denote them by $\beta(x.b,a)$ and $\eta(f)$:
 \eta(f) & : \Id(\lambda x.\,f\,x, f)
 \end{align*}
 
+If an indexed dependent type theory has weak function types, then the underlying indexed unary type theory is locally Cartesian closed.
+The converse does not hold.
+We can construct weak $\Pi$-types from exponents, but they will not be stable under substitution.
+We will show in \rprop{ccc} that weak $\Pi$-types for closed indexed types can be constructed if the underlying unary type theory is Cartesian closed.
+
 \begin{example}
-The model $\qCat$ has $\Pi$-types in the empty context, that is it is Cartesian closed.
+The model $\sSpace$ has $\Pi$-types, which implies that it is locally Cartesian closed.
+\end{example}
+
+\begin{example}[qcat-lim]
+The model $\qCat$ has $\Pi$-types of closed indexed types (that is, indexed types in which no free indexed variables occur).
 It cannot have all $\Pi$-types since the $\infty$-category of small $\infty$-categories is not locally Cartesian closed.
+Nevertheless, we can use $\Pi$-types in the base theory to reason about indexed types.
+Recall that we can think of closed indexed types as $\infty$-categories.
+The base type of objects of an indexed type $C$ is defined as $\Hom(C)$ and we will denote it by $\Ob(C)$.
+Let us demonstrate how we can use $\Pi$-types of the base theory to define the notion of a limit of a diagram.
+
+First, we need to add an indexed type $\Delta^1$ together with terms $l,r : \Delta^1$ which is interpreted in the obvious way.
+Now, for every closed indexed type $C$ and every pair $x,y : C$, we can define the type of morphisms of $C$ between $x$ and $y$ as $\Ob(\Sigma_{f : \Delta^1 \to C} \Id(f\,l, x) \times \Id(f\,r, y))$.
+We will denote this type by $\chom_C(x,y)$.
+Now, we can define the following predicate:
+\begin{align*}
+& \fs{isTerm} : \Ob(C) \to \fs{Prop} \\
+& \fs{isTerm}(x) = \Pi_{y : \Ob(C)} \fs{isContr}(\chom_C(y,x))
+\end{align*}
+That is, we say that an object $x$ of $C$ is terminal if, for every object $y$, the type of morphisms between $y$ and $x$ is contractible.
+
+Finally, if $F : J \to C$ is a diagram in $C$, then we can define the category of cones of $F$ as $\Sigma_{a : C} \Pi_{z : C} \chom_C(a,z)$ (we can use $\Pi$-types since $C$ is closed, see \rremark{pi-gen}).
+We can define a limit of $F$ as a terminal object of the category of cones of $F$.
+To prove various properties of limits, we need to put a Segal condition on indexed types.
+This will allow us to develop the theory of $\infty$-categories in this synthetic context, but this is beyond the scope of this paper.
 \end{example}
 
 \emph{Functional extensionality} for (weak) $\Pi$-types is defined as usual:
@@ -1340,7 +1575,7 @@ The inverse of this function is given by $\lambda g.\,\lambda \overline{y}.\lamb
 \end{proof}
 
 \begin{prop}
-Functional extensionality holds for all $\Pi$-types that exist in an indexed dependent type theory with extensional identity types.
+Functional extensionality holds for all $\Pi$-types that exist in an indexed dependent type theory with extensional $\Hom$-types.
 \end{prop}
 \begin{proof}
 Let $\Delta = y_1 : A_1, \ldots y_k : A_k$ be a context and let $\Gamma \mid \Delta \vdash f' : \Pi_{x : A} B$ and $\Gamma \mid \Delta \vdash g' : \Pi_{x : A} B$ be a pair of functions in this context.
@@ -1350,7 +1585,7 @@ Consider the following square:
             } \]
 The bottom map is defined as $\lambda s.\,\lambda \overline{y} x.\,\pmap(f.\,f\,x,s\,\overline{y})$.
 The left and right maps are defined as $\fs{hap}$.
-These functions are equivalences since identity maps are extensional.
+These functions are equivalences since $\Hom$-types are extensional.
 The top map is defined as $\lambda p.\,\pmap(f.\,\lambda \overline{y} x.\,f\,\overline{y}\,x,p)$.
 \Rlem{dep-exp} implies that this function is also an equivalence.
 Since the functions appearing in this square preserve $\refl$, path induction implies that it commutes.
@@ -1362,19 +1597,24 @@ If $\Gamma \mid \Delta, x : A \vdash p : \Id(f\,x,g\,x)$, then we define $\fs{fu
 It is easy to define $\fs{funext_h}$ and $\fs{funext_h'}$ using the fact that $r$ is an inverse of the function $\lambda s.\,\lambda \overline{y} x.\,\pmap(f.\,f\,x,s\,\overline{y})$.
 \end{proof}
 
-\begin{prop}[lccc]
-Let $\Gamma \mid \Delta \vdash A \ob$ be a type in an indexed dependent type theory with $\Sigma$-types, unit types, and extensional identity types.
-Then the following conditions are equivalent:
+\begin{prop}[ccc]
+The following conditions are equivalent in any indexed dependent type theory with unit types, $\Sigma$-types, identity types, and extensional $\Hom$-types:
 \begin{enumerate}
-\item \label{it:exp-dep} Weak unstable $\Pi$-types $\Pi_{x : A} B$ exist for all dependent types $B$.
-\item \label{it:exp-non-dep} Weak unstable function types $A \to B$ exist for all types $B$.
-\item \label{it:exp-exp} $A$ is exponentiable.
+\item Weak $\Pi$-types exist for all closed types.
+That is, we have the following rule (with the usual rules for $\lambda$ and application and propositional $\beta$ and $\eta$ rules):
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
+\AxiomC{$\Gamma \mid x : A \vdash B \ob$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \Pi_{x : A} B \ob$}
+\DisplayProof
+\end{center}
+\item Weak function types exist for all closed types.
 \end{enumerate}
+If these conditions hold, then the underlying indexed unary type theory is Cartesian closed.
 \end{prop}
 \begin{proof}
-\eqref{it:exp-dep} $\Rightarrow$ \eqref{it:exp-non-dep} Obvious.
-
-\eqref{it:exp-non-dep} $\Rightarrow$ \eqref{it:exp-dep} 
+Clearly, the existence of $\Pi$-types implies the existence of function types.
+Let us prove the converse.
 We define $\Pi_{x : A} B$ as follows:
 \[ \sum_{f : A \to \Sigma_{x : A} B} \Id_{A \to A}(\lambda x.\,\pi_1\,(f\,x), \lambda x.\,x). \]
 If $\Gamma \mid \Delta, x : A \vdash b : B$, then we define $\lambda x.b$ as follows:
@@ -1431,22 +1671,34 @@ The first homotopy easily follows from the definitions of $s$ and $h(b,x)$.
 The second homotopy follows from the sequence above.
 The last homotopy follows from the definition of $h'((f,q),x)$.
 
-\eqref{it:exp-non-dep} $\Leftrightarrow$ \eqref{it:exp-exp}.
-A map $\fs{ev} : \Hom_D(B^A \times_D A, B)$ corresponds to a map $\fs{ev} : \Hom((d : D, f : B^A, a : A). B)$.
-Then $\lambda f.\,\fs{ev} \circ (f \times_D A)$ is an equivalence if and only if the following function is an equivalence:
-\[ \lambda f. \lambda d x a.\,\fs{ev}\,d\,(f\,d\,x)\,a : \Hom((d : D, x : X).\,B^A) \to \Hom((d : D, x : X, a : A). B). \]
-If the function type $\Gamma \mid d : D \vdash A \to B \ob$ exists, then we define $B^A$ as $A \to B$ and $\fs{ev}$ as $\lambda d f a.\,f\,a$.
-The function $\lambda f. \lambda d x a.\,\fs{ev}\,d\,(f\,d\,x)\,a = \lambda f.\,\lambda d x a.\,f\,d\,x\,a$ is an equivalence by \rlem{dep-exp}.
-
-Conversely, suppose that the exponent $B^A$ over $D$ exists for all dependent types $\Gamma \mid d : D \vdash A \ob$ and $\Gamma \mid d : D \vdash B \ob$.
-Let $\Gamma \mid \Delta \vdash A \ob$ and $\Gamma \mid \Delta \vdash B \ob$ be a pair of dependent types.
-Since the theory has $\Sigma$-types and unit types, we may assume that $\Delta$ consists of a single type, that is $\Delta = (d : D)$.
-Then we can define $A \to B$ as $B^A$.
-If $\Gamma \mid d : D \vdash f : A \to B$ and $\Gamma \mid d : D \vdash a : A$, then we define $\Gamma \mid d : D \vdash f\,a : B$ as $\fs{ev}\,d\,f\,a$.
-Let $r$ be the inverse of $\lambda f. \lambda d x a.\,\fs{ev}\,d\,(f\,d\,x)\,a$ for $X = \top$.
-If $\Gamma \mid d : D, x : A \vdash b : B$, then we define $\Gamma \mid d : D \vdash \lambda x.b : A \to B$ as $r\,(\lambda d x a.\,b[a/x])\,d\,\fs{tt}$, where $\fs{tt}$ is the unique element of $\top$.
-Then $\beta$ and $\eta$ equivalences follow from the fact that $r$ is the inverse of $\lambda f. \lambda d x a.\,\fs{ev}\,d\,(f\,d\,x)\,a$.
+Finally, let us prove that the existence of function types implies that the theory is Cartesian closed.
+We define $B^A$ as $A \to B$.
+The map $\fs{ev} : \Hom(B^A \times A, B)$ is defined as $\lambda p.\,\pi_1(p)\,(\pi_2(p))$.
+The inverse of $\lambda f.\,\fs{ev} \circ (f \times A)$ is defined as follows:
+\[ \lambda g. \lambda x. \lambda a.\, g\,(x,a) : \Hom(X \times A, B) \to \Hom(X, B^A). \]
 \end{proof}
+
+\begin{remark}[ccc-unstable]
+The converse of \rprop{ccc} almost holds.
+If the theory is Cartesian closed, then we can define $A \to B$ as $B^A$ and application $f\,a$ as $\fs{ev}(f,a)$.
+We can use the universal property of $B^A$ to define $\lambda$.
+The only problem is that $\lambda$ will not be stable under substitution.
+\end{remark}
+
+\begin{remark}[pi-gen]
+It can be proved that exponential maps are closed under pullbacks.
+In particular, if $A$ and $D$ are closed indexed types and $A$ is exponential, then $\pi_1 : D \times A \to D$ is also exponential.
+We can express this in type-theoretic language by saying that there is the following (weak) $\Pi$-type:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
+\AxiomC{$\Gamma \mid \Delta, x : A \vdash B \ob$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \Pi_{x : A} B \ob$}
+\DisplayProof
+\end{center}
+We cannot prove that the existence of $\Pi$-types for closed types implies the existence of such $\Pi$-types because of the problem discussed in \rremark{ccc-unstable}.
+In particular, we do not know whether such $\Pi$-types exist in $\qCat$.
+Nevertheless, we can use them as in \rexample{qcat-lim}, but we need to be careful since $\lambda$ is not stable under substitution for such $\Pi$-types.
+\end{remark}
 
 \section{Limits and colimits in dependent theories}
 \label{sec:colimits-dep}
@@ -1457,17 +1709,17 @@ In this section, we discuss the concepts of limits and colimits in indexed depen
 
 Clearly, an indexed dependent type theory has a terminal type if and only if it has a closed contractible type.
 For example, this is true when it has the unit type.
-If an indexed dependent type theory has extensional identity types and $\Sigma$-types, then it has pullbacks.
+If an indexed dependent type theory has identity types, $\Sigma$-types, and extensional $\Hom$-types, then it has pullbacks.
 Indeed, we can define a pullback of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ as $A \times_C B = \Sigma_{x : A} \Sigma_{y : B} \Id_C(f\,x,g\,y)$
-with the obvious projections $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \times_C B, B)$ and the obvious homotopy between $f \circ \pi_1$ and $g \circ \pi_2$: namely, $\fs{Idext}(p.\,\pi_3(p))$.
+with the obvious projections $\pi_1 : \Hom(A \times_C B, A)$, $\pi_2 : \Hom(A \times_C B, B)$ and the obvious homotopy between $f \circ \pi_1$ and $g \circ \pi_2$: namely, $\Idext(p.\,\pi_3(p))$.
 We need to show that the following map is an equivalence:
 \begin{align*}
 & \Hom(P, A \times_C B) \to \sum_{F : \Hom(P,A)} \sum_{G : \Hom(P,B)} \Id(f \circ F, g \circ G) \\
-& \lambda s.\,(\pi_1 \circ s, \pi_2 \circ s, s * \fs{Idext}(p.\,\pi_3(p))).
+& \lambda s.\,(\pi_1 \circ s, \pi_2 \circ s, s * \Idext(p.\,\pi_3(p))).
 \end{align*}
 The inverse of this map is defined as follows:
 \[ \lambda t.\,\lambda p.\,(\pi_1(t)\,p, \pi_2(t)\,p, \fs{hap}(\pi_3(t),p)). \]
-It is easy to see that these functions are inverse of each other using the fact that $s * \fs{Idext}(p.\,\pi_3(p)) = \fs{Idext}(p.\,\pi_3(s\,p))$.
+It is easy to see that these functions are inverse of each other using the fact that $s * \Idext(p.\,\pi_3(p)) = \Idext(p.\,\pi_3(s\,p))$.
 
 \begin{remark}
 The existence of $\Sigma$-types also implies the existence of products.
@@ -1476,14 +1728,14 @@ Thus, equalizers also can be constructed from $\Sigma$-types.
 
 The following proposition shows that $\Hom(x_1 \ldots x_n.\,-)$ commutes with $\Sigma$-types and identity types:
 \begin{prop}[hom-sigma-id]
-If an indexed dependent type theory has extensional identity types and $\Sigma$-types, then it has the following canonical equivalences:
+If an indexed dependent type theory has identity types, $\Sigma$-types, and extensional $\Hom$-types, then it has the following canonical equivalences:
 \begin{align*}
 \Hom(x_1 \ldots x_n.\,\Id_A(a,a')) & \simeq \Id_{\Hom(x_1 \ldots x_n. A)}(\lambda x_1 \ldots x_n.\,a, \lambda x_1 \ldots x_n.\,a') \\
 \Hom(x_1 \ldots x_n.\,\sum_{y : A} B) & \simeq \sum_{f : \Hom(x_1 \ldots x_n. A)} \Hom(x_1 \ldots x_n.\,B[f\,x_1\,\ldots\,x_n / y]).
 \end{align*}
 \end{prop}
 \begin{proof}
-The first equivalence is simply the extensionality for identity types.
+The first equivalence is simply the extensionality for $\Hom$-types.
 The second equivalence is defined as follows:
 \begin{align*}
 & \lambda g.\,(\lambda x_1 \ldots x_n.\,\pi_1(g\,x_1\,\ldots\,x_n), \lambda x_1 \ldots x_n.\,\pi_2(g\,x_1\,\ldots\,x_n)) \\
@@ -1493,14 +1745,66 @@ It is easy to see that these functions are mutually inverse.
 \end{proof}
 
 \subsection{Initial types}
+\label{sec:dep-initial}
 
 Finite colimits can be defined in an indexed dependent type theory as higher inductive types.
-We need to be careful since the usual definition gives us finite colimits which are stable under pullbacks.
-If we want a definition of general finite colimits, then we need to modify the rules for higher inductive types slightly.
+We will say that the initial type $0$ in an indexed unary type theory is \emph{stable under pullbacks} if, for every type $B$ such that the product $B \times 0$ exists, this product is initial.
+
+\begin{prop}[initial]
+Let $0$ be a type in an indexed dependent type theory with identity types, $\Sigma$-types, and extensional $\Hom$-types.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item The following rule is derivable:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, x : 0, E \vdash D \type$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
+\BinaryInfC{$\Gamma \mid \Delta, E[a/x] \vdash 0\text{-}\fs{elim''}(x E.D,a) : D[a/x]$}
+\DisplayProof
+\end{center}
+\item The following rule is derivable:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta \vdash D \type$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash 0\text{-}\fs{elim'}(D,a) : D$}
+\DisplayProof
+\end{center}
+\end{enumerate}
+\end{prop}
+If these equivalent conditions hold, then the type $0$ is a stable under pullbacks initial type.
+\begin{proof}
+The rule $0\text{-}\fs{elim'}$ is a special case of $0\text{-}\fs{elim''}$.
+Conversely, if we have $0\text{-}\fs{elim'}$, then we can define $0\text{-}\fs{elim''}$ as follows:
+\begin{center}
+\AxiomC{$\Gamma \mid \Delta, x : 0, E \vdash D \type$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
+\BinaryInfC{$\Gamma \mid \Delta, E[a/x] \vdash 0\text{-}\fs{elim'}(D[a/x],a) : D[a/x]$}
+\DisplayProof
+\end{center}
+
+Let us prove that these rules imply that $0$ is a stable under pullbacks initial type.
+For every type $C$, we can define a map $\lambda x.\,0\text{-}\fs{elim'}(C,f\,x) : \Hom(B,C)$.
+Let $g_1,g_2 : \Hom(B,C)$ be a pair of maps.
+Then we can define a homotopy between them as follows:
+\[ \Idext(x.\,0\text{-}\fs{elim'}(\Id_C(g_1\,x,g_2\,x),f\,x)) : \Id(g_1,g_2). \]
+\end{proof}
+
+\begin{remark}
+The converse of \rprop{initial} almost holds.
+If $0$ is a stable under pullbacks initial type, then we can define $0\text{-}\fs{elim'}$ in every context $\Delta$,
+but these terms will not be stable under substitution of indexed terms.
+\end{remark}
+
+\begin{example}
+Both models $\qCat$ and $\sSpace$ satisfy equivalent conditions of \rprop{initial}.
+\end{example}
+
+The theory of zero types does not satisfy conditions of \rprop{initial} unless it is trivial (that is, unless all indexed types are equivalent).
+The reason is that the initial type in such theories is not stable under pullbacks.
+To define an indexed dependent type theory in which the initial type is not necessarily stable under pullbacks, we need to modify the rules slightly.
 
 \begin{prop}
-Let $0$ be a type in an indexed dependent type theory has extensional identity types and $\Sigma$-types.
-Then $0$ is initial if and only if the theory has the following rule:
+Let $0$ be a type in an indexed dependent type theory with identity types, $\Sigma$-types, and extensional $\Hom$-types.
+Then $0$ is initial if and only if the following rule is derivable:
 \begin{center}
 \AxiomC{$\Gamma \mid x : 0 \vdash D \type$}
 \AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
@@ -1512,74 +1816,16 @@ Then $0$ is initial if and only if the theory has the following rule:
 If $0$ is initial, then $\Gamma \mid x : 0 \vdash \fs{hap}(h,x)_*(\pi_2(f\,x)) : D$, where $f$ is the unique map $\Hom(0,\Sigma_{x : 0} D)$ and $h$ is the unique homotopy between $\pi_1 \circ f$ and $\id_0$.
 Now, we can define $0\text{-}\fs{elim}(x.D,a)$ as $\fs{hap}(h,x)_*(\pi_2(f\,x))[a/x]$.
 
-Conversely, suppose that the theory has the the rule $0\text{-}\fs{elim}$.
+Conversely, suppose that the theory has the rule $0\text{-}\fs{elim}$.
 Then, for every type $D$, we can define a map $\lambda x.\,0\text{-}\fs{elim}(y.D,x) : \Hom(0,D)$.
 For all maps $f,g : \Hom(0,D)$, we can define a homotopy between them as follows:
-\[ \fs{Idext}(x.\,0\text{-}\fs{elim}(y.\,\Id_D(f\,y,g\,y),x)) : \Id(f,g). \]
+\[ \Idext(x.\,0\text{-}\fs{elim}(y.\,\Id_D(f\,y,g\,y),x)) : \Id(f,g). \]
 \end{proof}
-
-We will say that the initial type $0$ in an indexed unary type theory is \emph{stable under pullbacks} if, for every type $B$ such that the product $B \times 0$ exists, this product is initial.
-
-\begin{prop}
-Let $0$ be a type in an indexed dependent type theory with extensional identity types and $\Sigma$-types.
-Then the following conditions are equivalent:
-\begin{enumerate}
-\item \label{it:init-first} The theory has the following unstable rule:
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta, x : 0, E \vdash D \type$}
-\AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
-\BinaryInfC{$\Gamma \mid \Delta, E[a/x] \vdash 0\text{-}\fs{elim''}(x E.D,a) : D[a/x]$}
-\DisplayProof
-\end{center}
-\item \label{it:init-second} The theory has the following unstable rule:
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta \vdash D \type$}
-\AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
-\BinaryInfC{$\Gamma \mid \Delta \vdash 0\text{-}\fs{elim'}(D,a) : D$}
-\DisplayProof
-\end{center}
-\item \label{it:init-third} For every map $f : \Hom(B,0)$, the type $B$ is initial.
-\item \label{it:init-fourth} The type $0$ is a stable under pullbacks initial type.
-\end{enumerate}
-\end{prop}
-\begin{proof}
-\eqref{it:init-first} $\Rightarrow$ \eqref{it:init-second}
-This is obvious since $0\text{-}\fs{elim'}$ is a special case of $0\text{-}\fs{elim''}$.
-
-\eqref{it:init-second} $\Rightarrow$ \eqref{it:init-third}
-For every type $C$, we can define a map $\lambda x.\,0\text{-}\fs{elim'}(C,f\,x) : \Hom(B,C)$.
-Let $g_1,g_2 : \Hom(B,C)$ be a pair of maps.
-Then we can define a homotopy between them as follows:
-\[ \fs{Idext}(x.\,0\text{-}\fs{elim'}(\Id_C(g_1\,x,g_2\,x),f\,x)) : \Id(g_1,g_2). \]
-
-\eqref{it:init-third} $\Rightarrow$ \eqref{it:init-fourth}
-Since we have the map $\id_0 : \Hom(0,0)$, the type $0$ is initial.
-Moreover, since we have the projection $\pi_2 : \Hom(B \times 0, 0)$, every product $B \times 0$ is also initial.
-
-\eqref{it:init-fourth} $\Rightarrow$ \eqref{it:init-third}
-It is enough to prove that $B$ is equivalent to $B \times 0$ since the latter type is initial.
-We have maps $\langle \id_B, f \rangle : \Hom(B, B \times 0)$ and $\pi_1 : B \times 0 \to B$.
-It is clear that $\pi_1 \circ \langle id_B, f \rangle$ is homotopic to $\id_B$.
-The map $\langle \id_B, f \rangle \circ \pi_1$ is homotopic to $\id_{B \times 0}$ since $B \times 0$ is initial.
-
-\eqref{it:init-third} $\Rightarrow$ \eqref{it:init-first}
-Let $\Delta = x_1 : A_1, \ldots x_m : A_m$ and $E = y_1 : C_1, \ldots y_n : C_n$.
-Let $B = \Sigma(\Delta, x : 0, E)$.
-Since we have the projection $\pi_{m+1} : \Hom(B,0)$, the type $B$ is initial.
-Thus, we have a map $f : \Hom(B, \Sigma_{b : B} D')$, where
-\[ D' = D[\pi_1(b)/x_1, \ldots \pi_m(b)/x_m, \pi_{m+1}(b)/x, \pi_{m+2}(b)/y_1, \ldots \pi_{m+n+1}(b)/y_n]. \]
-We also have a homotopy $h : \Id(\pi_1 \circ f, \id_B)$.
-Now, we can define $0\text{-}\fs{elim''}(x E.D, a)$ as $\fs{hap}(h,p)_*(\pi_2(f\,p))$, where $p = (x_1, \ldots x_m, a, y_1, \ldots y_n)$.
-\end{proof}
-
-\begin{example}
-The model $\qCat$ has strict initial types.
-\end{example}
 
 \subsection{Dependent products}
 
 We defined strict products in subsection~\ref{sec:products}.
-We can define even stricter version of products which we call \emph{strict dependent products} in indexed dependent type theories:
+We can define even stricter version of products, which we call \emph{strict dependent products}, in indexed dependent type theories:
 \begin{center}
 \AxiomC{$\Gamma, i : I \mid \Delta \vdash B \ob$}
 \RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
@@ -1610,29 +1856,94 @@ The canonical indexing of a dependent type theory over itself has strict depende
 \end{example}
 
 \begin{example}
-The model $\qCat$ has strict dependent products.
+Both models $\qCat$ and $\sSpace$ have strict dependent products.
 \end{example}
-
-\emph{Weak dependent products} are defined in the same way except for the last two equations which hold only propositionally.
-Obviously, if a theory has strict (resp., weak) dependent products, then it also has strict (resp., weak) products.
-We can think of dependent products as wide pullbacks.
-Thus, to construct them from ordinary products, we also need to assume the existence of finite limits:
-
-\begin{prop}
-If a theory has $\Sigma$-types, unit types, extensional identity types, and weak extensional products, then it also has weak unstable dependent products.
-\end{prop}
-\begin{proof}
-Let $\Gamma, i : I \mid \Delta \vdash B_i \ob$ be an indexed type.
-Since we have $\Sigma$-types and unit types, we may assume that $\Delta$ consists of exactly one type, that is $\Delta = (x : A)$.
-We define $\Gamma \mid x : A \vdash \prod_{i : I} B_i$ as follows:
-\[ \Gamma \mid x : A \vdash \sum_{f : \prod_{i : I} \Sigma_{x : A} B_i} \Id_{A^I}(\lambda i.\,\pi_1(f\,i), \lambda i.\,x). \]
-The construction of the abstraction and the application and proofs of $\beta$ and $\eta$ equivalences are the same as in \rprop{lccc}.
-\end{proof}
 
 \subsection{Dependent coproducts}
 
 Coproducts can be defined in a more type-theoretic way.
-The theory of \emph{(unstable) dependent coproducts} consists of the following unstable rules:
+The theory of \emph{dependent coproducts} consists of the following rules:
+\begin{center}
+\AxiomC{$\Gamma, i : I \mid \cdot \vdash B_i \ob$}
+\RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \coprod_{i : I} B_i \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash j : I$}
+\AxiomC{$\Gamma \mid \Delta \vdash b : B_j$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash (j,b) : \coprod_{i : I} B_i$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid z : \coprod_{i : I} B_i \vdash D \ob$}
+\AxiomC{$\Gamma, i : I \mid x : B_i \vdash d : D[(i,x)/z]$}
+\AxiomC{$\Gamma \mid \Delta \vdash e : \coprod_{i : I} B_i$}
+\TrinaryInfC{$\Gamma \mid \Delta \vdash \coprod\text{-}\fs{elim}(z.D, i x.d, e) : D[e/z]$}
+\DisplayProof
+\end{center}
+\medskip
+
+\[ \coprod\text{-}\fs{elim}(z.D, i x.d, (j,b)) = d[j/i,b/x] \]
+
+The theory of \emph{weak dependent coproducts} has the same rules except for the last equality which holds only propositionally.
+Note that the coproduct is defined only for closed indexed types and that free indexed variables of the eliminator can occur only in its last argument.
+The reason is that the unrestricted version forces coproducts to be stable under pullbacks as we will see in \rprop{coproduct-stable}.
+
+The theory of (weak) dependent coproducts is more convenient than the theory of coproducts defined in section~\ref{sec:products} since the former allows us to use the type-theoretic language to reason about coproducts.
+The following proposition shows that the theories of weak dependent coproducts and coproducts are actually equivalent.
+This implies that we can use weak dependent coproducts to reason about pointed types, spectra, and other theories with coproducts.
+
+\begin{prop}[dep-coprod-coprod]
+Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, and extensional $\Hom$-types.
+Then it has weak dependent coproducts if and only if the underlying indexed unary type theory has coproducts.
+\end{prop}
+\begin{proof}
+First, assume that the theory has weak dependent coproducts.
+We will show that $\coprod_{i : I} B_i$ is the coproduct of $B_i$.
+We define $\fs{in}_i$ as $\lambda b.(i,b)$.
+Let $f$ be a map of the following form:
+\[ \Gamma, i : I \vdash f : \Hom(B_i,C). \]
+Then we define $\Gamma \vdash [f]_{i : I} : \Hom(\coprod_{i : I} B_i, C)$ as follows:
+\[ [f]_{i : I} = \lambda e.\,\coprod\text{-}\fs{elim}(z.\,C, i x.\,f\,x, e). \]
+Let us prove that $[f]_{i : I} \circ \fs{in}_i \sim f$:
+\begin{align*}
+[f]_{i : I} \circ \fs{in}_i & = \\
+\lambda b.\,\coprod\text{-}\fs{elim}(z.\,C, i x.\,f\,x, (i,b)) & \sim \\
+\lambda b.\,f\,b & = \\
+f & .
+\end{align*}
+Finally, for every $g : \Hom(\coprod_{i : I} B_i, C)$, we need to prove that $[g \circ \fs{in}_i]_{i : I} \sim g$.
+It is enough to prove that, for every $e : \coprod_{i : I} B_i$, there is a homotopy between $[g \circ \fs{in}_i]_{i : I}\,e$ and $g\,e$.
+To do this, we can apply $\coprod\text{-}\fs{elim}$ to $e$.
+Then we just need to construct a homotopy between $[g \circ \fs{in}_i]_{i : I}\,(i,x)$ and $g\,(i,x)$:
+\begin{align*}
+[g \circ \fs{in}_i]_{i : I}\,(i,x) & = \\
+\coprod\text{-}\fs{elim}(z.C, i x.\,g\,(\fs{in}_i\,x), (i,x)) & \sim \\
+g\,(\fs{in}_i\,x) & = \\
+g\,(i,x) & .
+\end{align*}
+
+Now, let us prove the converse.
+Assume that the theory has coproducts.
+Then we define $(j,b)$ as $\fs{in}_j\,b$.
+The eliminator $\coprod\text{-}\fs{elim}(z. D, i x. d, e)$ is defined as $\fs{hap}(h,e)_*(\pi_2\,(f\,e))$, where
+\begin{align*}
+f & : \Hom(\coprod_{i : I} B_i, \Sigma_{(z : \coprod_{i : I} B_i)} D) \\
+f & = [\lambda x.\,((i,x),d)]_{i : I} \\
+h & : \Id(\pi_1 \circ f, \fs{id})
+\end{align*}
+The existence of $h$ follows from the universal property of coproducts and the fact that $\pi_1 \circ f \circ \fs{in}_i \sim \fs{id} \circ \fs{in}_i$.
+Finally, we need to show that
+\[ \fs{hap}(h,(j,b)))_*(\pi_2\,(f\,(j,b))) \sim d[j/i,b/x]. \]
+It is easy to see that $\fs{hap}(h,(j,b)) \sim \fs{ap}(\pi_1, \fs{hap}(\beta_j, b))$, where
+\[ \beta_j : \Id(f \circ \fs{in}_j, \lambda b.\,((j,b), d[j/i,b/x])) \]
+is one of the homotopies that appear in the definition of coproducts.
+Now, the existence of the required homotopy follows from the fact that, for every $p : \Id_{\Sigma_{a : A} B}(x,y)$, there is a homotopy $\fs{ap}(\pi_1,p)_*(\pi_2(x)) \sim \pi_2(y)$.
+\end{proof}
+
+The theory of \emph{stable dependent coproducts} consists of the following rules:
 \begin{center}
 \AxiomC{$\Gamma, i : I \mid \Delta \vdash B_i \ob$}
 \RightLabel{, $i \notin \mathrm{FV}(\Delta)$}
@@ -1640,165 +1951,58 @@ The theory of \emph{(unstable) dependent coproducts} consists of the following u
 \DisplayProof
 \qquad
 \AxiomC{$\Gamma \vdash j : I$}
-\UnaryInfC{$\Gamma \mid \Delta, x : B_j \vdash \fs{in}_j(x) : \coprod_{i : I} B_i$}
-\DisplayProof
-\end{center}
-\medskip
-
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B \vdash D \ob$}
-\AxiomC{$\Gamma, i : I \mid \Delta, x : B \vdash d : D[\fs{in}_i(x)/z]$}
-\BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B \vdash \coprod\text{-}\fs{elim}(z.D, i x.d) : D$}
-\DisplayProof
-\end{center}
-\medskip
-
-\[ \coprod\text{-}\fs{elim}(z.D, i x.d)[\fs{in}_j(x)[b/x]/z] = d[j/i,b/x] \]
-
-The theory of \emph{weak (unstable) dependent coproducts} has the same rules except for the last equality which holds only propositionally.
-
-\begin{example}
-The canonical indexing of a dependent type theory over itself always has dependent coproducts since we always assume that the base theory has $\Sigma$-types.
-\end{example}
-
-\begin{prop}[coprod-sigma]
-Dependent coproducts commute with $\Sigma$-types.
-More precisely, the following map is an equivalence for every dependent type $\Gamma, i : I \mid \Delta, d : D \vdash B \ob$:
-\[ \lambda z. \coprod\text{-}\fs{elim}(z. \sum_{d : D} \coprod_{i : I} B, i p. (\pi_1(p),\fs{in}_i(x)[\pi_2(p)/x])) : \Hom_\Delta(\coprod_{i : I} \sum_{d : D} B, \sum_{d : D} \coprod_{i : I} B). \]
-\end{prop}
-\begin{proof}
-The inverse of this map is defined as follows:
-\[ \lambda p. \coprod\text{-}\fs{elim}(z. \coprod_{i : I} \sum_{d : D} B, i b.\,\fs{in}_i(x)[(\pi_1(p),b)/x])[\pi_2(p)/z]. \]
-It is easy to show that these maps are mutually inverse using the eliminator for coproducts.
-\end{proof}
-
-\begin{lem}[dep-coprod-coprod]
-Suppose that an indexed dependent type theory has $\Sigma$-types, extensional identity types, and dependent coproducts.
-Then the map
-\[ \Gamma, i : I \vdash \fs{in}_i' : \Hom(\Sigma(\Delta,B_i), \Sigma(\Delta, \coprod_{i : I} B_i)) \]
-induced by $\fs{in}_i$ makes $\Sigma(\Delta, \coprod_{i : I} B_i)$ into a coproduct of the family $\Gamma, i : I \mid \cdot \vdash \Sigma(\Delta,B_i)$.
-\end{lem}
-\begin{proof}
-Let $\Delta = x_1 : A_1, \ldots x_n : A_n$.
-Then $\fs{in}_i'$ is defined as follows:
-\[ \fs{in}_i' = \lambda p.(\pi_1(p), \ldots \pi_n(p), \fs{in}_i(x)[\pi_{n+1}(p)/x]). \]
-Let $f$ be a map of the following form:
-\[ \Gamma, i : I \vdash f : \Hom(\Sigma(\Delta,B_i),C). \]
-Then we define $\Gamma \vdash [f]_{i : I} : \Hom(\Sigma(\Delta, \coprod_{i : I} B_i), C)$ as follows:
-\[ [f]_{i : I} = \lambda p.\,\coprod\text{-}\fs{elim}(z.C, i x.\,f\,(\pi_1(p), \ldots \pi_n(p), x))[\pi_{n+1}(p)/z]. \]
-Let us prove that $[f]_{i : I} \circ \fs{in}_i' \sim f$:
-\begin{align*}
-[f]_{i : I} \circ \fs{in}_i' & = \\
-\lambda p.\,\coprod\text{-}\fs{elim}(z.C, i x.\,f\,(\pi_1(p), \ldots \pi_n(p), x))[\fs{in}_i(x)[\pi_{n+1}(p)/x]/z] & \sim \\
-\lambda p.\,f\,(\pi_1(p), \ldots \pi_{n+1}(p)) & \sim \\
-\lambda p.\,f\,p & \sim \\
-f & .
-\end{align*}
-Finally, for every $g : \Hom(\coprod_{i : I} B_i, C)$, we need to prove that $[g \circ \fs{in}_i']_{i : I} \sim g$.
-It is enough to prove that, for all $x_1 : A_1, \ldots x_n : A_n, z : \coprod_{i : I} B_i$, there is a homotopy between $[g \circ \fs{in}_i']_{i : I}\,(x_1, \ldots x_n, z)$ and $g\,(x_1, \ldots x_n, z)$.
-To do this, we can apply $\coprod\text{-}\fs{elim}$ to $z$.
-Then we just need to construct a homotopy between $[g \circ \fs{in}_i']_{i : I}\,(x_1, \ldots x_n, \fs{in}_i(x))$ and $g\,(x_1, \ldots x_n, \fs{in}_i(x))$:
-\begin{align*}
-[g \circ \fs{in}_i']_{i : I}\,(x_1, \ldots x_n, \fs{in}_i(x)) & = \\
-\lambda p.\,\coprod\text{-}\fs{elim}(z.C, i x.\,g\,(\fs{in}_i\,(x_1, \ldots x_n, x)))[\fs{in}_i(x)/z] & \sim \\
-g\,(x_1, \ldots x_n, \fs{in}_i(x)) & .
-\end{align*}
-\end{proof}
-
-This lemma implies that $\Hom_\Delta(\coprod_{i : I} B_i, C)$ is a weak $\Pi$-type $\Pi_{i : I} \Hom_\Delta(B_i,C)$.
-We will say that dependent coproducts are \emph{extensional} if this $\Pi$-type satisfies functional extensionality.
-
-\begin{example}
-The model $\qCat$ has \emph{stable} dependent coproducts.
-They are extensional since all $\Pi$-types of the base theory are extensional in this model.
-\end{example}
-
-\begin{lem}[coprod-dep-coprod]
-Suppose that an indexed dependent type theory has $\Sigma$-types and identity types.
-If $\coprod$ and $\fs{in}$ are unstable constructions defined above and the map $\Gamma, i : I \vdash \fs{in}_i' : \Hom(\Sigma(\Delta,B_i), \Sigma(\Delta, \coprod_{i : I} B_i))$ induced by $\fs{in}_i$ makes $\Sigma(\Delta, \coprod_{i : I} B_i)$ into an extensional coproduct of the family $\Gamma, i : I \mid \cdot \vdash \Sigma(\Delta,B_i)$,
-then the eliminator is definable and this dependent coproduct is extensional.
-\end{lem}
-\begin{proof}
-Let $\Delta = x_1 : A_1, \ldots x_n : A_n$ and let $\Gamma, i : I \mid \Delta, x : B_i \vdash d : D[\fs{in}_i(x)/z]$ be a term.
-Since $\Sigma(\Delta, \coprod_{i : I} B_i)$ is a coproduct of $\Sigma(\Delta, B_i)$, we have the following map:
-\begin{align*}
-t & : \Hom(\Sigma(\Delta, \coprod_{i : I} B_i), \Sigma(\Delta, z : \coprod_{i : I} B_i, D)) \\
-t & = [\lambda p.(x_1, \ldots x_n, \fs{in}_i(x), d)[\pi_1(p)/x_1, \ldots \pi_n(p)/x_n, \pi_{n+1}(p)/x]]_{i : I}
-\end{align*}
-Let $\pi_0 : \Hom(\Sigma(\Delta, z : \coprod_{i : I} B_i, D), \Sigma(\Delta, \coprod_{i : I} B_i))$ be the obvious projection map.
-Let $\eta(q)$ be the following homotopy:
-\[ \eta(q) : \Id(t\,q, (x_1, \ldots x_n, \fs{in}_i(x), d)[\pi_1(q)/x_1, \ldots \pi_n(q)/x_n, \pi_{n+1}(q)/x]). \]
-Then $\eta(\fs{in}_i'\,p) * \pi_0$ is a homotopy between $\pi_0\,(t\,(\fs{in}_i'\,p))$ and $\fs{in}_i'\,p$.
-By the universal property of coproducts, there exists (a unique) homotopy $h(q)$ between $\pi_0\,(t\,q)$ and $q$ such that $h(\fs{in}_i'\,p)$ is homotopic to $\eta(\fs{in}_i'\,p) * \pi_0$.
-Now, we can define the eliminator $\coprod\text{-}\fs{elim}(z.D, i x.d)$ as $h(x_1, \ldots x_n, z)_*(\pi_{n+2}(t\,(x_1, \ldots x_n, z)))$.
-
-We need to construct the following homotopy:
-\[ h(x_1, \ldots x_n, \fs{in}_j(x)[b/x])_*(\pi_{n+2}(t\,(x_1, \ldots x_n, \fs{in}_j(x)[b/x]))) \sim d[j/i,b/x]. \]
-Since $\eta(q)$ is a homotopy between $\Sigma$-types, the standard argument about such homotopies shows that we have the following homotopy:
-\[ (\eta(\fs{in}_j'(b)) * \pi_0)_*(\pi_{n+2}(t\,(x_1, \ldots x_n, \fs{in}_j(x)[b/x]))) \sim d[j/i,b/x]. \]
-Thus, we just need to prove that $h(x_1, \ldots x_n, \fs{in}_j(x)[b/x])$ is homotopic to $\eta(\fs{in}_j'(b)) * \pi_0$, but this is true by the definition of $h$.
-
-The extensionality of dependent coproducts is equivalent to the extensionality of the ordinary coproduct $\Sigma(\Delta, \coprod_{i : I} B_i)$.
-\end{proof}
-
-\begin{prop}
-If an indexed dependent type theory has $\Sigma$-types and extensional identity types, then it has weak extensional dependent coproducts if and only if it has extensional coproducts.
-\end{prop}
-\begin{proof}
-If the theory has weak dependent coproducts, then \rlem{dep-coprod-coprod} implies that it has coproducts.
-If dependent coproducts are extensional, then coproducts are also extensional since the latter is the special case of the former.
-Conversely, suppose that the theory has extensional coproducts.
-Let $\Gamma, i : I \mid \Delta \vdash B_i \ob$ be a dependent type.
-If $\Delta$ is empty, then an extensional dependent coproduct of $B_i$ exists by \rlem{coprod-dep-coprod}.
-Thus, we may assume that $\Delta$ is not empty.
-Since we have $\Sigma$-types, we may also assume that it consists of a single type, that is $\Delta = (x : A)$.
-
-We define $\coprod'_{i : I} B_i$ as $\Gamma \mid \Delta \vdash \Sigma_{(p : \coprod_{i : I} \Sigma_{x : A} B_i)} \Id_A([\pi_1]_{i : I}\,p, x) \ob$.
-If $\Gamma \vdash j : I$, then we define $\fs{in}_j$ as $\Gamma \mid \Delta, y : B_j \vdash (\fs{in}_j(x,y), \refl(x)) : \coprod'_{i : I} B_i$.
-Let $\fs{in}_i'$ be the following map:
-\[ \lambda p. (\pi_1(p), \fs{in}_i\,p, \refl(x)) : \Hom(\Sigma(\Delta, B_i), \Sigma(\Delta, p : \coprod_{i : I} \Sigma(\Delta, B_i), \Id_A([\pi_1]_{i : I}\,p,x))). \]
-By \rlem{coprod-dep-coprod}, we just need to prove that $\fs{in}_i'$ makes its codomain into an extensional coproduct.
-Since the type $\Sigma(\Delta, \Id_A([\pi_1]_{i : I}\,p,x))$ is contractible, the following map is an equivalence:
-\[ \pi_2 : \Hom(\Sigma(\Delta, p : \coprod_{i : I} \Sigma(\Delta, B_i), \Id_A([\pi_1]_{i : I}\,p,x)), \coprod_{i : I} \Sigma(\Delta, B_i)). \]
-Since $\pi_2 \circ \fs{in}_i'$ makes $\coprod_{i : I} \Sigma(\Delta, B_i)$ into an extensional coproduct of $\Sigma(\Delta, B_i)$ and $\pi_2$ is an equivalence, this is also true for $\fs{in}_i'$.
-\end{proof}
-
-If we assume the stability condition for $\fs{in}$, then we can replace it with the following stable rule:
-\begin{center}
-\AxiomC{$\Gamma \vdash j : I$}
 \AxiomC{$\Gamma \mid \Delta \vdash b : B_j$}
 \BinaryInfC{$\Gamma \mid \Delta \vdash (j,b) : \coprod_{i : I} B_i$}
 \DisplayProof
 \end{center}
 \medskip
-Indeed, $\fs{in}_j(x)$ can be defined as $(j,x)$.
-Conversely, $(j,b)$ can be defined in terms of $\fs{in}$ as $\fs{in}_j(x)[b/x]$.
-Since $(-,-)$ is stable, these constructions are mutually inverse.
 
-We will say that dependent coproducts are \emph{stable} if $\coprod$ and $(-,-)$ are stable.
-We will say that coproducts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$,
-the canonical map from $\coprod_{i : I} r^*(B_i)$ to $r^*(\coprod_{i : I} B_i)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
-
-If dependent coproducts are stable, then we can define the local version of their eliminator:
 \begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B_i, E \vdash D \ob$}
-\AxiomC{$\Gamma, i : I \mid \Delta, x : B_i, E[(i,x)/z] \vdash d : D[(i,x)/z]$}
-\BinaryInfC{$\Gamma \mid \Delta, z : \coprod_{i : I} B_i, E \vdash \coprod\text{-}\fs{elim}(z E. D, i x E. d) : D$}
+\AxiomC{$\Gamma \mid \Delta, z : \coprod_{i : I} B_i \vdash D \ob$}
+\AxiomC{$\Gamma, i : I \mid \Delta, x : B_i \vdash d : D[(i,x)/z]$}
+\AxiomC{$\Gamma \mid \Delta \vdash e : \coprod_{i : I} B_i$}
+\TrinaryInfC{$\Gamma \mid \Delta \vdash \coprod\text{-}\fs{elim}(z.D, i x.d, e) : D[e/z]$}
 \DisplayProof
 \end{center}
 \medskip
 
-\[ \coprod\text{-}\fs{elim}(z E. D, i x E. d)[(j,b)/z] = d[j/i,b/x] \]
+\[ \coprod\text{-}\fs{elim}(z.D, i x.d, (j,b)) = d[j/i,b/x] \]
 
-This is a strict version of the local eliminator.
-We can define its weak version as usual by replacing the judgmental equality with a propositional one.
+\begin{example}
+The canonical indexing of a dependent type theory over itself always has dependent coproducts since we always assume that the base theory has $\Sigma$-types.
+\end{example}
 
-\begin{prop}
-Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, and dependent coproducts.
-If $\coprod$ and $(-,-)$ are stable, then the local weak unstable eliminator is definable and coproducts are stable under pullbacks.
+\begin{example}
+The model $\qCat$ has stable dependent coproducts.
+If we think of base types as $\infty$-groupoids and indexed types as $\infty$-categories, then tensoring $- \cdot 1$ is the functor that embeds $\infty$-groupoids into $\infty$-categories.
+More generally, $X \cdot A$ is the product $(X \cdot 1) \times A$ (this is true in any Cartesian closed theory).
+\end{example}
+
+\begin{example}
+The model $\sSpace$ also has stable dependent coproducts.
+Tensoring $- \cdot 1$ embeds spaces into simplicial spaces as discrete objects.
+\end{example}
+
+\begin{prop}[coprod-sigma]
+Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, extensional $\Hom$-types, and (weak) stable dependent coproducts.
+Then dependent coproducts commute with $\Sigma$-types.
+More precisely, the following map is an equivalence for every dependent type $\Gamma, i : I \mid \Delta, d : D \vdash B_i \ob$:
+\[ \lambda e. \coprod\text{-}\fs{elim}(z. \sum_{d : D} \coprod_{i : I} B_i, i p. (\pi_1(p),(i,\pi_2(p))), e) : \Hom_\Delta(\coprod_{i : I} \sum_{d : D} B_i, \sum_{d : D} \coprod_{i : I} B_i). \]
 \end{prop}
 \begin{proof}
-First, let us prove that coproducts are stable under pullbacks.
+The inverse of this map is defined as follows:
+\[ \lambda p. \coprod\text{-}\fs{elim}(z. \coprod_{i : I} \sum_{d : D} B_i, i b.\,(i,(\pi_1(p),b)), \pi_2(p)). \]
+It is easy to show that these maps are mutually inverse using the eliminator for coproducts.
+\end{proof}
+
+We will say that coproducts in an indexed unary type theory are \emph{stable under pullbacks} if, for every pair of maps $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$,
+the canonical map from $\coprod_{i : I} r^*(B_i)$ to $r^*(\coprod_{i : I} B_i)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
+
+\begin{prop}[coproduct-stable]
+Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, extensional $\Hom$-types, and (weak) stable dependent coproducts.
+Then coproducts are stable under pullbacks.
+\end{prop}
+\begin{proof}
 Let $\Gamma, i : I \mid \cdot \vdash B_i \ob$ be a dependent type and let $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$ be maps.
 We define $\Gamma, i : I \mid d : D \vdash B_i' \ob$ as the fiber of $B_i$ over $d$.
 Then we have the following pullback squares:
@@ -1809,57 +2013,56 @@ Then we have the following pullback squares:
             } \]
 The bottom square is a pullback since substitutions correspond to pullbacks.
 Vertical maps in the second row are equivalences by \rprop{coprod-sigma}.
-Vertical maps in the first row are equivalences since $B_i \simeq \Sigma_{d : D} B_i'$ and $r^*(B_i) \simeq B_i'[r\,e/d]$.
-
-Now, let us prove the existence of the local weak unstable eliminator.
-By \rlem{coprod-dep-coprod}, it is enough to show that the following map makes its codomain into a coproduct:
-\[ \fs{in}_i : \Hom(\Sigma(x : B_i, E[(i,x)/z]), \Sigma(z : \coprod_{i : I} B_i, E)). \]
-This follows from the fact that coproducts are stable under pullbacks since the codomain of this map is a pullback of $\id_{\coprod_{i : I} B_i}$ along the obvious projection from $\Sigma(z : \coprod_{i : I} B_i, E)$ to $\coprod_{i : I} B_i$.
+Vertical maps in the first row are equivalences since $B_i \simeq \Sigma_{d : D} B_i'$ and $r^*(B_i) \simeq \Sigma_{e : E} B_i'[r\,e/d]$.
 \end{proof}
 
 \subsection{Pushouts}
+\label{sec:dep-pushouts}
 
 Pushouts can be defined in a more type-theoretic way.
-The theory of \emph{(unstable) weak dependent pushouts} consists of the following unstable rules:
+The theory of \emph{weak dependent pushouts} consists of the following rules:
+\medskip
 \begin{center}
-\AxiomC{$\Gamma \mid \Delta \vdash f : \Hom(A,B)$}
-\AxiomC{$\Gamma \mid \Delta \vdash g : \Hom(A,C)$}
+\AxiomC{$\Gamma \mid \cdot \vdash f : \Hom(A,B)$}
+\AxiomC{$\Gamma \mid \cdot \vdash g : \Hom(A,C)$}
 \BinaryInfC{$\Gamma \mid \Delta \vdash B \amalg_A C \ob$}
 \DisplayProof
 \end{center}
 \medskip
 
 \begin{center}
-\AxiomC{}
-\UnaryInfC{$\Gamma \mid \Delta, y : B \vdash \fs{inl}(y) : B \amalg_A C$}
+\AxiomC{$\Gamma \mid \Delta \vdash B \amalg_A C$}
+\AxiomC{$\Gamma \mid \Delta \vdash b : B$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{inl}(b) : B \amalg_A C$}
 \DisplayProof
 \qquad
-\AxiomC{}
-\UnaryInfC{$\Gamma \mid \Delta, z : C \vdash \fs{inr}(z) : B \amalg_A C$}
+\AxiomC{$\Gamma \mid \Delta \vdash B \amalg_A C$}
+\AxiomC{$\Gamma \mid \Delta \vdash c : C$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{inr}(c) : B \amalg_A C$}
 \DisplayProof
 \end{center}
 \medskip
 
 \begin{center}
-\AxiomC{}
-\UnaryInfC{$\Gamma \mid \Delta, x : A \vdash \fs{glue}(x) : \Id(\fs{inl}(y)[f\,x/y],\fs{inr}(z)[g\,x/z])$}
+\AxiomC{$\Gamma \mid \Delta \vdash B \amalg_A C$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{glue}(a) : \Id(\fs{inl}(f\,a),\fs{inr}(g\,a))$}
 \DisplayProof
 \end{center}
 \medskip
-
-To simplify the notation, we will write $\fs{inl}(b)$, $\fs{inr}(c)$, and $\fs{glue}(a)$ instead of $\fs{inl}(y)[b/y]$, $\fs{inr}(z)[c/z]$, and $\fs{glue}(x)[a/x]$, respectively.
 
 \begin{center}
 \def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \mid \Delta, w : B \amalg_A C \vdash D \ob$
+\Axiom$\fCenter \Gamma \mid w : B \amalg_A C \vdash D \ob$
 \noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, y : B \vdash d_1 : D[\fs{inl}(y)/w]$
+\UnaryInf$\fCenter \Gamma \mid \Delta \vdash e : B \amalg_A C$
+\Axiom$\fCenter \Gamma \mid y : B \vdash d_1 : D[\fs{inl}(y)/w]$
 \noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, z : C \vdash d_2 : D[\fs{inr}(z)/w]$
+\UnaryInf$\fCenter \Gamma \mid z : C \vdash d_2 : D[\fs{inr}(z)/w]$
 \noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, x : A \vdash d_3 : \Id(\fs{glue}(x)_*(d_1[f\,x/y]), d_2[g\,x/z])$
+\UnaryInf$\fCenter \Gamma \mid x : A \vdash d_3 : \Id(\fs{glue}(x)_*(d_1[f\,x/y]), d_2[g\,x/z])$
 \def\extraVskip{2pt}
-\UnaryInf$\fCenter \Gamma \mid \Delta, w : B \amalg_A C \vdash \amalg\text{-}\fs{elim}(w.D, y.d_1, z.d_2, x.d_3) : D$
+\BinaryInf$\fCenter \Gamma \mid \Delta \vdash \amalg\text{-}\fs{elim}(w.D, y.d_1, z.d_2, x.d_3, e) : D[e/w]$
 \DisplayProof
 \end{center}
 \medskip
@@ -1868,6 +2071,7 @@ To simplify the notation, we will write $\fs{inl}(b)$, $\fs{inr}(c)$, and $\fs{g
 h_1(b) & : \Id(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inl}(b)/w], d_1[b/y]) \\
 h_2(c) & : \Id(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inr}(c)/w], d_2[c/z])
 \end{align*}
+\medskip
 
 \[ \xymatrix{ \fs{glue}(a)_*(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inl}(f\,a)/w]) \ar@{=}[r] \ar@{=}[d] & \fs{glue}(a)_*(d_1[f\,a/y]) \ar@{=}[d]^{d_3[a/x]} \\
               \amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inr}(g\,a)/w] \ar@{=}[r]_-{h_2(g\,a)} & d_2[g\,a/z]
@@ -1875,137 +2079,116 @@ h_2(c) & : \Id(\amalg\text{-}\fs{elim}(w.D,y.d_1,z.d_2,x.d_3)[\fs{inr}(c)/w], d_
 The last square must commute up to a homotopy $h_3(a)$.
 The top arrow in this square is $\pmap(x.\,\fs{glue}(a)_*(x), h_1(f\,a))$ and the left arrow is defined by path induction on $\fs{glue}(a)$.
 
+\begin{remark}
+Of course, we can define a stricter version of this theory by replacing homotopies $h_1$ and $h_2$ with computational rules.
+We will call such a theory simply the theory of \emph{dependent pushouts}.
+\end{remark}
+
 \begin{example}
-The model $\qCat$ has \emph{unstable} dependent pushouts.
-Pushouts in $\qCat$ cannot be stable since pushouts of $\infty$-categories are not stable under pullbacks.
+The model $\qCat$ has dependent pushouts.
+We can use pushouts to construct new examples of indexed types.
+For example, if we have $\Delta^1$, then we can define $\Delta^n$ by induction as $\Delta^{n-1} \amalg_1 \Delta^1$.
 \end{example}
 
+\begin{prop}
+Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, and extensional $\Hom$-types.
+Then it has weak dependent pushouts if and only if the underlying indexed unary type theory has pushouts.
+\end{prop}
+\begin{proof}
+First, assume that the theory has weak dependent pushouts.
+We will show that $B \amalg_A C$ is the pushout of $f : \Hom(A,B)$ and $g : \Hom(A,C)$.
+We need to show that the following map is an equivalence:
+\begin{align*}
+F & : \Hom(B \amalg_A C, D) \to \sum_{b : \Hom(B,D)} \sum_{c : \Hom(C,D)} \Id(\lambda x.\,b\,(f\,x), \lambda x.\,c\,(g\,x)) \\
+F & = \lambda h.\,(\lambda y.\,h\,(\fs{inl}(y)), \lambda z.\,h\,(\fs{inr}(z)), \Idext(x.\,\pmap(h,\fs{glue}(x))))
+\end{align*}
+The inverse of this function is defined as follows:
+\[ G = \lambda (b,c,p).\,\lambda w.\,\amalg\text{-}\fs{elim}(w.D, y.\,b\,y, z.\,c\,z, x.\,\fs{hap}(p,x), w). \]
+
+For every triple $(b,c,p)$, we need to show that $F\,(G\,(b,c,p)) \sim (b,c,p)$.
+It is easy to construct this homotopy using $h_1$, $h_2$, and $h_3$.
+For every map $h : \Hom(B \amalg_A C, D)$, we need to show that $G\,(F\,h) \sim h$.
+We have the following homotopy:
+\[ G\,(F\,h) \sim \lambda w.\,\amalg\text{-}\fs{elim}(w.D, y.\,h\,(\fs{inl}(y)), z.\,h\,(\fs{inr}(z)), x.\,\pmap(h, \fs{glue}(x)), w). \]
+Let us denote the latter function by $h'$.
+
+We can define a homotopy between $h'$ and $h$ as follows:
+\[ \Idext(w.\,\amalg\text{-}\fs{elim}(w.\,\Id(h'\,w,h\,w), y.\,h_1(y), z.\,h_2(z), x.\,h_3'(x))), \]
+where $h_3'(x)$ is a homotopy between $\fs{glue}(x)_*(h_1(f\,x))$ and $h_2(g\,x)$.
+Since the former term is homotopic to $\sym{\pmap(h'\,\overline{x},\fs{glue}(x))} \ct h_1(f\,x) \ct \pmap(h\,\overline{x},\fs{glue}(x))$, we can construct $h_3'(x)$ using $h_3(x)$.
+
+Now, let us prove the converse.
+Assume that the theory has pushouts.
+Thus, we have terms $\fs{inl}' : \Hom(B, B \amalg_A C)$, $\fs{inr}' : \Hom(C, B \amalg_A C)$, and $\fs{glue}' : \Id(\fs{inl}' \circ f, \fs{inr}' \circ g)$.
+We define $\fs{inl}(b)$ as $\fs{inl}'\,b$, $\fs{inr}(c)$ as $\fs{inr}'\,c$, and $\fs{glue}(a)$ as $\fs{hap}(\fs{glue}',a)$.
+
+Let us define the eliminator $\amalg\text{-}\fs{elim}(w.D, y.d_1, z.d_2, x.d_3, e)$.
+We have the following commutative square:
+\[ \xymatrix{ A \ar[rr]^-f \ar[d]_g                    & & B \ar[d]^{\lambda y.(\fs{inl}(y),d_1)} \\
+              C \ar[rr]_-{\lambda z.(\fs{inr}(z),d_2)} & & \Sigma_{w : B \amalg_A C} D
+            } \]
+The commutativity of the square is witnessed by the following term:
+\[ \fs{Idext}(x.\,\Sigma\fs{ext}(\fs{glue}(x),d_3)). \]
+By the universal property of pushouts, we have the following terms:
+\begin{align*}
+\Gamma \mid w : B \amalg_A C & \vdash s(w) : \Sigma_{w : B \amalg_A C} D \\
+\Gamma \mid y : B & \vdash h_1'(y) : \Id(s(\fs{inl}(y)),(\fs{inl}(y),d_1)) \\
+\Gamma \mid z : C & \vdash h_2'(z) : \Id(s(\fs{inr}(z)),(\fs{inr}(z),d_2))
+\end{align*}
+and term $h_3'(x)$ which witnesses the commutativity of the following square:
+\[ \xymatrix{ s(\fs{inl}(f\,x)) \ar@{=}[r]^-{h_1'(f\,x)} \ar@{=}[d]_{\pmap(w.s(w),\fs{glue}(x))} & (\fs{inl}(f\,x),d_1[f\,x/y]) \ar@{=}[d]^{\Sigma\fs{ext}(\fs{glue}(x),d_3)} \\
+              s(\fs{inr}(g\,x)) \ar@{=}[r]_-{h_2'(g\,x)} & (\fs{inr}(g\,x),d_2[g\,x/z])
+            } \]
+By the universal property of pushouts, we have the following terms:
+\begin{align*}
+\Gamma \mid w : B \amalg_A C & \vdash q(w) : \Id(\pi_1(s(w)),w) \\
+\Gamma \mid y : B & \vdash q_1(y) : \Id(h(\fs{inl}(y)),\pmap(\pi_1,h_1'(y))) \\
+\Gamma \mid z : C & \vdash q_2(z) : \Id(h(\fs{inr}(z)),\pmap(\pi_1,h_2'(z)))
+\end{align*}
+and $q_3(x)$ which is a homotopy between two terms witnessing the commutativity of the following square:
+\[ \xymatrix{ \pi_1(s(\fs{inl}(f\,x))) \ar@{=}[rr]^-{q(\fs{inl}(f\,x))} \ar@{=}[d]_{\pmap(w.\pi_1(s(w)),\fs{glue}(x))} & & \fs{inl}(f\,x) \ar@{=}[d]^{\fs{glue}(x)} \\
+              \pi_1(s(\fs{inr}(g\,x))) \ar@{=}[rr]_-{q(\fs{inr}(g\,x))}                                                & & \fs{inr}(g\,x)
+            } \]
+One of these terms is defined by path induction on $\fs{glue}(x)$ and the other one is obtained from $h_3'(x)$, $q_1(f\,x)$, and $q_2(g\,x)$.
+We define $\amalg\text{-}\fs{elim}(w.D, y.d_1, z.d_2, x.d_3, e)$ as $q_*(\pi_2(s(e)))$.
+Maps $h_1$, $h_2$, and $h_3$ can be defined using $h_1'$ and $q_1$, $h_2'$ and $q_2$, and $h_3'$ and $q_3$, respectively.
+\end{proof}
+
+\emph{Stable dependent pushouts} are defined in the same way as dependent pushouts with the difference that all premises in all rules have an extension of $\Delta$ as their context.
+
+\begin{example}
+The model $\sSpace$ has stable dependent pushouts.
+\end{example}
+
+\begin{example}
+Pushouts in $\qCat$ cannot be stable since pushouts of $\infty$-categories are not stable under pullbacks.
+The same is true for pointed types and spectra.
+\end{example}
+
+We will say that pushouts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $f : \Hom(A,B)$, $g : \Hom(A,C)$, $p : \Hom(B \amalg_A C, D)$, and $r : \Hom(E,D)$,
+the canonical map from $r^*(B) \amalg_{r^*(A)} r^*(C)$ to $r^*(B \amalg_A C)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
+
 \begin{prop}[pushout-sigma]
+Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, extensional $\Hom$-types, and (weak) stable dependent pushouts.
 Dependent pushouts commute with $\Sigma$-types.
 More precisely, the following map is an equivalence for all maps $f : \Hom_\Delta(A,B)$ and $g : \Hom_\Delta(A,C)$:
 \begin{align*}
 & \Hom_\Delta((\sum_{d : D} B) \amalg_{(\sum_{d : D} A)} (\sum_{d : D} C), \sum_{d : D} B \amalg_A C) \\
-& \lambda w. \amalg\text{-}\fs{elim}(w. \sum_{d : D} B \amalg_A C, (d,y).(d,\fs{inl}(y)), (d,z).(d,\fs{inr}(z)), (d,x).d_3),
+& \lambda e. \amalg\text{-}\fs{elim}(w. \sum_{d : D} B \amalg_A C, (d,y).(d,\fs{inl}(y)), (d,z).(d,\fs{inr}(z)), (d,x).d_3, e),
 \end{align*}
 where $d_3 = (d,\pmap(w.(d,w),\fs{glue}(x)))$.
 \end{prop}
 \begin{proof}
 The inverse of this map is defined as follows:
-\[ \lambda (d,w). \amalg\text{-}\fs{elim}(w. (\sum_{d : D} B) \amalg_{(\sum_{d : D} A)} (\sum_{d : D} C), y.(d,y), z.(d.z), x.\pmap(w.(d,w),\fs{glue}(x))). \]
+\[ \lambda (d,e). \amalg\text{-}\fs{elim}(w. (\sum_{d : D} B) \amalg_{(\sum_{d : D} A)} (\sum_{d : D} C), y.(d,y), z.(d.z), x.\pmap(w.(d,w),\fs{glue}(x)), e). \]
 It is easy to show that these maps are mutually inverse using the eliminator for pushouts.
 \end{proof}
 
-\begin{lem}[dep-pushouts]
-Suppose that an indexed dependent type theory has $\Sigma$-types and extensional identity types.
-Let $B \amalg_A C$, $\fs{inl}$, $\fs{inr}$, and $\fs{glue}$ be unstable constructions as defined above.
-Then the eliminator is definable if and only if the following square is a pushout:
-\[ \xymatrix{ \Sigma(\Delta,A) \ar[rr]^-{T(f)} \ar[d]_{T(g)}        & & \Sigma(\Delta,B) \ar[d]^{T(\lambda y.\fs{inl}(y))} \\
-              \Sigma(\Delta,C) \ar[rr]_-{T(\lambda z.\fs{inr}(z))}  & & \Sigma(\Delta, B \amalg_A C)
-            } \]
-where $T(h) = \lambda x_1 \ldots x_n x.\,(x_1, \ldots x_n, h\,x)$.
-\end{lem}
-\begin{proof}
-First, suppose that the eliminator is definable.
-Then we need to show that the following canonical map is an equivalence:
-\[ \Hom(\Sigma(\Delta, B \amalg_A C), D) \to \Hom(\Sigma(\Delta,B),D) \times_{\Hom(\Sigma(\Delta,A),D)} \Hom(\Sigma(\Delta,C),D). \]
-The domain of this map is equivalent to $\Hom_\Delta(B \amalg_A C, D)$ and the codomain is equivalent to $\Sigma_{b : \Hom_\Delta(B,D)} \Sigma_{c : \Hom_\Delta(C,D)} \Id_{\Hom_\Delta(A,D)}(\lambda \overline{x} x.\,b\,\overline{x}\,(f\,x), \lambda \overline{x} x.\,c\,\overline{x}\,(g\,x))$.
-It follows that this map is an equivalence if and only if the following one is:
-\begin{align*}
-F & : \Hom_\Delta(B \amalg_A C, D) \to \sum_{b : \Hom_\Delta(B,D)} \sum_{c : \Hom_\Delta(C,D)} \Id(\lambda \overline{x} x.\,b\,\overline{x}\,(f\,x), \lambda \overline{x} x.\,c\,\overline{x}\,(g\,x)) \\
-F & = \lambda h.\,(\lambda \overline{x} y.\,h\,\overline{x}\,(\fs{inl}(y)), \lambda \overline{x} z.\,h\,\overline{x}\,(\fs{inr}(z)), \fs{Idext}(\overline{x} x.\,\pmap(h\,\overline{x},\fs{glue}(x))))
-\end{align*}
-The inverse of this function is defined as follows:
-\begin{align*}
-G & : \sum_{b : \Hom_\Delta(B,D)} \sum_{c : \Hom_\Delta(C,D)} \Id(\lambda \overline{x} x.\,b\,\overline{x}\,(f\,x), \lambda \overline{x} x.\,c\,\overline{x}\,(g\,x)) \to \Hom_\Delta(B \amalg_A C, D) \\
-G & = \lambda (b,c,p).\,\lambda \overline{x} w.\,\amalg\text{-}\fs{elim}(w.D, y.\,b\,\overline{x}\,y, z.\,c\,\overline{x}\,z, x.\,\fs{hap}(p,\overline{x},x))
-\end{align*}
-For every triple $(b,c,p)$, we need to show that $F\,(G\,(b,c,p)) \sim (b,c,p)$.
-It is easy to construct this homotopy using $h_1$, $h_2$, and $h_3$.
-For every map $h : \Hom_\Delta(B \amalg_A C, D)$, we need to show that $G\,(F\,h) \sim h$.
-We have the following homotopy:
-\[ G\,(F\,h) \sim \lambda \overline{x} w.\,\amalg\text{-}\fs{elim}(w.D, y.\,h\,\overline{x}\,(\fs{inl}(y)), z.\,h\,\overline{x}\,(\fs{inr}(z)), x.\,\pmap(h\,\overline{x}, \fs{glue}(x))). \]
-Let us denote the latter function by $h'$.
-We can define a homotopy $h'$ and $h$ as follows:
-\[ \fs{Idext}(\overline{x} w.\,\amalg\text{-}\fs{elim}(w.\,\Id(h'\,\overline{x}\,w,h\,\overline{x}\,w), y.\,h_1(y), z.\,h_2(z), x.\,h_3'(x))), \]
-where $h_3'(x)$ is a homotopy between $\fs{glue}(x)_*(h_1(f\,x))$ and $h_2(g\,x)$.
-Since the former term is homotopic to $\sym{\pmap(h'\,\overline{x},\fs{glue}(x))} \ct h_1(f\,x) \ct \pmap(h\,\overline{x},\fs{glue}(x))$, we can construct $h_3'(x)$ using $h_3(x)$.
-
-Now, let us prove the converse.
-Let $D$, $d_1$, $d_2$, and $d_3$ be arguments of $\amalg\text{-}\fs{elim}$.
-Then we have the following commutative square:
-\[ \xymatrix{ \Sigma(\Delta,A) \ar[rrr]^-{T(f)} \ar[d]_{T(g)}               & & & \Sigma(\Delta,B) \ar[d]^{T(\lambda y.(\fs{inl}(y),d_1))} \\
-              \Sigma(\Delta,C) \ar[rrr]_-{T(\lambda z.(\fs{inr}(z),d_2))}   & & & \Sigma(\Delta, w : B \amalg_A C, D)
-            } \]
-The commutativity of the square is witnessed by the following term:
-\[ \fs{Idext}((x_1, \ldots x_n, x).\,\pmap(p.(x_1, \ldots x_n, p), \Sigma\fs{ext}(\fs{glue}(x),d_3))). \]
-By the universal property of pushouts, we have the following terms:
-\begin{align*}
-\Delta, w : B \amalg_A C & \vdash s(w) : \Sigma(\Delta, w : B \amalg_A C, D) \\
-\Delta, y : B & \vdash h_1'(y) : \Id(s(\fs{inl}(y)),(\overline{x},\fs{inl}(y),d_1)) \\
-\Delta, z : C & \vdash h_2'(z) : \Id(s(\fs{inr}(z)),(\overline{x},\fs{inr}(z),d_2))
-\end{align*}
-and term $h_3'(x)$ which witnesses the commutativity of the following square:
-\[ \xymatrix{ s(\fs{inl}(f\,x)) \ar@{=}[r]^-{h_1'(f\,x)} \ar@{=}[d]_{\pmap(w.s(w),\fs{glue}(x))} & (\overline{x},\fs{inl}(f\,x),d_1[f\,x/y]) \ar@{=}[d]^{\pmap(p.(\overline{x},p),\Sigma\fs{ext}(\fs{glue}(x),d_3))} \\
-              s(\fs{inr}(g\,x)) \ar@{=}[r]_-{h_2'(g\,x)} & (\overline{x},\fs{inr}(g\,x),d_2[g\,x/z])
-            } \]
-Let $\pi_0$ be the obvious projection $\Hom(\Sigma(\Delta, w : B \amalg_A C, D), \Sigma(\Delta, B \amalg_A C))$.
-By the uniqueness, we have the following terms:
-\begin{align*}
-\Delta, w : B \amalg_A C & \vdash q(w) : \Id(\pi_0(s(w)),(\overline{x},w)) \\
-\Delta, y : B & \vdash q_1(y) : \Id(h(\fs{inl}(y)),\pmap(\pi_0,h_1'(y))) \\
-\Delta, z : C & \vdash q_2(z) : \Id(h(\fs{inr}(z)),\pmap(\pi_0,h_2'(z)))
-\end{align*}
-and $q_3(x)$ which is a homotopy between two terms witnessing the commutativity of the following square:
-\[ \xymatrix{ \pi_0(s(\fs{inl}(f\,x))) \ar@{=}[rr]^-{q(\fs{inl}(f\,x))} \ar@{=}[d]_{\pmap(w.\pi_0(s(w)),\fs{glue}(x))} & & (\overline{x},\fs{inl}(f\,x)) \ar@{=}[d]^{\pmap(p.(\overline{x},p),\fs{glue}(x))} \\
-              \pi_0(s(\fs{inr}(g\,x))) \ar@{=}[rr]_-{q(\fs{inr}(g\,x))} & & (\overline{x},\fs{inr}(g\,x))
-            } \]
-One of this term is define by path induction on $\fs{glue}(x)$ and the other one is obtained from $h_3'(x)$, $q_1(f\,x)$, and $q_2(g\,x)$.
-We define $\amalg\text{-}\fs{elim}(w.D, y.d_1, z.d_2, x.d_3)$ as $q_*(\pi_{n+2}(s))$.
-Maps $h_1$, $h_2$, and $h_3$ can be defined using $h_1'$ and $q_1$, $h_2'$ and $q_2$, and $h_3'$ and $q_3$, respectively.
-\end{proof}
-
 \begin{prop}
-If an indexed dependent type theory has $\Sigma$-types and extensional identity types, then it has weak dependent pushouts if and only if it has pushouts.
+Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, extensional $\Hom$-types, and (weak) stable dependent pushouts.
+Then pushouts are stable under pullbacks.
 \end{prop}
 \begin{proof}
-\Rlem{dep-pushouts} implies that the theory with weak dependent pushouts has pushouts.
-Conversely, suppose that the theory has pushouts.
-Let $\Gamma \mid \Delta \vdash f : \Hom(A,B)$ and $\Gamma \mid \Delta \vdash g : \Hom(A,C)$ be a pair of maps.
-If $\Delta$ is empty, then an extensional dependent pushout of $f$ and $g$ exists by \rlem{dep-pushouts}.
-Thus, we may assume that $\Delta$ is not empty.
-Since we have $\Sigma$-types, we may also assume that it consists of a single type, that is $\Delta = (u : U)$.
-
-By the universal property of pushouts, there exists a map $p : \Hom(B \amalg_A C, U)$ such that $p \circ \fs{inl} \sim \pi_1$ and $p \circ \fs{inr} \sim \pi_1$.
-We define $B \amalg_A' C$ as $\Gamma \mid \Delta \vdash \Sigma_{w : B \amalg_A C} \Id(p\,w,u)$.
-By \rlem{dep-pushouts}, to prove that $B \amalg_A' C$ is a pushouts of $f$ and $g$, it is enough to show that $\Sigma(\Delta, B \amalg_A' C)$ is a pushout of $T(f)$ and $T(g)$.
-This follows from the fact that $\Sigma(\Delta, B \amalg_A' C)$ is equivalent to $B \amalg_A C$.
-\end{proof}
-
-We will say that pushouts in an indexed unary type theory are \emph{stable under pullbacks} if, for all maps $f : \Hom(A,B)$, $g : \Hom(A,C)$, $p : \Hom(B \amalg_A C, D)$, and $r : \Hom(E,D)$,
-the canonical map from $r^*(B) \amalg_{r^*(A)} r^*(C)$ to $r^*(B \amalg_A C)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
-If dependent pushouts are stable, then we can define the local version of their eliminator:
-\begin{center}
-\def\extraVskip{1pt}
-\Axiom$\fCenter \Gamma \mid \Delta, w : B \amalg_A C, E \vdash D \ob$
-\noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, y : B, E[\fs{inl}(y)/w] \vdash d_1 : D[\fs{inl}(y)/w]$
-\noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, z : C, E[\fs{inr}(z)/w] \vdash d_2 : D[\fs{inr}(z)/w]$
-\noLine
-\UnaryInf$\fCenter \Gamma \mid \Delta, x : A, E[\fs{inr}(g\,x)/w] \vdash d_3 : \Id(d_1', d_2[g\,x/z])$
-\def\extraVskip{2pt}
-\UnaryInf$\fCenter \Gamma \mid \Delta, w : B \amalg_A C, E \vdash \amalg\text{-}\fs{elim}(z E.D, x E.d_1, y E.d_2, w E.d_3) : D$
-\DisplayProof
-\end{center}
-where $E = z_1 : E_1, \ldots z_n : E_n$, $d_1' = \fs{glue}(x)_*(d_1[\rho(\fs{glue}(x)), f\,x/w])$, and $\rho(p) = \overline{\sym{p}_*(z_i)/z_i}$.
-The definitions of $h_1$, $h_2$, and $h_3$ are modified appropriately.
-
-\begin{prop}
-Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, and dependent pushouts.
-If $B \amalg_A C$, $\fs{inl}$, $\fs{inr}$, and $\fs{glue}$ are stable, then the local weak unstable eliminator is definable and pushouts are stable under pullbacks.
-\end{prop}
-\begin{proof}
-First, let us prove that pushouts are stable under pullbacks.
 Suppose that we have the following maps: $f : \Hom(A,B)$, $g : \Hom(A,C)$, $p : \Hom(B \amalg_A C, D)$, and $r : \Hom(E,D)$.
 We define $d : D \vdash A' \ob$ as the fiber of $A$ over $d$.
 Types $B'$ and $C'$ and maps $f' : \Hom_{d : D}(A',B')$ and $g' : \Hom_{d : D}(A',C')$ are defined similarly.
@@ -2017,14 +2200,6 @@ Then we have the following pullback squares:
             } \]
 The bottom square is a pullback since substitutions correspond to pullbacks.
 Vertical maps in the second row are equivalences by \rprop{pushout-sigma}.
-
-Now, let us prove the existence of the local weak unstable eliminator.
-By \rlem{dep-pushouts}, it is enough to prove that $\Sigma(w : B \amalg_A C, E)$ is a pushout of the following maps:
-\begin{align*}
-\lambda (x, \overline{z}).\,(f\,x, \overline{z}) & : \Hom_\Delta(\Sigma(x : A, E[\fs{inl}(f\,x)/w]), \Sigma(y : B, E[\fs{inl}(y)])) \\
-\lambda (x, \overline{z}).\,(g\,x, \overline{\fs{glue}(x)_*(z)}) & : \Hom_\Delta(\Sigma(x : A, E[\fs{inl}(f\,x)/w]), \Sigma(z : C, E[\fs{inr}(z)]))
-\end{align*}
-This follows from the fact that pushouts are stable under pullbacks since $\Sigma(w : B \amalg_A C, E)$ is a pullback of $\id_{B \amalg_A C}$ along the obvious projection from $\Sigma(w : B \amalg_A C, E)$ to $B \amalg_A C$.
 \end{proof}
 
 \section{The initial type theorem}
@@ -2082,7 +2257,7 @@ This implies that the type $\Hom(0,X) \to \Hom(0,X)$ is weakly connected.
 Let $f,g : \Hom(0,X)$ be a pair of maps.
 We need to construct a homotopy between them.
 
-First, let us prove the type $\Id_{\Hom(0,X) \to \Hom(0,X)}(\id, \lambda x.g)$ is a proposition.
+First, let us prove that the type $\Id_{\Hom(0,X) \to \Hom(0,X)}(\id, \lambda x.g)$ is a proposition.
 Since powers are extensional, the functional extensionality holds for the type $\Hom(0,X) \to \Hom(0,X)$.
 Thus, we just need to prove that, for all $x : \Hom(0,X) \vdash p : \Id(x,g)$ and $x : \Hom(0,X) \vdash q : \Id(x,g)$, there is a homotopy $x : \Hom(0,X) \vdash h : \Id(p,q)$.
 It is enough to prove that, for all $x$ and $q$, there is a homotopy between $q$ and $p \ct \sym{p[g/x]}$, which follows by path induction.
@@ -2180,7 +2355,7 @@ We will prove the initial type theorem for indexed dependent type theories.
 This is merely a technical convenience; the theorem should also be true in unary theories.
 
 \begin{thm}
-Suppose that a locally small indexed dependent type theory has $\Sigma$-types, extensional identity types, extensional dependent products, and split idempotents.
+Suppose that a locally small indexed dependent type theory has $\Sigma$-types, identity types, extensional $\Hom$-types, extensional dependent products, and split idempotents.
 If it has a weakly initial family of indexed types, then it also has the initial type.
 \end{thm}
 \begin{proof}
@@ -2191,19 +2366,19 @@ Let $Z$ be the following type:
 Let $e : \Hom(Z,W)$ be the first projection and let $r : \Hom(W,Z)$ be any map.
 We will prove that $h = r \circ e$ is idempotent.
 We define $I : \Id(h, h \circ h)$ as follows:
-\[ I = \fs{Idext}(z.\,\pmap(r, \pi_2\,z\,(e \circ r))). \]
+\[ I = \Idext(z.\,\pmap(r, \pi_2\,z\,(e \circ r))). \]
 To construct a homotopy $J$, it is enough to define the following homotopy:
 \[ z : Z \vdash J' : \Id(\pmap(r, \pi_2\,(h\,z)\,(e \circ r), \pmap(h \circ r, \pi_2\,z\,(e \circ r))). \]
 We define $J'$ as $\pmap(r,-)$ applied to the following sequence:
-\[ \pi_2\,(h\,z)\,(e \circ r) \sim \fs{hap}(\fs{Idext}(w.\,\pi_2\,(r\,w)\,(e \circ r)),e\,z) \sim \pmap(e \circ r, \pi_2\,z\,(e \circ r)). \]
-The second homotopy here is $\pi_3\,z\,(e \circ r)\,(\fs{Idext}(w.\,\pi_2\,(r\,w)\,(e \circ r)),e\,z)$.
+\[ \pi_2\,(h\,z)\,(e \circ r) \sim \fs{hap}(\Idext(w.\,\pi_2\,(r\,w)\,(e \circ r)),e\,z) \sim \pmap(e \circ r, \pi_2\,z\,(e \circ r)). \]
+The second homotopy here is $\pi_3\,z\,(e \circ r)\,(\Idext(w.\,\pi_2\,(r\,w)\,(e \circ r)),e\,z)$.
 
 Since idempotents are split, there exist a type $0$ and maps $q : \Hom(0,Z)$ and $p : \Hom(Z,0)$ such that $p \circ q \sim \id_0$ and $q \circ p \sim r \circ e$.
 Let us prove that $0$ is initial.
 For every type $B$, there exists a map $0 \xrightarrow{q} Z \xrightarrow{e} W \to B$.
 Thus, it is enough to construct a homotopy between any two maps $f,g : \Hom(0,B)$.
 Since there exists a map from $W$ to the equalizer of $f \circ p$ and $g \circ p$, there is a map $r' : \Hom(W,Z)$ such that $f \circ p \circ r' \sim g \circ p \circ r'$.
-Then $\fs{Idext}(z.\,\pi_2\,z\,(e \circ r'))$ is a homotopy between $e$ and $e \circ r' \circ e$.
+Then $\Idext(z.\,\pi_2\,z\,(e \circ r'))$ is a homotopy between $e$ and $e \circ r' \circ e$.
 Then we have the following sequence of homotopies:
 \[ p \circ r' \circ e \sim p \circ q \circ p \circ r' \circ e \sim p \circ r \circ e \circ r' \circ e \sim p \circ r \circ e \sim p \circ q \circ p \sim p. \]
 It follows that $f$ and $g$ are homotopic:
@@ -2527,7 +2702,7 @@ Such a map is an object classifier if and only if the corresponding universe is 
 
 Every internal universe $\mathcal{U}$ gives rise to an external one, namely $\Hom(\Delta.\mathcal{U})$.
 An internal universe is univalent if and only if the corresponding external one is.
-Moreover, a class of fibration is classified by an internal universe if and only if it is classified by the corresponding external one.
+Moreover, a class of fibrations is classified by an internal universe if and only if it is classified by the corresponding external one.
 An internal universe classifying a given class of fibrations is also unique up to a canonical equivalence.
 The proof is the same as for external universes.
 
@@ -3135,7 +3310,7 @@ Since the class of $n$-truncated maps is closed under identity types, it is loca
 
 In this paper, we defined the notion of an indexed type theory.
 Such theories allow us to work with a larger class of $\infty$-categories and, more generally, indexed $\infty$-categories using the language of type theory.
-We also defined several categorical constructions in this setting and prove their properties.
+We also defined several categorical constructions in this setting and proved their properties.
 
 We believe there is a strong relationship between models of indexed dependent types theories and indexed categories.
 It was proved in \cite{kapulkin-szumilo-fin-comp} that the category of models of the dependent type theory with $\Sigma$-types, unit types, and identity types presents an $\infty$-category equivalent to the $\infty$-category of small finitely complete categories.
@@ -3224,7 +3399,7 @@ E.~{Rijke}, M.~{Shulman}, and B.~{Spitters}, \emph{{Modalities in homotopy type
   theory}},  (2017), \href {http://arxiv.org/abs/1706.07526}
   {\path{arXiv:1706.07526}}.
 
-\bibitem[Shulman 2014]{split-idemp}
+\bibitem[Shulman 2017]{split-idemp}
 M.~{Shulman}, \emph{Idempotents in intensional type theory}, Logical Methods
   in Computer Science \textbf{12} (2017).
 
