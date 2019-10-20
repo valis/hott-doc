@@ -741,6 +741,7 @@ Finally, we can even consider an extension of indexed unary type theories in whi
 The theory of spectra extened in such a way would allow us to work with the smash product of spectra in a convenient way.
 
 \subsection{Finite (co)limits}
+\label{sec:finite-limits}
 
 A \emph{binary product} of indexed types $A$ and $B$ is an indexed type $A \times B$ together with a pair of maps $\pi_1 : \Hom(A \times B, A)$ and $\pi_2 : \Hom(A \times B, B)$
 such that the following function is an equivalence for every indexed type $C$:
@@ -2442,7 +2443,23 @@ By \rlem{trunc-total}, the latter function is $n$-truncated if and only if the i
 The latter function is equivalent to $\lambda a.\,(a,a,\refl) : A \to \Sigma_{a : A} \Sigma_{a' : A} \Id(f\,a,f\,a')$, which is equivalent to $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$.
 \end{proof}
 
-The last lemma implies that if the theory has pullbacks, then we can define a predicate on maps that corresponds to the notion of $n$-truncated maps by induction on $n$.
+\Rlem{trunc-id} implies that if the theory has pullbacks, then we can define a predicate on maps that corresponds to the notion of $n$-truncated maps by induction on $n$.
+
+\begin{example}
+The map $\Hom(S^0,-)$ preserves pullbacks and preserves and reflects equivalences.
+Thus, \rlem{trunc-id} implies that a map of pointed types is $n$-truncated if and only if the underlying map of types is $n$-truncated.
+\end{example}
+
+\begin{example}
+A map of spectra $f : A \to B$ is an equivalence if and only if $\Sigma^n(f) \circ - : U_S(A)_n \to U_S(B)_n$ is an equivalence for all $n : \mathbb{N}$.
+Since $\Sigma$ is an equivalence, it preserves pullbacks.
+It follows that $U_S(-)_n = \Hom(S,\Sigma^n(-))$ preserves pullbacks for all $n : \mathbb{N}$.
+Now, \rlem{trunc-id} implies that a map of spectra $f$ is $k$-truncated if and only if $\Sigma^n(f) \circ - : U_S(A)_n \to U_S(B)_n$ is $k$-truncated for all $n : \mathbb{N}$.
+
+It follows that a map of spectra is $k$-truncated if and only if it is an equivalence.
+Indeed, since $(\Sigma^n(f) \circ -) = \Omega^{k+2}(\Sigma^{n+k+2}(f) \circ -)$ and $\Sigma^{n+k+2}(f) \circ -$ is $k$-truncated, $\Sigma^n(f) \circ -$ is $(-2)$-truncated.
+Thus, $\Sigma^n(f) \circ -$ is an equivalence for all $n : \mathbb{N}$.
+\end{example}
 
 \subsection{Fibrations}
 
@@ -2613,48 +2630,20 @@ The class of $n$-truncated maps is closed under composition, pullbacks, $m$-type
 This follows from \rlem{trunc-pb}, \rprop{fib-sigma}, \rprop{fib-id}, and \rlem{trunc-id}.
 \end{example}
 
-An \emph{external universe} is a base type $\mathcal{U}(\Delta)$ defined for all indexed context $\Delta$ together with an indexed type $\El(c)$ over $\Delta$ for all $c : \mathcal{U}(\Delta)$:
-\begin{center}
-\AxiomC{$\Gamma \vdash c : \mathcal{U}(\Delta)$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \El(c) \ob$}
-\DisplayProof
-\end{center}
-We have a function from $\Id_{\mathcal{U}(\Delta)}(c,c')$ to the type of equivalences between $\El(c)$ and $\El(c')$ over $\Delta$ defined as the transport of the identity morphism along the homotopy $\Id_{\mathcal{U}(\Delta)}(c,c')$.
-We will say that the universe $\mathcal{U}(\Delta)$ is \emph{univalent} if this function is an equivalence.
-We will say that a universe \emph{classifies} fibrations $\Fib$ if it is univalent, the family $\El(c)$ satisfies $\Fib$ for all $c$, the class $\Fib$ is stable under substitution, and every fibration is equivalent to a fibration of the form $\El(c)$ for some $c$.
-
-If a universe classifying $\Fib$ exists, then it is unique up to a canonical equivalence.
-Indeed, let $\mathcal{U}$ and $\mathcal{U}'$ be two universes classifying $\Fib$.
-Then, for every indexed context $\Delta$ over a base context $\Gamma$, we have a fibration $\El(x)$ over $\Delta$ in the context $\Gamma, x : \mathcal{U}$.
-This fibration is equivalent to a fibration of the form $\El'(c')$ for some $\Gamma, x : \mathcal{U} \vdash c' : \mathcal{U}'$.
-Thus, we have a map $\lambda x.\,c' : \mathcal{U} \to \mathcal{U}'$.
-Similarly, we have a map $\lambda y.\,c : \mathcal{U}' \to \mathcal{U}$.
-We need to construct a homotopy $\Gamma, x : \mathcal{U} \vdash h : \Id(c[c'/y],x)$.
-By univalence, it is enough to prove that $\El(c[c'/y])$ is equivalent to $\El(x)$ over $\Delta$.
-By definition of $c$, we have an equivalence $\Gamma, y : \mathcal{U}' \mid \Delta \vdash e : \El(c) \simeq \El'(y)$.
-It follows that we have the following equivalence: $\Gamma, x : \mathcal{U} \mid \Delta \vdash e[c'/y] : \El(c[c'/y]) \simeq \El'(c')$.
-By definition of $c'$, $\El'(c')$ is equivalent to $\El(x)$ over $\Delta$.
-The composition of these two equivalences gives us the required equivalence between $\El(c[c'/y])$ and $\El(x)$ over $\Delta$.
-A homotopy between $c'[c/x]$ and $y$ is constructed similarly.
-
-\begin{defn}
-We will say that a class $\Fib$ is \emph{locally small} if it is classified by an external universe.
-\end{defn}
-
-\begin{example}
-An indexed type theory is called \emph{well-powered} if the class of monomorphisms (that is, $(-1)$-truncated maps) is locally small.
-This definition is analogous to the definition of well-powered indexed categories (see \cite[Example~B1.3.14]{elephant}).
-\end{example}
-
 \subsection{Object classifiers}
 
 Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be a map in an indexed unary type theory such that its pullbacks along all maps exist.
-Then we can define a map from $\Id_{\Hom(\Delta,\mathcal{U})}(f,g)$ to the type of equivalences over $\Delta$ between pullbacks of $p$ along $f$ and $g$ as the transport of the identity map along the homotopy between $f$ and $g$.
+Then we can define a map from $\Id_{\Hom(D,\mathcal{U})}(f,g)$ to the type of equivalences over $D$ between pullbacks of $p$ along $f$ and $g$ as the transport of the identity map along the homotopy between $f$ and $g$.
 An \emph{object classifier} is a map $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ such that its pullbacks exist and the map defined above is an equivalence.
 We will say that an object classifier \emph{classifies} a class of fibrations if this class is closed under pullbacks, $p$ is a fibration, and every fibration is a pullback of $p$.
+A \emph{subobject classifier} is an object classifier for the class of monomorphisms.
 
 \begin{example}
-A subobject classifier is an object classifier for monomorphisms.
+Let $\mathcal{U}$ be a univalent universe in the base theory containing a contractible type $C$ with a point $c : \El(C)$.
+Consider the following map of pointed types:
+\[ \pi_1 : (\Sigma_{A : \mathcal{U}} \El(A), (C, c)) \to_* (\mathcal{U}, C). \]
+Then a straightforward computation shows that the map of indexed types corresponding to $\pi_1$ is an object classifier.
+In particular, if the base theory contains a suboject classifier, then so does the theory of pointed types.
 \end{example}
 
 \begin{example}
@@ -2662,14 +2651,20 @@ We believe that classes of small fibrations mentioned in \rexample{qcat-fib} sho
 Verification of these facts is beyond the scope of this paper.
 \end{example}
 
+If an object classifier classifying a class $\Fib$ exists, then it is unique up to a canonical equivalence.
+Indeed, let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ and $p' : \Hom(\widehat{\mathcal{U}}',\mathcal{U}')$ be two object classifiers classifying $\Fib$.
+Then we have maps $f : \Hom(\mathcal{U},\mathcal{U}')$ and $f' : \Hom(\mathcal{U}',\mathcal{U})$ such that $p$ is a pullback of $p'$ along $f$ and $p'$ is a pullback of $p$ along $f'$.
+To construct a homotopy between $f' \circ f$ and $\fs{id}$, it is enough to show that the pullback of $p$ along $f' \circ f$ is equivalent to $p$ over $\mathcal{U}$, but this is obvious by the definition of $f$ and $f'$.
+A homotopy between $f \circ f'$ and $\fs{id}$ is constructed similarly.
+
 Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be any map.
 We can think of such a map as a (non-univalent) universe.
 We will say that the universe $\mathcal{U}$ \emph{contains a type $A$} if there is a map $a : \Hom(1,\mathcal{U})$ and an equivalence between $A$ and the pullback of $p$ along $a$.
-We will say that $\mathcal{U}$ is \emph{closed under coproducts} if, for all maps $a,b : \Hom(\Delta,\mathcal{U})$, there is a map $a + b : \Hom(\Delta,\mathcal{U})$
-and an equivalence over $\Delta$ between the pullback of $p$ along $a + b$ and the sum of pullbacks of $p$ along $a$ and $b$.
-Similarly, we will say that $\mathcal{U}$ is \emph{closed under $\Sigma$-types} if, for every map $a : \Hom(\Delta,\mathcal{U})$
-and every map $b : \Hom(\Delta \times_\mathcal{U} \widehat{\mathcal{U}}, \mathcal{U})$, there is a map $\Sigma(a,b) : \Hom(\Delta,\mathcal{U})$
-together with an equivalence over $\Delta$ between the pullback of $p$ along $\Sigma(a,b)$ and the composition of pullbacks of $p$ along $b$ and $a$.
+We will say that $\mathcal{U}$ is \emph{closed under coproducts} if, for all maps $a,b : \Hom(D,\mathcal{U})$, there is a map $a + b : \Hom(D,\mathcal{U})$
+and an equivalence over $D$ between the pullback of $p$ along $a + b$ and the sum of pullbacks of $p$ along $a$ and $b$.
+Similarly, we will say that $\mathcal{U}$ is \emph{closed under $\Sigma$-types} if, for every map $a : \Hom(D,\mathcal{U})$
+and every map $b : \Hom(D \times_\mathcal{U} \widehat{\mathcal{U}}, \mathcal{U})$, there is a map $\Sigma(a,b) : \Hom(D,\mathcal{U})$
+together with an equivalence over $D$ between the pullback of $p$ along $\Sigma(a,b)$ and the composition of pullbacks of $p$ along $b$ and $a$.
 The closure under other constructions is defined similarly.
 
 In general, being closed under different construction is not a property of a map but additional data on it.
@@ -2680,42 +2675,10 @@ Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be an object classifier.
 Then the types corresponding to the closure conditions listed above are propositions.
 \end{prop}
 \begin{proof}
-Such types consist of a map $c : \Hom(\Delta,\mathcal{U})$ for some fixed type $\Delta$ together with an equivalence between the fiber of $p$ over $c$ and some fixed type over $\Delta$.
+Such types consist of a map $c : \Hom(D,\mathcal{U})$ for some fixed type $D$ together with an equivalence between the fiber of $p$ over $c$ and some fixed type over $D$.
 Let $(c_1,e_1)$ and $(c_2,e_2)$ be two such pairs.
 Since $p$ is an object classifier, to define a homotopy between these pairs, it is enough to define a homotopy $e$ between fibers of $p$ over $c_1$ and $c_2$ together with a homotopy between $e \circ e_1$ and $e_2$.
 We can define $e$ as $e_2 \circ e_1^{-1}$.
-\end{proof}
-
-An \emph{(internal) universe} in an indexed dependent type theory is an indexed type $\mathcal{U}$ together with an indexed type $\El(c)$ for all $c : \mathcal{U}$:
-\begin{center}
-\AxiomC{}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \mathcal{U} \ob$}
-\DisplayProof
-\qquad
-\AxiomC{$\Gamma \mid \Delta \vdash c : \mathcal{U}$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash \El(c) \ob$}
-\DisplayProof
-\end{center}
-An internal universe is \emph{univalent} if the obvious map from $\Id_{\mathcal{U}}(c,c')$ to the type of equivalences between $\El(c)$ and $\El(c')$ is an equivalence.
-Internal universes in a theory with $\Sigma$-types and identity types correspond to maps $\Hom(\widehat{\mathcal{U}},\mathcal{U})$ via the construction $\pi_1 : \Hom(\Sigma_{x : \mathcal{U}} \El(x), \mathcal{U})$.
-Such a map is an object classifier if and only if the corresponding universe is univalent.
-
-Every internal universe $\mathcal{U}$ gives rise to an external one, namely $\Hom(\Delta.\mathcal{U})$.
-An internal universe is univalent if and only if the corresponding external one is.
-Moreover, a class of fibrations is classified by an internal universe if and only if it is classified by the corresponding external one.
-An internal universe classifying a given class of fibrations is also unique up to a canonical equivalence.
-The proof is the same as for external universes.
-
-A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) contains a type $A$} if there is an element $a : \mathcal{U}$ such that $\El(a)$ is propositionally (resp., judgmentally) equivalent to $A$. 
-A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under coproducts} if, for all elements $a,b : \mathcal{U}$, there exists an element $a + b : \mathcal{U}$ such that $\El(a + b)$ is propositionally (resp., judgmentally) equivalent to the coproduct of $\El(a)$ and $\El(b)$.
-A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under $\Sigma$-types} if, for every element $a : \mathcal{U}$ and every function $b : \El(a) \to \mathcal{U}$, there exists an element $\Sigma(a,x.b(x)) : \mathcal{U}$ such that $\El(\Sigma(a,x.b(x)))$ is propositionally (resp., judgmentally) equivalent to $\Sigma_{x : \El(a)} \El(b(x))$.
-
-\begin{prop}
-A universe $\mathcal{U}$ is weakly closed under one of the constructions listed above if and only if the map $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ is closed under this construction.
-\end{prop}
-\begin{proof}
-This follows from the fact that elements of $\mathcal{U}$ in a context $\Delta$ correspond to maps $\Hom(\Delta, \mathcal{U})$ and
-types of the form $\El(c)$ over $\Delta$ correspond to pullbacks of $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ along $c$.
 \end{proof}
 
 The following propositions discuss $n$-truncated object classifiers.
@@ -2737,7 +2700,7 @@ This type is the fiber of $s' \circ -$ over $s$, which is $n$-truncated since $s
 Finally, since both $p$ and $\mathcal{U}$ are $(n+1)$-truncated, $\widehat{\mathcal{U}}$ is also $(n+1)$-truncated.
 \end{proof}
 
-\begin{prop}
+\begin{prop}[mono-classifier]
 If $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ is an object classifier which is also a monomorphism, then $\widehat{\mathcal{U}}$ is subterminal.
 It is terminal if and only if identity morphisms are classified by $p$.
 \end{prop}
@@ -2784,6 +2747,79 @@ This function maps $\refl(g)$ to $\refl(f \circ g)$.
 This implies that it is homotopic to $\lambda h.\,\pmap(f \circ -, h)$, but this map is an equivalence if and only if $f$ is a monomorphism.
 \end{proof}
 
+\subsection{Universes}
+
+Object classifiers can be defined in a more type-theoretic way.
+An \emph{(internal) universe} in an indexed dependent type theory is an indexed type $\mathcal{U}$ together with an indexed type $\El(c)$ for all $c : \mathcal{U}$:
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \mathcal{U} \ob$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \mid \Delta \vdash c : \mathcal{U}$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \El(c) \ob$}
+\DisplayProof
+\end{center}
+An internal universe is \emph{univalent} if the obvious map from $\Id_{\mathcal{U}}(c,c')$ to the type of equivalences between $\El(c)$ and $\El(c')$ is an equivalence.
+Internal universes in a theory with $\Sigma$-types and identity types correspond to maps $\Hom(\widehat{\mathcal{U}},\mathcal{U})$ via the construction $\pi_1 : \Hom(\Sigma_{x : \mathcal{U}} \El(x), \mathcal{U})$.
+Such a map is an object classifier if and only if the corresponding universe is univalent.
+
+A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) contains a type $A$} if there is an element $a : \mathcal{U}$ such that $\El(a)$ is propositionally (resp., judgmentally) equivalent to $A$. 
+A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under coproducts} if, for all elements $a,b : \mathcal{U}$, there exists an element $a + b : \mathcal{U}$ such that $\El(a + b)$ is propositionally (resp., judgmentally) equivalent to the coproduct of $\El(a)$ and $\El(b)$.
+A universe $\mathcal{U}$ is \emph{weakly (resp., strictly) closed under $\Sigma$-types} if, for every element $a : \mathcal{U}$ and every function $b : \El(a) \to \mathcal{U}$, there exists an element $\Sigma(a,x.b(x)) : \mathcal{U}$ such that $\El(\Sigma(a,x.b(x)))$ is propositionally (resp., judgmentally) equivalent to $\Sigma_{x : \El(a)} \El(b(x))$.
+
+\begin{prop}
+A universe $\mathcal{U}$ is weakly closed under one of the constructions listed above if and only if the map $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ is closed under this construction.
+\end{prop}
+\begin{proof}
+This follows from the fact that elements of $\mathcal{U}$ in a context $\Delta$ correspond to maps $\Hom(\Delta, \mathcal{U})$ and
+types of the form $\El(c)$ over $\Delta$ correspond to pullbacks of $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ along $c$.
+\end{proof}
+
+We already saw that object classifiers (and hence internal universes) may not exists in some interesting theories.
+To fix this problem, we will define the notion of an \emph{external universe}.
+In an indexed unary type theory, an external universe consists of a base type $\mathcal{U}_A$ defined for every closed indexed type $A$ together with an indexed type over $A$.
+In an indexed dependent type theory, this can be reformulated as the following rules:
+\begin{center}
+\AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
+\UnaryInfC{$\Gamma \vdash \mathcal{U}_A \type$}
+\DisplayProof
+\qquad
+\AxiomC{$\Gamma \vdash c : \mathcal{U}_A$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \El(c,a) \ob$}
+\DisplayProof
+\end{center}
+We have a function from $\Id_{\mathcal{U}_A}(c,c')$ to the type of equivalences between dependent $\Hom$-types $\Hom(x.\,\El(c,x))$ and $\Hom(x.\,\El(c',x))$ defined as the transport of the identity morphism along the homotopy between $c$ and $c'$.
+We will say that the universe is \emph{univalent} if this function is an equivalence.
+We will say that a universe \emph{classifies} fibrations $\Fib$ if it is univalent, the family $\El(c,a)$ satisfies $\Fib$ for all $c$ and $a$,
+the class $\Fib$ is stable under substitution, and every fibration is equivalent to a fibration of the form $\El(c,a)$ for some $c$ and $a$.
+
+Every internal universe $(\mathcal{U},\El)$ gives rise to an external one: $\mathcal{U}_A = \Hom(A,\mathcal{U})$ and $\El(c,a) = \El(c\,a)$.
+An internal universe is univalent if and only if the corresponding external one is.
+Moreover, a class of fibrations is classified by an internal universe if and only if it is classified by the corresponding external one.
+An external universe classifying a given class of fibrations is also unique up to a canonical equivalence.
+The proof is the same as for internal universes.
+
+\begin{defn}
+We will say that a class $\Fib$ is \emph{locally small} if it is classified by an external universe.
+\end{defn}
+
+\begin{defn}
+An indexed type theory is called \emph{well-powered} if the class of monomorphisms is locally small.
+This definition is analogous to the definition of well-powered indexed categories (see \cite[Example~B1.3.14]{elephant}).
+\end{defn}
+
+\begin{example}
+If the base theory has a univalent universe $\mathcal{U}$, then we can define the external universe $\mathcal{U}$-small spectra.
+If $A$ is an indexed type, then we define $\mathcal{U}_A$ as the type consisting of a sequence of maps $B_n : U_S(A)_n \to \Sigma_{X : \mathcal{U}} \El(X)$
+together with a sequence of pointed equivalences $(\Sigma_{a : U_S(A)_n} \El(\pi_1(B_n\,a))) \simeq \Omega(\Sigma_{a : U_S(A)_{n+1}} \El(\pi_1(B_{n+1}\,a)))$ over the structure maps $U_S(A)_n \to \Omega(U_S(A)_{n+1})$.
+Every such pair of sequences gives rise to a spectrum over $A$ in the obvious way.
+\end{example}
+
+External universes can be used to define function on indexed types.
+For example, the operation $\Sigma^n$ on indexed types that we explicitly added in section~\ref{sec:finite-limits} can be defined as a function on $\mathcal{U}$-small indexed types by recursion on $n$.
+
 \section{Locally reflective classes of fibrations}
 \label{sec:refl-fib}
 
@@ -2803,6 +2839,21 @@ such that, for every factorization of $f$ through any fibration $p' : \Hom(C',B)
             } \]
 The factorization $A \to C \twoheadrightarrow B$ will be called \emph{the universal factorization} of $f$.
 We will say that $\Fib$ is \emph{stably} locally reflective if the universal factorization of any map is stable under pullbacks.
+
+\begin{example}
+Suppose that we have a locally reflected class of fibrations in the base theory.
+We will say that a map of indexed types in the theory of pointed types is a fibration if the underlying map of base types is a fibration.
+If $f : \Hom(A,B)$ is a map of pointed types and $i : \Hom(S^0,A) \to C$, $p : C \to \Hom(S^0,B)$ is the universal factorization of the underlying map,
+then it is easy to see that $f$ factors through $R(C, i\,*_A)$, where $*_A$ is the base point of $\Hom(S^0,A)$.
+A tedious but straightforward computation shows that the type of lifts in the square depicted above in indexed types is equivalent to the type of lifts in the square underlying it in base types.
+It follows that this defines a locally reflected class of fibrations in the theory of pointed types.
+Since $\Hom(S^0,-)$ preserves pullbacks, this class is stably locally reflective if and only if this is true for fibrations of base types.
+\end{example}
+
+\begin{example}
+If the base theory has the $n$-truncation operation, then the class of $n$-truncated maps in the theory of pointed types is stably locally reflective.
+This is a spectial case of the previous example.
+\end{example}
 
 \begin{lem}[fib-refl]
 If $A \xrightarrow{i} C \overset{p}\twoheadrightarrow B$ is the universal factorization of $f$, then the following conditions are equivalent:
