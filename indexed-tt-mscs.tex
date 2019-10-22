@@ -632,6 +632,13 @@ Formally, this means that their exist terms $c(X)$ and $p(X)$ such that the foll
 \UnaryInfC{$\Gamma, f : \Hom(X,T) \vdash p(X) : \Id(f,c(X))$}
 \DisplayProof
 \end{center}
+The second rule can be equivalently written as follows:
+\begin{center}
+\AxiomC{$\Gamma \vdash f : \Hom(X,T)$}
+\UnaryInfC{$\Gamma \vdash p'(f) : \Id(f,c(X))$}
+\DisplayProof
+\end{center}
+
 We will say that an indexed unary type theory \emph{has terminal types} if the following rule and the rules given above, in which $T$ is replaced with $1$, are derivable:
 \begin{center}
 \AxiomC{}
@@ -708,6 +715,7 @@ We already saw in section~\ref{sec:term-init} that these types are pointed.
 Now, we can define an equivalence $\Omega(U_S(A)_{n+1}) = \Omega(\Hom(S,\Sigma^{n+1}(A))) \simeq \Hom(S,\Omega\Sigma^{n+1}(A)) \simeq \Hom(S,\Sigma^n(A)) = U_S(A)_n$.
 Thus, $U_S(A)$ is indeed a spectrum.
 Moreover, for every map $f : \Hom(A,B)$, the maps $\Sigma^n(f) \circ - : U_S(A)_n \to U_S(B)_n$ determine a morphism of spectra.
+We will denote these maps by $U_S(f)_n$.
 
 The spectrum $U_S(A)$ is not indexed by the base type of natural numbers (we do not even assume that such a type exists).
 That is, $U_S(A)$ is just a sequence of base types together with a sequence of structure maps.
@@ -2451,14 +2459,14 @@ Thus, \rlem{trunc-id} implies that a map of pointed types is $n$-truncated if an
 \end{example}
 
 \begin{example}
-A map of spectra $f : A \to B$ is an equivalence if and only if $\Sigma^n(f) \circ - : U_S(A)_n \to U_S(B)_n$ is an equivalence for all $n : \mathbb{N}$.
+A map of spectra $f : A \to B$ is an equivalence if and only if $U_S(f)_n : U_S(A)_n \to U_S(B)_n$ is an equivalence for all $n : \mathbb{N}$.
 Since $\Sigma$ is an equivalence, it preserves pullbacks.
 It follows that $U_S(-)_n = \Hom(S,\Sigma^n(-))$ preserves pullbacks for all $n : \mathbb{N}$.
-Now, \rlem{trunc-id} implies that a map of spectra $f$ is $k$-truncated if and only if $\Sigma^n(f) \circ - : U_S(A)_n \to U_S(B)_n$ is $k$-truncated for all $n : \mathbb{N}$.
+Now, \rlem{trunc-id} implies that a map of spectra $f$ is $k$-truncated if and only if $U_S(f)_n$ is $k$-truncated for all $n : \mathbb{N}$.
 
 It follows that a map of spectra is $k$-truncated if and only if it is an equivalence.
-Indeed, since $(\Sigma^n(f) \circ -) = \Omega^{k+2}(\Sigma^{n+k+2}(f) \circ -)$ and $\Sigma^{n+k+2}(f) \circ -$ is $k$-truncated, $\Sigma^n(f) \circ -$ is $(-2)$-truncated.
-Thus, $\Sigma^n(f) \circ -$ is an equivalence for all $n : \mathbb{N}$.
+Indeed, since $U_S(f)_n = \Omega^{k+2}(U_S(f)_{n+k+2})$ and $U_S(f)_{n+k+2}$ is $k$-truncated, $U_S(f)_n$ is $(-2)$-truncated.
+Thus, $U_S(f)_n$ is an equivalence for all $n : \mathbb{N}$.
 \end{example}
 
 \subsection{Fibrations}
@@ -2855,6 +2863,14 @@ If the base theory has the $n$-truncation operation, then the class of $n$-trunc
 This is a spectial case of the previous example.
 \end{example}
 
+\begin{example}
+We already saw that $n$-truncated maps in the theory of spectra are not interesting.
+It is possible to define a more useful notion of $n$-truncatedness.
+Let $n$ be an integer.
+We will say that a map $f$ of spectra is $n$-truncated if, for every $i : \mathbb{N}$ such that $i + n \geq 0$, the map $U_S(f)_i$ is $(i + n)$-truncated.
+Then the class of $n$-truncated maps is locally reflective for every $n : \mathbb{Z}$.
+\end{example}
+
 \begin{lem}[fib-refl]
 If $A \xrightarrow{i} C \overset{p}\twoheadrightarrow B$ is the universal factorization of $f$, then the following conditions are equivalent:
 \begin{enumerate}
@@ -3186,194 +3202,181 @@ and $q'$ is the witness of commutativity of the following square:
             } \]
 Thus, $f$ is internally left orthogonal to $g$ if and only if $\id_E \times f$ is left orthogonal to $g$ for all indexed types $E$.
 
-\subsection{Locally reflective classes in dependent theories}
+\subsection{Higher modalities}
 
-We can reformulate the definition of locally reflective class of fibrations in dependent theories with identity types, $\Sigma$-types, and unit types.
-Let $\Fib$ be a dependent class of fibrations.
-A factorization of a map in a unary theory can be turned into a factorization of a dependent type $\Delta \vdash A \ob$, which consists of a dependent type $\Delta \vdash \| A \| \ob$ and a map $\eta_A : \Hom_\Delta(A, \| A \|)$.
-Then $\Fib$ is locally reflective if and only if, for every dependent type $A$, there exists its factorization such that the following function is an equivalence for every fibrant type $\Delta \vdash B \ob$:
-\[ \lambda f.\, f \circ \eta_A : \Hom_\Delta(\| A \|, B) \to \Hom_\Delta(A, B). \]
-This condition holds if and only if the type of lifts in the following diagram is contractible for every fibrant type $\Delta \vdash B \ob$ and every map $\Hom_\Delta(A,B)$:
-\[ \xymatrix{ A \ar[r] \ar[d]_{\eta_A} & B \\
+We can reformulate the definition of locally reflective class of fibrations in indexed dependent type theories.
+Let $\Fib$ be a class of fibrations closed under substitutions and identity types.
+A factorization of a map in a unary theory can be turned into a factorization of a dependent type $\Gamma \mid x : B \vdash A \ob$, which consists of a dependent type $\Gamma \mid x : B \vdash \| A \| \ob$ and a map $\eta_A : \Hom_B(A, \| A \|)$.
+Then $\Fib$ is locally reflective if and only if, for every dependent type $A$, there exists its factorization such that the following function is an equivalence for every fibrant type $\Gamma \mid x : B \vdash C \ob$:
+\[ \lambda f.\, f \circ \eta_A : \Hom_B(\| A \|, C) \to \Hom_B(A, C). \]
+This condition holds if and only if the type of lifts in the following diagram is contractible for every fibrant type $\Gamma \mid x : B \vdash C \ob$ and every map $\Hom_B(A,C)$:
+\[ \xymatrix{ A \ar[r] \ar[d]_{\eta_A} & C \\
               \| A \| \ar@{-->}[ur]
             } \]
 
-The constructions $\| - \|$ and $\eta$ are unstable, that is they are not stable under substitutions.
-An \emph{(unstable) higher modality} consists of a class of fibrations $\Fib$ closed under identity types together with the following unstable rules:
+The theory of \emph{weak higher modalities} (with respect to $\Fib$) is defined as follows:
+\begin{center}
+\AxiomC{$\Gamma \mid x : B \vdash A \ob$}
+\AxiomC{$\Gamma \mid \Delta \vdash b : B$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \| x.A, b \| \fib$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \mid x : B \vdash A \ob$}
+\AxiomC{$\Gamma \mid \Delta \vdash b : B$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A[b/x]$}
+\TrinaryInfC{$\Gamma \mid \Delta \vdash | a, b | : \| x.A, b \|$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \mid x : B, z : \| x.A, x \| \vdash D \fib$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid x : B, y : A \vdash d : D[|y,x|/z]$
+\Axiom$\fCenter \Gamma \mid \Delta \vdash b : B$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta \vdash a : \| x.A, b \|$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \| x.A, b \|\text{-}\fs{elim}(x z. D, x y. d, a) : D[b/x, a/z]$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \Gamma \mid x : B, z : \| x.A, x \| \vdash D \fib$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid x : B, y : A \vdash d : D[|y,x|/z]$
+\Axiom$\fCenter \Gamma \mid \Delta \vdash b : B$
+\noLine
+\UnaryInf$\fCenter \Gamma \mid \Delta \vdash a : A[b/x]$
+\def\extraVskip{2pt}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \| x.A, b \|\text{-}\fs{elim_h}(x z. D, x y. d, a) : \Id(\| x.A, b \|\text{-}\fs{elim}(x z. D, x y. d, |a,b|), d[b/x, a/y])$}
+\DisplayProof
+\end{center}
+\medskip
+Of course, we can also define the theory of higher modalities in which the last rule holds judgementally.
+The theory of \emph{stable higher modalities} is defined as follows:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
 \UnaryInfC{$\Gamma \mid \Delta \vdash \| A \| \fib$}
 \DisplayProof
 \qquad
-\AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
-\UnaryInfC{$\Gamma \mid \Delta, x : A \vdash \eta_A(x) : \|A\|$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : A \ob$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash |a| : \| A \|$}
 \DisplayProof
 \end{center}
 \medskip
 
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta, z : \| A \| \vdash D \fib$}
-\AxiomC{$\Gamma \mid \Delta, x : A \vdash d : D[\eta_A(x)/z]$}
-\BinaryInfC{$\Gamma \mid \Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.D, x.d) : D$}
+\AxiomC{$\Gamma \mid \Delta, y : A \vdash d : D[|y|/z]$}
+\AxiomC{$\Gamma \mid \Delta \vdash a : \| A \|$}
+\TrinaryInfC{$\Gamma \mid \Delta \vdash \| A \|\text{-}\fs{elim}(z.D, y.d, a) : D[a/z]$}
 \DisplayProof
 \end{center}
 \medskip
 
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \| A \| \vdash D \fib$}
-\AxiomC{$\Gamma \mid \Delta, x : A \vdash d : D[\eta_A(x)/z]$}
-\BinaryInfC{$\Gamma \mid \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.D, x.d) : \Id(\| A \|\text{-}\fs{elim}(z.D, x.d)[\eta_A(x)/z], d)$}
-\DisplayProof
-\end{center}
+\[ \| A \|\text{-}\fs{elim}(z.D, y.d, |a|) = d[a/y] \]
+Of course, every stable higher modality determines a higher modality: $\| x.A, b \|$ can be defined as $\| A[b/x] \|$.
 
-\begin{lem}[fib-dep-unst]
-The class of fibrations of a higher modality is locally reflective and the universal factorization is given by $\| - \|$ and $\eta$.
-\end{lem}
-\begin{proof}
-Let $B$ be a fibrant type over $\Delta$.
-We need to prove that the type of lifts in the following diagram is contractible:
-\[ \xymatrix{ A \ar[r]^b \ar[d]_{\eta_A} & B \\
-              \| A \| \ar@{-->}[ur]
-            } \]
-We can define a lift in this diagram as $\lambda z.\,\| A \|\text{-}\fs{elim}(z.B, x.\,b\,x)$.
-The commutativity of the triangle is witnessed by the term $\lambda x.\,\| A \|\text{-}\fs{elim_h}(z.B, x.\,b\,x)$.
+\begin{example}
+We already mentioned that $\qCat$ has several interesting classes of fibrations.
+Most of them are locally reflective but not stably locally reflective.
+We will see that the existence of a stable higher modality with respect to a class of fibrations implies that this class is stably locally reflective.
+Thus, only the unstable version of higher modalities can be defined in $\qCat$ for such classes.
+\end{example}
 
-Let $\Delta, z : \| A \| \vdash f_i : B$, $\Delta, x : A \vdash h_i : \Id(f_i[|x|/z],\,b\,x)$ be lifts in this diagram for $i \in \{1,2\}$.
-We need to construct a homotopy between them.
-Since $\Fib$ is closed under identity types, the type $\Id(f_1,f_2)$ is fibrant over $\Delta, z : \| A \|$.
-Thus, we have a homotopy between $f_1$ and $f_2$:
-\[ \Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(f_1, f_2). \]
-Let us denote this homotopy by $H$.
-We need to prove that $\sym{H[|x|/z]} \ct h_1$ is homotopic to $h_2$.
-This homotopy can be constructed from the following one:
-\[ \Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.\,\Id(f_1,f_2), x.\,h_1 \ct \sym{h_2}) : \Id(H[|x|/z], h_1 \ct \sym{h_2}). \]
-\end{proof}
-
-The following proposition shows that unstable higher modalities are the same as locally reflective classes of fibrations:
+The following proposition shows that weak higher modalities are equivalent to locally reflective classes of fibrations:
 
 \begin{prop}[fib-dep-unst]
-Let $\Fib$ be a class of fibrations closed under substitutions and let $\| - \|$, $\eta$ be a pair of unstable constructions as described above.
-Then this pair extends to a higher modality if and only if it makes $\Fib$ into a locally reflective class and $\Fib$ is closed under $\Sigma$-types.
-\end{prop}
-\begin{proof}
-First, suppose that $\Fib$ is locally reflective class that closed under $\Sigma$-types.
-By \rprop{fib-refl-id}, $\Fib$ is closed under identity types.
-Let $j : \Hom(\Sigma(\Delta, x : A), \Sigma(\Delta, z : \| A \|))$ be the obvious map defined in terms of $\eta$.
-Since $\Fib$ is closed under $\Sigma$-types, \rprop{fib-sigma} implies that it is also closed under composition.
-Then \rlem{uni-conn} implies that $j$ is connected.
-A term $\Delta, x : A \vdash d : D[\eta_A(x)/z]$ determines the top map in the following diagram:
-\[ \xymatrix{ \Sigma(\Delta, x : A) \ar[r] \ar[d]_j                  & \Sigma(\Delta, z : \| A \|, D) \ar@{->>}[d] \\
-              \Sigma(\Delta, z : \| A \|) \ar@{-->}[ur] \ar@{=}[r]  & \Sigma(\Delta, z : \| A \|)
-            } \]
-The right map is the obvious projection, which is a fibration since $D$ is fibrant over $\Delta, z : \| A \|$.
-Since $j$ is connected, we have a lift in this square.
-This lift determines a term $\Delta, z : \| A \| \vdash \| A \|\text{-}\fs{elim}(z.D, x.d) : D$.
-The commutativity of the upper triangle implies the existence of a term $\Delta, x : A \vdash \| A \|\text{-}\fs{elim_h}(z.D, x.d) : \Id(\| A \|\text{-}\fs{elim}(z.D, x.d)[\eta_A(x)/z],d)$.
-
-By \rlem{fib-dep-unst}, if $\| - \|$, $\eta$ extends to a higher modality, then they make $\Fib$ into a locally reflective class.
-Let us prove that $\Fib$ is also closed under $\Sigma$-types.
-Let $A$ be a fibrant type over $\Delta$ and let $B$ be a fibrant type over $\Delta, x : A$.
-We need to prove that $\Sigma_{x : A} B$ is (equivalent to) a fibrant type over $\Delta$.
-First, let us define a map $f : \| \Sigma_{x : A} B \| \to A$ as $\lambda z.\,\| \Sigma_{x : A} B \|\text{-}\fs{elim}(z.A,p.\pi_1(p))$.
-Then, for every $z : \| \Sigma_{x : A} B \|$, we define a term $g\,z : B[f\,z/x]$ as follows:
-\[ \| \Sigma_{x : A} B \|\text{-}\fs{elim}(z.\,B[f\,z/x], p.\,\sym{(\| \Sigma_{x : A} B\|\text{-}\fs{elim_h}(z.A,p.\pi_1(p)))}_*(\pi_2(p))). \]
-Thus, we have a map $r = \lambda z.(f\,z,g\,z) : \| \Sigma_{x : A} B \| \to \Sigma_{x : A} B$ and $\| \Sigma_{x : A} B\|\text{-}\fs{elim_h}$ implies that $r \circ \eta_{\Sigma_{x : A} B}$ is homotopic to the identity map.
-To prove that $\eta_{\Sigma_{x : A} B} \circ r$ is also homotopic to the identity map, we can apply $\| \Sigma_{x : A} B\|\text{-}\fs{elim_h}$.
-Then it is enough to prove that $\eta_{\Sigma_{x : A} B} \circ r \circ \eta_{\Sigma_{x : A} B}$ is homotopic to $\eta_{\Sigma_{x : A} B}$ which follows from the fact that $r \circ \eta_{\Sigma_{x : A} B} \sim \id$.
-\end{proof}
-
-\begin{cor}
-A class of fibrations closed under substitutions extends to a higher modality if and only if it is locally reflective and is closed under $\Sigma$-types.
-\end{cor}
-
-If we assume the stability condition for $\eta$, then we can replace it with the following stable rule:
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta \vdash a : A$}
-\UnaryInfC{$\Gamma \mid \Delta \vdash | a | : \| A \|$}
-\DisplayProof
-\end{center}
-\medskip
-Indeed, $\eta_A(x)$ can be defined as $| x |$.
-Conversely, $| a |$ can be defined in terms of $\eta_A$ as $\eta_A(x)[a/x]$.
-Since $|-|$ is stable, these constructions are mutually inverse.
-
-We will say that a higher modality is \emph{stable} if $\| - \|$ and $| - |$ are stable.
-The underlying class of fibrations of a stable higher modality is stably locally reflective.
-The converse does not hold since the stability under substitutions is a stricter condition, then the stability under pullbacks.
-
-If a higher modality is stable, then we can define the local version of its eliminator:
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$}
-\AxiomC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$}
-\BinaryInfC{$\Gamma \mid \Delta, z : \| A \|, E \vdash \| A \|\text{-}\fs{elim}(z E .D, x E.d) : D$}
-\DisplayProof
-\end{center}
-\medskip
-
-\begin{center}
-\AxiomC{$\Gamma \mid \Delta, z : \| A \|, E \vdash D \fib$}
-\AxiomC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash d : D[| x | / z]$}
-\BinaryInfC{$\Gamma \mid \Delta, x : A, E[|x|/z] \vdash \| A \|\text{-}\fs{elim_h}(z E.D, x E.d) : \Id(d'[|x|/z], d)$}
-\DisplayProof
-\end{center}
-where $d' = \| A \|\text{-}\fs{elim}(z E.D, x E.d)$.
-
-\begin{prop}[fib-dep-st]
-Let $\Fib$ be a class of fibrations and let $\| - \|$, $| - |$ be a pair of stable constructions as described above.
+Suppose that an indexeded dependent type theory has $\Sigma$-types, unit types, identity types, and extensional $\Hom$-types.
+Let $\Fib$ be a class of fibrations closed under substitutions.
 Then the following conditions are equivalent:
 \begin{enumerate}
-\item \label{it:fib-non-dep} The pair $\| - \|$, $| - |$ makes $\Fib$ into a (stably) locally reflective class and $\Fib$ is closed under $\Sigma$-types.
-\item \label{it:fib-dep} The pair $\| - \|$, $| - |$ makes $\Fib$ into a (stable) higher modality.
-\item \label{it:fib-dep-local} The class $\Fib$ is closed under identity types and the unstable local eliminator is definable.
+\item \label{it:higher-modality} The theory has a weak higher modality with respect to $\Fib$ and $\Fib$ is closed under identity types.
+\item \label{it:locally-reflective} $\Fib$ is locally reflective and is closed under $\Sigma$-types.
 \end{enumerate}
 \end{prop}
 \begin{proof}
-By \rlem{fib-dep-unst}, \eqref{it:fib-dep} implies that $\Fib$ is stably locally reflective.
-Thus, if either \eqref{it:fib-non-dep} or \eqref{it:fib-dep} holds, then $\Fib$ is closed under substitutions by \rlem{fib-pullback}.
-Now, \Rprop{fib-dep-unst} implies that \eqref{it:fib-non-dep} and \eqref{it:fib-dep} are equivalent.
+\eqref{it:higher-modality} $\implies$ \eqref{it:locally-reflective}
+Let $\Gamma \mid x : B \vdash A \ob$ be an indexed type over $B$.
+Then we can define $\| A \|$ as $\Gamma \mid x : B \vdash \| x.A, x \|$.
+Function $\eta_A : \Hom_B(A, \| x.A, x \|)$ is defined as $\lambda a.\,| a, x |$.
 
-Obviously, \eqref{it:fib-dep-local} implies \eqref{it:fib-dep} since the (global) eliminator is a special case of the local one.
-Let us prove that \eqref{it:fib-non-dep} implies the existence of the unstable local eliminator.
-Consider the following pullback square:
-\[ \xymatrix{ \Sigma(\Delta, x : A, E[|x|/z]) \ar[r] \ar[d]_i \pb   & \Sigma(\Delta, x : A) \ar[d]^j \\
-              \Sigma(\Delta, z : \| A \|, E) \ar[r]                 & \Sigma(\Delta, z : \| A \|),
+Let $C$ be a fibrant type over $B$.
+We need to prove that the type of lifts in the following diagram is contractible:
+\[ \xymatrix{ A \ar[r]^c \ar[d]_{\eta_A} & C \\
+              \| x.A, x \| \ar@{-->}[ur]
             } \]
-where the bottom and top maps are the obvious projection and the left and right maps are defined in terms of $| - |$.
-Since $\Fib$ is closed under $\Sigma$-types, \rprop{fib-sigma} implies that it is also closed under composition.
-Then \rlem{uni-conn} implies that $j$ is connected.
-Since $\Fib$ is stably locally reflective, \rlem{conn-pullback} implies that $i$ is also connected.
+We can define a lift in this diagram as $\lambda z.\,\| x.A, x \|\text{-}\fs{elim}(x z. C, x y.\,c\,y, z)$.
+The commutativity of the triangle is witnessed by the term $\lambda y.\,\| x.A, x \|\text{-}\fs{elim_h}(x z. C, x y.\,c\,y, y)$.
 
-Any term $\Delta, x : A, E[|x|/z] \vdash d : D[|x|/z]$ determines the top map in the following diagram:
-\[ \xymatrix{ \Sigma(\Delta, x : A, E[|x|/z]) \ar[r] \ar[d]_i           & \Sigma(\Delta, z : \| A \|, E, D) \ar@{->>}[d] \\
-              \Sigma(\Delta, z : \| A \|, E) \ar@{-->}[ur] \ar@{=}[r]   & \Sigma(\Delta, z : \| A \|, E)
+Let $\Gamma \mid x : B, z : \| x.A, x \| \vdash f_i : C$, $\Gamma \mid x : B, y : A \vdash h_i : \Id(f_i[|y,x|/z],\,c\,y)$ be lifts in this diagram for $i \in \{1,2\}$.
+We need to construct a homotopy between them.
+Since $\Fib$ is closed under identity types, the type $\Id(f_1,f_2)$ is fibrant over $x : B, z : \| x.A, x \|$.
+Thus, we have a homotopy between $f_1$ and $f_2$:
+\[ \Gamma \mid x : B, z : \| x.A, x \| \vdash \| x.A, x \|\text{-}\fs{elim}(x z.\,\Id(f_1,f_2), x y.\,h_1 \ct \sym{h_2}, z) : \Id(f_1, f_2). \]
+Let us denote this homotopy by $H$.
+We need to prove that $\sym{H[|y,x|/z]} \ct h_1$ is homotopic to $h_2$.
+This homotopy can be constructed from the following one:
+\[ \Gamma \mid x : B, y : A \vdash \| x.A, x \|\text{-}\fs{elim_h}(x z.\,\Id(f_1,f_2), x y.\,h_1 \ct \sym{h_2}) : \Id(H[|y,x|/z], h_1 \ct \sym{h_2}). \]
+
+Now, let us prove that $\Fib$ is closed under $\Sigma$-types.
+Let $A$ be a fibrant type over $x : B$ and let $C$ be a fibrant type over $x : B, y : A$.
+We need to prove that $\Sigma_{y : A} C$ is (equivalent to) a fibrant type over $x : B$.
+First, let us define a map $f : \Hom_B(\| \Sigma_{y : A} C \|, A)$ as $\lambda z.\,\| x.\,\Sigma_{y : A} C, x \|\text{-}\fs{elim}(x z. A, x p.\,\pi_1(p), z)$.
+Then, for every $z : \| \Sigma_{y : A} C \|$, we define a term $g\,z : C[f\,z/y]$ as follows:
+\[ \| x.\,\Sigma_{y : A} C, x \|\text{-}\fs{elim}(x z.\,C[f\,z/y], x p.\,\sym{(\| x.\,\Sigma_{y : A} C, x \|\text{-}\fs{elim_h}(x z. A, x p.\,\pi_1(p), p))}_*(\pi_2(p)), z). \]
+Thus, we have a map $r = \lambda z.(f\,z,g\,z) : \Hom_B(\| x.\,\Sigma_{y : A} C, x \|, \Sigma_{y : A} C)$.
+It is easy to see that $r \circ \eta_{\Sigma_{y : A} C} \sim \id$ using $\| x.\,\Sigma_{y : A} C, x \|\text{-}\fs{elim_h}$.
+To prove that $\eta_{\Sigma_{y : A} C} \circ r$ is also homotopic to the identity map, we can apply $\| x.\,\Sigma_{y : A} C, x \|\text{-}\fs{elim}$.
+Then it is enough to prove that $\eta_{\Sigma_{y : A} C} \circ r \circ \eta_{\Sigma_{y : A} C}$ is homotopic to $\eta_{\Sigma_{y : A} C}$ which follows from the fact that $r \circ \eta_{\Sigma_{y : A} C} \sim \id$.
+
+\eqref{it:locally-reflective} $\implies$ \eqref{it:higher-modality}
+By \rprop{fib-refl-id}, $\Fib$ is closed under identity types.
+Let us define a higher modality.
+Let $\Gamma \mid x : B \vdash A \ob$ be an indexed type.
+Let $i : \Hom(\Sigma_{x : B} A, \| \Sigma_{x : B} A \|)$, $\pi : \Hom(\| \Sigma_{x : B} A \|, B)$ be the universal factorization of the map $\pi_1 : \Hom(\Sigma_{x : B} A, B)$.
+Let $p : \Id(\pi \circ i, \pi_1)$ be the witness of the fact that $i,\pi$ is a factorization of $\pi_1$.
+We define $\| x.A, b \|$ as $\Sigma_{z : \| \Sigma_{x : B} A \|} \Id(\pi\,z, b)$ and $| a, b |$ as $(i\,(b,a), \fs{hap}(p,(b,a)))$.
+
+Now, let us define the eliminator.
+Let $D$ be a fibrant indexed type over $x : B, z : \| x.A, x \|$.
+Then the type $\Gamma \mid w : \| \Sigma_{x : B} A \| \vdash D[\pi\,w/x, (w,\fs{refl})] \ob$ is also fibrant since fibrations are closed under substitution.
+Suppose that we have a term $\Gamma \mid x : B, y : A \vdash d : D[|y,x|/z]$.
+Then we have the following commutative square:
+\[ \xymatrix{ \Sigma_{x : B} A \ar[rrrr]^-{\lambda q.\,(i\,q, d[\pi_1(q)/x, \pi_2(q)/y])} \ar[d]_i  & & & & \Sigma_{w : \| \Sigma_{x : B} A \|} D[\pi\,w/x, (w,\fs{refl})] \ar@{->>}[d]^{\pi_1} \\
+              \| \Sigma_{x : B} A \| \ar@{=}[rrrr] \ar@{-->}[urrrr]^h                               & & & & \| \Sigma_{x : B} A \|
             } \]
-The right map is the obvious projection, which is a fibration since $D$ is fibrant over $\Delta, z : \| A \|, E$.
-Since $i$ is connected, we have a lift in this square.
-This lift determines a term $\Delta, z : \| A \|, E \vdash \| A \|\text{-}\fs{elim}(z E. D, x E. d) : D$.
-The commutativity of the upper triangle implies the existence of a term $\Delta, x : A, E[|x|/z] \vdash \| A \|\text{-}\fs{elim_h}(z E. D, x E .d) : \Id(\| A \|\text{-}\fs{elim}(z E. D, x E. d)[|x|/z],d)$.
+By \rlem{conn-orth} and \rlem{uni-conn}, there is a lift $h$ in this square.
+If $\Gamma \mid \Delta \vdash b : B$ and $\Gamma \mid \Delta \vdash a : \| x.A, b \|$, then $\pi_1(a) : \| \Sigma_{x : B} A \|$ and $\pi_2(a) : \Id(\pi\,(\pi_1(a)), b)$.
+We can define $\| x.A, b \|\text{-}\fs{elim}(x z. D, x y. d, a)$ as the transport of $\pi_2(h\,(\pi_1(a)))$ along the path witnessing the commutativity of the bottom triangle and $\pi_2(a)$.
+Finally, the existence of $\| x.A, b \|\text{-}\fs{elim_h}(x z. D, x y. d, a)$ follows from the commutativity of the top triangle.
 \end{proof}
 
-\begin{example}
-Since the class of $n$-truncated maps is closed under identity types, it is locally reflective if and only if we have the weak version of the $n$-truncation operation.
-\end{example}
+\begin{remark}
+If the theory has stable higher modality and $\Fib$ is closed under identity types, then $\Fib$ is stably locally reflective.
+This follows from the fact that $\| - \|$ is stable under substitution.
+\end{remark}
 
 \section{Final remarks}
 
 In this paper, we defined the notion of an indexed type theory.
 Such theories allow us to work with a larger class of $\infty$-categories and, more generally, indexed $\infty$-categories using the language of type theory.
-We also defined several categorical constructions in this setting and proved their properties.
+We also defined several categorical constructions in this setting and proved that they are equivalent to their type-theoretic counterparts.
 
 We believe there is a strong relationship between models of indexed dependent types theories and indexed categories.
 It was proved in \cite{kapulkin-szumilo-fin-comp} that the category of models of the dependent type theory with $\Sigma$-types, unit types, and identity types presents an $\infty$-category equivalent to the $\infty$-category of small finitely complete categories.
 We conjecture that a similar result should be true for indexed type theories.
-Since indexed $\infty$-categories do not have strict equalities, many equivalences between various levels of strictness of structures that we prove in this paper might be helpful.
-We might try to split the problem into three parts.
-First, we prove that indexed $\infty$-categories are equivalent to models of indexed types theories with corresponding categorical structure,
-which should be easier than establishing an equivalence with models of indexed type theories with type-theoretic structures since categorical structures are much weaker than their type-theoretical counterparts.
-Then we construct an equivalence between categorical and type-theoretic descriptions of various structures.
-This should easily follow from the results of this paper (although many theories should be modified since we usually require the existence of quasi-inverses of various functions on types instead of proper inverses).
-Finally, we need to prove that weak versions of type-theoretic constructions are equivalent to their strict versions.
-This might be possible to do with techniques presented in \cite{morita-equiv}.
+Anyway, it is necessary to find more models of indexed type theories.
+
+Another possible line of further research is to consider other variations of indexed type theories such as indexed linear type theories.
+Such theories would allow us to reason about monoidal $\infty$-categories such as $\infty$-categories of pointed spaces and spectra.
 
 \begin{thebibliography}{}
 
@@ -3390,11 +3393,6 @@ David {Ayala} and John {Francis}, \emph{{Fibrations of $\infty$-categories}},
 Denis-Charles Cisinski, \emph{Invariance de la {K-Th\'eorie} par \'equivalences
   d\'eriv\'ees}, Journal of K-theory: K-theory and its Applications to Algebra,
   Geometry, and Topology \textbf{6} (2010), 505--546.
-
-\bibitem[Isaev 2018a]{morita-equiv}
-V.~{Isaev}, \emph{{Morita equivalences between algebraic dependent type
-  theories}},  (2018), \href {http://arxiv.org/abs/1804.05045}
-  {\path{arXiv:1804.05045}}.
 
 \bibitem[Isaev 2018b]{indexed-models}
 V.~{Isaev}, \emph{{Contextually indexed contextual categories}},
