@@ -32,8 +32,6 @@
 \newref{lem}{Lemma}{Lemma}
 \newref{prop}{Proposition}{Proposition}
 \newref{cor}{Corollary}{Corollary}
-\newref{cond}{Condition}{Condition}
-\newref{conj}{Conjecture}{Conjecture}
 \newref{defn}{Definition}{Definition}
 \newref{example}{Example}{Example}
 \newref{remark}{Remark}{Remark}
@@ -45,7 +43,6 @@
 
 \newcommand{\fs}[1]{\mathrm{#1}}
 \newcommand{\cat}[1]{\mathcal{#1}}
-\newcommand{\subst}{\fs{subst}}
 \newcommand{\Hom}{\fs{Hom}}
 \newcommand{\chom}{\fs{hom}}
 \newcommand{\Ob}{\fs{Ob}}
@@ -60,7 +57,6 @@
 \newcommand{\qCat}{\fs{qCat}}
 \newcommand{\sSpace}{\fs{sSpace}}
 \newcommand{\Idext}{\fs{Homext}}
-\newcommand{\Cat}{\fs{qCat}}
 
 \numberwithin{figure}{section}
 
@@ -402,7 +398,7 @@ We do not assume that operations or inference rules are primitive.
 For example, if the theory has $\Sigma$-types, then it has binary products since they can be defined in terms of $\Sigma$-types (even though they are not primitive).
 A more complicated example is the theory of $\Pi$-types.
 If a theory has $\Id$-types, $\Sigma$-types and non-dependent function types, then it (almost) has $\Pi$-types.
-Indeed, $\Pi_{x : A} B$ can be defined as $\Sigma_{(f : A \to \Sigma_{x : A} B)} \Id(\pi_1 \circ f, \fs{id}_A)$ and operations of abstraction and application can be easily defined so that necessary inference rules are derivable.
+Indeed, $\Pi_{x : A} B$ can be defined as $\Sigma_{(f : A \to \Sigma_{x : A} B)} \Id(\pi_1 \circ f, \id_A)$ and operations of abstraction and application can be easily defined so that necessary inference rules are derivable.
 The only problem is that $\eta$-equivalence holds only propositionally for this definition of $\Pi$-types.
 We will call $\Pi$-types in which computational rules hold only propositionally \emph{weak $\Pi$-types}.
 We will see many examples of weak versions of various constructions throughout this paper.
@@ -632,7 +628,7 @@ Formally, this means that their exist terms $c(X)$ and $p(X)$ such that the foll
 \UnaryInfC{$\Gamma, f : \Hom(X,T) \vdash p(X) : \Id(f,c(X))$}
 \DisplayProof
 \end{center}
-The second rule can be equivalently written as follows:
+The second rule is equivalent to the following one:
 \begin{center}
 \AxiomC{$\Gamma \vdash f : \Hom(X,T)$}
 \UnaryInfC{$\Gamma \vdash p'(f) : \Id(f,c(X))$}
@@ -653,7 +649,7 @@ A type which is both terminal and initial is called a \emph{zero type}.
 This is an interesting example since a non-trivial $\infty$-category cannot be Cartesian closed and have a zero object at the same type.
 This means that we cannot use ordinary homotopy type theory as an internal language of such $\infty$-categories.
 
-For every nice enough model of the base theory, there is an obvious model of the theory of zero types in which indexed types over a base context $\Gamma$ are interpreted as pointed base types in this context.
+For every sufficiently nice model of the base theory, there is an obvious model of the theory of zero types in which indexed types over a base context $\Gamma$ are interpreted as pointed base types in this context.
 To make the theory match this model more closely, we can add an indexed type $S^0$.
 Then every indexed type $A$ has the underlying base type $\Hom(S^0,A)$.
 This base type is pointed with the base pointed given by the zero map, that is the map $S^0 \to 0 \to A$, where $0$ is the zero type.
@@ -746,7 +742,7 @@ The theory of spectra can be used to reason about spectra in a more convenient w
 For example, composition of morphisms of spectra (presented as indexed types) is strictly associative.
 Moreover, we can apply a type-theoretic language to various constructions on spectra such as their coproduct.
 Finally, we can even consider an extension of indexed unary type theories in which the indexed level is a linear type theory.
-The theory of spectra extened in such a way would allow us to work with the smash product of spectra in a convenient way.
+The theory of spectra extended in such a way would allow us to work with the smash product of spectra in a convenient way.
 
 \subsection{Finite (co)limits}
 \label{sec:finite-limits}
@@ -928,9 +924,9 @@ The product of a family $\Gamma, i : I \mid \cdot \vdash B_i$ is defined as $R(\
 
 \begin{example}
 If the base theory has pushouts and functional extensionality holds in it, then the theory of pointed types has extensional coproducts.
-The coproduct of a family $\Gamma, i : I \mid \cdot \vdash B_i$ is defined as $R(\bigvee_{i : I} B_i, *)$, where $\bigvee_{i : I} B_i$ is the following pushouts:
+The coproduct of a family $\Gamma, i : I \mid \cdot \vdash B_i$ is defined as $R(\bigvee_{i : I} \Hom(S^0, B_i), *)$, where $\bigvee_{i : I} \Hom(S^0, B_i)$ is the following pushouts:
 \[ \xymatrix{ I                           \ar[r] \ar[d]_{\lambda i.\,(i,*_{B_i})} & 1 \ar[d]^{*} \\
-              \sum_{i : I} \Hom(S^0, B_i) \ar[r]                                  & \po \bigvee_{i : I} B_i
+              \sum_{i : I} \Hom(S^0, B_i) \ar[r]                                  & \po \bigvee_{i : I} \Hom(S^0, B_i)
             } \]
 \end{example}
 
@@ -1941,15 +1937,15 @@ The eliminator $\coprod\text{-}\fs{elim}(z. D, i x. d, e)$ is defined as $\fs{ha
 \begin{align*}
 f & : \Hom(\coprod_{i : I} B_i, \Sigma_{(z : \coprod_{i : I} B_i)} D) \\
 f & = [\lambda x.\,((i,x),d)]_{i : I} \\
-h & : \Id(\pi_1 \circ f, \fs{id})
+h & : \Id(\pi_1 \circ f, \id)
 \end{align*}
-The existence of $h$ follows from the universal property of coproducts and the fact that $\pi_1 \circ f \circ \fs{in}_i \sim \fs{id} \circ \fs{in}_i$.
+The existence of $h$ follows from the universal property of coproducts and the fact that $\pi_1 \circ f \circ \fs{in}_i \sim \id \circ \fs{in}_i$.
 Finally, we need to show that
 \[ \fs{hap}(h,(j,b)))_*(\pi_2\,(f\,(j,b))) \sim d[j/i,b/x]. \]
-It is easy to see that $\fs{hap}(h,(j,b)) \sim \fs{ap}(\pi_1, \fs{hap}(\beta_j, b))$, where
+It is easy to see that $\fs{hap}(h,(j,b)) \sim \pmap(\pi_1, \fs{hap}(\beta_j, b))$, where
 \[ \beta_j : \Id(f \circ \fs{in}_j, \lambda b.\,((j,b), d[j/i,b/x])) \]
 is one of the homotopies that appear in the definition of coproducts.
-Now, the existence of the required homotopy follows from the fact that, for every $p : \Id_{\Sigma_{a : A} B}(x,y)$, there is a homotopy $\fs{ap}(\pi_1,p)_*(\pi_2(x)) \sim \pi_2(y)$.
+Now, the existence of the required homotopy follows from the fact that, for every $p : \Id_{\Sigma_{a : A} B}(x,y)$, there is a homotopy $\pmap(\pi_1,p)_*(\pi_2(x)) \sim \pi_2(y)$.
 \end{proof}
 
 The theory of \emph{stable dependent coproducts} consists of the following rules:
@@ -2137,7 +2133,7 @@ We have the following commutative square:
               C \ar[rr]_-{\lambda z.(\fs{inr}(z),d_2)} & & \Sigma_{w : B \amalg_A C} D
             } \]
 The commutativity of the square is witnessed by the following term:
-\[ \fs{Idext}(x.\,\Sigma\fs{ext}(\fs{glue}(x),d_3)). \]
+\[ \Idext(x.\,\Sigma\fs{ext}(\fs{glue}(x),d_3)). \]
 By the universal property of pushouts, we have the following terms:
 \begin{align*}
 \Gamma \mid w : B \amalg_A C & \vdash s(w) : \Sigma_{w : B \amalg_A C} D \\
@@ -2460,7 +2456,7 @@ Thus, \rlem{trunc-id} implies that a map of pointed types is $n$-truncated if an
 
 \begin{example}
 A map of spectra $f : A \to B$ is an equivalence if and only if $U_S(f)_n : U_S(A)_n \to U_S(B)_n$ is an equivalence for all $n : \mathbb{N}$.
-Since $\Sigma$ is an equivalence, it preserves pullbacks.
+Since $\Sigma$ has an inverse, it preserves pullbacks.
 It follows that $U_S(-)_n = \Hom(S,\Sigma^n(-))$ preserves pullbacks for all $n : \mathbb{N}$.
 Now, \rlem{trunc-id} implies that a map of spectra $f$ is $k$-truncated if and only if $U_S(f)_n$ is $k$-truncated for all $n : \mathbb{N}$.
 
@@ -2651,7 +2647,7 @@ Let $\mathcal{U}$ be a univalent universe in the base theory containing a contra
 Consider the following map of pointed types:
 \[ \pi_1 : (\Sigma_{A : \mathcal{U}} \El(A), (C, c)) \to_* (\mathcal{U}, C). \]
 Then a straightforward computation shows that the map of indexed types corresponding to $\pi_1$ is an object classifier.
-In particular, if the base theory contains a suboject classifier, then so does the theory of pointed types.
+In particular, if the base theory contains a subobject classifier, then so does the theory of pointed types.
 \end{example}
 
 \begin{example}
@@ -2662,8 +2658,8 @@ Verification of these facts is beyond the scope of this paper.
 If an object classifier classifying a class $\Fib$ exists, then it is unique up to a canonical equivalence.
 Indeed, let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ and $p' : \Hom(\widehat{\mathcal{U}}',\mathcal{U}')$ be two object classifiers classifying $\Fib$.
 Then we have maps $f : \Hom(\mathcal{U},\mathcal{U}')$ and $f' : \Hom(\mathcal{U}',\mathcal{U})$ such that $p$ is a pullback of $p'$ along $f$ and $p'$ is a pullback of $p$ along $f'$.
-To construct a homotopy between $f' \circ f$ and $\fs{id}$, it is enough to show that the pullback of $p$ along $f' \circ f$ is equivalent to $p$ over $\mathcal{U}$, but this is obvious by the definition of $f$ and $f'$.
-A homotopy between $f \circ f'$ and $\fs{id}$ is constructed similarly.
+To construct a homotopy between $f' \circ f$ and $\id$, it is enough to show that the pullback of $p$ along $f' \circ f$ is equivalent to $p$ over $\mathcal{U}$, but this is obvious by the definition of $f$ and $f'$.
+A homotopy between $f \circ f'$ and $\id$ is constructed similarly.
 
 Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be any map.
 We can think of such a map as a (non-univalent) universe.
@@ -2860,15 +2856,17 @@ Since $\Hom(S^0,-)$ preserves pullbacks, this class is stably locally reflective
 
 \begin{example}
 If the base theory has the $n$-truncation operation, then the class of $n$-truncated maps in the theory of pointed types is stably locally reflective.
-This is a spectial case of the previous example.
+This is a special case of the previous example.
 \end{example}
 
 \begin{example}
 We already saw that $n$-truncated maps in the theory of spectra are not interesting.
-It is possible to define a more useful notion of $n$-truncatedness.
+We can define a more useful notion of $n$-truncatedness for spectra.
 Let $n$ be an integer.
 We will say that a map $f$ of spectra is $n$-truncated if, for every $i : \mathbb{N}$ such that $i + n \geq 0$, the map $U_S(f)_i$ is $(i + n)$-truncated.
-Then the class of $n$-truncated maps is locally reflective for every $n : \mathbb{Z}$.
+If the base theory has $k$-truncations for all $k : \mathbb{N}$, then the class of $n$-truncated maps of spectra is locally reflective for every $n : \mathbb{Z}$.
+To construct the universal factorization of a map $f$ of spectra, we just need to factor $U_S(f)_i$ into an $(i+n)$-connected map followed by an $(i+n)$-truncated one for every $i \geq -n$.
+If $i < -n$, then $U_S(f)_i$ is factored into $U_S(f)_i$ followed by the identity map.
 \end{example}
 
 \begin{lem}[fib-refl]
@@ -3259,7 +3257,7 @@ The theory of \emph{weak higher modalities} (with respect to $\Fib$) is defined 
 \DisplayProof
 \end{center}
 \medskip
-Of course, we can also define the theory of higher modalities in which the last rule holds judgementally.
+Of course, we can also define the theory of higher modalities in which the last rule holds judgmentally.
 The theory of \emph{stable higher modalities} is defined as follows:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta \vdash A \ob$}
@@ -3294,7 +3292,7 @@ Thus, only the unstable version of higher modalities can be defined in $\qCat$ f
 The following proposition shows that weak higher modalities are equivalent to locally reflective classes of fibrations:
 
 \begin{prop}[fib-dep-unst]
-Suppose that an indexeded dependent type theory has $\Sigma$-types, unit types, identity types, and extensional $\Hom$-types.
+Suppose that an indexed dependent type theory has $\Sigma$-types, unit types, identity types, and extensional $\Hom$-types.
 Let $\Fib$ be a class of fibrations closed under substitutions.
 Then the following conditions are equivalent:
 \begin{enumerate}
