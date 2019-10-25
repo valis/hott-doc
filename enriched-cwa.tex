@@ -120,9 +120,9 @@ We will denote this category by $\sfCat$.
 
 Recall that the category of small simplicial categories is a combinatorial model category \cite[Proposition~A.3.2.4]{lurie-topos}.
 The forgetful functor $U : \sfCat \to \sCat$ has both left and right adjoints.
-Moreover, $U \circ F$ is isomorphic to $\Id$, where $F$ is the left adjoint of $U$.
+Moreover, $U \circ (-)^\flat$ is isomorphic to $\Id$, where $(-)^\flat$ is the left adjoint of $U$.
 It follows that the model structure on $\sCat$ can be transferred to $\sfCat$.
-Moreover, $F \dashv U$ is a Quillen equivalence between $\sCat$ and $\sfCat$.
+Moreover, $(-)^\flat \dashv U$ is a Quillen equivalence between $\sCat$ and $\sfCat$.
 
 Let $\C$ be a combinatorial model category with $\I$ and $\J$ as sets of generating cofibrations and generating trivial cofibrations, respectively.
 Let $S$ be a set of maps of $\C$ such that maps in $\Icell[(\J \cup S)]$ are weak equivalences.
@@ -130,12 +130,51 @@ Then \cite[Theorem~2.1.19]{hovey} implies that $\I \cup S$ and $\J \cup S$ are s
 Moreover, the identity functor is a Quillen equivalence between the original model structure and the new one.
 
 Let $[0]$ be the terminal simplicial category and let $[1]$ be the walking arrow considered as simplicial category with discrete simplicial $\Hom$-sets.
-We will denote the domain object of $[1]$ by $B$ and its codomain object by $C$.
-Let $[1]_e$ be any simplicial category with two objects $A$ and $B$ such that the map $[A,B] : [0] \amalg [0] \to [1]_e$ is a cofibration and $[1]_e \to [0]$ is a weak equivalence.
-Consider the simplicial category $[1]_i \amalg_{[0]} [1]$, where both morphisms $[0] \to [1]$ and $[0] \to [1]_e$ map the unique object of $[0]$ to $B$.
+We will denote the domain object of $[1]$ by $b$ and its codomain object by $c$.
+Let $[1]_e$ be any simplicial category with two objects $a$ and $b$ such that the map $[a,b] : [0] \amalg [0] \to [1]_e$ is a cofibration and $[1]_e \to [0]$ is a weak equivalence.
+Consider the simplicial category $[1]_e \amalg_{[0]} [1]$, where both morphisms $[0] \to [1]$ and $[0] \to [1]_e$ map the unique object of $[0]$ to $b$.
 We will make this simplicial category into a simplicial category with fibrations by declaring the image of $[1]$ to be the only fibration.
-Let $f : [1] \to [1]_i \amalg_{[0]} [1]$ be the unique morphism such that $f(B) = A$ and $f(C) = C$.
-If $X$ is a simplicial category with fibrations such that the underlying simplicial category is fibrant, then $X$ has the right lifting property with respect to $f$ if and only if every map factors into an equivalence followed by a fibration.
+Let $\varphi : [1] \to [1]_e \amalg_{[0]} [1]$ be any morphism such that $\varphi(b) = a$ and $\varphi(c) = c$.
+If $Z$ is a simplicial category with fibrations such that the underlying simplicial category is fibrant, then $Z$ has the right lifting property with respect to $\varphi$ if and only if every map factors into an equivalence followed by a fibration.
+
+If $V$ is a simplicial set and $U$ is a simplicial subset of $V$, then we will denote by $[2]_{U,V}$ the simplicial category with fibrations that has three objects $0$, $1$, and $2$ such that
+\[ \Hom_{[2]_{U,V}}(x,y) =
+  \begin{cases}
+    \varnothing & \quad \text{if } x > y \\
+    \Delta^0    & \quad \text{if } x = y \\
+    U           & \quad \text{if } x = 0, y = 1 \\
+    \Delta^0    & \quad \text{if } x = 1, y = 2 \\
+    V           & \quad \text{if } x = 0, y = 2
+  \end{cases}
+\]
+The composition is defined in the obvious way.
+The only fibration in $[2]_{U,V}$ is the unique map between $1$ and $2$.
+Then we have the obvious maps $\lambda^n_k : [2]_{\Lambda^n_k,\Delta^n} \to [2]_{\Delta^n,\Delta^n}$.
+A simplicial category with fibrations $Z$ has the right lifting property with respect to the maps $\lambda^n_k$ if and only if every fibration in $Z$ is a basic fibration.
+
+\begin{prop}
+There is a semi-model structure on the category of small simplicial categories with fibrations satisfying the following properties.
+Weak equivalences are precisely the maps that are weak equivalences of the underlying simplicial categories.
+A simplicial category with fibrations $Z$ is fibrant if and only if the following conditions hold:
+\begin{enumerate}
+\item \label{it:fib-a} The underlying simplicial category of $Z$ is fibrant.
+\item \label{it:fib-b} Every map in $Z$ factors into an equivalence followed by a fibration.
+\item \label{it:fib-c} Every fibration in $Z$ is a basic fibration.
+\end{enumerate}
+The forgetful functor $U : \sfCat \to \sCat$ is a right Quillen functor and is a part of a Quillen equivalence.
+\end{prop}
+\begin{proof}
+Let $S = \{ \varphi \} \cup \{ \lambda^n_k \mid k \leq n, n \in \mathbb{N} \}$.
+Then a simplicial category with fibrations satisfies conditions \eqref{it:fib-a}-\eqref{it:fib-c} if and only if it has the right lifting property with respect to $\J^\flat \cup S$.
+Thus, we just need to show that maps in $\Icell[(\J^\flat \cup S)]$ are weak equivalences (of simplicial categories).
+Since weak equivalences are closed under transfinite composition, it is enough to prove that pushouts of maps in $S$ are weak equivalences.
+
+Let $h : \Hom_Z(a,c)$ be a map in a cofibrant simplicial category with fibrations.
+Let $\varphi' : Z \to Z'$ be the pushout of $\varphi$ along the map $[1] \to Z$ corresponding to $h$.
+We need to show that $\varphi'$ is a weak equivalence.
+The only object of $Z'$ that does not belong to $Z$ is $b$ and it is equivalent to $a$.
+Thus, we just need to show that, for every pair of objects $x$ and $y$ of $Z$, the map $\Hom_Z(x,y) \to \Hom_{Z'}(\varphi'(x),\varphi'(y))$ is a weak equivalence of simplicial sets.
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
