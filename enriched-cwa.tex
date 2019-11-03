@@ -45,6 +45,7 @@
 \newcommand{\Hom}{\fs{Hom}}
 \newcommand{\cat}[1]{\mathcal{#1}}
 \newcommand{\C}{\cat{C}}
+\newcommand{\D}{\cat{D}}
 \newcommand{\op}{\fs{op}}
 \newcommand{\id}{\fs{id}}
 \newcommand{\Id}{\fs{Id}}
@@ -52,11 +53,18 @@
 \newcommand{\sSet}{\fs{sSet}}
 \newcommand{\sCat}{\fs{sCat}}
 \newcommand{\sfCat}{\fs{sfCat}}
+\newcommand{\colim}{\fs{colim}}
 
 \newcommand{\I}{\fs{I}}
 \newcommand{\J}{\fs{J}}
+\newcommand{\we}{\mathcal{W}}
 \newcommand{\class}[2]{#1\text{-}\mathrm{#2}}
 \newcommand{\Icell}[1][\I]{\class{#1}{cell}}
+\newcommand{\Icof}[1][\I]{\class{#1}{cof}}
+\newcommand{\Iinj}[1][\I]{\class{#1}{inj}}
+\newcommand{\Jcell}[1][]{\Icell[\J#1]}
+\newcommand{\Jcof}[1][]{\Icof[\J#1]}
+\newcommand{\Jinj}[1][]{\Iinj[\J#1]}
 
 \numberwithin{figure}{section}
 
@@ -118,15 +126,39 @@ A morphism of simplicial categories with fibraions is a morphism of simplicial c
 The category of small simplicial categories with fibrations is finitely locally presentable since it is the category of models of a finitary essentially algebraic theory.
 We will denote this category by $\sfCat$.
 
+We will construct a left semi-model structure on the category of small simplicial categories with fibrations.
+We will use the notation from \cite{hovey}.
+We will work only with combinatorial (left) semi-model categories.
+Thus, the following proposition will be useful:
+
+\begin{prop}[semi-model-cat]
+Let $\C$ be a locally presentable category, let $\we$ be a class of morphisms of $\C$, and let $\I$ and $\J$ be sets of morphisms of $\C$.
+Then there is a semi-model structure on $\C$ with $\we$ as a class of weak equivalences, $\I$ as a set of generating cofibrations and $\J$ as a set of generating trivial cofibrations if and only if the following conditions hold:
+\begin{enumerate}
+\item $\we$ satisfies 2-out-of-3 and is closed under retracts.
+\item $\Iinj \subseteq \we$.
+\item $\J \subseteq \Icof$ and every map in $\Jcell$ with a domain which is an $\Icell$ complex belongs to $\we$.
+\item $\Jinj \cap \we \subseteq \Iinj$.
+\end{enumerate}
+\end{prop}
+
+This proposition implies that semi-model structures can be transferred:
+\begin{prop}[semimodel-transfer]
+Let $F : \C \to \D$ be functor between locally presentable categories with a right adjoint $U : \D \to \C$.
+Suppose that there is a semi-model structure on $\C$ with $\we$ as the class of weak equivalences, $\I$ as a set of generating cofibrations, and $\J$ as a set of generating trivial cofibrations.
+Then there is a semi-model structure on $\D$ with $U^{-1}(\we)$ as the class of weak equivalences, $F(\I)$ as a set of generating cofibrations, and $F(\J)$ as a set of generating trivial cofibrations
+if and only if, for every map $f$ in $\Icell[F(\J)]$ with a domain which is an $\Icell[F(\I)]$ complex, the map $U(f)$ is a weak equivalence.
+\end{prop}
+
 Recall that the category of small simplicial categories is a combinatorial model category \cite[Proposition~A.3.2.4]{lurie-topos}.
 The forgetful functor $U : \sfCat \to \sCat$ has both left and right adjoints.
 Moreover, $U \circ (-)^\flat$ is isomorphic to $\Id$, where $(-)^\flat$ is the left adjoint of $U$.
 It follows that the model structure on $\sCat$ can be transferred to $\sfCat$.
 Moreover, $(-)^\flat \dashv U$ is a Quillen equivalence between $\sCat$ and $\sfCat$.
 
-Let $\C$ be a combinatorial model category with $\I$ and $\J$ as sets of generating cofibrations and generating trivial cofibrations, respectively.
-Let $S$ be a set of maps of $\C$ such that maps in $\Icell[(\J \cup S)]$ are weak equivalences.
-Then \cite[Theorem~2.1.19]{hovey} implies that $\I \cup S$ and $\J \cup S$ are sets of generating cofibrations and generating trivial cofibrations, respectively, for a model structure on $\C$ with the same class of weak equivalences.
+Let $\C$ be a combinatorial semi-model category with $\I$ and $\J$ as sets of generating cofibrations and generating trivial cofibrations, respectively.
+Let $S$ be a set of maps of $\C$ such that maps in $\Icell[(\J \cup S)]$ with domains in $\Icell[(\I \cup S)]$ are weak equivalences.
+Then \rprop{semi-model-cat} implies that $\I \cup S$ and $\J \cup S$ are sets of generating cofibrations and generating trivial cofibrations, respectively, for a semi-model structure on $\C$ with the same class of weak equivalences.
 Moreover, the identity functor is a Quillen equivalence between the original model structure and the new one.
 
 Let $[0]$ be the terminal simplicial category and let $[1]$ be the walking arrow considered as simplicial category with discrete simplicial $\Hom$-sets.
@@ -161,19 +193,47 @@ A simplicial category with fibrations $Z$ is fibrant if and only if the followin
 \item \label{it:fib-b} Every map in $Z$ factors into an equivalence followed by a fibration.
 \item \label{it:fib-c} Every fibration in $Z$ is a basic fibration.
 \end{enumerate}
+Every fibration $p : \Hom(x,y)$ in a cofibrant simplicial category with fibrations is an epimorphism (that is, the map $- \circ p : \Hom(y,b) \to \Hom(x,b)$ is a monomorphism of simplicial sets for every object $b$).
 The forgetful functor $U : \sfCat \to \sCat$ is a right Quillen functor and is a part of a Quillen equivalence.
 \end{prop}
 \begin{proof}
 Let $S = \{ \varphi \} \cup \{ \lambda^n_k \mid k \leq n, n \in \mathbb{N} \}$.
 Then a simplicial category with fibrations satisfies conditions \eqref{it:fib-a}-\eqref{it:fib-c} if and only if it has the right lifting property with respect to $\J^\flat \cup S$.
-Thus, we just need to show that maps in $\Icell[(\J^\flat \cup S)]$ are weak equivalences (of simplicial categories).
-Since weak equivalences are closed under transfinite composition, it is enough to prove that pushouts of maps in $S$ are weak equivalences.
+Thus, we just need to show that maps in $\Icell[(\J^\flat \cup S)]$ with domains in $\Icell[(\I^\flat \cup S)]$ are weak equivalences (of simplicial categories).
+Since weak equivalences are closed under transfinite composition, it is enough to prove that pushouts of maps in $S$ with domains in $\Icell[(\I^\flat \cup S)]$ are weak equivalences.
 
-Let $h : \Hom_Z(a,c)$ be a map in a cofibrant simplicial category with fibrations.
+Let $h : \Hom_Z(a,c)$ be a map in a simplicial category with fibrations.
 Let $\varphi' : Z \to Z'$ be the pushout of $\varphi$ along the map $[1] \to Z$ corresponding to $h$.
 We need to show that $\varphi'$ is a weak equivalence.
 The only object of $Z'$ that does not belong to $Z$ is $b$ and it is equivalent to $a$.
 Thus, we just need to show that, for every pair of objects $x$ and $y$ of $Z$, the map $\Hom_Z(x,y) \to \Hom_{Z'}(\varphi'(x),\varphi'(y))$ is a weak equivalence of simplicial sets.
+Note that $\varphi$ can be factored into maps $[1] \xrightarrow{\varphi_1} [1] \amalg_{[0]} [1] \xrightarrow{\varphi_2} [1]_e \amalg_{[0]} [1]$.
+Let $\varphi_1'$ and $\varphi_2'$ be pushouts of $\varphi_1$ and $\varphi_2$, respectively.
+The map $\Hom_Z(x,y) \to \Hom(\varphi_1'(x),\varphi_1'(y))$ is an isomorphism.
+The proof that the map $\Hom(\varphi_1'(x),\varphi_1'(y)) \to \Hom(\varphi_2'(x),\varphi_2'(y))$ is a weak equivalence is the same as in \cite[Proposition~A.3.2.4]{lurie-topos}.
+
+Now, let $Z$ be an $\Icell[(\I^\flat \cup S)]$ complex.
+Then $Z = \colim_{\alpha < \lambda} Z_\alpha$, where $Z_\alpha \to Z_{\alpha + 1}$ is a pushout of a map in $\I^\flat \cup S$, $Z_0 = 0$, and $Z_\kappa = \colim_{\alpha < \kappa} Z_\alpha$.
+We will prove by induction on $\lambda$ that, for every fibration $p : \Hom_Z(x,y)$ and every object $b$, the map $- \circ p : \Hom_Z(y,b) \to \Hom_Z(x,b)$ is a monomorphism.
+This is obvious for $\lambda = 0$.
+For limit ordinals, this follows from induction hypothesis.
+If $\lambda = \alpha+1$, then $Z_\alpha \to Z_{\alpha+1}$ is a pushout of one of the generating cofibrations.
+If it is a cofibration of the form $f^\flat$, then we can use the description of simplicial $\Hom$-sets of $Z_{\alpha+1}$ given in \cite[Proposition~A.3.2.4]{lurie-topos} to conclude that $- \circ p$ is a monomorphism.
+If it is $\varphi$, then the description of simplicial $\Hom$-sets given above implies that $- \circ p$ is an isomorphism.
+If it is $\lambda^n_k$, then simplicial $\Hom$-sets can be explicitly described in a similar way.
+This description also implies $- \circ p$ is a monomorphism.
+
+Finally, let $Z$ be a $\Icell[(\I^\flat \cup S)]$ complex and let $\lambda' : Z \to Z'$ be a pushout of a map $\lambda^n_k : [2]_{\Lambda^n_k,\Delta^n} \to [2]_{\Delta^n,\Delta^n}$.
+Let $z$ be the image of $0$ and let $p : \Hom(x,y)$ be the image of the unique fibration in $[2]_{\Lambda^n_k,\Delta^n}$.
+For every object $c$, we define a map of simplicial sets $f(c)$ as the pushout-product of $\Lambda^n_k \to \Delta^n$ and $- \circ p : \Hom_Z(y,c) \to \Hom(x,c)$.
+Since $p$ is a fibration in a cofibrant simplicial category with fibrations, $- \circ p$ is a cofibration and $f(c)$ is a trivial cofibration.
+
+Let $a$ and $b$ be a pair of objects of $Z$.
+We define a sequence of trivial cofibrations of simplicial sets $f_i : N_i \to M_i$ as follows:
+$f_0 = \id_{\Hom_Z(a,z)} \times f(b)$ and $f_{i+1}$ is the pushout-product of $f_i$ and $f(z)$.
+We can also define maps $g_i : N_i \to \Hom_Z(a,b)$ such that $\varphi'_{a,b} : \Hom_Z(a,b) \to \Hom_{Z'}(\varphi'(a),\varphi'(b))$ is the pushout of $\coprod_{i \in \mathbb{N}} f_i$ along $[g_i]_{i \in \mathbb{N}}$.
+Since $f_i$ are trivial cofibrations, $\varphi'_{a,b}$ is also a trivial cofibration.
+Since $\varphi' : Z \to Z'$ is surjective on objects, this implies that it is a weak equivalence of simplicial categories.
 \end{proof}
 
 \bibliographystyle{amsplain}
