@@ -46,6 +46,7 @@
 \newcommand{\cat}[1]{\mathcal{#1}}
 \newcommand{\C}{\cat{C}}
 \newcommand{\D}{\cat{D}}
+\newcommand{\K}{\cat{K}}
 \newcommand{\op}{\fs{op}}
 \newcommand{\id}{\fs{id}}
 \newcommand{\Id}{\fs{Id}}
@@ -112,7 +113,7 @@ The composition and identity maps are defined in the obvious way.
 Since $g \circ -$ is a Kan fibration, $\Hom_{\C/Z}(X,Y)$ is a Kan complex, so $\C/Z$ is a fibrant simplicial category.
 If $\C$ has enough basic fibrations, then $N(\C/Z)$ is equivalent to $N(\C)/Z$:
 
-\begin{prop}
+\begin{prop}[over-cat]
 Let $\C$ be a fibrant simplicial category.
 Suppose that every map of $\C$ factors into an equivalence followed by a basic fibration.
 Then $N(\C/Z)$ is equivalent to $N(\C)/Z$ for every object $Z$ of $\C$.
@@ -132,14 +133,15 @@ We will work only with combinatorial (left) semi-model categories.
 Thus, the following proposition will be useful:
 
 \begin{prop}[semi-model-cat]
-Let $\C$ be a locally presentable category, let $\we$ be a class of morphisms of $\C$, and let $\I$ and $\J$ be sets of morphisms of $\C$.
-Then there is a semi-model structure on $\C$ with $\we$ as a class of weak equivalences, $\I$ as a set of generating cofibrations and $\J$ as a set of generating trivial cofibrations if and only if the following conditions hold:
+Let $\C$ be a category and let $\we$ be a class of morphisms of $\C$.
+Then there is a combinatorial semi-model structure on $\C$ with $\we$ as a class of weak equivalences if and only if there are sets $\I$ and $\J$ of morphisms of $\C$ such that the following conditions hold:
 \begin{enumerate}
 \item $\we$ satisfies 2-out-of-3 and is closed under retracts.
 \item $\Iinj \subseteq \we$.
 \item $\J \subseteq \Icof$ and every map in $\Jcell$ with a domain which is an $\Icell$ complex belongs to $\we$.
 \item $\Jinj \cap \we \subseteq \Iinj$.
 \end{enumerate}
+The class of cofibrations in this model category is $\Icof$ and the class of fibrations is $\Jinj$.
 \end{prop}
 
 This proposition implies that semi-model structures can be transferred:
@@ -163,10 +165,12 @@ Moreover, the identity functor is a Quillen equivalence between the original mod
 
 Let $[0]$ be the terminal simplicial category and let $[1]$ be the walking arrow considered as simplicial category with discrete simplicial $\Hom$-sets.
 We will denote the domain object of $[1]$ by $b$ and its codomain object by $c$.
+Let $[1]_f$ be the simplicial category with fibrations which has two objects and one non-identity map which is a fibration.
+We will denote by $\gamma : [0] \to [1]_f$ the morphism that maps the unique object of $[0]$ to the codomain of $[1]_f$.
+
 Let $[1]_e$ be any simplicial category with two objects $a$ and $b$ such that the map $[a,b] : [0] \amalg [0] \to [1]_e$ is a cofibration and $[1]_e \to [0]$ is a weak equivalence.
-Consider the simplicial category $[1]_e \amalg_{[0]} [1]$, where both morphisms $[0] \to [1]$ and $[0] \to [1]_e$ map the unique object of $[0]$ to $b$.
-We will make this simplicial category into a simplicial category with fibrations by declaring the image of $[1]$ to be the only fibration.
-Let $\varphi : [1] \to [1]_e \amalg_{[0]} [1]$ be any morphism such that $\varphi(b) = a$ and $\varphi(c) = c$.
+Consider the simplicial category with fibrations $[1]_e \amalg_{[0]} [1]_f$, where both morphisms $[0] \to [1]_f$ and $[0] \to [1]_e$ map the unique object of $[0]$ to $b$.
+Let $\varphi : [1] \to [1]_e \amalg_{[0]} [1]_f$ be any morphism such that $\varphi(b) = a$ and $\varphi(c) = c$.
 If $Z$ is a simplicial category with fibrations such that the underlying simplicial category is fibrant, then $Z$ has the right lifting property with respect to $\varphi$ if and only if every map factors into an equivalence followed by a fibration.
 
 If $V$ is a simplicial set and $U$ is a simplicial subset of $V$, then we will denote by $[2]_{U,V}$ the simplicial category with fibrations that has three objects $0$, $1$, and $2$ such that
@@ -187,6 +191,7 @@ A simplicial category with fibrations $Z$ has the right lifting property with re
 \begin{prop}
 There is a semi-model structure on the category of small simplicial categories with fibrations satisfying the following properties.
 Weak equivalences are precisely the maps that are weak equivalences of the underlying simplicial categories.
+Generating cofibrations are the generating cofibrations of simplicial categories together with the maps $\lambda^n_k$ and the map $\gamma$.
 A simplicial category with fibrations $Z$ is fibrant if and only if the following conditions hold:
 \begin{enumerate}
 \item \label{it:fib-a} The underlying simplicial category of $Z$ is fibrant.
@@ -198,7 +203,16 @@ The forgetful functor $U : \sfCat \to \sCat$ is a right Quillen functor and is a
 \end{prop}
 \begin{proof}
 Let $S = \{ \varphi \} \cup \{ \lambda^n_k \mid k \leq n, n \in \mathbb{N} \}$.
-Then a simplicial category with fibrations satisfies conditions \eqref{it:fib-a}-\eqref{it:fib-c} if and only if it has the right lifting property with respect to $\J^\flat \cup S$.
+We will use $\I^\flat \cup S$ as a set of generating cofibrations.
+Let us show that $\I^\flat \cup S$ generate the same class of cofibrations as $\I^\flat \cup S'$, where $S' = \{ \gamma \} \cup \{ \lambda^n_k \mid k \leq n, n \in \mathbb{N} \}$.
+First, the map $\gamma$ is a cofibration since it is a retract of the cofibration $[0] \xrightarrow{\gamma} [1]_f \to [1]_e \amalg_{[0]} [1]_f$.
+Let us show that the map $\varphi$ belongs to $\Icof[(\I^\flat \cup S')]$.
+Consider the simplicial category with fibrations $C = ([1]_e \amalg_{[0]} [1]_f) \amalg_{[1]} D^2$,
+where $[1] \to [1]_e \amalg_{[0]} [1]_f$ maps the non-identity map of $[1]$ to the equivalence and $D^2$ is the simplicial category with two objects $x$ and $y$,
+two non-identity morphisms between $x$ and $y$ and one $1$-simplex between them.
+Then the morphism $[1] \to C$ that maps $b$ to $a$ and $c$ to $c$ belongs to $\Icof[(\I^\flat \cup S')]$ and the morphism $[1] \to [1]_e \amalg_{[0]} [1]_f$ is a retract of $[1] \to C$.
+
+A simplicial category with fibrations satisfies conditions \eqref{it:fib-a}-\eqref{it:fib-c} if and only if it has the right lifting property with respect to $\J^\flat \cup S$.
 Thus, we just need to show that maps in $\Icell[(\J^\flat \cup S)]$ with domains in $\Icell[(\I^\flat \cup S)]$ are weak equivalences (of simplicial categories).
 Since weak equivalences are closed under transfinite composition, it is enough to prove that pushouts of maps in $S$ with domains in $\Icell[(\I^\flat \cup S)]$ are weak equivalences.
 
@@ -207,12 +221,14 @@ Let $\varphi' : Z \to Z'$ be the pushout of $\varphi$ along the map $[1] \to Z$ 
 We need to show that $\varphi'$ is a weak equivalence.
 The only object of $Z'$ that does not belong to $Z$ is $b$ and it is equivalent to $a$.
 Thus, we just need to show that, for every pair of objects $x$ and $y$ of $Z$, the map $\Hom_Z(x,y) \to \Hom_{Z'}(\varphi'(x),\varphi'(y))$ is a weak equivalence of simplicial sets.
-Note that $\varphi$ can be factored into maps $[1] \xrightarrow{\varphi_1} [1] \amalg_{[0]} [1] \xrightarrow{\varphi_2} [1]_e \amalg_{[0]} [1]$.
+Note that $\varphi$ can be factored into maps $[1] \xrightarrow{\varphi_1} [1] \amalg_{[0]} [1]_f \xrightarrow{\varphi_2} [1]_e \amalg_{[0]} [1]_f$.
 Let $\varphi_1'$ and $\varphi_2'$ be pushouts of $\varphi_1$ and $\varphi_2$, respectively.
 The map $\Hom_Z(x,y) \to \Hom(\varphi_1'(x),\varphi_1'(y))$ is an isomorphism.
 The proof that the map $\Hom(\varphi_1'(x),\varphi_1'(y)) \to \Hom(\varphi_2'(x),\varphi_2'(y))$ is a weak equivalence is the same as in \cite[Proposition~A.3.2.4]{lurie-topos}.
 
-Now, let $Z$ be an $\Icell[(\I^\flat \cup S)]$ complex.
+Now, let us prove that every fibration $p : \Hom(x,y)$ in a cofibrant simplicial category with fibrations is an epimorphism.
+It is enough to prove this for $\Icell[(\I^\flat \cup S)]$ complexes since every cofibrant simplicial category with fibrations is a retract of such a complex.
+Let $Z$ be an $\Icell[(\I^\flat \cup S)]$ complex.
 Then $Z = \colim_{\alpha < \lambda} Z_\alpha$, where $Z_\alpha \to Z_{\alpha + 1}$ is a pushout of a map in $\I^\flat \cup S$, $Z_0 = 0$, and $Z_\kappa = \colim_{\alpha < \kappa} Z_\alpha$.
 We will prove by induction on $\lambda$ that, for every fibration $p : \Hom_Z(x,y)$ and every object $b$, the map $- \circ p : \Hom_Z(y,b) \to \Hom_Z(x,b)$ is a monomorphism.
 This is obvious for $\lambda = 0$.
@@ -235,6 +251,53 @@ We can also define maps $g_i : N_i \to \Hom_Z(a,b)$ such that $\varphi'_{a,b} : 
 Since $f_i$ are trivial cofibrations, $\varphi'_{a,b}$ is also a trivial cofibration.
 Since $\varphi' : Z \to Z'$ is surjective on objects, this implies that it is a weak equivalence of simplicial categories.
 \end{proof}
+
+\section{Categories of marked objects}
+
+Categories of marked objects were defined in \cite{marked-obj}.
+Here, we recall their definition and basic properties.
+
+\begin{defn}[marked-obj]
+Let $\C$ be a category, let $\mathcal{K}$ be a small category, and let $\mathcal{F} : \mathcal{K} \to \C$ be a functor.
+A \emph{$\K$-marked object} of $\C$ is a pair $(X,\mathcal{E})$, where $X$ is an object of $\C$ and $\mathcal{E} : \mathcal{K}^{op} \to \Set$ is a subfunctor of $\Hom(\mathcal{F}(-),X)$.
+Morphisms $f : \mathcal{F}(K) \to X$ that belong to $\mathcal{E}$ will be called \emph{marked}.
+A morphism of marked objects is a morphism of the underlying objects that preserves marked morphisms.
+The category of marked objects will be denoted by $\C^m$.
+\end{defn}
+
+The forgetful functor $U : \C^m \to \C$ has a left adjoint $(-)^\flat : \C \to \C^m$ and a right adjoint $(-)^\sharp : \C \to \C^m$.
+For every $X \in \C$, $X^\flat$ is the marked object in which no morphisms are marked (that is, $X^\flat = (X,\varnothing)$),
+and $X^\sharp$ is the marked object in which all morphisms are marked (that is, $X^\sharp = (X,\coprod_{K \in \mathcal{K}} \Hom(K,X))$).
+Objects of the form $X^\flat$ and of the form $X^\sharp$ will be called \emph{flat} and \emph{sharp} respectively.
+
+\begin{thm}[mark-main]
+Let $\C$ be a combinatorial model category and let $\mathcal{F} : \mathcal{K} \to \C$ be a functor such that, for every $K \in \mathcal{K}$, the object $\mathcal{F}(K)$ is cofibrant.
+Then $\C^m$ is a combinatorial model category in which a map is a cofibration if and only if the underlying map is a cofibration in $\C$.
+Both adjoint pairs $(-)^\flat \dashv U$ and $U \dashv (-)^\sharp$ are Quillen pairs.
+If $\C$ is left proper, then so is $\C^m$.
+A marked object $X$ is fibrant in $\C^m$ if and only if the following conditions hold:
+\begin{itemize}
+\item The underlying object $U(X)$ is fibrant in $\C$
+\item Marked maps in $X$ are stable under homotopy (that is, if two maps $K \to U(X)$ are homotopic and one of them is marked, then so is the other).
+\end{itemize}
+\end{thm}
+
+\begin{remark}
+This theorem also holds for left semi-model categories with one additional assumption that the domains of generating cofibrations are cofibrant.
+This assumption is required for Jeff Smith's theorem for left semi-model categories.
+\end{remark}
+
+The model category of marked objects has very explicit description of 
+
+\section{Finite limits in categories with fibrations}
+
+Let $\C$ be a simplicial category.
+An object $1$ of $\C$ is \emph{terminal} if the simplicial set $\Hom(c,1)$ is contractible for every object of $\C$.
+If $1$ is a terminal object of $\C$, then it is also a terminal objects of $N(\C)$.
+A \emph{product} of objects $a$ and $b$ of $\C$ is an object $a \times b$ together with maps $\pi_1 : \Hom(a \times b, a)$ and $\pi_2 : \Hom(a \times b, b)$ such that the following map is an equivalence for every object $c$:
+\[ \Hom(c, a \times b) \to \Hom(c,a) \times \Hom(c,b) \]
+If $a \times b$ is a product of $a$ and $b$, then it is a product of these objects in $N(\C)$.
+Now, \rprop{over-cat} implies that a pullback of two basic fibrations in $\C$ is a pullback in $N(\C)$.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
