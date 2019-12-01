@@ -281,6 +281,11 @@ A marked object $X$ is fibrant in $\C^m$ if and only if the following conditions
 \item The underlying object $U(X)$ is fibrant in $\C$
 \item Marked maps in $X$ are stable under homotopy (that is, if two maps $K \to U(X)$ are homotopic and one of them is marked, then so is the other).
 \end{itemize}
+A map $f$ is a weak equivalence in $\C^m$ if and only if its underlying map is a weak equivalence in $\C$ and $R^m(f)$ reflects marked maps, where $R^m : \C^m \to \C^m$ is a fibrant replacement functor
+
+A fibrant replacement functor $R^m$ can be defined as $X \mapsto (R(X),\mathcal{E})$,
+where $R$ is a fibrant replacement functor for $\C$ and a map $K \to R(X)$ is marked in $R^m(X)$ if and only if
+it is homotopic to a map that factors as a marked map $K \to X$ followed by the map $X \to R(X)$.
 \end{thm}
 
 \begin{remark}
@@ -334,6 +339,90 @@ Since an equivalence of quasicategories always preserves and reflects limit cone
 Thus, the $\infty$-category corresponding to this model category is the $\infty$-category of $\infty$-categories with limits of given shapes and functors preserving them.
 In particular, $\sSet_{\{ \varnothing, \Lambda^2_2 \}}$ presents the $\infty$-category of finitely complete $\infty$-categories and functors preserving finite limits.
 \end{example}
+
+% TODO: Give a characterization of S-local objects.
+
+It is often convenient to work with categories in which objects have chosen lifts for certain maps.
+Let $S$ be a set of maps of a category $\C$.
+Then there is a category $\C_S$ with objects $(X,\mathcal{E})$, where $X$ is an object of $\C$ and $\mathcal{E}$ is a function that, for every map $A \to B$ in $S$ and every map $A \to X$ gives a lift in the following diagram:
+\[ \xymatrix{ A \ar[r] \ar[d] & X \\
+              B \ar@{-->}[ur]
+            } \]
+Morphisms in $\C_S$ are morphisms of the underlying objects preserving chosen lifts.
+We will use the following theorem to construct a left semi-model structure on $\C_S$:
+
+\begin{thm}[alg-fib-obj]
+Suppose that $\C$ is a cofibrantly generated left semi-model category in which all cofibrations are monomorphisms.
+Let $S$ be a set of trivial cofibrations of $\C$.
+Then there is a model structure on $\C_S$ in which a map is a fibration or a weak equivalence if and only if its underlying map is such in $\C$.
+The forgetful functor $U : \C_S \to \C$ preserves cofibrations and it is a right Quillen functor and a part of a Quillen equivalence.
+If $\C$ is a model category, then so is $\C_S$.
+\end{thm}
+\begin{proof}
+This follows from results of \cite{algebraic-fibrant-objects}.
+This theorem differs from \cite[Theorem~2.20]{algebraic-fibrant-objects} in two ways.
+First, we do not assume that trivial cofibrations in $S$ determine fibrant objects, but this assumption is superfluous and was never used in \cite{algebraic-fibrant-objects}.
+The second difference is that we only assume that $\C$ is a left semi-model category.
+To construct a left semi-model structure on $\C_S$, we need to show that maps in $\Icell[F(\J)]$ with cofibrant domains are weak equivalences.
+This can be done in the same way as in \cite[Theorem~2.20]{algebraic-fibrant-objects} using the fact that $U$ preserves cofibrant objects (which is true by \cite[Corollary~2.18]{algebraic-fibrant-objects}).
+\end{proof}
+
+Let $\C$ be a combinatorial left semi-model category $\C$ in which all cofibrations are monomorphisms.
+Let $S$ be a set of cofibrations with cofibrant codomains of $\C$.
+We want to construct a left semi-model structure on $\C_S$.
+We cannot use \rthm{alg-fib-obj} directly since morphisms in $S$ are not weak equivalences, but we can combine this theorem with \rthm{mark-main} to get the desired result.
+Let $\mathcal{F} : S \to \C$ be the codomain function.
+Let $\C^m$ be the category of $\mathcal{F}$-marked objects.
+We can make $S$ into a set of maps of marked objects in which only the identity maps on the codomains of morphisms in $S$ are marked.
+Let $\C^m_L$ be a left Bousfield localization of $\C^m$ such that maps in $S$ are weak equivalences.
+By \rthm{alg-fib-obj}, there is a left-semi model structure on the category $\C^m_{L,S}$ of marked objects with chosen $S$-lifts such that the forgetful functor $\C^m_{L,S} \to \C^m_L$ is a part of a Quillen equivalence.
+We can define a left semi-model structure on $\C_S$ which is Quillen equivalent to $\C^m_{L,S}$:
+
+\begin{thm}
+Let $\C$ be a combinatorial left semi-model category $\C$ in which all cofibrations are monomorphisms.
+Suppose that there is a set $\I$ of generating cofibrations of $\C$ in which all maps have cofibrant domains.
+Let $S$ be a set of cofibrations with cofibrant codomains of $\C$.
+Let $\C^m_L$ be a left Bousfield localization of $\C^m$ such that maps in $S$ are weak equivalences.
+Then there is a left semi-model structure on $\C_S$ which satisfies the following properties:
+\begin{enumerate}
+\item \label{it:alg-cof} If $F_S : \C \to \C_S$ is the left adjoint of the forgetful functor $U_S : \C_S \to \C$, then $F_S(\I)$ is a set generating cofibrations of $\C_S$.
+\item \label{it:alg-we} If $(-)^\flat : \C_S \to \C^m_{L,S}$ be the left adjoint to the forgetful functor $U^m_{L,S} : \C^m_{L,S} \to \C_S$, then a map $f$ of $\C_S$ is a weak equivalence if and only if $f^\flat$ is a weak equivalence.
+\item Both adjunctions $F_S \dashv U_S$ and $(-)^\flat \dashv U^m_{L,S}$ are Quillen adjunctions and the latter one is a Quillen equivalence.
+\item The left semi-model category $\C_S$ is Quillen equivalent to $\C^m_L$ and this Quillen equivalence commutes with forgetful functors $\C_S \to C$ and $\C^m_L \to \C$.
+\end{enumerate}
+\end{thm}
+\begin{proof}
+Conditions~\eqref{it:alg-cof} and \eqref{it:alg-we} determine cofibrations and weak equivalences of $\C_S$.
+We will construct the semi-model structure on $\C_S$ using Smith's theorem.
+Since $(-)^\flat : \C_S \to \C^m_{L,S}$ is a left adjoint, most of the conditions of this theorem hold trivially.
+We just need to prove that maps in $\Iinj[F_S(\I)]$ are weak equivalences.
+Let $f : X \to Y$ be a map in $\Iinj[F_S(\I)]$.
+Then $U(f)$ is a trivial fibration in $\C$.
+Thus, we just need to prove that $R^m(f^\flat)$ reflects marked maps.
+Let $i : A \to B$ be a map in $S$ and let $k : B \to R(X)$ be a map such that $R(f) \circ k$ is marked in $R^m(Y)$.
+Then $R(f) \circ k$ is homotopic to a map of the form $B \xrightarrow{g} Y \to R(Y)$, where $g$ is the chosen lift for $g \circ i$.
+Since $B$ is cofibrant and $U(f)$ is a trivial fibration, we have a map $g' : B \to X$ such that $U(f) \circ g' = g$.
+If $g'' : B \to X$ is the chosen lift for $g' \circ i$, then $U(f) \circ g'' = g$ since $f$ preserves chosen lifts.
+Since $g''$ is marked in $X^\flat$, we just need to show that $B \xrightarrow{g''} X \to R(X)$ is homotopic to $k$.
+Since $B$ is cofibrant and $R(f)$ is a weak equivalence between fibrant objects, this follows from the fact that $B \xrightarrow{g''} X \to R(X) \xrightarrow{R(f)} R(Y)$ is homotopic to $R(f) \circ k$.
+
+We have the following (commutative) square of left adjoint functors:
+\[ \xymatrix{ \C \ar[r]^{(-)^\flat} \ar[d]_{F_S} & \C^m_L \ar[d]^{F^m} \\
+              \C_S \ar[r]_{(-)^\flat}            & \C^m_{L,S}
+            } \]
+The functor $F_S$ preserves cofibrations by definition and it preserves trivial cofibrations since $F^m \circ F_S$ preserves them.
+The functor $(-)^\flat : C_S \to C^m_{L,S}$ preserves cofibrations since $F^m \circ F_S$ preserves them.
+Also, it preserves weak equivalence by definition.
+Thus, $F_S \dashv U_S$ and $(-)^\flat \dashv U^m_{L,S}$ are Quillen adjunctions.
+Since $(-)^\flat$ preserves and reflects weak equivalences, to prove that the latter adjunction is a Quillen equivalence, it is enough to show that the counit $\varepsilon_X : (U^m_{L,S}(X))^\flat \to X$ is a weak equivalence for every fibrant object $X$.
+Since the underlying map of $\varepsilon_X$ is the identity, we just need to prove that $R^m(\varepsilon_X)$ reflects marked maps.
+Let $i : A \to B$ be a map in $S$ and let $k : B \to X$ be a marked map.
+If $k' : B \to X$ be the chosen lift for the map $k \circ i$, then $k'$ is marked in $(U^m_{L,S}(X))^\flat$.
+Since $i$ is a trivial cofibration, $X$ is fibrant, and $k \circ i = k' \circ i$, it follows that $k$ and $k'$ are homotopic.
+Thus, $k$ is also marked in $R^m((U^m_{L,S}(X))^\flat)$.
+
+The last property follows from the facts that $(-)^\flat \dashv U^m_{L,S}$ and $F^m \dashv U^m$ are Quillen equivalences and the square of left adjoint functors above commutes.
+\end{proof}
 
 \section{Finite limits in categories with fibrations}
 
