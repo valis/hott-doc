@@ -13,6 +13,67 @@
 
 \hypersetup{colorlinks=true,linkcolor=blue}
 
+\renewcommand{\turnstile}[6][s]
+    {\ifthenelse{\equal{#1}{d}}
+        {\sbox{\first}{$\displaystyle{#4}$}
+        \sbox{\second}{$\displaystyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{t}}
+        {\sbox{\first}{$\textstyle{#4}$}
+        \sbox{\second}{$\textstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{s}}
+        {\sbox{\first}{$\scriptstyle{#4}$}
+        \sbox{\second}{$\scriptstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{ss}}
+        {\sbox{\first}{$\scriptscriptstyle{#4}$}
+        \sbox{\second}{$\scriptscriptstyle{#5}$}}{}
+    \setlength{\dashthickness}{0.111ex}
+    \setlength{\ddashthickness}{0.35ex}
+    \setlength{\leasturnstilewidth}{2em}
+    \setlength{\extrawidth}{0.2em}
+    \ifthenelse{%
+      \equal{#3}{n}}{\setlength{\tinyverdistance}{0ex}}{}
+    \ifthenelse{%
+      \equal{#3}{s}}{\setlength{\tinyverdistance}{0.5\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{d}}{\setlength{\tinyverdistance}{0.5\ddashthickness}
+        \addtolength{\tinyverdistance}{\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{t}}{\setlength{\tinyverdistance}{1.5\dashthickness}
+        \addtolength{\tinyverdistance}{\ddashthickness}}{}
+        \setlength{\verdistance}{0.4ex}
+        \settoheight{\lengthvar}{\usebox{\first}}
+        \setlength{\raisedown}{-\lengthvar}
+        \addtolength{\raisedown}{-\tinyverdistance}
+        \addtolength{\raisedown}{-\verdistance}
+        \settodepth{\raiseup}{\usebox{\second}}
+        \addtolength{\raiseup}{\tinyverdistance}
+        \addtolength{\raiseup}{\verdistance}
+        \setlength{\lift}{0.8ex}
+        \settowidth{\firstwidth}{\usebox{\first}}
+        \settowidth{\secondwidth}{\usebox{\second}}
+        \ifthenelse{\lengthtest{\firstwidth = 0ex}
+            \and
+            \lengthtest{\secondwidth = 0ex}}
+                {\setlength{\turnstilewidth}{\leasturnstilewidth}}
+                {\setlength{\turnstilewidth}{2\extrawidth}
+        \ifthenelse{\lengthtest{\firstwidth < \secondwidth}}
+            {\addtolength{\turnstilewidth}{\secondwidth}}
+            {\addtolength{\turnstilewidth}{\firstwidth}}}
+        \ifthenelse{\lengthtest{\turnstilewidth < \leasturnstilewidth}}{\setlength{\turnstilewidth}{\leasturnstilewidth}}{}
+    \setlength{\turnstileheight}{1.5ex}
+    \sbox{\turnstilebox}
+    {\raisebox{\lift}{\ensuremath{
+        \makever{#2}{\dashthickness}{\turnstileheight}{\ddashthickness}
+        \makehor{#3}{\dashthickness}{\turnstilewidth}{\ddashthickness}
+        \hspace{-\turnstilewidth}
+        \raisebox{\raisedown}
+        {\makebox[\turnstilewidth]{\usebox{\first}}}
+            \hspace{-\turnstilewidth}
+            \raisebox{\raiseup}
+            {\makebox[\turnstilewidth]{\usebox{\second}}}
+        \makever{#6}{\dashthickness}{\turnstileheight}{\ddashthickness}}}}
+        \mathrel{\usebox{\turnstilebox}}}
+
 \newcommand{\axlabel}[1]{(#1) \phantomsection \label{ax:#1}}
 \newcommand{\axtag}[1]{\label{ax:#1} \tag{#1}}
 \newcommand{\axref}[1]{(\hyperref[ax:#1]{#1})}
@@ -56,6 +117,7 @@
 \newcommand{\sCat}{\fs{sCat}}
 \newcommand{\sfCat}{\fs{sfCat}}
 \newcommand{\colim}{\fs{colim}}
+\newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
 
 \newcommand{\I}{\fs{I}}
 \newcommand{\J}{\fs{J}}
@@ -423,6 +485,87 @@ Since $i$ is a trivial cofibration, $X$ is fibrant, and $k \circ i = k' \circ i$
 Thus, $k$ is also marked in $R^m((U^m_{L,S}(X))^\flat)$.
 
 The last property follows from the facts that $(-)^\flat \dashv U^m_{L,S}$ and $F^m \dashv U^m$ are Quillen equivalences and the square of left adjoint functors above commutes.
+\end{proof}
+
+\section{Models of cofibrant type theories}
+
+In this section, we recall the definition of algebraic type theories.
+We see that every type theory has two related categories of models: one based on contextual categories and the other on categories with attributes.
+We construct a model structure on both kinds of categories of models of cofibrant type theories.
+
+Algebraic type theories were defined in \cite{alg-tt}.
+Every such theory is an essentially algebraic theory presented in the form of a partial Horn theory as defined in \cite{PHL}.
+The set of sorts is defined as $\mathcal{S}_c = \{ \fs{ctx}, \fs{tm} \} \times \mathbb{N}$.
+We will also write $(\fs{ty},n)$ for the sort $(\fs{ctx},n+1)$.
+An algebraic type theory consists of sets of function and predicate symbols ($\mathcal{F}$ and $\mathcal{P}$, respectively) and a set $\mathcal{A}$ of axioms.
+Every function symbol $\sigma \in \mathcal{F}$ has a signature $\sigma : s_1 \times \ldots \times s_k \to s$, where $s_1, \ldots s_k, s$ are sorts.
+Every predicate symbol $R \in \mathcal{P}$ has a signature $R : s_1 \times \ldots \times s_k$.
+\emph{Terms} are constructed from function symbols and variables in the usual way.
+\emph{Formulas} are constructed from terms, predicate symbols, and equality sign in the usual way.
+Axioms are sequents and a \emph{sequent} is a pair of formulas together with a set of variables, written $\varphi \sststile{}{V} \psi$.
+
+The most basic such theory is the theory of substitution $(\mathcal{F}_s, \varnothing, \mathcal{A}_s)$.
+The category of models of this theory is equivalent to the category of contextual categories.
+Every algebraic type theory can be presented in the form $(\mathcal{F}_s \amalg \{ \sigma_m \mid \sigma \in \mathcal{F}_0, m \in \mathbb{N} \}, \{ R_m \mid R \in \mathcal{P}_0, m \in \mathbb{N} \}, \mathcal{A}_s \amalg \mathcal{A})$.
+Elements of $\mathcal{F}_0$ and $\mathcal{P}_0$ are called basic function and basic predicate symbols, respectively.
+If $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ is a basic function symbol, then $\sigma_m : (\fs{ctx},m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m)$.
+Similarly, if $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ is a basic predicate symbol, then $R_m : (\fs{ctx},m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m)$.
+
+For every type theory $T$, we will define another partial Horn theory $A(T)$ which extends the theory $\fs{CwA}$ of categories with attributes.
+Moreover, we will show that $\Mod{T}$ is a coreflective subcategory of $\Mod{A(T)}$.
+The set of sorts of $\fs{CwA}$ is defined as $\mathcal{S}_a = \{ \fs{ob}, \fs{hom}, \fs{ty} \}$.
+This theory extends the theory of categories.
+Thus, it has function symbols $\fs{dom},\fs{cod} : \fs{hom} \to \fs{ob}$, $\fs{id} : \fs{ob} \to \fs{hom}$, and $\circ : \fs{hom} \times \fs{hom} \to \fs{hom}$.
+It also has function symbol $\fs{ext} : \fs{ty} \to \fs{hom}$.
+In the standard notation, it maps a type $A$ over context $\Gamma$ to the morphism $p_A : \Gamma.A \to \Gamma$.
+The theory $\fs{CwA}$ also has function symbols and axioms which assert the existence of a terminal object and pullbacks of types.
+
+A \emph{derived sort} is an expression of the form $\{ (x_1, \ldots x_l) : s_1 \times \ldots \times s_l \mid \varphi \}$,
+where $\varphi$ is a formula with variables in $\{ x_1 : s_1, \ldots x_l : s_l \}$.
+We can work with function symbols which have derived sorts in their signature.
+Let $s_i' = \{ \overline{x^i} : \overline{s^i} \mid \varphi^i \}$ and $s' = \{ \overline{y} : \overline{s} \mid \psi \}$.
+Then a function symbol $\sigma$ with signature $s_1' \times \ldots \times s_k' \to s'$ is a collection of function symbols
+$\{ \sigma^j : \overline{s^1} \times \ldots \times \overline{s^{l_j}} \to s_i \}_{1 \leq j \leq l}$ together with the following axiom:
+\[ \bigwedge_{1 \leq j \leq l} \sigma^j(\overline{x^1}, \ldots \overline{x^{l_j}})\!\downarrow\ \sststile{}{\{ \overline{x^1}, \ldots \overline{x^{l_j}} \}_{1 \leq j \leq l}} \psi[\{ \sigma^j(\overline{x^1}, \ldots \overline{x^{l_j}})/y_j \}_{1 \leq j \leq l}] \land \bigwedge_{1 \leq i \leq k} \varphi^i. \]
+Predicate symbols with derived signature are define in a similar way.
+
+For every $s \in \mathcal{S}_c$, we define a derived sort $A(s)$ in the theory of categories with attributes as follows:
+\begin{align*}
+A((\fs{ctx},n)) & = \{ \overline{B} : \fs{ty}^n \mid \fs{cod}(\fs{ext}(B_{i+1})) = \fs{dom}(\fs{ext}(B_i)) \text{ for all } 1 \leq i < n \} \\
+A((\fs{tm},n)) & = \{ (\overline{B}, h) : A((\fs{ty},n)) \times \fs{hom} \mid \fs{ext}(B_{n+1}) \circ h = \fs{id}(\fs{cod}(\fs{ext}(B_{n+1}))) \}
+\end{align*}
+
+Now, for every type theory $T$, we define a partial Horn theory $A(T)$.
+It has function symbols and axioms of $\fs{CwA}$.
+Also, for every basic function symbol $\sigma : s_1 \times \ldots s_k \to s$ of $T$, we add function symbol $\sigma : \fs{ob} \times A(s_1) \times \ldots \times A(s_k) \to A(s)$ to $A(T)$.
+We also add the following axiom:
+\[ \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \fs{cod}(\fs{ext}(\sigma^1(\Gamma, x_1, \ldots x_k))) = \Gamma \land \bigwedge_{1 \leq i \leq k} \fs{cod}(\fs{ext}(x_i^1)) = \Gamma \]
+For every predicate symbol of $T$, we add a predicate symbol and an axiom to $A(T)$ in a similar way.
+Finally, we need to transfer axioms of $T$ to $A(T)$.
+To do this, we need to define a restricted term (resp., a formula) $A(\Gamma,S)$ in $A(T)$ for every function (resp., predicate) symbol $S$ of $T$.
+This function can be extended to a function on terms and formulas.
+Then we will add an axiom $f(\varphi) \sststile{}{\overline{x}} f(\psi)$ to $A(T)$ for every axiom $\varphi \sststile{}{\overline{x}} \psi$ of $T$.
+
+If $S = \sigma_m$ for some basic function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, then we define $A(\sigma_m)(\Gamma, x_1, \ldots x_k)$ as follows:
+\[ (\Gamma, \sigma(\fs{dom}(\fs{ext}(\Gamma^m)), x_1^{m+1, \ldots |x_1|}, \ldots x_k^{m+1, \ldots |x_k|})|_{\bigwedge_{1 \leq i \leq k} x_i^{1, \ldots m} = \Gamma}), \]
+where $x_i^{j_1, \ldots j_l} = (x_i^{j_1}, \ldots x_i^{j_l})$.
+For predicate symbols, $A(S)$ is defined similarly.
+For function symbols from the theory of substitution, $A(S)$ is defined in the obvious way: $A(\fs{ft}_n)$ and $A(\fs{ty}_n)$ are obvious projections,
+$A(\fs{subst}_{p,n,k})$ is defined in terms of the pullback operation from the theory $\fs{CwA}$, and $A(v_{n,i})$ is defined by the universal property of pullbacks.
+
+There is a generalized morphism of theories $f : T \to A(T)$, which maps sorts $s$ to $A(s)$ and function and predicate symbols $S$ to $A(S)$.
+It induces an adjunction $f_! \dashv f^*$ between $\Mod{T}$ and $\Mod{A(T)}$.
+It is easy to describe the left adjoint $f_! : \Mod{T} \to \Mod{A(T)}$ explicitly.
+Objects of $f_!(M)$ are contexts of $M$ and maps are morphisms of contexts.
+Types are non-empty contexts and the pullback of a type $A$ along a morphism $f$ is defined as $A[f]$.
+
+\begin{prop}
+The unit of the adjunction $f_! \dashv f^*$ is an isomorphism.
+\end{prop}
+\begin{proof}
+This is a standard fact for the theory of substitutions.
+In general, we just need to show that the isomorphism $M \to f^*(f_!(M))$ preserves the additional structure.
+This can be verified in a strightforward way.
 \end{proof}
 
 \section{Finite limits in categories with fibrations}
