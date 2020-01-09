@@ -117,7 +117,7 @@
 \newcommand{\sCat}{\fs{sCat}}
 \newcommand{\sfCat}{\fs{sfCat}}
 \newcommand{\colim}{\fs{colim}}
-\newcommand{\Mod}[1]{#1\text{-}\cat{Mod}}
+\newcommand{\Mod}[1]{#1\text{-}\mathbf{Mod}}
 
 \newcommand{\I}{\fs{I}}
 \newcommand{\J}{\fs{J}}
@@ -487,11 +487,11 @@ Thus, $k$ is also marked in $R^m((U^m_{L,S}(X))^\flat)$.
 The last property follows from the facts that $(-)^\flat \dashv U^m_{L,S}$ and $F^m \dashv U^m$ are Quillen equivalences and the square of left adjoint functors above commutes.
 \end{proof}
 
-\section{Models of cofibrant type theories}
+\section{Models of type theories}
 
 In this section, we recall the definition of algebraic type theories.
-We see that every type theory has two related categories of models: one based on contextual categories and the other on categories with attributes.
-We construct a model structure on both kinds of categories of models of cofibrant type theories.
+For every algebraic type theory, we define several categories of its models.
+We also construct left semi-model structures on these categories for sufficiently nice theories.
 
 Algebraic type theories were defined in \cite{alg-tt}.
 Every such theory is an essentially algebraic theory presented in the form of a partial Horn theory as defined in \cite{PHL}.
@@ -502,6 +502,7 @@ Every function symbol $\sigma \in \mathcal{F}$ has a signature $\sigma : s_1 \ti
 Every predicate symbol $R \in \mathcal{P}$ has a signature $R : s_1 \times \ldots \times s_k$.
 \emph{Terms} are constructed from function symbols and variables in the usual way.
 \emph{Formulas} are constructed from terms, predicate symbols, and equality sign in the usual way.
+A \emph{restricted term} is an expression of the form $t|_\varphi$, where $t$ is a term and $\varphi$ is a formula.
 Axioms are sequents and a \emph{sequent} is a pair of formulas together with a set of variables, written $\varphi \sststile{}{V} \psi$.
 
 The most basic such theory is the theory of substitution $(\mathcal{F}_s, \varnothing, \mathcal{A}_s)$.
@@ -542,9 +543,9 @@ We also add the following axiom:
 \[ \sigma(\Gamma, x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \fs{cod}(\fs{ext}(\sigma^1(\Gamma, x_1, \ldots x_k))) = \Gamma \land \bigwedge_{1 \leq i \leq k} \fs{cod}(\fs{ext}(x_i^1)) = \Gamma \]
 For every predicate symbol of $T$, we add a predicate symbol and an axiom to $A(T)$ in a similar way.
 Finally, we need to transfer axioms of $T$ to $A(T)$.
-To do this, we need to define a restricted term (resp., a formula) $A(\Gamma,S)$ in $A(T)$ for every function (resp., predicate) symbol $S$ of $T$.
+To do this, we need to define a restricted term (resp., a formula) $A(S)$ in $A(T)$ for every function (resp., predicate) symbol $S$ of $T$.
 This function can be extended to a function on terms and formulas.
-Then we will add an axiom $f(\varphi) \sststile{}{\overline{x}} f(\psi)$ to $A(T)$ for every axiom $\varphi \sststile{}{\overline{x}} \psi$ of $T$.
+Then we will add an axiom $A(\varphi) \sststile{}{\overline{x}} A(\psi)$ to $A(T)$ for every axiom $\varphi \sststile{}{\overline{x}} \psi$ of $T$.
 
 If $S = \sigma_m$ for some basic function symbol $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$, then we define $A(\sigma_m)(\Gamma, x_1, \ldots x_k)$ as follows:
 \[ (\Gamma, \sigma(\fs{dom}(\fs{ext}(\Gamma^m)), x_1^{m+1, \ldots |x_1|}, \ldots x_k^{m+1, \ldots |x_k|})|_{\bigwedge_{1 \leq i \leq k} x_i^{1, \ldots m} = \Gamma}), \]
@@ -553,20 +554,138 @@ For predicate symbols, $A(S)$ is defined similarly.
 For function symbols from the theory of substitution, $A(S)$ is defined in the obvious way: $A(\fs{ft}_n)$ and $A(\fs{ty}_n)$ are obvious projections,
 $A(\fs{subst}_{p,n,k})$ is defined in terms of the pullback operation from the theory $\fs{CwA}$, and $A(v_{n,i})$ is defined by the universal property of pullbacks.
 
-There is a generalized morphism of theories $f : T \to A(T)$, which maps sorts $s$ to $A(s)$ and function and predicate symbols $S$ to $A(S)$.
-It induces an adjunction $f_! \dashv f^*$ between $\Mod{T}$ and $\Mod{A(T)}$.
-It is easy to describe the left adjoint $f_! : \Mod{T} \to \Mod{A(T)}$ explicitly.
-Objects of $f_!(M)$ are contexts of $M$ and maps are morphisms of contexts.
+There is a generalized morphism of theories $a : T \to A(T)$, which maps sorts $s$ to $A(s)$ and function and predicate symbols $S$ to $A(S)$.
+It induces an adjunction $a_! \dashv a^*$ between $\Mod{T}$ and $\Mod{A(T)}$.
+It is easy to describe the left adjoint $a_! : \Mod{T} \to \Mod{A(T)}$ explicitly.
+Objects of $a_!(M)$ are contexts of $M$ and maps are morphisms of contexts.
 Types are non-empty contexts and the pullback of a type $A$ along a morphism $f$ is defined as $A[f]$.
 
-\begin{prop}
-The unit of the adjunction $f_! \dashv f^*$ is an isomorphism.
+\begin{prop}[cwa-coref]
+The adjunction $a_! \dashv a^*$ makes $\Mod{T}$ into a coreflective subcategory of $\Mod{A(T)}$.
 \end{prop}
 \begin{proof}
+We need to prove that the unit of the adjunction $a_! \dashv a^*$ is an isomorphism.
 This is a standard fact for the theory of substitutions.
-In general, we just need to show that the isomorphism $M \to f^*(f_!(M))$ preserves the additional structure.
+In general, we just need to show that the isomorphism $M \to a^*(a_!(M))$ preserves the additional structure.
 This can be verified in a strightforward way.
 \end{proof}
+
+There is a close relationship between left semi-model structures on $\Mod{A(T)}$ and $\Mod{T}$:
+
+\begin{prop}[coref-model]
+Let $\C$ be a coreflective subcategory of $\D$, let $a_! : \C \to \D$ be the inclusion functor, and let $a^* : \D \to \C$ be the coreflector.
+Suppose that $\C$ and $\D$ are locally presentable.
+Then the following properties hold:
+\begin{enumerate}
+\item \label{it:coref-model-right}
+Suppose that there is a combinatorial left semi-model structure on $\C$.
+Then there is a combinatorial right transferred left semi-model structure on $\D$.
+\item \label{it:coref-model-left}
+Suppose that there is a combinatorial model structure (resp., left semi-model structure) on $\D$ with $a_!(\I)$ as a set of generating cofibrations for some set $\I$ of maps of $\C$.
+Then there is a combinatorial left transferred model structure (resp., left semi-model structure) on $\C$.
+\end{enumerate}
+The adjunction $a_! \dashv a^*$ is a Quillen equivalence in both of these cases.
+\end{prop}
+\begin{proof}
+It is easy to prove \eqref{it:coref-model-right}.
+If $\J$ is a set of generating cofibrations of $\C$, then we just need to show that maps with cofibrant domains in $a^*(\Icell[a_!(\J)])$ are weak equivalences.
+Since $a_!$ is fully faithful, cofibrant objects of $\D$ are precisely objects of the form $a_!(X)$ for cofibrant objects $X$.
+Thus, colimits that appear in the construction of maps (with cofibrant domains) in $\Icell[a_!(\J)]$ can be computed in $\C$.
+Hence, they are trivial cofibration.
+Since $a^*$ preserves and reflects weak equivalences and the unit of the adjunction $a_! \dashv a^*$ is an isomorphism, this adjunction is a Quillen equivalence.
+
+To prove \eqref{it:coref-model-left}, we can apply Smith's theorem.
+Then we just need to show that if a map $f$ has RLP with respect to $\I$, then $a_!(f)$ has RLP with respect to $a_!(\I)$.
+This follows from the fact that $a_!$ is fully faithful.
+The adjunction $a_! \dashv a^*$ is a Quillen pair by definition.
+Since $a_!$ preserves and reflects weak equivalences, we just need to show that the counit $\varepsilon_X$ of the adjunction is a weak equivalence.
+Since $\eta_{a^*(X)}$ is an isomorphism, $a^*(\varepsilon_X)$ is also an isomorphism.
+In particular, it is a trivial fibration.
+It follows that $\varepsilon_X$ is also a trivial fibration.
+\end{proof}
+
+Let $T$ be a type theory.
+For every sort $s$, we have a model $V_s$ of $T$ that represents the functor $M \mapsto M_s$.
+There are obvious maps $V_{(\fs{ctx},n)} \to V_{(\fs{ty},n)}$ and $V_{(\fs{ty},n)} \to V_{(\fs{tm},n)}$.
+Let $\I$ be the set of such maps.
+
+\begin{defn}
+We will say that a model structure (or a left semi-model structure) on $\Mod{T}$ (resp., $\Mod{A(T)}$) is \emph{standard} if $\I$ (resp., $a_!(\I)$) is a set of generating cofibrations for this model structure.
+\end{defn}
+
+In \cite{morita-equiv}, we proved that the category of type theories is locally presentable and defined a set of generating cofibrations on this category.
+Let us recall this definition.
+Let $d_\fs{ty} = \fs{ctx}$, $d_\fs{tm} = \fs{ty}$, $e_\fs{ty}(a) = \fs{ft}(a)$, and $e_\fs{tm}(a) = \fs{ty}(a)$.
+For every sequence $(p_1,n_1), \ldots (p_{k+1},n_{k+1})$ of sorts, let $T_{(p_1,n_1), \ldots (p_{k+1},n_{k+1})}$ be the theory
+with function symbols $\sigma_i : (p_1,n_1) \times \ldots \times (p_{i-1},n_{i-1}) \to (d_{p_i},n_i)$ for every $1 \leq i \leq k$,
+$\sigma_{k+1} : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p_{k+1},n_{k+1})$,
+and axioms $\varphi_1 \land \ldots \land \varphi_i \sststile{}{x_1, \ldots x_i} \sigma_{i+1}(x_1, \ldots x_i)\!\downarrow$ for every $1 \leq i \leq k$,
+where $\varphi_j$ equals to $e_{p_j}(x_j) = \sigma_j(x_1, \ldots x_{j-1})$.
+Let $\I$ be the set of maps of the form $T_{l, (d_p,n)} \to T_{l, (p,n)}$, where $l = s_1, \ldots s_k$ is any sequence of sorts,
+$\sigma_i$ maps to $\sigma_i$ for every $1 \leq i \leq k$, and $\sigma_{k+1}$ maps to $e_p(\sigma_{k+1})$.
+
+\begin{defn}
+We will say that a type theory is \emph{cellular} (resp., \emph{cofibrant}) if it belongs to $\Icell$ (resp., $\Icof$).
+\end{defn}
+
+The cellular theory of identity types $T_\fs{Id}$ is defined as follows:
+\medskip
+\begin{center}
+\AxiomC{$\Gamma \vdash a : A$}
+\AxiomC{$\Gamma \vdash a' : A$}
+\BinaryInfC{$\Gamma \vdash \fs{Id}_A(a, a')$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma \vdash a : A$}
+\UnaryInfC{$\Gamma \vdash \fs{refl}(a) : \fs{Id}_A(a, a)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, y : A, z : \fs{Id}_A(a, y) \vdash D$}
+\AxiomC{$\Gamma \vdash d : D[a/y, \fs{refl}(a)/z]$}
+\AxiomC{$\Gamma \vdash p : \fs{Id}_A(a, a')$}
+\TrinaryInfC{$\Gamma \vdash \fs{J}(y z.\,D, d, a, a', p) : D[a'/y, p/z]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, y : A, z : \fs{Id}_A(a, y) \vdash D$}
+\AxiomC{$\Gamma \vdash d : D[a/y, \fs{refl}(a)/z]$}
+\AxiomC{$\Gamma \vdash a : A$}
+\TrinaryInfC{$\Gamma \vdash \fs{J}_\fs{eq}(y z.\,D, d, a) : \fs{Id}_{D[a/y, \fs{refl}(a)/z]}(\fs{J}(y z.\,D, d, a, a, \fs{refl}(a)), d)$}
+\DisplayProof
+\end{center}
+
+The cellular theory of unit types $T_\top$ is the following extension of $T_\fs{Id}$:
+\medskip
+\begin{center}
+\AxiomC{}
+\UnaryInfC{$\Gamma \vdash () : \top$}
+\DisplayProof
+\quad
+\AxiomC{$\Gamma, x : \top \vdash D$}
+\AxiomC{$\Gamma \vdash d : D[()/x]$}
+\AxiomC{$\Gamma \vdash u : \top$}
+\TrinaryInfC{$\Gamma \vdash \top\text{-}\fs{elim}(x.D, d, u) : D[u/x]$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\Gamma, x : \top \vdash D$}
+\AxiomC{$\Gamma \vdash d : D[()/x]$}
+\BinaryInfC{$\Gamma \vdash \top\text{-}\fs{elim}_\fs{eq}(x.D, d) : \Id_{D[()/x]}(\top\text{-}\fs{elim}(x.D, d, ()), d)$}
+\DisplayProof
+\end{center}
+
+The cellular theory of $\Sigma$-types $T_\Sigma$ can be defined in a similar way.
+Let $T_{\fs{Id} + \top + \Sigma}$ be the pushout $T_\top \amalg_{T_\fs{Id}} T_\Sigma$.
+We will define a standard model structure on $\Mod{T_{\fs{Id} + \top + \Sigma}}$.
+First, we define a path object functor $P : \Mod{T_{\fs{Id} + \top + \Sigma}} \to \Mod{T_{\fs{Id} + \top + \Sigma}}$.
+Let $X$ be a category with attributes.
 
 \section{Finite limits in categories with fibrations}
 
