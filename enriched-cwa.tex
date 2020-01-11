@@ -352,7 +352,7 @@ it is homotopic to a map that factors as a marked map $K \to X$ followed by the 
 
 \begin{remark}
 This theorem also holds for left semi-model categories with one additional assumption that the domains of generating cofibrations are cofibrant.
-This assumption is required for Jeff Smith's theorem for left semi-model categories.
+This assumption is required for Jeff Smith's theorem for left semi-model categories \cite[Theorem~3.1]{semi-smith}.
 \end{remark}
 
 The model category of marked objects has an explicit description of mapping spaces:
@@ -456,7 +456,7 @@ Then there is a left semi-model structure on $\C_S$ which satisfies the followin
 \end{thm}
 \begin{proof}
 Conditions~\eqref{it:alg-cof} and \eqref{it:alg-we} determine cofibrations and weak equivalences of $\C_S$.
-We will construct the semi-model structure on $\C_S$ using Smith's theorem.
+We will construct the semi-model structure on $\C_S$ using Smith's theorem \cite[Theorem~3.1]{semi-smith}.
 Since $(-)^\flat : \C_S \to \C^m_{L,S}$ is a left adjoint, most of the conditions of this theorem hold trivially.
 We just need to prove that maps in $\Iinj[F_S(\I)]$ are weak equivalences.
 Let $f : X \to Y$ be a map in $\Iinj[F_S(\I)]$.
@@ -493,24 +493,76 @@ In this section, we recall the definition of algebraic type theories.
 For every algebraic type theory, we define several categories of its models.
 We also construct left semi-model structures on these categories for sufficiently nice theories.
 
-Algebraic type theories were defined in \cite{alg-tt}.
-Every such theory is an essentially algebraic theory presented in the form of a partial Horn theory as defined in \cite{PHL}.
-The set of sorts is defined as $\mathcal{S}_c = \{ \fs{ctx}, \fs{tm} \} \times \mathbb{N}$.
-We will also write $(\fs{ty},n)$ for the sort $(\fs{ctx},n+1)$.
-An algebraic type theory consists of sets of function and predicate symbols ($\mathcal{F}$ and $\mathcal{P}$, respectively) and a set $\mathcal{A}$ of axioms.
+We will work with essentially algebraic theory presented in the form of a partial Horn theory as defined in \cite{PHL}.
+Such a theory consists of a set of sorts $\mathcal{S}$, a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
 Every function symbol $\sigma \in \mathcal{F}$ has a signature $\sigma : s_1 \times \ldots \times s_k \to s$, where $s_1, \ldots s_k, s$ are sorts.
 Every predicate symbol $R \in \mathcal{P}$ has a signature $R : s_1 \times \ldots \times s_k$.
 \emph{Terms} are constructed from function symbols and variables in the usual way.
 \emph{Formulas} are constructed from terms, predicate symbols, and equality sign in the usual way.
 A \emph{restricted term} is an expression of the form $t|_\varphi$, where $t$ is a term and $\varphi$ is a formula.
-Axioms are sequents and a \emph{sequent} is a pair of formulas together with a set of variables, written $\varphi \sststile{}{V} \psi$.
+A \emph{sequent} is a pair of formulas together with a set of variables, written $\varphi \sststile{}{V} \psi$.
+The set of axioms consists of sequents.
+Derivations are constructed from rules for symmetry, transitivity, and congruence.
+The precise set of rules can be found in \cite{PHL,alg-tt,morita-equiv}.
 
-The most basic such theory is the theory of substitution $(\mathcal{F}_s, \varnothing, \mathcal{A}_s)$.
+A \emph{derived sort} is an expression of the form $\{ (x_1, \ldots x_l) : s_1 \times \ldots \times s_l \mid \varphi \}$,
+where $\varphi$ is a formula with variables in $\{ x_1 : s_1, \ldots x_l : s_l \}$.
+It is convenient to think of (restricted) terms as derived function symbols.
+If $t$ is a term of sort $s$ such that $\fs{FV}(t) \subseteq \{ x_1 : s_1, \ldots x_k : s_k \}$, then we can write $t : s_1 \times \ldots \times s_k \to s$.
+Similarly, we can think of formulas as derived predicate symbols.
+
+We can work with (derived) function symbols which have derived sorts in their signature.
+Let $s_i' = \{ \overline{x^i} : \overline{s^i} \mid \varphi^i \}$ and $s' = \{ \overline{y} : \overline{s} \mid \psi \}$.
+Then a function symbol $\sigma$ with signature $s_1' \times \ldots \times s_k' \to s'$ is a collection of function symbols
+$\{ \sigma^j : \overline{s^1} \times \ldots \times \overline{s^{l_j}} \to s_i \}_{1 \leq j \leq l}$ together with the following axiom:
+\[ \bigwedge_{1 \leq j \leq l} \sigma^j(\overline{x^1}, \ldots \overline{x^{l_j}})\!\downarrow\ \sststile{}{\{ \overline{x^1}, \ldots \overline{x^{l_j}} \}_{1 \leq j \leq l}} \psi[\{ \sigma^j(\overline{x^1}, \ldots \overline{x^{l_j}})/y_j \}_{1 \leq j \leq l}] \land \bigwedge_{1 \leq i \leq k} \varphi^i. \]
+Predicate symbols with derived signature are define in a similar way.
+
+A \emph{generalized morphism} of theories $T$ and $T'$ can be defined as a finitary right adjoint functor $\Mod{T'} \to \Mod{T}$.
+If $f : T \to T'$ is a generalized morphism, we will denote the corresponding adjunction by $f_! \dashv f^*$.
+Generalized morphisms can often be conveniently described syntactically.
+To define such a morphism, we need to specify the following data:
+\begin{enumerate}
+\item A function $f$ from the set of sorts of $T$ to the set of derived sorts of $T'$.
+\item A function $f$ from the set of function symbols of $T$ to the set of restricted terms of $T'$ such that, if $\sigma : s_1 \times \ldots \times s_k \to s$, then $f(\sigma) : f(s_1) \times \ldots \times f(s_k) \to f(s)$.
+\item A function $f$ from the set of predicate symbols of $T$ to the set of formulas of $T'$ such that, if $R : s_1 \times \ldots \times s_k$, then $f(R) : f(s_1) \times \ldots \times f(s_k)$.
+\end{enumerate}
+These functions can be extended to functions on terms and formulas.
+Thus, for every sequent $\varphi \sststile{}{V} \psi$ in $T$, we get a sequent $f(\varphi) \sststile{}{V} f(\psi)$ in $T'$.
+If this function maps axioms of $T$ to theorems in $T'$, then these functions determine a generalized morphism $f : T \to T'$.
+
+Let $\mathcal{S}_c = \{ \fs{ctx}, \fs{tm} \} \times \mathbb{N}$ be a set of sorts.
+We will also write $(\fs{ty},n)$ for the sort $(\fs{ctx},n+1)$.
+Let $T_0$ be the theory with function symbols $\fs{ft}_n : (\fs{ty},n) \to (\fs{ctx},n)$ and $\fs{ty}_n : (\fs{tm},n) \to (\fs{ty},n)$.
+All theories that we will consider will be theories under $T_0$, that is they will be equipped with a generalized morphism from $T_0$.
+Moreover, all generalized morphisms between theories will commute with morphisms from $T_0$.
+
+Models of $T_0$ are presheaves on the poset $(\mathcal{S}_c,\leq)$, where $(\fs{ctx},n) \leq (\fs{ty},n)$ and $(\fs{ty},n) \leq (\fs{tm},n)$.
+Let $Y : (\mathcal{S}_c,\leq) \to \Mod{T_0}$ be the Yoneda embedding.
+Let $\I_0$ be the set of maps $Y(\fs{ctx},n) \to Y(\fs{ty},n)$ and $Y(\fs{ty},n) \to Y(\fs{tm},n)$.
+If $T$ is a theory under $T_0$, then the image of $\I_0$ in $\Mod{T}$ will also be denoted by $\I_0$.
+We will use this set as a set of generating cofibrations for various theories $T$.
+
+Algebraic type theories were defined in \cite{alg-tt}.
+The most basic such theory is the theory of substitution $(\mathcal{S}_c, \mathcal{F}_s, \varnothing, \mathcal{A}_s)$.
 The category of models of this theory is equivalent to the category of contextual categories.
-Every algebraic type theory can be presented in the form $(\mathcal{F}_s \amalg \{ \sigma_m \mid \sigma \in \mathcal{F}_0, m \in \mathbb{N} \}, \{ R_m \mid R \in \mathcal{P}_0, m \in \mathbb{N} \}, \mathcal{A}_s \amalg \mathcal{A})$.
+Every algebraic type theory can be presented in the form $(\mathcal{S}_c, \mathcal{F}_s \amalg \{ \sigma_m \mid \sigma \in \mathcal{F}_0, m \in \mathbb{N} \}, \{ R_m \mid R \in \mathcal{P}_0, m \in \mathbb{N} \}, \mathcal{A}_s \amalg \mathcal{A})$.
 Elements of $\mathcal{F}_0$ and $\mathcal{P}_0$ are called basic function and basic predicate symbols, respectively.
 If $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ is a basic function symbol, then $\sigma_m : (\fs{ctx},m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m) \to (p,n+m)$.
 Similarly, if $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ is a basic predicate symbol, then $R_m : (\fs{ctx},m) \times (p_1,n_1+m) \times \ldots \times (p_k,n_k+m)$.
+We will not assume that all substitution commutes with all function symbols in all type theories.
+We will call type theories that satisfy this property \emph{regular}.
+For every type theory $T$, we can define its regular version $T^r$ as $T$ together with axioms asserting that all function symbols commute with substitution.
+
+By definition, type theories are extensions of the theory of substitution.
+It follows that models of type theories are contextual categories with additional structures.
+Another popular notion of models of type theories is categories with attributes.
+A \emph{(non-split) category with attributes} is a category together with a set of types $\fs{Ty}(\Gamma)$ defined for every object $\Gamma$ and the following operations:
+\begin{enumerate}
+\item For every type $A$ over $\Gamma$, a map $p_A : \Gamma.A \to \Gamma$.
+\item For every map $f : \Delta \to \Gamma$ and every type $A$ over $\Gamma$, a type $f^*(A)$ over $\Delta$ (called the pullback of $A$) and a map $f.A : \Delta.f^*(A) \to \Gamma.A$ such that the obvious square is a pullback.
+\end{enumerate}
+A category with attributes is \emph{split} if $\fs{id}^*(A) = A$ and $(g \circ f)^*(A) = g^*f^*(A)$.
 
 For every type theory $T$, we will define another partial Horn theory $A(T)$ which extends the theory $\fs{CwA}$ of categories with attributes.
 Moreover, we will show that $\Mod{T}$ is a coreflective subcategory of $\Mod{A(T)}$.
@@ -520,15 +572,6 @@ Thus, it has function symbols $\fs{dom},\fs{cod} : \fs{hom} \to \fs{ob}$, $\fs{i
 It also has function symbol $\fs{ext} : \fs{ty} \to \fs{hom}$.
 In the standard notation, it maps a type $A$ over context $\Gamma$ to the morphism $p_A : \Gamma.A \to \Gamma$.
 The theory $\fs{CwA}$ also has function symbols and axioms which assert the existence of a terminal object and pullbacks of types.
-
-A \emph{derived sort} is an expression of the form $\{ (x_1, \ldots x_l) : s_1 \times \ldots \times s_l \mid \varphi \}$,
-where $\varphi$ is a formula with variables in $\{ x_1 : s_1, \ldots x_l : s_l \}$.
-We can work with function symbols which have derived sorts in their signature.
-Let $s_i' = \{ \overline{x^i} : \overline{s^i} \mid \varphi^i \}$ and $s' = \{ \overline{y} : \overline{s} \mid \psi \}$.
-Then a function symbol $\sigma$ with signature $s_1' \times \ldots \times s_k' \to s'$ is a collection of function symbols
-$\{ \sigma^j : \overline{s^1} \times \ldots \times \overline{s^{l_j}} \to s_i \}_{1 \leq j \leq l}$ together with the following axiom:
-\[ \bigwedge_{1 \leq j \leq l} \sigma^j(\overline{x^1}, \ldots \overline{x^{l_j}})\!\downarrow\ \sststile{}{\{ \overline{x^1}, \ldots \overline{x^{l_j}} \}_{1 \leq j \leq l}} \psi[\{ \sigma^j(\overline{x^1}, \ldots \overline{x^{l_j}})/y_j \}_{1 \leq j \leq l}] \land \bigwedge_{1 \leq i \leq k} \varphi^i. \]
-Predicate symbols with derived signature are define in a similar way.
 
 For every $s \in \mathcal{S}_c$, we define a derived sort $A(s)$ in the theory of categories with attributes as follows:
 \begin{align*}
@@ -554,14 +597,16 @@ For predicate symbols, $A(S)$ is defined similarly.
 For function symbols from the theory of substitution, $A(S)$ is defined in the obvious way: $A(\fs{ft}_n)$ and $A(\fs{ty}_n)$ are obvious projections,
 $A(\fs{subst}_{p,n,k})$ is defined in terms of the pullback operation from the theory $\fs{CwA}$, and $A(v_{n,i})$ is defined by the universal property of pullbacks.
 
-There is a generalized morphism of theories $a : T \to A(T)$, which maps sorts $s$ to $A(s)$ and function and predicate symbols $S$ to $A(S)$.
-It induces an adjunction $a_! \dashv a^*$ between $\Mod{T}$ and $\Mod{A(T)}$.
-It is easy to describe the left adjoint $a_! : \Mod{T} \to \Mod{A(T)}$ explicitly.
+Let $A^s(T)$ be the split version of $A(T)$.
+That is, $A^s(T)$ is just $A(T)$ together with axioms asserting that the underlying category with attributes is split.
+Then there is a generalized morphism of theories $a : T \to A^s(T)$, which maps sorts $s$ to $A(s)$ and function and predicate symbols $S$ to $A(S)$.
+It induces an adjunction $a_! \dashv a^*$ between $\Mod{T}$ and $\Mod{A^s(T)}$.
+It is easy to describe the left adjoint $a_! : \Mod{T} \to \Mod{A^s(T)}$ explicitly.
 Objects of $a_!(M)$ are contexts of $M$ and maps are morphisms of contexts.
-Types are non-empty contexts and the pullback of a type $A$ along a morphism $f$ is defined as $A[f]$.
+Types are non-empty contexts and the pullback of a type $B$ along a morphism $f$ is defined as $B[f]$.
 
 \begin{prop}[cwa-coref]
-The adjunction $a_! \dashv a^*$ makes $\Mod{T}$ into a coreflective subcategory of $\Mod{A(T)}$.
+The adjunction $a_! \dashv a^*$ makes $\Mod{T}$ into a coreflective subcategory of $\Mod{A^s(T)}$.
 \end{prop}
 \begin{proof}
 We need to prove that the unit of the adjunction $a_! \dashv a^*$ is an isomorphism.
@@ -570,7 +615,7 @@ In general, we just need to show that the isomorphism $M \to a^*(a_!(M))$ preser
 This can be verified in a strightforward way.
 \end{proof}
 
-There is a close relationship between left semi-model structures on $\Mod{A(T)}$ and $\Mod{T}$:
+There is a close relationship between left semi-model structures on $\Mod{A^s(T)}$ and $\Mod{T}$:
 
 \begin{prop}[coref-model]
 Let $\C$ be a coreflective subcategory of $\D$, let $a_! : \C \to \D$ be the inclusion functor, and let $a^* : \D \to \C$ be the coreflector.
@@ -604,16 +649,9 @@ In particular, it is a trivial fibration.
 It follows that $\varepsilon_X$ is also a trivial fibration.
 \end{proof}
 
-Let $T$ be a type theory.
-For every sort $s$, we have a model $V_s$ of $T$ that represents the functor $M \mapsto M_s$.
-There are obvious maps $V_{(\fs{ctx},n)} \to V_{(\fs{ty},n)}$ and $V_{(\fs{ty},n)} \to V_{(\fs{tm},n)}$.
-Let $\I$ be the set of such maps.
+% TODO: Define type theories in categories with fibrations.
 
-\begin{defn}
-We will say that a model structure (or a left semi-model structure) on $\Mod{T}$ (resp., $\Mod{A(T)}$) is \emph{standard} if $\I$ (resp., $a_!(\I)$) is a set of generating cofibrations for this model structure.
-\end{defn}
-
-In \cite{morita-equiv}, we proved that the category of type theories is locally presentable and defined a set of generating cofibrations on this category.
+In \cite{morita-equiv}, we defined a set of generating cofibrations on the category of type theories.
 Let us recall this definition.
 Let $d_\fs{ty} = \fs{ctx}$, $d_\fs{tm} = \fs{ty}$, $e_\fs{ty}(a) = \fs{ft}(a)$, and $e_\fs{tm}(a) = \fs{ty}(a)$.
 For every sequence $(p_1,n_1), \ldots (p_{k+1},n_{k+1})$ of sorts, let $T_{(p_1,n_1), \ldots (p_{k+1},n_{k+1})}$ be the theory
@@ -628,7 +666,20 @@ $\sigma_i$ maps to $\sigma_i$ for every $1 \leq i \leq k$, and $\sigma_{k+1}$ ma
 We will say that a type theory is \emph{cellular} (resp., \emph{cofibrant}) if it belongs to $\Icell$ (resp., $\Icof$).
 \end{defn}
 
-The cellular theory of identity types $T_\fs{Id}$ is defined as follows:
+Let $T$ be a cellular theory.
+For every function symbol $\sigma$ of $T$, there is a formula $\varphi$ such that $\varphi \sststile{}{\overline{x}} \sigma(x_1, \ldots x_k)\!\downarrow$ is derivable in $T$.
+In general, the sequent $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{\overline{x}} \varphi$ is not derivable in $T$.
+If we add this axiom to $T$, then we get a cofibrant theory $T'$.
+Indeed, there is an obvious inclusion $T \to T'$.
+A section $s : T' \to T$ can be defined as $s(\sigma) = \sigma|_\varphi$.
+If a theory $T'$ is a retract of a theory $T$, then $\Mod{T'}$ is a coreflective subcategory of $\Mod{T}$.
+Since cofibrant theories are retracts of cellular theories, \rprop{coref-model} implies that, for every cofibrant theory $T'$,
+there exists a cellular theory $T$ such that a left semi-model structure exists on $\Mod{T'}$ if and only if it exists on $\Mod{T}$ and these structures are Quillen equivalent.
+
+We can define cofibrant analogs of standard type theories.
+We will present them in the usual way using derivation rules.
+Every such rule is translated to the axiom that the conclusion holds if and only if its premises do.
+The cofibrant theory $T_\fs{Id}$ of identity types is defined as follows:
 \medskip
 \begin{center}
 \AxiomC{$\Gamma \vdash a : A$}
@@ -681,11 +732,17 @@ The cellular theory of unit types $T_\top$ is the following extension of $T_\fs{
 \DisplayProof
 \end{center}
 
-The cellular theory of $\Sigma$-types $T_\Sigma$ can be defined in a similar way.
+The cellular theory of $\Sigma$-types $T_\Sigma$ is defined in a similar way, we just replace the computational rule for the eliminator $\Sigma\text{-}\fs{elim}$ with a propositional equality $\Sigma\text{-}\fs{elim}_\fs{eq}$.
 Let $T_{\fs{Id} + \top + \Sigma}$ be the pushout $T_\top \amalg_{T_\fs{Id}} T_\Sigma$.
-We will define a standard model structure on $\Mod{T_{\fs{Id} + \top + \Sigma}}$.
-First, we define a path object functor $P : \Mod{T_{\fs{Id} + \top + \Sigma}} \to \Mod{T_{\fs{Id} + \top + \Sigma}}$.
-Let $X$ be a category with attributes.
+
+% TODO: Define weak equivalences in \Mod{T}.
+
+% TODO: Add more conditions?
+% \begin{defn}
+% We will say that a model structure (or a left semi-model structure) on $\Mod{T}$ (resp., $\Mod{A(T)}$) is \emph{standard} if $\I$ (resp., $a_!(\I)$) is a set of generating cofibrations for this model structure.
+% \end{defn}
+
+% TODO: Define type theories in simplicial categories with fibrations.
 
 \section{Finite limits in categories with fibrations}
 
