@@ -453,7 +453,7 @@ If we can express the property of being exponentiable in type theory, we can add
 A \emph{model} of an indexed unary type theory is a model $\cat{B}$ of the underlying base theory (that is, a small contextual category with additional structure, depending on the constructions in the base theory)
 together with a contravariant functor from the underlying category of $\cat{B}$ to the category of small categories (with additional structure, depending on the constructions in the indexed theory).
 Models of indexed type theories are closely related to indexed $\infty$-categories.
-We will show that every model of an indexed dependent type theory determines an indexed $\infty$-categories in section~\ref{sec:models}.
+We will show that every model of an indexed dependent type theory determines an indexed $\infty$-category in section~\ref{sec:models}.
 We believe that every model of a locally small indexed unary type theory also gives rise to an indexed $\infty$-category, but this is harder to prove.
 
 A general method of constructing models of indexed type theories is described in \cite{indexed-models}.
@@ -652,7 +652,7 @@ This means that we cannot use ordinary homotopy type theory as an internal langu
 For every sufficiently nice model of the base theory, there is an obvious model of the theory of zero types in which indexed types over a base context $\Gamma$ are interpreted as pointed base types in this context.
 To make the theory match this model more closely, we can add an indexed type $S^0$.
 Then every indexed type $A$ has the underlying base type $\Hom(S^0,A)$.
-This base type is pointed with the base pointed given by the zero map, that is the map $S^0 \to 0 \to A$, where $0$ is the zero type.
+This base type is pointed with the base point given by the zero map, that is the map $S^0 \to 0 \to A$, where $0$ is the zero type.
 Moreover, for every map $f : \Hom(A,B)$, the map $f \circ - : \Hom(S^0,A) \to \Hom(S^0,B)$ preserves the base point.
 
 Finally, we can make the theory match the model exactly.
@@ -664,6 +664,7 @@ Also, for every pointed base type $(X,*)$, we can add an indexed type $R(X,*)$ t
 The theory of zero types with these additional constructions will be called \emph{the theory of pointed types}.
 
 \subsection{Pullbacks and pushouts}
+\label{sec:pullbacks-pushouts}
 
 A \emph{pullback} of a pair of maps $f : \Hom(A,C)$ and $g : \Hom(B,C)$ is a triple $\pi_1 : \Hom(P, A)$, $\pi_2 : \Hom(P, B)$, $\pi_3 : \Id(f \circ \pi_1, g \circ \pi_2)$
 such that the following function is an equivalence for every indexed type $P'$:
@@ -745,7 +746,6 @@ Finally, we can even consider an extension of indexed unary type theories in whi
 The theory of spectra extended in such a way would allow us to work with the smash product of spectra in a convenient way.
 
 \subsection{Finite (co)limits}
-\label{sec:finite-limits}
 
 A \emph{binary product} of indexed types $A$ and $B$ is an indexed type $A \times B$ together with a pair of maps $\pi_1 : \Hom(A \times B, A)$ and $\pi_2 : \Hom(A \times B, B)$
 such that the following function is an equivalence for every indexed type $C$:
@@ -944,6 +944,7 @@ The product of a family of spectra is defined pointwise.
 If the base theory has pushouts and functional extensionality holds in it, then the theory of spectra has extensional coproducts.
 Let $\Gamma, i : I \mid \cdot \vdash B_i$ be a family of indexed types.
 Then we can define a prespectrum $\Gamma, n : \mathbb{N} \vdash \bigvee_{i : I} U_S(B_i)_n$ with the structure maps induced by the structure maps of spectra $B_i$.
+The spectrification of a prespectrum is defined as usual using sequential colimits (which can be constructed in terms of pushouts and $\mathbb{N}$).
 A tedious but straightforward computation shows that (the indexed type corresponding to) the spectrification of this prespectrum is the coproduct of $B_i$.
 \end{example}
 
@@ -1519,12 +1520,12 @@ The base type of objects of an indexed type $C$ is defined as $\Hom(C)$ and we w
 Let us demonstrate how we can use $\Pi$-types of the base theory to define the notion of a limit of a diagram.
 
 First, we need to add an indexed type $\Delta^1$ together with terms $l,r : \Delta^1$ which is interpreted in the obvious way.
-Now, for every closed indexed type $C$ and every pair $x,y : C$, we can define the type of morphisms of $C$ between $x$ and $y$ as $\Ob(\Sigma_{f : \Delta^1 \to C} \Id(f\,l, x) \times \Id(f\,r, y))$.
+Now, for every closed indexed type $C$ and every pair $x,y : C$, we can define the type of morphisms of $C$ between $x$ and $y$ as $\Sigma_{f : \Delta^1 \to C} \Id(f\,l, x) \times \Id(f\,r, y)$.
 We will denote this type by $\chom_C(x,y)$.
 Now, we can define the following predicate:
 \begin{align*}
 & \fs{isTerm} : \Ob(C) \to \fs{Prop} \\
-& \fs{isTerm}(x) = \Pi_{y : \Ob(C)} \fs{isContr}(\chom_C(y,x))
+& \fs{isTerm}(x) = \Pi_{y : \Ob(C)} \fs{isContr}(\Ob(\chom_C(y,x)))
 \end{align*}
 That is, we say that an object $x$ of $C$ is terminal if, for every object $y$, the type of morphisms between $y$ and $x$ is contractible.
 
@@ -1740,7 +1741,7 @@ If an indexed dependent type theory has identity types, $\Sigma$-types, and exte
 \end{align*}
 \end{prop}
 \begin{proof}
-The first equivalence is simply the extensionality for $\Hom$-types.
+The first equivalence is simply extensionality for $\Hom$-types.
 The second equivalence is defined as follows:
 \begin{align*}
 & \lambda g.\,(\lambda x_1 \ldots x_n.\,\pi_1(g\,x_1\,\ldots\,x_n), \lambda x_1 \ldots x_n.\,\pi_2(g\,x_1\,\ldots\,x_n)) \\
@@ -2413,7 +2414,7 @@ Suppose that we have a pullback square in which the right arrow is $n$-truncated
 \[ \xymatrix{ A \ar[r] \ar[d] \pb   & C \ar[d] \\
               B \ar[r]              & D.
             } \]
-Since $\Hom(X,-)$ preserves pullbacks, the following square is also pullback and the right arrow is $n$-truncated by the definition of $n$-truncated maps in indexed type theories:
+Since $\Hom(X,-)$ preserves pullbacks, the following square is also a pullback and the right arrow is $n$-truncated by the definition of $n$-truncated maps in indexed type theories:
 \[ \xymatrix{ \Hom(X,A) \ar[r] \ar[d] \pb   & \Hom(X,C) \ar[d] \\
               \Hom(X,B) \ar[r]              & \Hom(X,D).
             } \]
@@ -2460,7 +2461,7 @@ Since $\Sigma$ has an inverse, it preserves pullbacks.
 It follows that $U_S(-)_n = \Hom(S,\Sigma^n(-))$ preserves pullbacks for all $n : \mathbb{N}$.
 Now, \rlem{trunc-id} implies that a map of spectra $f$ is $k$-truncated if and only if $U_S(f)_n$ is $k$-truncated for all $n : \mathbb{N}$.
 
-It follows that a map of spectra is $k$-truncated if and only if it is an equivalence.
+It follows that a map of spectra is $k$-truncated (if and) only if it is an equivalence.
 Indeed, since $U_S(f)_n = \Omega^{k+2}(U_S(f)_{n+k+2})$ and $U_S(f)_{n+k+2}$ is $k$-truncated, $U_S(f)_n$ is $(-2)$-truncated.
 Thus, $U_S(f)_n$ is an equivalence for all $n : \mathbb{N}$.
 \end{example}
@@ -2505,7 +2506,7 @@ If the indexed theory has finite limits, then we can define a class of fibration
 
 \begin{example}[qcat-fib]
 The model $\qCat$ has many interesting examples of fibrations: Cartesian, coCartesian, covariant, and contravariant.
-More examples of fibrations in this model can be found in \cite{fib-inf-cat}.
+More examples of classes of fibrations in this model can be found in \cite{fib-inf-cat}.
 \end{example}
 
 For every dependent class of fibrations $\Fib$, we can add a new sort of dependent types $\Gamma \mid \Delta \vdash A \fib$ consisting of types satisfying the predicate $\Fib$:
@@ -2780,7 +2781,13 @@ This follows from the fact that elements of $\mathcal{U}$ in a context $\Delta$ 
 types of the form $\El(c)$ over $\Delta$ correspond to pullbacks of $\pi_1 : \Hom(\Sigma_{A : \mathcal{U}} \El(A), \mathcal{U})$ along $c$.
 \end{proof}
 
-We already saw that object classifiers (and hence internal universes) may not exists in some interesting theories.
+\begin{example}[spectra-int-universe]
+The theory of spectra does not have interseting object classifiers (and hence internal universes).
+To be more precise, if a map $p$ classifies the zero spectrum $*$, then $p$ is an equivalence (and hence classifies only equivalences).
+Indeed, since the theory of spectra is stable, if $\fs{id}_*$ is a pullback of $p$, then $p$ is a pushout of $\fs{id}_*$, hence an equivalence.
+\end{example}
+
+\Rexample{spectra-int-universe} shows that internal universes may not exists in some interesting theories.
 To fix this problem, we will define the notion of an \emph{external universe}.
 In an indexed unary type theory, an external universe consists of a base type $\mathcal{U}_A$ defined for every closed indexed type $A$ together with an indexed type over $A$.
 In an indexed dependent type theory, this can be reformulated as the following rules:
@@ -2815,14 +2822,14 @@ This definition is analogous to the definition of well-powered indexed categorie
 \end{defn}
 
 \begin{example}
-If the base theory has a univalent universe $\mathcal{U}$, then we can define the external universe $\mathcal{U}$-small spectra.
+If the base theory has a univalent universe $\mathcal{U}$, then we can define the external universe of $\mathcal{U}$-small spectra.
 If $A$ is an indexed type, then we define $\mathcal{U}_A$ as the type consisting of a sequence of maps $B_n : U_S(A)_n \to \Sigma_{X : \mathcal{U}} \El(X)$
 together with a sequence of pointed equivalences $(\Sigma_{a : U_S(A)_n} \El(\pi_1(B_n\,a))) \simeq \Omega(\Sigma_{a : U_S(A)_{n+1}} \El(\pi_1(B_{n+1}\,a)))$ over the structure maps $U_S(A)_n \to \Omega(U_S(A)_{n+1})$.
 Every such pair of sequences gives rise to a spectrum over $A$ in the obvious way.
 \end{example}
 
 External universes can be used to define function on indexed types.
-For example, the operation $\Sigma^n$ on indexed types that we explicitly added in section~\ref{sec:finite-limits} can be defined as a function on $\mathcal{U}$-small indexed types by recursion on $n$.
+For example, the operation $\Sigma^n$ on indexed types that we explicitly added in section~\ref{sec:pullbacks-pushouts} can be defined as a function on $\mathcal{U}$-small indexed types by recursion on $n$.
 
 \section{Locally reflective classes of fibrations}
 \label{sec:refl-fib}
