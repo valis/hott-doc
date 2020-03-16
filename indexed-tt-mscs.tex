@@ -649,7 +649,8 @@ A type which is both terminal and initial is called a \emph{zero type}.
 This is an interesting example since a non-trivial $\infty$-category cannot be Cartesian closed and have a zero object at the same type.
 This means that we cannot use ordinary homotopy type theory as an internal language of such $\infty$-categories.
 
-For every sufficiently nice model of the base theory, there is an obvious model of the theory of zero types in which indexed types over a base context $\Gamma$ are interpreted as pointed base types in this context.
+For every sufficiently nice model of the base theory, there is a model of the indexed theory with zero types.
+Namely, if the model is constructed out of a Cartesian model category, then we can interpret indexed types over $\Gamma$ as pointed types over $\Gamma$ in which the point is a cofibration.
 To make the theory match this model more closely, we can add an indexed type $S^0$.
 Then every indexed type $A$ has the underlying base type $\Hom(S^0,A)$.
 This base type is pointed with the base point given by the zero map, that is the map $S^0 \to 0 \to A$, where $0$ is the zero type.
@@ -748,7 +749,6 @@ Semantically, such indexed linear type theories should correspond to indexed mon
 Such indexed monoidal $\infty$-categories were considered in \cite[Definition~3.6]{schreiber-linear}.
 Of course, this paper discusses only $\infty$-categorical analogues of models of indexed linear type theories, while actual models should be much stricter.
 We did not construct any such model yet.
-It is not even clear how to construct models of the unary theory of spectra.
 
 \subsection{Finite (co)limits}
 
@@ -785,7 +785,7 @@ An equalizer of maps $f,g : \Hom(A,B)$ can be defined as the pullback of $\langl
               A \ar[r]_-{\langle f, g \rangle} & B \times B
             } \]
 By the definition of products, the type of homotopies $\Id_{\Hom(P, B \times B)}(r,r')$ is equivalent to the type $\Id_{\Hom(P,B)}(\pi_1 \circ r, \pi_1 \circ r') \times \Id_{\Hom(P,B)}(\pi_2 \circ r, \pi_2 \circ r')$.
-Thus, by the definition of pushouts, we have the following equivalence:
+Thus, by the definition of pullbacks, we have the following equivalence:
 \begin{align*}
 & \Hom(P,E) \to \sum_{a : \Hom(P,A)} \sum_{b : \Hom(P,B)} \Id(f \circ a, b) \times \Id(g \circ a, b) \\
 & \lambda q.\,(e \circ q, s \circ q, q * h_1, q * h_2),
@@ -818,8 +818,8 @@ If the base theory has pushouts, then the theory of pointed types also has pusho
 \subsection{(Co)products}
 \label{sec:products}
 
-A \emph{product} of an indexed type $\Gamma, i : I \mid \cdot \vdash B \ob$ is an indexed type $\Gamma \mid \cdot \vdash P \ob$ together with a term $\Gamma, i : I \vdash \pi : \Hom(P,B)$
-such that the function $\pi \circ -$ has an inverse in the sense that there is a rule of the form
+A \emph{product} of an indexed type $\Gamma, i : I \mid \cdot \vdash B \ob$ is an indexed type $\Gamma \mid \cdot \vdash P \ob$ together with a term $\Gamma, i : I \vdash \pi_i : \Hom(P,B)$
+such that the function $\pi_i \circ -$ has an inverse in the sense that there is a rule of the form
 \begin{center}
 \AxiomC{$\Gamma \mid \cdot \vdash P' \ob$}
 \AxiomC{$\Gamma, i : I \vdash f : \Hom(P',B)$}
@@ -828,13 +828,13 @@ such that the function $\pi \circ -$ has an inverse in the sense that there is a
 \end{center}
 and the following types are inhabited:
 \begin{align*}
-& \Id(\pi \circ \langle f \rangle_{i : I}, f), \\
-& \Id(\langle \pi \circ g \rangle_{i : I}, g).
+\Gamma, i : I & \vdash \Id(\pi_i \circ \langle f \rangle_{i : I}, f), \\
+\Gamma & \vdash \Id(\langle \pi_i \circ g \rangle_{i : I}, g).
 \end{align*}
 
 The theory of coproducts is defined dually.
-A \emph{coproduct} of an indexed type $\Gamma, i : I \mid \cdot \vdash B \ob$ is an indexed type $\Gamma \mid \cdot \vdash C \ob$ together with a term $\Gamma, i : I \vdash \fs{in} : \Hom(B,C)$
-such that the function $- \circ \fs{in}$ has an inverse in the sense that there is a rule of the form
+A \emph{coproduct} of an indexed type $\Gamma, i : I \mid \cdot \vdash B \ob$ is an indexed type $\Gamma \mid \cdot \vdash C \ob$ together with a term $\Gamma, i : I \vdash \fs{in}_i : \Hom(B,C)$
+such that the function $- \circ \fs{in}_i$ has an inverse in the sense that there is a rule of the form
 \begin{center}
 \AxiomC{$\Gamma \mid \cdot \vdash C' \ob$}
 \AxiomC{$\Gamma, i : I \vdash f : \Hom(B,C')$}
@@ -843,18 +843,39 @@ such that the function $- \circ \fs{in}$ has an inverse in the sense that there 
 \end{center}
 and the following types are inhabited:
 \begin{align*}
-& \Id([ f ]_{i : I} \circ \fs{in}, f) \\
-& \Id([ g \circ \fs{in} ]_{i : I}, g).
+\Gamma, i : I & \vdash \Id([ f ]_{i : I} \circ \fs{in}_i, f) \\
+\Gamma & \vdash \Id([ g \circ \fs{in}_i ]_{i : I}, g).
 \end{align*}
 
-If the $\Pi$-type $\Pi_{i : I} \Hom(P',B)$ exists for all indexed types $\Gamma \mid \cdot \vdash P' \ob$, then a pair $P$, $\pi$ is a product of a family $B$ if and only if the following function is an equivalence for every indexed type $P'$:
-\[ \lambda h.\,\lambda i.\,\pi \circ h : \Hom(P',P) \to \prod_{i : I} \Hom(P',B). \]
-Dually, if the $\Pi$-type $\Pi_{i : I} \Hom(B,C')$ exists for all indexed types $\Gamma \mid \cdot \vdash C' \ob$, then a pair $C$, $\fs{in}$ is a product of a family $B$ if and only if the following function is an equivalence for every indexed type $C'$:
-\[ \lambda h.\,\lambda i.\,h \circ \fs{in}(i) : \Hom(C,C') \to \prod_{i : I} \Hom(B,C'). \]
+If the $\Pi$-type $\Pi_{i : I} \Hom(P',B)$ exists for all indexed types $\Gamma \mid \cdot \vdash P' \ob$, then a pair $(P, \pi_i)$ is a product of a family $B$ if and only if the following function is an equivalence for every indexed type $P'$:
+\[ \lambda h.\,\lambda i.\,\pi_i \circ h : \Hom(P',P) \to \prod_{i : I} \Hom(P',B). \]
+Dually, if the $\Pi$-type $\Pi_{i : I} \Hom(B,C')$ exists for all indexed types $\Gamma \mid \cdot \vdash C' \ob$, then a pair $(C, \fs{in}_i)$ is a coproduct of a family $B$ if and only if the following function is an equivalence for every indexed type $C'$:
+\[ \lambda h.\,\lambda i.\,h \circ \fs{in}_i : \Hom(C,C') \to \prod_{i : I} \Hom(B,C'). \]
 
 Products and coproducts are unique up to unique equivalence.
 We will denote the product and the coproduct of a family $\Gamma, i : I \mid \cdot \vdash B \type$ by $\prod_{i : I} B$ and $\coprod_{i : I} B$, respectively.
 We will say that the product $\prod_{i : I} B$ is \emph{extensional} if the type $\Hom(P, \prod_{i : I} B)$ satisfies functional extensionality as a weak $\Pi$-type $\Pi_{i : I} \Hom(P,B)$ for all indexed types $P$.
+Explicitly, this means that we have the following rules:
+\begin{center}
+\AxiomC{$\Gamma, i : I \vdash p : \Id_B(\pi_i \circ f, \pi_i \circ g)$}
+\UnaryInfC{$\Gamma \vdash \fs{funext}(i.p) : \Id_{\Hom(P, \prod_{i : I} B)}(f,g)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Id_{\Hom(P, \prod_{i : I} B)}(f, g)$}
+\UnaryInfC{$\Gamma \mid \Delta \vdash \fs{funext_h}(p) : \Id(\fs{funext}(i.\,\pmap(f.\, \pi_i \circ f, p)), p)$}
+\DisplayProof
+\end{center}
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma, i : I \vdash p : \Id_B(\pi_i \circ f, \pi_i \circ g)$}
+\AxiomC{$\Gamma \mid \Delta \vdash j : I$}
+\BinaryInfC{$\Gamma \mid \Delta \vdash \fs{funext_h'}(i.p,j) : \Id(\pmap(f.\, \pi_j \circ f, \fs{funext}(i.p)), p[j/i])$}
+\DisplayProof
+\end{center}
 Similarly, we will say that the coproduct $\coprod_{i : I} B$ is \emph{extensional} if the type $\Hom(\coprod_{i : I} B, C)$ satisfies functional extensionality as a weak $\Pi$-type $\Pi_{i : I} \Hom(B,C)$ for all indexed types $C$.
 
 \begin{example}
@@ -893,7 +914,7 @@ We can also define the theory of \emph{strict products}:
 \lambda i.\,f\,i & = f
 \end{align*}
 
-The difference between weak and strict products is that the former requires types $\Hom(P',\prod_{i : I} B)$ and $\Pi_{i : I} \Hom(P',B)$ to be equivalent while the latter requires them to be \emph{isomorphic}.
+The difference between products and strict products is that the former requires types $\Hom(P',\prod_{i : I} B)$ and $\Pi_{i : I} \Hom(P',B)$ to be equivalent while the latter requires them to be \emph{isomorphic}.
 The theory of \emph{weak products} is defined in the same way as the theory of strict products with the difference that the last two equations hold only propositionally.
 This theory is simply a reformulation of the theory of products:
 
@@ -903,22 +924,22 @@ A type $\Gamma \mid \cdot \vdash \prod_{i : I} B$ is a product of a family $\Gam
 \begin{proof}
 First, suppose that $\prod_{i : I} B$ is a product.
 If $\Gamma, i : I \mid x : A \vdash b : B$, then we define $\lambda i.\,b$ as $\langle \lambda x.\,b \rangle_{i : I}\,x$.
-If $\Gamma \mid x : A \vdash f : \prod_{i : I} B$ and $\Gamma \vdash j : I$, then we define $f\,j$ as $\pi[j/i]\,f$.
+If $\Gamma \mid x : A \vdash f : \prod_{i : I} B$ and $\Gamma \vdash j : I$, then we define $f\,j$ as $\pi_j\,f$.
 The $\beta$ and $\eta$ equations hold for these definitions:
 \begin{align*}
-& \lambda x.\,(\lambda i.b)\,j = \lambda x.\,\pi[j/i]\,(\langle \lambda x.b \rangle_{i : I}\,x) = (\pi \circ \langle \lambda x.b \rangle_{i : I})[j/i] \sim (\lambda x.b)[j/i] = \lambda x.\,b[j/i] \\
-& \lambda x.\,\lambda i.\,f\,i = \lambda x.\,\langle \lambda x.\,\pi\,f \rangle_{i : I}\,x = \langle \lambda x.\,\pi\,f \rangle_{i : I} = \langle \pi \circ (\lambda x.f) \rangle_{i : I} \sim \lambda x.f
+& \lambda x.\,(\lambda i.b)\,j = \lambda x.\,\pi_j\,(\langle \lambda x.b \rangle_{i : I}\,x) = (\pi_i \circ \langle \lambda x.b \rangle_{i : I})[j/i] \sim (\lambda x.b)[j/i] = \lambda x.\,b[j/i] \\
+& \lambda x.\,\lambda i.\,f\,i = \lambda x.\,\langle \lambda x.\,\pi_i\,f \rangle_{i : I}\,x = \langle \lambda x.\,\pi_i\,f \rangle_{i : I} = \langle \pi_i \circ (\lambda x.f) \rangle_{i : I} \sim \lambda x.f
 \end{align*}
 
 Now, suppose that $\prod_{i : I} B$ is a weak product.
 We define
-\[ \Gamma, i : I \vdash \pi : \Hom(\prod_{i : I} B, B) \]
+\[ \Gamma, i : I \vdash \pi_i : \Hom(\prod_{i : I} B, B) \]
 as $\lambda f.\,f\,i$.
 If $\Gamma, i : I \vdash g : \Hom(P,B)$, then we define $\Gamma \vdash \langle g \rangle_{i : I} : \Hom(P, \prod_{i : I} B)$ as $\lambda x.\,\lambda i.\,g\,x$.
 The required homotopies can be constructed as follows:
 \begin{align*}
-& \pi \circ \langle g \rangle_{i : I} = \lambda x.\,(\lambda i.\,g\,x)\,i \sim \lambda x.\,g\,x = g \\
-& \langle \pi \circ g \rangle_{i : I} = \lambda x.\,\lambda i.\,g\,x\,i \sim \lambda x.\,g\,x = g
+& \pi_i \circ \langle g \rangle_{i : I} = \lambda x.\,(\lambda i.\,g\,x)\,i \sim \lambda x.\,g\,x = g \\
+& \langle \pi_i \circ g \rangle_{i : I} = \lambda x.\,\lambda i.\,g\,x\,i \sim \lambda x.\,g\,x = g
 \end{align*}
 \end{proof}
 
@@ -960,7 +981,7 @@ More generally, $I \cdot B$ is the smash product $\Sigma^\infty I_* \wedge B$.
 
 Let us prove a few properties of products and coproducts.
 To simplify the notation, we will assume that the base theory of an indexed theory with a product $\prod_{i : I} B$ has $\Pi$-types $\Pi_{i : I} \Hom(P,B)$ for all $P$.
-The following proposition shows that the (co)product of a contractible family of types is any type of this family:
+The following proposition shows that the (co)product of a contractibly-indexed family of types is any type of this family:
 
 \begin{prop}
 Let $I$ be a contractible type and let $i_0$ be a point of $I$.
@@ -968,10 +989,10 @@ Then types $\prod_{i : I} B$, $\coprod_{i : I} B$, and $B[i_0/i]$ are equivalent
 \end{prop}
 \begin{proof}
 Let $p(i)$ be a path between $i_0$ and $i : I$.
-Then the pair $B[i_0/i], \pi_i = \lambda x.\,p(i)_*(x)$ is a product of $B$.
+Then the pair $(B[i_0/i], \pi_i = \lambda x.\,p(i)_*(x))$ is a product of $B$.
 We can define $\langle f \rangle_{i : I}$ as $\lambda x.\,\sym{p(i)}_*(f\,x)$.
-Clearly, this is an inverse to $\pi \circ -$.
-Since $B[i_0/i],\pi$ is a product and products are unique up to equivalence, it follows that $B[i_0/i]$ is equivalent to $\prod_{i : I} B$.
+Clearly, this is an inverse to $\pi_i \circ -$.
+Since $(B[i_0/i],\pi_i)$ is a product and products are unique up to equivalence, it follows that $B[i_0/i]$ is equivalent to $\prod_{i : I} B$.
 Similar argument shows that it is also equivalent to $\coprod_{i : I} B$.
 \end{proof}
 
@@ -1164,7 +1185,7 @@ We will consider examples of models of indexed theories in which some of the con
 For example, the initial type is not stable under pullbacks in models corresponding to stable $\infty$-categories (unless it is the trivial $\infty$-category).
 We still can use initial types, but the elimination principle should be restricted (see section~\ref{sec:dep-initial}).
 
-If we want to work with more complicated constructions which are not stable under pullbacks such as pushouts, then the type former itself should be restricted to the empty context.
+If we want to work with more complicated constructions which are not stable under pullbacks such as pushouts, then the type former itself should also be restricted to the empty context.
 The substitution cannot be applied to such constructions, but the weakening is still available for them.
 This means that we can use such constructions in every context as usual, but the type former can be applied only to closed types and terms (that is, no indexed variables can appear in it, but base variables are still available).
 See section~\ref{sec:dep-pushouts} for an example of such a construction.
@@ -1187,7 +1208,29 @@ We will always assume that the following rule is derivable:
 
 \[ J(a, x p \Delta E.\,D, \Delta E.\,d, a, \refl(a)) = d \]
 
-It allows us to define $\pmap$ and transport in the same way as usual.
+It allows us to define the following analogues of transport and $\pmap$:
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Id_A(a,a')$}
+\AxiomC{$\Gamma \mid \Delta \vdash$}
+\AxiomC{$\Gamma, x : A \mid \Delta \vdash D \ob$}
+\AxiomC{$\Gamma \mid \Delta \vdash d : D[a/x]$}
+\QuaternaryInfC{$\Gamma \mid \Delta \vdash p_*(d) : D[a'/x]$}
+\DisplayProof
+\end{center}
+
+\[ p_*(d) = J(a, x p \Delta. D, d, a', p) \]
+\medskip
+
+\begin{center}
+\AxiomC{$\Gamma \vdash p : \Id_A(a,a')$}
+\AxiomC{$\Gamma \mid \Delta \vdash B \ob$}
+\AxiomC{$\Gamma, x : A \mid \Delta \vdash b : B$}
+\TrinaryInfC{$\Gamma \mid \Delta \vdash \pmap(x.b, p) : \Id_B(b[a/x], b[a'/x])$}
+\DisplayProof
+\end{center}
+
+\[ \pmap(x.b, p) = J(a, x p \Delta. \Id_B(b[a/x], b), \refl(b[a/x]), a', p) \]
+
 Moreover, we can define the following operation:
 \begin{center}
 \AxiomC{$\Gamma \vdash p : \Id_{\Hom(A,B)}(f,g)$}
@@ -1195,13 +1238,12 @@ Moreover, we can define the following operation:
 \BinaryInfC{$\Gamma \mid \Delta \vdash \fs{hap}(p,a) : \Id_B(f\,a,g\,a)$}
 \DisplayProof
 \end{center}
-It is defined as follows:
 \[ \fs{hap}(p,a) = \pmap(f.\,f\,a,p). \]
 
 The rules of indexed unary type theories are true in indexed dependent type theories.
 This means that unary theories can be interpreted in dependent theories.
 This implies that every model of an indexed dependent type theory is a model of the corresponding unary theory
-(that is, there is a forgetful functor from the category of models of an indexed dependent theory to the category of models of an indexed unary theory).
+(that is, there is a forgetful functor from the category of models of an indexed dependent theory $T$ to the category of models of the underlying indexed unary theory of $T$).
 Every model of an ordinary dependent type theory (that is, a small contextual category) is a model of an indexed dependent type theory.
 This follows from the fact that indexed type theories can be interpreted in ordinary dependent type theories.
 
@@ -1221,7 +1263,7 @@ We believe that every model of a locally small indexed unary type theory also gi
 \end{remark}
 
 First, recall that a \emph{homotopical category} is a category equipped with a class of maps, called weak equivalences, containing identity morphisms and satisfying the 2-out-of-6 property.
-A standard way to construct an $\infty$-category out of a homotopical category is to apply the simplicial localization functor, the fibrant replacement functor, and the simplicial nerve functor.
+A standard way to construct a quasicategory out of a homotopical category is to apply the simplicial localization functor, the fibrant replacement functor, and the simplicial nerve functor.
 We will denote the composite of these three functors by $L$.
 A \emph{homotopical functor} is a functor between homotopical categories preserving weak equivalences.
 A homotopical functor $F : \cat{C} \to \cat{D}$ induces a functor $L(F) : L(\cat{C}) \to L(\cat{D})$.
@@ -1369,11 +1411,9 @@ We can define a dependent version of $\fs{hap}$:
 \end{center}
 It is defined as follows:
 \[ \fs{hap}(p, a_1, \ldots a_k) = J(f, h q.\,\Id(f\,a_1\,\ldots\,a_k,h\,a_1\,\ldots\,a_k), \refl(f\,a_1\,\ldots\,a_k), g, p). \]
-It is straightforward to check that if $\Hom$-types are extensional, then the following function is an equivalence:
-\begin{align*}
-& \Id_{\Hom(x_1 \ldots x_k.B)}(f,g) \to \Hom(x_1 \ldots x_k.\,\Id_B(f\,x_1\,\ldots\,x_k,g\,x_1\,\ldots\,x_k)) \\
-& \lambda p.\,\lambda x_1 \ldots x_k.\,\fs{hap}(p, x_1, \ldots x_k).
-\end{align*}
+It is straightforward to check that if $\Hom$-types are extensional, then (weak) dependent $\Hom$-types are also extensional.
+That is, the following function is an equivalence:
+\[ \lambda p.\,\lambda \overline{x}.\,\fs{hap}(p, \overline{x}) : \Id_{\Hom(\overline{x}.B)}(f,g) \to \Hom(\overline{x}.\,\Id_B(f\,\overline{x},g\,\overline{x})). \]
 
 \section{Locally Cartesian closed indexed theories}
 \label{sec:lccc}
@@ -1388,7 +1428,7 @@ If we think of maps $\Hom(X,D)$ as types over $D$, then $\Hom_D(A,B)$ is the typ
 We will identify elements of $\Hom_D(A,B)$ with underlying morphisms $\Hom(A,B)$ and we will often omit the homotopy in $\Hom_D(A,B)$ when constructing an element of this type.
 
 We will say that two maps are equivalent if there is an equivalence between their domains and an equivalence between their codomains such that the obvious square commutes.
-We will say that two dependent types $\Delta \vdash A$ and $\Delta' \vdash A'$ are equivalent if there is an equivalence of contexts $\Delta, x : A$ and $\Delta', x : A'$.
+We will say that two dependent types $\Delta \vdash A$ and $\Delta' \vdash A'$ are equivalent if there is an equivalence of contexts $\Delta$ and $\Delta'$ which extends to an equivalence of contexts $\Delta, x : A$ and $\Delta', x : A'$.
 If the theory has $\Sigma$-types and unit types, then, for every dependent type $\Delta \vdash B \ob$, we can define the following map:
 \[ \pi_1 : \Hom(\sum_{p : \Sigma(\Delta)} B[\pi_1(p)/x_1, \ldots \pi_k(p)/x_k]), \Sigma(\Delta)), \]
 where $\Delta = x_1 : A_1, \ldots x_k : A_k$.
@@ -1806,16 +1846,16 @@ but these terms will not be stable under substitution of indexed terms.
 \end{remark}
 
 \begin{example}
-Both models $\qCat$ and $\sSpace$ satisfy equivalent conditions of \rprop{initial}.
+Both models $\qCat$ and $\sSpace$ satisfy the equivalent conditions of \rprop{initial}.
 \end{example}
 
-The theory of zero types does not satisfy conditions of \rprop{initial} unless it is trivial (that is, unless all indexed types are equivalent).
+A theory with a zero type cannot satisfy the conditions of \rprop{initial} unless it is trivial (that is, unless all indexed types are equivalent in it).
 The reason is that the initial type in such theories is not stable under pullbacks.
 To define an indexed dependent type theory in which the initial type is not necessarily stable under pullbacks, we need to modify the rules slightly.
 
 \begin{prop}
 Let $0$ be a type in an indexed dependent type theory with identity types, $\Sigma$-types, and extensional $\Hom$-types.
-Then $0$ is initial if and only if the following rule is derivable:
+Then $0$ is initial in the underlying indexed unary type theory if and only if the following rule is derivable:
 \begin{center}
 \AxiomC{$\Gamma \mid x : 0 \vdash D \type$}
 \AxiomC{$\Gamma \mid \Delta \vdash a : 0$}
@@ -2008,6 +2048,8 @@ It is easy to show that these maps are mutually inverse using the eliminator for
 
 We will say that coproducts in an indexed unary type theory are \emph{stable under pullbacks} if, for every pair of maps $p : \Hom(\coprod_{i : I} B_i, D)$ and $r : \Hom(E,D)$,
 the canonical map from $\coprod_{i : I} r^*(B_i)$ to $r^*(\coprod_{i : I} B_i)$ is an equivalence, where $r^*(X)$ is the pullback of $X$ along $r$.
+The following proposition shows that stability under substitution implies stability under pullbacks.
+The converse of this proposition does not hold because stability under pullbacks implies that coproducts are stable under substitution only up to equivalence.
 
 \begin{prop}[coproduct-stable]
 Suppose that an indexed dependent type theory has $\Sigma$-types, identity types, extensional $\Hom$-types, and (weak) stable dependent coproducts.
@@ -2169,6 +2211,7 @@ Maps $h_1$, $h_2$, and $h_3$ can be defined using $h_1'$ and $q_1$, $h_2'$ and $
 
 \begin{example}
 The model $\sSpace$ has stable dependent pushouts.
+See \cite[Example~5.16]{indexed-models}.
 \end{example}
 
 \begin{example}
@@ -2184,15 +2227,15 @@ Suppose that an indexed dependent type theory has $\Sigma$-types, identity types
 Dependent pushouts commute with $\Sigma$-types.
 More precisely, the following map is an equivalence for all maps $f : \Hom_\Delta(A,B)$ and $g : \Hom_\Delta(A,C)$:
 \begin{align*}
-& \Hom_\Delta((\sum_{d : D} B) \amalg_{(\sum_{d : D} A)} (\sum_{d : D} C), \sum_{d : D} B \amalg_A C) \\
-& \lambda e. \amalg\text{-}\fs{elim}(w. \sum_{d : D} B \amalg_A C, (d,y).(d,\fs{inl}(y)), (d,z).(d,\fs{inr}(z)), (d,x).d_3, e),
+& \lambda e. \amalg\text{-}\fs{rec} \left(\sum_{d : D} B \amalg_A C, (d,y).(d,\fs{inl}(y)), (d,z).(d,\fs{inr}(z)), (d,x).d_3, e \right) : \\
+& \quad \Hom_\Delta \left( \left(\sum_{d : D} B \right) \amalg_{(\sum_{d : D} A)} \left(\sum_{d : D} C \right), \sum_{d : D} B \amalg_A C \right),
 \end{align*}
-where $d_3 = (d,\pmap(w.(d,w),\fs{glue}(x)))$.
+where $d_3 = (d,\pmap(w.(d,w),\fs{glue}(x)))$ and $\amalg\text{-}\fs{rec}$ is the recursor for pushouts, that is a non-dependent version of the eliminator.
 \end{prop}
 \begin{proof}
 The inverse of this map is defined as follows:
-\[ \lambda (d,e). \amalg\text{-}\fs{elim}(w. (\sum_{d : D} B) \amalg_{(\sum_{d : D} A)} (\sum_{d : D} C), y.(d,y), z.(d.z), x.\pmap(w.(d,w),\fs{glue}(x)), e). \]
-It is easy to show that these maps are mutually inverse using the eliminator for pushouts.
+\[ \lambda (d,e). \amalg\text{-}\fs{rec} \left(\left(\sum_{d : D} B \right) \amalg_{(\sum_{d : D} A)} \left(\sum_{d : D} C \right), y.\,\fs{inl}(d,y), z.\,\fs{inr}(d.z), x.\,\fs{glue}(d,x), e \right). \]
+It is straightforward to check that these maps are mutually inverse using the eliminator for pushouts.
 \end{proof}
 
 \begin{prop}
@@ -2269,9 +2312,11 @@ Let $f,g : \Hom(0,X)$ be a pair of maps.
 We need to construct a homotopy between them.
 
 First, let us prove that the type $\Id_{\Hom(0,X) \to \Hom(0,X)}(\id, \lambda x.g)$ is a proposition.
-Since powers are extensional, the functional extensionality holds for the type $\Hom(0,X) \to \Hom(0,X)$.
-Thus, we just need to prove that, for all $x : \Hom(0,X) \vdash p : \Id(x,g)$ and $x : \Hom(0,X) \vdash q : \Id(x,g)$, there is a homotopy $x : \Hom(0,X) \vdash h : \Id(p,q)$.
-It is enough to prove that, for all $x$ and $q$, there is a homotopy between $q$ and $p \ct \sym{p[g/x]}$, which follows by path induction.
+To do this, we can assume that $\id$ is homotopic to $\lambda x.g$.
+It follows that $x$ is homotopic to $g$ for every $x : \Hom(0,X)$.
+That is, $\Hom(0,X)$ is contractible.
+Since powers are extensional, functional extensionality holds for the type $\Hom(0,X) \to \Hom(0,X)$.
+It follows that $\Hom(0,X) \to \Hom(0,X)$ is also contractible and hence a proposition.
 
 Now, since $\Hom(0,X) \to \Hom(0,X)$ is weakly connected and $\Id(\id_{\Hom(0,X)}, \lambda x.g)$ is a proposition, the latter type is inhabited.
 If $h$ is a homotopy between $\id$ and $\lambda x.g$, then $\fs{hap}(h,f)$ is a homotopy between $f$ and $g$.
@@ -2453,7 +2498,8 @@ By \rlem{trunc-total}, the latter function is $n$-truncated if and only if the i
 The latter function is equivalent to $\lambda a.\,(a,a,\refl) : A \to \Sigma_{a : A} \Sigma_{a' : A} \Id(f\,a,f\,a')$, which is equivalent to $\langle \id_A, \id_A \rangle : \Hom(A, A \times_B A)$.
 \end{proof}
 
-\Rlem{trunc-id} implies that if the theory has pullbacks, then we can define a predicate on maps that corresponds to the notion of $n$-truncated maps by induction on $n$.
+A map is $(-2)$-truncated if and only if it is an equivalence.
+This fact and \rlem{trunc-id} define a predicate on maps (by induction on $n$) that corresponds to the notion of $n$-truncated maps.
 
 \begin{example}
 The map $\Hom(S^0,-)$ preserves pullbacks and preserves and reflects equivalences.
@@ -2466,7 +2512,7 @@ Since $\Sigma$ has an inverse, it preserves pullbacks.
 It follows that $U_S(-)_n = \Hom(S,\Sigma^n(-))$ preserves pullbacks for all $n : \mathbb{N}$.
 Now, \rlem{trunc-id} implies that a map of spectra $f$ is $k$-truncated if and only if $U_S(f)_n$ is $k$-truncated for all $n : \mathbb{N}$.
 
-It follows that a map of spectra is $k$-truncated (if and) only if it is an equivalence.
+It follows that a map of spectra is $k$-truncated if and only if it is an equivalence.
 Indeed, since $U_S(f)_n = \Omega^{k+2}(U_S(f)_{n+k+2})$ and $U_S(f)_{n+k+2}$ is $k$-truncated, $U_S(f)_n$ is $(-2)$-truncated.
 Thus, $U_S(f)_n$ is an equivalence for all $n : \mathbb{N}$.
 \end{example}
@@ -2514,7 +2560,7 @@ The model $\qCat$ has many interesting examples of fibrations: Cartesian, coCart
 More examples of classes of fibrations in this model can be found in \cite{fib-inf-cat}.
 \end{example}
 
-For every dependent class of fibrations $\Fib$, we can add a new sort of dependent types $\Gamma \mid \Delta \vdash A \fib$ consisting of types satisfying the predicate $\Fib$:
+For every dependent class of fibrations $\Fib$ (closed under pullbacks), we can add a new sort of dependent types $\Gamma \mid \Delta \vdash A \fib$ consisting of types satisfying the predicate $\Fib$:
 \begin{center}
 \AxiomC{$\Gamma \mid \Delta \vdash A \fib$}
 \UnaryInfC{$\Gamma \mid \Delta \vdash \El(A) \ob$}
@@ -2539,9 +2585,9 @@ We define equivalences between fibrations $\Gamma \mid \Delta \vdash A \fib$ and
 We will often omit the function symbol $\El$.
 
 We can assume various closure conditions on the class of fibrations in the usual way.
-For example, we can assume that $\Fib$ is closed under contractible types.
+For example, we can assume that $\Fib$ contains contractible types.
 This is true if and only if it contains all identity morphisms.
-Similarly, $\Fib$ is closed under $n$-types (as a dependent class) if and only if it contains all $n$-truncated maps (as a non-dependent class).
+Similarly, $\Fib$ contains $n$-types (as a dependent class) if and only if it contains $n$-truncated maps (as a non-dependent class).
 
 \begin{prop}[fib-sigma]
 A class of fibrations is closed under $\Sigma$-types if and only if the corresponding non-dependent class is closed under composition.
@@ -2657,7 +2703,7 @@ In particular, if the base theory contains a subobject classifier, then so does 
 \end{example}
 
 \begin{example}
-We believe that classes of small fibrations mentioned in \rexample{qcat-fib} should be classified by an object classifier.
+We believe that the classes of small fibrations mentioned in \rexample{qcat-fib} should be classified by an object classifier.
 Verification of these facts is beyond the scope of this paper.
 \end{example}
 
@@ -2741,7 +2787,7 @@ Since this square is a pullback, $p$ classifies $\id_B$.
 \end{proof}
 
 Finally, let us prove another simple but useful result.
-An analogous result in the context of higher categories was proved in \cite[Theorem~3.28]{rasekh-eht}.
+An analogous result in the context of higher categories was proved in \cite[Corollary~3.10]{univalence-lccc} and \cite[Theorem~3.28]{rasekh-eht}.
 
 \begin{prop}
 Let $p : \Hom(\widehat{\mathcal{U}},\mathcal{U})$ be an object classifier and let $f : \Hom(\mathcal{U}',\mathcal{U})$ be any map.
@@ -2792,9 +2838,9 @@ To be more precise, if a map $p$ classifies the zero spectrum $*$, then $p$ is a
 Indeed, since the theory of spectra is stable, if $\fs{id}_*$ is a pullback of $p$, then $p$ is a pushout of $\fs{id}_*$, hence an equivalence.
 \end{example}
 
-\Rexample{spectra-int-universe} shows that internal universes may not exists in some interesting theories.
+\Rexample{spectra-int-universe} shows that internal universes may not exist in some interesting theories.
 To fix this problem, we will define the notion of an \emph{external universe}.
-In an indexed unary type theory, an external universe consists of a base type $\mathcal{U}_A$ defined for every closed indexed type $A$ together with an indexed type over $A$.
+In an indexed unary type theory, an external universe consists of a base type $\mathcal{U}_A$ defined for every closed indexed type $A$ together with an indexed type $\El(c)$ and a map $p(c) : \Hom(\El(c),A)$ defined for every $c : \mathcal{U}_A$.
 In an indexed dependent type theory, this can be reformulated as the following rules:
 \begin{center}
 \AxiomC{$\Gamma \mid \cdot \vdash A \ob$}
@@ -2806,6 +2852,9 @@ In an indexed dependent type theory, this can be reformulated as the following r
 \BinaryInfC{$\Gamma \mid \Delta \vdash \El(c,a) \ob$}
 \DisplayProof
 \end{center}
+Indeed, $\El(c,a)$ can be defined as the fiber of $p(c)$ over $a$.
+Conversely, $p(c)$ can be defined as $\pi_1 : \Hom(\Sigma_{x : A} \El(c,x), A)$.
+
 We have a function from $\Id_{\mathcal{U}_A}(c,c')$ to the type of equivalences between dependent $\Hom$-types $\Hom(x.\,\El(c,x))$ and $\Hom(x.\,\El(c',x))$ defined as the transport of the identity morphism along the homotopy between $c$ and $c'$.
 We will say that the universe is \emph{univalent} if this function is an equivalence.
 We will say that a universe \emph{classifies} fibrations $\Fib$ if it is univalent, the family $\El(c,a)$ satisfies $\Fib$ for all $c$ and $a$,
@@ -2818,7 +2867,7 @@ An external universe classifying a given class of fibrations is also unique up t
 The proof is the same as for internal universes.
 
 \begin{defn}
-We will say that a class $\Fib$ is \emph{locally small} if it is classified by an external universe.
+We will say that a class $\Fib$ is \emph{locally small} if it is classified by a univalent external universe.
 \end{defn}
 
 \begin{defn}
@@ -2962,7 +3011,7 @@ The type of lift in the left square is contractible and \rlem{pullback-lift} imp
 \end{proof}
 
 \begin{prop}[fib-refl-id]
-Any locally reflective class of fibrations closed under pullbacks satisfies the equivalent conditions of \rprop{fib-id}.
+Any locally reflective class of fibrations closed under pullbacks is closed under identity types.
 \end{prop}
 \begin{proof}
 By \rlem{fib-id-idm} and \rlem{fib-idm}, it is enough to prove condition~\eqref{it:fib-over} of \rprop{fib-id-comp}.
@@ -3408,6 +3457,11 @@ A.~Carboni, George Janelidze, G.~M. Kelly, and R.~Par{\'{e}}, \emph{On
 Denis-Charles Cisinski, \emph{Invariance de la {K-Th\'eorie} par \'equivalences
   d\'eriv\'ees}, Journal of K-theory: K-theory and its Applications to Algebra,
   Geometry, and Topology \textbf{6} (2010), 505--546.
+
+\bibitem[Gepner and Kock 2012]{univalence-lccc}
+David {Gepner} and Joachim {Kock}, \emph{{Univalence in locally cartesian
+  closed infinity-categories}},  (2012), \href {http://arxiv.org/abs/1208.1749}
+  {\path{arXiv:1208.1749}}.
 
 \bibitem[Isaev 2018b]{indexed-models}
 V.~{Isaev}, \emph{{Contextually indexed contextual categories}},
