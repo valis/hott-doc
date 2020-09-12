@@ -1167,8 +1167,8 @@ We will say that a theory has separated axioms if the set of axioms of this theo
 \item The set $\mathcal{A}_d$ consists of axioms of the form $\varphi \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ and, for every $\sigma$, there is exactly one axiom of this form.
 We will denote the left hand side of this axiom by $\varphi_\sigma$.
 \item The set $\mathcal{A}'_d$ consists of (not necessary all) sequents of the form $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \varphi_\sigma$.
-\item For every axiom $\varphi \sststile{}{V} \psi$ in $\mathcal{A}_e \cup \mathcal{A}'_d$, every subterm $\sigma(t_1, \ldots t_k)$ of the formula $\psi$, and every substitution $\rho$,
-if the sequent $\sststile{}{} \varphi[\rho] \land \rho\!\downarrow$ is derivable from the axioms $\mathcal{A}_d \cup \mathcal{A}_e$, then so is the sequent $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k][\rho]$.
+\item \label{it:sep-ax} For every axiom $\varphi \sststile{}{V} \psi$ in $\mathcal{A}_e$ and every subterm $\sigma(t_1, \ldots t_k)$ of $\psi$,
+the sequent $\varphi \sststile{}{V} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from the axioms $\mathcal{A}_d \cup \mathcal{A}_e$.
 \end{enumerate}
 We will say that a theory with separated axioms is \emph{minimal} (resp., \emph{maximal}) if $\mathcal{A}'_d$ is empty (resp., consists of all sequents of the specified form).
 
@@ -1205,7 +1205,7 @@ Let us consider the inference rule for axioms from $\mathcal{A}_d$:
 \end{center}
 If $\sigma(t_1, \ldots t_k)$ is a subterm of $s_i$ for some $i$, then the required property follows from the induction hypothesis for $\sststile{}{} s_i\!\downarrow$.
 Otherwise, $\tau(s_1, \ldots s_n) = \sigma(t_1, \ldots t_k)$ and the required property is obvious.
-This inference rule for axioms from $\mathcal{A}_e \cup \mathcal{A}_d'$ follows from the assumption that we put on these axioms.
+This inference rule for axioms from $\mathcal{A}_e$ follows from \eqref{it:sep-ax}.
 The rest of the inference rules are trivial.
 
 Now, we can prove the lemma.
@@ -1225,19 +1225,19 @@ and the fact that we just proved implies that $\sststile{}{} \varphi_\sigma[t_1/
 \end{proof}
 
 \begin{lem}[morita-separated]
-Let $T$ be a theory with separated axioms and let $(\varphi_1 \land \ldots \land \varphi_n, V)$ be a pair in $P_M$.
-Then the theory $T_0 \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \}$ also has separated axioms.
+Let $T$ be a theory and let $(\varphi_1 \land \ldots \land \varphi_n, \{ x_1, \ldots x_n \})$ be a pair in $P_M$.
+If $T$ has separated axioms, then so does the following theory:
+\[ T_n = T \cup \{ \sststile{}{} c_i\!\downarrow |\ 1 \leq i \leq n \} \cup \{ \sststile{}{} \varphi_i[c_1/x_1, \ldots c_i/x_i]\ |\ 1 \leq i \leq n \} \]
 \end{lem}
 \begin{proof}
-If $\varphi_i$ equals to $e_{p_i}(x_i) = A_i$, then, for each $0 \leq i \leq n$, we define a theory $T_i$ as $T \cup \{ \sststile{}{} c_j\!\downarrow |\ 1 \leq j \leq i \} \cup \{ \varphi_j[c_1/x_1, \ldots c_j/x_j]\ |\ 1 \leq j \leq i \}$.
-Since $T_n = T$, we just need to prove that all theories $T_i$ have separated axioms.
-We proceed by induction on $i$.
-Since $T_0 = T$, the case $i = 0$ holds by assumptions on $T$.
-Assume that $T_i$ has separated axioms.
-To prove that $T_{i+1}$ also has separated axioms, we need to show that, for every subterm $\sigma(t_1, \ldots t_k)$ of $A_{i+1}[c_1/x_1, \ldots c_i/x_i]$,
+Let $\varphi_i$ be equal to $e_{p_i}(x_i) = A_i$.
+We proceed by induction on $n$.
+Since $T_0 = T$, the case $n = 0$ holds by assumption.
+Assume that $T_{n-1}$ has separated axioms.
+To prove that $T_n$ also has separated axioms, we need to show that, for every subterm $\sigma(t_1, \ldots t_k)$ of $A_n[c_1/x_1, \ldots c_{n-1}/x_{n-1}]$,
 the sequent $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]\!\downarrow$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
-Since the sequent $\sststile{}{} A_{i+1}[c_1/x_1, \ldots c_i/x_i]\!\downarrow$ is derivable in $T_i$, the sequents $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ and $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ are also derivable in it.
-Since $T_i$ has separated axioms, \rlem{der-separated-closed} implies that $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$ in $T_i$ and hence in $T_{i+1}$.
+Since the sequent $\sststile{}{} A_n[c_1/x_1, \ldots c_{n-1}/x_{n-1}]\!\downarrow$ is derivable in $T_{n-1}$, the sequents $\sststile{}{} \sigma(t_1, \ldots t_k)\!\downarrow$ and $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ are also derivable in it.
+Since $T_{n-1}$ has separated axioms, \rlem{der-separated-closed} implies that $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$ in $T_{n-1}$ and hence in $T_n$.
 \end{proof}
 
 \begin{prop}[der-separated]
