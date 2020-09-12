@@ -122,6 +122,7 @@
 \newcommand{\Lang}{\mathrm{Lang}}
 \newcommand{\Ho}{\mathrm{Ho}}
 \newcommand{\Term}{\mathrm{Term}}
+\newcommand{\FV}{\mathrm{FV}}
 
 \newcommand{\IdT}{\mathrm{Id}}
 \newcommand{\Jeq}{\mathit{Jeq}}
@@ -237,7 +238,7 @@ More precisely, a map $f : T_1 \to T_2$ is a syntactic equivalence if and only i
 There is also a characterization of Morita equivalences in syntactic terms.
 It seems that this characterization is the most useful one if we want to check that a specific map is a Morita equivalence.
 To work with this characterization, it is useful to assume that the theories are confluent.
-Roughly speaking, this means that we can choose a direction of axioms so that this relation is confluent.
+Roughly speaking, this means that we can choose a direction of axioms so that the relation corresponding to the axioms with the chosen direction is confluent.
 We will give a formal definition of confluent theories in the setting of algebraic type theories.
 
 Unfortunately, we still do not know whether all of the examples listed above are indeed Morita equivalences.
@@ -258,16 +259,39 @@ In this section we define several notions of weak equivalence of algebraic depen
 
 \subsection{Algebraic dependent type theories}
 
-Recall that an algebraic dependent type theory $T$ consists of a set $\mathcal{F}$ of function symbols, a set $\mathcal{P}$ of predicate symbols and a set of axioms.
-The set of sorts $\mathcal{S}$ is defined as $\{ \ctx, \tm \} \times \mathbb{N}$.
-We also write $(\ty,n)$ for $(\ctx,n+1)$.
-Every function symbol $\sigma \in \mathcal{F}$ is equipped with a signature $\sigma : s_1 \times \ldots \times s_k \to s$ where $s_1, \ldots s_k, s \in \mathcal{S}$.
-Every predicate symbol $R \in \mathcal{P}$ is equipped with a signature $R : s_1 \times \ldots \times s_k$ where $s_1, \ldots s_k \in \mathcal{S}$.
-The set $\Term_T(V)_s$ of terms of sort $s$ with variable in $V$ is defined inductively from $\mathcal{F}$ as usual.
-An atomic formula with variables in $V$ is an expression either of the form $t_1 = t_2$  where $t_i \in \Term_T(V)_s$ or of the form $R(t_1, \ldots t_k)$ where $t_i \in \Term_T(V)_{s_i}$.
-A formula with variables in $V$ is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$ where $\varphi_i$ are atomic formulas.
-An axiom is an expression of the form $\varphi \sststile{}{V} \psi$ where $\varphi$ and $\psi$ are formulas with variables in $V$.
-We will write $\varphi \sststile{T}{V} \psi$ to denote the fact that sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$ using the following inference rules:
+In this paper, we will need a precise definition of a type theory.
+Moreover, we will need a category of such theories.
+We will work with definitions given in \cite{alg-tt}.
+They are based on the notion of partial Horn theories defined in \cite{PHL}.
+Similar ideas were developed by Lumsdaine, Bauer, and Haselwarter \cite{lum-tt}.
+In this section, we briefly recall necessary definitions and notations.
+
+A many sorted first-order signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ consists of a set $\mathcal{S}$ of sorts,
+a set $\mathcal{F}$ of function symbols and a set $\mathcal{P}$ of predicate symbols.
+Each function symbol $\sigma$ is equipped with a signature of the form $\sigma : s_1 \times \ldots \times s_k \to s$, where $s_1$, \ldots $s_k$, $s$ are sorts.
+Each predicate symbol $R$ is equipped with a signature of the form $R : s_1 \times \ldots \times s_k$.
+If $V$ is an $\mathcal{S}$-set, then the $\mathcal{S}$-set of terms of $\mathbb{T}$ with free variables in $V$ will be denoted by $\Term_\mathbb{T}(V)$.
+
+An atomic formula is an expression either of the form $t_1 = t_2$ or of the form $R(t_1, \ldots t_n)$,
+where $R$ is a predicate symbol and $t_1$, \ldots $t_n$ are terms.
+We abbreviate $t = t$ to $t\!\downarrow$.
+A Horn formula is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$, where $\varphi_1$, \ldots $\varphi_n$ are atomic formulas.
+The conjunction of the empty set of atomic formulas is denoted by $\top$.
+A sequent is an expression of the form $\varphi \sststile{}{x_1, \ldots x_n} \psi$, where $x_1$, \ldots $x_n$ are variables
+and $\varphi$ and $\psi$ are Horn formulas such that $\FV(\varphi) \cup \FV(\psi) \subseteq \{ x_1, \ldots x_n \}$.
+A \emph{partial Horn theory} consists of a signature and a set of Horn sequents in this signature.
+
+An $\mathcal{S}$-set $M$ is a collection of sets $\{ M_s \}_{s \in \mathcal{S}}$.
+An interpretation $M$ of a signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ is an $\mathcal{S}$-set $M$
+together with a collection of \emph{partial} functions $M(\sigma) : M_{s_1} \times \ldots \times M_{s_k} \to M_s$
+for every function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ of $\mathbb{T}$
+and relations $M(R) \subseteq M_{s_1} \times \ldots \times M_{s_k}$ for every predicate symbol $R : s_1 \times \ldots \times s_k$.
+A model of a partial Horn theory $\mathbb{T}$ is an interpretation of the underlying signature such that the axioms of $\mathbb{T}$ hold in this interpretation.
+The category of models of $\mathbb{T}$ will be denoted by $\Mod{\mathbb{T}}$.
+
+The rules of \emph{partial Horn logic} are listed below.
+A \emph{theorem} of a partial Horn theory $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
+We will write $\varphi \sststile{T}{V} \psi$ to denote the fact that sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$.
 \begin{center}
 $\varphi \sststile{}{V} \varphi$ \axlabel{b1}
 \qquad
@@ -303,7 +327,7 @@ $x = y \land \varphi \sststile{}{V,x,y} \varphi[y/x]$ \axlabel{a2}
 \medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \psi$}
-\RightLabel{, $x \in FV(\varphi)$ \axlabel{a3}}
+\RightLabel{, $x \in \FV(\varphi)$ \axlabel{a3}}
 \UnaryInfC{$\varphi[t/x] \sststile{}{V,V'} \psi[t/x]$}
 \DisplayProof
 \end{center}
@@ -384,7 +408,7 @@ in which the left hand sides of all sequents are replaced with $\varphi$ and rul
 To prove the rule \axref{a3}, consider a derivation tree for a sequent $\varphi \sststile{}{V} \psi$.
 To construct a derivation tree for $\varphi[t/x] \sststile{}{V,V'} \psi[t/x]$, we just need to apply the substitution to every sequent in this derivation tree.
 The only rule that is not closed under substitution is \axref{nv}.
-By assumption, $x \in FV(\varphi)$.
+By assumption, $x \in \FV(\varphi)$.
 In this case the sequent $\varphi[t/x] \sststile{}{V,V'} t\!\downarrow$ is derivable from \axref{np}, \axref{nf} and the following rules:
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} t_1 = t_2$}
@@ -411,6 +435,47 @@ where $c_1$, \ldots $c_n$ are fresh constants.
 \begin{proof}
 This follows from \cite[Theorem~10, Theorem~11]{PHL}.
 \end{proof}
+
+Partial Horn theories with a given set of sorts $\mathcal{S}$ form a category which we will denote by $\Th_\mathcal{S}$ (see \cite[Section~2]{alg-tt} for a definition).
+The category of models $\Mod{T}$ embeds fully faithfully into the category $T/\Th_\mathcal{S}$.
+We will denote the embedding functor by $\Lang$.
+This functor has a right adjoint $\Syn : T/\Th_\mathcal{S} \to \Mod{T}$.
+The model $\Syn(T')$ is defined as the syntactic model of the theory $T'$.
+The precise definition of these functors is given in \cite[Section~4.1]{alg-models}.
+
+An \emph{algebraic dependent type theory} is a theory with $\{ \ctx, \tm \} \times \mathbb{N}$ as the set of sorts that contains function symbols given below and axioms listed in \cite[Section~3.1]{alg-tt}.
+\begin{align*}
+\emptyCtx      & : (\ctx,0) \\
+\ft_n          & : (\ty,n) \to (\ctx,n) \\
+\ty_n          & : (\tm,n) \to (\ty,n) \\
+v_{n,i}        & : (\ctx,n) \to (\tm,n) \text{, } 0 \leq i < n \\
+\subst_{p,n,k} & : (\ctx,n) \times (p,k) \times (\tm,n)^k \to (p,n) \text{, } p \in \{ \tm, \ty \}
+\end{align*}
+
+We often omit index $n$ in these function symbols.
+So, we will write $\ft$, $\ty$, and $v_i$ instead of $\ft_n$, $\ty_n$, and $v_{n,i}$, respectively.
+Function symbols $v_{n,i}$ represent de Bruijn indices.
+We will sometimes use named representation of terms.
+So, $A_1, \ldots A_n \vdash B(v_{n-1, \ldots v_0})$ and $x_1 : A_1, \ldots x_n : A_n \vdash B(x_1, \ldots x_n)$ represent the same judgment.
+The judgment itself simply denotes the formula $\ft(B(v_{n-1, \ldots v_0})) = A_n \land \ft(A_n) = A_{n-1} \land \ldots \land \ft(A_1) = A_0$.
+Similarly, judgement $\Gamma \vdash b : B$ represents formula $\ty(b) = B \land (\Gamma \vdash B)$.
+
+Note that $\subst_{p,n,k}$ denotes the usual type-theoretic substitution while $t[s/x]$ denotes substitution on the meta level of algebraic theories.
+
+We let $\ft^i_n : (\ctx,n+i) \to (\ctx,n)$ and $\ctx_{p,n} : (p,n) \to (\ctx,n)$ be the following derived operations:
+\begin{align*}
+\ft^0_n(A)      & = A \\
+\ft^{i+1}_n(A)  & = \ft^i_n(\ft_{n+i}(A)) \\
+\ctx_{\ty,n}(t) & = \ft_n(t) \\
+\ctx_{\tm,n}(t) & = \ft_n(\ty_n(t))
+\end{align*}
+We also write $(\ty,n)$ for $(\ctx,n+1)$.
+
+We will also use the theory defined in \cite{alg-models}, which we denote by $\coeT_1 + \sigma + \PathT + \wUA$.
+This theory has an interval type $I$ with two constructors $left$ and $right$ and an eliminator $\coe$, which is just the eliminator for the unit type.
+It also has the following axiom, which we denote by $\sigma$:
+\[ \coe(x.A, a, i) = a \text{, if } x \notin \FV(A) \]
+It also has the type of paths, which we will denote by $\Id(a,a')$ and a weak univalence axiom.
 
 \subsection{Model categories of models of type theories}
 
@@ -498,13 +563,6 @@ We will say that $f$ is a \emph{strict Morita equivalence} if $\eta_X$ is a weak
 We will say that $f$ is a \emph{syntactic equivalence} if $\eta_X$ is a weak equivalence when $X$ is the initial model.
 \end{defn}
 
-\begin{example}
-Let $T_I$ be the theory with identity types, $\Sigma$-types, $\Pi$-types, natural numbers, functional extensionality, and uniqueness of identity proofs.
-Let $T_E$ be the same theory together with the extensionality axiom.
-Hofmann proved in \cite[Theorem~3.2.5]{hofmann-ext} that the obvious map $T_I \to T_E$ is a syntactic equivalence.
-It should be possible to extend the proof to prove that it is a Morita equivalence.
-\end{example}
-
 If the theories are semi-model, then we can give a characterization of Morita equivalences in terms of the semi-model structures on the categories of their models.
 
 \begin{prop}[morita-quillen]
@@ -530,11 +588,19 @@ such that sequent $\varphi \sststile{}{V} \ty(h) = \Id(a,a')$ is derivable in $T
 If $a$ and $a'$ are such that only $\varphi \sststile{}{V} \ft(\ty(a)) = \ft(\ty(a'))$ is true, then a \emph{relative (heterogeneous) homotopy} between $a$ and $a'$ with respect to $\varphi$
 is a relative homotopy $f,g,p,g',p'$ between $\ty(a)$ and $\ty(a')$ together with a relative homotopy between $f[a]$ and $a'$.
 
+We can study lifting properties of maps $\eta_X : X \to f^*(f_!(X))$ in syntactical terms.
 Let $V$ be a set of variables and let $\varphi$ be a formula with free variables in $V$.
-We will say that a morphism $f : T_1 \to T_2$ of theories with identity types has the weak lifting property with respect to $V,\varphi$ if
+Then we can consider the syntactic model $M$ corresponding to the pair $(V,\varphi)$.
+It is the model generated by constants corresponding to variables in $V$ together a relation corresponding to $\varphi$ (for a precise definition, see the proof of \rprop{str-morita-char}).
+Then the lifting properties of $\eta_M$ are closely related to certain lifting properties in the category of theories.
+More precisely, we will show that $\eta_M$ has a lifting property for all $M$ if and only if a certain lifting property holds in the category of theories.
+
+Let us describe this lifting property.
+Let $V$ be a set of variables and let $\varphi$ be a formula with free variables in $V$.
+We will say that a morphism $f : T_1 \to T_2$ of theories with identity types has \emph{the weak lifting property} with respect to $V,\varphi$ if
 for every term $A \in \Term_{T_1}(V)_{(d_p,n)}$ and every term $a \in \Term_{T_2}(V)_{(p,n)}$ such that $\varphi \sststile{}{V} A\!\downarrow$ and $f(\varphi) \sststile{}{V} e_p(a) = f(A)$,
 there exists a term $a' \in \Term_{T_1}(V)_{(p,n)}$ such that $f(a')$ is relatively homotopic to $a$ with respect to $\varphi$.
-We will say that $f$ has the lifting property with respect to $V,\varphi$ if $f(a')$ is not only homotopic to $a$, but also equals it.
+We will say that $f$ has \emph{the lifting property} with respect to $V,\varphi$ if $f(a')$ is not only homotopic to $a$, but actually is equal to it.
 
 If $P$ is a set of pairs of the form $V,\varphi$, then we will say that a map has the (weak) lifting property with respect to $P$ if it has this property with respect to every element of $P$.
 We define $P_0$ as the singleton set $\{ \varnothing,\top \}$, $P_S$ as the set of all pairs, and $P_M$ as the set of pairs $V,\varphi$ such that $V = \{ x_1, \ldots x_k \}$
@@ -556,7 +622,7 @@ If $f : T_1 \to T_2$ is a morphism of theories, then it is easy to see that $f_!
 Let us prove the ``only if'' direction.
 Note that elements of $\Syn(T_1, V, \{\,\sststile{}{}~\varphi\,\})$ correspond to terms $t$ of $T_1$ with variables in $V$ such that $\varphi \sststile{T_1}{V} t\!\downarrow$.
 Moreover, two terms $t_1$ and $t_2$ map to the same element under this correspondence if and only if $\varphi \sststile{T_1}{V} t_1 = t_2$.
-Analogous statement holds for $\Syn(T_2, V, \{\,\sststile{}{}~f(\varphi)\,\})$.
+An analogous statement holds for $\Syn(T_2, V, \{\,\sststile{}{}~f(\varphi)\,\})$.
 Using this correspondence, the required conditions immediately follow from the fact that
 map $\Syn(T_1, V, \{\,\sststile{}{}~\varphi\,\}) \to f^*(\Syn(T_2, V, \{\,\sststile{}{}~f(\varphi)\,\}))$ is a weak equivalence.
 
@@ -618,7 +684,7 @@ This is obvious since elements of the initial model of $T_1$ are closed terms $t
 
 We will show that there is a model structure on the category of theories with the interval type, path types and the weak univalence axiom as described in \cite{alg-models}.
 Note that if we assume only usual identity types with the J rule since, then no such model structure (or left semi-model structure, or structure of a cofibration category) can exist since trivial cofibrations are not closed under pushouts.
-Indeed, consider theories $T_1 = \IdT \amalg \{ A : (\ty,0), A\!\downarrow \}$ and $T_2 = \IdT \amalg \{ A, A' : (\ty,0), a : (\tm,1), A\!\downarrow, A'\!\downarrow, A \vdash a : A' \}$, where $\IdT$ is some version of the theory of identity types.
+Indeed, let $\IdT$ be any version of the theory of identity types, let $T_1 = \IdT \amalg \{ A : (\ty,0), A\!\downarrow \}$, and let $T_2$ be $\IdT$ together with two constants $A,A' : (\ty,0)$ such that $\sststile{T_2}{} A\!\downarrow \land A'\!\downarrow$ and an equivalence between $A$ and $A'$.
 \Rprop{str-morita-char} implies that the obvious morphism $T_1 \to T_2$ is a strict Morita equivalence.
 Now, consider the theory $T_3 = \{ \sigma : (\ty,0) \to (\ty,0), \sigma(x)\!\downarrow \}$.
 Then the map $T_1 \amalg T_3 \to T_2 \amalg T_3$ is not even a syntactic equivalence since types $\sigma(A)$ and $\sigma(A')$ are equal in $T_2 \amalg T_3$, but there is no term between them in $T_1 \amalg T_3$.
@@ -670,6 +736,13 @@ Now, since $\pi_1 \circ p$ belongs to $\Jinj$, \cite[Proposition~3.1]{f-model-st
 \label{sec:model-structure}
 
 In this section we define a model structure on the category of algebraic dependent type theories with enough structure.
+Weak equivalences in this model structure are precisely Morita equivalences.
+This model structure can be used to prove that some map is a Morita equivalence.
+For example, we can use the 2-out-of-3 property.
+We can also use the fact that every weak equivalence factors into a trivial cofibration and a trivial fibration and it is easier to check that a map is a trivial cofibration or a trivial fibration.
+Several characterizations of trivial fibrations will be given in section~\ref{sec:triv-fib}.
+To prove that a map is a trivial cofibration, we can construct a homotopy inverse for it.
+Since all theories are fibrant in this model structures, such an inverse always exists.
 
 \subsection{Categories of theories}
 
@@ -944,20 +1017,25 @@ In this section we prove several useful lemmas that characterize trivial fibrati
 Since all of these notations are defined in terms of lifting properties, we will prove general results about them.
 Indeed, if we think about a map that has the weak lifting property with respect to a pair $V,\varphi$ as a weak equivalence,
 then a map having the lifting property with respect to this pair can be thought of as a trivial fibration.
-We begin with a simple lemma:
+
+If we want to show that a map $f : T_1 \to T_2$ has the lifting property with respect to some pair $V,\varphi$, we could try to prove this by induction on terms.
+If we do this, then we need to prove the lifting property only for function symbols (and not arbitrary terms).
+Also, we need to know that we can transport terms in $T_1$ along equalities in $T_2$.
+That is, if $a$ is a term of type $A$ in $T_1$ and $B$ is a type such that $f(A) = f(B)$, then there should be a term $b$ of type $B$ such that $f(a) = f(b)$ (and the same property should hold for types).
+This is proved in the following lemma:
 
 \begin{lem}[eq-char-fib]
 Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
 Let $f : T_1 \to T_2$ be a morphism of theories such that the following conditions hold:
 \begin{enumerate}
-\item \label{it:char-fun-fib} For every function symbol $\sigma$ of $T_2$, there exist terms $A_1$, \ldots $A_k$, $t$ of $T_1$ such that $FV(A_i) \subseteq \{ x_1, \ldots x_{i-1} \}$ and the following sequents are derivable:
+\item \label{it:char-fun-fib} For every function symbol $\sigma$ of $T_2$, there exist terms $A_1$, \ldots $A_k$, $t$ of $T_1$ such that $\FV(A_i) \subseteq \{ x_1, \ldots x_{i-1} \}$ and the following sequents are derivable:
 \begin{align*}
 \bigwedge_{1 \leq i < j} e_{p_i}(x_i) = A_i & \sststile{T_1}{x_1, \ldots x_{j-1}} A_j\!\downarrow \text{ for every } 1 \leq j \leq k \\
 \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i & \sststile{T_1}{x_1, \ldots x_k} t\!\downarrow \\
 \sigma(x_1, \ldots x_k)\!\downarrow & \sststile{T_2}{x_1, \ldots x_k} f(t) = \sigma(x_1, \ldots x_k) \land \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = f(A_i)
 \end{align*}
 \item \label{it:char-type-fib} For all terms $A$, $B$, and $a$ of $T_1$ such that $\varphi \sststile{T_1}{V} e_p(a) = A$, $\varphi \sststile{T_1}{V} B\!\downarrow$, and $f(\varphi) \sststile{T_2}{V} f(A) = f(B)$,
-there exists a term $b$ such that $\varphi \sststile{T_1}{V} e_p(b) = B$ and $f(b)$ equals to $f(a)$.
+there exists a term $b$ such that $\varphi \sststile{T_1}{V} e_p(b) = B$ and $f(\varphi) \sststile{T_2}{V} f(a) = f(b)$.
 \end{enumerate}
 Then $f$ has the lifting property with respect to $V,\varphi$.
 \end{lem}
@@ -978,8 +1056,8 @@ If $T_2$ is a stable contextual theory, then it is enough to check the first con
 It is easy to see that this implies the general case.
 \end{remark}
 
-Now, we want to simplify conditions of \rlem{eq-char-fib}.
-It is easy to do this for the second one:
+We can simplify the second condition of \rlem{eq-char-fib}.
+It is enough to show that given two types $A$ and $B$ in $T_1$ such that $f(A) = f(B)$, the identity map on $f(A)$ lifts to a term in $T_1$:
 
 \begin{lem}[char-type-fib]
 Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
@@ -1012,7 +1090,7 @@ We will say that a theory \emph{has well-defined function symbols} if (it is iso
 for every function symbol $\sigma$, either $\sigma$ equals to one of the function symbols $\ty_n$, $\ft_n$ or there exist terms $A_1$, \ldots $A_k$ satisfying the following conditions:
 \begin{enumerate}
 \item All function symbols that occur in $A_1$, \ldots $A_k$ are less than $\sigma$.
-\item $FV(A_i) \subseteq \{ x_1, \ldots x_{i-1} \}$ for every $1 \leq i \leq k$.
+\item $\FV(A_i) \subseteq \{ x_1, \ldots x_{i-1} \}$ for every $1 \leq i \leq k$.
 \item The following sequents are derivable:
 \begin{align*}
 \bigwedge_{1 \leq i < j} e_{p_i}(x_i) = A_i & \sststile{}{x_1, \ldots x_{j-1}} A_j\!\downarrow \text{ for every } 1 \leq j \leq k \\
@@ -1024,6 +1102,10 @@ We will say that terms $A_1$, \ldots $A_k$ \emph{define} the function symbol $\s
 This condition is easy to check and most of the theories that occur in practice satisfy it.
 An example of a theory that does not satisfy it appeared in \cite{alg-models}: it is the theory of filler operations.
 The rest of the theories that appear in \cite{alg-models} and also all of the theories in this paper and in \cite{alg-tt} have well-defined function symbols.
+
+Now, we can simplify the first condition of \rlem{eq-char-fib}.
+This condition requires to construct not only a lift of a function symbol but also terms in the left hand side of the sequent defining this term.
+The following lemma shows that it is enough to construct this lift with an arbitrary formula as the left hand side of this sequent:
 
 \begin{lem}[eq-comp-char-fib]
 Let $V$ be a set of variables and let $\varphi$ be a formula of a theory $T_1$ with free variables in $V$.
@@ -1108,7 +1190,7 @@ Let us consider the case \axref{nl}:
 \DisplayProof
 \end{center}
 If $\sigma(t_1, \ldots t_k)$ is a subterm of $b$, then the required property follows from the induction hypothesis for $\sststile{}{} a = b$.
-Otherwise, $\sigma$ belongs to $\psi$ and there exist terms $t_1'$, \ldots $t_k'$ and a formula $\psi'$ such that $t_i = t_i'[b/x]$, $\psi = \psi'[\sigma(t_1', \ldots t_k')/x]$, and $x \notin FV(\psi')$.
+Otherwise, $\sigma$ belongs to $\psi$ and there exist terms $t_1'$, \ldots $t_k'$ and a formula $\psi'$ such that $t_i = t_i'[b/x]$, $\psi = \psi'[\sigma(t_1', \ldots t_k')/x]$, and $x \notin \FV(\psi')$.
 The induction hypothesis implies that the sequent \[ \sststile{}{} \varphi_\sigma[t_1'[a/x]/x_1, \ldots t_k'[a/x]/x_k] \] is derivable.
 Since the sequent $\sststile{}{} a = b$ is derivable, this implies that the required sequent $\sststile{}{} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is also derivable.
 
@@ -1172,8 +1254,8 @@ The previous proposition implies that the maps between theories with separated a
 This shows that if we are interested in a theory with separated axioms, then we can work with either minimal or maximal theory corresponding to it instead.
 In general, we prefer to work with the latter, but sometimes it is convenient to switch to the former.
 
-Note that relative $\I$-cell complexes are minimal theories with simple axioms.
-We can define another set $\I'$ of generating cofibrations such that relative $\I'$-cell complexes are maximal theories with simple axioms.
+Note that relative $\I$-cell complexes are minimal theories with separated axioms.
+We can define another set $\I'$ of generating cofibrations such that relative $\I'$-cell complexes are maximal theories with separated axioms.
 Recall that $T_{(p_1,n_1), \ldots (p_{k+1},n_{k+1})}$ is the theory with function symbols $\sigma_i : (p_1,n_1) \times \ldots \times (p_{i-1},n_{i-1}) \to (d_{p_i},n_i)$ for every $1 \leq i \leq k$,
 $\sigma_{k+1} : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p_{k+1},n_{k+1})$, and axioms $\varphi_1 \land \ldots \land \varphi_i \sststile{}{x_1, \ldots x_i} \sigma_{i+1}(x_1, \ldots x_i)\!\downarrow$ for every $1 \leq i \leq k$,
 where $\varphi_j$ equals to $e_{p_j}(x_j) = \sigma_j(x_1, \ldots x_{j-1})$.
@@ -1204,13 +1286,13 @@ If $\Rightarrow_1$ and $\Rightarrow_2$ are some relations, then we will write $\
 $t \Rightarrow_1 \Rightarrow_2 t'$ if and only if there is a term $s$ such that $t \Rightarrow_1 s$ and $s \Rightarrow_2 t'$.
 \item An element $a$ \emph{reduces} to an element $a'$ if $a \Rightarrow^* a'$.
 A \emph{reduction sequence} is a finite or infinite sequence of elements $a_i$ such that $a_0 \Rightarrow a_1 \Rightarrow a_2 \Rightarrow \ldots$.
+\item Two elements $a$ and $b$ are \emph{$\Rightarrow$-equivalent} if there is a sequence of elements $a_1$, \ldots $a_n$ such that $a = a_1$, $b = a_n$,
+and, for every $1 \leq i < n$, either $a_i \Rightarrow a_{i+1}$ or $a_{i+1} \Rightarrow a_i$.
 \item Two elements $a$ and $b$ are \emph{joinable} if there is an element $c$ such that $a \Rightarrow^* c$ and $b \Rightarrow^* c$.
 We will also say that $a$ and $b$ are joinable under $\Rightarrow$ if the reduction relation is not clear from the context.
 An element $a$ is \emph{confluent} if whenever $a \Rightarrow^* b$ and $a \Rightarrow^* c$ the terms $b$ and $c$ are joinable.
 The system is confluent if every element is confluent.
-Equivalently, the system is confluent if every pair of elements is joinable.
-\item Two elements $a$ and $b$ are \emph{$\Rightarrow$-equivalent} if there is a sequence of elements $a_1$, \ldots $a_n$ such that $a = a_1$, $b = a_n$,
-and, for every $1 \leq i < n$, either $a_i \Rightarrow a_{i+1}$ or $a_{i+1} \Rightarrow a_i$.
+Equivalently, the system is confluent if every pair of $\Rightarrow$-equivalent elements is joinable.
 \item An element $a$ is a \emph{normal form} if there is no element $a'$ such that $a \Rightarrow a'$.
 We will write $a \Rightarrow^\nf b$ if $a \Rightarrow^* b$ and $b$ is a normal form.
 We will say that an element $a$ \emph{has a normal form} (or that it is \emph{weakly normalizable}) if $a \Rightarrow^\nf b$ for some $b$.
@@ -1222,7 +1304,7 @@ The system is \emph{strongly normalizing} if all elements are.
 
 A \emph{term rewriting system} is a binary relation $R$ on the set of terms of some theory such that the following conditions hold:
 \begin{enumerate}
-\item If $R(t,s)$, then $FV(s) \subseteq FV(t)$.
+\item If $R(t,s)$, then $\FV(s) \subseteq \FV(t)$.
 \item If $R(t,s)$, then $t$ is not a variable.
 \end{enumerate}
 A term rewriting system $R$ is \emph{left-linear} if, for every $t$ and $s$ such that $R(t,s)$, every variable occurs in $t$ at most once.
@@ -1232,7 +1314,7 @@ if $R(t,s)$, then $c[x \repl t[x_1 \repl t_1, \ldots x_k \repl t_k]] \Rightarrow
 Every term rewriting system has the underlying abstract reduction system $(\Term_T,\Rightarrow_R)$.
 
 We will say that a term $t$ of a theory $T$ is \emph{defined} with respect to a pair $(\varphi,V) \in P_M$ if the sequent $\varphi \sststile{}{V} t\!\downarrow$ is derivable.
-Let $\Term_{T,\varphi}^d$ be the set of defined terms with respect to the pair $(\varphi,FV(\varphi))$.
+Let $\Term_{T,\varphi}^d$ be the set of defined terms with respect to the pair $(\varphi,\FV(\varphi))$.
 There is an abstract reduction system $\Rightarrow_\varphi$ on the set $\Term_{T,\varphi}^d$ defined as follows.
 If $\varphi = \varphi_1 \land \ldots \land \varphi_n$ and $\varphi_i$ equals to $e_{p_i}(x_i) = t_i$, then $\Rightarrow_\varphi$ consists of pairs $(c[e_{p_i}(x_i)/y],c[t_i/y])$
 for every $1 \leq i \leq n$ and every term $c$ such that there is exactly one occurrence of $y$ in $c$.
@@ -1264,13 +1346,13 @@ Also, it is enough to prove condition~\eqref{it:dir-second} only for $c = x$ sin
 
 \begin{example}[dir-ax]
 Let $T$ be a theory with a set of axioms $\mathcal{A}_d$ and a term rewriting system $R$.
-If we define $\mathcal{A}_e$ as the set of axioms of the form $t\!\downarrow\ \sststile{}{FV(t)} t = s$ for every $(t,s) \in R$,
+If we define $\mathcal{A}_e$ as the set of axioms of the form $t\!\downarrow\ \sststile{}{\FV(t)} t = s$ for every $(t,s) \in R$,
 then $\Rightarrow_R \cup \Rightarrow_\varphi$ is a reduction system on $T \cup \mathcal{A}_e$.
 \end{example}
 
 Let $T$ be a theory with separated axioms such that, for every axiom $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$, the following conditions hold:
 \begin{itemize}
-\item The term $t$ is not a variable and $FV(s) \subseteq FV(t)$.
+\item The term $t$ is not a variable and $\FV(s) \subseteq \FV(t)$.
 \item For every pair $(\varphi,V) \in P_M$ and every substitution $\rho$, if $\varphi \sststile{T}{V} t[\rho]\!\downarrow$, then $\varphi \sststile{T}{V} t[\rho] = s[\rho]$.
 \end{itemize}
 Then we can define a term rewriting system $R$ as the set of pairs $(t,s)$ such that there is an axiom of the form $\psi \sststile{}{V'} t = s$ in $\mathcal{A}_e$.
@@ -1409,13 +1491,14 @@ One of the axioms (beta reduction) of this theory looks like this:
 If we replace this axiom with the following one, then we obtain a new theory which we will denote by $T_\Pi'$.
 \[ \app(A,B,\lambda(A,b),a)\!\downarrow\ \sststile{}{A,B,a,b} \app(A,B,\lambda(A,b),a) = b[a] \]
 
+The formula $\app(A,B,\lambda(A,b),a)\!\downarrow$ is equivalent to $\ft(B) = A \land \Pi(A,\ty(b)) = \Pi(A,B) \land \ty(a) = A$.
+Thus, $\ft(B) = A \land \ty(b) = B \land \ty(a) = A$ implies it, but not vice versa.
 We want to show that the obvious map $T_\Pi \to T_\Pi'$ is a Morita equivalence.
 It is a folklore result that the ordinary type theory with $\Pi$-types is confluent.
 This does not imply confluence of $T_\Pi'$ immediately since terms of this theory differ from terms of ordinary type theory.
 It is possible to prove confluence of $T_\Pi'$, but this proof is beyond the scope of this paper, so we will simply assume that $T_\Pi'$ is confluent.
 
 Let us show that the condition of \rprop{ext-morita} holds.
-Note that the formula $\app(A,B,\lambda(A,b),a)\!\downarrow$ is equivalent to $\ft(B) = A \land \Pi(A,\ty(b)) = \Pi(A,B) \land \ty(a) = A$.
 Suppose that $\varphi \sststile{}{V} \ft(B) = A \land \Pi(A,\ty(b)) = \Pi(A,B) \land \ty(a) = A$ is derivable in $T_\Pi'$.
 Since $T_\Pi'$ is confluent and there are no reductions of the form $\Pi(A,B) \Rightarrow t$, it follows that $\ty(b) \Rightarrow B$.
 Hence, $\varphi \sststile{}{V} \ty(b) = B$.
@@ -1440,7 +1523,7 @@ Then we have the following commutative diagram of theories:
               T_\Pi' \ar[r]         & T_\Pi'''
             } \]
 The top arrow is actually an isomorphism and we can prove that the two remaining arrows are Morita equivalences using \rprop{ext-morita} in the same way as we did this for the arrow $T_\Pi \to T_\Pi'$.
-Note that even theories $T_\Pi$ and $T_\Pi''$ are isomorphic they differ as theories with directed axioms.
+Note that even though theories $T_\Pi$ and $T_\Pi''$ are isomorphic they differ as theories with directed axioms.
 In particular, the underlying term rewriting systems of $T_\Pi$ and $T_\Pi''$ differ.
 The latter is left-linear and this is the main reason why we might be interested in this theory.
 \end{example}
@@ -1452,6 +1535,7 @@ Also, similar results can be proved for other theories such as the theory of $\S
 \subsection{Contractible types}
 \label{sec:contr}
 
+The notion of a contractible type was defined by Vladimir Voevodsky \cite{unimath}.
 The theory of the contractible type can be formulated in several different ways.
 In this subsection we will prove that some of them are Morita equivalent.
 The first theory that we will consider is the simplest definition of a contractible type:
@@ -1466,8 +1550,11 @@ The first theory that we will consider is the simplest definition of a contracti
 \end{center}
 We will denote this theory by $T_0$.
 
+\begin{prop}
 If a theory $T$ is under $T_I$, then $T \to T \amalg T_0$ is a Morita equivalence.
-Indeed, consider a theory $T'$ which extends $T$ with a type $\vdash C\ \type$, an equivalence $I \vdash e : C$ between $I$ and $C$, a term $\vdash c_0 : C$, and a homotopy $\vdash h : \Id(C, e[\leftI], c_0)$.
+\end{prop}
+\begin{proof}
+Consider a theory $T'$ which extends $T$ with a type $\vdash C\ \type$, an equivalence $I \vdash e : C$ between $I$ and $C$, a term $\vdash c_0 : C$, and a homotopy $\vdash h : \Id(C, e[\leftI], c_0)$.
 Since $C$ is equivalent to $I$ and $I$ is contractible, it follows that $C$ is also contractible.
 That is, there is a term $\Ceq'(c) : \Id(c_0, c)$ in $T'$.
 Let $T'' = T' \cup \{ \Ceq, h' \}$, where $\Ceq$ satisfies the same axiom as before and $h'$ satisfies the following axiom:
@@ -1482,10 +1569,11 @@ these maps are pushouts of the generating trivial cofibrations.
 The map $T' \to T''$ is also a trivial cofibration for the same reason.
 
 Finally, let us show that the map $T \to T \amalg T_0$ is a retract of $T \to T''$.
-The map $T_0 \to T''$ is defined in the obvious way and the map $f : T'' \to T_0$ is defined in such a way that it becomes a retraction of $T_0 \to T''$.
+The map $T_0 \to T''$ is defined in the obvious way and the map $f : T'' \to T_0 \amalg T$ is defined in such a way that $T \to T'' \xrightarrow{f} T_0 \amalg T$ equals to $T \to T \amalg T_0$.
 Since $C$ and $I$ are both contractible, we can define $f(e)$ simply as $I \vdash c_0 : C$ and $f(h)$ as $\vdash \refl(c_0) : \Id(C, c_0, c_0)$.
 Since $C$ is contractible, the type $\Id(\Id(C, c_0, c), \Ceq(c), f(\Ceq'(c)))$ is also contractible, so $f(h')$ can be defined as any inhabitant of this type.
 Since $T \to T \amalg T_0$ is a retract of $T \to T''$ and the latter map is a Morita equivalence, it follows that the former map is also a Morita equivalence.
+\end{proof}
 
 Next, we will consider the theory of the unit type which we will denote by $T_2$:
 \begin{center}
@@ -1497,15 +1585,8 @@ Next, we will consider the theory of the unit type which we will denote by $T_2$
 \UnaryInfC{$\Gamma \vdash t \deq \unit$}
 \DisplayProof
 \end{center}
-This theory is also can be considered as the theory of the contractible type.
+This theory is an extension of the theory of the contractible type by the equation $\Ceq(c) = \refl(c_0)$.
 Let us prove that $T \amalg T_0 \to T \amalg T_2$ is a Morita equivalence whenever $T \amalg T_2$ is confluent and satisfies some additional conditions.
-One of these conditions is that $T$ does not have any reduction rules between types.
-We believe that the argument below can be modified so that this condition is not needed, but then the proof becomes more complicated.
-In particular, this means that $T$ does not have the weak univalence axiom.
-This implies that we cannot prove that the map $T \to T \amalg T_2$ is a Morita equivalence.
-We know that the map $T \to T \amalg T_0$ is a Morita equivalence when $T$ has the weak univalence axioms and the map $T \amalg T_0 \to T \amalg T_2$ is a Morita equivalence when it does not,
-so we cannot conclude that their composition is a Morita equivalence.
-
 First, we need to give several definitions and prove a technical lemma.
 Let $t$ be a term of sort $(p,n)$, where $p \in \{ \ty, \tm \}$.
 We will say that $t$ is \emph{$\ft$-free} if function symbol $\ft$ does not occur in $t$.
@@ -1563,23 +1644,36 @@ This means that the parts of terms $q_1$ and $q_2$ without contexts coincide.
 Since the contexts of $q_1$ and $q_2$ are also the same, this implies that $q_1 = q_2$.
 \end{proof}
 
-Suppose that $T$ is a theory under $\coeT_1 + \sigma + \PathT$ with well-defined function symbols which satisfies the conditions of \rlem{context}.
-Then the first condition of \rlem{eq-char-fib} holds for the map $T \amalg T_0 \to T \amalg T_2$.
+Now, we are ready to formulate the main proposition of this section:
+\begin{prop}[contr-main]
+Let $T$ be a theory under $\coeT_1 + \sigma + \PathT$ with well-defined function symbols which satisfies the conditions of \rlem{context}.
+Suppose that $T \amalg T_2$ is confluent and generated by a term rewriting system as described in \rremark{trs-theory}.
+Moreover, assume that, for every reduction rule $(t_1,t_2)$ in this system, if $t_i[s_1, \ldots s_k]$ contains a proper subterm of type $C$, then it is a subterm of $s_j$ for some $j$.
+\end{prop}
+
+\begin{remark}
+Conditions of \rprop{contr-main} are technical assumptions that hold in many theories that occur in practice.
+\end{remark}
+
+\begin{proof}
+Clearly, the first condition of \rlem{eq-char-fib} holds for the map $T \amalg T_0 \to T \amalg T_2$.
 Thus, to prove that it is a Morita equivalence, it is enough to check that it satisfies the condition of \rlem{char-type-fib}.
 That is, we need to prove that, for every pair $(\varphi,V) \in P_M$ and every pair of types $\Gamma \vdash A\ \type$ and $\Gamma \vdash B\ \type$ in $T \amalg T_0$ such that $f(\Gamma) \vdash f(A) \deq f(B)$ is provable in $T \amalg T_0 \cup \varphi$,
 there exists a term $\Gamma, A \vdash b : B$ such that $f(\Gamma), f(A) \vdash f(b) \deq v_0$.
-Suppose that $T \amalg T_2$ is confluent.
-By \rlem{context}, it is enough to prove the following facts:
+It is enough to prove facts \eqref{it:contr-first} and \eqref{it:contr-second} below.
+Indeed, since $T \amalg T_2$ is confluent $f(A)$ and $f(B)$ are joinable under $\Rightarrow_{T \amalg T_2, f(\varphi)}^c$ by \rlem{context}.
+It follows that they are joinable under relation $\Rightarrow_{T \amalg T_2, f(\varphi)}^{cp}$ (see \eqref{it:contr-first}).
+Thus, we can define $b$ as composition of terms $a_1$, $a_2$, and $b'$ defined below.
 \begin{enumerate}
 \item \label{it:contr-first} There is a confluent subset $\Rightarrow_{T \amalg T_2, f(\varphi)}^{cp}$ of $\Rightarrow_{T \amalg T_2, f(\varphi)}^c$ such that its transitive closure is $\Rightarrow_{T \amalg T_2, f(\varphi)}^c$ and,
-for every type $\Gamma \vdash A\ \type$ of $T \amalg T_0$, if $f(A) \Rightarrow_{T \amalg T_2, f(\varphi)}^{cp} A'$, then there exists terms $A''$, $a_1$, and $a_2$ such that $f(A'') = A'$ and the following sequents are derivable:
+for every type $\Gamma \vdash A\ \type$ of $T \amalg T_0$, if $f(A) \Rightarrow_{T \amalg T_2, f(\varphi)}^{cp} A'$, then there exist terms $A''$, $a_1$, and $a_2$ such that $f(A'') = A'$ and the following sequents are derivable:
 \begin{align*}
 \Gamma, A & \vdash a_1 : A'' \\
 \Gamma, A'' & \vdash a_2 : A \\
 f(\Gamma), f(A) & \vdash f(a_1) \deq v_0 \\
 f(\Gamma), f(A'') & \vdash f(a_2) \deq v_0
 \end{align*}
-\item \label{it:contr-second} For every pair of types $\Gamma \vdash A\ \type$ and $\Gamma \vdash B\ \type$ such that $f(A) = f(B)$, there exists a term $\Gamma, A \vdash b : B$ such that $f(\Gamma), f(A) \vdash f(b) \deq v_0$.
+\item \label{it:contr-second} For every pair of types $\Gamma \vdash A'\ \type$ and $\Gamma \vdash B'\ \type$ such that $f(A') = f(B')$, there exists a term $\Gamma, A' \vdash b' : B'$ such that $f(\Gamma), f(A') \vdash f(b') \deq v_0$.
 \end{enumerate}
 
 It is easy to see that \eqref{it:contr-second} holds since $f$ is almost injective.
@@ -1596,12 +1690,12 @@ If $a = b = v_i$ and $i \geq n$, then $h_n(a,b) = v_{i+1}$.
 If $a = \subst_{p,m,k}(a', a_1, \ldots a_k)$ and $b = \subst_{p,m,k}(b', b_1, \ldots b_k)$, then $h_n(a,b) = \subst_{p,m+1,k}(h_k(a',b'), v_n, h_n(a_1,b_1), \ldots h_n(a_k,b_k))$.
 The only function symbols that are identified by $f$ are $\Ceq$ and $\refl$.
 Thus the remaining case is when $a = \Ceq(c)$ and $b = \refl(c')$.
-In this case $c = c' = c_0$ since $\Ceq(c)$ maps to $\refl(\unit)$ and the only function symbol that maps to $\unit$ is $c_0$.
+In this case $c = c' = c_0$ since $\Ceq(c)$ is mapped to $\refl(\unit)$ and the only function symbol which is mapped to $\unit$ is $c_0$.
 Let $\Delta = \ctx(h_n(c_0,c_0))$.
 It is easy to construct a term $\Delta \vdash p : \Id(\Id(C,c_0,c_0),\Ceq(c_0),\refl(c_0))$ since $C$ is contractible.
 Thus we can define $h_n(a,b)$ as $\at(p,i)$.
 
-Now let us prove \eqref{it:contr-first}.
+Now, let us prove \eqref{it:contr-first}.
 Let $\Gamma \vdash A\ \type$ be a type of $T \amalg T_0$ such that $f(A) \Rightarrow_{T \amalg T_2, f(\varphi)}^c A'$.
 We will prove that there is a type $\Gamma \vdash A''\ \type$ such that $f(A'') = A'$ and a homotopy $\Gamma, i : I \vdash H \type$ between $A$ and $A''$ such that $f(H)$ is the constant homotopy.
 
@@ -1615,18 +1709,23 @@ If $t = \sigma_m(t_1, \ldots t_k)$, then $h_n(t) = \sigma_{m+1}(h_n(t_1), \ldots
 If $t = \subst_{p,m,k}(t, t_1, \ldots t_k)$, then $h_n(t) = \subst_{p,m+1,k+1}(h_k(t), v_n, h_n(t_1), \ldots h_n(t_k))$.
 
 Suppose that $\varphi \sststile{T \amalg T_0}{V} t\!\downarrow$.
-Then we can prove by induction on $t$ that $\varphi \sststile{T \amalg T_0}{V} g_n(t)\!\downarrow \land h_n(t)\!\downarrow$.
-If $\Gamma, \Delta \vdash t : C$, $t = x$, or $t = v_i$, then it is obvious.
+Then we can prove that $\varphi \sststile{T \amalg T_0}{V} g_n(t)\!\downarrow \land h_n(t)\!\downarrow$.
+To do this, we define a well-founded relation on the set of terms.
+We will say that $t[t_1/x_1, ... t_n/x_n] < \sigma_m(t_1, ... t_n)$ if $t_1$, ... $t_n$ are arbitrary terms and $\sigma_m$ is greater than every function symbol that occurs in $t$.
+It can be shown that this relation is well-founded.
+Note that every term is greater than its subterms.
+If $\Gamma, \Delta \vdash t : C$, $t = x$, or $t = v_i$, then $t$ is always defined.
 Let us consider the case $t = \sigma_m(t_1, \ldots t_k)$
 If $t = \subst_{p,m,k}(t, t_1, \ldots t_k)$, then a similar argument applies, so we omit this case.
 We also prove this only for $g_n$, the proof for $h_n$ is similar.
 
-Since $T \amalg T_0$ has well-defined function symbols, there exist terms $A_1, \ldots A_k$ satisfying several conditions including the following one:
+Since $T \amalg T_0$ has well-defined function symbols, there exist terms $A_1, \ldots A_k$ such that all function symbols that occur in $A_i$ are less than $\sigma_m$ and the following condition is satisfied:
 \[ \bigwedge_{1 \leq i \leq k} e_{p_i}(x_i) = A_i \ssststile{T}{x_1, \ldots x_k} \sigma_m(x_1, \ldots x_k)\!\downarrow \]
 For every such $A_i$ and for all terms $t_1$, \ldots $t_{i-1}$, terms $g_n(A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}])$ and $A_i[g_n(t_1)/x_1, \ldots g_n(t_{i-1})/x_{i-1}]$ are equivalent.
 This is true because $A_i$ cannot have nontrivial terms of type $C$.
 Thus, to prove that $\sigma_m(g_n(t_1), \ldots g_n(t_k))$ is defined, it is enough to prove that terms $g_n(A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}])$ and $g_n(e_{p_i}(t_i))$ are equivalent.
-By the induction hypothesis, these terms are defined.
+The first term is defined by induction hypothesis.
+Since $g_n(e_{p_i}(t_i)) = e_{p_i}(g_n(t_i))$, the second term is also defined by induction hypothesis.
 Moreover, terms $A_i[t_1/x_1, \ldots t_{i-1}/x_{i-1}]$ and $e_{p_i}(t_i)$ are equivalent.
 Since the theory is confluent, this implies that they reduce to the same term.
 \Rlem{context} implies that this is also true for the reduction system $\Rightarrow_{T \amalg T_0, \varphi}^c$
@@ -1637,18 +1736,13 @@ then this redex is either in a subterm of $t$ of type $C$ or not.
 In the former case, $g_n(t) = g_n(s)$.
 In the latter case, it is easy to see that $g_n(t) \Rightarrow_{T \amalg T_0, \varphi}^{c*} g_n(s)$.
 Assume that $t \Rightarrow_{T \amalg T_0, \varphi}^0 s$.
-Relation $\Rightarrow_{T \amalg T_0, \varphi}^0$ depends on the theory and we cannot prove that $t \Rightarrow_{T \amalg T_0, \varphi}^c s$ in general,
-but this is true if $T$ satisfies some mild additional hypothesis.
-For example, if $T$ is defined in terms of a term rewriting system $R_T$ as in \rremark{trs-theory}, then we just need to assume that, for every reduction rule $(t,s) \in R_T$,
-the only subterms of $t$ and $s$ of type $C$ are variables.
-This is true for all theories that occur in practice.
+If the reduction is coming from $T$, then $g_n(t) \Rightarrow_{T \amalg T_0, \varphi}^c g_n(s)$ by the last assumption of \rprop{contr-main}.
 The only problem is reduction rules of the form $e_p(x) \Rightarrow_\varphi A$ since terms $A$ may contain subterms of type $C$.
 Let us assume that the only subterms of $\varphi$ of type $C$ are $c_0$.
 
-Now, we can finally prove \eqref{it:contr-first}.
 Let $\Rightarrow_{T \amalg T_2, f(\varphi)}^{cp}$ be the subset of $\Rightarrow_{T \amalg T_2, f(\varphi)}^{c*}$ which consists of the same reductions as $\Rightarrow_{T \amalg T_2, f(\varphi)}^c$
 except for the reduction $t \Rightarrow_{T \amalg T_2, f(\varphi)} \unit$.
-Instead, $t \Rightarrow_{T \amalg T_2, f(\varphi)}^{cp} s$ is true when all subterms of $t$ of type $\top$ are replaced with $\unit$.
+Instead, we let $t \Rightarrow_{T \amalg T_2, f(\varphi)}^{cp} s$ whenever all subterms of $t$ of type $\top$ are replaced with $\unit$ in $s$.
 In this case the condition of \eqref{it:contr-first} holds since we can take $A'' = g_n(t)$, $a_2 = \coe^l_0(h_n(t), v_0)$, and $a_1 = \coe^l_2(h_n(t), \rightI, v_0, \leftI)$.
 If $t \Rightarrow_{T \amalg T_2, f(\varphi)}^{cp} s$ is an ordinary reduction from $\Rightarrow_{T \amalg T_2, f(\varphi)}^c$, then the condition of \eqref{it:contr-first} holds strictly,
 that is there is a term $A''$ such that $t \Rightarrow_{T \amalg T_0, \varphi} A''$.
@@ -1686,6 +1780,7 @@ Note that
 \[ H' = B[H(i)/x_j, a_{j+1}'(i)/x_{j+1}, \ldots a_n'(i)/x_n] \]
 is a homotopy between $B$ and $B'[a_j/x_j', \ldots a_n/x_n']$ which is constant in $T \amalg T_2$.
 Thus $\coe^l_2(H',\rightI,b'',\leftI)$ is the required lifting of $b$.
+\end{proof}
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -1707,9 +1802,12 @@ First of all, the existence of a model structure implies that Morita equivalence
 We do not know whether this is true for all type theories.
 Another useful consequence is that a Morita equivalence which is a cofibrations is always a homotopy equivalence since all objects are fibrant in this model structure.
 
-A map between arbitrary type theories can always be factored into a cofibration followed by a trivial fibration using the small object argument,
+There is a very explicit description of generating trivial cofibrations in the category of type theories.
+This means that a map between arbitrary type theories can always be factored into a cofibration followed by a trivial fibration using the small object argument even if we don't have the model structure
+(in the absence of the module structure, the trivial cofibration/fibration factorization is not that useful since we cannot even show that trivial cofibrations are Morita equivalences).
 and we believe it is often possible to construct such a factorization explicitly.
 In general, a Morita equivalence which is a cofibration may not be a homotopy equivalence, but we believe it is often the case.
+For example, this is always true for theories with the interval type since then we have a model structure in which all objects are fibrant.
 This leaves us with the question of how to prove that a map is a trivial fibration.
 Section~\ref{sec:triv-fib} is devoted to this question.
 
@@ -1723,7 +1821,7 @@ Suppose that we have a reduction $t[a/x] \Rightarrow_{T_2,\varphi} t[b/x]$, wher
 To prove \eqref{it:contr-first}, we need to find a term $s$ of $T_1$ such that $f(s) = t[b/x]$.
 Since $T_1$ and $T_2$ have the same function symbols, this means that $s$ must be equal to $t[b/x]$.
 The problem is that this term may not be defined in $T_1$.
-For example, if $t = \sigma(x,a,\refl(a)$, where $\sigma(x,y,p)$ is defined if $p : \Id(A,x,y)$, then $t[a/x]$ is defined in $T_1$, but $t[b/x]$ is not.
+For example, if $t = \sigma(x,a,\refl(a))$, where $\sigma(x,y,p)$ is defined if $p : \Id(A,x,y)$, then $t[a/x]$ is defined in $T_1$, but $t[b/x]$ is not.
 
 We solved this problem in subsection~\ref{sec:contr} by replacing all occurrences of $a$ in the term that we are reducing.
 This solution also has a problem.
@@ -1750,7 +1848,7 @@ Similar construction can be used in the more general case of the reduction $t[a/
 Terms $t'$ and $t[b/x]$ are equivalent in $T_2$, but they are not equal.
 Thus we have to modify condition \eqref{it:contr-first} so that we can construct a term in $T_1$ which is not necessarily equal to $t[b/x]$ in $T_2$, but still is sufficiently close to it.
 More specifically, $t'$ may contain additional applications of $\coe_0(i.\,A,-)$ inserted in $t[b/x]$ such that $A$ is a trivial homotopy in $T_2$.
-To apply this method, we need to solve to problems.
+To apply this method, we need to solve two problems.
 The first one is that the term in $T_1$ does not match a term in $T_2$ strictly, so it might be more difficult to construct a homotopy in $T_1$ corresponding to a reduction rule of $T_2$.
 The second problem is that we need to modify \eqref{it:contr-second} accordingly and it seems that this problem is more serious.
 
