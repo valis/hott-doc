@@ -270,7 +270,7 @@ A many sorted first-order signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ cons
 a set $\mathcal{F}$ of function symbols and a set $\mathcal{P}$ of predicate symbols.
 Each function symbol $\sigma$ is equipped with a signature of the form $\sigma : s_1 \times \ldots \times s_k \to s$, where $s_1$, \ldots $s_k$, $s$ are sorts.
 Each predicate symbol $R$ is equipped with a signature of the form $R : s_1 \times \ldots \times s_k$.
-If $V$ is an $\mathcal{S}$-set, then the $\mathcal{S}$-set of terms of $\mathbb{T}$ with free variables in $V$ will be denoted by $\Term_\mathbb{T}(V)$.
+If $V$ is an $\mathcal{S}$-set, then the $\mathcal{S}$-set of terms of $T$ with free variables in $V$ will be denoted by $\Term_T(V)$.
 
 An atomic formula is an expression either of the form $t_1 = t_2$ or of the form $R(t_1, \ldots t_n)$,
 where $R$ is a predicate symbol and $t_1$, \ldots $t_n$ are terms.
@@ -284,13 +284,13 @@ A \emph{partial Horn theory} consists of a signature and a set of Horn sequents 
 An $\mathcal{S}$-set $M$ is a collection of sets $\{ M_s \}_{s \in \mathcal{S}}$.
 An interpretation $M$ of a signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ is an $\mathcal{S}$-set $M$
 together with a collection of \emph{partial} functions $M(\sigma) : M_{s_1} \times \ldots \times M_{s_k} \to M_s$
-for every function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ of $\mathbb{T}$
+for every function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ of $T$
 and relations $M(R) \subseteq M_{s_1} \times \ldots \times M_{s_k}$ for every predicate symbol $R : s_1 \times \ldots \times s_k$.
-A model of a partial Horn theory $\mathbb{T}$ is an interpretation of the underlying signature such that the axioms of $\mathbb{T}$ hold in this interpretation.
-The category of models of $\mathbb{T}$ will be denoted by $\Mod{\mathbb{T}}$.
+A model of a partial Horn theory $T$ is an interpretation of the underlying signature such that the axioms of $T$ hold in this interpretation.
+The category of models of $T$ will be denoted by $\Mod{T}$.
 
 The rules of \emph{partial Horn logic} are listed below.
-A \emph{theorem} of a partial Horn theory $\mathbb{T}$ is a sequent derivable from $\mathbb{T}$ in this logic.
+A \emph{theorem} of a partial Horn theory $T$ is a sequent derivable from $T$ in this logic.
 We will write $\varphi \sststile{T}{V} \psi$ to denote the fact that sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$.
 \begin{center}
 $\varphi \sststile{}{V} \varphi$ \axlabel{b1}
@@ -443,7 +443,7 @@ This functor has a right adjoint $\Syn : T/\Th_\mathcal{S} \to \Mod{T}$.
 The model $\Syn(T')$ is defined as the syntactic model of the theory $T'$.
 The precise definition of these functors is given in \cite[Section~4.1]{alg-models}.
 
-An \emph{algebraic dependent type theory} is a theory with $\{ \ctx, \tm \} \times \mathbb{N}$ as the set of sorts that contains function symbols given below and axioms listed in \cite[Section~3.1]{alg-tt}.
+The \emph{theory of substitutions} is the theory with $\mathcal{S} = \{ \ctx, \tm \} \times \mathbb{N}$ as the set of sorts, function symbols given below, and axioms listed in \cite[Section~3.1]{alg-tt}.
 \begin{align*}
 \emptyCtx      & : (\ctx,0) \\
 \ft_n          & : (\ty,n) \to (\ctx,n) \\
@@ -470,6 +470,20 @@ We let $\ft^i_n : (\ctx,n+i) \to (\ctx,n)$ and $\ctx_{p,n} : (p,n) \to (\ctx,n)$
 \ctx_{\tm,n}(t) & = \ft_n(\ty_n(t))
 \end{align*}
 We also write $(\ty,n)$ for $(\ctx,n+1)$.
+
+Let $\mathcal{F}_0$ be a set of function symbols and let $\mathcal{P}_0$ be a set of predicate symbols.
+We call elements of these sets basic function symbols and basic predicate symbols, respectively.
+Then we define the full sets of function and predicate symbols:
+\begin{align*}
+\mathcal{F} = \{ & \sigma_m : (\ctx,m) \times (p_1,m+n_1) \times \ldots \times (p_k,m+n_k) \to (p,m+n) \mid \\
+                 & m \in \mathbb{N}, \sigma \in \mathcal{F}_0, \sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \} \\
+\mathcal{P} = \{ & R_m : (\ctx,m) \times (p_1,m+n_1) \times \ldots \times (p_k,m+n_k) \mid \\
+                 & m \in \mathbb{N}, R \in \mathcal{P}_0, R : (p_1,n_1) \times \ldots \times (p_k,n_k) \}
+\end{align*}
+
+An \emph{algebraic dependent type theory} is a theory of the form $(\mathcal{S}, \mathcal{F}_s \cup \mathcal{F}, \mathcal{P}, \mathcal{A}_s \cup \mathcal{A})$, where $\mathcal{S}$, $\mathcal{F}$, and $\mathcal{P}$ are defined above,
+$\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $\mathcal{A}_s$ is the set of its axioms, and $\mathcal{A}$ is an arbitrary set of axioms.
+Moreover, such a theory must satisfy the condition given in \cite[Definition~4.5]{alg-tt}, which just says that $\subst$ commutes with all function symbols.
 
 We will also use the theory defined in \cite{alg-models}, which we denote by $\coeT_1 + \sigma + \PathT + \wUA$.
 This theory has an interval type $I$ with two constructors $left$ and $right$ and an eliminator $\coe$, which is just the eliminator for the unit type.

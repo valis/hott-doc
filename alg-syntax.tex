@@ -1,0 +1,210 @@
+\documentclass[reqno]{amsart}
+
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage[all]{xy}
+\usepackage{verbatim}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage{bussproofs}
+\usepackage{turnstile}
+\usepackage{etex}
+
+\hypersetup{colorlinks=true,linkcolor=blue}
+
+\newcommand{\axlabel}[1]{(#1) \phantomsection \label{ax:#1}}
+\newcommand{\axtag}[1]{\label{ax:#1} \tag{#1}}
+\newcommand{\axref}[1]{(\hyperref[ax:#1]{#1})}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname n#2\endcsname[1]{\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{Theorem}{Theorem}
+\newref{lem}{Lemma}{Lemma}
+\newref{prop}{Proposition}{Proposition}
+\newref{cor}{Corollary}{Corollary}
+\newref{cond}{Condition}{Condition}
+
+\theoremstyle{definition}
+\newref{defn}{Definition}{Definition}
+\newref{example}{Example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{Remark}{Remark}
+
+\newcommand{\fs}[1]{\mathrm{#1}}
+\newcommand{\Term}{\fs{Term}}
+\newcommand{\FV}{\fs{FV}}
+\newcommand{\subst}{\fs{subst}}
+\newcommand{\Id}{\fs{Id}}
+\newcommand{\refl}{\fs{refl}}
+\newcommand{\El}{\fs{El}}
+\newcommand{\emptyCtx}{\mathbf{1}}
+\newcommand{\ft}{\fs{ft}}
+\newcommand{\ty}{\fs{ty}}
+\newcommand{\ctx}{\fs{ctx}}
+\newcommand{\tm}{\fs{tm}}
+
+\newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\Th}{\cat{Th}}
+
+\numberwithin{figure}{section}
+
+\newcommand{\pb}[1][dr]{\save*!/#1-1.2pc/#1:(-1,1)@^{|-}\restore}
+\newcommand{\po}[1][dr]{\save*!/#1+1.2pc/#1:(1,-1)@^{|-}\restore}
+
+\begin{document}
+
+\title{Syntax of Algebraic Dependent Type Theories}
+
+\author{Valery Isaev}
+
+\begin{abstract}
+TODO
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+TODO
+
+\section{Syntax}
+
+In this section, we define a syntax for algebraic dependent type theories which is closer to the usual presentation.
+
+\subsection{Preliminaries}
+
+Let us recall definitions from \cite{PHL} and \cite{alg-tt}.
+A many sorted first-order signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ consists of a set $\mathcal{S}$ of sorts,
+a set $\mathcal{F}$ of function symbols and a set $\mathcal{P}$ of predicate symbols.
+Each function symbol $\sigma$ is equipped with a signature of the form $\sigma : s_1 \times \ldots \times s_k \to s$, where $s_1$, \ldots $s_k$, $s$ are sorts.
+Each predicate symbol $R$ is equipped with a signature of the form $R : s_1 \times \ldots \times s_k$.
+If $V$ is an $\mathcal{S}$-set, then the $\mathcal{S}$-set of terms of $T$ with free variables in $V$ will be denoted by $\Term^e_T(V)$.
+
+An atomic formula is an expression either of the form $t_1 = t_2$ or of the form $R(t_1, \ldots t_n)$,
+where $R$ is a predicate symbol and $t_1$, \ldots $t_n$ are terms.
+We abbreviate $t = t$ to $t\!\downarrow$.
+A Horn formula is an expression of the form $\varphi_1 \land \ldots \land \varphi_n$, where $\varphi_1$, \ldots $\varphi_n$ are atomic formulas.
+The conjunction of the empty set of atomic formulas is denoted by $\top$.
+A sequent is an expression of the form $\varphi \sststile{}{x_1, \ldots x_n} \psi$, where $x_1$, \ldots $x_n$ are variables
+and $\varphi$ and $\psi$ are Horn formulas such that $\FV(\varphi) \cup \FV(\psi) \subseteq \{ x_1, \ldots x_n \}$.
+A \emph{partial Horn theory} consists of a signature and a set of Horn sequents in this signature.
+
+The rules of \emph{partial Horn logic} are listed below.
+A \emph{theorem} of a partial Horn theory $T$ is a sequent derivable from $T$ in this logic.
+We will write $\varphi \sststile{T}{V} \psi$ to denote the fact that sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$.
+
+\begin{center}
+\AxiomC{}
+\RightLabel{\axlabel{nv}}
+\UnaryInfC{$\varphi \sststile{}{V} x\!\downarrow$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} a = b$}
+\RightLabel{\axlabel{ns}}
+\UnaryInfC{$\varphi \sststile{}{V} b = a$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\AxiomC{}
+\RightLabel{\axlabel{nh}}
+\UnaryInfC{$\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \varphi_i$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} a = b$}
+\AxiomC{$\varphi \sststile{}{V} \psi[a/x]$}
+\RightLabel{\axlabel{nl}}
+\BinaryInfC{$\varphi \sststile{}{V} \psi[b/x]$}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} R(t_1, \ldots t_n)$}
+\RightLabel{\axlabel{np}}
+\UnaryInfC{$\varphi \sststile{}{V} t_i\!\downarrow$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \sigma(t_1, \ldots t_n)\!\downarrow$}
+\RightLabel{\axlabel{nf}}
+\UnaryInfC{$\varphi \sststile{}{V} t_i\!\downarrow$}
+\DisplayProof
+\end{center}
+where $R$ is a predicate symbol of the theory and $\sigma$ is its function symbol.
+
+Finally, for every axiom $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k} \chi_1 \land \ldots \land \chi_m$
+and for all terms $t_1 : s_1$, \ldots $t_k : s_k$, we have the following rules for all $1 \leq j \leq m$:
+\smallskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} t_i\!\downarrow$, $1 \leq i \leq k$}
+\AxiomC{$\varphi \sststile{}{V} \psi_i[t_1/x_1, \ldots t_k/x_k]$, $1 \leq i \leq n$}
+\RightLabel{\axlabel{na}}
+\BinaryInfC{$\varphi \sststile{}{V} \chi_j[t_1/x_1, \ldots t_k/x_k]$}
+\DisplayProof
+\end{center}
+
+The \emph{theory of substitutions} is the theory with $\mathcal{S} = \{ \ctx, \tm \} \times \mathbb{N}$ as the set of sorts, function symbols given below, and axioms listed in \cite[Section~3.1]{alg-tt}.
+\begin{align*}
+\emptyCtx      & : (\ctx,0) \\
+\ft_n          & : (\ty,n) \to (\ctx,n) \\
+\ty_n          & : (\tm,n) \to (\ty,n) \\
+v_{n,i}        & : (\ctx,n) \to (\tm,n) \text{, } 0 \leq i < n \\
+\subst_{p,n,k} & : (\ctx,n) \times (p,k) \times (\tm,n)^k \to (p,n) \text{, } p \in \{ \tm, \ty \}
+\end{align*}
+We write $(\ty,n)$ for $(\ctx,n+1)$.
+
+Let $\mathcal{F}_0$ be a set of function symbols and let $\mathcal{P}_0$ be a set of predicate symbols.
+We call elements of these sets basic function symbols and basic predicate symbols, respectively.
+Then we define the full sets of function and predicate symbols:
+\begin{align*}
+\mathcal{F} = \{ & \sigma_m : (\ctx,m) \times (p_1,m+n_1) \times \ldots \times (p_k,m+n_k) \to (p,m+n) \mid \\
+                 & m \in \mathbb{N}, \sigma \in \mathcal{F}_0, \sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n) \} \\
+\mathcal{P} = \{ & R_m : (\ctx,m) \times (p_1,m+n_1) \times \ldots \times (p_k,m+n_k) \mid \\
+                 & m \in \mathbb{N}, R \in \mathcal{P}_0, R : (p_1,n_1) \times \ldots \times (p_k,n_k) \}
+\end{align*}
+
+An \emph{algebraic dependent type theory} is a theory of the form $(\mathcal{S}, \mathcal{F}_s \cup \mathcal{F}, \mathcal{P}, \mathcal{A}_s \cup \mathcal{A})$, where $\mathcal{S}$, $\mathcal{F}$, and $\mathcal{P}$ are defined above,
+$\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $\mathcal{A}_s$ is the set of its axioms, and $\mathcal{A}$ is an arbitrary set of axioms.
+Note that \cite[Definition~4.5]{alg-tt} has an additional condition which just says that $\subst$ commutes with all function symbols, but we do not assume this condition in general.
+Theories satisfying it will be called \emph{regular}.
+
+\subsection{Contexts}
+
+The syntax we described in the previous subection is too verbose.
+We can make it closer to the usual presentation of type theories by removing some redundant information.
+We define another $\mathcal{S}$-set of terms $\Term_T(V)$ of a theory $T$ inductively as follows:
+\begin{itemize}
+\item Every element of $V_s$ is a term of sort $s$.
+\item If $t$ is a term of sort $(\tm,n)$, then $\ty(t)$ is a term of sort $(\ty,n)$.
+\item $v_i$ is a term of sort $(\tm,n)$ for every $0 \leq i < n$.
+\item If $t$ is a term of sort $(p,k)$, where $p \in \{ \ty, \tm \}$, and $t_1, \ldots t_k$ are terms of sort $(\tm,n)$, then $\subst(t, t_1, \ldots t_k)$ is a term of sort $(p,n)$.
+\item If $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ is a basic function symbol of $T$ and $t_i$ is a term of sort $(p_i,n_i)$, then $\sigma(t_1, \ldots t_k)$ is a term of sort $(p,n)$.
+\end{itemize}
+
+Thus, these terms define a syntax, called the \emph{$\ft$-free syntax}, which has metavariables (elements of $V$), de Bruijn indices ($v_i$), explicit substitutions ($\subst$), and constructions depending on the theory (basic function symbols).
+We also have an explicit typing operation ($\ty$).
+We will see in section~\ref{sec:types} that it is possible to get rid of it too, but this makes the theory more awkward to work with.
+
+\subsection{Types}
+\label{sec:types}
+
+\section{Examples}
+
+\section{Strong normalization}
+
+\section{Confluence}
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
