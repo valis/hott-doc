@@ -467,7 +467,8 @@ We let $\ft^i_n : (\ctx,n+i) \to (\ctx,n)$ and $\ctx_{p,n} : (p,n) \to (\ctx,n)$
 \ft^0_n(A)      & = A \\
 \ft^{i+1}_n(A)  & = \ft^i_n(\ft_{n+i}(A)) \\
 \ctx_{\ty,n}(t) & = \ft_n(t) \\
-\ctx_{\tm,n}(t) & = \ft_n(\ty_n(t))
+\ctx_{\tm,n}(t) & = \ft_n(\ty_n(t)) \\
+\ctx^i_{p,n}(t) & = \ft^i_n(\ctx_{p,n+i}(t))
 \end{align*}
 We also write $(\ty,n)$ for $(\ctx,n+1)$.
 
@@ -482,7 +483,12 @@ Then we define the full sets of function and predicate symbols:
 \end{align*}
 
 An \emph{algebraic dependent type theory} is a theory of the form $(\mathcal{S}, \mathcal{F}_s \cup \mathcal{F}, \mathcal{P}, \mathcal{A}_s \cup \mathcal{A})$, where $\mathcal{S}$, $\mathcal{F}$, and $\mathcal{P}$ are defined above,
-$\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $\mathcal{A}_s$ is the set of its axioms, and $\mathcal{A}$ is an arbitrary set of axioms.
+$\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $\mathcal{A}_s$ is the set of its axioms, and $\mathcal{A}$ is an arbitrary set of axioms such that the following sequents are derivable for every $\sigma_m \in \mathcal{F}$ and $R_m \in \mathcal{P}$:
+\begin{align*}
+\sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \ctx^n_{p,m}(\sigma_m(\Gamma, x_1, \ldots x_k)) = \Gamma \\
+\sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ctx^{n_i}_{p_i,m}(x_i) = \Gamma \\
+R_m(\Gamma, x_1, \ldots x_k) & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ctx^{n_i}_{p_i,m}(x_i) = \Gamma
+\end{align*}
 Moreover, such a theory must satisfy the condition given in \cite[Definition~4.5]{alg-tt}, which just says that $\subst$ commutes with all function symbols.
 
 We will also use the theory defined in \cite{alg-models}, which we denote by $\coeT_1 + \sigma + \PathT + \wUA$.

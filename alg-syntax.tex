@@ -13,6 +13,67 @@
 
 \hypersetup{colorlinks=true,linkcolor=blue}
 
+\renewcommand{\turnstile}[6][s]
+    {\ifthenelse{\equal{#1}{d}}
+        {\sbox{\first}{$\displaystyle{#4}$}
+        \sbox{\second}{$\displaystyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{t}}
+        {\sbox{\first}{$\textstyle{#4}$}
+        \sbox{\second}{$\textstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{s}}
+        {\sbox{\first}{$\scriptstyle{#4}$}
+        \sbox{\second}{$\scriptstyle{#5}$}}{}
+    \ifthenelse{\equal{#1}{ss}}
+        {\sbox{\first}{$\scriptscriptstyle{#4}$}
+        \sbox{\second}{$\scriptscriptstyle{#5}$}}{}
+    \setlength{\dashthickness}{0.111ex}
+    \setlength{\ddashthickness}{0.35ex}
+    \setlength{\leasturnstilewidth}{2em}
+    \setlength{\extrawidth}{0.2em}
+    \ifthenelse{%
+      \equal{#3}{n}}{\setlength{\tinyverdistance}{0ex}}{}
+    \ifthenelse{%
+      \equal{#3}{s}}{\setlength{\tinyverdistance}{0.5\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{d}}{\setlength{\tinyverdistance}{0.5\ddashthickness}
+        \addtolength{\tinyverdistance}{\dashthickness}}{}
+    \ifthenelse{%
+      \equal{#3}{t}}{\setlength{\tinyverdistance}{1.5\dashthickness}
+        \addtolength{\tinyverdistance}{\ddashthickness}}{}
+        \setlength{\verdistance}{0.4ex}
+        \settoheight{\lengthvar}{\usebox{\first}}
+        \setlength{\raisedown}{-\lengthvar}
+        \addtolength{\raisedown}{-\tinyverdistance}
+        \addtolength{\raisedown}{-\verdistance}
+        \settodepth{\raiseup}{\usebox{\second}}
+        \addtolength{\raiseup}{\tinyverdistance}
+        \addtolength{\raiseup}{\verdistance}
+        \setlength{\lift}{0.8ex}
+        \settowidth{\firstwidth}{\usebox{\first}}
+        \settowidth{\secondwidth}{\usebox{\second}}
+        \ifthenelse{\lengthtest{\firstwidth = 0ex}
+            \and
+            \lengthtest{\secondwidth = 0ex}}
+                {\setlength{\turnstilewidth}{\leasturnstilewidth}}
+                {\setlength{\turnstilewidth}{2\extrawidth}
+        \ifthenelse{\lengthtest{\firstwidth < \secondwidth}}
+            {\addtolength{\turnstilewidth}{\secondwidth}}
+            {\addtolength{\turnstilewidth}{\firstwidth}}}
+        \ifthenelse{\lengthtest{\turnstilewidth < \leasturnstilewidth}}{\setlength{\turnstilewidth}{\leasturnstilewidth}}{}
+    \setlength{\turnstileheight}{1.5ex}
+    \sbox{\turnstilebox}
+    {\raisebox{\lift}{\ensuremath{
+        \makever{#2}{\dashthickness}{\turnstileheight}{\ddashthickness}
+        \makehor{#3}{\dashthickness}{\turnstilewidth}{\ddashthickness}
+        \hspace{-\turnstilewidth}
+        \raisebox{\raisedown}
+        {\makebox[\turnstilewidth]{\usebox{\first}}}
+            \hspace{-\turnstilewidth}
+            \raisebox{\raiseup}
+            {\makebox[\turnstilewidth]{\usebox{\second}}}
+        \makever{#6}{\dashthickness}{\turnstileheight}{\ddashthickness}}}}
+        \mathrel{\usebox{\turnstilebox}}}
+
 \newcommand{\axlabel}[1]{(#1) \phantomsection \label{ax:#1}}
 \newcommand{\axtag}[1]{\label{ax:#1} \tag{#1}}
 \newcommand{\axref}[1]{(\hyperref[ax:#1]{#1})}
@@ -56,6 +117,7 @@
 
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\Th}{\cat{Th}}
+\newcommand{\algtt}{\cat{TT}}
 
 \numberwithin{figure}{section}
 
@@ -161,7 +223,17 @@ The \emph{theory of substitutions} is the theory with $\mathcal{S} = \{ \ctx, \t
 v_{n,i}        & : (\ctx,n) \to (\tm,n) \text{, } 0 \leq i < n \\
 \subst_{p,n,k} & : (\ctx,n) \times (p,k) \times (\tm,n)^k \to (p,n) \text{, } p \in \{ \tm, \ty \}
 \end{align*}
+
+We let $\ft^i_n : (\ctx,n+i) \to (\ctx,n)$ and $\ctx_{p,n} : (p,n) \to (\ctx,n)$ be the following derived operations:
+\begin{align*}
+\ft^0_n(A)      & = A \\
+\ft^{i+1}_n(A)  & = \ft^i_n(\ft_{n+i}(A)) \\
+\ctx_{\ty,n}(t) & = \ft_n(t) \\
+\ctx_{\tm,n}(t) & = \ft_n(\ty_n(t)) \\
+\ctx^i_{p,n}(t) & = \ft^i_n(\ctx_{p,n+i}(t))
+\end{align*}
 We write $(\ty,n)$ for $(\ctx,n+1)$.
+We also define the following notations: $d_\ty = \ctx$, $d_\tm = \ty$, $e_\ty(a) = \ft(a)$, $e_\tm(a) = \ty(a)$,
 
 Let $\mathcal{F}_0$ be a set of function symbols and let $\mathcal{P}_0$ be a set of predicate symbols.
 We call elements of these sets basic function symbols and basic predicate symbols, respectively.
@@ -174,9 +246,55 @@ Then we define the full sets of function and predicate symbols:
 \end{align*}
 
 An \emph{algebraic dependent type theory} is a theory of the form $(\mathcal{S}, \mathcal{F}_s \cup \mathcal{F}, \mathcal{P}, \mathcal{A}_s \cup \mathcal{A})$, where $\mathcal{S}$, $\mathcal{F}$, and $\mathcal{P}$ are defined above,
-$\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $\mathcal{A}_s$ is the set of its axioms, and $\mathcal{A}$ is an arbitrary set of axioms.
+$\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $\mathcal{A}_s$ is the set of its axioms, and $\mathcal{A}$ is an arbitrary set of axioms such that the following sequents are derivable for every $\sigma_m \in \mathcal{F}$ and $R_m \in \mathcal{P}$:
+\begin{align*}
+\sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \ctx^n_{p,m}(\sigma_m(\Gamma, x_1, \ldots x_k)) = \Gamma \\
+\sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ctx^{n_i}_{p_i,m}(x_i) = \Gamma \\
+R_m(\Gamma, x_1, \ldots x_k) & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ctx^{n_i}_{p_i,m}(x_i) = \Gamma
+\end{align*}
 Note that \cite[Definition~4.5]{alg-tt} has an additional condition which just says that $\subst$ commutes with all function symbols, but we do not assume this condition in general.
 Theories satisfying it will be called \emph{regular}.
+
+Let $T$ be an algebraic dependent type theory.
+We define $P_M$ as the set of pairs $V,\varphi$ such that $V = \{ x_1, \ldots x_k \}$ and $\varphi = \varphi_1 \land \ldots \land \varphi_k$, where $\varphi_i$ equals to $e_p(x_i) = t_i$,
+where $t_i$ is a term of $T$ with free variables in $\{ x_1, \ldots x_{i-1} \}$ such that for every $1 \leq i \leq k$,
+sequent $\varphi_1 \land \ldots \land \varphi_{i-1} \sststile{}{x_1, \ldots x_{i-1}} t_i\!\downarrow$ is derivable in $T$.
+We will be mostly interested in theorems of the form $\varphi \sststile{}{V} \psi$ where $(\varphi,V) \in P_M$ for reasons explained in \cite{morita-equiv}.
+
+\begin{defn}
+We will say that a partial Horn theory has \emph{separated axioms} if the set of axioms of this theory consists of three disjoint subsets $\mathcal{A}_d$, $\mathcal{A}'_d$, and $\mathcal{A}_e$ such that the following conditions hold:
+\begin{enumerate}
+\item The set $\mathcal{A}_d$ consists of axioms of the form $\varphi \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ and $\varphi \sststile{}{x_1, \ldots x_k} R(x_1, \ldots x_k)$ and, for every function symbol $\sigma$ and every predicate symbol $R$, there is exactly one axiom of this form.
+We will denote the left hand side of these axioms by $\varphi_\sigma$ and $\varphi_R$.
+\item The set $\mathcal{A}'_d$ consists of (not necessary all) sequents of the form $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \varphi_\sigma$ and $R(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} \varphi_R$.
+\item For every axiom $\varphi \sststile{}{V} \psi$ in $\mathcal{A}_e$ and every subterm $\sigma(t_1, \ldots t_k)$ of $\psi$,
+the sequent $\varphi \sststile{}{V} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
+Also, for every subformula $R(t_1, \ldots t_k)$ of $\psi$, the sequent $\varphi \sststile{}{V} \varphi_R[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
+\end{enumerate}
+We will say that a theory with separated axioms is \emph{minimal} (resp., \emph{maximal}) if $\mathcal{A}'_d$ is empty (resp., consists of all sequents of the specified form).
+\end{defn}
+
+\begin{remark}
+Theories with separated axioms were defined in \cite[Section~5.1]{morita-equiv}.
+There we do not allow axioms of the form $\varphi \sststile{}{x_1, \ldots x_k} R(x_1, \ldots x_k)$ in $\mathcal{A}_d$, but the main property of such theories (\rprop{sep-main}) still holds for this generalization.
+\end{remark}
+
+\begin{remark}
+Every theory is isomorphic to a theory with a separated axioms.
+We can take $\mathcal{A}_d$ to be the set of axioms of the form
+\[ \sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow \]
+and $\mathcal{A}_e$ to be the set of axioms of the original theory (if some axiom $\varphi \sststile{}{V} \psi$ clashes with an axiom in $\mathcal{A}_d$, we can replace it with $\varphi \sststile{}{V} \psi \land \psi$).
+\end{remark}
+
+The main property of theories with separated axioms is that axioms in $\mathcal{A}_d'$ are redundant in a certain sense:
+
+\begin{prop}[sep-main]
+Let $T$ be an algebraic dependent type theory with separated axioms and let $(\varphi,V)$ be a pair in $P_M$.
+Then a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$ if and only if it is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
+\end{prop}
+\begin{proof}
+It is easy to see that the proof of \cite[Proposition~5.3]{morita-equiv} holds for the generalized definition of theories with separated axioms.
+\end{proof}
 
 \subsection{Contexts}
 
@@ -194,6 +312,11 @@ We define another $\mathcal{S}$-set of terms $\Term_T(V)$ of a theory $T$ induct
 Thus, these terms define a syntax, called the \emph{$\ft$-free syntax}, which has metavariables (elements of $V$), de Bruijn indices ($v_i$), explicit substitutions ($\subst$), and constructions depending on the theory (basic function symbols).
 We also have an explicit typing operation ($\ty$).
 We will see in section~\ref{sec:types} that it is possible to get rid of it too, but this makes the theory more awkward to work with.
+
+We want to be able to reconstruct a term in $\Term^e_T(V)$ from a term in $\Term_T(V)$ and a context.
+This can be done under very mild assumptions on $T$.
+Suppose that $T$ has separated axioms.
+Moreover, suppose that, for every function or predicate symbol $S$, there are 
 
 \subsection{Types}
 \label{sec:types}
