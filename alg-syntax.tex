@@ -109,11 +109,12 @@
 \newcommand{\Id}{\fs{Id}}
 \newcommand{\refl}{\fs{refl}}
 \newcommand{\El}{\fs{El}}
-\newcommand{\emptyCtx}{\mathbf{1}}
+\newcommand{\emptyCtx}{\cdot}
 \newcommand{\ft}{\fs{ft}}
 \newcommand{\ty}{\fs{ty}}
 \newcommand{\ctx}{\fs{ctx}}
 \newcommand{\tm}{\fs{tm}}
+\newcommand{\sub}{\fs{Sub}}
 
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\Th}{\cat{Th}}
@@ -151,7 +152,7 @@ A many sorted first-order signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ cons
 a set $\mathcal{F}$ of function symbols and a set $\mathcal{P}$ of predicate symbols.
 Each function symbol $\sigma$ is equipped with a signature of the form $\sigma : s_1 \times \ldots \times s_k \to s$, where $s_1$, \ldots $s_k$, $s$ are sorts.
 Each predicate symbol $R$ is equipped with a signature of the form $R : s_1 \times \ldots \times s_k$.
-If $V$ is an $\mathcal{S}$-set, then the $\mathcal{S}$-set of terms of $T$ with free variables in $V$ will be denoted by $\Term^e_T(V)$.
+If $V$ is an $\mathcal{S}$-set, then the $\mathcal{S}$-set of terms of $T$ with free variables in $V$ will be denoted by $\Term^e_\mathcal{F}(V)$ or by $\Term^e_T(V)$.
 
 An atomic formula is an expression either of the form $t_1 = t_2$ or of the form $R(t_1, \ldots t_n)$,
 where $R$ is a predicate symbol and $t_1$, \ldots $t_n$ are terms.
@@ -160,6 +161,7 @@ A Horn formula is an expression of the form $\varphi_1 \land \ldots \land \varph
 The conjunction of the empty set of atomic formulas is denoted by $\top$.
 A sequent is an expression of the form $\varphi \sststile{}{x_1, \ldots x_n} \psi$, where $x_1$, \ldots $x_n$ are variables
 and $\varphi$ and $\psi$ are Horn formulas such that $\FV(\varphi) \cup \FV(\psi) \subseteq \{ x_1, \ldots x_n \}$.
+We also write $\varphi \ssststile{}{V} \psi$ to denote the pair of sequents $\varphi \sststile{}{V} \psi$ and $\psi \sststile{}{V} \varphi$.
 A \emph{partial Horn theory} consists of a signature and a set of Horn sequents in this signature.
 
 The rules of \emph{partial Horn logic} are listed below.
@@ -203,6 +205,8 @@ We will write $\varphi \sststile{T}{V} \psi$ to denote the fact that sequent $\v
 \DisplayProof
 \end{center}
 where $R$ is a predicate symbol of the theory and $\sigma$ is its function symbol.
+Note that this system derives only sequents in which the conclusion is atomic.
+For this reason, we will consider only such sequents.
 
 Finally, for every axiom $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k} \chi_1 \land \ldots \land \chi_m$
 and for all terms $t_1 : s_1$, \ldots $t_k : s_k$, we have the following rules for all $1 \leq j \leq m$:
@@ -215,7 +219,7 @@ and for all terms $t_1 : s_1$, \ldots $t_k : s_k$, we have the following rules f
 \DisplayProof
 \end{center}
 
-The \emph{theory of substitutions} is the theory with $\mathcal{S} = \{ \ctx, \tm \} \times \mathbb{N}$ as the set of sorts, function symbols given below, and axioms listed in \cite[Section~3.1]{alg-tt}.
+The \emph{theory of substitutions} is the theory with $\mathcal{S} = \{ \ctx, \tm \} \times \mathbb{N}$ as the set of sorts, function symbols given below, and axioms listed in \cite[Section~3.1]{alg-tt} (also, see the section~\ref{sec:contexts}).
 \begin{align*}
 \emptyCtx      & : (\ctx,0) \\
 \ft_n          & : (\ty,n) \to (\ctx,n) \\
@@ -296,29 +300,215 @@ Then a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$ if and only if 
 It is easy to see that the proof of \cite[Proposition~5.3]{morita-equiv} holds for the generalized definition of theories with separated axioms.
 \end{proof}
 
-\subsection{Contexts}
+\subsection{The $\ft$-free syntax}
+\label{sec:contexts}
 
 The syntax we described in the previous subection is too verbose.
 We can make it closer to the usual presentation of type theories by removing some redundant information.
-We define another $\mathcal{S}$-set of terms $\Term_T(V)$ of a theory $T$ inductively as follows:
+We define another $\mathcal{S}$-set of terms $\Term_\mathcal{F}(V)$ inductively as follows:
 \begin{itemize}
 \item Every element of $V_s$ is a term of sort $s$.
 \item If $t$ is a term of sort $(\tm,n)$, then $\ty(t)$ is a term of sort $(\ty,n)$.
 \item $v_i$ is a term of sort $(\tm,n)$ for every $0 \leq i < n$.
 \item If $t$ is a term of sort $(p,k)$, where $p \in \{ \ty, \tm \}$, and $t_1, \ldots t_k$ are terms of sort $(\tm,n)$, then $\subst(t, t_1, \ldots t_k)$ is a term of sort $(p,n)$.
-\item If $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ is a basic function symbol of $T$ and $t_i$ is a term of sort $(p_i,n_i)$, then $\sigma(t_1, \ldots t_k)$ is a term of sort $(p,n)$.
+\item If $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ is a function symbol of $T$ and $t_i$ is a term of sort $(p_i,m+n_i)$, then $\sigma(t_1, \ldots t_k)$ is a term of sort $(p,m+n)$.
 \end{itemize}
-
-Thus, these terms define a syntax, called the \emph{$\ft$-free syntax}, which has metavariables (elements of $V$), de Bruijn indices ($v_i$), explicit substitutions ($\subst$), and constructions depending on the theory (basic function symbols).
+These terms will be called \emph{$\ft$-free} terms.
+They define a syntax, called the \emph{$\ft$-free syntax}, which has metavariables (elements of $V$), de Bruijn indices ($v_i$), explicit substitutions ($\subst$), and constructions depending on the theory (basic function symbols).
 We also have an explicit typing operation ($\ty$).
 We will see in section~\ref{sec:types} that it is possible to get rid of it too, but this makes the theory more awkward to work with.
 
-We want to be able to reconstruct a term in $\Term^e_T(V)$ from a term in $\Term_T(V)$ and a context.
-This can be done under very mild assumptions on $T$.
-Suppose that $T$ has separated axioms.
-Moreover, suppose that, for every function or predicate symbol $S$, there are 
+A \emph{context} of length $n$ a sequence of terms of sorts $(\ty,0)$, \ldots $(\ty,n-1)$.
+An ($\ft$-free) \emph{judgement} is an expression of one of the following forms:
+\[ \Gamma \vdash t \qquad \Gamma \vdash t \equiv t' \qquad \Gamma \vdash R(t_1, \ldots t_k) \]
+where $\Gamma$ is a context of length $m$, $t$ and $t'$ are terms of sort $(p,m)$ (where $p \in \{ \ty, \tm \}$), $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ is a predicate symbol, and $t_1$, \ldots $t_k$ are terms of sorts $(p_1,m+n_1)$, \ldots $(p_k,m+n_k)$, respectively.
+All terms above are written in the $\ft$-free syntax.
+We will use judgements of the form $\Gamma \vdash$.
+If $\Gamma$ is the empty context, this judgement denotes $\top$.
+If $\Gamma = (\Gamma', A)$, this judgement denotes $\Gamma' \vdash A$.
 
-\subsection{Types}
+Jusgements play the role of atomic formulas in the $\ft$-free syntax.
+An ($\ft$-free) \emph{formula} is a finite conjunction of judgements.
+Sequents are defined as before.
+We will often write sequents in the form of derivation rules.
+Thus, $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi$ can be written as
+\begin{center}
+\AxiomC{$\varphi_1$}
+\AxiomC{\ldots}
+\AxiomC{$\varphi_n$}
+\TrinaryInfC{$\psi$}
+\DisplayProof
+\end{center}
+The set of variables $V$ is implicit in this notation and we let it to be the union of all variables that appear in the premise and in the conclusion.
+Also, $\varphi_1 \land \ldots \land \varphi_n \ssststile{}{V} \psi$ will be represented by the following rule:
+\begin{center}
+\AxiomC{$\varphi_1$}
+\AxiomC{\ldots}
+\AxiomC{$\varphi_n$}
+\doubleLine
+\TrinaryInfC{$\psi$}
+\DisplayProof
+\end{center}
+
+If $\Gamma$ and $\Delta$ are two contexts of the same length, we can define formula $\Gamma \equiv \Delta$ by induction on their length.
+If they are empty, then this formula is defined as $\top$.
+If $\Gamma = (\Gamma',A)$ and $\Delta = (\Delta',B)$, then this formula is defined as $(\Gamma' \equiv \Delta') \land (\Gamma' \vdash A \equiv B)$.
+
+An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
+These sets must satisfy a few conditions that we list below.
+First, we assume that, for every function or predicate symbol $S$ and every $n \in \mathbb{N}$, there is a unique axiom of the form $\varphi \sststile{}{A_1, \ldots A_n, x_1, \ldots x_k} A_1, \ldots A_n \vdash S(x_1, \ldots x_k)$.
+Moreover, we assume that, for every $1 \leq i \leq k$, the formula $\varphi$ contains a unique judgement of the form $\Gamma \vdash x_i$ and the first $n$ terms of $\Gamma$ are $A_1$, \ldots $A_n$.
+The rest of the terms in $\Gamma$ will be denoted by $\Gamma^S_i$.
+Note that $\Gamma^S_i$ implicitly depends on $n$.
+This abuse of notation will not cause any problems because sorts of terms in $C_{S,i}$ also depend on $n$, hence $n$ can be inferred from the context.
+For example, if we write $\Gamma, \Gamma^S_i \vdash t$, then $n$ is equal to the length of $\Gamma$.
+
+A \emph{contexted term} is a pair $(\Gamma,t)$, where $\Gamma$ is a context of length $n$ and $t$ is a term of sort $(p,n)$ for some $p \in \{ \ty, \tm \}$.
+For every contexted term $(\Gamma,t)$, we can define the set $\sub(\Gamma,t)$ of its contxeted subterms:
+\begin{align*}
+\sub(\Gamma,t) & = \{ (\Gamma,t) \} \text{ if $t$ is a variable or $v_i$} \\
+\sub(\Gamma,\ty(t')) & = \{ (\Gamma,t) \} \cup \sub(\Gamma,t') \\
+\sub(\Gamma,\subst(t', t_1, \ldots t_k)) & = \{ (\Gamma,t) \} \cup \sub((\ty(t_1), \ldots \ty(t_k)), t') \cup \bigcup_{1 \leq i \leq k} \sub(\Gamma,t_i) \\
+\sub(\Gamma,\sigma(t_1, \ldots t_k)) & = \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma_{\leq n},\Gamma^\sigma_i),t_i)
+\end{align*}
+where $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and $\Gamma_{\leq n}$ is the first $n$ terms of $\Gamma$.
+In each of the cases, $(\Gamma,t)$ is the contexted term itself.
+So, every contexted term is always a contexted subterm of itself.
+Note that the definition of $\sub$ depends on the theory.
+
+We can also define the set of contexted subterms of a formula:
+\begin{align*}
+\sub(\Gamma \vdash t) & = \sub(\Gamma, t) \\
+\sub(\Gamma \vdash t \equiv t') & = \sub(\Gamma,t) \cup \sub(\Gamma,t') \\
+\sub(\Gamma, R(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^R_i),t_i) \\
+\sub(\varphi_1 \land \ldots \land \varphi_n) & = \bigcup_{1 \leq i \leq n} \sub(\varphi_i)
+\end{align*}
+
+Now, we can describe the derivation system for the $\ft$-free syntax:
+\medskip
+\begin{center}
+\AxiomC{}
+\RightLabel{\axlabel{ch}}
+\UnaryInfC{$\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \varphi_i$}
+\DisplayProof
+\qquad
+\AxiomC{}
+\RightLabel{, $(\Gamma,t) \in \sub(\varphi)$ \axlabel{cd}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash t$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{}
+\RightLabel{, $(\Gamma,x),(\Delta,x) \in \sub(\varphi)$ \axlabel{cc}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \equiv \Delta$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash t$}
+\RightLabel{\axlabel{cr}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash t \equiv t$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a \equiv b$}
+\RightLabel{\axlabel{cs}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash b \equiv a$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a \equiv b$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash b \equiv c$}
+\RightLabel{\axlabel{ct}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash a \equiv c$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash R(t_1, \ldots t_k)$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^R_i \vdash t_i \equiv t_i'$}
+\RightLabel{\axlabel{cp}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash R(t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k)$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i \vdash t_i \equiv t_i'$}
+\RightLabel{\axlabel{cf}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k) = \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
+\DisplayProof
+\end{center}
+
+% \medskip
+% \begin{center}
+% \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash t \equiv t$}
+% \RightLabel{\axlabel{cde}}
+% \UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash t$}
+% \DisplayProof
+% \qquad
+% \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash R(t_1, \ldots t_k)$}
+% \RightLabel{\axlabel{cdp}}
+% \UnaryInfC{$\varphi \sststile{}{V} \Gamma, \Gamma^R_i \vdash t_i$}
+% \DisplayProof
+% \end{center}
+
+% \medskip
+% \begin{center}
+% \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_n)$}
+% \RightLabel{\axlabel{cdf}}
+% \UnaryInfC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i \vdash t_i$}
+% \DisplayProof
+% \end{center}
+
+Finally, for every axiom $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k} \chi_1 \land \ldots \land \chi_m$
+and for all terms $t_1$, \ldots $t_k$, we have the following rules for all $1 \leq j \leq m$:
+\smallskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \psi_i[t_1/x_1, \ldots t_k/x_k]$, $1 \leq i \leq n$}
+\RightLabel{\axlabel{ca}}
+\UnaryInfC{$\varphi \sststile{}{V} \chi_j[t_1/x_1, \ldots t_k/x_k]$}
+\DisplayProof
+\end{center}
+
+% We will later see that if a theory satisfies some mild additional hypothesis, then we can replace rules \axref{cde}, \axref{cdp}, and \axref{cdf} with simpler ones.
+% Thus, we will denote this set of rules by (cd*) and other rules by (c*).
+
+We will say that a term or a formula $E$ is \emph{valid} with respect to $(\varphi,V)$ if the following conditions hold:
+\begin{enumerate}
+\item For every contexted subterm $(\Gamma,t)$ of $E$, the sequent $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
+\item For every pair $(\Gamma,x)$ and $(\Delta,x)$ of contexted subterms of $E$ (where $x$ is any variable), the sequent $\varphi \sststile{}{V} \Gamma \equiv \Delta$ is derivable.
+\end{enumerate}
+We will say that a sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\psi$ is valid with respect to $(\varphi,V)$.
+
+\begin{remark}
+The first condition expresses the idea that everything that occurs in $E$ should be defined.
+The second condition says that every variable should have a unique context, that is if a variable is used in two different contexts, they must be equivalent.
+\end{remark}
+
+\begin{remark}
+Rules \axref{cd} and \axref{cc} say that every formula is valid with respect to itself.
+\end{remark}
+
+\begin{defn}
+An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
+For every function or predicate symbol $S$, there must a unique axiom of the form
+\[ \varphi \land \bigwedge_{1 \leq i \leq k} \Gamma, \Gamma^S_i \vdash x_i \sststile{}{x_1, \ldots x_k} S(x_1, \ldots x_k), \]
+where $\varphi$ does not contain judgements of the form $\Delta \vdash x_i$.
+All axioms must be valid and the set of free variables of the conclusion of every axiom must be contained in the set of free variables of its premise.
+\end{defn}
+
+% We want to be able to reconstruct a term in $\Term^e_T(V)$ from a term in $\Term_T(V)$ and a context.
+% This can be done under very mild assumptions on $T$.
+% Suppose that $T$ has separated axioms.
+% Then we define a binary relation $\prec$ on the set of basic function symbols.
+% Let $\tau \prec \sigma$ if and only if $\tau$ appears in $\varphi_\sigma$.
+% We will say that (basic) function symbols are \emph{well-founded} if this relation is.
+
+\subsection{The $\ty$-free syntax}
 \label{sec:types}
 
 \section{Examples}
