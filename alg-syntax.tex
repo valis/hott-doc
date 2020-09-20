@@ -115,6 +115,7 @@
 \newcommand{\ctx}{\fs{ctx}}
 \newcommand{\tm}{\fs{tm}}
 \newcommand{\sub}{\fs{Sub}}
+\newcommand{\id}{\fs{id}}
 
 \newcommand{\cat}[1]{\mathbf{#1}}
 \newcommand{\Th}{\cat{Th}}
@@ -355,13 +356,13 @@ If they are empty, then this formula is defined as $\top$.
 If $\Gamma = (\Gamma',A)$ and $\Delta = (\Delta',B)$, then this formula is defined as $(\Gamma' \equiv \Delta') \land (\Gamma' \vdash A \equiv B)$.
 
 An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
-These sets must satisfy a few conditions that we list below.
-First, we assume that, for every function or predicate symbol $S$ and every $n \in \mathbb{N}$, there is a unique axiom of the form $\varphi \sststile{}{A_1, \ldots A_n, x_1, \ldots x_k} A_1, \ldots A_n \vdash S(x_1, \ldots x_k)$.
-Moreover, we assume that, for every $1 \leq i \leq k$, the formula $\varphi$ contains a unique judgement of the form $\Gamma \vdash x_i$ and the first $n$ terms of $\Gamma$ are $A_1$, \ldots $A_n$.
-The rest of the terms in $\Gamma$ will be denoted by $\Gamma^S_i$.
-Note that $\Gamma^S_i$ implicitly depends on $n$.
-This abuse of notation will not cause any problems because sorts of terms in $C_{S,i}$ also depend on $n$, hence $n$ can be inferred from the context.
-For example, if we write $\Gamma, \Gamma^S_i \vdash t$, then $n$ is equal to the length of $\Gamma$.
+These sets must satisfy conditions listed in \rdefn{ft-free}.
+First, we assume that, for every function or predicate symbol $S$ and every $m \in \mathbb{N}$, there is a unique axiom of the form
+\[ \varphi \sststile{}{A_1, \ldots A_m, x_1, \ldots x_k} A_1, \ldots A_m, \Gamma \vdash S(x_1, \ldots x_k), \]
+where the length of $\Gamma$ equals to $0$ if $S$ is a predicate symbol and it equals to $n$ if $S$ is a function symbol with signature $s_1 \times \ldots \times s_k \to (p,n)$.
+We will write $\Gamma^S((B_1, \ldots B_m), y_1, \ldots y_k)$ for $\Gamma[B_1/A_1, \ldots B_m/A_m, y_1/x_1, \ldots y_k/x_k]$.
+Moreover, we assume that, for every $1 \leq i \leq k$, the formula $\varphi$ contains a unique judgement of the form $A_1, \ldots A_m, \Gamma' \vdash x_i$.
+We will write $\Gamma^S_i((B_1, \ldots B_m), y_1, \ldots y_k)$ for $\Gamma'[B_1/A_1, \ldots B_m/A_m, y_1/x_1, \ldots y_k/x_k]$.
 
 A \emph{contexted term} is a pair $(\Gamma,t)$, where $\Gamma$ is a context of length $n$ and $t$ is a term of sort $(p,n)$ for some $p \in \{ \ty, \tm \}$.
 For every contexted term $(\Gamma,t)$, we can define the set $\sub(\Gamma,t)$ of its contxeted subterms:
@@ -369,7 +370,7 @@ For every contexted term $(\Gamma,t)$, we can define the set $\sub(\Gamma,t)$ of
 \sub(\Gamma,t) & = \{ (\Gamma,t) \} \text{ if $t$ is a variable or $v_i$} \\
 \sub(\Gamma,\ty(t')) & = \{ (\Gamma,t) \} \cup \sub(\Gamma,t') \\
 \sub(\Gamma,\subst(t', t_1, \ldots t_k)) & = \{ (\Gamma,t) \} \cup \sub((\ty(t_1), \ldots \ty(t_k)), t') \cup \bigcup_{1 \leq i \leq k} \sub(\Gamma,t_i) \\
-\sub(\Gamma,\sigma(t_1, \ldots t_k)) & = \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma_{\leq n},\Gamma^\sigma_i),t_i)
+\sub(\Gamma,\sigma(t_1, \ldots t_k)) & = \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma_{\leq n},\Gamma^\sigma_i(\Gamma_{\leq n}, t_1, \ldots t_k)),t_i)
 \end{align*}
 where $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and $\Gamma_{\leq n}$ is the first $n$ terms of $\Gamma$.
 In each of the cases, $(\Gamma,t)$ is the contexted term itself.
@@ -380,7 +381,7 @@ We can also define the set of contexted subterms of a formula:
 \begin{align*}
 \sub(\Gamma \vdash t) & = \sub(\Gamma, t) \\
 \sub(\Gamma \vdash t \equiv t') & = \sub(\Gamma,t) \cup \sub(\Gamma,t') \\
-\sub(\Gamma, R(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^R_i),t_i) \\
+\sub(\Gamma, R(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^R_i(\Gamma, t_1, \ldots t_k)),t_i) \\
 \sub(\varphi_1 \land \ldots \land \varphi_n) & = \bigcup_{1 \leq i \leq n} \sub(\varphi_i)
 \end{align*}
 
@@ -428,7 +429,7 @@ Now, we can describe the derivation system for the $\ft$-free syntax:
 \medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash R(t_1, \ldots t_k)$}
-\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^R_i \vdash t_i \equiv t_i'$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^R_i(\Gamma, t_1, \ldots t_k) \vdash t_i \equiv t_i'$}
 \RightLabel{\axlabel{cp}}
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash R(t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
 \DisplayProof
@@ -437,32 +438,11 @@ Now, we can describe the derivation system for the $\ft$-free syntax:
 \medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k)$}
-\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i \vdash t_i \equiv t_i'$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(\Gamma, t_1, \ldots t_k) \vdash t_i \equiv t_i'$}
 \RightLabel{\axlabel{cf}}
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k) = \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
 \DisplayProof
 \end{center}
-
-% \medskip
-% \begin{center}
-% \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash t \equiv t$}
-% \RightLabel{\axlabel{cde}}
-% \UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash t$}
-% \DisplayProof
-% \qquad
-% \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash R(t_1, \ldots t_k)$}
-% \RightLabel{\axlabel{cdp}}
-% \UnaryInfC{$\varphi \sststile{}{V} \Gamma, \Gamma^R_i \vdash t_i$}
-% \DisplayProof
-% \end{center}
-
-% \medskip
-% \begin{center}
-% \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_n)$}
-% \RightLabel{\axlabel{cdf}}
-% \UnaryInfC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i \vdash t_i$}
-% \DisplayProof
-% \end{center}
 
 Finally, for every axiom $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k} \chi_1 \land \ldots \land \chi_m$
 and for all terms $t_1$, \ldots $t_k$, we have the following rules for all $1 \leq j \leq m$:
@@ -473,9 +453,6 @@ and for all terms $t_1$, \ldots $t_k$, we have the following rules for all $1 \l
 \UnaryInfC{$\varphi \sststile{}{V} \chi_j[t_1/x_1, \ldots t_k/x_k]$}
 \DisplayProof
 \end{center}
-
-% We will later see that if a theory satisfies some mild additional hypothesis, then we can replace rules \axref{cde}, \axref{cdp}, and \axref{cdf} with simpler ones.
-% Thus, we will denote this set of rules by (cd*) and other rules by (c*).
 
 We will say that a term or a formula $E$ is \emph{valid} with respect to $(\varphi,V)$ if the following conditions hold:
 \begin{enumerate}
@@ -493,20 +470,54 @@ The second condition says that every variable should have a unique context, that
 Rules \axref{cd} and \axref{cc} say that every formula is valid with respect to itself.
 \end{remark}
 
-\begin{defn}
-An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
-For every function or predicate symbol $S$, there must a unique axiom of the form
-\[ \varphi \land \bigwedge_{1 \leq i \leq k} \Gamma, \Gamma^S_i \vdash x_i \sststile{}{x_1, \ldots x_k} S(x_1, \ldots x_k), \]
-where $\varphi$ does not contain judgements of the form $\Delta \vdash x_i$.
-All axioms must be valid and the set of free variables of the conclusion of every axiom must be contained in the set of free variables of its premise.
+Finally, we need to define a relation $\prec$ on the set of basic function symbols.
+We let $\tau \prec \sigma$ to be true if and only if $\tau$ appears in $\Gamma^\sigma_i$ for some $i$.
+We will say that function symbols are \emph{well-founded} if this relation is.
+
+\begin{defn}[ft-free]
+An $\ft$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$ such that the following conditions hold:
+\begin{itemize}
+\item For every function or predicate symbol $S$ and every possible length of $\Gamma$, there is unique axiom of the form
+\[ \varphi \land \bigwedge_{1 \leq i \leq k} \Gamma, \Gamma^S_i \vdash x_i \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma, \Gamma^S \vdash S(x_1, \ldots x_k), \]
+where $\varphi$ does not contain judgements of the form $\Gamma, \Delta \vdash x_i$.
+\item Function symbols are well-founded.
+\item All axioms are valid and the set of free variables of the conclusion of every axiom is contained in the set of free variables of its premise.
+\end{itemize}
 \end{defn}
 
-% We want to be able to reconstruct a term in $\Term^e_T(V)$ from a term in $\Term_T(V)$ and a context.
-% This can be done under very mild assumptions on $T$.
-% Suppose that $T$ has separated axioms.
-% Then we define a binary relation $\prec$ on the set of basic function symbols.
-% Let $\tau \prec \sigma$ if and only if $\tau$ appears in $\varphi_\sigma$.
-% We will say that (basic) function symbols are \emph{well-founded} if this relation is.
+\subsection{The category of $\ft$-free theories}
+\label{sec:types}
+
+Let us recall the definition of the category of algebraic type theories from \cite{alg-tt}.
+A \emph{restricted term} is a term $t$ together with a formula $\varphi$.
+We denote such a restricted term by $t|_\varphi$.
+Let $T$ and $T'$ be two theories with the same set of sorts.
+An \emph{interpretation} of $T$ in $T'$ is a function $f$ such that the following conditions hold:
+\begin{itemize}
+\item For every basic function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ of $T$,
+the function $f$ defines a restricted term $f(\sigma(x_1, \ldots x_k))$ of $T'$ of sort $s$ such that $\FV(f(\sigma(x_1, \ldots x_k)))$ equals to $\{ x_1 : s_1, \ldots x_k : s_k \}$.
+\item For every basic predicate symbol $P : s_1 \times \ldots \times s_k$,
+the function $f$ defines a formula $f(P(x_1, \ldots x_k))$ of $T'$ such that $\FV(f(P(x_1, \ldots x_k)))$ equals to $\{ x_1 : s_1, \ldots x_k : s_k \}$.
+\item For every axiom $\varphi \sststile{}{V} \psi$ of $T$, the sequent $f(\varphi) \sststile{}{V} f(\psi)$ is derivable in $T'$.
+Formulas $f(\varphi)$ and $f(\psi)$ are defined inductively using $f(\sigma(x_1, \ldots x_k))$ and $f(P(x_1, \ldots x_k))$ in the obvious way (we will give a precise definition for the $\ft$-free syntax below).
+\end{itemize}
+
+We will say that formulas $\varphi$ and $\psi$ are \emph{equivalent} if the sequents $\varphi \ssststile{}{\FV(\varphi) \cup \FV(\psi)} \psi$ are derivable.
+Two restricted terms $t|_\varphi$ and $t'|_\psi$ are equivalent if the following sequents are derivable:
+\begin{align*}
+\varphi \land t\!\downarrow\ & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \psi \land t = t' \\
+\psi \land t'\!\downarrow\ & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \varphi \land t = t'
+\end{align*}
+
+Two interpretations $f$ and $f'$ are equivalent if $f(S(x_1, \ldots x_k))$ and $f'(S(x_1, \ldots x_k))$ are equivalent for every function or predicate symbol $S$.
+A \emph{morphism} of theories $T$ and $T'$ is an equivalence class of interpretations of $T$ in $T'$.
+The identity morphism is defined in the obvious way: $\id(\sigma(x_1, \ldots x_k)) = \sigma(x_1, \ldots x_k)|_\top$ and $\id(R(x_1, \ldots x_k)) = R(x_1, \ldots x_k)$.
+The composition of morphisms is defined as follows: $(g \circ f)(S(x_1, \ldots x_k))$ = $g(f(S(x_1, \ldots x_k)))$.
+It is easy to see that this defines the structure of a category on algebraic dependent type theories.
+
+Now, let us describe the category of $\ft$-free theories.
+First, an $\ft$-free restricted term is just a pair consisting of an $\ft$-free term $t$ and an $\ft$-free formula $\varphi$, written $t|_\varphi$.
+Let $f$ be a function 
 
 \subsection{The $\ty$-free syntax}
 \label{sec:types}
