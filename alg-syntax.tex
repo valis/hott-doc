@@ -393,19 +393,6 @@ Now, we can describe the derivation system for the $\ft$-free syntax:
 \UnaryInfC{$\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \varphi_i$}
 \DisplayProof
 \qquad
-\AxiomC{}
-\RightLabel{, $(\Gamma,t) \in \sub(\varphi)$ \axlabel{cd}}
-\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash t$}
-\DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
-\AxiomC{}
-\RightLabel{, $(\Gamma,x),(\Delta,x) \in \sub(\varphi)$ \axlabel{cc}}
-\UnaryInfC{$\varphi \sststile{}{V} \Gamma \equiv \Delta$}
-\DisplayProof
-\qquad
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash t$}
 \RightLabel{\axlabel{cr}}
 \UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash t \equiv t$}
@@ -459,15 +446,11 @@ We will say that a term or a formula $E$ is \emph{valid} with respect to $(\varp
 \item For every contexted subterm $(\Gamma,t)$ of $E$, the sequent $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
 \item For every pair $(\Gamma,x)$ and $(\Delta,x)$ of contexted subterms of $E$ (where $x$ is any variable), the sequent $\varphi \sststile{}{V} \Gamma \equiv \Delta$ is derivable.
 \end{enumerate}
-We will say that a sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\psi$ is valid with respect to $(\varphi,V)$.
+A sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\varphi$ and $\psi$ are valid with respect to $(\varphi,V)$.
 
 \begin{remark}
 The first condition expresses the idea that everything that occurs in $E$ should be defined.
 The second condition says that every variable should have a unique context, that is if a variable is used in two different contexts, they must be equivalent.
-\end{remark}
-
-\begin{remark}
-Rules \axref{cd} and \axref{cc} say that every formula is valid with respect to itself.
 \end{remark}
 
 Finally, we need to define a relation $\prec$ on the set of basic function symbols.
@@ -483,6 +466,7 @@ where $\varphi$ does not contain judgements of the form $\Gamma, \Delta \vdash x
 \item Function symbols are well-founded.
 \item All axioms are valid and the set of free variables of the conclusion of every axiom is contained in the set of free variables of its premise.
 \end{itemize}
+A \emph{theorem} is a valid derivable sequent.
 \end{defn}
 
 \subsection{The category of $\ft$-free theories}
@@ -509,15 +493,25 @@ Two restricted terms $t|_\varphi$ and $t'|_\psi$ are equivalent if the following
 \psi \land t'\!\downarrow\ & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \varphi \land t = t'
 \end{align*}
 
-Two interpretations $f$ and $f'$ are equivalent if $f(S(x_1, \ldots x_k))$ and $f'(S(x_1, \ldots x_k))$ are equivalent for every function or predicate symbol $S$.
+Two interpretations $f$ and $f'$ are equivalent if restricted terms $f(S(x_1, \ldots x_k))$ and $f'(S(x_1, \ldots x_k))$ are equivalent for every function or predicate symbol $S$.
 A \emph{morphism} of theories $T$ and $T'$ is an equivalence class of interpretations of $T$ in $T'$.
 The identity morphism is defined in the obvious way: $\id(\sigma(x_1, \ldots x_k)) = \sigma(x_1, \ldots x_k)|_\top$ and $\id(R(x_1, \ldots x_k)) = R(x_1, \ldots x_k)$.
 The composition of morphisms is defined as follows: $(g \circ f)(S(x_1, \ldots x_k))$ = $g(f(S(x_1, \ldots x_k)))$.
 It is easy to see that this defines the structure of a category on algebraic dependent type theories.
 
 Now, let us describe the category of $\ft$-free theories.
-First, an $\ft$-free restricted term is just a pair consisting of an $\ft$-free term $t$ and an $\ft$-free formula $\varphi$, written $t|_\varphi$.
-Let $f$ be a function 
+First, an $\ft$-free \emph{restricted term} is just a pair consisting of an $\ft$-free term $t$ and an $\ft$-free formula $\varphi$, written $t|_\varphi$.
+A restricted term $t|_\varphi$ is \emph{valid} in a context $\Gamma$ if $(\Gamma,t)$ and $\varphi$ are valid with respect to $(\varphi \land (\Gamma \vdash t), \FV(t|_\varphi) \cup \FV(\Gamma))$.
+
+Let $f$ be a function that defines a restricted term $f(\sigma(x_1, \ldots x_k))$ and a formula $f(R(x_1, \ldots x_k))$ for every function symbol $\sigma$ and every predicate symbol $R$ such that $\FV(f(\sigma(x_1, \ldots x_k))) = \{ x_1, \ldots x_k \}$ and $\FV(R(x_1, \ldots x_k)) = \{ x_1, \ldots x_k \}$.
+Then we can extend its definition to all terms, formulas, and restricted terms.
+% TODO: Define this.
+
+% TODO: Потребовать, чтобы \Gamma^S_i зависели только от x_1, ... x_{i-1}, т.к. иначе мы не сможем восстановить полные термы.
+% TODO: Потребовать, чтобы все \Gamma^S_i и \Gamma^S совпадали для всех m. И еще что они не зависят от контекста, только от x_1, ... x_k.
+%       Так будет проще формулировать всякие штуки, а категория не изменится, т.к. те ft-свободные теории, которые мы будем строить из свободных и так удовлетворяют этому условию.
+% TODO: После упрощения \Gamma^S можно определить валидность интерпретаций как валидность f(\sigma(x_1, \ldots x_k)) в контексте \Gamma^\sigma(x_1, \ldots x_k).
+% TODO: Можно определить замыкание на формулах и restricted термах, которое будет давать всегда валидную их версию. Хотя это лучше в виде ремарки оставить, т.к. опасно с этим работать, можно забыть при подстановки.
 
 \subsection{The $\ty$-free syntax}
 \label{sec:types}
