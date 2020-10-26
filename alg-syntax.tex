@@ -251,14 +251,13 @@ Then we define the full sets of function and predicate symbols:
 \end{align*}
 
 An \emph{algebraic dependent type theory} is a theory of the form $(\mathcal{S}, \mathcal{F}_s \cup \mathcal{F}, \mathcal{P}, \mathcal{A}_s \cup \mathcal{A})$, where $\mathcal{S}$, $\mathcal{F}$, and $\mathcal{P}$ are defined above,
-$\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $\mathcal{A}_s$ is the set of its axioms, and $\mathcal{A}$ is an arbitrary set of axioms such that the following sequents are derivable for every $\sigma_m \in \mathcal{F}$ and $R_m \in \mathcal{P}$:
+$\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $\mathcal{A}_s$ is the set of its axioms, and $\mathcal{A}$ is an arbitrary set of axioms such that the following sequents are derivable for every $\sigma_m \in \mathcal{F}$ and $R_m \in \mathcal{P}$
 \begin{align*}
 \sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \ctx^n_{p,m}(\sigma_m(\Gamma, x_1, \ldots x_k)) = \Gamma \\
 \sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ctx^{n_i}_{p_i,m}(x_i) = \Gamma \\
 R_m(\Gamma, x_1, \ldots x_k) & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ctx^{n_i}_{p_i,m}(x_i) = \Gamma
 \end{align*}
-Note that \cite[Definition~4.5]{alg-tt} has an additional condition which just says that $\subst$ commutes with all function symbols, but we do not assume this condition in general.
-Theories satisfying it will be called \emph{regular}.
+and $\subst$ commutes with every function symbol (for a precise definition, see \cite[Definition~4.5]{alg-tt}).
 
 Let $T$ be an algebraic dependent type theory.
 We define $P_M$ as the set of pairs $V,\varphi$ such that $V = \{ x_1, \ldots x_k \}$ and $\varphi = \varphi_1 \land \ldots \land \varphi_k$, where $\varphi_i$ equals to $e_p(x_i) = t_i$,
@@ -355,16 +354,13 @@ If $\Gamma$ and $\Delta$ are two contexts of the same length, we can define form
 If they are empty, then this formula is defined as $\top$.
 If $\Gamma = (\Gamma',A)$ and $\Delta = (\Delta',B)$, then this formula is defined as $(\Gamma' \equiv \Delta') \land (\Gamma' \vdash A \equiv B)$.
 
-An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
+An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$ such that every function symbol has a signature of the form $s_1 \times \ldots \times s_k \to (p,0)$ , a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
 These sets must satisfy conditions listed in \rdefn{ft-free}.
 First, we assume that, for every function or predicate symbol $S$ and every $m \in \mathbb{N}$, there is a unique axiom of the form
-\[ \varphi \sststile{}{A_1, \ldots A_m, x_1, \ldots x_k} A_1, \ldots A_m, \Gamma \vdash S(x_1, \ldots x_k), \]
-where the length of $\Gamma$ equals to $0$ if $S$ is a predicate symbol and it equals to $n$ if $S$ is a function symbol with signature $s_1 \times \ldots \times s_k \to (p,n)$.
+\[ \varphi \sststile{}{A_1, \ldots A_m, x_1, \ldots x_k} A_1, \ldots A_m \vdash S(x_1, \ldots x_k). \]
+We assume that, for every $1 \leq i \leq k$, the formula $\varphi$ contains a unique judgement of the form $A_1, \ldots A_m, \Gamma \vdash x_i$.
 We assume that $\Gamma$ does not depend on $m$ and that $A_1, \ldots A_m \notin \FV(\Gamma)$.
-We will write $\Gamma^S(t_1, \ldots t_k)$ for $\Gamma[t_1/x_1, \ldots t_k/x_k]$.
-Moreover, we assume that, for every $1 \leq i \leq k$, the formula $\varphi$ contains a unique judgement of the form $A_1, \ldots A_m, \Gamma' \vdash x_i$.
-We assume that $\Gamma'$ does not depend on $m$ and that $A_1, \ldots A_m \notin \FV(\Gamma')$.
-We will write $\Gamma^S_i(t_1, \ldots t_k)$ for $\Gamma'[t_1/x_1, \ldots t_k/x_k]$.
+We will write $\Gamma^S_i(t_1, \ldots t_k)$ for $\Gamma[t_1/x_1, \ldots t_k/x_k]$.
 We will also write $\Gamma^S$ and $\Gamma^S_i$ for $\Gamma^S(x_1, \ldots x_k)$ and $\Gamma^S_i(x_1, \ldots x_k)$, respectively.
 
 A \emph{contexted term} is a pair $(\Gamma,t)$, where $\Gamma$ is a context of length $n$ and $t$ is a term of sort $(p,n)$ for some $p \in \{ \ty, \tm \}$.
@@ -373,9 +369,8 @@ For every contexted term $(\Gamma,t)$, we can define the set $\sub(\Gamma,t)$ of
 \sub(\Gamma,t) & = \{ (\Gamma,t) \} \text{ if $t$ is a variable or $v_i$} \\
 \sub(\Gamma,\ty(t')) & = \{ (\Gamma,t) \} \cup \sub(\Gamma,t') \\
 \sub(\Gamma,\subst(t', t_1, \ldots t_k)) & = \{ (\Gamma,t) \} \cup \sub((\ty(t_1), \ldots \ty(t_k)), t') \cup \bigcup_{1 \leq i \leq k} \sub(\Gamma,t_i) \\
-\sub(\Gamma,\sigma(t_1, \ldots t_k)) & = \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma_{\leq n},\Gamma^\sigma_i(t_1, \ldots t_k)),t_i)
+\sub(\Gamma,\sigma(t_1, \ldots t_k)) & = \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub(\Gamma^\sigma_i(t_1, \ldots t_k),t_i)
 \end{align*}
-where $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ and $\Gamma_{\leq n}$ is the first $n$ terms of $\Gamma$.
 In each of the cases, $(\Gamma,t)$ is the contexted term itself.
 So, every contexted term is always a contexted subterm of itself.
 Note that the definition of $\sub$ depends on the theory.
@@ -435,10 +430,10 @@ Now, we can describe the derivation system for the $\ft$-free syntax:
 
 \medskip
 \begin{center}
-\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma(t_1, \ldots t_k) \vdash \sigma(t_1, \ldots t_k)$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k)$}
 \AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1, \ldots t_k) \vdash t_i \equiv t_i'$}
 \RightLabel{\axlabel{cf}}
-\BinaryInfC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma(t_1, \ldots t_k) \vdash \sigma(t_1, \ldots t_k) = \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k) = \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
 \DisplayProof
 \end{center}
 
@@ -464,11 +459,12 @@ We will say that function symbols are \emph{well-founded} if this relation is.
 An $\ft$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$ such that the following conditions hold:
 \begin{enumerate}
 \item For every symbol $S$ and every possible length of $\Gamma$, there is unique axiom of the form
-\[ \varphi \land \bigwedge_{1 \leq i \leq k} \Gamma, \Gamma^S_i \vdash x_i \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma, \Gamma^S \vdash S(x_1, \ldots x_k), \]
+\[ \varphi \land \bigwedge_{1 \leq i \leq k} \Gamma, \Gamma^S_i \vdash x_i \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash S(x_1, \ldots x_k), \]
 where $\varphi$ does not contain judgements of the form $\Gamma, \Delta \vdash x_i$.
 \item Function symbols are well-founded.
 \item \label{it:ax-valid} All axioms are valid and the set of free variables of the conclusion of every axiom is contained in the set of free variables of its premise.
 \item \label{it:ax-cond} For every axiom $\varphi \sststile{}{V} \psi$ and every contexted subterm $(\Gamma,t)$ of $\psi$, the sequent $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
+\item TODO: Add rules for $v_i$, $\subst$, regularity.
 \end{enumerate}
 A \emph{theorem} is a valid derivable sequent.
 \end{defn}
@@ -621,7 +617,7 @@ The restriction formulas are just lifted to the top.
 That is, $\sigma(t_1|_{\varphi_1}, \ldots t_k|_{\varphi_k}) = \sigma(t_1, \ldots t_k)|_{\varphi_1 \land \ldots \land \varphi_k}$ and $R(t_1|_{\varphi_1}, \ldots t_k|_{\varphi_k}) = R(t_1, \ldots t_k) \land \varphi_1 \land \ldots \land \varphi_k$.
 We will say that such a function is an \emph{interpretation} of $T$ in $T'$ if the following conditions hold:
 \begin{enumerate}
-\item \label{it:interp-symb} For every symbol $S$ of $T$, if $x_i$ has context $\Delta$ in $(f(\Gamma^S), f(S(x_1, \ldots x_k)))$, then $\Gamma, f(\Gamma^S) \vdash f(S(x_1, \ldots x_k)) \sststile{}{\Gamma, x_1, \ldots x_k} (\Gamma, \Delta) \equiv (\Gamma, f(\Gamma^S_i))$ is derivable in $T'$.
+\item \label{it:interp-symb} For every symbol $S$ of $T$, if $x_i$ has context $\Delta$ in $f(S(x_1, \ldots x_k))$, then $\Gamma \vdash f(S(x_1, \ldots x_k)) \sststile{}{\Gamma, x_1, \ldots x_k} (\Gamma, \Delta) \equiv (\Gamma, f(\Gamma^S_i))$ is derivable in $T'$.
 \item \label{it:interp-axiom} For every axiom $\varphi \sststile{}{V} \psi$ of $T$, the sequent $f(\varphi) \sststile{}{V} f(\psi)$ is derivable.
 \end{enumerate}
 
@@ -632,15 +628,18 @@ Two $\ft$-free restricted terms $t|_\varphi$ and $t'|_\psi$ are \emph{equivalent
 \psi \land (\Gamma \vdash t') & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \varphi \land (\Gamma \vdash t \equiv t')
 \end{align*}
 
-Interpretations $f$ and $f'$ are \emph{equivalent} if $f(S(x_1, \ldots x_k))$ and $f'(S(x_1, \ldots x_k))$ are equivalent in $f(\Gamma^S(x_1, \ldots x_k))$ for every symbol $S$.
+Interpretations $f$ and $f'$ are \emph{equivalent} if $f(S(x_1, \ldots x_k))$ and $f'(S(x_1, \ldots x_k))$ are equivalent (in the empty context for function symbols) for every symbol $S$.
 A \emph{morphism} of $\ft$-free theories $T$ and $T'$ is an equivalence class of interpretations of $T$ in $T'$.
 The identity morphism is defined in the obvious way: $\id(\sigma(x_1, \ldots x_k)) = \sigma(x_1, \ldots x_k)|_\top$ and $\id(R(x_1, \ldots x_k)) = R(x_1, \ldots x_k)$.
 The composition of morphisms is defined as follows:
 \[ (g \circ f)(S(x_1, \ldots x_k)) = g(f(S(x_1, \ldots x_k))) \]
 It is easy to see that this defines the structure of a category on $\ft$-free theories.
 
-% TODO: Нужно проверить валидность \id и композиции и то, что композиция сохраняет эквивалентность, ну и свойства категории можно было бы.
-%       На самом деле первое условие валидности уже фейлится для \id. У меня возникает ощущение, что оно и не нужно здесь. Наверное стоит его убрать и отдельно потребовать для аксиом.
+\begin{prop}
+The composition operation is well-defined and together with the identity map gives us the structure of a category on $\ft$-free theories.
+\end{prop}
+\begin{proof}
+\end{proof}
 
 \subsection{The $\ty$-free syntax}
 \label{sec:types}
