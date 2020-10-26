@@ -310,7 +310,7 @@ We define another $\mathcal{S}$-set of terms $\Term_\mathcal{F}(V)$ inductively 
 \item Every element of $V_s$ is a term of sort $s$.
 \item If $t$ is a term of sort $(\tm,n)$, then $\ty(t)$ is a term of sort $(\ty,n)$.
 \item $v_i$ is a term of sort $(\tm,n)$ for every $0 \leq i < n$.
-\item If $t$ is a term of sort $(p,k)$, where $p \in \{ \ty, \tm \}$, and $t_1, \ldots t_k$ are terms of sort $(\tm,n)$, then $\subst(t, t_1, \ldots t_k)$ is a term of sort $(p,n)$.
+\item If $A_1$, \ldots $A_k$ are terms of sorts $(\ty,0)$, \ldots $(\ty,k-1)$, respectively, $t$ is a term of sort $(p,k)$, where $p \in \{ \ty, \tm \}$, and $t_1, \ldots t_k$ are terms of sort $(\tm,n)$, then $\subst(A_1, \ldots A_k, t, t_1, \ldots t_k)$ is a term of sort $(p,n)$.
 \item If $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ is a function symbol of $T$ and $t_i$ is a term of sort $(p_i,m+n_i)$, then $\sigma(t_1, \ldots t_k)$ is a term of sort $(p,m+n)$.
 \end{itemize}
 These terms will be called \emph{$\ft$-free} terms.
@@ -366,20 +366,23 @@ We will also write $\Gamma^S$ and $\Gamma^S_i$ for $\Gamma^S(x_1, \ldots x_k)$ a
 A \emph{contexted term} is a pair $(\Gamma,t)$, where $\Gamma$ is a context of length $n$ and $t$ is a term of sort $(p,n)$ for some $p \in \{ \ty, \tm \}$.
 For every contexted term $(\Gamma,t)$, we can define the set $\sub(\Gamma,t)$ of its contxeted subterms:
 \begin{align*}
-\sub(\Gamma,t) & = \{ (\Gamma,t) \} \text{ if $t$ is a variable or $v_i$} \\
-\sub(\Gamma,\ty(t')) & = \{ (\Gamma,t) \} \cup \sub(\Gamma,t') \\
-\sub(\Gamma,\subst(t', t_1, \ldots t_k)) & = \{ (\Gamma,t) \} \cup \sub((\ty(t_1), \ldots \ty(t_k)), t') \cup \bigcup_{1 \leq i \leq k} \sub(\Gamma,t_i) \\
-\sub(\Gamma,\sigma(t_1, \ldots t_k)) & = \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub(\Gamma^\sigma_i(t_1, \ldots t_k),t_i)
+\sub(\Gamma,t) = & \{ (\Gamma,t) \} \text{ if $t$ is a variable or $v_i$} \\
+\sub(\Gamma,\ty(t')) = & \{ (\Gamma,t) \} \cup \sub(\Gamma,t') \\
+\sub(\Gamma,\subst(A_1, \ldots A_k, t', t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \sub((A_1, \ldots A_k), t')\ \cup \\
+    & \bigcup_{1 \leq i \leq k} \sub(\Gamma,t_i) \cup \sub((A_1, \ldots A_{i-1}), A_i) \\
+\sub(\Gamma,\sigma(t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^\sigma_i(t_1, \ldots t_k)), t_i)
 \end{align*}
 In each of the cases, $(\Gamma,t)$ is the contexted term itself.
 So, every contexted term is always a contexted subterm of itself.
-Note that the definition of $\sub$ depends on the theory.
+Note that the definition of $\sub$ depends on the choice of contexts $\Gamma^\sigma_i$.
 
-We can also define the set of contexted subterms of a formula:
+We can also define the set of contexted subterms of contexts and formulas:
 \begin{align*}
-\sub(\Gamma \vdash t) & = \sub(\Gamma, t) \\
-\sub(\Gamma \vdash t \equiv t') & = \sub(\Gamma,t) \cup \sub(\Gamma,t') \\
-\sub(\Gamma, R(t_1, \ldots t_k)) & = \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^R_i(t_1, \ldots t_k)),t_i) \\
+\sub(\cdot) & = \varnothing \\
+\sub((\Gamma, A)) & = \sub(\Gamma) \cup \sub(\Gamma,A) \\
+\sub(\Gamma \vdash t) & = \sub(\Gamma) \cup \sub(\Gamma, t) \\
+\sub(\Gamma \vdash t \equiv t') & = \sub(\Gamma) \cup \sub(\Gamma,t) \cup \sub(\Gamma,t') \\
+\sub(\Gamma, R(t_1, \ldots t_k)) & = \sub(\Gamma) \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^R_i(t_1, \ldots t_k)),t_i) \\
 \sub(\varphi_1 \land \ldots \land \varphi_n) & = \bigcup_{1 \leq i \leq n} \sub(\varphi_i)
 \end{align*}
 
@@ -437,15 +440,96 @@ Now, we can describe the derivation system for the $\ft$-free syntax:
 \DisplayProof
 \end{center}
 
-Finally, for every axiom $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k} \chi_1 \land \ldots \land \chi_m$
-and for all terms $t_1$, \ldots $t_k$, we have the following rules for all $1 \leq j \leq m$:
-\smallskip
+\medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \psi_i[t_1/x_1, \ldots t_k/x_k]$, $1 \leq i \leq n$}
 \RightLabel{\axlabel{ca}}
 \UnaryInfC{$\varphi \sststile{}{V} \chi_j[t_1/x_1, \ldots t_k/x_k]$}
 \DisplayProof
 \end{center}
+where $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k} \chi_1 \land \ldots \land \chi_m$ is an axiom and $t_1$, \ldots $t_k$ are arbitrary terms.
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash t$}
+\RightLabel{\axlabel{et}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \ty(t)$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash$}
+\RightLabel{\axlabel{ev}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash v_i$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash$}
+\RightLabel{\axlabel{evt}}
+\UnaryInfC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash \ty(v_i) \equiv \subst(A_1, \ldots A_{m-i}, v_{m-1}, \ldots v_{i+1})$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash b$
+\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\def\extraVskip{2pt}
+\RightLabel{\axlabel{es}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \subst(A_1, \ldots A_k, b, a_1, \ldots a_k)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash b$
+\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\def\extraVskip{2pt}
+\RightLabel{\axlabel{est}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \ty(\subst(\overline{A}, b, a_1, \ldots a_k)) \equiv \subst(\overline{A}, \ty(b), a_1, \ldots a_k)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a_i$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$}
+\RightLabel{\axlabel{esl}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \subst(A_1, \ldots A_k, v_i, a_1, \ldots a_k) \equiv a_{k-i}$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash b$}
+\RightLabel{\axlabel{esr}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \subst(\Gamma, b, v_{k-1}, \ldots v_0) \equiv b$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash c$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} B_1, \ldots B_n \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(b_i) \equiv \subst(B_1, \ldots B_i, b_1, \ldots b_{i-1})$
+\Axiom$\fCenter \varphi \sststile{}{V} \overline{B} \vdash a_i$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash b_i$
+\def\extraVskip{2pt}
+\RightLabel{\axlabel{esa}}
+\BinaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \subst(\overline{B}, \subst(\overline{A}, c, \overline{a}), \overline{b}) \equiv \subst(\overline{A}, c, a_1' \ldots a_k')$
+\DisplayProof
+\end{center}
+where $a_i' = \subst(B_1, \ldots B_n, a_i, b_1, \ldots b_n)$.
 If $\psi = \psi_1 \land \ldots \land \psi_n$, then we will say that $\psi \sststile{}{V} \psi$ is derivable if $\psi \sststile{}{V} \psi_i$ is derivable for every $1 \leq i \leq n$.
 
 We will say that a term or a formula $E$ is \emph{valid} with respect to $(\varphi,V)$ if, for every pair $(\Gamma,x)$ and $(\Delta,x)$ of contexted subterms of $E$ (where $x$ is any variable), the sequent $\varphi \sststile{}{V} \Gamma \equiv \Delta$ is derivable.
@@ -464,7 +548,6 @@ where $\varphi$ does not contain judgements of the form $\Gamma, \Delta \vdash x
 \item Function symbols are well-founded.
 \item \label{it:ax-valid} All axioms are valid and the set of free variables of the conclusion of every axiom is contained in the set of free variables of its premise.
 \item \label{it:ax-cond} For every axiom $\varphi \sststile{}{V} \psi$ and every contexted subterm $(\Gamma,t)$ of $\psi$, the sequent $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
-\item TODO: Add rules for $v_i$, $\subst$, regularity.
 \end{enumerate}
 A \emph{theorem} is a valid derivable sequent.
 \end{defn}
@@ -473,12 +556,10 @@ A \emph{theorem} is a valid derivable sequent.
 The theory of $\Pi$-types is defined as follows:
 \begin{center}
 \AxiomC{$\Gamma, A \vdash B$}
-\doubleLine
 \UnaryInfC{$\Gamma \vdash \Pi(A,B)$}
 \DisplayProof
 \qquad
 \AxiomC{$\Gamma, A \vdash b$}
-\doubleLine
 \UnaryInfC{$\Gamma \vdash \lambda(A,b)$}
 \DisplayProof
 \qquad
@@ -514,6 +595,7 @@ The theory of $\Pi$-types is defined as follows:
 \DisplayProof
 \end{center}
 \medskip
+where $B[a]$ is $\subst(\Gamma, \ty(a), B, v_{n-1}, \ldots v_0, a)$ and $b[a]$ is defined similarly.
 \end{example}
 
 A rule is \emph{admissible} if its conclusion is derivable whenever its premises are.
@@ -639,6 +721,11 @@ It is easy to see that this defines the structure of a category on $\ft$-free th
 The composition operation is well-defined and together with the identity map gives us the structure of a category on $\ft$-free theories.
 \end{prop}
 \begin{proof}
+It is easy to see that the identity function is an interpretation.
+The second property is obvious and the first property follows from \axref{cd}.
+Let $f : T_1 \to T_2$ and $g : T_2 \to T_3$ be a pair of interpretations.
+We need to show that $g \circ f$ is also an interpretation.
+To prove that it satisfies \eqref{it:interp-axiom}, it is enough to show that interpretations preserve theorems.
 \end{proof}
 
 \subsection{The $\ty$-free syntax}
