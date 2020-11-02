@@ -350,9 +350,9 @@ Also, $\varphi_1 \land \ldots \land \varphi_n \ssststile{}{V} \psi$ will be repr
 \DisplayProof
 \end{center}
 
-If $\Gamma$ and $\Delta$ are two contexts of the same length, we can define formula $\Gamma \equiv \Delta$ by induction on their length.
-If they are empty, then this formula is defined as $\top$.
-If $\Gamma = (\Gamma',A)$ and $\Delta = (\Delta',B)$, then this formula is defined as $(\Gamma' \equiv \Delta') \land (\Gamma' \vdash A \equiv B)$.
+Let $\Gamma$ be a context of length $n$ and let $\Delta_1 = (A_1, \ldots A_k)$, $\Delta_2 = (B_1, \ldots B_k)$ be a pair of sequences of terms of sorts $(\ty,n)$, \ldots $(\ty,n+k)$.
+Then we define $\Gamma \vdash \Delta_1 \equiv \Delta_2$ as $\Gamma \vdash A_1 \equiv B_1 \land \ldots \land \Gamma, A_1, \ldots A_{k-1} \vdash A_k \equiv B_k$.
+If $\Gamma$ and $\Delta$ are two contexts of the same length, we define $\Gamma \equiv \Delta$ as $\vdash \Gamma \equiv \Delta$.
 
 An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$ such that every function symbol has a signature of the form $s_1 \times \ldots \times s_k \to (p,0)$ , a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
 These sets must satisfy conditions listed in \rdefn{ft-free}.
@@ -402,6 +402,16 @@ Now, we can describe the derivation system for the $\ft$-free syntax:
 
 \medskip
 \begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, A, \Delta \vdash \psi$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash A \equiv B$}
+\RightLabel{\axlabel{cx}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma, B, \Delta \vdash \psi$}
+\DisplayProof
+\end{center}
+where $\psi$ is either a term, an equality, or a predicate symbol applied to some terms.
+
+\medskip
+\begin{center}
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash t$}
 \RightLabel{\axlabel{cr}}
 \UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash t \equiv t$}
@@ -436,9 +446,20 @@ Now, we can describe the derivation system for the $\ft$-free syntax:
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k)$}
 \AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1, \ldots t_k) \vdash t_i \equiv t_i'$}
 \RightLabel{\axlabel{cf}}
-\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k) = \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k) \equiv \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
 \DisplayProof
 \end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k)$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1, \ldots t_k) \vdash t_i \equiv t_i'$}
+\RightLabel{\axlabel{cf'}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
+\DisplayProof
+\end{center}
+where $\sigma$ is either a function symbol, $\ty$, or $\subst$.
+We define $\Gamma^\ty_1$ as the empty context and $\Gamma^\subst_i(A_1, \ldots A_{k+1}, a_1, \ldots a_k)$ as $A_1, \ldots A_{i-1}$ if $i \leq k+1$ and as the empty context otherwise.
 
 \medskip
 \begin{center}
@@ -473,12 +494,15 @@ where $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k}
 \medskip
 \begin{center}
 \def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
 \Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash b$
-\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
 \noLine
 \UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
 \def\extraVskip{2pt}
 \RightLabel{\axlabel{es}}
+\doubleLine
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \subst(A_1, \ldots A_k, b, a_1, \ldots a_k)$}
 \DisplayProof
 \end{center}
@@ -486,7 +510,9 @@ where $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k}
 \medskip
 \begin{center}
 \def\extraVskip{1pt}
-\Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash b$
+\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash b$
 \Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
 \noLine
 \UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
@@ -521,7 +547,9 @@ where $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k}
 \UnaryInf$\fCenter \varphi \sststile{}{V} B_1, \ldots B_n \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
 \noLine
 \UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(b_i) \equiv \subst(B_1, \ldots B_i, b_1, \ldots b_{i-1})$
-\Axiom$\fCenter \varphi \sststile{}{V} \overline{B} \vdash a_i$
+\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \overline{B} \vdash a_i$
 \noLine
 \UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash b_i$
 \def\extraVskip{2pt}
@@ -541,8 +569,10 @@ We will say that function symbols are \emph{well-founded} if this relation is.
 
 \begin{defn}[ft-free]
 An $\ft$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
-together with a context $\Gamma^S_i$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that the following rules hold:
+together with a context $\Gamma^S_i(x_1, \ldots x_k)$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that $x_i \notin \FV(\Gamma^S_i(x_1, \ldots x_k))$ and the following conditions hold:
 \begin{enumerate}
+\item \label{it:ax-consist} For every symbol $S$ with $n$ parameters, every $1 \leq j \leq n$, and every $(\Delta,x_i) \in \sub(\Gamma_j^S(x_1, \ldots x_k))$, the following sequent is derivable:
+\[ \Gamma \vdash S(x_1, \ldots x_k) \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash \Gamma_i^S(x_1, \ldots x_k) \equiv \Delta \]
 \item Function symbols are well-founded.
 \item \label{it:ax-valid} All axioms are valid and the set of free variables of the conclusion of every axiom is contained in the set of free variables of its premise.
 \item \label{it:ax-cond} For every axiom $\varphi \sststile{}{V} \psi$ and every contexted subterm $(\Gamma,t)$ of $\psi$, the sequent $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
@@ -602,7 +632,45 @@ The theory of $\Pi$-types is defined as follows:
 where $B[a]$ is $\subst(\Gamma, \ty(a), B, v_{n-1}, \ldots v_0, a)$ and $b[a]$ is defined similarly.
 \end{example}
 
+\begin{lem}[derived-cong]
+Let $t$ and $t'$ be terms, let $\Gamma$ be a context of length $n$, and let $A$ be a term of sort $(\ty,n)$.
+Suppose that $\varphi \sststile{}{V} \Delta \vdash t \equiv t'$ for every $\Delta$ such that $(\Delta,x) \in \sub(\Gamma,A)$.
+If the sequent $\varphi \sststile{}{V} \Gamma \vdash A[t/x]$ is derivable, then so is the sequent $\varphi \sststile{}{V} \Gamma \vdash A[t/x] \equiv A[t'/x]$.
+\end{lem}
+\begin{proof}
+TODO
+\end{proof}
+
 A rule is \emph{admissible} if its conclusion is derivable whenever its premises are.
+
+\begin{lem}
+The following rules are admissible:
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Delta \vdash \psi$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \Delta \equiv \Delta'$}
+\RightLabel{\axlabel{cx'}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma, \Delta' \vdash \psi$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \Delta \equiv \Delta'$}
+\RightLabel{\axlabel{cs'}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \Delta' \equiv \Delta$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \Delta \equiv \Delta'$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \Delta' \equiv \Delta''$}
+\RightLabel{\axlabel{ct'}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \Delta \equiv \Delta''$}
+\DisplayProof
+\end{center}
+\end{lem}
+\begin{proof}
+The proof is by easy induction on the length of $\Delta$.
+\end{proof}
 
 \begin{prop}
 The following rules are admissible:
@@ -640,7 +708,9 @@ The rule \axref{cd} follows from the assumption that $\varphi \sststile{}{V} \ps
 
 Now, we can prove that every derivable sequent is good, which implies both \axref{cc} and \axref{ce}.
 We proceed by induction on the derivation.
-The only non-trivial case is \axref{ca}.
+Most of the cases are trivial since the set of contexted subterms of the conclusion is a subset of the set of contexted subterms of the premise.
+We consider only non-trivial cases.
+First, let us consider \axref{ca}.
 Let $\psi \sststile{}{V'} \chi$ be an axiom, let $\rho$ be a substitution, and let $(\Gamma,t)$ be a contexted subterm of $\chi[\rho]$.
 Suppose that $\varphi \sststile{}{V} \psi[\rho]$ is derivable and good.
 We need to show that $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
@@ -648,6 +718,20 @@ It is easy to see that there exists a contexted subterm $(\Gamma',t')$ of $\chi$
 By \eqref{it:ax-cond}, the sequent $\psi \sststile{}{V'} \Gamma' \vdash t'$ is derivable.
 By \axref{cu}, the sequent $\psi[\rho] \sststile{}{V} \Gamma \vdash t$ is also derivable.
 Since $\varphi \sststile{}{V} \psi[\rho]$ is derivable and good, this implies that $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
+
+Now, we consider \axref{cp}, \axref{cf}, and \axref{cf'}.
+Assume that $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is derivable and good and that $\varphi \sststile{}{V} \Gamma, \Gamma_i^S(t_1, \ldots t_k) \vdash t_i \equiv t_i'$ is derivable.
+We need to show that $\varphi \sststile{}{V} \Gamma, \Gamma_j^S(t_1, \ldots t_i', \ldots t_k) \vdash t_j$ is derivable.
+By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_j^S(t_1, \ldots t_k) \equiv \Gamma_j^S(t_1, \ldots t_i', \ldots t_k)$ is derivable.
+To prove this, we need to apply a version of \rlem{derived-cong} for contexts.
+If the conditions of this lemma hold and $\varphi \sststile{}{V} \Gamma, \Theta' \vdash$ is derivable for every initial segment $\Theta'$ of $\Theta[t/x]$, then $\varphi \sststile{}{V} \Gamma \vdash \Theta[t/x] \equiv \Theta[t'/x]$ is derivable.
+This is easy to prove by induction on the length of $\Theta$ using \rlem{derived-cong}.
+Thus, we just need to show that $\varphi \sststile{}{V} \Gamma, \Theta' \vdash$ is derivable for every initial segment $\Theta'$ of $\Gamma_j^S(t_1, \ldots t_k)$.
+Since $\Gamma, \Theta'$ is a contexted subterm of $\Gamma, \Gamma_j^S(t_1, \ldots t_k)$, which is a contexted subterm of $(\Gamma, S(t_1, \ldots t_k))$, the required property follows from the fact that $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is good.
+We also need to verify that conditions of \rlem{derived-cong} hold.
+That is, we need to show that $\varphi \sststile{}{V} \Delta \vdash t_i \equiv t_i'$ is derivable for every $(\Delta,x_i) \in \sub(\Gamma_j^S(t_1, \ldots x_j, t_k))$.
+By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_i^S(t_1, \ldots t_k) \equiv \Delta$ is derivable.
+Since $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is derivable and good, this follows from \axref{cc} and \eqref{it:ax-consist}.
 \end{proof}
 
 \begin{cor}
@@ -657,7 +741,7 @@ This does not change the set of theorems.
 \begin{proof}
 Every theorem is valid by the definition.
 It is easy to prove by induction on the derivation that the second condition of \eqref{it:ax-valid} holds.
-Condition~\eqref{it:ax-cond} is axactly the admissibility of \axref{ce}.
+Condition~\eqref{it:ax-cond} is exactly the admissibility of \axref{ce}.
 Finally, we need to show that \axref{ca} holds for theorems.
 This follows from \axref{cu} and \axref{cc}.
 \end{proof}
@@ -703,7 +787,7 @@ The restriction formulas are just lifted to the top.
 That is, $\sigma(t_1|_{\varphi_1}, \ldots t_k|_{\varphi_k}) = \sigma(t_1, \ldots t_k)|_{\varphi_1 \land \ldots \land \varphi_k}$ and $R(t_1|_{\varphi_1}, \ldots t_k|_{\varphi_k}) = R(t_1, \ldots t_k) \land \varphi_1 \land \ldots \land \varphi_k$.
 We will say that such a function is an \emph{interpretation} of $T$ in $T'$ if the following conditions hold:
 \begin{enumerate}
-\item \label{it:interp-symb} For every symbol $S$ of $T$, if $x_i$ has context $\Delta$ in $f(S(x_1, \ldots x_k))$, then $\Gamma \vdash f(S(x_1, \ldots x_k)) \sststile{}{\Gamma, x_1, \ldots x_k} (\Gamma, \Delta) \equiv (\Gamma, f(\Gamma^S_i))$ is derivable in $T'$.
+\item \label{it:interp-symb} For every symbol $S$ of $T$, if $x_i$ has context $\Delta$ in $f(S(x_1, \ldots x_k))$, then $\Gamma \vdash f(S(x_1, \ldots x_k)) \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash \Delta \equiv f(\Gamma^S_i)$ is derivable in $T'$.
 \item \label{it:interp-axiom} For every axiom $\varphi \sststile{}{V} \psi$ of $T$, the sequent $f(\varphi) \sststile{}{V} f(\psi)$ is derivable.
 \end{enumerate}
 
