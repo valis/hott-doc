@@ -354,14 +354,12 @@ Let $\Gamma$ be a context of length $n$ and let $\Delta_1 = (A_1, \ldots A_k)$, 
 Then we define $\Gamma \vdash \Delta_1 \equiv \Delta_2$ as $\Gamma \vdash A_1 \equiv B_1 \land \ldots \land \Gamma, A_1, \ldots A_{k-1} \vdash A_k \equiv B_k$.
 If $\Gamma$ and $\Delta$ are two contexts of the same length, we define $\Gamma \equiv \Delta$ as $\vdash \Gamma \equiv \Delta$.
 
-An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$ such that every function symbol has a signature of the form $s_1 \times \ldots \times s_k \to (p,0)$ , a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
+An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$ such that every function symbol has a signature of the form $s_1 \times \ldots \times s_k \to (p,0)$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
 These sets must satisfy conditions listed in \rdefn{ft-free}.
-First, we assume that, for every function or predicate symbol $S$ and every $m \in \mathbb{N}$, there is a unique axiom of the form
-\[ \varphi \sststile{}{A_1, \ldots A_m, x_1, \ldots x_k} A_1, \ldots A_m \vdash S(x_1, \ldots x_k). \]
-We assume that, for every $1 \leq i \leq k$, the formula $\varphi$ contains a unique judgement of the form $A_1, \ldots A_m, \Gamma \vdash x_i$.
-We assume that $\Gamma$ does not depend on $m$ and that $A_1, \ldots A_m \notin \FV(\Gamma)$.
-We will write $\Gamma^S_i(t_1, \ldots t_k)$ for $\Gamma[t_1/x_1, \ldots t_k/x_k]$.
-We will also write $\Gamma^S$ and $\Gamma^S_i$ for $\Gamma^S(x_1, \ldots x_k)$ and $\Gamma^S_i(x_1, \ldots x_k)$, respectively.
+Each symbol $S$ with $k$ parameters of sorts $(p_1,n_1)$, \ldots $(p_k,n_k)$ is equipped with a collection $\{ \Gamma^S_i(x_1, \ldots x_{i-1}) \}_{1 \leq i \leq k}$ of contexts,
+where $\Gamma^S_i(x_1, \ldots x_{i-1})$ is a context of length $n_i$ with free variables in $\{ x_1 : (p_1,n_1), \ldots x_{i-1} : (p_{i-1},n_{i-1}) \}$.
+We will write $\Gamma^S_i$ for $\Gamma^S_i(x_1, \ldots x_k)$.
+We will also write $\Gamma^S_i(t_1, \ldots t_k)$ for $\Gamma^S_i[t_1/x_1, \ldots t_k/x_k]$.
 
 A \emph{contexted term} is a pair $(\Gamma,t)$, where $\Gamma$ is a context of length $n$ and $t$ is a term of sort $(p,n)$ for some $p \in \{ \ty, \tm \}$.
 For every contexted term $(\Gamma,t)$, we can define the set $\sub(\Gamma,t)$ of its contxeted subterms:
@@ -370,7 +368,7 @@ For every contexted term $(\Gamma,t)$, we can define the set $\sub(\Gamma,t)$ of
 \sub(\Gamma,\ty(t')) = & \{ (\Gamma,t) \} \cup \sub(\Gamma,t') \\
 \sub(\Gamma,\subst(A_1, \ldots A_k, t', t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \sub((A_1, \ldots A_k), t')\ \cup \\
     & \bigcup_{1 \leq i \leq k} \sub(\Gamma,t_i) \cup \sub((A_1, \ldots A_{i-1}), A_i) \\
-\sub(\Gamma,\sigma(t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^\sigma_i(t_1, \ldots t_k)), t_i)
+\sub(\Gamma,\sigma(t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^\sigma_i(t_1, \ldots t_{i-1})), t_i)
 \end{align*}
 In each of the cases, $(\Gamma,t)$ is the contexted term itself.
 So, every contexted term is always a contexted subterm of itself.
@@ -382,7 +380,7 @@ We can also define the set of contexted subterms of contexts and formulas:
 \sub((\Gamma, A)) & = \sub(\Gamma) \cup \sub(\Gamma,A) \\
 \sub(\Gamma \vdash t) & = \sub(\Gamma) \cup \sub(\Gamma, t) \\
 \sub(\Gamma \vdash t \equiv t') & = \sub(\Gamma) \cup \sub(\Gamma,t) \cup \sub(\Gamma,t') \\
-\sub(\Gamma, R(t_1, \ldots t_k)) & = \sub(\Gamma) \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^R_i(t_1, \ldots t_k)),t_i) \\
+\sub(\Gamma, R(t_1, \ldots t_k)) & = \sub(\Gamma) \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^R_i(t_1, \ldots t_{i-1})),t_i) \\
 \sub(\varphi_1 \land \ldots \land \varphi_n) & = \bigcup_{1 \leq i \leq n} \sub(\varphi_i)
 \end{align*}
 
@@ -435,7 +433,7 @@ where $\psi$ is either a term, an equality, or a predicate symbol applied to som
 \medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash R(t_1, \ldots t_k)$}
-\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^R_i(t_1, \ldots t_k) \vdash t_i \equiv t_i'$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^R_i(t_1, \ldots t_{i-1}) \vdash t_i \equiv t_i'$}
 \RightLabel{\axlabel{cp}}
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash R(t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
 \DisplayProof
@@ -444,7 +442,7 @@ where $\psi$ is either a term, an equality, or a predicate symbol applied to som
 \medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k)$}
-\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1, \ldots t_k) \vdash t_i \equiv t_i'$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1, \ldots t_{i-1}) \vdash t_i \equiv t_i'$}
 \RightLabel{\axlabel{cf}}
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k) \equiv \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
 \DisplayProof
@@ -453,13 +451,13 @@ where $\psi$ is either a term, an equality, or a predicate symbol applied to som
 \medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k)$}
-\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1, \ldots t_k) \vdash t_i \equiv t_i'$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1, \ldots t_{i-1}) \vdash t_i \equiv t_i'$}
 \RightLabel{\axlabel{cf'}}
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
 \DisplayProof
 \end{center}
 where $\sigma$ is either a function symbol, $\ty$, or $\subst$.
-We define $\Gamma^\ty_1$ as the empty context and $\Gamma^\subst_i(A_1, \ldots A_{k+1}, a_1, \ldots a_k)$ as $A_1, \ldots A_{i-1}$ if $i \leq k+1$ and as the empty context otherwise.
+We define $\Gamma^\ty_1$ as the empty context and $\Gamma^\subst_i(x_1, \ldots x_{2k+1})$ as $x_1, \ldots x_{i-1}$ if $i \leq k+1$ and as the empty context otherwise.
 
 \medskip
 \begin{center}
@@ -563,17 +561,13 @@ If $\psi = \psi_1 \land \ldots \land \psi_n$, then we will say that $\psi \sstst
 We will say that a term or a formula $E$ is \emph{valid} with respect to $(\varphi,V)$ if, for every pair $(\Gamma,x)$ and $(\Delta,x)$ of contexted subterms of $E$ (where $x$ is any variable), the sequent $\varphi \sststile{}{V} \Gamma \equiv \Delta$ is derivable.
 A sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\varphi$ and $\psi$ are valid with respect to $(\varphi,V)$.
 
-Finally, we need to define a relation $\prec$ on the set of basic function symbols.
-We let $\tau \prec \sigma$ to be true if and only if $\tau$ appears in $\Gamma^\sigma_i$ for some $i$.
-We will say that function symbols are \emph{well-founded} if this relation is.
-
 \begin{defn}[ft-free]
 An $\ft$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
-together with a context $\Gamma^S_i(x_1, \ldots x_k)$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that $x_i \notin \FV(\Gamma^S_i(x_1, \ldots x_k))$ and the following conditions hold:
+together with a context $\Gamma^S_i(x_1, \ldots x_k)$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that the following conditions hold:
 \begin{enumerate}
-\item \label{it:ax-consist} For every symbol $S$ with $n$ parameters, every $1 \leq j \leq n$, and every $(\Delta,x_i) \in \sub(\Gamma_j^S(x_1, \ldots x_k))$, the following sequent is derivable:
-\[ \Gamma \vdash S(x_1, \ldots x_k) \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash \Gamma_i^S(x_1, \ldots x_k) \equiv \Delta \]
-\item Function symbols are well-founded.
+\item \label{it:ax-consist} For every symbol $S$ with $n$ parameters, every $1 \leq j \leq n$, and every $(\Delta,x_i) \in \sub(\Gamma_j^S(x_1, \ldots x_{j-1}))$, the following sequent is derivable:
+\[ \Gamma \vdash S(x_1, \ldots x_k) \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash \Gamma_i^S(x_1, \ldots x_{i-1}) \equiv \Delta \]
+\item \label{it:ax-wf} The following relation on the set of function symbols is well-founded: $\tau \prec \sigma$ if and only if $\tau$ appears in $\Gamma^\sigma_i$ for some $i$.
 \item \label{it:ax-valid} All axioms are valid and the set of free variables of the conclusion of every axiom is contained in the set of free variables of its premise.
 \item \label{it:ax-cond} For every axiom $\varphi \sststile{}{V} \psi$ and every contexted subterm $(\Gamma,t)$ of $\psi$, the sequent $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
 \end{enumerate}
@@ -604,20 +598,20 @@ The theory of $\Pi$-types is defined as follows:
 \medskip
 
 \begin{center}
-\AxiomC{$\Gamma, \ty(a) \vdash B$}
-\AxiomC{$\Gamma \vdash \ty(f) \equiv \Pi(\ty(a),B)$}
-\AxiomC{$\Gamma \vdash a$}
+\AxiomC{$\Gamma, A \vdash B$}
+\AxiomC{$\Gamma \vdash \ty(f) \equiv \Pi(A,B)$}
+\AxiomC{$\Gamma \vdash \ty(a) \equiv A$}
 \doubleLine
-\TrinaryInfC{$\Gamma \vdash \fs{app}(B,f,a)$}
+\TrinaryInfC{$\Gamma \vdash \fs{app}(A,B,f,a)$}
 \DisplayProof
 \end{center}
 \medskip
 
 \begin{center}
-\AxiomC{$\Gamma, \ty(a) \vdash B$}
-\AxiomC{$\Gamma \vdash \ty(f) \equiv \Pi(\ty(a),B)$}
-\AxiomC{$\Gamma \vdash a$}
-\TrinaryInfC{$\Gamma \vdash \ty(\fs{app}(B,f,a)) \equiv B[a]$}
+\AxiomC{$\Gamma, A \vdash B$}
+\AxiomC{$\Gamma \vdash \ty(f) \equiv \Pi(A,B)$}
+\AxiomC{$\Gamma \vdash \ty(a) \equiv A$}
+\TrinaryInfC{$\Gamma \vdash \ty(\fs{app}(A, B,f,a)) \equiv \subst(\Gamma, A, B, v_{n-1}, \ldots v_0, a)$}
 \DisplayProof
 \end{center}
 \medskip
@@ -625,20 +619,36 @@ The theory of $\Pi$-types is defined as follows:
 \begin{center}
 \AxiomC{$\Gamma, \ty(a) \vdash b$}
 \AxiomC{$\Gamma \vdash a$}
-\BinaryInfC{$\Gamma \vdash \fs{app}(\ty(b),\lambda(\ty(a),b),a) \equiv b[a]$}
+\BinaryInfC{$\Gamma \vdash \fs{app}(\ty(a), \ty(b),\lambda(\ty(a),b),a) \equiv \subst(\Gamma, \ty(a), b, v_{n-1}, \ldots v_0, a)$}
 \DisplayProof
 \end{center}
 \medskip
-where $B[a]$ is $\subst(\Gamma, \ty(a), B, v_{n-1}, \ldots v_0, a)$ and $b[a]$ is defined similarly.
 \end{example}
 
+% A well-founded relation $\prec$ on function symbols can be extended to a well-founded relation $\prec$ on the set of terms (called \emph{recursive path ordering} \cite{mrpo}) such that $t[t_1/x_1, \ldots t_k/x_k] \prec \sigma(t_1, \ldots t_k)$ if $\tau \prec \sigma$ for every function symbol $\tau$ in $t$.
+% We always have a recursive path ordering on terms by \eqref{it:ax-wf}.
+
 \begin{lem}[derived-cong]
-Let $t$ and $t'$ be terms, let $\Gamma$ be a context of length $n$, and let $A$ be a term of sort $(\ty,n)$.
-Suppose that $\varphi \sststile{}{V} \Delta \vdash t \equiv t'$ for every $\Delta$ such that $(\Delta,x) \in \sub(\Gamma,A)$.
-If the sequent $\varphi \sststile{}{V} \Gamma \vdash A[t/x]$ is derivable, then so is the sequent $\varphi \sststile{}{V} \Gamma \vdash A[t/x] \equiv A[t'/x]$.
+Let $t$ and $t'$ be terms, let $\Gamma$ be a context of length $n$, and let $A$ be a term of sort $(p,n)$.
+Suppose that $\varphi \sststile{}{V} \Delta \vdash t \equiv t'$ is derivable for every $\Delta$ such that $(\Delta,x) \in \sub(\Gamma,A)$.
+If the sequent $\varphi \sststile{}{V} \Delta \vdash s$ is derivable for every $(\Delta,s) \in \sub(\Gamma,A[t/x])$, then so is the sequent $\varphi \sststile{}{V} \Gamma \vdash A[t/x] \equiv A[t'/x]$.
 \end{lem}
 \begin{proof}
-TODO
+The proof is by induction on $A$.
+If $A = x$, it is obvious.
+If $A = \sigma(t_1, \ldots t_k)$, let
+\[ T_i = \sigma(t_1[t/x], \ldots t_{i-1}[t/x], t_i[t'/x], \ldots t_k[t'/x]). \]
+Since $T_{k+1} = A[t/x]$ and $T_1 = A[t'/x]$, it is enough to show that, for every $1 \leq i \leq k$, sequents $\varphi \sststile{}{V} \Gamma \vdash T_{i+1} \equiv T_i$ and $\varphi \sststile{}{V} \Gamma \vdash T_i$ are derivable whenever $\varphi \sststile{}{V} \Gamma \vdash T_{i+1}$ is.
+By \axref{cf} and \axref{cf'}, it is enough to show that $\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1[t/x], \ldots t_{i-1}[t/x]) \vdash t_i[t/x] \equiv t_i[t'/x]$ is derivable, which follows by induction hypothesis.
+\end{proof}
+
+\begin{lem}[derived-cong-ctx]
+Let $t$ and $t'$ be terms, let $\Gamma$ be a context of length $n$, and let $\Theta$ be a sequence of terms of sorts $(\ty,n)$, \ldots $(\ty,n+m)$.
+Suppose that $\varphi \sststile{}{V} \Delta \vdash t \equiv t'$ is derivable for every $\Delta$ such that $(\Delta,x) \in \sub(\Gamma,\Theta)$.
+If the sequent $\varphi \sststile{}{V} \Delta \vdash s$ is derivable for every $(\Delta,s) \in \sub(\Gamma,\Theta[t/x])$, then so is the sequent $\varphi \sststile{}{V} \Gamma \vdash \Theta[t/x] \equiv \Theta[t'/x]$.
+\end{lem}
+\begin{proof}
+This follows from \rlem{derived-cong} by induction on the length of $\Theta$.
 \end{proof}
 
 A rule is \emph{admissible} if its conclusion is derivable whenever its premises are.
@@ -720,17 +730,13 @@ By \axref{cu}, the sequent $\psi[\rho] \sststile{}{V} \Gamma \vdash t$ is also d
 Since $\varphi \sststile{}{V} \psi[\rho]$ is derivable and good, this implies that $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
 
 Now, we consider \axref{cp}, \axref{cf}, and \axref{cf'}.
-Assume that $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is derivable and good and that $\varphi \sststile{}{V} \Gamma, \Gamma_i^S(t_1, \ldots t_k) \vdash t_i \equiv t_i'$ is derivable.
-We need to show that $\varphi \sststile{}{V} \Gamma, \Gamma_j^S(t_1, \ldots t_i', \ldots t_k) \vdash t_j$ is derivable.
-By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_j^S(t_1, \ldots t_k) \equiv \Gamma_j^S(t_1, \ldots t_i', \ldots t_k)$ is derivable.
-To prove this, we need to apply a version of \rlem{derived-cong} for contexts.
-If the conditions of this lemma hold and $\varphi \sststile{}{V} \Gamma, \Theta' \vdash$ is derivable for every initial segment $\Theta'$ of $\Theta[t/x]$, then $\varphi \sststile{}{V} \Gamma \vdash \Theta[t/x] \equiv \Theta[t'/x]$ is derivable.
-This is easy to prove by induction on the length of $\Theta$ using \rlem{derived-cong}.
-Thus, we just need to show that $\varphi \sststile{}{V} \Gamma, \Theta' \vdash$ is derivable for every initial segment $\Theta'$ of $\Gamma_j^S(t_1, \ldots t_k)$.
-Since $\Gamma, \Theta'$ is a contexted subterm of $\Gamma, \Gamma_j^S(t_1, \ldots t_k)$, which is a contexted subterm of $(\Gamma, S(t_1, \ldots t_k))$, the required property follows from the fact that $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is good.
-We also need to verify that conditions of \rlem{derived-cong} hold.
-That is, we need to show that $\varphi \sststile{}{V} \Delta \vdash t_i \equiv t_i'$ is derivable for every $(\Delta,x_i) \in \sub(\Gamma_j^S(t_1, \ldots x_j, t_k))$.
-By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_i^S(t_1, \ldots t_k) \equiv \Delta$ is derivable.
+Assume that $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is derivable and good and that $\varphi \sststile{}{V} \Gamma, \Gamma_i^S(t_1, \ldots t_{i-1}) \vdash t_i \equiv t_i'$ is derivable.
+We need to show that $\varphi \sststile{}{V} \Gamma, \Gamma_j^S(t_1, \ldots t_i', \ldots t_{j-1}) \vdash t_j$ is derivable.
+By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_j^S(t_1, \ldots t_{j-1}) \equiv \Gamma_j^S(t_1, \ldots t_i', \ldots t_{j-1})$ is derivable.
+This follows from \rlem{derived-cong-ctx}.
+Since $\Gamma, \Gamma_j^S(t_1, \ldots t_{j-1})$ is a contexted subterm of $(\Gamma, S(t_1, \ldots t_k))$, one of the conidtions of \rlem{derived-cong-ctx} follows from the fact that $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is good.
+We also need to to show that $\varphi \sststile{}{V} \Gamma, \Delta \vdash t_i \equiv t_i'$ is derivable for every $(\Delta,x_i) \in \sub(\Gamma_j^S(t_1, \ldots x_i, \ldots t_{j-1}))$.
+By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_i^S(t_1, \ldots t_{i-1}) \equiv \Delta$ is derivable.
 Since $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is derivable and good, this follows from \axref{cc} and \eqref{it:ax-consist}.
 \end{proof}
 
