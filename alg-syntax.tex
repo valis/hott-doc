@@ -818,19 +818,9 @@ We will say that such a function is an \emph{interpretation} of $T$ in $T'$ if t
 \item \label{it:interp-axiom} For every axiom $\varphi \sststile{}{V} \psi$ of $T$, the sequent $f(\varphi) \sststile{}{V} f(\psi)$ is derivable.
 \end{enumerate}
 
-Two $\ft$-free formulas are \emph{equivalent} if the sequents $\varphi \ssststile{}{\FV(\varphi) \cup \FV(\psi)} \psi$ are derivable.
-Two $\ft$-free restricted terms $t|_\varphi$ and $t'|_\psi$ are \emph{equivalent} in a context $\Gamma$ if the following sequents are derivable:
-\begin{align*}
-\varphi \land (\Gamma \vdash t) & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \psi \land (\Gamma \vdash t \equiv t') \\
-\psi \land (\Gamma \vdash t') & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \varphi \land (\Gamma \vdash t \equiv t')
-\end{align*}
-
-Interpretations $f$ and $f'$ are \emph{equivalent} if $f(S(x_1, \ldots x_k))$ and $f'(S(x_1, \ldots x_k))$ are equivalent (in the empty context for function symbols) for every symbol $S$.
-A \emph{morphism} of $\ft$-free theories $T$ and $T'$ is an equivalence class of interpretations of $T$ in $T'$.
-The identity morphism is defined in the obvious way: $\id(\sigma(x_1, \ldots x_k)) = \sigma(x_1, \ldots x_k)|_\top$ and $\id(R(x_1, \ldots x_k)) = R(x_1, \ldots x_k)$.
-The composition of morphisms is defined as follows:
+The identity interpretation is defined in the obvious way: $\id(\sigma(x_1, \ldots x_k)) = \sigma(x_1, \ldots x_k)|_\top$ and $\id(R(x_1, \ldots x_k)) = R(x_1, \ldots x_k)$.
+The composition of interpretations is defined as follows:
 \[ (g \circ f)(S(x_1, \ldots x_k)) = g(f(S(x_1, \ldots x_k))) \]
-It is easy to see that this defines the structure of a category on $\ft$-free theories.
 
 \begin{lem}
 The identity map is an interpretation and the composition of interpretations is an interpretation.
@@ -868,6 +858,34 @@ The required equality $g(\Delta_2') \equiv \Delta$ follows from this sequent and
 \Gamma, g(\Theta) \vdash g(t) & \sststile{}{\Gamma, \FV(\Theta,t)} \Gamma, g(\Theta') \vdash g(t_i)
 \end{align*}
 The first one follows from \eqref{it:interp-symb} and the second one is \axref{cd}.
+\end{proof}
+
+Two $\ft$-free restricted terms $t|_{\Delta \vdash \varphi}$ and $t'|_{\Delta' \vdash \psi}$ are \emph{equivalent} in a context $\Gamma$ if the following sequents are derivable:
+\begin{align*}
+(\Gamma, \Delta \vdash \varphi) \land (\Gamma \vdash t) & \sststile{}{\FV(\Gamma) \cup \FV(t|_{\Delta \vdash \varphi}) \cup \FV(t'|_{\Delta' \vdash \psi})} (\Gamma, \Delta' \vdash \psi) \land (\Gamma \vdash t \equiv t') \\
+(\Gamma, \Delta' \vdash \psi) \land (\Gamma \vdash t') & \sststile{}{\FV(\Gamma) \cup \FV(t|_{\Delta \vdash \varphi}) \cup \FV(t'|_{\Delta' \vdash \psi})} (\Gamma, \Delta \vdash \varphi) \land (\Gamma \vdash t \equiv t')
+\end{align*}
+Two $\ft$-free formulas $\bigwedge_{1 \leq i \leq n} \Gamma_i \vdash \varphi_i$ and $\bigwedge_{1 \leq i \leq k} \Delta_i \vdash \psi_i$ are \emph{equivalent} in a context $\Gamma$
+if the following sequents are derivable:
+\begin{align*}
+\bigwedge_{1 \leq i \leq n} \Gamma, \Gamma_i \vdash \varphi_i & \ssststile{}{\FV(\Gamma) \cup \FV(\varphi) \cup \FV(\psi)} \bigwedge_{1 \leq i \leq k} \Gamma, \Delta_i \vdash \psi_i \\
+\bigwedge_{1 \leq i \leq k} \Gamma, \Delta_i \vdash \psi_i & \ssststile{}{\FV(\Gamma) \cup \FV(\varphi) \cup \FV(\psi)} \bigwedge_{1 \leq i \leq n} \Gamma, \Gamma_i \vdash \varphi_i
+\end{align*}
+
+Interpretations $f$ and $f'$ are \emph{equivalent} if, for every function (resp., predicate) symbol $S$, restricted terms (resp., formulas) $f(S(x_1, \ldots x_k))$ and $f'(S(x_1, \ldots x_k))$ are equivalent in all contexts consisting of variables.
+A \emph{morphism} of $\ft$-free theories $T$ and $T'$ is an equivalence class of interpretations of $T$ in $T'$.
+
+\begin{prop}
+The composition operation respects the equivalence relation and together with the identity map determines the structure of a category on $\ft$-free theories.
+\end{prop}
+\begin{proof}
+If $f$ and $f'$ are equivalent interpretations, then $g \circ f$ and $g \circ f'$ are equivalent because $g$ preserves theorems.
+If $g$ and $g'$ are equivalent interpretations, then we need to show that $g \circ f$ and $g' \circ f$ are equivalent.
+It is enough to show that the sequent $g(\varphi) \sststile{}{V} g'(\varphi)$ is derivable for every formula $\varphi$.
+By \axref{cp}, \axref{ct}, and \axref{cs}, it is enough to show that the sequent $\Gamma \vdash g(t) \sststile{}{\Gamma,V} \Gamma \vdash g(t) \equiv g'(t)$ is derivable for every term $t$, which is easy to do by induction on $t$ using \axref{cf}.
+
+It is obvious that $f \circ \id = \id \circ f = f$.
+To prove that $(h \circ g) \circ f = h \circ (g \circ f)$, it is enough to show that $(h \circ g)(e)$ is equivalent to $h(g(e))$ for every restricted term or formula $e$, which is easy to do by induction on $e$.
 \end{proof}
 
 \subsection{The $\ty$-free syntax}
