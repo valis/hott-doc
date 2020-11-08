@@ -374,6 +374,10 @@ In each of the cases, $(\Gamma,t)$ is the contexted term itself.
 So, every contexted term is always a contexted subterm of itself.
 Note that the definition of $\sub$ depends on the choice of contexts $\Gamma^\sigma_i$.
 
+\begin{remark}[ctx-begin]
+The context of every contexted subterm of $(\Gamma,t)$ begins with $\Gamma$.
+\end{remark}
+
 We can also define the set of contexted subterms of contexts and formulas:
 \begin{align*}
 \sub(\cdot) & = \varnothing \\
@@ -565,7 +569,7 @@ A sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\varphi$ and $\psi$ 
 An $\ft$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
 together with a context $\Gamma^S_i(x_1, \ldots x_k)$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that the following conditions hold:
 \begin{enumerate}
-\item \label{it:ax-consist} For every symbol $S$ with $n$ parameters, every $1 \leq j \leq n$, and every $(\Delta,x_i) \in \sub(\Gamma_j^S(x_1, \ldots x_{j-1}))$, the following sequent is derivable:
+\item \label{it:ax-consist} For every symbol $S$ with $n$ parameters, all $1 \leq i < j \leq n$, and every $(\Delta,x_i) \in \sub(\Gamma_j^S(x_1, \ldots x_{j-1}))$, the following sequent is derivable:
 \[ \Gamma \vdash S(x_1, \ldots x_k) \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash \Gamma_i^S(x_1, \ldots x_{i-1}) \equiv \Delta \]
 \item \label{it:ax-wf} The following relation on the set of function symbols is well-founded: $\tau \prec \sigma$ if and only if $\tau$ appears in $\Gamma^\sigma_i$ for some $i$.
 \item \label{it:ax-valid} All axioms are valid and the set of free variables of the conclusion of every axiom is contained in the set of free variables of its premise.
@@ -628,9 +632,9 @@ The theory of $\Pi$-types is defined as follows:
 % A well-founded relation $\prec$ on function symbols can be extended to a well-founded relation $\prec$ on the set of terms (called \emph{recursive path ordering} \cite{mrpo}) such that $t[t_1/x_1, \ldots t_k/x_k] \prec \sigma(t_1, \ldots t_k)$ if $\tau \prec \sigma$ for every function symbol $\tau$ in $t$.
 % We always have a recursive path ordering on terms by \eqref{it:ax-wf}.
 
-\begin{lem}[derived-cong]
+\begin{lem}[derived-cong-lem]
 Let $t$ and $t'$ be terms, let $\Gamma$ be a context of length $n$, and let $A$ be a term of sort $(p,n)$.
-Suppose that $\varphi \sststile{}{V} \Delta \vdash t \equiv t'$ is derivable for every $\Delta$ such that $(\Delta,x) \in \sub(\Gamma,A)$.
+Suppose that $\varphi \sststile{}{V} \Delta[t/x] \vdash t \equiv t'$ is derivable for every $\Delta$ such that $(\Delta,x) \in \sub(\Gamma,A)$.
 If the sequent $\varphi \sststile{}{V} \Delta \vdash s$ is derivable for every $(\Delta,s) \in \sub(\Gamma,A[t/x])$, then so is the sequent $\varphi \sststile{}{V} \Gamma \vdash A[t/x] \equiv A[t'/x]$.
 \end{lem}
 \begin{proof}
@@ -640,15 +644,18 @@ If $A = \sigma(t_1, \ldots t_k)$, let
 \[ T_i = \sigma(t_1[t/x], \ldots t_{i-1}[t/x], t_i[t'/x], \ldots t_k[t'/x]). \]
 Since $T_{k+1} = A[t/x]$ and $T_1 = A[t'/x]$, it is enough to show that, for every $1 \leq i \leq k$, sequents $\varphi \sststile{}{V} \Gamma \vdash T_{i+1} \equiv T_i$ and $\varphi \sststile{}{V} \Gamma \vdash T_i$ are derivable whenever $\varphi \sststile{}{V} \Gamma \vdash T_{i+1}$ is.
 By \axref{cf} and \axref{cf'}, it is enough to show that $\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1[t/x], \ldots t_{i-1}[t/x]) \vdash t_i[t/x] \equiv t_i[t'/x]$ is derivable, which follows by induction hypothesis.
+To apply it, we need to check that the condition of the lemma holds.
+Let $(\Delta,x)$ be a contexted subterm of $((\Gamma, \Gamma^\sigma_i(t_1[t/x], \ldots t_{i-1}[t/x])), t_i)$.
+Then there exists $\Delta'$ such that $\Delta[t/x] = \Delta'[t/x]$ and $(\Delta',x) \in \sub(\Gamma, \sigma(t_1, \ldots t_k))$, which implies that $\varphi \sststile{}{V} \Delta[t/x] \vdash t \equiv t'$ is derivable.
 \end{proof}
 
 \begin{lem}[derived-cong-ctx]
 Let $t$ and $t'$ be terms, let $\Gamma$ be a context of length $n$, and let $\Theta$ be a sequence of terms of sorts $(\ty,n)$, \ldots $(\ty,n+m)$.
-Suppose that $\varphi \sststile{}{V} \Delta \vdash t \equiv t'$ is derivable for every $\Delta$ such that $(\Delta,x) \in \sub(\Gamma,\Theta)$.
+Suppose that $\varphi \sststile{}{V} \Delta[t/x] \vdash t \equiv t'$ is derivable for every $\Delta$ such that $(\Delta,x) \in \sub(\Gamma,\Theta)$.
 If the sequent $\varphi \sststile{}{V} \Delta \vdash s$ is derivable for every $(\Delta,s) \in \sub(\Gamma,\Theta[t/x])$, then so is the sequent $\varphi \sststile{}{V} \Gamma \vdash \Theta[t/x] \equiv \Theta[t'/x]$.
 \end{lem}
 \begin{proof}
-This follows from \rlem{derived-cong} by induction on the length of $\Theta$.
+This follows from \rlem{derived-cong-lem} by induction on the length of $\Theta$.
 \end{proof}
 
 A rule is \emph{admissible} if its conclusion is derivable whenever its premises are.
@@ -735,12 +742,12 @@ We need to show that $\varphi \sststile{}{V} \Gamma, \Gamma_j^S(t_1, \ldots t_i'
 By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_j^S(t_1, \ldots t_{j-1}) \equiv \Gamma_j^S(t_1, \ldots t_i', \ldots t_{j-1})$ is derivable.
 This follows from \rlem{derived-cong-ctx}.
 Since $\Gamma, \Gamma_j^S(t_1, \ldots t_{j-1})$ is a contexted subterm of $(\Gamma, S(t_1, \ldots t_k))$, one of the conidtions of \rlem{derived-cong-ctx} follows from the fact that $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is good.
-We also need to to show that $\varphi \sststile{}{V} \Gamma, \Delta \vdash t_i \equiv t_i'$ is derivable for every $(\Delta,x_i) \in \sub(\Gamma_j^S(t_1, \ldots x_i, \ldots t_{j-1}))$.
-By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_i^S(t_1, \ldots t_{i-1}) \equiv \Delta$ is derivable.
+We also need to to show that $\varphi \sststile{}{V} \Gamma, \Delta[t_i/x_i] \vdash t_i \equiv t_i'$ is derivable for every $(\Delta,x_i) \in \sub(\Gamma_j^S(t_1, \ldots x_i, \ldots t_{j-1}))$.
+By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_i^S(t_1, \ldots t_{i-1}) \equiv \Delta[t_i/x_i]$ is derivable.
 Since $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is derivable and good, this follows from \axref{cc} and \eqref{it:ax-consist}.
 \end{proof}
 
-\begin{cor}
+\begin{cor}[theorem-ext]
 Any theorem can be added to the set of axioms.
 This does not change the set of theorems.
 \end{cor}
@@ -750,6 +757,20 @@ It is easy to prove by induction on the derivation that the second condition of 
 Condition~\eqref{it:ax-cond} is exactly the admissibility of \axref{ce}.
 Finally, we need to show that \axref{ca} holds for theorems.
 This follows from \axref{cu} and \axref{cc}.
+\end{proof}
+
+The following lemma generalizes \rlem{derived-cong-lem}:
+
+\begin{lem}[derived-cong]
+Let $t$ and $t'$ be terms, let $\Gamma$ be a context, and let $\psi$ be either a term, an equality, or a predicate symbol applied to some terms.
+Suppose that $\varphi \sststile{}{V} \Delta[t/x] \vdash t \equiv t'$ is derivable for every $\Delta[t/x]$ such that $(\Delta,x) \in \sub(\Gamma,\psi)$.
+If the sequent $\varphi \sststile{}{V} \Gamma \vdash \psi[t/x]$ is derivable, then so is the sequent $\varphi \sststile{}{V} \Gamma \vdash \psi[t'/x]$.
+\end{lem}
+\begin{proof}
+If $\psi$ is an equality, then this follows from \rlem{derived-cong} and \axref{ce}.
+If $\psi$ is a term, then this follows from the previous case by \axref{ce} since $(\Gamma,b) \in \sub(\Gamma \vdash a \equiv b)$.
+If $\psi = R(t_1, \ldots t_k)$, then \axref{cp} and \rlem{derived-cong-lem} imply that the following sequent is derivable for every $1 \leq i \leq k$:
+\[ \varphi \sststile{}{V} \Gamma \vdash R(t_1[t/x], \ldots t_{i-1}[t/x], t_i[t'/x], \ldots t_k[t'/x]). \]
 \end{proof}
 
 \subsection{The category of $\ft$-free theories}
@@ -811,15 +832,42 @@ The composition of morphisms is defined as follows:
 \[ (g \circ f)(S(x_1, \ldots x_k)) = g(f(S(x_1, \ldots x_k))) \]
 It is easy to see that this defines the structure of a category on $\ft$-free theories.
 
-\begin{prop}
-The composition operation is well-defined and together with the identity map gives us the structure of a category on $\ft$-free theories.
-\end{prop}
+\begin{lem}
+The identity map is an interpretation and the composition of interpretations is an interpretation.
+\end{lem}
 \begin{proof}
 It is easy to see that the identity function is an interpretation.
 The second property is obvious and the first property follows from \axref{cd}.
 Let $f : T_1 \to T_2$ and $g : T_2 \to T_3$ be a pair of interpretations.
 We need to show that $g \circ f$ is also an interpretation.
 To prove that it satisfies \eqref{it:interp-axiom}, it is enough to show that interpretations preserve theorems.
+This follows from the fact that interpretations preserve inference rules.
+This is obvious for most of them.
+Rule \axref{ca} follows from \rcor{theorem-ext}.
+Let us consider rules \axref{cp}, \axref{cf}, and \axref{cf'}.
+Let $f$ be an interpretation.
+Then we know that the following sequents are derivable: $f(\varphi) \sststile{}{V} f(\Gamma) \vdash f(S(t_1, \ldots t_k))$ and $f(\varphi) \sststile{}{V} f(\Gamma), f(\Gamma_i^S(t_1, \ldots t_{i-1})) \vdash f(t_i) \equiv f(t_i')$.
+By \rlem{derived-cong} and \axref{cx'}, it is enough to show that the sequent $f(\varphi) \sststile{}{V} f(\Gamma) \vdash \Delta[t_i/x_i] \equiv f(\Gamma_i^S(t_1, \ldots t_{i-1}))$ is derivable for every $\Delta$ such that $((f(\Gamma),\Delta),x_i) \in \sub(f(\Gamma), f(S(t_1, \ldots x_i, \ldots t_k)))$.
+It is easy to see that there exists $\Delta'$ such that $((f(\Gamma),\Delta'),x_i) \in \sub(f(\Gamma), f(S(x_1, \ldots x_k)))$ and $\Delta = \Delta'[t_1/x_1, \ldots t_{i-1}/x_{i-1}, t_{i+1}/x_{i+1}, \ldots t_k/x_k]$.
+Now, the derivability of $f(\varphi) \sststile{}{V} f(\Gamma) \vdash \Delta[t_i/x_i] \equiv f(\Gamma_i^S(t_1, \ldots t_{i-1}))$ follows from \eqref{it:interp-symb}.
+
+Now, let us prove that $g \circ f$ satisfies \eqref{it:interp-symb}.
+Since $g$ preserves theorems, it is enough to show that, for every $(\Delta,x_i) \in \sub(\cdot, g(f(S(x_1, \ldots x_k))))$, there exists $\Delta'$ such that $(\Delta',x_i) \in \sub(\cdot, f(S(x_1, \ldots x_k)))$ and $\Gamma \vdash g(f(S(x_1, \ldots x_k))) \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash g(\Delta') \equiv \Delta$ is derivable.
+We will prove a more general property: for every contexted term $(\Theta,t)$ and every $(\Delta,x) \in \sub(g(\Theta), g(t))$, there exists $\Delta'$ such that $(\Delta',x) \in \sub(\Theta, t)$ and the sequent $\Gamma, g(\Theta) \vdash g(t) \sststile{}{\Gamma, \FV(\Theta,t)} \Gamma \vdash g(\Delta') \equiv \Delta$ is derivable.
+The proof is by induction on $t$.
+If $t$ is a variable, this is obvious.
+Suppose $t = \sigma(t_1, \ldots t_k)$.
+Then there exists $\Delta_1$ such that $(\Delta_1,x_i) \in \sub(\cdot, g(\sigma(x_1, \ldots x_k)))$ and $(\Delta,x) \in \sub((g(\Theta),\Delta_1[t_1/x_1, \ldots t_k/x_k]), g(t_i))$.
+By \rremark{ctx-begin}, there exists $\Delta_2$ such that $\Delta = (g(\Theta), \Delta_1[t_1/x_1, \ldots t_k/x_k], \Delta_2)$.
+By induction hypothesis, there exists $\Delta_2'$ such that the following sequent is derivable:
+\[ \Gamma, g(\Theta') \vdash g(t_i) \sststile{}{\Gamma, \FV(\Theta',t_i)} \Gamma \vdash g(\Delta_2') \equiv (g(\Theta'),\Delta_2) \]
+where $\Theta' = (\Theta, \Gamma^\sigma_i(t_1, \ldots t_{i-1}))$.
+The required equality $g(\Delta_2') \equiv \Delta$ follows from this sequent and the following ones:
+\begin{align*}
+\Gamma, g(\Theta) \vdash g(t) & \sststile{}{\Gamma, \FV(\Theta,t)} \Gamma, g(\Theta) \vdash \Delta_1[t_1/x_1, \ldots t_k/x_k] \equiv g(\Gamma^\sigma_i(t_1, \ldots t_{i-1})) \\
+\Gamma, g(\Theta) \vdash g(t) & \sststile{}{\Gamma, \FV(\Theta,t)} \Gamma, g(\Theta') \vdash g(t_i)
+\end{align*}
+The first one follows from \eqref{it:interp-symb} and the second one is \axref{cd}.
 \end{proof}
 
 \subsection{The $\ty$-free syntax}
