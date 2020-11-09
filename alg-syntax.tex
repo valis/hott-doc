@@ -104,8 +104,10 @@
 
 \newcommand{\fs}[1]{\mathrm{#1}}
 \newcommand{\Term}{\fs{Term}}
+\newcommand{\RTerm}{\fs{RTerm}}
 \newcommand{\FV}{\fs{FV}}
 \newcommand{\subst}{\fs{subst}}
+\newcommand{\wk}{\fs{wk}}
 \newcommand{\Id}{\fs{Id}}
 \newcommand{\refl}{\fs{refl}}
 \newcommand{\El}{\fs{El}}
@@ -237,6 +239,7 @@ We let $\ft^i_n : (\ctx,n+i) \to (\ctx,n)$ and $\ctx_{p,n} : (p,n) \to (\ctx,n)$
 \ctx_{\tm,n}(t) & = \ft_n(\ty_n(t)) \\
 \ctx^i_{p,n}(t) & = \ft^i_n(\ctx_{p,n+i}(t))
 \end{align*}
+We often omit indices in these operations.
 We write $(\ty,n)$ for $(\ctx,n+1)$.
 We also define the following notations: $d_\ty = \ctx$, $d_\tm = \ty$, $e_\ty(a) = \ft(a)$, $e_\tm(a) = \ty(a)$,
 
@@ -250,6 +253,7 @@ Then we define the full sets of function and predicate symbols:
                  & m \in \mathbb{N}, R \in \mathcal{P}_0, R : (p_1,n_1) \times \ldots \times (p_k,n_k) \}
 \end{align*}
 
+\begin{defn}[alg-tt]
 An \emph{algebraic dependent type theory} is a theory of the form $(\mathcal{S}, \mathcal{F}_s \cup \mathcal{F}, \mathcal{P}, \mathcal{A}_s \cup \mathcal{A})$, where $\mathcal{S}$, $\mathcal{F}$, and $\mathcal{P}$ are defined above,
 $\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $\mathcal{A}_s$ is the set of its axioms, and $\mathcal{A}$ is an arbitrary set of axioms such that the following sequents are derivable for every $\sigma_m \in \mathcal{F}$ and $R_m \in \mathcal{P}$
 \begin{align*}
@@ -258,6 +262,7 @@ $\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $
 R_m(\Gamma, x_1, \ldots x_k) & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ctx^{n_i}_{p_i,m}(x_i) = \Gamma
 \end{align*}
 and $\subst$ commutes with every function symbol (for a precise definition, see \cite[Definition~4.5]{alg-tt}).
+\end{defn}
 
 Let $T$ be an algebraic dependent type theory.
 We define $P_M$ as the set of pairs $V,\varphi$ such that $V = \{ x_1, \ldots x_k \}$ and $\varphi = \varphi_1 \land \ldots \land \varphi_k$, where $\varphi_i$ equals to $e_p(x_i) = t_i$,
@@ -305,7 +310,7 @@ It is easy to see that the proof of \cite[Proposition~5.3]{morita-equiv} holds f
 
 The syntax we described in the previous subection is too verbose.
 We can make it closer to the usual presentation of type theories by removing some redundant information.
-We define another $\mathcal{S}$-set of terms $\Term_\mathcal{F}(V)$ inductively as follows:
+We define another $\mathcal{S}$-set of terms $\Term^\ft_\mathcal{F}(V)$ inductively as follows:
 \begin{itemize}
 \item Every element of $V_s$ is a term of sort $s$.
 \item If $t$ is a term of sort $(\tm,n)$, then $\ty(t)$ is a term of sort $(\ty,n)$.
@@ -489,9 +494,10 @@ where $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k}
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash$}
 \RightLabel{\axlabel{evt}}
-\UnaryInfC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash \ty(v_i) \equiv \subst(A_1, \ldots A_{m-i}, v_{m-1}, \ldots v_{i+1})$}
+\UnaryInfC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash \ty(v_i) \equiv \wk^{i+1}(A_1, \ldots A_{m-i})$}
 \DisplayProof
 \end{center}
+where $\wk^n(A_1, \ldots A_k, a) = \subst(A_1, \ldots A_k, a, v_{n+k-1}, \ldots v_n)$.
 
 \medskip
 \begin{center}
@@ -560,22 +566,71 @@ where $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k}
 \DisplayProof
 \end{center}
 where $a_i' = \subst(B_1, \ldots B_n, a_i, b_1, \ldots b_n)$.
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
+\Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash \sigma(b_1, \ldots b_m)$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\def\extraVskip{2pt}
+\RightLabel{\axlabel{esf}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \subst(A_1, \ldots A_k, \sigma(b_1, \ldots b_m), a_1, \ldots a_k) \equiv \sigma(b_1', \ldots b_m')$}
+\DisplayProof
+\end{center}
+where $\sigma : (p_1,n_1) \times \ldots \times (p_m,n_m) \to (p,0)$ is a function symbol and
+\[ b_i' = \subst(A_1, \ldots A_k, \Gamma^\sigma_i(b_1, \ldots b_{i-1}), b_i, \wk^{n_i}(a_1), \ldots \wk^{n_i}(a_k), v_{n_i-1}, \ldots v_0). \]
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
+\Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash \sigma(b_1, \ldots b_m)$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\def\extraVskip{2pt}
+\RightLabel{\axlabel{esf'}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(b_1', \ldots b_m')$}
+\DisplayProof
+\end{center}
+where $\sigma$ is a function symbol and $b_1'$, \ldots $b_m'$ are defined as before.
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
+\Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash R(b_1, \ldots b_m)$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\def\extraVskip{2pt}
+\RightLabel{\axlabel{esp}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash R(b_1', \ldots b_m')$}
+\DisplayProof
+\end{center}
+where $R : (p_1,n_1) \times \ldots \times (p_m,n_m)$ is a predicate symbol and $b_1'$, \ldots $b_m'$ are defined as before.
 If $\psi = \psi_1 \land \ldots \land \psi_n$, then we will say that $\psi \sststile{}{V} \psi$ is derivable if $\psi \sststile{}{V} \psi_i$ is derivable for every $1 \leq i \leq n$.
 
-We will say that a term or a formula $E$ is \emph{valid} with respect to $(\varphi,V)$ if, for every pair $(\Gamma,x)$ and $(\Delta,x)$ of contexted subterms of $E$ (where $x$ is any variable), the sequent $\varphi \sststile{}{V} \Gamma \equiv \Delta$ is derivable.
-A sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\varphi$ and $\psi$ are valid with respect to $(\varphi,V)$.
+We will say that a term or a formula $E$ is \emph{valid} with respect to $(\varphi,V)$ if, for every pair $(\Gamma,x)$ and $(\Delta,x)$ of contexted subterms of $E$ (where $x$ is any variable), the sequent $\varphi \sststile{}{V} \Gamma \equiv \Delta$ is derivable in the empty theory (that is, without \axref{ca}).
+A sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\FV(\psi) \subseteq \FV(\varphi)$ and $\varphi$ and $\psi$ are valid with respect to $(\varphi,V)$.
 
 \begin{defn}[ft-free]
 An $\ft$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
-together with a context $\Gamma^S_i(x_1, \ldots x_k)$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that the following conditions hold:
+together with a context $\Gamma^S_i(x_1, \ldots x_{i-1})$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that the following conditions hold:
 \begin{enumerate}
 \item \label{it:ax-consist} For every symbol $S$ with $n$ parameters, all $1 \leq i < j \leq n$, and every $(\Delta,x_i) \in \sub(\Gamma_j^S(x_1, \ldots x_{j-1}))$, the following sequent is derivable:
 \[ \Gamma \vdash S(x_1, \ldots x_k) \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash \Gamma_i^S(x_1, \ldots x_{i-1}) \equiv \Delta \]
 \item \label{it:ax-wf} The following relation on the set of function symbols is well-founded: $\tau \prec \sigma$ if and only if $\tau$ appears in $\Gamma^\sigma_i$ for some $i$.
-\item \label{it:ax-valid} All axioms are valid and the set of free variables of the conclusion of every axiom is contained in the set of free variables of its premise.
+\item \label{it:ax-valid} All axioms are valid.
 \item \label{it:ax-cond} For every axiom $\varphi \sststile{}{V} \psi$ and every contexted subterm $(\Gamma,t)$ of $\psi$, the sequent $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
 \end{enumerate}
-A \emph{theorem} is a valid derivable sequent.
+A \emph{theorem} is a derivable sequent $\varphi \sststile{}{V} \psi$ such that $\FV(\psi) \subseteq \FV(\varphi)$ and $\varphi$ is valid with respect to $(\varphi,V)$.
 \end{defn}
 
 We do not usually explicitly specify context $\Gamma^S_i$.
@@ -628,9 +683,6 @@ The theory of $\Pi$-types is defined as follows:
 \end{center}
 \medskip
 \end{example}
-
-% A well-founded relation $\prec$ on function symbols can be extended to a well-founded relation $\prec$ on the set of terms (called \emph{recursive path ordering} \cite{mrpo}) such that $t[t_1/x_1, \ldots t_k/x_k] \prec \sigma(t_1, \ldots t_k)$ if $\tau \prec \sigma$ for every function symbol $\tau$ in $t$.
-% We always have a recursive path ordering on terms by \eqref{it:ax-wf}.
 
 \begin{lem}[derived-cong-lem]
 Let $t$ and $t'$ be terms, let $\Gamma$ be a context of length $n$, and let $A$ be a term of sort $(p,n)$.
@@ -745,6 +797,8 @@ Since $\Gamma, \Gamma_j^S(t_1, \ldots t_{j-1})$ is a contexted subterm of $(\Gam
 We also need to to show that $\varphi \sststile{}{V} \Gamma, \Delta[t_i/x_i] \vdash t_i \equiv t_i'$ is derivable for every $(\Delta,x_i) \in \sub(\Gamma_j^S(t_1, \ldots x_i, \ldots t_{j-1}))$.
 By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_i^S(t_1, \ldots t_{i-1}) \equiv \Delta[t_i/x_i]$ is derivable.
 Since $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is derivable and good, this follows from \axref{cc} and \eqref{it:ax-consist}.
+
+TODO: consider \axref{esf}, \axref{esf'}, and \axref{esp}.
 \end{proof}
 
 \begin{cor}[theorem-ext]
@@ -752,11 +806,14 @@ Any theorem can be added to the set of axioms.
 This does not change the set of theorems.
 \end{cor}
 \begin{proof}
-Every theorem is valid by the definition.
-It is easy to prove by induction on the derivation that the second condition of \eqref{it:ax-valid} holds.
 Condition~\eqref{it:ax-cond} is exactly the admissibility of \axref{ce}.
-Finally, we need to show that \axref{ca} holds for theorems.
+We also need to show that \axref{ca} holds for theorems.
 This follows from \axref{cu} and \axref{cc}.
+Finally, we need to show that theorems are valid.
+Let $\varphi \sststile{}{V} \psi$ be a theorem.
+If $(\Gamma,x)$ is a contexted subterm of $\psi$, then there exists a contexted subterm $(\Delta,x)$ of $\varphi$.
+Thus, it is enough to show that $\varphi \sststile{}{V} \Gamma \equiv \Delta$ is derivable.
+It is easy to do this by induction on the derivation of the theorem.
 \end{proof}
 
 The following lemma generalizes \rlem{derived-cong-lem}:
@@ -779,6 +836,7 @@ If $\psi = R(t_1, \ldots t_k)$, then \axref{cp} and \rlem{derived-cong-lem} impl
 Let us recall the definition of the category of algebraic type theories from \cite{alg-tt}.
 A \emph{restricted term} is a term $t$ together with a formula $\varphi$.
 We denote such a restricted term by $t|_\varphi$.
+The $\mathcal{S}$-set of restricted terms (with free variables in $V$) will be denoted by $\RTerm^e(V)$.
 Let $T$ and $T'$ be two theories with the same set of sorts.
 An \emph{interpretation} of $T$ in $T'$ is a function $f$ such that the following conditions hold:
 \begin{itemize}
@@ -886,6 +944,90 @@ By \axref{cp}, \axref{ct}, and \axref{cs}, it is enough to show that the sequent
 
 It is obvious that $f \circ \id = \id \circ f = f$.
 To prove that $(h \circ g) \circ f = h \circ (g \circ f)$, it is enough to show that $(h \circ g)(e)$ is equivalent to $h(g(e))$ for every restricted term or formula $e$, which is easy to do by induction on $e$.
+\end{proof}
+
+The category of algebraic type theories is denoted by $\algtt$ and the category of $\ft$-free theories is denoted by $\algtt^\ft$.
+We will show that $\algtt^\ft$ is equivalent to a full subcategory of $\algtt$.
+First, let us construct a functor $F : \algtt^\ft \to \algtt$.
+Let $T = (\mathcal{F},\mathcal{P},\mathcal{A})$ be an $\ft$-free theory.
+We define the basic function (resp., basic predicate) symbols of $F(T)$ as $\mathcal{F}$ (resp., $\mathcal{P}$).
+We also add function symbols of the theory of substitutions (defined in \cite[Section~3.1]{alg-tt}) to $F(T)$.
+
+A well-founded relation $\prec$ on function symbols can be extended to a well-founded relation $\prec$ on the set of terms (called \emph{recursive path ordering} \cite{mrpo}) such that $t[t_1/x_1, \ldots t_k/x_k] \prec \sigma(t_1, \ldots t_k)$ if $\tau \prec \sigma$ for every function symbol $\tau$ in $t$.
+We always have a recursive path ordering on terms by \eqref{it:ax-wf}.
+
+Now, we define a function $F : \Term^e(V)_{(\ctx,n)} \times \Term^\ft(V)_{(p,n)} \to \RTerm^e(V)_{(p,n)}$ by induction on the second argument with respect to the recursive path ordering:
+\begin{align*}
+F(\Gamma, x) & = x|_{\ctx_{(p,n)}(x) = \Gamma} \\
+F(\Gamma, \ty(t)) & = \ty_n(F(\Gamma, t)) \\
+F(\Gamma, v_i) & = v_{n,i}(\Gamma) \\
+F(\Gamma, \subst(A_1, \ldots A_k, t, t_1, \ldots t_k)) & = \subst_{p,n,k}(\Gamma, F(F(\cdot,\overline{A}), t), \ldots F(\Gamma, t_i), \ldots) \\
+F(\Gamma, \sigma(t_1, \ldots t_k)) & = \sigma_n(\Gamma, \ldots F(F(\Gamma, \Gamma^\sigma_i(t_1, \ldots t_{i-1})), t_i), \ldots)
+\end{align*}
+where $F(\Gamma, (B_1, \ldots B_m)) = F(\ldots F(F(\Gamma, B_1), B_2) \ldots, B_m)$.
+We will write $F(\Delta)$ for $F(\cdot,\Delta)$ and $F(\Delta,E)$ for $F(F(\Delta),E)$, where $\Delta$ is an $\ft$-free context.
+
+For every $\ft$-free formula $\varphi$, we can define a formula $F(\varphi)$ as follows:
+\begin{align*}
+F(\Gamma \vdash t) & = F(\Gamma,t)\!\downarrow \\
+F(\Gamma \vdash t \equiv t') & = (F(\Gamma,t) = F(\Gamma,t')) \\
+F(\Gamma \vdash R(t_1, \ldots t_k)) & = R_n(\ldots F(F(\Gamma, \Gamma^R_i(t_1, \ldots t_{i-1})), t_i), \ldots) \\
+F(\varphi_1 \land \ldots \land \varphi_m) & = F(\varphi_1) \land \ldots \land F(\varphi_m)
+\end{align*}
+Every $\ft$-free sequent determines $\varphi \sststile{}{V} \psi$ a sequent $F(\varphi) \sststile{}{V} F(\psi)$.
+Thus, we can define axioms of $F(T)$ to be the image of axioms of $T$ under this function together with the axioms listed in \rdefn{alg-tt} and the axioms of the theory of substitutions.
+
+\begin{lem}
+If $x$ has context $\Delta$ in $t$, then the following sequent is derivable:
+\[ F(\Gamma,t)\!\downarrow\ \sststile{}{V} \ctx(x) = F(\Gamma,\Delta) \]
+\end{lem}
+\begin{proof}
+Easy induction on $t$.
+\end{proof}
+
+\begin{lem}[ftmap-ctx]
+The following sequent is derivable:
+\[ F(\Gamma,t)\!\downarrow\ \sststile{}{V} \ctx(F(\Gamma,t)) = \Gamma \]
+\end{lem}
+\begin{proof}
+Easy case analysis on $t$.
+\end{proof}
+
+\begin{lem}[ftmap-th]
+If $\varphi \sststile{}{V} \psi$ is a theorem of $T$, then $F(\varphi) \sststile{}{V} F(\psi)$ is derivable in $F(T)$.
+\end{lem}
+\begin{proof}
+TODO
+% It seems we might need \rlem{ftmap-subst} for this, but only when there is a unique occurrence of $x$ in $t$, which can be proved without this lemma.
+% I'm not sure we need the general case of \rlem{ftmap-subst} anyway.
+\end{proof}
+
+\begin{lem}[ftmap-subst]
+If $x \notin \FV(\Gamma)$, then the following restricted terms are equivalent:
+\begin{align*}
+& F(\Gamma, t[t'/x])|_{\bigwedge_{(\Delta',x) \in \sub(\cdot,t)} \Delta = F(\Gamma,\Delta'[t'/x])} \\
+& F(\Gamma,t)[F(\Delta,t')/x]
+\end{align*}
+\end{lem}
+\begin{proof}
+The proof is by induction on $t$ with respect to the recursive path ordering.
+If $t$ is a variable and is not equal to $x$, this is obvious.
+If $t = x$, then the second term is equal to $F(\Delta,t')|_{\ctx(F(\Delta,t')) = \Gamma}$.
+By \rlem{ftmap-ctx}, it is equivalent to $F(\Delta,t')|_{\Delta = \Gamma}$, which is equivalent to the first term $F(\Gamma,t')|_{\Delta = \Gamma}$.
+If $t = \ty(t')$ or $t = v_i$, this is obvious.
+
+Now, suppose $t = \sigma(t_1, \ldots t_k)$, where $\sigma$ is either a function symbol or $\subst$.
+Then the first term is equivalent to $s|_\varphi$, where
+\begin{align*}
+s & = \sigma_n(\Gamma, \ldots, F(F(\Gamma, \Gamma^\sigma_i(t_1, \ldots t_{i-1})[t'/x]), t_i[t'/x]), \ldots) \\
+\varphi & = \bigwedge_{1 \leq i \leq k} \bigwedge_{(\Delta',x) \in \sub(\cdot,t_i)} \Delta = F(\Gamma, (\Gamma^\sigma_i(t_1, \ldots t_{i-1}),\Delta')[t'/x])
+\end{align*}
+By induction hypothesis, the second term is equivalent to $s|_{\varphi \land \psi}$, where
+\[ \psi = \bigwedge_{1 \leq i \leq k} \bigwedge_{(\Delta'',x) \in \sub(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))} \Delta = F(\Gamma,\Delta''[t'/x]) \]
+If $(\Delta'',x) \in \sub(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))$, then \eqref{it:ax-consist} implies that there exist $1 \leq j \leq k$ and $\Delta'$ such that $(\Delta',x) \in \sub(\cdot,t_i)$ and $\Delta''$ is equivalent to $(\Gamma^\sigma_j(t_1, \ldots t_{j-1}), \Delta')$.
+Now, \rlem{ftmap-th} implies that the following sequent is derivable:
+\[ s\!\downarrow \land \varphi \sststile{}{\FV(s)} F(\Gamma, \Delta''[t'/x]) = F(\Gamma, (\Gamma^\sigma_j(t_1, \ldots t_{j-1}), \Delta')[t'/x]), \]
+which implies that $s_\varphi$ and $s|_{\varphi \land \psi}$ are equivalent.
 \end{proof}
 
 \subsection{The $\ty$-free syntax}
