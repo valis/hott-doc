@@ -854,8 +854,8 @@ Two restricted terms $t|_\varphi$ and $t'|_\psi$ are equivalent if the following
 \varphi \land t\!\downarrow\ & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \psi \land t = t' \\
 \psi \land t'\!\downarrow\ & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \varphi \land t = t'
 \end{align*}
-
-Two interpretations $f$ and $f'$ are equivalent if $f(S(x_1, \ldots x_k))$ and $f'(S(x_1, \ldots x_k))$ are equivalent for every function or predicate symbol $S$.
+We will write $t \simeq t'$ if $t$ and $t'$ are equivalent.
+Two interpretations $f$ and $f'$ are equivalent if $f(S_n(\Gamma, x_1, \ldots x_k))$ and $f'(S_n(\Gamma, x_1, \ldots x_k))$ are equivalent for every symbol $S$.
 A \emph{morphism} of theories $T$ and $T'$ is an equivalence class of interpretations of $T$ in $T'$.
 The identity morphism is defined in the obvious way: $\id(\sigma(x_1, \ldots x_k)) = \sigma(x_1, \ldots x_k)|_\top$ and $\id(R(x_1, \ldots x_k)) = R(x_1, \ldots x_k)$.
 The composition of morphisms is defined as follows: $(g \circ f)(S(x_1, \ldots x_k))$ = $g(f(S(x_1, \ldots x_k)))$.
@@ -977,12 +977,19 @@ F(\varphi_1 \land \ldots \land \varphi_m) & = F(\varphi_1) \land \ldots \land F(
 Every $\ft$-free sequent determines $\varphi \sststile{}{V} \psi$ a sequent $F(\varphi) \sststile{}{V} F(\psi)$.
 Thus, we can define axioms of $F(T)$ to be the image of axioms of $T$ under this function together with the axioms listed in \rdefn{alg-tt} and the axioms of the theory of substitutions.
 
-\begin{lem}
-If $x$ has context $\Delta$ in $t$, then the following sequent is derivable:
-\[ F(\Gamma,t)\!\downarrow\ \sststile{}{V} \ctx(x) = F(\Gamma,\Delta) \]
+\begin{lem}[ftmap-th]
+If $\varphi \sststile{}{V} \psi$ is a theorem of $T$, then $F(\varphi) \sststile{}{V} F(\psi)$ is derivable in $F(T)$.
 \end{lem}
 \begin{proof}
-Easy induction on $t$.
+We need to show that $F$ preserves inference rules.
+Rule \axref{ch} corresponds to \axref{nh}.
+Rule \axref{cr} is preserved trivially.
+Rule \axref{cs} corresponds to \axref{ns}.
+For every $(\Gamma,t) \in \sub(\varphi)$, the term $F(\Gamma,t)$ is a subterm of $F(\varphi)$.
+This implies that \axref{cd} corresponds to \axref{np} and \axref{nf}.
+Rules \axref{cx}, \axref{ct}, \axref{cp}, \axref{cf}, and \axref{cf'} follow from \axref{nl}.
+Rule \axref{ca} follows from \axref{na}, \axref{np}, and \axref{nf} since the set of free variables of the premise of every axiom is contained in the set free variables of its conclusion.
+The rest of the rules are explicitly added to $F(T)$ as axioms.
 \end{proof}
 
 \begin{lem}[ftmap-ctx]
@@ -991,15 +998,6 @@ The following sequent is derivable:
 \end{lem}
 \begin{proof}
 Easy case analysis on $t$.
-\end{proof}
-
-\begin{lem}[ftmap-th]
-If $\varphi \sststile{}{V} \psi$ is a theorem of $T$, then $F(\varphi) \sststile{}{V} F(\psi)$ is derivable in $F(T)$.
-\end{lem}
-\begin{proof}
-TODO
-% It seems we might need \rlem{ftmap-subst} for this, but only when there is a unique occurrence of $x$ in $t$, which can be proved without this lemma.
-% I'm not sure we need the general case of \rlem{ftmap-subst} anyway.
 \end{proof}
 
 \begin{lem}[ftmap-subst]
@@ -1028,6 +1026,42 @@ If $(\Delta'',x) \in \sub(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))$, then \eqref{it
 Now, \rlem{ftmap-th} implies that the following sequent is derivable:
 \[ s\!\downarrow \land \varphi \sststile{}{\FV(s)} F(\Gamma, \Delta''[t'/x]) = F(\Gamma, (\Gamma^\sigma_j(t_1, \ldots t_{j-1}), \Delta')[t'/x]), \]
 which implies that $s_\varphi$ and $s|_{\varphi \land \psi}$ are equivalent.
+\end{proof}
+
+Let $f : T \to T'$ be an interpretation, then we can define $F(f) : F(T) \to F(T')$ as follows: $F(f)(S(x_1, \ldots x_k)) = F(f(S(x_1, \ldots x_k)))$.
+
+\begin{lem}[ftmap-term]
+If $f : T \to T'$ is an interpretation and $(\Gamma,t)$ is a contexted term, then terms $F(f)(F(\Gamma,t))$ and $F(f(\Gamma),f(t))$ are equivalent.
+\end{lem}
+\begin{proof}
+The proof is by induction on $F(\Gamma,t)$.
+If $t = x$ is a variable, then $F(f)(F(\Gamma,t))$ is equal to $x|_{\ctx(x) = F(f)(F(\Gamma))}$ and $F(f(\Gamma),f(t))$ is equal to $x|_{\ctx(x) = F(f(\Gamma))}$ and these terms are equivalent by induction hypothesis.
+If $t = \sigma(t_1, \ldots t_k)$, then
+\begin{align*}
+F(f)(F(\Gamma,t)) & = \\
+F(f)(\sigma_n(F(\Gamma), \ldots F((\Gamma, \Gamma^\sigma_i), t_i), \ldots)) & = \\
+F(F(f)(F(\Gamma)), f(\sigma(x_1, \ldots x_k)))[\{ F(f)(F((\Gamma, \Gamma^\sigma_i), t_i))/x_i \}_{1 \leq i \leq k}] & \simeq \\
+F(F(f(\Gamma)), f(\sigma(x_1, \ldots x_k)))[\{ F((f(\Gamma), f(\Gamma^\sigma_i)), f(t_i))/x_i \}_{1 \leq i \leq k}].
+\end{align*}
+By \rlem{ftmap-subst}, this term is equivalent to $F(f(\Gamma),f(t))|_{\bigwedge_{1 \leq j < i \leq k} \varphi_{i,j}}$, where $\varphi_{i,j}$ is the following formula:
+\[ \bigwedge_{(\Delta,x_j) \in \sub(\cdot, f(t_i))} F(f(\Gamma), f(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))) = F(f(\Gamma), \Delta[\{ f(t_l)/x_l \}_{1 \leq l < i}]). \]
+Thus, we just need to show that sequents $F(f(\Gamma),f(t)) \sststile{}{V} \varphi_{i,j}$ are derivable, but this follows from \eqref{it:interp-symb} and \rlem{ftmap-th}.
+\end{proof}
+
+\begin{lem}[ftmap-form]
+If $f : T \to T'$ is an interpretation and $\varphi$ is a formula, then formulas $F(f)(F(\varphi))$ and $F(f(\varphi))$ are equivalent.
+\end{lem}
+\begin{proof}
+This follows from \rlem{ftmap-term} by a similar argument.
+\end{proof}
+
+\begin{prop}
+If $f : T \to T'$ is an interpretation, then $F(f) : F(T) \to F(T')$ is also interpretation.
+Moreover, $F$ respects the equivalence relation on interpretations and it is a functor between $\algtt^\ft$ and $\algtt$.
+\end{prop}
+\begin{proof}
+The facts that $F(f)$ is an interpretation and respects the equivalence relations follow from \eqref{it:interp-axiom}, \rlem{ftmap-th}, and \rlem{ftmap-form}.
+It is obvious that $F$ preserves the identity morphism and the fact that it preserves the composition follows from \rlem{ftmap-term} and \rlem{ftmap-form}.
 \end{proof}
 
 \subsection{The $\ty$-free syntax}
