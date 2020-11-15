@@ -1077,8 +1077,11 @@ G^{i+1}(\subst_{p,n,k}(\Gamma, t, t_1, \ldots t_k)) & = G^i(\Gamma)|_\varphi \\
 G^0(\sigma_n(\Gamma, t_1, \ldots t_k)) & = \sigma(G^0(t_1), \ldots G^0(t_k))|_\psi \\
 G^{i+1}(\sigma_n(\Gamma, t_1, \ldots t_k)) & = G^i(\Gamma)|_\psi
 \end{align*}
-where $\varphi = \bigwedge_{1 \leq i \leq k} (G^{n-1}(\Gamma), \ldots G^0(\Gamma)) \equiv (G^n(t_i), \ldots G^1(t_i))$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$,
-and $\psi = \bigwedge_{1 \leq i \leq k} (G^{n-1}(\Gamma), \ldots G^0(\Gamma)) \equiv (G^{n_i+n}(t_i), \ldots G^{n_i+1}(t_i))$.
+where $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ and
+\begin{align*}
+\varphi & = \bigwedge_{1 \leq i \leq k} (G^{n-1}(\Gamma), \ldots G^0(\Gamma)) \equiv (G^n(t_i), \ldots G^1(t_i)) \\
+\psi & = \bigwedge_{1 \leq i \leq k} (G^{n-1}(\Gamma), \ldots G^0(\Gamma), \Gamma^\sigma_i(G^0(t_1), \ldots G^0(t_{i-1}))) \equiv (G^{n+n_i}(t_i), \ldots G^1(t_i))
+\end{align*}
 If $\Gamma$ is a term of sort $(\ctx,n)$, we will write $G(\Gamma)$ for the context $G^{n-1}(\Gamma), \ldots G^0(\Gamma)$.
 
 \begin{lem}[gmap-term]
@@ -1105,9 +1108,11 @@ This follows from equalities $B_1, \ldots B_i \vdash G(F^{n-i}(\Gamma,t_j)) \equ
 For every formula $\varphi$ with free variables in $V$, we define an $\ft$-free formula $G(\varphi)$ with free variables in $G(V)$:
 \begin{align*}
 G(t = t') & = (G(\ctx(t)) \equiv G(\ctx(t'))) \land (G(\ctx(t)) \vdash G^0(t) \equiv G^0(t')) \\
-G(R_n(\Gamma, t_1, \ldots t_k)) & = G(\Gamma) \vdash R(G^0(t_1), \ldots G^0(t_k)) \\
+G(R_n(\Gamma, t_1, \ldots t_k)) & = (G(\Gamma) \vdash R(G^0(t_1), \ldots G^0(t_k))) \land \psi \\
 G(\varphi_1 \land \ldots \land \varphi_n) & = G(\varphi_1) \land \ldots \land G(\varphi_n)
 \end{align*}
+ where
+ \[ \psi = \bigwedge_{1 \leq i \leq k} (G^{n-1}(\Gamma), \ldots G^0(\Gamma), \Gamma^R_i(G^0(t_1), \ldots G^0(t_{i-1}))) \equiv (G^{n+n_i}(t_i), \ldots G^1(t_i)) \]
 
 \begin{lem}
 The following sequents are derivable for every $\ft$-free formula $\varphi$:
@@ -1122,6 +1127,33 @@ Let us conside the case $\varphi = (\Gamma \vdash t_1 \equiv t_2)$; other cases 
 First, note that $G(F(\varphi))$ is equal to $(\Gamma_1 \equiv \Gamma_2) \land (\Gamma_1 \vdash G^0(F(\Gamma,t_1)) \equiv G^0(F(\Gamma,t_2)))$,
 where $\Gamma_i$ is equal to $G^n(F(\Gamma,t_i)), \ldots G^1(F(\Gamma,t_i))$.
 By \rlem{gmap-term}, $\Gamma_1$ and $\Gamma_2$ are equal to $\Gamma$ and $G^0(F(\Gamma,t_i))$ is equivalent to $t_i$ in $\Gamma$, which implies that $\varphi$ and $G(F(\varphi))$ are equivalent.
+\end{proof}
+
+\begin{lem}[gmap-subst]
+Formulas $G(\varphi[s/x])$ and $G(\varphi)[G^0(s)/x, G^1(s)/x^1, \ldots G^n(s)/x^n]$ are equivalent.
+\end{lem}
+\begin{proof}
+TODO
+\end{proof}
+
+\begin{lem}
+If $\varphi \sststile{}{\FV(\varphi)} \psi$ is derivable, then $G(\varphi) \sststile{}{G(\FV(\varphi))} G(\psi)$ is also derivable.
+\end{lem}
+\begin{proof}
+We need to show that $G$ preserves inference rules and axioms.
+Since all variables belong to $\FV(\varphi)$, the rule \axref{nf} follows from \axref{nh}, \axref{np}, and \axref{nf}.
+The rule \axref{nl} follows from \rlem{gmap-subst}.
+Other rules are obvious.
+Thus, we just need to show that $G$ preserves axioms.
+
+TODO
+\end{proof}
+
+\begin{prop}
+The functor $F : \algtt^\ft \to \algtt$ is fully faithful.
+\end{prop}
+\begin{proof}
+TODO
 \end{proof}
 
 \section{The $\ty$-free syntax}
