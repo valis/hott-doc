@@ -144,11 +144,7 @@ TODO
 
 TODO
 
-\section{Syntax}
-
-In this section, we define a syntax for algebraic dependent type theories which is closer to the usual presentation.
-
-\subsection{Preliminaries}
+\section{Preliminaries}
 
 Let us recall definitions from \cite{PHL} and \cite{alg-tt}.
 A many sorted first-order signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ consists of a set $\mathcal{S}$ of sorts,
@@ -305,7 +301,7 @@ Then a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$ if and only if 
 It is easy to see that the proof of \cite[Proposition~5.3]{morita-equiv} holds for the generalized definition of theories with separated axioms.
 \end{proof}
 
-\subsection{The $\ft$-free syntax}
+\section{The $\ft$-free syntax}
 \label{sec:contexts}
 
 The syntax we described in the previous subection is too verbose.
@@ -618,7 +614,7 @@ where $R : (p_1,n_1) \times \ldots \times (p_m,n_m)$ is a predicate symbol and $
 If $\psi = \psi_1 \land \ldots \land \psi_n$, then we will say that $\psi \sststile{}{V} \psi$ is derivable if $\psi \sststile{}{V} \psi_i$ is derivable for every $1 \leq i \leq n$.
 
 We will say that a term or a formula $E$ is \emph{valid} with respect to $(\varphi,V)$ if, for every pair $(\Gamma,x)$ and $(\Delta,x)$ of contexted subterms of $E$ (where $x$ is any variable), the sequent $\varphi \sststile{}{V} \Gamma \equiv \Delta$ is derivable in the empty theory (that is, without \axref{ca}).
-A sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\FV(\psi) \subseteq \FV(\varphi)$ and $\varphi$ and $\psi$ are valid with respect to $(\varphi,V)$.
+A sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\FV(\psi) \subseteq \FV(\varphi)$ and $\varphi \land \psi$ is valid with respect to $(\varphi,V)$.
 
 \begin{defn}[ft-free]
 An $\ft$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
@@ -830,7 +826,7 @@ If $\psi = R(t_1, \ldots t_k)$, then \axref{cp} and \rlem{derived-cong-lem} impl
 \[ \varphi \sststile{}{V} \Gamma \vdash R(t_1[t/x], \ldots t_{i-1}[t/x], t_i[t'/x], \ldots t_k[t'/x]). \]
 \end{proof}
 
-\subsection{The category of $\ft$-free theories}
+\section{The category of $\ft$-free theories}
 \label{sec:types}
 
 Let us recall the definition of the category of algebraic type theories from \cite{alg-tt}.
@@ -918,17 +914,17 @@ The required equality $g(\Delta_2') \equiv \Delta$ follows from this sequent and
 The first one follows from \eqref{it:interp-symb} and the second one is \axref{cd}.
 \end{proof}
 
-Two $\ft$-free restricted terms $t|_{\Delta \vdash \varphi}$ and $t'|_{\Delta' \vdash \psi}$ are \emph{equivalent} in a context $\Gamma$ if the following sequents are derivable:
+Let $t|_{\Delta \vdash \varphi}$ and $t'|_{\Delta' \vdash \psi}$ be a pair of $\ft$-free restricted terms.
+Then we will say that a sequent $\chi \sststile{}{V} \Gamma \vdash t|_{\Delta \vdash \varphi} \simeq t'|_{\Delta' \vdash \psi}$ is derivable if the following seuqnets are:
 \begin{align*}
-(\Gamma, \Delta \vdash \varphi) \land (\Gamma \vdash t) & \sststile{}{\FV(\Gamma) \cup \FV(t|_{\Delta \vdash \varphi}) \cup \FV(t'|_{\Delta' \vdash \psi})} (\Gamma, \Delta' \vdash \psi) \land (\Gamma \vdash t \equiv t') \\
-(\Gamma, \Delta' \vdash \psi) \land (\Gamma \vdash t') & \sststile{}{\FV(\Gamma) \cup \FV(t|_{\Delta \vdash \varphi}) \cup \FV(t'|_{\Delta' \vdash \psi})} (\Gamma, \Delta \vdash \varphi) \land (\Gamma \vdash t \equiv t')
+\chi \land (\Gamma, \Delta \vdash \varphi) \land (\Gamma \vdash t) & \sststile{}{V} (\Gamma, \Delta' \vdash \psi) \land (\Gamma \vdash t \equiv t') \\
+\chi \land (\Gamma, \Delta' \vdash \psi) \land (\Gamma \vdash t') & \sststile{}{V} (\Gamma, \Delta \vdash \varphi) \land (\Gamma \vdash t \equiv t')
 \end{align*}
+
+Two $\ft$-free restricted terms $t$ and $t'$ are \emph{equivalent} in a context $\Gamma$ if the sequent $\sststile{}{\FV(\Gamma) \cup \FV(t) \cup \FV(t')} \Gamma \vdash t \simeq t'$ is derivable.
 Two $\ft$-free formulas $\bigwedge_{1 \leq i \leq n} \Gamma_i \vdash \varphi_i$ and $\bigwedge_{1 \leq i \leq k} \Delta_i \vdash \psi_i$ are \emph{equivalent} in a context $\Gamma$
-if the following sequents are derivable:
-\begin{align*}
-\bigwedge_{1 \leq i \leq n} \Gamma, \Gamma_i \vdash \varphi_i & \ssststile{}{\FV(\Gamma) \cup \FV(\varphi) \cup \FV(\psi)} \bigwedge_{1 \leq i \leq k} \Gamma, \Delta_i \vdash \psi_i \\
-\bigwedge_{1 \leq i \leq k} \Gamma, \Delta_i \vdash \psi_i & \ssststile{}{\FV(\Gamma) \cup \FV(\varphi) \cup \FV(\psi)} \bigwedge_{1 \leq i \leq n} \Gamma, \Gamma_i \vdash \varphi_i
-\end{align*}
+if the following sequent is derivable:
+\[ \bigwedge_{1 \leq i \leq n} \Gamma, \Gamma_i \vdash \varphi_i \ssststile{}{\FV(\Gamma) \cup \FV(\varphi) \cup \FV(\psi)} \bigwedge_{1 \leq i \leq k} \Gamma, \Delta_i \vdash \psi_i \]
 
 Interpretations $f$ and $f'$ are \emph{equivalent} if, for every function (resp., predicate) symbol $S$, restricted terms (resp., formulas) $f(S(x_1, \ldots x_k))$ and $f'(S(x_1, \ldots x_k))$ are equivalent in all contexts consisting of variables.
 A \emph{morphism} of $\ft$-free theories $T$ and $T'$ is an equivalence class of interpretations of $T$ in $T'$.
@@ -1064,14 +1060,72 @@ The facts that $F(f)$ is an interpretation and respects the equivalence relation
 It is obvious that $F$ preserves the identity morphism and the fact that it preserves the composition follows from \rlem{ftmap-term} and \rlem{ftmap-form}.
 \end{proof}
 
-\subsection{The $\ty$-free syntax}
+Let $V$ be an $\mathcal{S}$-set of variables.
+Then we define $G(V)$ as $V \amalg \{ x^i \mid x \in V, x : (p,n), 1 \leq i \leq n \}$.
+For every term $t$ of sort $(p,n)$ with free variables in $V$ and every $0 \leq i \leq n$, we define an $\ft$-free restricted term $G^i(t)$ with free variables in $G(V)$.
+The term $G^i(t)$ has sort $(p,n)$ if $i = 0$ and sort $(\ty,n-i)$ if $i > 0$.
+\begin{align*}
+G^0(x) & = x \\
+G^{i+1}(x) & = x^{i+1} \\
+G^i(\ft_n(t)) & = G^{i+1}(t) \\
+G^0(\ty_n(t)) & = \ty(G^0(t)) \\
+G^{i+1}(\ty_n(t)) & = G^{i+1}(t) \\
+G^0(v_{n,j}(\Gamma)) & = v_j \\
+G^{i+1}(v_{n,j}(\Gamma)) & = G^i(\Gamma) \\
+G^0(\subst_{p,n,k}(\Gamma, t, t_1, \ldots t_k)) & = \subst(G^k(t), \ldots G^0(t), G^0(t_1), \ldots G^0(t_k))|_\varphi \\
+G^{i+1}(\subst_{p,n,k}(\Gamma, t, t_1, \ldots t_k)) & = G^i(\Gamma)|_\varphi \\
+G^0(\sigma_n(\Gamma, t_1, \ldots t_k)) & = \sigma(G^0(t_1), \ldots G^0(t_k))|_\psi \\
+G^{i+1}(\sigma_n(\Gamma, t_1, \ldots t_k)) & = G^i(\Gamma)|_\psi
+\end{align*}
+where $\varphi = \bigwedge_{1 \leq i \leq k} (G^{n-1}(\Gamma), \ldots G^0(\Gamma)) \equiv (G^n(t_i), \ldots G^1(t_i))$, $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$,
+and $\psi = \bigwedge_{1 \leq i \leq k} (G^{n-1}(\Gamma), \ldots G^0(\Gamma)) \equiv (G^{n_i+n}(t_i), \ldots G^{n_i+1}(t_i))$.
+If $\Gamma$ is a term of sort $(\ctx,n)$, we will write $G(\Gamma)$ for the context $G^{n-1}(\Gamma), \ldots G^0(\Gamma)$.
+
+\begin{lem}[gmap-term]
+If $\Gamma = (B_1, \ldots B_n)$ is a context and $t$ is an $\ft$-free term of sort $(p,n)$ with free variables in $V$, then the following sequents are derivable:
+\begin{align*}
+\chi & \sststile{}{G(V)} \Gamma \vdash G^0(F(\Gamma,t)) \simeq t \\
+\chi & \sststile{}{G(V)} B_1, \ldots B_{n-i-1} \vdash G^{i+1}(F(\Gamma,t)) \simeq B_{n-i}
+\end{align*}
+where $\chi = \bigwedge_{(\Delta,x) \in \sub((\Gamma,t)), x : (p,m)} \Delta \equiv (x^m, \ldots x^1)$.
+\end{lem}
+\begin{proof}
+The proof is by induction on $F(\Gamma,t)$.
+If $t = x$ is a variable, then both sequents are obvious since $\Gamma \vdash G^0(F(\Gamma,x))$ is equal to $(\Gamma \vdash x) \land \chi$ and $\Gamma \vdash G^{i+1}(F(\Gamma,x))$ is equal to $(\Gamma \vdash x^{i+1}) \land \chi$ and the equality $B_1, \ldots B_{n-i-1} \vdash x^{i+1} \equiv B_{n-i}$ follows from $\chi$.
+Let us consider the case $t = \subst(\overline{A}, t', t_1, \ldots t_k)$; other cases are similar.
+First, note that $G^0(F(\Gamma,t))$ is equal to
+\[ \subst(G^k(F(\overline{A},t')), \ldots A_k', G^0(F(\overline{A},t')), G^0(F(\Gamma,t_1)), \ldots G^0(F(\Gamma,t_k)))|_\varphi, \]
+where $\varphi = \bigwedge_{1 \leq i \leq k} (G^{n-1}(F(\Gamma)), \ldots G^0(F(\Gamma))) \equiv (G^n(F(\Gamma,t_i)), \ldots G^1(F(\Gamma,t_i)))$.
+By induction hypothesis, we have equalities $A_1, \ldots A_i \vdash G^{k-i}(F(\overline{A},t')) \equiv A_{i+1}$ for $i < k$ and $A_1, \ldots A_k \vdash G^0(F(\overline{A},t')) \equiv t'$.
+Similarly, we have equalities $\Gamma \vdash G^0(F(\Gamma,t_i)) \equiv t_i$.
+Thus, we just need to show that $\varphi$ is provable.
+This follows from equalities $B_1, \ldots B_i \vdash G(F^{n-i}(\Gamma,t_j)) \equiv B_{i+1}$ and $B_1, \ldots B_i \vdash G^{n-i-1}(F(\Gamma)) \equiv B_{i+1}$.
+\end{proof}
+
+For every formula $\varphi$ with free variables in $V$, we define an $\ft$-free formula $G(\varphi)$ with free variables in $G(V)$:
+\begin{align*}
+G(t = t') & = (G(\ctx(t)) \equiv G(\ctx(t'))) \land (G(\ctx(t)) \vdash G^0(t) \equiv G^0(t')) \\
+G(R_n(\Gamma, t_1, \ldots t_k)) & = G(\Gamma) \vdash R(G^0(t_1), \ldots G^0(t_k)) \\
+G(\varphi_1 \land \ldots \land \varphi_n) & = G(\varphi_1) \land \ldots \land G(\varphi_n)
+\end{align*}
+
+\begin{lem}
+The following sequents are derivable for every $\ft$-free formula $\varphi$:
+\begin{align*}
+\chi \land \varphi & \sststile{}{G(V)} G(F(\varphi)) \\
+\chi \land G(F(\varphi)) & \sststile{}{G(V)} \varphi
+\end{align*}
+where $\chi = \bigwedge_{(\Delta,x) \in \sub(\varphi), x : (p,m)} \Delta \equiv (x^m, \ldots x^1)$.
+\end{lem}
+\begin{proof}
+Let us conside the case $\varphi = (\Gamma \vdash t_1 \equiv t_2)$; other cases are similar.
+First, note that $G(F(\varphi))$ is equal to $(\Gamma_1 \equiv \Gamma_2) \land (\Gamma_1 \vdash G^0(F(\Gamma,t_1)) \equiv G^0(F(\Gamma,t_2)))$,
+where $\Gamma_i$ is equal to $G^n(F(\Gamma,t_i)), \ldots G^1(F(\Gamma,t_i))$.
+By \rlem{gmap-term}, $\Gamma_1$ and $\Gamma_2$ are equal to $\Gamma$ and $G^0(F(\Gamma,t_i))$ is equivalent to $t_i$ in $\Gamma$, which implies that $\varphi$ and $G(F(\varphi))$ are equivalent.
+\end{proof}
+
+\section{The $\ty$-free syntax}
 \label{sec:types}
-
-\section{Examples}
-
-\section{Strong normalization}
-
-\section{Confluence}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
