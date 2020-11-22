@@ -1091,10 +1091,12 @@ If $\Gamma = (B_1, \ldots B_n)$ is a context and $t$ is an $\ft$-free term of so
 \chi & \sststile{}{G(V)} B_1, \ldots B_{n-i-1} \vdash G^{i+1}(F(\Gamma,t)) \simeq B_{n-i}
 \end{align*}
 where $\chi = \bigwedge_{(\Delta,x) \in \sub((\Gamma,t)), x : (p,m)} \Delta \equiv (x^m, \ldots x^1)$.
+Moreover, the following sequent is also derivable:
+\[ \Gamma \vdash G^0(F(\Gamma,t)) \sststile{}{G(V)} \chi \]
 \end{lem}
 \begin{proof}
 The proof is by induction on $F(\Gamma,t)$.
-If $t = x$ is a variable, then both sequents are obvious since $\Gamma \vdash G^0(F(\Gamma,x))$ is equal to $(\Gamma \vdash x) \land \chi$ and $\Gamma \vdash G^{i+1}(F(\Gamma,x))$ is equal to $(\Gamma \vdash x^{i+1}) \land \chi$ and the equality $B_1, \ldots B_{n-i-1} \vdash x^{i+1} \equiv B_{n-i}$ follows from $\chi$.
+If $t = x$ is a variable, then it is obvious since $\Gamma \vdash G^0(F(\Gamma,x))$ is equal to $(\Gamma \vdash x) \land \chi$ and $\Gamma \vdash G^{i+1}(F(\Gamma,x))$ is equal to $(\Gamma \vdash x^{i+1}) \land \chi$ and the equality $B_1, \ldots B_{n-i-1} \vdash x^{i+1} \equiv B_{n-i}$ follows from $\chi$.
 Let us consider the case $t = \subst(\overline{A}, t', t_1, \ldots t_k)$; other cases are similar.
 First, note that $G^0(F(\Gamma,t))$ is equal to
 \[ \subst(G^k(F(\overline{A},t')), \ldots A_k', G^0(F(\overline{A},t')), G^0(F(\Gamma,t_1)), \ldots G^0(F(\Gamma,t_k)))|_\varphi, \]
@@ -1103,6 +1105,7 @@ By induction hypothesis, we have equalities $A_1, \ldots A_i \vdash G^{k-i}(F(\o
 Similarly, we have equalities $\Gamma \vdash G^0(F(\Gamma,t_i)) \equiv t_i$.
 Thus, we just need to show that $\varphi$ is provable.
 This follows from equalities $B_1, \ldots B_i \vdash G(F^{n-i}(\Gamma,t_j)) \equiv B_{i+1}$ and $B_1, \ldots B_i \vdash G^{n-i-1}(F(\Gamma)) \equiv B_{i+1}$.
+The last sequent follows from the fact that every free variable belongs to some subterm.
 \end{proof}
 
 For every formula $\varphi$ with free variables in $V$, we define an $\ft$-free formula $G(\varphi)$ with free variables in $G(V)$:
@@ -1114,29 +1117,32 @@ G(\varphi_1 \land \ldots \land \varphi_n) & = G(\varphi_1) \land \ldots \land G(
  where
  \[ \psi = \bigwedge_{1 \leq i \leq k} (G^{n-1}(\Gamma), \ldots G^0(\Gamma), \Gamma^R_i(G^0(t_1), \ldots G^0(t_{i-1}))) \equiv (G^{n+n_i}(t_i), \ldots G^1(t_i)) \]
 
-\begin{lem}
-The following sequents are derivable for every $\ft$-free formula $\varphi$:
-\begin{align*}
-\chi \land \varphi & \sststile{}{G(V)} G(F(\varphi)) \\
-\chi \land G(F(\varphi)) & \sststile{}{G(V)} \varphi
-\end{align*}
+\begin{lem}[gmap-form]
+For every formulas $\varphi$, formulas $G(F(\varphi))$ and $\varphi \land \chi$ are equivalent,
 where $\chi = \bigwedge_{(\Delta,x) \in \sub(\varphi), x : (p,m)} \Delta \equiv (x^m, \ldots x^1)$.
 \end{lem}
 \begin{proof}
 Let us conside the case $\varphi = (\Gamma \vdash t_1 \equiv t_2)$; other cases are similar.
 First, note that $G(F(\varphi))$ is equal to $(\Gamma_1 \equiv \Gamma_2) \land (\Gamma_1 \vdash G^0(F(\Gamma,t_1)) \equiv G^0(F(\Gamma,t_2)))$,
 where $\Gamma_i$ is equal to $G^n(F(\Gamma,t_i)), \ldots G^1(F(\Gamma,t_i))$.
-By \rlem{gmap-term}, $\Gamma_1$ and $\Gamma_2$ are equal to $\Gamma$ and $G^0(F(\Gamma,t_i))$ is equivalent to $t_i$ in $\Gamma$, which implies that $\varphi$ and $G(F(\varphi))$ are equivalent.
+By \rlem{gmap-term}, the sequent $G^0(F(\Gamma,t_i)) \sststile{}{G(V)} \Delta \equiv (x^m, \ldots x^1)$ is derivable for every $(\Delta,x) \in \sub((\Gamma,t_i))$.
+Thus, $G(F(\varphi)) \sststile{}{G(V)} \chi$ is derivable.
+By \rlem{gmap-term}, $\Gamma_1$ and $\Gamma_2$ are equal to $\Gamma$ and $G^0(F(\Gamma,t_i))$ is equivalent to $t_i$ in $\Gamma$, which implies that $\varphi \land \chi$ and $G(F(\varphi))$ are equivalent.
 \end{proof}
 
 \begin{lem}[gmap-subst]
 Formulas $G(\varphi[s/x])$ and $G(\varphi)[G^0(s)/x, G^1(s)/x^1, \ldots G^n(s)/x^n]$ are equivalent.
 \end{lem}
 \begin{proof}
-TODO
+To prove this, it is enough to show that the following restricted contexted terms are equivalent:
+\begin{align*}
+& (G(\ctx(t[s/x])), G^0(t[s/x])) \\
+& (G(\ctx(t)), G^0(t))[G^0(s)/x, G^1(s)/x^1, \ldots G^n(s)/x^n]
+\end{align*}
+This is prvoed by easy induction on $t$.
 \end{proof}
 
-\begin{lem}
+\begin{lem}[gmap-seq]
 If $\varphi \sststile{}{\FV(\varphi)} \psi$ is derivable, then $G(\varphi) \sststile{}{G(\FV(\varphi))} G(\psi)$ is also derivable.
 \end{lem}
 \begin{proof}
@@ -1146,13 +1152,30 @@ The rule \axref{nl} follows from \rlem{gmap-subst}.
 Other rules are obvious.
 Thus, we just need to show that $G$ preserves axioms.
 
-TODO
+It is easy to see that $G$ preserves axioms listed in \rdefn{alg-tt} and the axioms of the theory of substitutions.
+Thus, we just need to prove that $G(F(\varphi)) \sststile{}{G(V)} G(F(\psi))$ is an axiom whenever $\varphi \sststile{}{V} \psi$ is.
+This follows from \rlem{gmap-form} since $\FV(\psi) \subseteq \FV(\varphi)$.
 \end{proof}
 
 \begin{prop}
 The functor $F : \algtt^\ft \to \algtt$ is fully faithful.
 \end{prop}
 \begin{proof}
+Let $f,g : T \to T'$ be a pair of interpretations of $\ft$-free theories such that $F(f)$ and $F(g)$ are equivalent.
+Let $\sigma$ be a function symbol of $T$.
+Then $F(\Gamma, f(\sigma(x_1, \ldots x_k)))$ and $F(\Gamma, g(\sigma(x_1, \ldots x_k)))$ are equivalent.
+By \rlem{gmap-seq}, the terms $G^0(F(\Gamma, f(\sigma(x_1, \ldots x_k))))$ and $G^0(F(\Gamma, g(\sigma(x_1, \ldots x_k))))$ are equivalent in $\Gamma$.
+By \rlem{gmap-term}, the sequent $\chi \sststile{}{G(\{ \Gamma, x_1, \ldots x_k \})} \Gamma \vdash G^0(F(\Gamma, f(\sigma(x_1, \ldots x_k)))) \simeq f(\sigma(x_1, \ldots x_k))$ is derivable,
+where $\chi = \bigwedge_{(\Delta,x_i) \in \sub((\Gamma,f(\sigma(x_1, \ldots x_k))))} \Delta \equiv (x^{n_i}_i, \ldots x^1_i)$.
+Let $\rho(x_j^i) = B_j^i$, where $f(\Gamma^S_j) = (B^{n_j}_j, \ldots B^1_j)$.
+Then the following sequent is derivable by \eqref{it:interp-symb}:
+\[ \Gamma \vdash f(\sigma(x_1, \ldots x_k)) \sststile{}{V} \chi[\rho] \]
+It follows that $\Gamma \vdash f(\sigma(x_1, \ldots x_k)) \sststile{}{V} \Gamma \vdash f(\sigma(x_1, \ldots x_k)) \equiv g(\sigma(x_1, \ldots x_k))$ is also derivable.
+Similarly, $\Gamma \vdash g(\sigma(x_1, \ldots x_k)) \sststile{}{V} \Gamma \vdash f(\sigma(x_1, \ldots x_k)) \equiv g(\sigma(x_1, \ldots x_k))$ is derivable.
+Similar argument shows that $f(R(x_1, \ldots x_k))$ and $g(R(x_1, \ldots x_k))$ are also equivalent for every predicate symbol.
+It follows that $f$ and $g$ are equivalent.
+
+Let $f : F(T) \to F(T')$ be an interpretation.
 TODO
 \end{proof}
 
