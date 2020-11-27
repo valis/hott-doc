@@ -1139,7 +1139,7 @@ To prove this, it is enough to show that the following restricted contexted term
 & (G(\ctx(t[s/x])), G^0(t[s/x])) \\
 & (G(\ctx(t)), G^0(t))[G^0(s)/x, G^1(s)/x^1, \ldots G^n(s)/x^n]
 \end{align*}
-This is prvoed by easy induction on $t$.
+This is proved by easy induction on $t$.
 \end{proof}
 
 \begin{lem}[gmap-seq]
@@ -1157,9 +1157,28 @@ Thus, we just need to prove that $G(F(\varphi)) \sststile{}{G(V)} G(F(\psi))$ is
 This follows from \rlem{gmap-form} since $\FV(\psi) \subseteq \FV(\varphi)$.
 \end{proof}
 
-\begin{prop}
+\begin{lem}[gmap-rev-term]
+The following sequents are derivable for every term $t$ and every $j$:
+\begin{align*}
+\ctx^j(t) \land \bigwedge_{x \in \FV(t), x : (p,m), 1 \leq i \leq m} x^i = \ctx^i(x) & \sststile{}{G(V)} F(\ctx^{j+1}(t), G^j(t)) = \ctx^j(t) \\
+F(\ctx^{j+1}(t), G^j(t)) & \sststile{}{G(V)} F(\ctx^{j+1}(t), G^j(t)) = \ctx^j(t)
+\end{align*}
+\end{lem}
+\begin{proof}
+By a straightforward induction on $t$.
+\end{proof}
+
+\begin{lem}[gmap-var]
+The following sequent is derivable for every term $t$:
+\[ G(t) \vdash G^i(t) \sststile{}{G(V)} \bigwedge_{(\Delta,x^j) \in \sub(G(t),G^i(t))} \Delta \equiv (x^n, \ldots x^{j+1}) \]
+\end{lem}
+\begin{proof}
+By a straightforward induction on $t$.
+\end{proof}
+
+\begin{thm}
 The functor $F : \algtt^\ft \to \algtt$ is fully faithful.
-\end{prop}
+\end{thm}
 \begin{proof}
 Let $f,g : T \to T'$ be a pair of interpretations of $\ft$-free theories such that $F(f)$ and $F(g)$ are equivalent.
 Let $\sigma$ be a function symbol of $T$.
@@ -1176,7 +1195,24 @@ Similar argument shows that $f(R(x_1, \ldots x_k))$ and $g(R(x_1, \ldots x_k))$ 
 It follows that $f$ and $g$ are equivalent.
 
 Let $f : F(T) \to F(T')$ be an interpretation.
-TODO
+We need to define an interpretation $g : T \to T'$ such that $F(g) = f$.
+Let $\sigma$ be a function symbol of $T$.
+We define $g(\sigma(x_1, \ldots x_k))$ as $G^0(f(\sigma_0(\cdot, x_1, \ldots x_k)))[\rho']$, where $\rho'(x_i^j) = G^{j-1}(f(F(\Gamma^\sigma_i)))$.
+We need to show that $F(g)(\sigma_n(\Gamma, x_1, \ldots x_k))$ is equivalent to $f(\sigma_n(\Gamma, x_1, \ldots x_k))$.
+First, note that $F(g)(\sigma_n(\Gamma, x_1, \ldots x_k))$ is equivalent to $F(\Gamma, G^0(f(\sigma_n(\Gamma, x_1, \ldots x_k)))[\rho])$, where $\rho(x_i^j) = G^{j-1}(f(F(\Gamma,\Gamma^\sigma_i)))$.
+By \rlem{gmap-var} and \rlem{ftmap-th}, the following sequent is derivable:
+\[ F(G(t)[\rho], G^0(t)[\rho]) \sststile{}{G(V)} \bigwedge_{(\Delta,x_i^j) \in \sub(G(t), G^0(t))} F(\Delta[\rho]) \equiv F(\rho(x^n), \ldots \rho(x^{j+1})), \]
+where $t = f(\sigma_n(\Gamma, x_1, \ldots x_k))$.
+Now, \rlem{ftmap-subst} implies that $F(G(t)[\rho], G^0(t)[\rho])$ is equivalent to $F(G(t), G^0(t))[\rho']$, where $\rho'(x_i^j) = F(F(\rho(x_i^n), \ldots \rho(x_i^{j+1})), \rho(x_i^j))$.
+Thus, it is enough to show that $F(\ctx^{i+1}(t), G^i(t))[\rho']$ is equivalent to $\ctx^i(t)$.
+If the first term is defined, then we have the required equality by \rlem{gmap-rev-term}.
+To prove the second required equality, we can apply the same lemma.
+Then we just need to show that the following sequent is derivable for all $i$ and $j$:
+\[ t\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} \rho'(x_i^j) = \ctx^j(x_i) \]
+First, note that the sequent $t\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} \ctx(x_i) = f(F(\Gamma, \Gamma^\sigma_i))$ is derivable.
+Thus, we just need to prove the equality $\rho'(x_i^j) = \ctx^{j-1}(f(F(\Gamma, \Gamma^\sigma_i)))$.
+This follows from \rlem{gmap-rev-term} by induction on $i$.
+Indeed, we can apply it to the term $t_i = f(F(\Gamma, \Gamma^\sigma_i))$ if it holds for terms $t_{i'}$ with $i' < i$ since variables of the form $x_{i'}^j$ can appear in $\FV(t_i)$ only if $i' < i$.
 \end{proof}
 
 \section{The $\ty$-free syntax}
