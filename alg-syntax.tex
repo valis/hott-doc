@@ -301,6 +301,33 @@ Then a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$ if and only if 
 It is easy to see that the proof of \cite[Proposition~5.3]{morita-equiv} holds for the generalized definition of theories with separated axioms.
 \end{proof}
 
+A \emph{restricted term} is a term $t$ together with a formula $\varphi$.
+We denote such a restricted term by $t|_\varphi$.
+The $\mathcal{S}$-set of restricted terms (with free variables in $V$) will be denoted by $\RTerm^e(V)$.
+Let $T$ and $T'$ be two theories with the same set of sorts.
+An \emph{interpretation} of $T$ in $T'$ is a function $f$ such that the following conditions hold:
+\begin{itemize}
+\item For every basic function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ of $T$,
+the function $f$ defines a restricted term $f(\sigma(x_1, \ldots x_k))$ of $T'$ of sort $s$ such that $\FV(f(\sigma(x_1, \ldots x_k)))$ equals to $\{ x_1 : s_1, \ldots x_k : s_k \}$.
+\item For every basic predicate symbol $P : s_1 \times \ldots \times s_k$,
+the function $f$ defines a formula $f(P(x_1, \ldots x_k))$ of $T'$ such that $\FV(f(P(x_1, \ldots x_k)))$ equals to $\{ x_1 : s_1, \ldots x_k : s_k \}$.
+\item For every axiom $\varphi \sststile{}{V} \psi$ of $T$, the sequent $f(\varphi) \sststile{}{V} f(\psi)$ is derivable in $T'$.
+Formulas $f(\varphi)$ and $f(\psi)$ are defined inductively using $f(\sigma(x_1, \ldots x_k))$ and $f(P(x_1, \ldots x_k))$ in the obvious way.
+\end{itemize}
+
+We will say that formulas $\varphi$ and $\psi$ are \emph{equivalent} if the sequents $\varphi \ssststile{}{\FV(\varphi) \cup \FV(\psi)} \psi$ are derivable.
+Two restricted terms $t|_\varphi$ and $t'|_\psi$ are equivalent if the following sequents are derivable:
+\begin{align*}
+\varphi \land t\!\downarrow\ & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \psi \land t = t' \\
+\psi \land t'\!\downarrow\ & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \varphi \land t = t'
+\end{align*}
+We will write $t \simeq t'$ if $t$ and $t'$ are equivalent.
+Two interpretations $f$ and $f'$ are equivalent if $f(S_n(\Gamma, x_1, \ldots x_k))$ and $f'(S_n(\Gamma, x_1, \ldots x_k))$ are equivalent for every symbol $S$.
+A \emph{morphism} of theories $T$ and $T'$ is an equivalence class of interpretations of $T$ in $T'$.
+The identity morphism is defined in the obvious way: $\id(\sigma(x_1, \ldots x_k)) = \sigma(x_1, \ldots x_k)|_\top$ and $\id(R(x_1, \ldots x_k)) = R(x_1, \ldots x_k)$.
+The composition of morphisms is defined as follows: $(g \circ f)(S(x_1, \ldots x_k))$ = $g(f(S(x_1, \ldots x_k)))$.
+It is easy to see that this defines the structure of a category on algebraic dependent type theories.
+
 \section{The $\ft$-free syntax}
 \label{sec:contexts}
 
@@ -842,36 +869,8 @@ If $\psi = R(t_1, \ldots t_k)$, then \axref{cp} and \rlem{derived-cong-lem} impl
 \section{The category of $\ft$-free theories}
 \label{sec:types}
 
-Let us recall the definition of the category of algebraic type theories from \cite{alg-tt}.
-A \emph{restricted term} is a term $t$ together with a formula $\varphi$.
-We denote such a restricted term by $t|_\varphi$.
-The $\mathcal{S}$-set of restricted terms (with free variables in $V$) will be denoted by $\RTerm^e(V)$.
-Let $T$ and $T'$ be two theories with the same set of sorts.
-An \emph{interpretation} of $T$ in $T'$ is a function $f$ such that the following conditions hold:
-\begin{itemize}
-\item For every basic function symbol $\sigma : s_1 \times \ldots \times s_k \to s$ of $T$,
-the function $f$ defines a restricted term $f(\sigma(x_1, \ldots x_k))$ of $T'$ of sort $s$ such that $\FV(f(\sigma(x_1, \ldots x_k)))$ equals to $\{ x_1 : s_1, \ldots x_k : s_k \}$.
-\item For every basic predicate symbol $P : s_1 \times \ldots \times s_k$,
-the function $f$ defines a formula $f(P(x_1, \ldots x_k))$ of $T'$ such that $\FV(f(P(x_1, \ldots x_k)))$ equals to $\{ x_1 : s_1, \ldots x_k : s_k \}$.
-\item For every axiom $\varphi \sststile{}{V} \psi$ of $T$, the sequent $f(\varphi) \sststile{}{V} f(\psi)$ is derivable in $T'$.
-Formulas $f(\varphi)$ and $f(\psi)$ are defined inductively using $f(\sigma(x_1, \ldots x_k))$ and $f(P(x_1, \ldots x_k))$ in the obvious way.
-\end{itemize}
-
-We will say that formulas $\varphi$ and $\psi$ are \emph{equivalent} if the sequents $\varphi \ssststile{}{\FV(\varphi) \cup \FV(\psi)} \psi$ are derivable.
-Two restricted terms $t|_\varphi$ and $t'|_\psi$ are equivalent if the following sequents are derivable:
-\begin{align*}
-\varphi \land t\!\downarrow\ & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \psi \land t = t' \\
-\psi \land t'\!\downarrow\ & \sststile{}{\FV(t|_\varphi) \cup \FV(t'|_\psi)} \varphi \land t = t'
-\end{align*}
-We will write $t \simeq t'$ if $t$ and $t'$ are equivalent.
-Two interpretations $f$ and $f'$ are equivalent if $f(S_n(\Gamma, x_1, \ldots x_k))$ and $f'(S_n(\Gamma, x_1, \ldots x_k))$ are equivalent for every symbol $S$.
-A \emph{morphism} of theories $T$ and $T'$ is an equivalence class of interpretations of $T$ in $T'$.
-The identity morphism is defined in the obvious way: $\id(\sigma(x_1, \ldots x_k)) = \sigma(x_1, \ldots x_k)|_\top$ and $\id(R(x_1, \ldots x_k)) = R(x_1, \ldots x_k)$.
-The composition of morphisms is defined as follows: $(g \circ f)(S(x_1, \ldots x_k))$ = $g(f(S(x_1, \ldots x_k)))$.
-It is easy to see that this defines the structure of a category on algebraic dependent type theories.
-
-Now, let us describe the category of $\ft$-free theories.
-First, an $\ft$-free \emph{restricted term} is just a pair consisting of an $\ft$-free term $t$ and an $\ft$-free formula $\varphi$, written $t|_\varphi$.
+In this section we define the category of $\ft$-free theories and prove that it is equivalent to a full subcategory of $\algtt$.
+An $\ft$-free \emph{restricted term} is just a pair consisting of an $\ft$-free term $t$ and an $\ft$-free formula $\varphi$, written $t|_\varphi$.
 A \emph{contexted restricted term} is a pair $(\Gamma,t|_\varphi)$ such that $(\Gamma,t)$ is a contexted term and $\varphi$ is a formula.
 
 Let $f$ be a function that defines a restricted term $f(\sigma(x_1, \ldots x_k))$ and a formula $f(R(x_1, \ldots x_k))$ for every function symbol $\sigma$ and every predicate symbol $R$ such that $\FV(f(\sigma(x_1, \ldots x_k))) = \{ x_1, \ldots x_k \}$ and $\FV(R(x_1, \ldots x_k)) = \{ x_1, \ldots x_k \}$.
