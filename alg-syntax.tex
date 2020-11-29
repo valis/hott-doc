@@ -375,10 +375,6 @@ In each of the cases, $(\Gamma,t)$ is the contexted term itself.
 So, every contexted term is always a contexted subterm of itself.
 Note that the definition of $\sub$ depends on the choice of contexts $\Gamma^\sigma_i$.
 
-\begin{remark}[ctx-begin]
-The context of every contexted subterm of $(\Gamma,t)$ begins with $\Gamma$.
-\end{remark}
-
 We can also define the set of contexted subterms of contexts and formulas:
 \begin{align*}
 \sub(\cdot) & = \varnothing \\
@@ -620,8 +616,8 @@ A sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\FV(\psi) \subseteq 
 An $\ft$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
 together with a context $\Gamma^S_i(x_1, \ldots x_{i-1})$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that the following conditions hold:
 \begin{enumerate}
-\item \label{it:ax-consist} For every symbol $S$ with $n$ parameters, all $1 \leq i < j \leq n$, and every $(\Delta,x_i) \in \sub(\Gamma_j^S(x_1, \ldots x_{j-1}))$, the following sequent is derivable:
-\[ \Gamma \vdash S(x_1, \ldots x_k) \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash \Gamma_i^S(x_1, \ldots x_{i-1}) \equiv \Delta \]
+\item \label{it:ax-consist} For every symbol $S$ with $n$ parameters, all $1 \leq i < j \leq n$, and every $(\Delta,x_i) \in \sub(\Gamma, \Gamma_j^S(x_1, \ldots x_{j-1}))$, the following sequent is derivable:
+\[ \Gamma \vdash S(x_1, \ldots x_k) \sststile{}{\Gamma, x_1, \ldots x_k} \Delta \equiv (\Gamma, \Gamma_i^S(x_1, \ldots x_{i-1})) \]
 \item \label{it:ax-wf} The following relation on the set of function symbols is well-founded: $\tau \prec \sigma$ if and only if $\tau$ appears in $\Gamma^\sigma_i$ for some $i$.
 \item \label{it:ax-valid} All axioms are valid.
 \item \label{it:ax-cond} For every axiom $\varphi \sststile{}{V} \psi$ and every contexted subterm $(\Gamma,t)$ of $\psi$, the sequent $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
@@ -737,6 +733,22 @@ The following rules are admissible:
 The proof is by easy induction on the length of $\Delta$.
 \end{proof}
 
+\begin{lem}[sub-subst]
+Let $t$ be a term and let $\rho$ be a substitution defined for every variable in $\FV(t)$.
+If $(\Delta,x) \in \sub(\Gamma[\rho],t[\rho])$, then there exists $(\Delta',x') \in \sub(\Gamma,t)$ such that $(\Delta,x) \in \sub(\Delta'[\rho],\rho(x'))$.
+\end{lem}
+\begin{proof}
+By a straightforward induction on $t$.
+\end{proof}
+
+\begin{lem}[sub-repl]
+If $(\Delta,t') \in \sub(\Gamma,t)$ and $\Gamma'$ is some context, then there exists $\Delta'$ such that $(\Delta',t') \in \sub(\Gamma',t)$ and the following sequent is derivable:
+\[ (\Gamma \equiv \Gamma') \land (\Gamma \vdash t) \sststile{}{V} \Delta \equiv \Delta' \]
+\end{lem}
+\begin{proof}
+By a straightforward induction on $t$.
+\end{proof}
+
 \begin{prop}
 The following rules are admissible:
 \medskip
@@ -789,9 +801,10 @@ Assume that $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is derivab
 We need to show that $\varphi \sststile{}{V} \Gamma, \Gamma_j^S(t_1, \ldots t_i', \ldots t_{j-1}) \vdash t_j$ is derivable.
 By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_j^S(t_1, \ldots t_{j-1}) \equiv \Gamma_j^S(t_1, \ldots t_i', \ldots t_{j-1})$ is derivable.
 This follows from \rlem{derived-cong-ctx}.
-Since $\Gamma, \Gamma_j^S(t_1, \ldots t_{j-1})$ is a contexted subterm of $(\Gamma, S(t_1, \ldots t_k))$, one of the conidtions of \rlem{derived-cong-ctx} follows from the fact that $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is good.
-We also need to to show that $\varphi \sststile{}{V} \Gamma, \Delta[t_i/x_i] \vdash t_i \equiv t_i'$ is derivable for every $(\Delta,x_i) \in \sub(\Gamma_j^S(t_1, \ldots x_i, \ldots t_{j-1}))$.
-By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Gamma \vdash \Gamma_i^S(t_1, \ldots t_{i-1}) \equiv \Delta[t_i/x_i]$ is derivable.
+Since $\Gamma, \Gamma_j^S(t_1, \ldots t_{j-1})$ is a contexted subterm of $\Gamma \vdash S(t_1, \ldots t_k)$, one of the conidtions of \rlem{derived-cong-ctx} follows from the fact that $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is good.
+We also need to to show that $\varphi \sststile{}{V} \Delta[t_i/x_i] \vdash t_i \equiv t_i'$ is derivable for every $(\Delta,x_i) \in \sub(\Gamma, \Gamma_j^S(t_1, \ldots x_i, \ldots t_{j-1}))$.
+By \rlem{sub-subst}, there exists $\Delta'$ such that $(\Delta',x_i) \in \sub(\Gamma,\Gamma_j^S)$ and $\Delta = \Delta'[\rho]$, where $\rho(x_i) = x_i$ and $\rho(x_k) = t_k$ if $k \neq i$.
+By \axref{cx'}, we just need to show that $\varphi \sststile{}{V} \Delta'[\rho][t_i/x_i] \equiv (\Gamma, \Gamma_i^S(t_1, \ldots t_{i-1}))$ is derivable.
 Since $\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$ is derivable and good, this follows from \axref{cc} and \eqref{it:ax-consist}.
 
 TODO: consider \axref{esf}, \axref{esf'}, and \axref{esp}.
@@ -860,7 +873,6 @@ It is easy to see that this defines the structure of a category on algebraic dep
 Now, let us describe the category of $\ft$-free theories.
 First, an $\ft$-free \emph{restricted term} is just a pair consisting of an $\ft$-free term $t$ and an $\ft$-free formula $\varphi$, written $t|_\varphi$.
 A \emph{contexted restricted term} is a pair $(\Gamma,t|_\varphi)$ such that $(\Gamma,t)$ is a contexted term and $\varphi$ is a formula.
-We will say that a free variable $x$ of a contexted restricted term or a formula $E$ \emph{has context} $\Gamma$ in $E$ if $(\Gamma,x)$ is a contexted subterm of $E$.
 
 Let $f$ be a function that defines a restricted term $f(\sigma(x_1, \ldots x_k))$ and a formula $f(R(x_1, \ldots x_k))$ for every function symbol $\sigma$ and every predicate symbol $R$ such that $\FV(f(\sigma(x_1, \ldots x_k))) = \{ x_1, \ldots x_k \}$ and $\FV(R(x_1, \ldots x_k)) = \{ x_1, \ldots x_k \}$.
 Then we can extend its definition to all terms, formulas, and restricted terms recursively.
@@ -868,7 +880,7 @@ The restriction formulas are just lifted to the top.
 That is, $\sigma(t_1|_{\varphi_1}, \ldots t_k|_{\varphi_k}) = \sigma(t_1, \ldots t_k)|_{\varphi_1 \land \ldots \land \varphi_k}$ and $R(t_1|_{\varphi_1}, \ldots t_k|_{\varphi_k}) = R(t_1, \ldots t_k) \land \varphi_1 \land \ldots \land \varphi_k$.
 We will say that such a function is an \emph{interpretation} of $T$ in $T'$ if the following conditions hold:
 \begin{enumerate}
-\item \label{it:interp-symb} For every symbol $S$ of $T$, if $x_i$ has context $\Delta$ in $f(S(x_1, \ldots x_k))$, then $\Gamma \vdash f(S(x_1, \ldots x_k)) \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash \Delta \equiv f(\Gamma^S_i)$ is derivable in $T'$.
+\item \label{it:interp-symb} For every symbol $S$ of $T$, if $(\Delta,x_i) \in \sub(\Gamma,f(S(x_1, \ldots x_k)))$, then the sequent $\Gamma \vdash f(S(x_1, \ldots x_k)) \sststile{}{\Gamma, x_1, \ldots x_k} \Delta \equiv (\Gamma,f(\Gamma^S_i))$ is derivable in $T'$.
 \item \label{it:interp-axiom} For every axiom $\varphi \sststile{}{V} \psi$ of $T$, the sequent $f(\varphi) \sststile{}{V} f(\psi)$ is derivable.
 \end{enumerate}
 
@@ -891,27 +903,21 @@ Rule \axref{ca} follows from \rcor{theorem-ext}.
 Let us consider rules \axref{cp}, \axref{cf}, and \axref{cf'}.
 Let $f$ be an interpretation.
 Then we know that the following sequents are derivable: $f(\varphi) \sststile{}{V} f(\Gamma) \vdash f(S(t_1, \ldots t_k))$ and $f(\varphi) \sststile{}{V} f(\Gamma), f(\Gamma_i^S(t_1, \ldots t_{i-1})) \vdash f(t_i) \equiv f(t_i')$.
-By \rlem{derived-cong} and \axref{cx'}, it is enough to show that the sequent $f(\varphi) \sststile{}{V} f(\Gamma) \vdash \Delta[t_i/x_i] \equiv f(\Gamma_i^S(t_1, \ldots t_{i-1}))$ is derivable for every $\Delta$ such that $((f(\Gamma),\Delta),x_i) \in \sub(f(\Gamma), f(S(t_1, \ldots x_i, \ldots t_k)))$.
-It is easy to see that there exists $\Delta'$ such that $((f(\Gamma),\Delta'),x_i) \in \sub(f(\Gamma), f(S(x_1, \ldots x_k)))$ and $\Delta = \Delta'[t_1/x_1, \ldots t_{i-1}/x_{i-1}, t_{i+1}/x_{i+1}, \ldots t_k/x_k]$.
-Now, the derivability of $f(\varphi) \sststile{}{V} f(\Gamma) \vdash \Delta[t_i/x_i] \equiv f(\Gamma_i^S(t_1, \ldots t_{i-1}))$ follows from \eqref{it:interp-symb}.
+By \rlem{derived-cong} and \axref{cx'}, it is enough to show that the sequent $f(\varphi) \sststile{}{V} \Delta[t_i/x_i] \equiv (f(\Gamma),f(\Gamma_i^S(t_1, \ldots t_{i-1})))$ is derivable for every $\Delta$ such that $(\Delta,x_i) \in \sub(f(\Gamma), f(S(t_1, \ldots x_i, \ldots t_k)))$.
+It is easy to see that there exists $\Delta'$ such that $(\Delta',x_i) \in \sub(f(\Gamma), f(S(x_1, \ldots x_k)))$ and $\Delta = \Delta'[t_1/x_1, \ldots t_{i-1}/x_{i-1}, t_{i+1}/x_{i+1}, \ldots t_k/x_k]$.
+Now, the derivability of $f(\varphi) \sststile{}{V} \Delta[t_i/x_i] \equiv (f(\Gamma),f(\Gamma_i^S(t_1, \ldots t_{i-1})))$ follows from \eqref{it:interp-symb}.
 
 Now, let us prove that $g \circ f$ satisfies \eqref{it:interp-symb}.
-Since $g$ preserves theorems, it is enough to show that, for every $(\Delta,x_i) \in \sub(\cdot, g(f(S(x_1, \ldots x_k))))$, there exists $\Delta'$ such that $(\Delta',x_i) \in \sub(\cdot, f(S(x_1, \ldots x_k)))$ and $\Gamma \vdash g(f(S(x_1, \ldots x_k))) \sststile{}{\Gamma, x_1, \ldots x_k} \Gamma \vdash g(\Delta') \equiv \Delta$ is derivable.
-We will prove a more general property: for every contexted term $(\Theta,t)$ and every $(\Delta,x) \in \sub(g(\Theta), g(t))$, there exists $\Delta'$ such that $(\Delta',x) \in \sub(\Theta, t)$ and the sequent $\Gamma, g(\Theta) \vdash g(t) \sststile{}{\Gamma, \FV(\Theta,t)} \Gamma \vdash g(\Delta') \equiv \Delta$ is derivable.
+Since $g$ preserves theorems, it is enough to show that, for every $(\Delta,x_i) \in \sub(\Gamma, g(f(S(x_1, \ldots x_k))))$, there exists $\Delta'$ such that $(\Delta',x_i) \in \sub(\Gamma, f(S(x_1, \ldots x_k)))$ and $\Gamma \vdash g(f(S(x_1, \ldots x_k))) \sststile{}{\Gamma, x_1, \ldots x_k} g(\Delta') \equiv \Delta$ is derivable.
+We will prove a more general property: for every contexted term $(\Theta,t)$ and every $(\Delta,x) \in \sub(g(\Theta), g(t))$, there exists $\Delta'$ such that $(\Delta',x) \in \sub(\Theta, t)$ and the sequent $g(\Theta) \vdash g(t) \sststile{}{\FV(\Theta,t)} g(\Delta') \equiv \Delta$ is derivable.
 The proof is by induction on $t$.
 If $t$ is a variable, this is obvious.
-Suppose $t = \sigma(t_1, \ldots t_k)$.
-Then there exists $\Delta_1$ such that $(\Delta_1,x_i) \in \sub(\cdot, g(\sigma(x_1, \ldots x_k)))$ and $(\Delta,x) \in \sub((g(\Theta),\Delta_1[t_1/x_1, \ldots t_k/x_k]), g(t_i))$.
-By \rremark{ctx-begin}, there exists $\Delta_2$ such that $\Delta = (g(\Theta), \Delta_1[t_1/x_1, \ldots t_k/x_k], \Delta_2)$.
-By induction hypothesis, there exists $\Delta_2'$ such that the following sequent is derivable:
-\[ \Gamma, g(\Theta') \vdash g(t_i) \sststile{}{\Gamma, \FV(\Theta',t_i)} \Gamma \vdash g(\Delta_2') \equiv (g(\Theta'),\Delta_2) \]
-where $\Theta' = (\Theta, \Gamma^\sigma_i(t_1, \ldots t_{i-1}))$.
-The required equality $g(\Delta_2') \equiv \Delta$ follows from this sequent and the following ones:
-\begin{align*}
-\Gamma, g(\Theta) \vdash g(t) & \sststile{}{\Gamma, \FV(\Theta,t)} \Gamma, g(\Theta) \vdash \Delta_1[t_1/x_1, \ldots t_k/x_k] \equiv g(\Gamma^\sigma_i(t_1, \ldots t_{i-1})) \\
-\Gamma, g(\Theta) \vdash g(t) & \sststile{}{\Gamma, \FV(\Theta,t)} \Gamma, g(\Theta') \vdash g(t_i)
-\end{align*}
-The first one follows from \eqref{it:interp-symb} and the second one is \axref{cd}.
+Suppose $t = \sigma(t_1, \ldots t_k)$ (including $\subst$, $\ty$, and $v_i$).
+By \rlem{sub-subst}, there exists $\Delta_1$ such that $(\Delta_1,x_i) \in \sub(g(\Theta), g(\sigma(x_1, \ldots x_k)))$ and $(\Delta,x) \in \sub(\Delta_1[g(t_1)/x_1, \ldots g(t_k)/x_k], g(t_i))$.
+By \eqref{it:interp-symb}, the following sequent is derivable:
+\[ g(\Theta) \vdash g(t) \sststile{}{V} \Delta_1[g(t_1)/x_1, \ldots g(t_k)/x_k] \equiv (g(\Theta), g(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))) \]
+By \rlem{sub-repl}, there exists $\Delta'$ such that the sequent $g(\Theta) \vdash g(t) \sststile{}{V} \Delta \equiv \Delta'$ is derivable and $(\Delta',x) \in \sub((g(\Theta), g(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))), g(t_i))$.
+Now, the required property follows by induction hypothesis.
 \end{proof}
 
 Let $t|_{\Delta \vdash \varphi}$ and $t'|_{\Delta' \vdash \psi}$ be a pair of $\ft$-free restricted terms.
@@ -997,31 +1003,32 @@ Easy case analysis on $t$.
 \end{proof}
 
 \begin{lem}[ftmap-subst]
-If $x \notin \FV(\Gamma)$, then the following restricted terms are equivalent:
+The following restricted terms are equivalent:
 \begin{align*}
-& F(\Gamma, t[t'/x])|_{\bigwedge_{(\Delta',x) \in \sub(\cdot,t)} \Delta = F(\Gamma,\Delta'[t'/x])} \\
+& F(F(\Gamma)[F(\Delta,t')/x], t[t'/x])|_{\bigwedge_{(\Delta',x) \in \sub(\Gamma,t)} \Delta = F(\Delta'[t'/x])} \\
 & F(\Gamma,t)[F(\Delta,t')/x]
 \end{align*}
 \end{lem}
 \begin{proof}
 The proof is by induction on $t$ with respect to the recursive path ordering.
 If $t$ is a variable and is not equal to $x$, this is obvious.
-If $t = x$, then the second term is equal to $F(\Delta,t')|_{\ctx(F(\Delta,t')) = \Gamma}$.
-By \rlem{ftmap-ctx}, it is equivalent to $F(\Delta,t')|_{\Delta = \Gamma}$, which is equivalent to the first term $F(\Gamma,t')|_{\Delta = \Gamma}$.
+If $t = x$, then the second term is equal to $F(\Delta,t')|_{\ctx(F(\Delta,t')) = \Gamma'}$, where $\Gamma' = F(\Gamma)[F(\Delta,t')/x]$.
+By \rlem{ftmap-ctx}, it is equivalent to $F(\Delta,t')|_{\Delta = \Gamma'}$, which is equivalent to the first term $F(\Gamma',t')|_{\Delta = \Gamma'}$.
 If $t = \ty(t')$ or $t = v_i$, this is obvious.
 
 Now, suppose $t = \sigma(t_1, \ldots t_k)$, where $\sigma$ is either a function symbol or $\subst$.
 Then the first term is equivalent to $s|_\varphi$, where
 \begin{align*}
-s & = \sigma_n(\Gamma, \ldots, F(F(\Gamma, \Gamma^\sigma_i(t_1, \ldots t_{i-1})[t'/x]), t_i[t'/x]), \ldots) \\
-\varphi & = \bigwedge_{1 \leq i \leq k} \bigwedge_{(\Delta',x) \in \sub(\cdot,t_i)} \Delta = F(\Gamma, (\Gamma^\sigma_i(t_1, \ldots t_{i-1}),\Delta')[t'/x])
+s & = \sigma_n(\Gamma', \ldots, F(F(\Gamma', \Gamma^\sigma_i(t_1, \ldots t_{i-1})[t'/x]), t_i[t'/x]), \ldots) \\
+\varphi & = \bigwedge_{1 \leq i \leq k} \bigwedge_{(\Delta',x) \in \sub((\Gamma,\Gamma^\sigma_i(t_1, \ldots t_{i-1})),t_i)} \Delta = F(\Delta'[t'/x])
 \end{align*}
 By induction hypothesis, the second term is equivalent to $s|_{\varphi \land \psi}$, where
-\[ \psi = \bigwedge_{1 \leq i \leq k} \bigwedge_{(\Delta'',x) \in \sub(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))} \Delta = F(\Gamma,\Delta''[t'/x]) \]
-If $(\Delta'',x) \in \sub(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))$, then \eqref{it:ax-consist} implies that there exist $1 \leq j \leq k$ and $\Delta'$ such that $(\Delta',x) \in \sub(\cdot,t_i)$ and $\Delta''$ is equivalent to $(\Gamma^\sigma_j(t_1, \ldots t_{j-1}), \Delta')$.
-Now, \rlem{ftmap-th} implies that the following sequent is derivable:
-\[ s\!\downarrow \land \varphi \sststile{}{\FV(s)} F(\Gamma, \Delta''[t'/x]) = F(\Gamma, (\Gamma^\sigma_j(t_1, \ldots t_{j-1}), \Delta')[t'/x]), \]
-which implies that $s_\varphi$ and $s|_{\varphi \land \psi}$ are equivalent.
+\[ \psi = \bigwedge_{1 \leq i \leq k} \bigwedge_{(\Delta'',x) \in \sub(\Gamma,\Gamma^\sigma_i(t_1, \ldots t_{i-1}))} \Delta = F(\Delta''[t'/x]) \]
+If $(\Delta'',x) \in \sub(\Gamma,\Gamma^\sigma_i(t_1, \ldots t_{i-1}))$, then \rlem{sub-subst} implies that there exists $(\Delta',x_j) \in \sub(\Gamma,\Gamma^\sigma_i)$ such that $(\Delta'',x) \in \sub(\Delta'[\rho], t_j)$, where $\rho(x_m) = t_m$.
+By \eqref{it:ax-consist}, we have equality $F(\Delta'[\rho]) = F(\Gamma,\Gamma^\sigma_j(t_1, \ldots t_{j-1}))$.
+By \rlem{sub-repl}, there exists $\Delta'''$ such that $(\Delta''',x) \in \sub((\Gamma,\Gamma^\sigma_j(t_1, \ldots t_{j-1})), t_j)$ and $F(\Delta'') = F(\Delta''')$.
+It follows that $s\!\downarrow \land \varphi \sststile{}{V} \psi$ is derivable.
+Thus, $s_{\varphi \land \psi}$ is equivalent to $s_\varphi$.
 \end{proof}
 
 Let $f : T \to T'$ be an interpretation, then we can define $F(f) : F(T) \to F(T')$ as follows: $F(f)(S(x_1, \ldots x_k)) = F(f(S(x_1, \ldots x_k)))$.
@@ -1040,7 +1047,7 @@ F(F(f)(F(\Gamma)), f(\sigma(x_1, \ldots x_k)))[\{ F(f)(F((\Gamma, \Gamma^\sigma_
 F(F(f(\Gamma)), f(\sigma(x_1, \ldots x_k)))[\{ F((f(\Gamma), f(\Gamma^\sigma_i)), f(t_i))/x_i \}_{1 \leq i \leq k}].
 \end{align*}
 By \rlem{ftmap-subst}, this term is equivalent to $F(f(\Gamma),f(t))|_{\bigwedge_{1 \leq j < i \leq k} \varphi_{i,j}}$, where $\varphi_{i,j}$ is the following formula:
-\[ \bigwedge_{(\Delta,x_j) \in \sub(\cdot, f(t_i))} F(f(\Gamma), f(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))) = F(f(\Gamma), \Delta[\{ f(t_l)/x_l \}_{1 \leq l < i}]). \]
+\[ \bigwedge_{(\Delta,x_j) \in \sub(f(\Gamma), f(t_i))} F(f(\Gamma), f(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))) = F(\Delta[\{ f(t_l)/x_l \}_{1 \leq l < i}]). \]
 Thus, we just need to show that sequents $F(f(\Gamma),f(t)) \sststile{}{V} \varphi_{i,j}$ are derivable, but this follows from \eqref{it:interp-symb} and \rlem{ftmap-th}.
 \end{proof}
 
