@@ -107,6 +107,7 @@
 \newcommand{\RTerm}{\fs{RTerm}}
 \newcommand{\FV}{\fs{FV}}
 \newcommand{\subst}{\fs{subst}}
+\newcommand{\Hom}{\fs{Hom}}
 \newcommand{\wk}{\fs{wk}}
 \newcommand{\Id}{\fs{Id}}
 \newcommand{\refl}{\fs{refl}}
@@ -114,6 +115,7 @@
 \newcommand{\emptyCtx}{\cdot}
 \newcommand{\ft}{\fs{ft}}
 \newcommand{\ty}{\fs{ty}}
+\newcommand{\Ty}{\fs{Ty}}
 \newcommand{\ctx}{\fs{ctx}}
 \newcommand{\tm}{\fs{tm}}
 \newcommand{\sub}{\fs{Sub}}
@@ -146,12 +148,12 @@ TODO
 
 \section{Preliminaries}
 
-Let us recall definitions from \cite{PHL} and \cite{alg-tt}.
+In this section, we recall definitions from \cite{PHL} and \cite{alg-tt} and describe a generalization of the notion of algebraic Type theories.
 A many sorted first-order signature $(\mathcal{S},\mathcal{F},\mathcal{P})$ consists of a set $\mathcal{S}$ of sorts,
 a set $\mathcal{F}$ of function symbols and a set $\mathcal{P}$ of predicate symbols.
 Each function symbol $\sigma$ is equipped with a signature of the form $\sigma : s_1 \times \ldots \times s_k \to s$, where $s_1$, \ldots $s_k$, $s$ are sorts.
 Each predicate symbol $R$ is equipped with a signature of the form $R : s_1 \times \ldots \times s_k$.
-If $V$ is an $\mathcal{S}$-set, then the $\mathcal{S}$-set of terms of $T$ with free variables in $V$ will be denoted by $\Term^e_\mathcal{F}(V)$ or by $\Term^e_T(V)$.
+If $V$ is an $\mathcal{S}$-set, then the $\mathcal{S}$-set of terms of $T$ with free variables in $V$ will be denoted by $\Term^\ft_\mathcal{F}(V)$ or by $\Term^\ft_T(V)$.
 
 An atomic formula is an expression either of the form $t_1 = t_2$ or of the form $R(t_1, \ldots t_n)$,
 where $R$ is a predicate symbol and $t_1$, \ldots $t_n$ are terms.
@@ -218,26 +220,43 @@ and for all terms $t_1 : s_1$, \ldots $t_k : s_k$, we have the following rules f
 \DisplayProof
 \end{center}
 
-The \emph{theory of substitutions} is the theory with $\mathcal{S} = \{ \ctx, \tm \} \times \mathbb{N}$ as the set of sorts, function symbols given below, and axioms listed in \cite[Section~3.1]{alg-tt} (also, see the section~\ref{sec:contexts}).
+Now, we define a generalization of the theory of substitutions defined in \cite{alg-tt}.
+The \emph{theory of substitutions} (without unique types) $T_S$ has sorts $\mathcal{S} = \{ \ctx, \tm \} \times \mathbb{N}$.
+We write $(\ty,n)$ for the sort $(\ctx,n+1)$.
+The set of function symbols is defined as follows:
 \begin{align*}
 \emptyCtx      & : (\ctx,0) \\
-\ft_n          & : (\ty,n) \to (\ctx,n) \\
-\ty_n          & : (\tm,n) \to (\ty,n) \\
+\ft_{p,n}      & : (p,n) \to (\ctx,n) \text{, } p \in \{ \tm, \ty \} \\
 v_{n,i}        & : (\ctx,n) \to (\tm,n) \text{, } 0 \leq i < n \\
 \subst_{p,n,k} & : (\ctx,n) \times (p,k) \times (\tm,n)^k \to (p,n) \text{, } p \in \{ \tm, \ty \}
 \end{align*}
+The theory also has the following predicate symbols:
+\[ \Ty_n : (\tm,n) \times (\ty,n) \]
 
-We let $\ft^i_n : (\ctx,n+i) \to (\ctx,n)$ and $\ctx_{p,n} : (p,n) \to (\ctx,n)$ be the following derived operations:
+We let $\ft^i_n : (\ctx,n+i) \to (\ctx,n)$ and $\ft^i_{p,n} : (p,n+i) \to (\ctx,n)$ be the following derived operations:
 \begin{align*}
 \ft^0_n(A)      & = A \\
-\ft^{i+1}_n(A)  & = \ft^i_n(\ft_{n+i}(A)) \\
-\ctx_{\ty,n}(t) & = \ft_n(t) \\
-\ctx_{\tm,n}(t) & = \ft_n(\ty_n(t)) \\
-\ctx^i_{p,n}(t) & = \ft^i_n(\ctx_{p,n+i}(t))
+\ft^{i+1}_n(A)  & = \ft^i_n(\ft_{\ty,n+i}(A)) \\
+\ft^i_{p,n}(t) & = \ft^i_n(\ft_{p,n}(t))
 \end{align*}
-We often omit indices in these operations.
 We write $(\ty,n)$ for $(\ctx,n+1)$.
-We also define the following notations: $d_\ty = \ctx$, $d_\tm = \ty$, $e_\ty(a) = \ft(a)$, $e_\tm(a) = \ty(a)$,
+We also define a formula $\Hom_{n,k} : (\ctx,n) \times (\ctx,k) \times (\tm,n)^k$ as follows:
+\[ \Hom_{n,k}(B, A, a_1, \ldots a_k) = \bigwedge_{1 \leq i \leq k} \Ty_n(a_i, \subst_{ty,n,i-1}(B, \ft^{k-i}_i(A), a_1, \ldots a_{i-1})). \]
+
+Now, we can describe the set of axioms of $T_S$:
+\begin{align*}
+& \sststile{}{x} x = \emptyCtx \\
+& \Hom_{n,k}(B, \ft_{p,k}(a), a_1, \ldots a_k) \ssststile{}{B, a, a_i}  \subst_{p,n,k}(B, a, a_1, \ldots a_k) \downarrow \\
+& \Hom_{n,k}(B, \ft_{p,k}(a), a_1, \ldots a_k) \sststile{}{B, a, a_i} \ft_{p,n}(\subst_{\ty,n,k}(B, a, a_1, \ldots a_k)) = B \\
+& \sststile{}{A} \ft_{\tm,n}(v_{n,i}(A)) = A \\
+& \sststile{}{A} \Ty_n(v_{n,i}(A), \subst_{\ty,n,n-i-1}(A, \ft^i_{n-i}(A), v_{n,n-1}(A), \ldots v_{n,i+1}(A))) \\
+& \Ty_k(a,A) \sststile{}{B, a, A, a_i} \Ty_n(\subst_{tm,n,k}(B, a, a_1, \ldots a_k), \subst_{\ty,n,k}(B, A, a_1, \ldots a_k)) \\
+& \sststile{}{a} \subst_{p,n,n}(\ft_{p,n}(a), a, v_{n,n-1}(\ft_{p,n}(a)), \ldots v_{n,0}(\ft_{p,n}(a))) = a \\
+& \Hom_{n,k}(B, A, a_1, \ldots a_k) \sststile{}{B, a_i, A} \subst_{\tm,n,k}(B, v_{k,i}(A), a_1, \ldots a_k) = a_{k-i} \\
+& \Hom_{n,k}(C, B, b_1, \ldots b_k) \land \Hom_{k,m}(B, \ft_{p,m}(a), a_1, \ldots a_m) \sststile{}{C, b_i, B, a_i, a} \\
+& \subst_{p,n,k}(C, \subst_{p,k,m}(B, a, a_1, \ldots a_m), b_1, \ldots b_k) = \\
+& \quad \subst_{p,n,m}(C, a, \subst_{tm,n,k}(C, a_1, b_1, \ldots b_k), \ldots \subst_{\tm,n,k}(C, a_m, b_1, \ldots b_k))
+\end{align*}
 
 Let $\mathcal{F}_0$ be a set of function symbols and let $\mathcal{P}_0$ be a set of predicate symbols.
 We call elements of these sets basic function symbols and basic predicate symbols, respectively.
@@ -253,57 +272,22 @@ Then we define the full sets of function and predicate symbols:
 An \emph{algebraic dependent type theory} is a theory of the form $(\mathcal{S}, \mathcal{F}_s \cup \mathcal{F}, \mathcal{P}, \mathcal{A}_s \cup \mathcal{A})$, where $\mathcal{S}$, $\mathcal{F}$, and $\mathcal{P}$ are defined above,
 $\mathcal{F}_s$ is the set of function symbols of the theory of substitutions, $\mathcal{A}_s$ is the set of its axioms, and $\mathcal{A}$ is an arbitrary set of axioms such that the following sequents are derivable for every $\sigma_m \in \mathcal{F}$ and $R_m \in \mathcal{P}$
 \begin{align*}
-\sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \ctx^n_{p,m}(\sigma_m(\Gamma, x_1, \ldots x_k)) = \Gamma \\
-\sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ctx^{n_i}_{p_i,m}(x_i) = \Gamma \\
-R_m(\Gamma, x_1, \ldots x_k) & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ctx^{n_i}_{p_i,m}(x_i) = \Gamma
+\sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \ft^n_{p,m}(\sigma_m(\Gamma, x_1, \ldots x_k)) = \Gamma \\
+\sigma_m(\Gamma, x_1, \ldots x_k)\!\downarrow\ & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ft^{n_i}_{p_i,m}(x_i) = \Gamma \\
+R_m(\Gamma, x_1, \ldots x_k) & \sststile{}{\Gamma, x_1, \ldots x_k} \bigwedge_{1 \leq i \leq k} \ft^{n_i}_{p_i,m}(x_i) = \Gamma
 \end{align*}
 and $\subst$ commutes with every function symbol (for a precise definition, see \cite[Definition~4.5]{alg-tt}).
 \end{defn}
 
 Let $T$ be an algebraic dependent type theory.
-We define $P_M$ as the set of pairs $V,\varphi$ such that $V = \{ x_1, \ldots x_k \}$ and $\varphi = \varphi_1 \land \ldots \land \varphi_k$, where $\varphi_i$ equals to $e_p(x_i) = t_i$,
+We define $P_M$ as the set of pairs $V,\varphi$ such that $V = \{ x_1, \ldots x_k \}$ and $\varphi = \varphi_1 \land \ldots \land \varphi_k$, where $\varphi_i$ equals to $\Ty_n(x_i,t_i)$ (resp., $\ft_{\ty,n}(x_i) = t_i$) if $x_i : (\tm,n)$ (resp., $x_i : (\ty,n)$),
 where $t_i$ is a term of $T$ with free variables in $\{ x_1, \ldots x_{i-1} \}$ such that for every $1 \leq i \leq k$,
-sequent $\varphi_1 \land \ldots \land \varphi_{i-1} \sststile{}{x_1, \ldots x_{i-1}} t_i\!\downarrow$ is derivable in $T$.
+the sequent $\varphi_1 \land \ldots \land \varphi_{i-1} \sststile{}{x_1, \ldots x_{i-1}} t_i\!\downarrow$ is derivable in $T$.
 We will be mostly interested in theorems of the form $\varphi \sststile{}{V} \psi$ where $(\varphi,V) \in P_M$ for reasons explained in \cite{morita-equiv}.
-
-\begin{defn}
-We will say that a partial Horn theory has \emph{separated axioms} if the set of axioms of this theory consists of three disjoint subsets $\mathcal{A}_d$, $\mathcal{A}'_d$, and $\mathcal{A}_e$ such that the following conditions hold:
-\begin{enumerate}
-\item The set $\mathcal{A}_d$ consists of axioms of the form $\varphi \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow$ and $\varphi \sststile{}{x_1, \ldots x_k} R(x_1, \ldots x_k)$ and, for every function symbol $\sigma$ and every predicate symbol $R$, there is exactly one axiom of this form.
-We will denote the left hand side of these axioms by $\varphi_\sigma$ and $\varphi_R$.
-\item The set $\mathcal{A}'_d$ consists of (not necessary all) sequents of the form $\sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \varphi_\sigma$ and $R(x_1, \ldots x_k) \sststile{}{x_1, \ldots x_k} \varphi_R$.
-\item For every axiom $\varphi \sststile{}{V} \psi$ in $\mathcal{A}_e$ and every subterm $\sigma(t_1, \ldots t_k)$ of $\psi$,
-the sequent $\varphi \sststile{}{V} \varphi_\sigma[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
-Also, for every subformula $R(t_1, \ldots t_k)$ of $\psi$, the sequent $\varphi \sststile{}{V} \varphi_R[t_1/x_1, \ldots t_k/x_k]$ is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
-\end{enumerate}
-We will say that a theory with separated axioms is \emph{minimal} (resp., \emph{maximal}) if $\mathcal{A}'_d$ is empty (resp., consists of all sequents of the specified form).
-\end{defn}
-
-\begin{remark}
-Theories with separated axioms were defined in \cite[Section~5.1]{morita-equiv}.
-There we do not allow axioms of the form $\varphi \sststile{}{x_1, \ldots x_k} R(x_1, \ldots x_k)$ in $\mathcal{A}_d$, but the main property of such theories (\rprop{sep-main}) still holds for this generalization.
-\end{remark}
-
-\begin{remark}
-Every theory is isomorphic to a theory with a separated axioms.
-We can take $\mathcal{A}_d$ to be the set of axioms of the form
-\[ \sigma(x_1, \ldots x_k)\!\downarrow\ \sststile{}{x_1, \ldots x_k} \sigma(x_1, \ldots x_k)\!\downarrow \]
-and $\mathcal{A}_e$ to be the set of axioms of the original theory (if some axiom $\varphi \sststile{}{V} \psi$ clashes with an axiom in $\mathcal{A}_d$, we can replace it with $\varphi \sststile{}{V} \psi \land \psi$).
-\end{remark}
-
-The main property of theories with separated axioms is that axioms in $\mathcal{A}_d'$ are redundant in a certain sense:
-
-\begin{prop}[sep-main]
-Let $T$ be an algebraic dependent type theory with separated axioms and let $(\varphi,V)$ be a pair in $P_M$.
-Then a sequent $\varphi \sststile{}{V} \psi$ is derivable in $T$ if and only if it is derivable from $\mathcal{A}_d \cup \mathcal{A}_e$.
-\end{prop}
-\begin{proof}
-It is easy to see that the proof of \cite[Proposition~5.3]{morita-equiv} holds for the generalized definition of theories with separated axioms.
-\end{proof}
 
 A \emph{restricted term} is a term $t$ together with a formula $\varphi$.
 We denote such a restricted term by $t|_\varphi$.
-The $\mathcal{S}$-set of restricted terms (with free variables in $V$) will be denoted by $\RTerm^e(V)$.
+The $\mathcal{S}$-set of restricted terms (with free variables in $V$) will be denoted by $\RTerm(V)$.
 Let $T$ and $T'$ be two theories with the same set of sorts.
 An \emph{interpretation} of $T$ in $T'$ is a function $f$ such that the following conditions hold:
 \begin{itemize}
@@ -327,29 +311,44 @@ A \emph{morphism} of theories $T$ and $T'$ is an equivalence class of interpreta
 The identity morphism is defined in the obvious way: $\id(\sigma(x_1, \ldots x_k)) = \sigma(x_1, \ldots x_k)|_\top$ and $\id(R(x_1, \ldots x_k)) = R(x_1, \ldots x_k)$.
 The composition of morphisms is defined as follows: $(g \circ f)(S(x_1, \ldots x_k))$ = $g(f(S(x_1, \ldots x_k)))$.
 It is easy to see that this defines the structure of a category on algebraic dependent type theories.
+We will denote this category by $\algtt^\ft$.
+
+Let $T_\ty$ be the theory with one basic function symbol $\ty : (\tm,0) \to (\ty,0)$ and one axiom $\Ty_n(a,A) \ssststile{}{a,A} \ty_n(a) = A$.
+Then there is at most one map from $T_\ty$ to any other type theory.
+We will say that a type theory $T$ \emph{has unique types} if there is a map $T_\ty \to T$.
+The full subcategory of type theories with unique types will be denoted by $\algtt^\ft_\ty$.
+This subcategory is reflective; the reflector is given by $T \mapsto T_\ty \amalg T$.
+
+\begin{remark}
+The category of type theories with unique types is equivalent to the category of type theories defined in \cite[Definition~4.5]{alg-tt}.
+\end{remark}
+
+\begin{remark}
+The category $\algtt^\ft$ is locally finitely presentable.
+This was proved for $\algtt^\ft_\ty$ in \cite[Corollary~3.2]{morita-equiv}.
+The proof in the general case is the same.
+\end{remark}
 
 \section{The $\ft$-free syntax}
 \label{sec:contexts}
 
 The syntax we described in the previous subection is too verbose.
 We can make it closer to the usual presentation of type theories by removing some redundant information.
-We define another $\mathcal{S}$-set of terms $\Term^\ft_\mathcal{F}(V)$ inductively as follows:
+We define another $\mathcal{S}$-set of terms $\Term_\mathcal{F}(V)$ inductively as follows:
 \begin{itemize}
 \item Every element of $V_s$ is a term of sort $s$.
-\item If $t$ is a term of sort $(\tm,n)$, then $\ty(t)$ is a term of sort $(\ty,n)$.
 \item $v_i$ is a term of sort $(\tm,n)$ for every $0 \leq i < n$.
 \item If $A_1$, \ldots $A_k$ are terms of sorts $(\ty,0)$, \ldots $(\ty,k-1)$, respectively, $t$ is a term of sort $(p,k)$, where $p \in \{ \ty, \tm \}$, and $t_1, \ldots t_k$ are terms of sort $(\tm,n)$, then $\subst(A_1, \ldots A_k, t, t_1, \ldots t_k)$ is a term of sort $(p,n)$.
 \item If $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,n)$ is a function symbol of $T$ and $t_i$ is a term of sort $(p_i,m+n_i)$, then $\sigma(t_1, \ldots t_k)$ is a term of sort $(p,m+n)$.
 \end{itemize}
 These terms will be called \emph{$\ft$-free} terms.
 They define a syntax, called the \emph{$\ft$-free syntax}, which has metavariables (elements of $V$), de Bruijn indices ($v_i$), explicit substitutions ($\subst$), and constructions depending on the theory (basic function symbols).
-We also have an explicit typing operation ($\ty$).
-We will see in section~\ref{sec:types} that it is possible to get rid of it too, but this makes the theory more awkward to work with.
 
 A \emph{context} of length $n$ a sequence of terms of sorts $(\ty,0)$, \ldots $(\ty,n-1)$.
 An ($\ft$-free) \emph{judgement} is an expression of one of the following forms:
-\[ \Gamma \vdash t \qquad \Gamma \vdash t \equiv t' \qquad \Gamma \vdash R(t_1, \ldots t_k) \]
-where $\Gamma$ is a context of length $m$, $t$ and $t'$ are terms of sort $(p,m)$ (where $p \in \{ \ty, \tm \}$), $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ is a predicate symbol, and $t_1$, \ldots $t_k$ are terms of sorts $(p_1,m+n_1)$, \ldots $(p_k,m+n_k)$, respectively.
+\[ \Gamma \vdash a : A \qquad \Gamma \vdash t \qquad \Gamma \vdash t \equiv t' \qquad \Gamma \vdash R(t_1, \ldots t_k) \]
+where $\Gamma$ is a context of length $m$, $a$ is a term of sort $(\tm,m)$, $A$ is a term of sort $(\ty,m)$,
+$t$ and $t'$ are terms of sort $(p,m)$ (where $p \in \{ \ty, \tm \}$), $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ is a predicate symbol, and $t_1$, \ldots $t_k$ are terms of sorts $(p_1,m+n_1)$, \ldots $(p_k,m+n_k)$, respectively.
 All terms above are written in the $\ft$-free syntax.
 We will use judgements of the form $\Gamma \vdash$.
 If $\Gamma$ is the empty context, this judgement denotes $\top$.
@@ -393,7 +392,6 @@ A \emph{contexted term} is a pair $(\Gamma,t)$, where $\Gamma$ is a context of l
 For every contexted term $(\Gamma,t)$, we can define the set $\sub(\Gamma,t)$ of its contxeted subterms:
 \begin{align*}
 \sub(\Gamma,t) = & \{ (\Gamma,t) \} \text{ if $t$ is a variable or $v_i$} \\
-\sub(\Gamma,\ty(t')) = & \{ (\Gamma,t) \} \cup \sub(\Gamma,t') \\
 \sub(\Gamma,\subst(A_1, \ldots A_k, t', t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \sub((A_1, \ldots A_k), t')\ \cup \\
     & \bigcup_{1 \leq i \leq k} \sub(\Gamma,t_i) \cup \sub((A_1, \ldots A_{i-1}), A_i) \\
 \sub(\Gamma,\sigma(t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^\sigma_i(t_1, \ldots t_{i-1})), t_i)
@@ -406,6 +404,7 @@ We can also define the set of contexted subterms of contexts and formulas:
 \begin{align*}
 \sub(\cdot) & = \varnothing \\
 \sub((\Gamma, A)) & = \sub(\Gamma) \cup \sub(\Gamma,A) \\
+\sub(\Gamma \vdash a : A) & = \sub(\Gamma) \cup \sub(\Gamma, a) \cup \sub(\Gamma, A) \\
 \sub(\Gamma \vdash t) & = \sub(\Gamma) \cup \sub(\Gamma, t) \\
 \sub(\Gamma \vdash t \equiv t') & = \sub(\Gamma) \cup \sub(\Gamma,t) \cup \sub(\Gamma,t') \\
 \sub(\Gamma, R(t_1, \ldots t_k)) & = \sub(\Gamma) \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^R_i(t_1, \ldots t_{i-1})),t_i) \\
@@ -484,8 +483,8 @@ where $\psi$ is either a term, an equality, or a predicate symbol applied to som
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
 \DisplayProof
 \end{center}
-where $\sigma$ is either a function symbol, $\ty$, or $\subst$.
-We define $\Gamma^\ty_1$ as the empty context and $\Gamma^\subst_i(x_1, \ldots x_{2k+1})$ as $x_1, \ldots x_{i-1}$ if $i \leq k+1$ and as the empty context otherwise.
+where $\sigma$ is either a function symbol or $\subst$.
+We define $\Gamma^\subst_i(x_1, \ldots x_{2k+1})$ as $x_1, \ldots x_{i-1}$ if $i \leq k+1$ and as the empty context otherwise.
 
 \medskip
 \begin{center}
@@ -498,22 +497,14 @@ where $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k}
 
 \medskip
 \begin{center}
-\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash t$}
-\RightLabel{\axlabel{et}}
-\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \ty(t)$}
-\DisplayProof
-\qquad
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash$}
 \RightLabel{\axlabel{ev}}
 \UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash v_i$}
 \DisplayProof
-\end{center}
-
-\medskip
-\begin{center}
+\qquad
 \AxiomC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash$}
 \RightLabel{\axlabel{evt}}
-\UnaryInfC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash \ty(v_i) \equiv \wk^{i+1}(A_1, \ldots A_{m-i})$}
+\UnaryInfC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash v_i : \wk^{i+1}(A_1, \ldots A_{m-i})$}
 \DisplayProof
 \end{center}
 where $\wk^n(A_1, \ldots A_k, a) = \subst(A_1, \ldots A_k, a, v_{n+k-1}, \ldots v_n)$.
@@ -521,12 +512,10 @@ where $\wk^n(A_1, \ldots A_k, a) = \subst(A_1, \ldots A_k, a, v_{n+k-1}, \ldots 
 \medskip
 \begin{center}
 \def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash b$
 \Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
 \noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
-\Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash b$
-\noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
 \def\extraVskip{2pt}
 \RightLabel{\axlabel{es}}
 \doubleLine
@@ -537,24 +526,21 @@ where $\wk^n(A_1, \ldots A_k, a) = \subst(A_1, \ldots A_k, a, v_{n+k-1}, \ldots 
 \medskip
 \begin{center}
 \def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash b : B$
 \Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
 \noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash b$
-\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
-\noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
 \def\extraVskip{2pt}
 \RightLabel{\axlabel{est}}
-\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \ty(\subst(\overline{A}, b, a_1, \ldots a_k)) \equiv \subst(\overline{A}, \ty(b), a_1, \ldots a_k)$}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \subst(\overline{A}, b, a_1, \ldots a_k) : \subst(\overline{A}, B, a_1, \ldots a_k)$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a_i$}
-\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$}
 \RightLabel{\axlabel{esl}}
-\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \subst(A_1, \ldots A_k, v_i, a_1, \ldots a_k) \equiv a_{k-i}$}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \subst(A_1, \ldots A_k, v_i, a_1, \ldots a_k) \equiv a_{k-i}$}
 \DisplayProof
 \end{center}
 
@@ -571,14 +557,10 @@ where $\wk^n(A_1, \ldots A_k, a) = \subst(A_1, \ldots A_k, a, v_{n+k-1}, \ldots 
 \def\extraVskip{1pt}
 \Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash c$
 \noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} B_1, \ldots B_n \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\UnaryInf$\fCenter \varphi \sststile{}{V} B_1, \ldots B_n \vdash a_i : \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
 \noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(b_i) \equiv \subst(B_1, \ldots B_i, b_1, \ldots b_{i-1})$
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash b_i : \subst(B_1, \ldots B_i, b_1, \ldots b_{i-1})$
 \Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
-\noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \overline{B} \vdash a_i$
-\noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash b_i$
 \def\extraVskip{2pt}
 \RightLabel{\axlabel{esa}}
 \BinaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \subst(\overline{B}, \subst(\overline{A}, c, \overline{a}), \overline{b}) \equiv \subst(\overline{A}, c, a_1' \ldots a_k')$
@@ -590,11 +572,9 @@ where $a_i' = \subst(B_1, \ldots B_n, a_i, b_1, \ldots b_n)$.
 \begin{center}
 \def\extraVskip{1pt}
 \Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
-\noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
 \Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash \sigma(b_1, \ldots b_m)$
 \noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
 \def\extraVskip{2pt}
 \RightLabel{\axlabel{esf}}
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \subst(A_1, \ldots A_k, \sigma(b_1, \ldots b_m), a_1, \ldots a_k) \equiv \sigma(b_1', \ldots b_m')$}
@@ -607,11 +587,9 @@ where $\sigma : (p_1,n_1) \times \ldots \times (p_m,n_m) \to (p,0)$ is a functio
 \begin{center}
 \def\extraVskip{1pt}
 \Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
-\noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
 \Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash \sigma(b_1, \ldots b_m)$
 \noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
 \def\extraVskip{2pt}
 \RightLabel{\axlabel{esf'}}
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(b_1', \ldots b_m')$}
@@ -623,11 +601,9 @@ where $\sigma$ is a function symbol and $b_1'$, \ldots $b_m'$ are defined as bef
 \begin{center}
 \def\extraVskip{1pt}
 \Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
-\noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i$
 \Axiom$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash R(b_1, \ldots b_m)$
 \noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash \ty(a_i) \equiv \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_1, \ldots A_i, a_1, \ldots a_{i-1})$
 \def\extraVskip{2pt}
 \RightLabel{\axlabel{esp}}
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash R(b_1', \ldots b_m')$}
@@ -669,16 +645,16 @@ The theory of $\Pi$-types is defined as follows:
 \UnaryInfC{$\Gamma \vdash \lambda(A,b)$}
 \DisplayProof
 \qquad
-\AxiomC{$\Gamma, A \vdash b$}
-\UnaryInfC{$\Gamma \vdash \ty(\lambda(A,b)) \equiv \Pi(A,\ty(b))$}
+\AxiomC{$\Gamma, A \vdash b : B$}
+\UnaryInfC{$\Gamma \vdash \lambda(A,b) : \Pi(A,B)$}
 \DisplayProof
 \end{center}
 \medskip
 
 \begin{center}
 \AxiomC{$\Gamma, A \vdash B$}
-\AxiomC{$\Gamma \vdash \ty(f) \equiv \Pi(A,B)$}
-\AxiomC{$\Gamma \vdash \ty(a) \equiv A$}
+\AxiomC{$\Gamma \vdash f : \Pi(A,B)$}
+\AxiomC{$\Gamma \vdash a : A$}
 \doubleLine
 \TrinaryInfC{$\Gamma \vdash \fs{app}(A,B,f,a)$}
 \DisplayProof
@@ -687,17 +663,17 @@ The theory of $\Pi$-types is defined as follows:
 
 \begin{center}
 \AxiomC{$\Gamma, A \vdash B$}
-\AxiomC{$\Gamma \vdash \ty(f) \equiv \Pi(A,B)$}
-\AxiomC{$\Gamma \vdash \ty(a) \equiv A$}
-\TrinaryInfC{$\Gamma \vdash \ty(\fs{app}(A, B,f,a)) \equiv \subst(\Gamma, A, B, v_{n-1}, \ldots v_0, a)$}
+\AxiomC{$\Gamma \vdash f : \Pi(A,B)$}
+\AxiomC{$\Gamma \vdash a : A$}
+\TrinaryInfC{$\Gamma \vdash \fs{app}(A, B,f,a) : \subst(\Gamma, A, B, v_{n-1}, \ldots v_0, a)$}
 \DisplayProof
 \end{center}
 \medskip
 
 \begin{center}
-\AxiomC{$\Gamma, \ty(a) \vdash b$}
-\AxiomC{$\Gamma \vdash a$}
-\BinaryInfC{$\Gamma \vdash \fs{app}(\ty(a), \ty(b),\lambda(\ty(a),b),a) \equiv \subst(\Gamma, \ty(a), b, v_{n-1}, \ldots v_0, a)$}
+\AxiomC{$\Gamma, A \vdash b : B$}
+\AxiomC{$\Gamma \vdash a : A$}
+\BinaryInfC{$\Gamma \vdash \fs{app}(A, B,\lambda(A,b),a) \equiv \subst(\Gamma, A, b, v_{n-1}, \ldots v_0, a)$}
 \DisplayProof
 \end{center}
 \medskip
@@ -812,7 +788,7 @@ The rule \axref{cd} follows from the assumption that $\varphi \sststile{}{V} \ps
 
 Now, we can prove that every derivable sequent is good, which implies both \axref{cc} and \axref{ce}.
 We proceed by induction on the derivation.
-Most of the cases are trivial since the set of contexted subterms of the conclusion is a subset of the set of contexted subterms of the premise.
+Most of the cases are trivial since the set of proper contexted subterms of the conclusion is a subset of the set of contexted subterms of the premise.
 We consider only non-trivial cases.
 First, let us consider \axref{ca}.
 Let $\psi \sststile{}{V'} \chi$ be an axiom, let $\rho$ be a substitution, and let $(\Gamma,t)$ be a contexted subterm of $\chi[\rho]$.
@@ -867,9 +843,8 @@ If $\psi = R(t_1, \ldots t_k)$, then \axref{cp} and \rlem{derived-cong-lem} impl
 \end{proof}
 
 \section{The category of $\ft$-free theories}
-\label{sec:types}
 
-In this section we define the category of $\ft$-free theories and prove that it is equivalent to a full subcategory of $\algtt$.
+In this section we define the category of $\ft$-free theories and prove that it is equivalent to a full subcategory of $\algtt^\ft$.
 An $\ft$-free \emph{restricted term} is just a pair consisting of an $\ft$-free term $t$ and an $\ft$-free formula $\varphi$, written $t|_\varphi$.
 A \emph{contexted restricted term} is a pair $(\Gamma,t|_\varphi)$ such that $(\Gamma,t)$ is a contexted term and $\varphi$ is a formula.
 
@@ -911,7 +886,7 @@ Since $g$ preserves theorems, it is enough to show that, for every $(\Delta,x_i)
 We will prove a more general property: for every contexted term $(\Theta,t)$ and every $(\Delta,x) \in \sub(g(\Theta), g(t))$, there exists $\Delta'$ such that $(\Delta',x) \in \sub(\Theta, t)$ and the sequent $g(\Theta) \vdash g(t) \sststile{}{\FV(\Theta,t)} g(\Delta') \equiv \Delta$ is derivable.
 The proof is by induction on $t$.
 If $t$ is a variable, this is obvious.
-Suppose $t = \sigma(t_1, \ldots t_k)$ (including $\subst$, $\ty$, and $v_i$).
+Suppose $t = \sigma(t_1, \ldots t_k)$ (including $\subst$ and $v_i$).
 By \rlem{sub-subst}, there exists $\Delta_1$ such that $(\Delta_1,x_i) \in \sub(g(\Theta), g(\sigma(x_1, \ldots x_k)))$ and $(\Delta,x) \in \sub(\Delta_1[g(t_1)/x_1, \ldots g(t_k)/x_k], g(t_i))$.
 By \eqref{it:interp-symb}, the following sequent is derivable:
 \[ g(\Theta) \vdash g(t) \sststile{}{V} \Delta_1[g(t_1)/x_1, \ldots g(t_k)/x_k] \equiv (g(\Theta), g(\Gamma^\sigma_i(t_1, \ldots t_{i-1}))) \]
@@ -947,9 +922,9 @@ It is obvious that $f \circ \id = \id \circ f = f$.
 To prove that $(h \circ g) \circ f = h \circ (g \circ f)$, it is enough to show that $(h \circ g)(e)$ is equivalent to $h(g(e))$ for every restricted term or formula $e$, which is easy to do by induction on $e$.
 \end{proof}
 
-The category of algebraic type theories is denoted by $\algtt$ and the category of $\ft$-free theories is denoted by $\algtt^\ft$.
-We will show that $\algtt^\ft$ is equivalent to a full subcategory of $\algtt$.
-First, let us construct a functor $F : \algtt^\ft \to \algtt$.
+The category of algebraic type theories is denoted by $\algtt$.
+We will show that $\algtt$ is equivalent to a full subcategory of $\algtt^\ft$.
+First, let us construct a functor $F : \algtt \to \algtt^\ft$.
 Let $T = (\mathcal{F},\mathcal{P},\mathcal{A})$ be an $\ft$-free theory.
 We define the basic function (resp., basic predicate) symbols of $F(T)$ as $\mathcal{F}$ (resp., $\mathcal{P}$).
 We also add function symbols of the theory of substitutions (defined in \cite[Section~3.1]{alg-tt}) to $F(T)$.
@@ -957,10 +932,9 @@ We also add function symbols of the theory of substitutions (defined in \cite[Se
 A well-founded relation $\prec$ on function symbols can be extended to a well-founded relation $\prec$ on the set of terms (called \emph{recursive path ordering} \cite{mrpo}) such that $t[t_1/x_1, \ldots t_k/x_k] \prec \sigma(t_1, \ldots t_k)$ if $\tau \prec \sigma$ for every function symbol $\tau$ in $t$.
 We always have a recursive path ordering on terms by \eqref{it:ax-wf}.
 
-Now, we define a function $F : \Term^e(V)_{(\ctx,n)} \times \Term^\ft(V)_{(p,n)} \to \RTerm^e(V)_{(p,n)}$ by induction on the second argument with respect to the recursive path ordering:
+Now, we define a function $F : \Term^\ft(V)_{(\ctx,n)} \times \Term(V)_{(p,n)} \to \RTerm^\ft(V)_{(p,n)}$ by induction on the second argument with respect to the recursive path ordering:
 \begin{align*}
-F(\Gamma, x) & = x|_{\ctx_{(p,n)}(x) = \Gamma} \\
-F(\Gamma, \ty(t)) & = \ty_n(F(\Gamma, t)) \\
+F(\Gamma, x) & = x|_{\ft_{p,n}(x) = \Gamma} \\
 F(\Gamma, v_i) & = v_{n,i}(\Gamma) \\
 F(\Gamma, \subst(A_1, \ldots A_k, t, t_1, \ldots t_k)) & = \subst_{p,n,k}(\Gamma, F(F(\cdot,\overline{A}), t), \ldots F(\Gamma, t_i), \ldots) \\
 F(\Gamma, \sigma(t_1, \ldots t_k)) & = \sigma_n(\Gamma, \ldots F(F(\Gamma, \Gamma^\sigma_i(t_1, \ldots t_{i-1})), t_i), \ldots)
@@ -995,7 +969,7 @@ The rest of the rules are explicitly added to $F(T)$ as axioms.
 
 \begin{lem}[ftmap-ctx]
 The following sequent is derivable:
-\[ F(\Gamma,t)\!\downarrow\ \sststile{}{V} \ctx(F(\Gamma,t)) = \Gamma \]
+\[ F(\Gamma,t)\!\downarrow\ \sststile{}{V} \ft_{p,n}(F(\Gamma,t)) = \Gamma \]
 \end{lem}
 \begin{proof}
 Easy case analysis on $t$.
@@ -1011,9 +985,9 @@ The following restricted terms are equivalent:
 \begin{proof}
 The proof is by induction on $t$ with respect to the recursive path ordering.
 If $t$ is a variable and is not equal to $x$, this is obvious.
-If $t = x$, then the second term is equal to $F(\Delta,t')|_{\ctx(F(\Delta,t')) = \Gamma'}$, where $\Gamma' = F(\Gamma)[F(\Delta,t')/x]$.
+If $t = x$, then the second term is equal to $F(\Delta,t')|_{\ft_{p,n}(F(\Delta,t')) = \Gamma'}$, where $\Gamma' = F(\Gamma)[F(\Delta,t')/x]$.
 By \rlem{ftmap-ctx}, it is equivalent to $F(\Delta,t')|_{\Delta = \Gamma'}$, which is equivalent to the first term $F(\Gamma',t')|_{\Delta = \Gamma'}$.
-If $t = \ty(t')$ or $t = v_i$, this is obvious.
+If $t = v_i$, this is obvious.
 
 Now, suppose $t = \sigma(t_1, \ldots t_k)$, where $\sigma$ is either a function symbol or $\subst$.
 Then the first term is equivalent to $s|_\varphi$, where
@@ -1037,7 +1011,7 @@ If $f : T \to T'$ is an interpretation and $(\Gamma,t)$ is a contexted term, the
 \end{lem}
 \begin{proof}
 The proof is by induction on $F(\Gamma,t)$.
-If $t = x$ is a variable, then $F(f)(F(\Gamma,t))$ is equal to $x|_{\ctx(x) = F(f)(F(\Gamma))}$ and $F(f(\Gamma),f(t))$ is equal to $x|_{\ctx(x) = F(f(\Gamma))}$ and these terms are equivalent by induction hypothesis.
+If $t = x$ is a variable, then $F(f)(F(\Gamma,t))$ is equal to $x|_{\ft_{p,n}(x) = F(f)(F(\Gamma))}$ and $F(f(\Gamma),f(t))$ is equal to $x|_{\ft_{p,n}(x) = F(f(\Gamma))}$ and these terms are equivalent by induction hypothesis.
 If $t = \sigma(t_1, \ldots t_k)$, then
 \begin{align*}
 F(f)(F(\Gamma,t)) & = \\
@@ -1059,7 +1033,7 @@ This follows from \rlem{ftmap-term} by a similar argument.
 
 \begin{prop}
 If $f : T \to T'$ is an interpretation, then $F(f) : F(T) \to F(T')$ is also interpretation.
-Moreover, $F$ respects the equivalence relation on interpretations and it is a functor between $\algtt^\ft$ and $\algtt$.
+Moreover, $F$ respects the equivalence relation on interpretations and it is a functor between $\algtt$ and $\algtt^\ft$.
 \end{prop}
 \begin{proof}
 The facts that $F(f)$ is an interpretation and respects the equivalence relations follow from \eqref{it:interp-axiom}, \rlem{ftmap-th}, and \rlem{ftmap-form}.
@@ -1074,8 +1048,6 @@ The term $G^i(t)$ has sort $(p,n)$ if $i = 0$ and sort $(\ty,n-i)$ if $i > 0$.
 G^0(x) & = x \\
 G^{i+1}(x) & = x^{i+1} \\
 G^i(\ft_n(t)) & = G^{i+1}(t) \\
-G^0(\ty_n(t)) & = \ty(G^0(t)) \\
-G^{i+1}(\ty_n(t)) & = G^{i+1}(t) \\
 G^0(v_{n,j}(\Gamma)) & = v_j \\
 G^{i+1}(v_{n,j}(\Gamma)) & = G^i(\Gamma) \\
 G^0(\subst_{p,n,k}(\Gamma, t, t_1, \ldots t_k)) & = \subst(G^k(t), \ldots G^0(t), G^0(t_1), \ldots G^0(t_k))|_\varphi \\
@@ -1116,7 +1088,7 @@ The last sequent follows from the fact that every free variable belongs to some 
 
 For every formula $\varphi$ with free variables in $V$, we define an $\ft$-free formula $G(\varphi)$ with free variables in $G(V)$:
 \begin{align*}
-G(t = t') & = (G(\ctx(t)) \equiv G(\ctx(t'))) \land (G(\ctx(t)) \vdash G^0(t) \equiv G^0(t')) \\
+G(t = t') & = (G(\ft_{p,n}(t)) \equiv G(\ft_{p,n}(t'))) \land (G(\ft_{p,n}(t)) \vdash G^0(t) \equiv G^0(t')) \\
 G(R_n(\Gamma, t_1, \ldots t_k)) & = (G(\Gamma) \vdash R(G^0(t_1), \ldots G^0(t_k))) \land \psi \\
 G(\varphi_1 \land \ldots \land \varphi_n) & = G(\varphi_1) \land \ldots \land G(\varphi_n)
 \end{align*}
@@ -1137,13 +1109,13 @@ By \rlem{gmap-term}, $\Gamma_1$ and $\Gamma_2$ are equal to $\Gamma$ and $G^0(F(
 \end{proof}
 
 \begin{lem}[gmap-subst]
-Formulas $G(\varphi[s/x])$ and $G(\varphi)[G^0(s)/x, G^1(s)/x^1, \ldots G^n(s)/x^n]$ are equivalent.
+Formulas $G(\varphi[s/x])$ and $G(\varphi)[G^0(s)/x, G^1(s)/x^1, \ldots G^k(s)/x^k]$ are equivalent.
 \end{lem}
 \begin{proof}
 To prove this, it is enough to show that the following restricted contexted terms are equivalent:
 \begin{align*}
-& (G(\ctx(t[s/x])), G^0(t[s/x])) \\
-& (G(\ctx(t)), G^0(t))[G^0(s)/x, G^1(s)/x^1, \ldots G^n(s)/x^n]
+& (G(\ft_{p,n}(t[s/x])), G^0(t[s/x])) \\
+& (G(\ft_{p,n}(t)), G^0(t))[G^0(s)/x, G^1(s)/x^1, \ldots G^k(s)/x^k]
 \end{align*}
 This is proved by easy induction on $t$.
 \end{proof}
@@ -1166,8 +1138,8 @@ This follows from \rlem{gmap-form} since $\FV(\psi) \subseteq \FV(\varphi)$.
 \begin{lem}[gmap-rev-term]
 The following sequents are derivable for every term $t$ and every $j$:
 \begin{align*}
-\ctx^j(t) \land \bigwedge_{x \in \FV(t), x : (p,m), 1 \leq i \leq m} x^i = \ctx^i(x) & \sststile{}{G(V)} F(\ctx^{j+1}(t), G^j(t)) = \ctx^j(t) \\
-F(\ctx^{j+1}(t), G^j(t)) & \sststile{}{G(V)} F(\ctx^{j+1}(t), G^j(t)) = \ctx^j(t)
+\ft^j_{p,n}(t) \land \bigwedge_{x \in \FV(t), x : (q,m), 1 \leq i \leq m} x^i = \ft^i_{p,n}(x) & \sststile{}{G(V)} F(\ft^{j+1}_{p,n}(t), G^j(t)) = \ft^j_{p,n}(t) \\
+F(\ft^{j+1}_{p,n}(t), G^j(t)) & \sststile{}{G(V)} F(\ft^{j+1}_{p,n}(t), G^j(t)) = \ft^j_{p,n}(t)
 \end{align*}
 \end{lem}
 \begin{proof}
@@ -1183,7 +1155,7 @@ By a straightforward induction on $t$.
 \end{proof}
 
 \begin{thm}
-The functor $F : \algtt^\ft \to \algtt$ is fully faithful.
+The functor $F : \algtt \to \algtt^\ft$ is fully faithful.
 \end{thm}
 \begin{proof}
 Let $f,g : T \to T'$ be a pair of interpretations of $\ft$-free theories such that $F(f)$ and $F(g)$ are equivalent.
@@ -1210,19 +1182,16 @@ By \rlem{gmap-var} and \rlem{ftmap-th}, the following sequent is derivable:
 \[ F(G(t)[\rho], G^0(t)[\rho]) \sststile{}{G(V)} \bigwedge_{(\Delta,x_i^j) \in \sub(G(t), G^0(t))} F(\Delta[\rho]) \equiv F(\rho(x^n), \ldots \rho(x^{j+1})), \]
 where $t = f(\sigma_n(\Gamma, x_1, \ldots x_k))$.
 Now, \rlem{ftmap-subst} implies that $F(G(t)[\rho], G^0(t)[\rho])$ is equivalent to $F(G(t), G^0(t))[\rho']$, where $\rho'(x_i^j) = F(F(\rho(x_i^n), \ldots \rho(x_i^{j+1})), \rho(x_i^j))$.
-Thus, it is enough to show that $F(\ctx^{i+1}(t), G^i(t))[\rho']$ is equivalent to $\ctx^i(t)$.
+Thus, it is enough to show that $F(\ft^{i+1}_{p,n}(t), G^i(t))[\rho']$ is equivalent to $\ft^i_{p,n}(t)$.
 If the first term is defined, then we have the required equality by \rlem{gmap-rev-term}.
 To prove the second required equality, we can apply the same lemma.
 Then we just need to show that the following sequent is derivable for all $i$ and $j$:
-\[ t\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} \rho'(x_i^j) = \ctx^j(x_i) \]
-First, note that the sequent $t\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} \ctx(x_i) = f(F(\Gamma, \Gamma^\sigma_i))$ is derivable.
-Thus, we just need to prove the equality $\rho'(x_i^j) = \ctx^{j-1}(f(F(\Gamma, \Gamma^\sigma_i)))$.
+\[ t\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} \rho'(x_i^j) = \ft^j_{p_i,n_i}(x_i) \]
+First, note that the sequent $t\!\downarrow\ \sststile{}{\Gamma, x_1, \ldots x_k} \ft_{p_i,n_i}(x_i) = f(F(\Gamma, \Gamma^\sigma_i))$ is derivable.
+Thus, we just need to prove the equality $\rho'(x_i^j) = \ft^{j-1}_{p_i,n_i}(f(F(\Gamma, \Gamma^\sigma_i)))$.
 This follows from \rlem{gmap-rev-term} by induction on $i$.
 Indeed, we can apply it to the term $t_i = f(F(\Gamma, \Gamma^\sigma_i))$ if it holds for terms $t_{i'}$ with $i' < i$ since variables of the form $x_{i'}^j$ can appear in $\FV(t_i)$ only if $i' < i$.
 \end{proof}
-
-\section{The $\ty$-free syntax}
-\label{sec:types}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
