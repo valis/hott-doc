@@ -381,7 +381,7 @@ Let $\Gamma$ be a context of length $n$ and let $\Delta_1 = (A_1, \ldots A_k)$, 
 Then we define $\Gamma \vdash \Delta_1 \equiv \Delta_2$ as $\Gamma \vdash A_1 \equiv B_1 \land \ldots \land \Gamma, A_1, \ldots A_{k-1} \vdash A_k \equiv B_k$.
 If $\Gamma$ and $\Delta$ are two contexts of the same length, we define $\Gamma \equiv \Delta$ as $\vdash \Gamma \equiv \Delta$.
 
-An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$ such that every function symbol has a signature of the form $s_1 \times \ldots \times s_k \to (p,0)$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
+An ($\ft$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consists of a set of function symbols $\mathcal{F}$ such that every function symbol has a signature of the form $s_1 \times \ldots \times s_k \to (p,0)$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
 These sets must satisfy conditions listed in \rdefn{ft-free}.
 Each symbol $S$ with $k$ parameters of sorts $(p_1,n_1)$, \ldots $(p_k,n_k)$ is equipped with a collection $\{ \Gamma^S_i(x_1, \ldots x_{i-1}) \}_{1 \leq i \leq k}$ of contexts,
 where $\Gamma^S_i(x_1, \ldots x_{i-1})$ is a context of length $n_i$ with free variables in $\{ x_1 : (p_1,n_1), \ldots x_{i-1} : (p_{i-1},n_{i-1}) \}$.
@@ -472,6 +472,24 @@ where $\psi$ is either a term, an equality, or a predicate symbol applied to som
 \AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1, \ldots t_{i-1}) \vdash t_i \equiv t_i'$}
 \RightLabel{\axlabel{cf}}
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k) \equiv \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a : A$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a \equiv a'$}
+\RightLabel{\axlabel{cxl}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash a' : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a : A$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash A \equiv A'$}
+\RightLabel{\axlabel{cxr}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash a : A'$}
 \DisplayProof
 \end{center}
 
@@ -616,7 +634,7 @@ We will say that a term or a formula $E$ is \emph{valid} with respect to $(\varp
 A sequent $\varphi \sststile{}{V} \psi$ is \emph{valid} if $\FV(\psi) \subseteq \FV(\varphi)$ and $\varphi \land \psi$ is valid with respect to $(\varphi,V)$.
 
 \begin{defn}[ft-free]
-An $\ft$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consits of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
+An $\ft$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consists of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
 together with a context $\Gamma^S_i(x_1, \ldots x_{i-1})$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that the following conditions hold:
 \begin{enumerate}
 \item \label{it:ax-consist} For every symbol $S$ with $n$ parameters, all $1 \leq i < j \leq n$, and every $(\Delta,x_i) \in \sub(\Gamma, \Gamma_j^S(x_1, \ldots x_{j-1}))$, the following sequent is derivable:
@@ -946,7 +964,8 @@ For every $\ft$-free formula $\varphi$, we can define a formula $F(\varphi)$ as 
 \begin{align*}
 F(\Gamma \vdash t) & = F(\Gamma,t)\!\downarrow \\
 F(\Gamma \vdash t \equiv t') & = (F(\Gamma,t) = F(\Gamma,t')) \\
-F(\Gamma \vdash R(t_1, \ldots t_k)) & = R_n(\ldots F(F(\Gamma, \Gamma^R_i(t_1, \ldots t_{i-1})), t_i), \ldots) \\
+F(\Gamma \vdash a : A) & = \Ty_n(F(\Gamma,a),F(\Gamma,A)) \\
+F(\Gamma \vdash R(t_1, \ldots t_k)) & = R_n(F(\Gamma), \ldots F(F(\Gamma, \Gamma^R_i(t_1, \ldots t_{i-1})), t_i), \ldots) \\
 F(\varphi_1 \land \ldots \land \varphi_m) & = F(\varphi_1) \land \ldots \land F(\varphi_m)
 \end{align*}
 Every $\ft$-free sequent determines $\varphi \sststile{}{V} \psi$ a sequent $F(\varphi) \sststile{}{V} F(\psi)$.
@@ -962,7 +981,7 @@ Rule \axref{cr} is preserved trivially.
 Rule \axref{cs} corresponds to \axref{ns}.
 For every $(\Gamma,t) \in \sub(\varphi)$, the term $F(\Gamma,t)$ is a subterm of $F(\varphi)$.
 This implies that \axref{cd} corresponds to \axref{np} and \axref{nf}.
-Rules \axref{cx}, \axref{ct}, \axref{cp}, \axref{cf}, and \axref{cf'} follow from \axref{nl}.
+Rules \axref{cx}, \axref{ct}, \axref{cp}, \axref{cf}, \axref{cf'}, \axref{cxl}, and \axref{cxr} follow from \axref{nl}.
 Rule \axref{ca} follows from \axref{na}, \axref{np}, and \axref{nf} since the set of free variables of the premise of every axiom is contained in the set free variables of its conclusion.
 The rest of the rules are explicitly added to $F(T)$ as axioms.
 \end{proof}
@@ -1089,6 +1108,7 @@ The last sequent follows from the fact that every free variable belongs to some 
 For every formula $\varphi$ with free variables in $V$, we define an $\ft$-free formula $G(\varphi)$ with free variables in $G(V)$:
 \begin{align*}
 G(t = t') & = (G(\ft_{p,n}(t)) \equiv G(\ft_{p,n}(t'))) \land (G(\ft_{p,n}(t)) \vdash G^0(t) \equiv G^0(t')) \\
+G(\Ty_n(a,A)) & = (G(\ft_{\tm,n}(a)) \equiv G(\ft_{\ty,n}(A))) \land (G(\ft_{\ty,n}(A)) \vdash G^0(a) : G^0(A)) \\
 G(R_n(\Gamma, t_1, \ldots t_k)) & = (G(\Gamma) \vdash R(G^0(t_1), \ldots G^0(t_k))) \land \psi \\
 G(\varphi_1 \land \ldots \land \varphi_n) & = G(\varphi_1) \land \ldots \land G(\varphi_n)
 \end{align*}
@@ -1241,18 +1261,67 @@ For every contexted term $(\Gamma,t)$, the set $\sub(\Gamma,t)$ of its contxeted
 \end{align*}
 
 Judgments, formulas, and the set of contexted subterms of a formula are defined in the same way as in the $\ft$-free syntax.
-The derivation system for the $\subst$-free syntax is also similar.
-Rules \axref{ch}, \axref{cd}, \axref{cx}, \axref{cr}, \axref{cs}, \axref{ct}, \axref{cp}, \axref{cf}, \axref{cf'}, \axref{ca}, and \axref{ev} are the same.
-Rule \axref{evt} is replaced with the following one:
+Sequents are defined differently.
+A \emph{sequent} is a triple (written as $\varphi \sststile{}{V} \psi$) consisting of formulas $\varphi$ and $\psi$ and a set $V$ of contexted terms in which the term is a variable such that $\FV(\varphi) \cup \FV(\psi) \cup \FV(V) \subseteq \{ X | (\Gamma,X) \in V \}$.
+The derivation system for the $\subst$-free syntax is similar to that of $\ft$-free theories.
+Rules \axref{ch}, \axref{cd}, \axref{cx}, \axref{cr}, \axref{cs}, \axref{ct}, \axref{cp}, \axref{cf}, \axref{cf'}, \axref{cxl}, \axref{cxr}, and \axref{ca} are the same.
+Other rules are replaced with the following ones:
+
 \medskip
 \begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash$}
+\RightLabel{\axlabel{fv}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash v_i$}
+\DisplayProof
+\qquad
 \AxiomC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash$}
-\RightLabel{\axlabel{evt'}}
+\RightLabel{\axlabel{fvt}}
 \UnaryInfC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash v_i : A_{m-i}(v_{m-1}, \ldots v_{i+1})$}
 \DisplayProof
 \end{center}
-We do not add other rules because they are admissible.
-Now, $\subst$-free theories are defined as before.
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_i, a_1, \ldots a_{i-1})$}
+\RightLabel{, $(A_1, \ldots A_k \vdash X) \in V$ \axlabel{fs}}
+\doubleLine
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash X(a_1, \ldots a_k)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash X : B$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_i, a_1, \ldots a_{i-1})$
+\def\extraVskip{2pt}
+\RightLabel{, $(A_1, \ldots A_k \vdash X) \in V$ \axlabel{fst}}
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash X(a_1, \ldots a_k) : \subst(B, a_1, \ldots a_k)$
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash X(a_1, \ldots a_k)$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a_i \equiv a_i'$}
+\RightLabel{\axlabel{fsc}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash X(a_1, \ldots a_k) \equiv X(a_1, \ldots a_i', \ldots a_k)$}
+\DisplayProof
+\end{center}
+
+\begin{defn}[subst-free]
+A $\subst$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consists of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
+together with a context $\Gamma^S_i(x_1, \ldots x_{i-1})$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that the following conditions hold:
+\begin{enumerate}
+\item \label{it:subst-ax-wf} The following relation on the set of function symbols is well-founded: $\tau \prec \sigma$ if and only if $\tau$ appears in $\Gamma^\sigma_i$ for some $i$.
+\item \label{it:subst-ax-cond} For every axiom $\varphi \sststile{}{V} \psi$ and every contexted subterm $(\Gamma,t)$ of $\psi$, the sequent $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
+\end{enumerate}
+A \emph{theorem} is a derivable sequent.
+\end{defn}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
