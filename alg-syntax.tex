@@ -287,7 +287,7 @@ We will be mostly interested in theorems of the form $\varphi \sststile{}{V} \ps
 
 A \emph{restricted term} is a term $t$ together with a formula $\varphi$.
 We denote such a restricted term by $t|_\varphi$.
-The $\mathcal{S}$-set of restricted terms (with free variables in $V$) will be denoted by $\RTerm(V)$.
+The $\mathcal{S}$-set of restricted terms (with free variables in $V$) will be denoted by $\RTerm^\ft(V)$.
 Let $T$ and $T'$ be two theories with the same set of sorts.
 An \emph{interpretation} of $T$ in $T'$ is a function $f$ such that the following conditions hold:
 \begin{itemize}
@@ -332,9 +332,9 @@ The proof in the general case is the same.
 \section{The $\ft$-free syntax}
 \label{sec:contexts}
 
-The syntax we described in the previous subection is too verbose.
+The syntax we described in the previous section is too verbose.
 We can make it closer to the usual presentation of type theories by removing some redundant information.
-We define another $\mathcal{S}$-set of terms $\Term_\mathcal{F}(V)$ inductively as follows:
+We define another $\mathcal{S}$-set of terms $\Term^s(V)$ inductively as follows:
 \begin{itemize}
 \item Every element of $V_s$ is a term of sort $s$.
 \item $v_i$ is a term of sort $(\tm,n)$ for every $0 \leq i < n$.
@@ -345,17 +345,17 @@ These terms will be called \emph{$\ft$-free} terms.
 They define a syntax, called the \emph{$\ft$-free syntax}, which has metavariables (elements of $V$), de Bruijn indices ($v_i$), explicit substitutions ($\subst$), and constructions depending on the theory (basic function symbols).
 
 A \emph{context} of length $n$ a sequence of terms of sorts $(\ty,0)$, \ldots $(\ty,n-1)$.
-An ($\ft$-free) \emph{judgement} is an expression of one of the following forms:
+An ($\ft$-free) \emph{judgment} is an expression of one of the following forms:
 \[ \Gamma \vdash a : A \qquad \Gamma \vdash t \qquad \Gamma \vdash t \equiv t' \qquad \Gamma \vdash R(t_1, \ldots t_k) \]
 where $\Gamma$ is a context of length $m$, $a$ is a term of sort $(\tm,m)$, $A$ is a term of sort $(\ty,m)$,
 $t$ and $t'$ are terms of sort $(p,m)$ (where $p \in \{ \ty, \tm \}$), $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ is a predicate symbol, and $t_1$, \ldots $t_k$ are terms of sorts $(p_1,m+n_1)$, \ldots $(p_k,m+n_k)$, respectively.
 All terms above are written in the $\ft$-free syntax.
-We will use judgements of the form $\Gamma \vdash$.
-If $\Gamma$ is the empty context, this judgement denotes $\top$.
-If $\Gamma = (\Gamma', A)$, this judgement denotes $\Gamma' \vdash A$.
+We will use judgments of the form $\Gamma \vdash$.
+If $\Gamma$ is the empty context, this judgment denotes $\top$.
+If $\Gamma = (\Gamma', A)$, this judgment denotes $\Gamma' \vdash A$.
 
 Jusgements play the role of atomic formulas in the $\ft$-free syntax.
-An ($\ft$-free) \emph{formula} is a finite conjunction of judgements.
+An ($\ft$-free) \emph{formula} is a finite conjunction of judgments.
 Sequents are defined as before.
 We will often write sequents in the form of derivation rules.
 Thus, $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi$ can be written as
@@ -932,7 +932,7 @@ We also add function symbols of the theory of substitutions (defined in \cite[Se
 A well-founded relation $\prec$ on function symbols can be extended to a well-founded relation $\prec$ on the set of terms (called \emph{recursive path ordering} \cite{mrpo}) such that $t[t_1/x_1, \ldots t_k/x_k] \prec \sigma(t_1, \ldots t_k)$ if $\tau \prec \sigma$ for every function symbol $\tau$ in $t$.
 We always have a recursive path ordering on terms by \eqref{it:ax-wf}.
 
-Now, we define a function $F : \Term^\ft(V)_{(\ctx,n)} \times \Term(V)_{(p,n)} \to \RTerm^\ft(V)_{(p,n)}$ by induction on the second argument with respect to the recursive path ordering:
+Now, we define a function $F : \Term^\ft(V)_{(\ctx,n)} \times \Term^s(V)_{(p,n)} \to \RTerm^\ft(V)_{(p,n)}$ by induction on the second argument with respect to the recursive path ordering:
 \begin{align*}
 F(\Gamma, x) & = x|_{\ft_{p,n}(x) = \Gamma} \\
 F(\Gamma, v_i) & = v_{n,i}(\Gamma) \\
@@ -1192,6 +1192,67 @@ Thus, we just need to prove the equality $\rho'(x_i^j) = \ft^{j-1}_{p_i,n_i}(f(F
 This follows from \rlem{gmap-rev-term} by induction on $i$.
 Indeed, we can apply it to the term $t_i = f(F(\Gamma, \Gamma^\sigma_i))$ if it holds for terms $t_{i'}$ with $i' < i$ since variables of the form $x_{i'}^j$ can appear in $\FV(t_i)$ only if $i' < i$.
 \end{proof}
+
+\section{The $\subst$-free syntax}
+
+In this section, we define a version of the syntax without explicit substitutions.
+We define the $\mathcal{S}$-set of \emph{$\subst$-free} terms $\Term(V)$ inductively as follows:
+\begin{itemize}
+\item If $X \in V_{(p,k)}$, $p \in \{ \ty, \tm \}$, and $t_1$, \ldots $t_k$ are terms of sort $(\tm,n)$, then $X(t_1, \ldots t_k)$ is a term of sort $(p,n)$.
+\item $v_i$ is a term of sort $(\tm,n)$ for every $0 \leq i < n$.
+\item If $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ is a function symbol of $T$ and $t_i$ is a term of sort $(p_i,n+n_i)$, then $\sigma(t_1, \ldots t_k)$ is a term of sort $(p,n)$.
+\end{itemize}
+
+Let $t$ be a term of sort $(p,n)$.
+If $m \leq n$, then we define a term $\wk^k_m(t)$ of sort $(p,n+k)$ recursively:
+\begin{itemize}
+\item If $t = X(t_1, \ldots t_l)$, then $\wk^k_m(t) = X(\wk^k_m(t_1), \ldots \wk^k_m(t_l))$.
+\item If $t = v_i$, then $\wk^k_m(v_i) = v_i$ if $i < m$ and $\wk^k_m(v_i) = v_{i+k}$ otherwise.
+\item If $t = \sigma(t_1, \ldots t_l)$, where $\sigma : (p_1,n_1) \times \ldots \times (p_m,n_m) \to (p,0)$, then $\wk^k_m(t) = \sigma(\wk^k_{m+n_1}(t_1), \ldots \wk^k_{m+n_l}(t_l))$.
+\end{itemize}
+
+Let $t$ be a term of sort $(p,k)$ and let $t_1$, \ldots $t_k$ be terms of sort $(\tm,n)$.
+Then we define a term $\subst(t, t_1, \ldots t_k)$ of sort $(p,n)$ recursively:
+\begin{itemize}
+\item If $t = X(t_1', \ldots t_m')$, then $\subst(t, t_1, \ldots t_k) = X(t_1'', \ldots t_m'')$, where
+\[ t_i'' = \subst(t_i', t_1, \ldots t_k). \]
+\item If $t = v_i$, then $\subst(t, t_1, \ldots t_k) = t_{k-i}$.
+\item If $t = \sigma(t_1', \ldots t_m')$, where $\sigma : (p_1,n_1) \times \ldots \times (p_m,n_m) \to (p,0)$, then $\subst(t, t_1, \ldots t_k) = \sigma(t_1'', \ldots t_m'')$, where
+\[ t_i'' = \subst(t_i', \wk^{n_i}_0(t_1), \ldots \wk^{n_i}_0(t_k), v_{n_i-1}, \ldots v_0). \]
+\end{itemize}
+
+If $t$ is a term of sort $(p,n+k)$ and $t_1, \ldots t_k$ are terms of sort $(\tm,n)$, then we will write $t[t_1, \ldots t_k]$ for $\subst(t, v_{n-1}, \ldots v_0, t_1, \ldots t_k)$.
+If $X$ is a variable, we will write $X$ for $X[]$.
+
+Let $\rho$ be a map $V \to \Term(W)$ and let $t$ be a term with free variables in $V$.
+Then we define a term $t[\rho]$ with free variables in $W$ recursively:
+\begin{itemize}
+\item If $t = X(t_1, \ldots t_k)$, then $t[\rho] = \subst(\rho(X), t_1[\rho], \ldots t_k[\rho])$.
+\item If $t = v_i$, then $t[\rho] = v_i$.
+\item If $t = \sigma(t_1, \ldots t_k)$, then $t[\rho] = \sigma(t_1[\rho], \ldots t_k[\rho])$.
+\end{itemize}
+
+Contexts and contexted terms are defined as before.
+For every contexted term $(\Gamma,t)$, the set $\sub(\Gamma,t)$ of its contxeted subterms is defined as follows:
+\begin{align*}
+\sub(\Gamma,v_i) = & \{ (\Gamma,t) \} \\
+\sub(\Gamma,X(t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \{ (\Gamma,t_i) \} \\
+\sub(\Gamma,\sigma(t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^\sigma_i(t_1, \ldots t_{i-1})), t_i)
+\end{align*}
+
+Judgments, formulas, and the set of contexted subterms of a formula are defined in the same way as in the $\ft$-free syntax.
+The derivation system for the $\subst$-free syntax is also similar.
+Rules \axref{ch}, \axref{cd}, \axref{cx}, \axref{cr}, \axref{cs}, \axref{ct}, \axref{cp}, \axref{cf}, \axref{cf'}, \axref{ca}, and \axref{ev} are the same.
+Rule \axref{evt} is replaced with the following one:
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash$}
+\RightLabel{\axlabel{evt'}}
+\UnaryInfC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash v_i : A_{m-i}(v_{m-1}, \ldots v_{i+1})$}
+\DisplayProof
+\end{center}
+We do not add other rules because they are admissible.
+Now, $\subst$-free theories are defined as before.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
