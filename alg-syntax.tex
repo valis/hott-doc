@@ -1215,13 +1215,15 @@ Indeed, we can apply it to the term $t_i = f(F(\Gamma, \Gamma^\sigma_i))$ if it 
 
 \section{The $\subst$-free syntax}
 
-In this section, we define a version of the syntax without explicit substitutions.
-We define the $\mathcal{S}$-set of \emph{$\subst$-free} terms $\Term(V)$ inductively as follows:
+The syntax we described in the previous section is too verbose.
+We can make it closer to the usual presentation of type theories by removing some redundant information.
+We define another $\mathcal{S}$-set of terms $\Term(V)$ inductively as follows:
 \begin{itemize}
 \item If $X \in V_{(p,k)}$, $p \in \{ \ty, \tm \}$, and $t_1$, \ldots $t_k$ are terms of sort $(\tm,n)$, then $X(t_1, \ldots t_k)$ is a term of sort $(p,n)$.
 \item $v_i$ is a term of sort $(\tm,n)$ for every $0 \leq i < n$.
 \item If $\sigma : (p_1,n_1) \times \ldots \times (p_k,n_k) \to (p,0)$ is a function symbol of $T$ and $t_i$ is a term of sort $(p_i,n+n_i)$, then $\sigma(t_1, \ldots t_k)$ is a term of sort $(p,n)$.
 \end{itemize}
+These terms will be called \emph{$\subst$-free} terms.
 
 Let $t$ be a term of sort $(p,n)$.
 If $m \leq n$, then we define a term $\wk^k_m(t)$ of sort $(p,n+k)$ recursively:
@@ -1252,41 +1254,158 @@ Then we define a term $t[\rho]$ with free variables in $W$ recursively:
 \item If $t = \sigma(t_1, \ldots t_k)$, then $t[\rho] = \sigma(t_1[\rho], \ldots t_k[\rho])$.
 \end{itemize}
 
-Contexts and contexted terms are defined as before.
-For every contexted term $(\Gamma,t)$, the set $\sub(\Gamma,t)$ of its contxeted subterms is defined as follows:
-\begin{align*}
-\sub(\Gamma,v_i) = & \{ (\Gamma,t) \} \\
-\sub(\Gamma,X(t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \{ (\Gamma,t_i) \} \\
-\sub(\Gamma,\sigma(t_1, \ldots t_k)) = & \{ (\Gamma,t) \} \cup \bigcup_{1 \leq i \leq k} \sub((\Gamma,\Gamma^\sigma_i(t_1, \ldots t_{i-1})), t_i)
-\end{align*}
+A \emph{context} of length $n$ a sequence of terms of sorts $(\ty,0)$, \ldots $(\ty,n-1)$.
+A \emph{contexted term} is a pair $(\Gamma,t)$, where $\Gamma$ is a context of length $n$ and $t$ is a term of sort $(p,n)$ for some $p \in \{ \ty, \tm \}$.
+An ($\subst$-free) \emph{judgment} is an expression of one of the following forms:
+\[ \Gamma \vdash a : A \qquad \Gamma \vdash t \qquad \Gamma \vdash t \equiv t' \qquad \Gamma \vdash R(t_1, \ldots t_k) \]
+where $\Gamma$ is a context of length $m$, $a$ is a term of sort $(\tm,m)$, $A$ is a term of sort $(\ty,m)$,
+$t$ and $t'$ are terms of sort $(p,m)$ (where $p \in \{ \ty, \tm \}$), $R : (p_1,n_1) \times \ldots \times (p_k,n_k)$ is a predicate symbol, and $t_1$, \ldots $t_k$ are terms of sorts $(p_1,m+n_1)$, \ldots $(p_k,m+n_k)$, respectively.
+All terms above are written in the $\subst$-free syntax.
+We will use judgments of the form $\Gamma \vdash$.
+If $\Gamma$ is the empty context, this judgment denotes $\top$.
+If $\Gamma = (\Gamma', A)$, this judgment denotes $\Gamma' \vdash A$.
 
-Judgments, formulas, and the set of contexted subterms of a formula are defined in the same way as in the $\ft$-free syntax.
-Sequents are defined differently.
+Jusgements play the role of atomic formulas in the $\subst$-free syntax.
+An ($\subst$-free) \emph{formula} is a finite conjunction of judgments.
 A \emph{sequent} is a triple (written as $\varphi \sststile{}{V} \psi$) consisting of formulas $\varphi$ and $\psi$ and a set $V$ of contexted terms in which the term is a variable such that $\FV(\varphi) \cup \FV(\psi) \cup \FV(V) \subseteq \{ X | (\Gamma,X) \in V \}$.
-The derivation system for the $\subst$-free syntax is similar to that of $\ft$-free theories.
-Rules \axref{ch}, \axref{cd}, \axref{cx}, \axref{cr}, \axref{cs}, \axref{ct}, \axref{cp}, \axref{cf}, \axref{cf'}, \axref{cxl}, \axref{cxr}, and \axref{ca} are the same.
-Other rules are replaced with the following ones:
+We will often write sequents in the form of derivation rules.
+Thus, $\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \psi$ can be written as
+\begin{center}
+\AxiomC{$\varphi_1$}
+\AxiomC{\ldots}
+\AxiomC{$\varphi_n$}
+\TrinaryInfC{$\psi$}
+\DisplayProof
+\end{center}
+The set of variables $V$ is implicit in this notation and we let it to be the union of all variables that appear in the premise and in the conclusion.
+Also, $\varphi_1 \land \ldots \land \varphi_n \ssststile{}{V} \psi$ will be represented by the following rule:
+\begin{center}
+\AxiomC{$\varphi_1$}
+\AxiomC{\ldots}
+\AxiomC{$\varphi_n$}
+\doubleLine
+\TrinaryInfC{$\psi$}
+\DisplayProof
+\end{center}
+
+Let $\Gamma$ be a context of length $n$ and let $\Delta_1 = (A_1, \ldots A_k)$, $\Delta_2 = (B_1, \ldots B_k)$ be a pair of sequences of terms of sorts $(\ty,n)$, \ldots $(\ty,n+k)$.
+Then we define $\Gamma \vdash \Delta_1 \equiv \Delta_2$ as $\Gamma \vdash A_1 \equiv B_1 \land \ldots \land \Gamma, A_1, \ldots A_{k-1} \vdash A_k \equiv B_k$.
+If $\Gamma$ and $\Delta$ are two contexts of the same length, we define $\Gamma \equiv \Delta$ as $\vdash \Gamma \equiv \Delta$.
+
+An ($\subst$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consists of a set of function symbols $\mathcal{F}$ such that every function symbol has a signature of the form $s_1 \times \ldots \times s_k \to (p,0)$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$.
+These sets must satisfy conditions listed in \rdefn{subst-free}.
+Each symbol $S$ with $k$ parameters of sorts $(p_1,n_1)$, \ldots $(p_k,n_k)$ is equipped with a collection $\{ \Gamma^S_i(x_1, \ldots x_{i-1}) \}_{1 \leq i \leq k}$ of contexts,
+where $\Gamma^S_i(x_1, \ldots x_{i-1})$ is a context of length $n_i$ with free variables in $\{ x_1 : (p_1,n_1), \ldots x_{i-1} : (p_{i-1},n_{i-1}) \}$.
+We will write $\Gamma^S_i$ for $\Gamma^S_i(x_1, \ldots x_k)$.
+We will also write $\Gamma^S_i(t_1, \ldots t_k)$ for $\Gamma^S_i[t_1/x_1, \ldots t_k/x_k]$.
+
+Now, we can describe the derivation system for the $\subst$-free syntax:
+\medskip
+\begin{center}
+\AxiomC{}
+\RightLabel{\axlabel{ch}}
+\UnaryInfC{$\varphi_1 \land \ldots \land \varphi_n \sststile{}{V} \varphi_i$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, A, \Delta \vdash \psi$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash A \equiv B$}
+\RightLabel{\axlabel{cx}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma, B, \Delta \vdash \psi$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash t$}
+\RightLabel{\axlabel{cr}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash t \equiv t$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a \equiv b$}
+\RightLabel{\axlabel{cs}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash b \equiv a$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a \equiv b$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash b \equiv c$}
+\RightLabel{\axlabel{ct}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash a \equiv c$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a : A$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a \equiv a'$}
+\RightLabel{\axlabel{cxl}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash a' : A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a : A$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash A \equiv A'$}
+\RightLabel{\axlabel{cxr}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash a : A'$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash R(t_1, \ldots t_k)$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^R_i(t_1, \ldots t_{i-1}) \vdash t_i \equiv t_i'$}
+\RightLabel{\axlabel{cp}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash R(t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k)$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Gamma^\sigma_i(t_1, \ldots t_{i-1}) \vdash t_i \equiv t_i'$}
+\RightLabel{\axlabel{cf}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \sigma(t_1, \ldots t_k) \equiv \sigma (t_1, \ldots t_{i-1}, t_i', t_{i+1}, \ldots t_k)$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \psi_i[t_1/x_1, \ldots t_k/x_k]$, $1 \leq i \leq n$}
+\RightLabel{\axlabel{ca}}
+\UnaryInfC{$\varphi \sststile{}{V} \chi_j[t_1/x_1, \ldots t_k/x_k]$}
+\DisplayProof
+\end{center}
+where $\psi_1 \land \ldots \land \psi_n \sststile{}{x_1 : s_1, \ldots x_k : s_k} \chi_1 \land \ldots \land \chi_m$ is an axiom and $t_1$, \ldots $t_k$ are arbitrary terms.
 
 \medskip
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash$}
-\RightLabel{\axlabel{fv}}
+\RightLabel{\axlabel{cv}}
 \UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash v_i$}
 \DisplayProof
 \qquad
 \AxiomC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash$}
-\RightLabel{\axlabel{fvt}}
+\RightLabel{\axlabel{cvt}}
 \UnaryInfC{$\varphi \sststile{}{V} A_1, \ldots A_m \vdash v_i : A_{m-i}(v_{m-1}, \ldots v_{i+1})$}
 \DisplayProof
 \end{center}
 
 \medskip
 \begin{center}
-\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash$}
-\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_i, a_1, \ldots a_{i-1})$}
-\RightLabel{, $(A_1, \ldots A_k \vdash X) \in V$ \axlabel{fs}}
-\doubleLine
-\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash X(a_1, \ldots a_k)$}
+\def\extraVskip{1pt}
+\Axiom$\fCenter \varphi \sststile{}{V} \Gamma \vdash$
+\noLine
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_i, a_1, \ldots a_{i-1}) \text{, } 1 \leq i \leq k$
+\def\extraVskip{2pt}
+\RightLabel{, $(A_1, \ldots A_k \vdash X) \in V$ \axlabel{cm}}
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash X(a_1, \ldots a_k)$
 \DisplayProof
 \end{center}
 
@@ -1297,9 +1416,9 @@ Other rules are replaced with the following ones:
 \noLine
 \UnaryInf$\fCenter \varphi \sststile{}{V} A_1, \ldots A_k \vdash X : B$
 \noLine
-\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_i, a_1, \ldots a_{i-1})$
+\UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_i, a_1, \ldots a_{i-1}) \text{, } 1 \leq i \leq k$
 \def\extraVskip{2pt}
-\RightLabel{, $(A_1, \ldots A_k \vdash X) \in V$ \axlabel{fst}}
+\RightLabel{, $(A_1, \ldots A_k \vdash X) \in V$ \axlabel{cmt}}
 \UnaryInf$\fCenter \varphi \sststile{}{V} \Gamma \vdash X(a_1, \ldots a_k) : \subst(B, a_1, \ldots a_k)$
 \DisplayProof
 \end{center}
@@ -1308,20 +1427,109 @@ Other rules are replaced with the following ones:
 \begin{center}
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash X(a_1, \ldots a_k)$}
 \AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a_i \equiv a_i'$}
-\RightLabel{\axlabel{fsc}}
+\RightLabel{\axlabel{cmc}}
 \BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash X(a_1, \ldots a_k) \equiv X(a_1, \ldots a_i', \ldots a_k)$}
 \DisplayProof
 \end{center}
 
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash t \equiv t'$}
+\RightLabel{\axlabel{ee}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash t$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash S(t_1, \ldots t_k)$}
+\RightLabel{\axlabel{ep}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma, \Gamma^S_i(t_1, \ldots t_{i-1}) \vdash t_i$}
+\DisplayProof
+\end{center}
+where $S$ is either a function or a predicate symbol.
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \psi$}
+\RightLabel{\axlabel{ec}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a : A$}
+\RightLabel{\axlabel{el}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash a$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash a : A$}
+\RightLabel{\axlabel{er}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash A$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash X(a_1, \ldots a_k)$}
+\RightLabel{, $(A_1, \ldots A_k \vdash X) \in V$ \axlabel{em}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash a_i : \subst(A_i, a_1, \ldots a_{i-1})$}
+\DisplayProof
+\end{center}
+
 \begin{defn}[subst-free]
-A $\subst$-free \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consists of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
-together with a context $\Gamma^S_i(x_1, \ldots x_{i-1})$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that the following conditions hold:
-\begin{enumerate}
-\item \label{it:subst-ax-wf} The following relation on the set of function symbols is well-founded: $\tau \prec \sigma$ if and only if $\tau$ appears in $\Gamma^\sigma_i$ for some $i$.
-\item \label{it:subst-ax-cond} For every axiom $\varphi \sststile{}{V} \psi$ and every contexted subterm $(\Gamma,t)$ of $\psi$, the sequent $\varphi \sststile{}{V} \Gamma \vdash t$ is derivable.
-\end{enumerate}
+An ($\subst$-free) \emph{theory} $(\mathcal{F},\mathcal{P},\mathcal{A})$ consists of a set of function symbols $\mathcal{F}$, a set of predicate symbols $\mathcal{P}$, and a set of axioms $\mathcal{A}$
+together with a context $\Gamma^S_i(x_1, \ldots x_{i-1})$ for every symbol $S$ with $n$ parameters and every $1 \leq i \leq n$ such that
+the following relation on the set of function symbols is well-founded: $\tau \prec \sigma$ if and only if $\tau$ appears in $\Gamma^\sigma_i$ for some $i$.
 A \emph{theorem} is a derivable sequent.
 \end{defn}
+
+We do not usually explicitly specify context $\Gamma^S_i$.
+Instead, we assume that every symbol $S$ has a unique axiom of the form
+\[ \varphi \sststile{}{x_1, \ldots x_k}\ \vdash S(x_1, \ldots x_k) \]
+such that there is a unique contexted subterm of $\varphi$ of the form $(\Gamma,x_i)$ for every $i$.
+Then we let $\Gamma^S_i$ to be equal to $\Gamma$.
+
+A rule is \emph{admissible} if its conclusion is derivable whenever its premises are.
+
+\begin{lem}
+The following rules are admissible:
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma, \Delta \vdash \psi$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \Delta \equiv \Delta'$}
+\RightLabel{\axlabel{cx'}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma, \Delta' \vdash \psi$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \Delta \equiv \Delta'$}
+\RightLabel{\axlabel{cs'}}
+\UnaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \Delta' \equiv \Delta$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \Delta \equiv \Delta'$}
+\AxiomC{$\varphi \sststile{}{V} \Gamma \vdash \Delta' \equiv \Delta''$}
+\RightLabel{\axlabel{ct'}}
+\BinaryInfC{$\varphi \sststile{}{V} \Gamma \vdash \Delta \equiv \Delta''$}
+\DisplayProof
+\end{center}
+
+\medskip
+\begin{center}
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\RightLabel{$\mathrm{\axlabel{cu}}$}
+\UnaryInfC{$\varphi[\rho] \sststile{}{V'} \psi[\rho]$}
+\DisplayProof
+\qquad
+\AxiomC{$\varphi \sststile{}{V} \psi$}
+\AxiomC{$\psi \sststile{}{V} \chi$}
+\RightLabel{$\mathrm{\axlabel{cc}}$}
+\BinaryInfC{$\varphi \sststile{}{V} \chi$}
+\DisplayProof
+\end{center}
+\end{lem}
+\begin{proof}
+The proof is by a straightforward induction on the length of $\Delta$ for \axref{cx'}, \axref{cs'}, and \axref{ct'},
+on the derivation of $\varphi \sststile{}{V} \psi$ for \axref{cu}, and on the derivation of $\psi \sststile{}{V} \chi$ for \axref{cc}.
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
