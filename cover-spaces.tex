@@ -228,7 +228,7 @@ Thus, $S(X)$ is regular.
 
 The following proposition shows that $V \rb U$ implies the usual definition of the rather below relation in terms of limit points:
 
-\begin{prop}
+\begin{prop}[rb-closure]
 Let $U,V$ be subsets of a cover space $X$ such that $V \rb U$.
 Then $U$ is a neighborhood of every limit point of $V$.
 In particular, the closure of $V$ is a subset of $U$.
@@ -270,7 +270,7 @@ Thus, a cover space is exactly a precover space that satisfies the regularity co
 We will also need the notion of a subbase for a precover structure:
 
 \begin{defn}
-Given a set $X$, a \emph{subbase} for a precover structure on $X$ is any set $\mathcal{B}_X$ of covers of $X$.
+Given a set $X$, a \emph{subbase} for a precover structure on $X$ is any set of covers of $X$.
 \end{defn}
 
 Any subbase $\mathcal{B}_X$ determines a precover space structure $\overline{\mathcal{B}_X}$ on $X$ by taking the closure of $\mathcal{B}_X$ under \axref{CT}, \axref{CE}, and \axref{CS}.
@@ -539,7 +539,7 @@ The following is true for subsets $U,V,U',V'$ of a precover space $X$:
 A precover space $X$ is called \emph{$\omega$-regular} if, for every $C \in \mathcal{C}_X$, the set $\{ V \mid \exists U \in C, V \rb^\omega U \}$ also belongs to $\mathcal{C}_X$.
 Since $\rb^\omega$ is contained in $\rb$ and $\rb^c$ is cointained in $\rb^\omega$, every $\omega$-regular precover space is a cover space and every completely regular cover space is $\omega$-regular.
 
-\begin{prop}
+\begin{prop}[omega-cauchy-filters]
 Let $X$ be ab $\omega$-regular cover space.
 Then every Cauchy filter in $X$ is equivalent to a regular one.
 In particular, every minimal Cauchy filter is regular.
@@ -1031,7 +1031,7 @@ We define the frame of opens of this locale by a method described in Section~2.1
 A \emph{coverage} on a meet-semilattice $P$ is a relation $\triangleleft_0$ between elements of $P$ and subsets of $P$ satisfying the following conditions:
 \begin{itemize}
 \item If $a \triangleleft_0 U$, then $b \leq a$ for every $b \in U$.
-\item If $a \triangleleft_0 U$ and $b \leq a$, then there exists a set $V$ such that $b \triangleleft_0 V$ and, for every $c \in V$, it is true that $c \leq b$ and $c \leq d$ for some $d \in U$.
+\item If $a \triangleleft_0 U$ and $b \leq a$, then there exists a set $V$ such that $b \triangleleft_0 V$ and, for every $c \in V$, it is true that $c \leq d$ for some $d \in U$.
 \end{itemize}
 Given a coverage $(P,\triangleleft_0)$, a subset $U$ of $P$ is called a \emph{$\triangleleft_0$-ideal} if it is downward closed and $a \in U$ whenever $a \triangleleft_0 V$ and $V \subseteq U$.
 Then the set of $\triangleleft_0$-ideals is a frame under the inclusion relation.
@@ -1127,7 +1127,7 @@ Thus, $V_j$ is a neighborhood of $x$.
 
 Finally, we are ready to prove the main result of this section:
 
-\begin{thm}
+\begin{thm}[locale-equiv]
 The functor $P : \cat{Loc} \to \cat{Precov}$ restricts to an equivalence between the category of regular locales with a strongly dense set of points and the category of complete strongly regular cover spaces with a dense set of points.
 \end{thm}
 \begin{proof}
@@ -1185,12 +1185,175 @@ This concludes the proof.
 \label{sec:reals}
 
 The aim of this section is to study the cover space of real numbers.
-We will define this cover space, show that it is complete and correspond to the locale of real numbers through the equivalence described in the previous section.
-We also show that cover maps between real numbers are exactly locally uniform functions.
+We will define this cover space, show that it is complete and corresponds to the locale of real numbers through the equivalence described in the previous section.
+
+Dedekind real numbers are usually defined as Dedekind cuts.
+A \emph{Dedekind cut} is a pair $(L,U)$ of subsets of $\mathbb{Q}$ satisfying the following conditions:
+\begin{itemize}
+\item[(DI)] \axitem{DI} Both $L$ and $U$ are inhabited.
+\item[(DL)] \axitem{DL} $a \in L$ if and only if there exists $b > a$ such that $b \in L$.
+\item[(DU)] \axitem{DU} $a \in U$ if and only if there exists $b < a$ such that $b \in U$.
+\item[(DD)] \axitem{DD} $L$ and $U$ do not intersect.
+\item[(DS)] \axitem{DS} If $a < b$, then either $a \in L$ or $b \in U$.
+\end{itemize}
+
+Dedekind reals can be alternatively represented by filters.
+A proper filter $F$ on $\mathbb{Q}$ will be called a \emph{Dedekind filter} if it satisfies the following conditions:
+\begin{itemize}
+\item[(DE)] \axitem{DE} For every rational $\varepsilon > 0$, there exists $a \in \mathbb{Q}$ such that the open interval $(a, a + \varepsilon)$ belongs to $F$.
+\item[(DR)] \axitem{DR} If $F$ contains an open interval $(a,d)$, then $F$ also contains an open interval $(b,c)$ such that $a < b < c < d$.
+\item[(DT)] \axitem{DT} For every $U \in F$, there exists an open interval $(a,b) \in F$ such that $(a,b) \subseteq U$.
+\end{itemize}
+
+\begin{prop}[dedekind-cuts-filters]
+There is a bijection between the set of Dedekind cuts and the set of Dedekind filters.
+\end{prop}
+\begin{proof}
+If $(L,U)$ is a Dedekind real, then we define $F(L,U)$ as the set of those $V$ for which there exist $a \in L$ and $b \in U$ such that the open interval $(a,b)$ is a subset of $V$.
+Clearly, it is a filter that satisfies \axref{DT}, \axref{DI} implies that it is proper, and \axref{DL} and \axref{DU} imply \axref{DR}.
+Let us prove \axref{DE}.
+By \axref{DI}, \axref{DD}, and \axref{DL}, there exist $a \in L$ and $b \in U$ such that $a < b$.
+Let $a' = a + \frac{b - a}{3}$ and $b' = b - \frac{b - a}{3}$.
+Then \axref{DS} implies that either $a' \in L$ or $b' \in U$.
+So, we reduced the open interval $(a,b) \in F(L,U)$ by a factor of $1.5$.
+Thus, we can get an arbitrary small open interval in a finite number of steps, which proves \axref{DE}.
+
+Now, let $F$ be a Dedekind filter.
+If we define $L_F = \{ a \in \mathbb{Q} \mid \exists b \in \mathbb{Q}, (a,b) \in F \}$ and $U_F = \{ b \in \mathbb{Q} \mid \exists a \in \mathbb{Q}, (a,b) \in F \}$,
+then \axref{DE} implies \axref{DI} and \axref{DS}, \axref{DR} implies \axref{DL} and \axref{DU}, and properness of $F$ implies \axref{DD}.
+
+It is easy to see that $L_{F(L,U)} = L$ and $U_{F(L,U)} = U$ and the fact that $F(L_F,U_F) = F$ follows from \axref{DT}.
+\end{proof}
+
+We will identify Dedekind cuts with corresponding Dedekind filters when necessary and call them simply Dedekind reals.
+There is an obvious metric space structure on the set of Dedekind reals in which the distance between points $x$ and $y$ is given by $| x - y |$.
+The cover space of real numbers $\mathbb{R}$ is defined to be the one induced by this metric space.
+Since this cover space structure is induced by a metric space structure, its underlying topology is the usual topology on $\mathbb{R}$.
+Thus, using the identifiction from \rprop{dedekind-cuts-filters}, a set $U$ is a neighborhood of a Dedekind filter $F$ if and only if there exists an open interval $(a,b) \in F$ such that $(a,b) \subseteq U$.
+
+There is an inclusion $\mathbb{Q} \to \mathbb{R}$ that maps a rational number to its neighborhood filter.
+The cover space of rational numbers $\mathbb{Q}$ is defined as the transferred cover space.
+Equivalently, it can be described as induced by the metric space structure on $\mathbb{Q}$.
+The following proposition shows that Cauchy filters on this cover space are closely related to Dedekind filters:
+
+\begin{prop}[dedekind-cauchy]
+A filter on $\mathbb{Q}$ is a Dedekind filter if and only if it is a minimal Cauchy filter.
+\end{prop}
+\begin{proof}
+Clearly, a proper filter on $\mathbb{Q}$ satisfies \axref{DE} if and only if it is Cauchy.
+Thus, we need to show that a Cauchy filter is minimal if and only if it satisfies \axref{DR} and \axref{DT}.
+If a Cauchy filter $F$ satisfies \axref{DR} and \axref{DT}, then, for every $U \in F$, there exist $a < b < c < d$ such that $(b,c) \subseteq (a,d) \subseteq U$ and $(b,c) \in F$.
+Since $(b,c) \rb (a,d)$, this implies that $F$ is regular.
+
+Conversely, suppose that $F$ is minimal.
+Then $F' = \{ U \in F \mid \exists (a,b) \in F, (a,b) \subseteq U \}$ is also a Cauchy filter.
+Since $F' \subseteq F$ and $F$ is minimal, we have that $F = F'$.
+Thus, $F$ satisfies \axref{DT}.
+
+Finally, let us prove that $F$ satisfies \axref{DR}.
+Since $\mathbb{Q}$ is $\omega$-regular, \rprop{omega-cauchy-filters} implies that $F$ is regular.
+Thus, if we have $(a,b) \in F$, then there exists a set $U \in F$ such that $U \rb (a,b)$.
+By \axref{DT}, we also have an open interval $(c,d) \in F$ such that $(c,d) \subseteq U$.
+\rprop{rb-closure} implies that $a < c$ and $d < b$.
+This concludes the proof.
+\end{proof}
+
+\begin{prop}
+The cover space of real numbers is the completion of $\mathbb{Q}$.
+\end{prop}
+\begin{proof}
+Since the underlying topology of $\mathbb{R}$ is the usual topological structure induced by the metric, $\mathbb{Q}$ is dense in $\mathbb{R}$.
+The inclusion $i : \mathbb{Q} \to \mathbb{R}$ is also an embedding by definition.
+Since the underlying cover space of a metric space is always separated, \rlem{complete-part} and \rprop{dedekind-cauchy} imply that $\mathbb{R}$ is complete.
+\end{proof}
+
+It is often useful to be able to control of which elements consist Cauchy covers.
+To simplify this discussion, we introduce an auxiliary notion.
+For a precover space $X$, we will say that a set $B$ of subsets of $X$ \emph{generates} $X$ if every Cauchy cover is refined by a Cauchy cover that consists of elements of $B$.
+We can rephrase the property that $X$ has a dense set of points using this new notion.
+Indeed, it is clear that $X$ is generated by a set of inhabited sets if and only if it has a dense set of points.
+Another useful application of this notion is the following lemma, which also motivates the terminology:
+
+\begin{lem}[locale-gen]
+Let $X$ be a precover space generated by a set $B$.
+Then $L(X)$ is generated under joins by elements of the form $[b]$ for $b \in B$.
+\end{lem}
+\begin{proof}
+Since $L(X)$ is generated by elements of the form $[U]$ for $U \subseteq X$, it is enough to show that every such element is a join of elements of the form $[b]$ for $b \in B$.
+For every $U \subseteq X$, we have $[U] = \bigvee \{ [V] \mid V \rb^s U \}$.
+If $V \rb^s U$, then $\{ X \backslash V \} \cup \{ [b] \mid b \in B, b \subseteq U \}$ is a Cauchy cover.
+It follows that $[V] \leq \bigvee \{ [b] \mid b \in B, b \subseteq U \}$.
+Thus, $[U] = \bigvee \{ [b] \mid b \in B, b \subseteq U \}$, which concludes the proof.
+\end{proof}
+
+The following lemma gives us a convenient way of obtaining a generating set for a precover space:
+
+\begin{lem}[subbase-gen]
+Let $\mathcal{B}_X$ be a subbase for a precover space $X$.
+Then $X$ is generated by finite intersections of sets in $\bigcup \mathcal{B}_X$.
+\end{lem}
+\begin{proof}
+Let $B$ be the set of finite intersections of sets in $\bigcup \mathcal{B}_X$.
+We prove by induction on the generation of $\overline{\mathcal{B}_X}$ that every cover $C$ in this set is refined by some Cauchy cover $C' \subseteq B$.
+The only non-trivial case is \axref{CS}.
+Let $C$ be a set in $\overline{\mathcal{B}_X}$ and $\{ D_U \}_{U \in C}$ be a collection of sets in $\overline{\mathcal{B}_X}$.
+We need to show that $E = \{ U \cap V \mid U \in C, V \in D_U \}$ is refined by some Cauchy cover $E' \subseteq B$.
+By induction hypothesis, there exists a Cauchy cover $C' \subseteq B$ that refines $C$.
+Let $D'_{U'} = \{ V' \mid \exists U \in C, V \in D_U, U' \subseteq U, V' \subseteq V, V' \in B \}$.
+Then $D'_{U'}$ is a Cauchy cover for every $U' \in C'$.
+If we let $E' = \{ U' \cap V' \mid U' \in C', V' \in D'_{U'} \}$, then $E'$ is a Cauchy cover, $E' \subseteq B$, and $E'$ refines $E$.
+Thus, the proof is concluded.
+\end{proof}
+
+We can simplify the condition in the previous lemma for completions of $\mathbb{Q}$:
+
+\begin{lem}[rat-gen]
+Both $\mathbb{Q}$ and $\mathbb{R}$ are generated by open balls of rational radii with rational centers.
+\end{lem}
+\begin{proof}
+Since $\mathbb{Q}$ is dense in $\mathbb{R}$, \rlem{subbase-gen} implies tht both of these cover spaces are generated by finite intersections of open balls of rational radii with rational centers.
+Every such intersection is either empty, the whole space, or an open ball of the specified form.
+Thus, every Cauchy cover $C$ is refined by a cover $C'$ that consists of sets of this form.
+Then $\{ U \cap B_\varepsilon(x) \mid U \in C', x \in \mathbb{Q}, \overlap{U}{B_\varepsilon(x)} \}$ is a Cauchy cover, refines $C'$, and consists of open balls as required.
+\end{proof}
+
+Now, we will show that localic reals correspond to the cover space of real numbers we described.
+Recall that the frame of opens of the locale $\mathbb{R}_l$ of real numbers is generated by the set of open intervals of rational numbers together with the empty set under the following coverage:
+\begin{itemize}
+\item $(a,d) \triangleleft_0 \{ (a,c), (b,d) \}$ for all rational numbers $a < b < c < d$.
+\item $(a,d) \triangleleft_0 \{ (b,c) \mid a < b < c < d \}$ for all rational numbers $a < d$.
+\item $\varnothing \triangleleft_0 \varnothing$.
+\end{itemize}
+
+\begin{prop}
+The cover space of real numbers is isomorphic to $P(\mathbb{R}_l)$.
+\end{prop}
+\begin{proof}
+Let us prove that $L(\mathbb{R})$ is isomorphic to $\mathbb{R}_l$.
+First, we define $f : L(\mathbb{R}) \to \mathbb{R}_l$ by $f^*((a,b)) = \{ x \in \mathbb{R} \mid a < x < b \}$ and $f^*(\varnothing) = \varnothing$.
+It is clear that $f^*$ respects the coverage relation.
+To prove that it is an isomorphism, it is enough to show that it is bijective.
+It is clearly injective and \rlem{locale-gen} and \rlem{rat-gen} imply that it is surjective.
+
+\rlem{rat-gen} also implies that $\mathbb{R}$ has a dense set of points.
+Since $\mathbb{R}$ is also complete and strongly regular, \rthm{locale-equiv} implies that $\mathbb{R} \simeq P(L(\mathbb{R})) \simeq P(\mathbb{R}_l)$.
+\end{proof}
+
+This proposition implies that there is a bijection between localic maps $M \to \mathbb{R}_l$ and cover maps $P(M) \to \mathbb{R}$ for regular locales $M$ that have a dense set of points.
+Thus, this proposition provides a convenient way of constructing localic real-valued maps.
+For example, any locally uniform map $P(M) \to \mathbb{R}$ is a cover map and, hence, corresponds to some localic map $M \to \mathbb{R}_l$.
 
 \section{Limits of functions}
 
 TODO
+
+% TODO: Nat with its incomplete structure (even though it's a uniform one)
+
+% TODO: Convergence, uniform convergence, limits of functions, etc
+
+% TODO: Limits of functions on dense open subsets
+
+% TODO: The relationship between the definition of limits through filters and through extensions.
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
