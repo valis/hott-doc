@@ -368,7 +368,7 @@ The category of cover spaces $\cat{Cov}$ is the full subcategory of $\cat{Precov
 Now, we will show that various constructions we defined before are actually functors.
 First, we need a lemma:
 
-\begin{lem}
+\begin{lem}[cover-map-rb]
 If $f : X \to Y$ is a cover map and $U$ and $V$ are subsets of $Y$ such that $V \rb_Y U$, then $f^{-1}(V) \rb_X f^{-1}(U)$.
 \end{lem}
 \begin{proof}
@@ -434,6 +434,35 @@ Coversely, let $f : X \to Y$ be an injective embedding.
 Then $f : X \to Y$ is an equalizer of some functions $g,h : Y \to Z$ in $\cat{Set}$.
 If we put the indiscrete structure on $Z$, then $g$ and $h$ are cover maps and it is easy to see that $f$ is their equalizer.
 The same proof works for cover spaces.
+\end{proof}
+
+We will need later the fact that embeddings are closed under products.
+For this, we will prove the following lemma first:
+
+\begin{lem}
+Let $\mathcal{B}_X$ be a subbase for a precover space structure on $X$ and let $Y$ be a precover space.
+Let $f : X \to Y$ be a cover map such that, for every $C \in \mathcal{B}_X$, the set $\{ V \mid \exists U \in C, f^{-1}(V) \subseteq U \}$ is a Cauchy cover of $Y$.
+Then $f$ is an embedding.
+\end{lem}
+\begin{proof}
+We will show by induction on the generation of a cover $E \in \overline{\mathcal{B}_X}$ that $\{ U' \mid \exists U \in E, f^{-1}(U') \subseteq U \}$ is a Cauchy cover of $Y$.
+The base case holds by assumption.
+The cases \axref{CT} and \axref{CE} are obvious.
+Let us consider \axref{CS}.
+Let $C$ be a Cauchy cover of $X$ and $\{ D_U \}_{U \in C}$ be a collection of Cauchy covers of $X$ such that $E = \{ U \cap V \mid U \in C, V \in D_U \}$.
+By induction hypothesis, $C' = \{ U' \mid \exists U \in C, f^{-1}(U') \subseteq U \}$ is a Cauchy cover of $Y$.
+Let $D'_{U'} = \{ V' \mid \exists U \in C, \exists V \in D_U, f^{-1}(U') \subseteq U, f^{-1}(V') \subseteq V \}$.
+Then $D'_{U'}$ is a Cauchy cover of $Y$ for every $U' \in C'$.
+Since $\{ U' \cap V' \mid U' \in C', V' \in D_{U'} \}$ refines $\{ W' \mid \exists W \in E, f^{-1}(W') \subseteq W \}$, this concludes the proof.
+\end{proof}
+
+\begin{lem}[prod-embedding]
+If $f : X \to Y$ and $g : X' \to Y'$ are embeddings, then so is $f \times g : X \times X' \to Y \times Y'$.
+\end{lem}
+\begin{proof}
+The precover space structure on $X \times X'$ is generted by covers of the form $\{ \pi_1^{-1}(U) \mid U \in C \}$ and $\{ \pi_2^{-1}(U') \mid U' \in C' \}$ for Cauchy covers $C$ on $X$ and $C'$ on $X'$.
+Since $f$ and $g$ are embeddings, sets $\{ \pi_1^{-1}(V) \mid \exists U \in C, f^{-1}(V) \subseteq U \}$ and $\{ \pi_2^{-1}(V') \mid \exists U' \in C', f^{-1}(V') \subseteq U' \}$ are Cauchy covers on $Y \times Y'$.
+Since these covers refine $\{ V \mid \exists U \in C, (f \times g)^{-1}(V) \subseteq \pi_1^{-1}(U) \}$ and $\{ V' \mid \exists U' \in C', (f \times g)^{-1}(V') \subseteq \pi_2^{-1}(U') \}$, the previous lemma implies that $f \times g$ is an embedding.
 \end{proof}
 
 \section{Cauchy filters}
@@ -793,8 +822,6 @@ This means that $F^\wedge$ is a subset of $\eta_X(F)$, so they are equivalent.
 \begin{cor}
 Complete cover spaces is a reflective subcategory of $\cat{Cov}$.
 \end{cor}
-
-% TODO: Is it true that dense embeddings preserve properties of being omega-regular, completely regular, strongly regular, etc?
 
 The embedding $\eta_X$ might not be injective in general, but it is for separated cover spaces.
 In fact, this property characterize separated spaces:
@@ -1186,6 +1213,7 @@ This concludes the proof.
 
 The aim of this section is to study the cover space of real numbers.
 We will define this cover space, show that it is complete and corresponds to the locale of real numbers through the equivalence described in the previous section.
+We will also show that the field operations on real numbers are cover maps.
 
 Dedekind real numbers are usually defined as Dedekind cuts.
 A \emph{Dedekind cut} is a pair $(L,U)$ of subsets of $\mathbb{Q}$ satisfying the following conditions:
@@ -1342,14 +1370,153 @@ Since $\mathbb{R}$ is also complete and strongly regular, \rthm{locale-equiv} im
 This proposition implies that there is a bijection between localic maps $M \to \mathbb{R}_l$ and cover maps $P(M) \to \mathbb{R}$ for regular locales $M$ that have a dense set of points.
 Thus, this proposition provides a convenient way of constructing localic real-valued maps.
 For example, any locally uniform map $P(M) \to \mathbb{R}$ is a cover map and, hence, corresponds to some localic map $M \to \mathbb{R}_l$.
+Since local uniformness is a very common and useful condition, we define it explicitly for metric spaces as follows:
+
+\begin{defn}[locally-uniform]
+Let $X$ and $Y$ be metric spaces.
+Then a function $f : X \to Y$ is \emph{locally uniform} if, for every $\varepsilon > 0$, there exists $\delta_1 > 0$ such that,
+for every $x_1 \in X$, there exists $\delta_2 > 0$ such that, for every $x_2 \in X$, there exists $y \in Y$ such that $B_{\delta_1}(x_1) \cap B_{\delta_2}(x_2) \subseteq f^{-1}(B_\varepsilon(y))$.
+\end{defn}
+
+\begin{prop}[locally-uniform-cover-map]
+Every locally uniform function between metric spaces is a cover map.
+\end{prop}
+\begin{proof}
+Let $f : X \to Y$ be a locally uniform function.
+Then it is enough to show that, for every $\varepsilon > 0$, there exists a Cauchy cover $E$ on $X$ such that every set in $E$ is mapped to an open ball of radius $\varepsilon$.
+Let $\varepsilon$ be a positive real number.
+Then we have $\delta_1 > 0$ as in \rdefn{locally-uniform}.
+Let $C$ be the uniform cover of $X$ consisting of open balls of radius $\delta_1$.
+Let $D_U = \{ V \mid \exists x_1,x_2 \in X, \exists \delta_2 > 0, \exists y \in Y, U = B_{\delta_1}(x_1), V = B_{\delta_2}(x_2), U \cap V \subseteq f^{-1}(B_\varepsilon(y)) \}$.
+Then, for every open ball $U = B_{\delta_1}(x_1) \in C$, there exists $\delta_2 > 0$ as in \rdefn{locally-uniform} and $D_U$ is refined by the uniform cover consisting of open balls of radius $\delta_2$.
+It follows that $E = \{ U \cap V \mid U \in C, V \in D_U \}$ is the required Cauchy cover.
+\end{proof}
+
+Finally, we will show that the field operations on $\mathbb{R}$ are cover maps.
+First, we need to show that dense embeddings are closed under products:
+
+\begin{lem}
+Let $X$ and $X'$ be precover spaces, $Y$ and $Y'$ be cover spaces, and $f : X \to Y$ and $g : X' \to Y'$ be cover maps.
+If $f$ and $g$ are dense embeddings, then so is $f \times g : X \times X' \to Y \times Y'$.
+\end{lem}
+\begin{proof}
+Since embeddings are closed under products by \rlem{prod-embedding}, it is enough to show that $f \times g$ is dense whenever $f$ and $g$ are.
+Let $(y,y')$ be a point in $Y \times Y'$ and let $U$ be its neighborhood.
+By \rlem{rb-point}, there exists a neighborhood $V$ of $(y,y')$ such that $V \rb U$.
+By applying \rlem{cover-map-rb} to the map $\langle \mathrm{id}_Y, \mathrm{const}(y') \rangle$, we get that $\{ y_1 \mid (y_1,y') \in V \}$ is a neighborhood of $y$.
+Since $f$ is dense, there exists a point $x \in X$ such that $(f(x),y')$ belongs to $V$.
+It follows that $U$ is a neighborhood of $(f(x),y')$.
+Now, if apply \rlem{cover-map-rb} to the map $\langle \mathrm{const}(f(x)), \mathrm{id}_{Y'} \rangle$ and this neighborhood,
+then we get that $\{ y_2 \mid (f(x),y_2) \in U \}$ is a neighborhood of $(f(x),y')$.
+Since $g$ is dense, there exists a point $x' \in X'$ such that $(f(x),f(x'))$ belongs to $U$.
+Thus, $f \times g$ is indeed dense.
+\end{proof}
+
+This lemma implies that we can extend cover maps $\mathbb{Q}^n \to \mathbb{R}$ to cover maps $\mathbb{R}^n \to \mathbb{R}$.
+Since the ring operations on $\mathbb{Q}$ are locally uniform, \rprop{locally-uniform-cover-map} implies that they extend to cover maps on $\mathbb{R}$.
+By uniqueness of extensions, these maps satisfy the ring axioms.
+
+Now, we just need to show that the inverse function is a cover map.
+Let $\mathbb{R}_*$ be the union of negative and positive real numbers.
+It is well-known that a real number is invertible if and only if it belongs to $\mathbb{R}_*$.
+We want to show that the function $(-)^{-1} : \mathbb{R}_* \to \mathbb{R}$ is a cover map.
+
+If we put the transferred cover space structure on $\mathbb{R}_*$, then this map is certainly not a cover map.
+The problem is that $\mathbb{R}_*$ is incomplete with this cover space structure and its completion is the whole $\mathbb{R}$,
+so if we could define such a cover map, it would extend to the whole $\mathbb{R}$, which is impossible.
+Thus, we need to put another cover space structure on $\mathbb{R}_*$.
+We will give a more general construction that applies to any open subset of a complete cover space:
+
+\begin{prop}
+Let $S$ be an open subset of a complete cover space $X$.
+Then $(S,\overline{\mathcal{B}_S})$ is a complete cover space for the following subbase $\mathcal{B}_S$:
+\[ \mathcal{B}_S = \{ \{ V \cap S \mid V \in D \} \mid D \in \mathcal{C}_X \} \cup \{ \{ V \mid V = V_1 \rb \ldots \rb V_n = S \} \mid n \in \mathbb{N} \}. \]
+\end{prop}
+\begin{proof}
+First, note that $\mathcal{B}_S$ consists of covers.
+For sets of the form $\{ V \cap S \mid V \in D \}$, this follows from the fact that $D$ is a cover.
+For sets of the form $\{ V \mid V = V_1 \rb \ldots \rb V_n = S \}$, this follows from \rlem{rb-point} and the fact that $S$ is open.
+It is clear that $\mathcal{B}_S$ is a regular subbase.
+Thus, $(S,\overline{\mathcal{B}_S})$ is a cover space.
+It is also clear that the inclusion function $i : S \to X$ is a cover map.
+\rprop{embedding-injective} implies that $S$ is separated.
+
+Finally, let us show that $S$ is complete.
+% TODO
+\end{proof}
 
 \section{Limits of functions}
 
-TODO
+Limits of functions are closely related to lifting problem for cover spaces.
+In this section, we show how various kinds of limits and are related and can be expressed in terms of liftings.
+In general, a kind of limits can be represented by a dense cover map $X \to \widetilde{X}$.
+Then a data of a limit in a precover space $Y$ is given by a function $f : X \to Y$.
+Then we can say that the limit of $f$ exists if this function extends to a cover map $\widetilde{f} : \widetilde{X} \to Y$.
+The limit itself is given by the image of $\widetilde{f}$ at some point in $\widetilde{X}$.
 
-% TODO: Nat with its incomplete structure (even though it's a uniform one)
+Let us demonstrate how these definitions apply to the case of sequential limits.
+First, we define a uniform space structure on $\mathbb{N}$.
+A cover $C$ of $\mathbb{N}$ is uniform if there exist $N \in \mathbb{N}$ and $U \in C$ such that $U$ contains every $n \geq N$.
+It is easy to check that this indeed defines a uniform space structure on $\mathbb{N}$.
 
-% TODO: Convergence, uniform convergence, limits of functions, etc
+Cauchy filters correspond to so-called extended natural numbers.
+An \emph{extended natural number} is a sequence $x$ of binary digits, that is, elements of $\{ 0, 1 \}$, such that $x_n = 1$ for at most one $n \in \mathbb{N}$.
+The set of extended natural numbers will be denoted by $\mathbb{N}_\infty$.
+There is a map $\mathbb{N} \amalg \{ \infty \} \to \mathbb{N}_\infty$ that maps $n \in \mathbb{N}$ to the sequence $x$ with $x_n = 1$ and maps $\infty$ to the sequence consisting of $0$.
+Classically, this map is bijective, but it is only injective constructively.
+
+\begin{prop}
+There is a bijection between the set of minimal Cauchy filters on $\mathbb{N}$ and the set of extended natural numbers.
+\end{prop}
+\begin{proof}
+A proper filter $F$ on $\mathbb{N}$ is Cauchy if and only if, for every $N \in \mathbb{N}$, either there exists $n < N$ such that $\{ n \} \in F$ or $[N,\infty) \in F$.
+Let us show that the relation $\{ n \} \in F$ is decidable.
+We proceed by induction on $n$.
+If $\{ k \}$ belongs to $F$ for some $k < n$, then $\{ n \}$ does not belong to $F$ since $F$ is proper.
+Otherwise, either $\{ n \} \in F$ or $[N + 1, \infty) \in F$.
+The latter case implies that $\{ n \} \notin F$.
+Thus, we can decide whether $\{ n \}$ belongs to $F$ or not.
+
+Now, we can define a function $s$ from the set of Cauchy filters to $\mathbb{N}_\infty$ as follows: $s(F)_n = 1$ if and only if $\{ n \} \in F$.
+Since $\{ n \}$ belongs to $F$ for at most one $n$, this sequence is indeed an extended natural number.
+We also define a function $f$ from $\mathbb{N}_\infty$ to the set of Cauchy filters:
+\[ f(x) = \{ U \mid (\exists n \in U, x_n = 1) \lor (\exists N \in \mathbb{N}, [N,\infty) \subseteq U, \forall n < N, x_n = 0) \}. \]
+It is easy to check that $f(x)$ is indeed a Cauchy filter.
+
+It is also easy to see that $s(f(x)) = x$ and that $f(s(F)) \subseteq F$.
+Thus, $f(s(F))$ is equivalent to $F$.
+Also, it is clear that $s(F) = s(G)$ whenever $F \subseteq G$, which implies that $s$ respects the equivalence of Cauchy filters.
+Thus, we get a bijection between $\mathbb{N}_\infty$ and equivalence classes of Cauchy filters.
+Since minimal Cauchy filters are unique representatives of their equivalence classes, we also have the required bijection.
+\end{proof}
+
+We will say that a sequence $f : \mathbb{N} \to X$ in a precover space $X$ is \emph{Cauchy} if, for every Cauchy cover $C$ of $X$, there exist $N \in \mathbb{N}$ and $U \in C$ such that, for every $n \geq N$, $f_n \in U$.
+If $X$ is a metric space, this is indeed equivalent to the usual definition of a Cauchy sequence.
+Thus, we get a generalization of Cauchy sequences for arbitrary precover spaces.
+Moreover, $f : \mathbb{N} \to X$ is a Cauchy sequence if and only if it is a cover map for the uniform structure on $\mathbb{N}$ we defined above.
+If $X$ is a complete cover space, then \rthm{dense-lift} implies that a sequence $f : \mathbb{N} \to X$ is Cauchy if and only if it extends to a cover map $\widetilde{f} : \mathbb{N}_\infty \to X$.
+Then the limit of $f$ is defined as $\widetilde{f}(\infty)$.
+
+Now, we will discuss limits of sequences of functions.
+It is well-known that the limit of a pointwise convergent sequence of continuous maps may not be continuous.
+The same is true for cover maps.
+The problem becomes obvious when expressed in terms of the lifting property.
+Indeed, a sequence of functions $X \to Y$ can be represented by a function $f : \mathbb{N} \times X \to Y$.
+Now, even if $f(n,-)$ is a cover map for all $n \in \mathbb{N}$ and $f(-,x)$ is a cover map for all $x \in X$, this does not imply that $f$ is a cover map.
+In other words, if $f$ represents a pointwise convergent sequence of cover maps, $f$ may not be a cover map itself.
+So, it is natural to say that a sequence of functions between precover spaces $X$ and $Y$ is \emph{Cauchy} if the corresponding function $\mathbb{N} \times X \to Y$ is a cover map.
+As before, if $Y$ is a complete cover space, then $f$ is Cauchy if and only if it extends to a map $\widetilde{f} : \mathbb{N}_\infty \times X \to Y$.
+Then the limit of $f$ is defined as $\widetilde{f}(\infty,-)$.
+
+Unfolding the definition of a cover map, we get simple conditions which imply that a sequence of functions is Cauchy.
+A sequence of functions $f_n : X \to Y$ is said to be \emph{uniformly convergent} if,
+for every Cauchy cover $D$ on $Y$, there exist $N \in \mathbb{N}$ and $V \in D$ such that, for all $n \geq N$ and $x \in X$, $f_n(x) \in V$.
+More generally, a sequence of functions $f_n : X \to Y$ is said to be \emph{locally uniformly convergent} if it consists of cover maps and,
+for every Cauchy cover $D$ on $Y$, the following set is a Cauchy cover on $X$:
+\[ \{ U \mid \exists N \in \mathbb{N}, \exists V \in D, \forall n \geq N, \forall x \in U, f_n(x) \in V \}. \]
+
+It is easy to see that uniformly convergent sequences are locally uniformly convergent and locally uniformly convergent sequences are Cauchy.
+Thus, these two definitions provide explicit conditions that imply the existence of the limit of a sequence of functions when their codomain is complete.
 
 % TODO: Limits of functions on dense open subsets
 
