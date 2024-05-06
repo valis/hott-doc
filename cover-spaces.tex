@@ -4,6 +4,7 @@
 \usepackage{hyperref}
 \usepackage{ifthen}
 \usepackage{xargs}
+\usepackage{mathtools}
 
 \hypersetup{colorlinks=true,linkcolor=blue}
 
@@ -41,6 +42,13 @@
 \newcommand{\refines}{<}
 \newcommand{\rb}{\prec}
 \newcommand{\cat}[1]{\mathbf{#1}}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+\makeatother
 
 \begin{document}
 
@@ -273,7 +281,18 @@ We will also need the notion of a subbase for a precover structure:
 Given a set $X$, a \emph{subbase} for a precover structure on $X$ is any set of covers of $X$.
 \end{defn}
 
-Any subbase $\mathcal{B}_X$ determines a precover space structure $\overline{\mathcal{B}_X}$ on $X$ by taking the closure of $\mathcal{B}_X$ under \axref{CT}, \axref{CE}, and \axref{CS}.
+Given a subbase $\mathcal{B}_X$, we can take its closure under \axref{CT}, \axref{CE}, and \axref{CS}.
+We will denote this closure by $\overline{\mathcal{B}_X}$.
+Then the following lemma applied to the filter of sets containing a given point implies that all sets in this closure are covers:
+
+\begin{lem}[closure-filter]
+Let $\mathcal{B}_X$ be a subbase and $F$ be a filter on $X$.
+If $F$ intersects with every set in $\mathcal{B}_X$, then it also intersects with every set in $\overline{\mathcal{B}_X}$.
+\end{lem}
+\begin{proof}
+The proof is an easy induction on the generation of $\overline{\mathcal{B}_X}$.
+\end{proof}
+
 Thus, $\overline{\mathcal{B}_X}$ is the minimal precover space structure on $X$ that contains $\mathcal{B}_X$.
 In general, $(X,\overline{\mathcal{B}_X})$ is not a cover space, but it is so if $\mathcal{B}_X$ satisfies an additional regularity hypothesis.
 We will say that subbase $\mathcal{B}_X$ is \emph{regular} if, for every $C \in \mathcal{B}_X$, the set $\{ V \mid \exists U \in C, V \rb_{(X,\overline{\mathcal{B}_X})} U \}$ belongs to $\overline{\mathcal{B}_X}$.
@@ -547,36 +566,17 @@ By \rlem{cauchy-filter-rb}, $U$ belongs to any Cauchy filter which is equivalent
 Thus, $F$ is minimal.
 \end{proof}
 
-We do not know if every minimal Cauchy filter is regular in general, but this is true for completely regular cover spaces.
-We can actually weaken the condition of complete regularity.
-To do this, we need to introduce a new relation on subsets of a precover space.
-We will say that a relation $R$ is \emph{left $\rb$-interpolative} if $R(W,U)$ implies that there exists $V$ such that $R(W,V)$ and $V \rb U$.
-If $U$ and $V$ are subsets of a precover space $X$, we will say that $V$ is \emph{$\omega$-rather below} $U$, written $V \rb^\omega_X U$ (or, for short, $V \rb^\omega U$), if there is a left $\omega$-interpolative relation $R$ contained in $\rb$ such that $R(V,U)$.
-It is easy to see that $\rb^\omega$ satisfies conditions analogous to conditions in \rprop{rb-props}:
-
-\begin{prop}[rbo-props]
-The following is true for subsets $U,V,U',V'$ of a precover space $X$:
-\begin{enumerate}
-\item If $V \rb^\omega U$, then $V \rb U$.
-\item If $V' \subseteq V \rb^\omega U \subseteq U'$, then $V' \rb^\omega U'$.
-\item If $V \rb^\omega U$ and $V' \rb^\omega U'$, then $V \cap V' \rb^\omega U \cap U'$.
-\item $V \rb^\omega X$.
-\item $\varnothing \rb^\omega U$.
-\end{enumerate}
-\end{prop}
-
-A precover space $X$ is called \emph{$\omega$-regular} if, for every $C \in \mathcal{C}_X$, the set $\{ V \mid \exists U \in C, V \rb^\omega U \}$ also belongs to $\mathcal{C}_X$.
-Since $\rb^\omega$ is contained in $\rb$ and $\rb^c$ is cointained in $\rb^\omega$, every $\omega$-regular precover space is a cover space and every completely regular cover space is $\omega$-regular.
+We do not know if every minimal Cauchy filter is regular in general, but this is true for completely regular cover spaces:
 
 \begin{prop}[omega-cauchy-filters]
-Let $X$ be ab $\omega$-regular cover space.
+Let $X$ be a completely regular cover space.
 Then every Cauchy filter in $X$ is equivalent to a regular one.
 In particular, every minimal Cauchy filter is regular.
 \end{prop}
 \begin{proof}
 Let $F$ be a Cauchy filter.
-Then we define $G$ as $\{ U \mid \exists V \in F, V \rb^\omega U \}$.
-Since $X$ is $\omega$-regular and $F$ is a Cauchy filter, $G$ is also a Cauchy filter.
+Then we define $G$ as $\{ U \mid \exists V \in F, V \rb^c U \}$.
+Since $X$ is completely regular and $F$ is a Cauchy filter, $G$ is also a Cauchy filter.
 It is also clear that $G$ is regular and is a subset of $F$.
 \end{proof}
 
@@ -758,7 +758,7 @@ Now, we can show that every cover space has a completion:
 
 \begin{thm}[completion]
 For every cover space $X$, there is a complete cover space $C(X)$ and a dense embedding $\eta_X : X \to C(X)$.
-If $X$ is $\omega$-regular or completely regular, then so is $C(X)$.
+If $X$ is completely regular, then so is $C(X)$.
 \end{thm}
 \begin{proof}
 Let $C(X)$ be the set of minimal Cauchy filters in $X$.
@@ -785,8 +785,8 @@ Now, we are ready to check \axref{CR}.
 Let $C$ be a Cauchy cover in $C(X)$.
 The fact we just proved implies that $\{ \widetilde{V'} \mid \exists U' \in C', V' \rb_X U' \}$ refines $\{ V \mid \exists U \in C, V \rb_{C(X)} U \}$ and, hence, the latter cover is Cauchy.
 
-It is easy to see that $V \rb_X^\omega U$ implies $\widetilde{V} \rb_{C(X)}^\omega \widetilde{U}$ and $V \rb_X^c U$ implies $\widetilde{V} \rb_{C(X)}^c \widetilde{U}$.
-Thus, similar proofs show that $C(X)$ is $\omega$-regular or completely regular whenever $X$ is.
+It is easy to see that $V \rb_X^c U$ implies $\widetilde{V} \rb_{C(X)}^c \widetilde{U}$.
+Thus, a similar proof shows that $C(X)$ is completely regular whenever $X$ is.
 
 We define $\eta_X(x)$ as $x^\wedge$.
 Let us check tht $\eta_X : X \to C(X)$ is a cover map.
@@ -1279,7 +1279,7 @@ Since $F' \subseteq F$ and $F$ is minimal, we have that $F = F'$.
 Thus, $F$ satisfies \axref{DT}.
 
 Finally, let us prove that $F$ satisfies \axref{DR}.
-Since $\mathbb{Q}$ is $\omega$-regular, \rprop{omega-cauchy-filters} implies that $F$ is regular.
+Since $\mathbb{Q}$ is completely regular, \rprop{omega-cauchy-filters} implies that $F$ is regular.
 Thus, if we have $(a,b) \in F$, then there exists a set $U \in F$ such that $U \rb (a,b)$.
 By \axref{DT}, we also have an open interval $(c,d) \in F$ such that $(c,d) \subseteq U$.
 \rprop{rb-closure} implies that $a < c$ and $d < b$.
@@ -1425,24 +1425,111 @@ If we put the transferred cover space structure on $\mathbb{R}_*$, then this map
 The problem is that $\mathbb{R}_*$ is incomplete with this cover space structure and its completion is the whole $\mathbb{R}$,
 so if we could define such a cover map, it would extend to the whole $\mathbb{R}$, which is impossible.
 Thus, we need to put another cover space structure on $\mathbb{R}_*$.
-We will give a more general construction that applies to any open subset of a complete cover space:
+We will give a more general construction that applies to any open subset of a complete cover space.
+Let $S$ be an open subset of a cover space $X$.
+Then we define the following subbase on $S$:
+\[ \mathcal{B}_S = \{ \{ V \cap S \mid V \in D \} \mid D \in \mathcal{C}_X \} \cup \{ \{ V \mid V \rb_X V_1 \rb_X \ldots \rb_X V_n \rb_X S \} \mid n \in \mathbb{N} \}. \]
 
-\begin{prop}
-Let $S$ be an open subset of a complete cover space $X$.
-Then $(S,\overline{\mathcal{B}_S})$ is a complete cover space for the following subbase $\mathcal{B}_S$:
-\[ \mathcal{B}_S = \{ \{ V \cap S \mid V \in D \} \mid D \in \mathcal{C}_X \} \cup \{ \{ V \mid V = V_1 \rb \ldots \rb V_n = S \} \mid n \in \mathbb{N} \}. \]
-\end{prop}
+\begin{lem}
+Let $S$ be an open subset of a cover space $X$.
+Then $\mathcal{B}_S$ is a regular subbase on $S$.
+\end{lem}
 \begin{proof}
 First, note that $\mathcal{B}_S$ consists of covers.
 For sets of the form $\{ V \cap S \mid V \in D \}$, this follows from the fact that $D$ is a cover.
-For sets of the form $\{ V \mid V = V_1 \rb \ldots \rb V_n = S \}$, this follows from \rlem{rb-point} and the fact that $S$ is open.
-It is clear that $\mathcal{B}_S$ is a regular subbase.
-Thus, $(S,\overline{\mathcal{B}_S})$ is a cover space.
-It is also clear that the inclusion function $i : S \to X$ is a cover map.
-\rprop{embedding-injective} implies that $S$ is separated.
+For sets of the form $\{ V \mid V = V_1 \rb_X \ldots \rb_X V_n = S \}$, this follows from \rlem{rb-point} and the fact that $S$ is open.
+The fact that this subbase is regular is obvious.
+\end{proof}
 
-Finally, let us show that $S$ is complete.
-% TODO
+The following lemma shows that neighborhoods in $(S,\overline{\mathcal{B}_X})$ are the same as in $X$:
+
+\begin{lem}[subspace-neighborhood]
+Let $S$ be an open subset of a cover space $X$.
+If $x$ is a point in $S$ and $U$ is a subset of $S$, then $U$ is a neighborhood of $x$ in $S$ if and only if it is a neighborhood of $x$ in $X$.
+\end{lem}
+\begin{proof}
+Since the inclusion function $S \to X$ is a cover map, \rlem{cover-map-rb} implies the ``if'' direction.
+Let us prove the converse.
+First, note that $F_x = \{ W \subseteq S \mid \{ x \} \rb_X W \}$ is a filter on $S$.
+It is easy to see that this filter intersects every element of $\mathcal{B}_X$ using \rlem{rb-point} and the fact that $S$ is open.
+\rlem{closure-filter} implies that $F_x$ also intersects every element of $\overline{\mathcal{B}_X}$.
+If $U$ is a neighborhood of $x$ in $S$, then $\{ W \mid x \in W \implies W \subseteq U \}$ belongs to $\overline{\mathcal{B}_X}$.
+Thus, there exists a set $W$ such that $\{ x \} \rb_X W$ and $W \subseteq U$ and, hence, $U$ is a neighborhood of $x$ in $X$.
+\end{proof}
+
+Now, we can show that $(S,\overline{\mathcal{B}_S})$ is complete whenever $X$ is:
+
+\begin{prop}
+Let $S$ be an open subset of a complete cover space $X$.
+Then $(S,\overline{\mathcal{B}_S})$ is a complete cover space.
+\end{prop}
+\begin{proof}
+Since the inclusion function $S \to X$ is a cover map, \rprop{embedding-injective} implies that $S$ is separated.
+Let us show that $S$ is complete.
+If $F$ is a Cauchy filter on $S$, then $G = \{ V \mid V \cap S \in F \}$ is a Cauchy filter on $X$.
+By \rlem{subspace-neighborhood}, it is enough to show that $G^\vee$ belongs to $S$.
+Since $\{ V \mid V \rb_X S \}$ is a Cauchy cover of $S$, there exists $V \in F$ such that $V \rb_X S$.
+Now, \rlem{filter-point-char} implies that $S$ is a neighborhood of $G^\vee$, which concludes the proof.
+\end{proof}
+
+Now, we can return to the problem of showing that the inverse function $\mathbb{R}_* \to \mathbb{R}_*$ is a cover map.
+To do that, we will assume that $\mathbb{R}_*$ is endowed with the cover space structure as described above.
+We can give a simpler description of this structure for $\mathbb{R}_*$:
+
+\begin{lem}
+Let $V$ be a subset of $\mathbb{R}$.
+Then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:inv-srb} $V \rb^s_\mathbb{R} \mathbb{R}_*$.
+\item \label{it:inv-rb} $V \rb_\mathbb{R} \mathbb{R}_*$.
+\item \label{it:inv-char} There exists a rational $\varepsilon > 0$ such that $V$ does not intersect $B_\varepsilon(0)$.
+\item \label{it:inv-crb} $V \rb^c_\mathbb{R} \mathbb{R}_*$.
+\end{enumerate}
+\end{lem}
+\begin{proof}
+Clearly, \eqref{it:inv-srb} implies \eqref{it:inv-rb}.
+Let us show that \eqref{it:inv-rb} implies \eqref{it:inv-char}.
+If $V \rb_\mathbb{R} \mathbb{R}_*$, then $\{ W' \mid W' \rb_\mathbb{R} W, \overlap{W}{V} \implies W \subseteq \mathbb{R}_* \}$ is a cover.
+Thus, there exists a neighborhood $W$ of $0$ such that the implication $\overlap{W}{V} \implies W \subseteq \mathbb{R}_*$ holds.
+Since $0$ does not belong to $\mathbb{R}_*$, this neighborhood does not intersect $V$.
+So, we showed that there is an open ball with center in $0$ that does not intersect $V$.
+
+Since \eqref{it:inv-crb} implies \eqref{it:inv-rb}, it is enough to show that \eqref{it:inv-char} implies \eqref{it:inv-crb} and \eqref{it:inv-srb}.
+To do this, we define a relation $R$ on subsets of $\mathbb{R}$ as follows:
+\[ R(V,U) \Leftrightarrow \exists \varepsilon_1 > \varepsilon_2 > 0, V \cap B_{\varepsilon_1}(0) = \varnothing, (- \infty, - \varepsilon_2) \cup (\varepsilon_2, \infty) \subseteq U. \]
+This relation is interpolative.
+Indeed, if $R(V,U)$, then we define $W = (- \infty, - \frac{\varepsilon_1 + \varepsilon_2}{2}) \cup (\frac{\varepsilon_1 + \varepsilon_2}{2}, \infty)$.
+Then clearly $R(V,W)$ and $R(W,U)$.
+
+If $R(V,U)$, then $\{ \mathbb{R} \backslash V, U \}$ is refined by the uniform cover consisting of open balls of radius $\frac{\varepsilon_1 - \varepsilon_2}{2}$.
+Thus, $R(V,U)$ implies $V \rb^s_\mathbb{R} U$ and $V \rb^c_\mathbb{R} U$.
+Since \eqref{it:inv-char} implies $R(V,\mathbb{R}_*)$, this completes the proof.
+\end{proof}
+
+\begin{prop}
+The cover space structure on $\mathbb{R}_*$ is generated by the following subbase:
+\[ \mathcal{B}_{\mathbb{R}_*} = \{ \{ B_\varepsilon(x) \cap \mathbb{R}_* \mid x \in \mathbb{Q}, x \neq 0 \} \mid \varepsilon > 0 \} \cup \{ \{ (- \infty, - \varepsilon) \cup (\varepsilon, \infty) \mid \varepsilon > 0 \} \}. \]
+\end{prop}
+\begin{proof}
+The first set in this union generates the transferred cover space structure on $\mathbb{R}_*$ and the second one generates the same covers as $\{ \{ V \mid V \rb_\mathbb{R} V_1 \rb_\mathbb{R} \ldots \rb_\mathbb{R} V_n \rb_\mathbb{R} \mathbb{R}_* \} \mid n \in \mathbb{N} \}$ by the previous lemma.
+Thus, this subbase generates the same set as the one described above for a general open set.
+\end{proof}
+
+Now, we are ready to prove that the inverse function is a cover map:
+
+\begin{prop}
+The inverse function $\mathbb{R}_* \to \mathbb{R}_*$ is a cover map.
+\end{prop}
+\begin{proof}
+We will denote this function by $e : \mathbb{R}_* \to \mathbb{R}_*$.
+First, note that $\{ e^{-1}((- \infty, - \varepsilon) \cup (\varepsilon, \infty)) \mid \varepsilon > 0 \}$ is refined by the uniform cover consisting of open balls of radius $1$.
+Thus, we just need to prove that $\{ e^{-1}(B_\varepsilon(y) \cap \mathbb{R}_*) \mid y \in \mathbb{Q}, y \neq 0 \}$ is a Cauchy cover for every $\varepsilon > 0$.
+We will show that it is refined by the Cauchy cover $\{ ((- \infty, - \delta) \cup (\delta, \infty)) \cap B_{\frac{\varepsilon \delta^2}{1 + \varepsilon \delta}}(x) \mid \delta > 0, x \in \mathbb{Q}, x \neq 0 \}$.
+To do this, it is enough to show that $((- \infty, - \delta) \cup (\delta, \infty)) \cap B_{\frac{\varepsilon \delta^2}{1 + \varepsilon \delta}}(x) \subseteq e^{-1}(B_\varepsilon(\frac{1}{x}) \cap \mathbb{R}_*)$.
+Let $z$ be a real number such that $\abs{z} > \delta$ and $\abs{z - x} < \frac{\varepsilon \delta^2}{1 + \varepsilon \delta}$.
+We need to show that $\abs{\frac{1}{z} - \frac{1}{x}} < \varepsilon$.
+First, note that $\abs{x} \geq \abs{z} - \abs{z - x} > \delta - \frac{\varepsilon \delta^2}{1 + \varepsilon \delta} = \frac{\delta}{1 + \varepsilon \delta}$.
+Now, we can finish the proof: $\abs{\frac{1}{z} - \frac{1}{x}} = \frac{\abs{z - x}}{\abs{z} \abs{x}} < \varepsilon$.
 \end{proof}
 
 \section{Limits of functions}
@@ -1518,9 +1605,40 @@ for every Cauchy cover $D$ on $Y$, the following set is a Cauchy cover on $X$:
 It is easy to see that uniformly convergent sequences are locally uniformly convergent and locally uniformly convergent sequences are Cauchy.
 Thus, these two definitions provide explicit conditions that imply the existence of the limit of a sequence of functions when their codomain is complete.
 
-% TODO: Limits of functions on dense open subsets
+Finally, we will discuss limits of functions of the form $f : \mathbb{R}_* \to \mathbb{R}$.
+As usual, we will say that $y$ is a \emph{limit} of $f$ at $0$ if, for every $\varepsilon > 0$,
+there exists $\delta > 0$ such that, for every $x \in \mathbb{R}_*$, if $\abs{x} < \delta$, then $\abs{f(x) - y} < \varepsilon$.
+The relationship between this notion and a lifting property is given by the following proposition:
 
-% TODO: The relationship between the definition of limits through filters and through extensions.
+\begin{prop}
+Let $f : \mathbb{R}_* \to \mathbb{R}$ be a cover map.
+Then $f$ has a limit at $0$ if and only if $f$ extends to a cover map $\widetilde{f} : \mathbb{R} \to \mathbb{R}$.
+The limit is then equal to $\widetilde{f}(0)$.
+\end{prop}
+\begin{proof}
+Assume that $f$ extends to $\widetilde{f}$.
+\rlem{cover-map-rb} implies that, for every $\varepsilon > 0$, the set $\widetilde{f}^{-1}(B_\varepsilon(\widetilde{f}(0)))$ is a neighborhood of $0$.
+It follows that $\widetilde{f}(0)$ is a limit of $f$ at $0$.
+
+Now, assume that $L$ is a limit of $f$ at $0$.
+Let $\mathbb{R}'_*$ be the set of invertible real number with the transferred cover space structure.
+Since it is densely embeds into $\mathbb{R}$, every cover map $\mathbb{R}'_* \to \mathbb{R}$ extends to a unique map $\mathbb{R} \to \mathbb{R}$.
+Thus, we just need to show that $f : \mathbb{R}_* \to \mathbb{R}$ is a cover map from $\mathbb{R}'_*$ to $\mathbb{R}$.
+That is, we need to show that, for every $\varepsilon > 0$, the set $\{ f^{-1}(B_\varepsilon(x)) \mid x \in \mathbb{Q} \}$ is a Cauchy cover of $\mathbb{R}'_*$.
+
+For every $\varepsilon > 0$, there exists $\delta > 0$ such that $B_\delta(0) \cap \mathbb{R}_* \subseteq f^{-1}(B_\varepsilon(L))$.
+Now, endow $V = \left(- \infty, - \frac{\delta}{3} \right) \cup \left(\frac{\delta}{3}, \infty \right)$ with the transferred cover space structure.
+It does not matter if we transfer it from $\mathbb{R}_*$ or $\mathbb{R}$ since the result is the same.
+Since the composite $V \to \mathbb{R}_* \overset{f}\to \mathbb{R}$ is a cover map,
+there exists a Cauchy cover $C$ of $\mathbb{R}$ such that $\{ U \cap V \mid U \in C \}$ refines $\{ f^{-1}(B_\varepsilon(y)) \mid y \in \mathbb{Q} \}$.
+
+Since $\{ U \cap B_{\delta/3}(x) \cap \mathbb{R}_* \mid U \in C, x \in \mathbb{Q} \}$ is a Cauchy cover of $\mathbb{R}'_*$,
+it is enough to show that it refines $\{ f^{-1}(B_\varepsilon(x)) \mid x \in \mathbb{Q} \}$.
+Let $U$ be a set in $C$ and $x$ be a rational number.
+If $\abs{x} \geq \frac{2}{3} \delta$, then $U \cap B_{\delta/3}(x) \cap \mathbb{R}_*$ is a subset of $U \cap V$ and, hence, it is a subset of $f^{-1}(B_\varepsilon(y))$ for some $y \in \mathbb{Q}$.
+If $\abs{x} \leq \frac{2}{3} \delta$, then $U \cap B_{\delta/3}(x) \cap \mathbb{R}_* \subseteq B_\delta(0) \cap \mathbb{R}_* \subseteq f^{-1}(B_\varepsilon(L))$.
+This completes the proof.
+\end{proof}
 
 \bibliographystyle{amsplain}
 \bibliography{ref}
