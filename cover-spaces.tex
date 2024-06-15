@@ -39,7 +39,6 @@
 \numberwithin{figure}{section}
 
 \newcommand{\overlap}[2]{#1 \between #2}
-\newcommand{\refines}{<}
 \newcommand{\rb}{\prec}
 \newcommand{\cat}[1]{\mathbf{#1}}
 
@@ -73,7 +72,7 @@ First, we need to give a few basic definitions:
 \begin{itemize}
 \item Two subsets $U,V$ of a set $X$ \emph{intersect}, written $\overlap{U}{V}$, if there exists an element of $X$ which belongs to both subsets.
 \item A set $C$ of subsets of a set $X$ is called a \emph{cover} if $\bigcup C = X$. If $C$ is a cover of $X$, we will also say that $C$ \emph{covers} $X$ and that $X$ \emph{is covered by} $C$.
-\item A cover $C$ \emph{refines} a cover $D$, written $C \refines D$, if every element of $C$ is a subset of some element of $D$.
+\item A cover $C$ \emph{refines} a cover $D$ if every element of $C$ is a subset of some element of $D$.
 \item If $U$ and $V$ are subsets of a topological space $X$, we will say that $V$ is \emph{rather below} $U$, written $V \rb_X U$ or, for short, $V \rb U$, if $X$ is covered by opens $W$ satisfying implication $\overlap{W}{V} \implies W \subseteq U$.
 \item A topological space is \emph{regular} if every open $U$ is covered by opens which are rather below $U$.
 \end{itemize}
@@ -83,8 +82,8 @@ Now, we are ready to define cover spaces:
 A \emph{cover space} is a set $X$ together with a set $\mathcal{C}_X$ of covers of $X$, which satisfy the following conditions:
 \begin{itemize}
 \item[(CT)] \axitem{CT} $\{ X \} \in \mathcal{C}_X$
-\item[(CE)] \axitem{CE} If $C \in \mathcal{C}_X$ and $C \refines D$, then $D \in \mathcal{C}_X$
-\item[(CS)] \axitem{CS} If $C \in \mathcal{C}_X$ and $\{ D_U \}_{U \in C}$ is a collection of covers such that $D_U \in \mathcal{C}_X$ for all $U \in C$,
+\item[(CE)] \axitem{CE} If $C \in \mathcal{C}_X$ and $C$ refines $D$, then $D \in \mathcal{C}_X$
+\item[(CG)] \axitem{CG} If $C \in \mathcal{C}_X$ and $\{ D_U \}_{U \in C}$ is a collection of covers such that $D_U \in \mathcal{C}_X$ for all $U \in C$,
             then $\{ U \cap V \mid U \in C, V \in D_U \} \in \mathcal{C}_X$.
 \item[(CR)] \axitem{CR} If $C \in \mathcal{C}_X$, then $\{ V \subseteq X \mid \exists U \in C, V \rb_X U \} \in \mathcal{C}_X$,
             where $V \rb_X U$ or, for short, $V \rb U$ means $\{ W \subseteq X \mid \overlap{W}{V} \implies W \subseteq U \} \in \mathcal{C}_X$.
@@ -112,7 +111,7 @@ The following is true for subsets $U,V,U',V'$ of a cover space $X$:
 \end{prop}
 \begin{proof}
 Item \eqref{rb:sub} follows from the fact that $\{ W \mid \overlap{W}{V} \implies W \subseteq U \}$ is a cover.
-Item \eqref{rb:meet} follows from \axref{CS}.
+Item \eqref{rb:meet} follows from \axref{CG}.
 The rest is obvious.
 \end{proof}
 
@@ -198,14 +197,13 @@ Thus, the latter cover is also Cauchy.
 Now, we will show how various topological properties of a cover space $X$ are related to corresponding properties of $S(X)$:
 
 \begin{prop}[top-neighborhood]
-If $X$ is a cover space, then the notions of a neighborhood, limit points, closed subsets, closure, and dense subsets for $X$ coincide with eponymous properties of $S(X)$.
+If $X$ is a cover space, then the notions of a neighborhood, closed subsets, closure, and dense subsets for $X$ coincide with eponymous properties of $S(X)$.
 \end{prop}
 \begin{proof}
 It is enough to show that $U \subseteq X$ is a neighborhood of $x \in X$ in $S(X)$ if and only if $\{ x \} \rb_X U$.
 If $V$ is an open set such that $x \in V \subseteq U$, then $\{ x \} \rb_X V \subseteq U$.
 Conversely, if $\{ x \} \rb_X U$, then $x \in \mathrm{int}(U) \subseteq U$ by \rlem{int-char}.
 \end{proof}
-
 
 Now, we will show that $S(X)$ is always a regular topological space.
 To do this, we first prove a useful lemma:
@@ -248,16 +246,13 @@ By \rprop{cover-int}, the cover $\{ \mathrm{int}(W') \mid \exists W, W' \rb W, \
 Since this cover refines $\{ W \mid \overlap{W}{\overline{V}} \implies W \subseteq \mathrm{int}(U) \}$, we get that $\overline{V} \rb \mathrm{int}(U)$.
 \end{proof}
 
-\section{Uniform structure}
-
 Many examples of cover spaces come from uniform spaces.
-In this section, we discuss the relationship between these two notions.
-First, recal that a uniform space is a set $X$ together with a set of covers $\mathcal{U}_X$ such that the following conditions hold:
+Recall that a uniform space is a set $X$ together with a set of covers $\mathcal{U}_X$ such that the following conditions hold:
 \begin{itemize}
 \item[(UT)] $\{ X \} \in \mathcal{U}_X$
-\item[(UE)] If $C \in \mathcal{U}_X$ and $C \refines D$, then $D \in \mathcal{U}_X$
-\item[(UI)] If $C,D \in \mathcal{U}_X$, then $\{ U \cap V \mid U \in C, V \in D \} \in \mathcal{U}_X$.
-\item[(UU)] If $C \in \mathcal{U}_X$, then there exists $D \in \mathcal{U}_X$ such that, for every $V \in D$,
+\item[(UE)] If $C \in \mathcal{U}_X$ and $C$ refines $D$, then $D \in \mathcal{U}_X$
+\item[(UI)] \axitem{UI} If $C,D \in \mathcal{U}_X$, then $\{ U \cap V \mid U \in C, V \in D \} \in \mathcal{U}_X$.
+\item[(UU)] \axitem{UU} If $C \in \mathcal{U}_X$, then there exists $D \in \mathcal{U}_X$ such that, for every $V \in D$,
 there exists $U \in C$ such that every $W \in D$ satisfies implication $\overlap{W}{V} \implies W \subseteq U$.
 \end{itemize}
 Elements of $\mathcal{U}_X$ are called \emph{uniform covers} of $X$.
@@ -271,7 +266,7 @@ We will show that every uniform space structure determines a cover space structu
 To do this, it is useful to introduce an auxiliary notion of a precover space:
 
 \begin{defn}
-A \emph{precover space} is a set $X$ together with a set $\mathcal{C}_X$ of covers of $X$, which satisfy conditions \axref{CT}, \axref{CE}, and \axref{CS}.
+A \emph{precover space} is a set $X$ together with a set $\mathcal{C}_X$ of covers of $X$, which satisfy conditions \axref{CT}, \axref{CE}, and \axref{CG}.
 \end{defn}
 
 Thus, a cover space is exactly a precover space that satisfies the regularity condition \axref{CR}.
@@ -281,7 +276,7 @@ We will also need the notion of a subbase for a precover structure:
 Given a set $X$, a \emph{subbase} for a precover structure on $X$ is any set of covers of $X$.
 \end{defn}
 
-Given a subbase $\mathcal{B}_X$, we can take its closure under \axref{CT}, \axref{CE}, and \axref{CS}.
+Given a subbase $\mathcal{B}_X$, we can take its closure under \axref{CT}, \axref{CE}, and \axref{CG}.
 We will denote this closure by $\overline{\mathcal{B}_X}$.
 Then the following lemma applied to the filter of sets containing a given point implies that all sets in this closure are covers:
 
@@ -303,7 +298,7 @@ If $\mathcal{B}_X$ is a regular subbase, then $(X,\overline{\mathcal{B}_X})$ is 
 \begin{proof}
 We show by induction on generation of $\overline{\mathcal{B}_X}$ that, for every $C \in \overline{\mathcal{B}_X}$, the cover $\{ W' \mid \exists W \in C, W' \rb W \}$ also belongs to $\overline{\mathcal{B}_X}$.
 Every element of $\mathcal{B}_X$ satisfies this condition by the regularity assumption.
-The only non-trivial remaining case is \axref{CS}.
+The only non-trivial remaining case is \axref{CG}.
 Suppose that $C = \{ U \cap V \mid U \in D, V \in E_U \} \in \mathcal{C}_X$ for some $D \in \overline{\mathcal{B}_X}$ and $\{ E_U \in \overline{\mathcal{B}_X} \}_{U \in D}$.
 Then, by induction hypothesis, we have $D' = \{ U' \mid \exists U \in D, U' \rb U \} \in \overline{\mathcal{B}_X}$ and $E'_{U'} = \{ V' \mid \exists U \in D, V \in E_U, V' \rb V, U' \rb U \} \in \overline{\mathcal{B}_X}$ for every $U' \in D'$.
 Since $\{ W' \mid \exists W \in C, W' \rb W \}$ is refined by $\{ U' \cap V' \mid U' \in D', V' \in E'_{U'} \}$, this concludes the proof.
@@ -355,7 +350,7 @@ To do this, we will show that the set of precover space structures on a given se
 Indeed, if $\{ \mathcal{C}_i \}_{i \in I}$ is a set of precover space structures on $X$, then $\overline{\bigcup_{i \in I} \mathcal{C}_i}$ is the join of these structures.
 Also, we need to define the transferred precover space structure.
 Given a set $X$, a precover space $Y$, and a function $f : X \to Y$, we can define the smallest precover space structure on $X$ for which this function is a cover map.
-This structure is given by $\mathcal{C}_X = \{ C \mid \exists D \in \mathcal{C}_Y, \forall V \in D, \exists U \in C, f^{-1}(V) \subseteq U \}$.
+A cover of $X$ is Cauchy in this structure if and only if $\{ V \mid \exists U \in C, f^{-1}(V) \subseteq U \}$ is a Cauchy cover of $Y$.
 These constructions together imply that $\cat{Precov}$ is a topological category.
 
 Cover spaces are closed under joins in the lattice of precover space structures on a set $X$.
@@ -410,7 +405,7 @@ Then $f$ is an embedding.
 We will show by induction on the generation of a cover $E \in \overline{\mathcal{B}_X}$ that $\{ U' \mid \exists U \in E, f^{-1}(U') \subseteq U \}$ is a Cauchy cover of $Y$.
 The base case holds by assumption.
 The cases \axref{CT} and \axref{CE} are obvious.
-Let us consider \axref{CS}.
+Let us consider \axref{CG}.
 Let $C$ be a Cauchy cover of $X$ and $\{ D_U \}_{U \in C}$ be a collection of Cauchy covers of $X$ such that $E = \{ U \cap V \mid U \in C, V \in D_U \}$.
 By induction hypothesis, $C' = \{ U' \mid \exists U \in C, f^{-1}(U') \subseteq U \}$ is a Cauchy cover of $Y$.
 Let $D'_{U'} = \{ V' \mid \exists U \in C, \exists V \in D_U, f^{-1}(U') \subseteq U, f^{-1}(V') \subseteq V \}$.
@@ -812,11 +807,11 @@ Indeed, given a regular Cauchy filter $F$, there is a set $U \in F \cap C'$.
 Thus, we have $V \in C$ such that $F \in \widetilde{U} \subseteq V$.
 
 Conditions \axref{CT} and \axref{CE} are obvious.
-Let us check \axref{CS}.
+Let us check \axref{CG}.
 Let $C$ and $\{ D_U \}_{U \in C}$ be Cauchy covers in $C(X)$.
 We need to show that $E = \{ U \cap V \mid U \in C, V \in D_U \}$ is Cauchy.
 The set $D'_{U'} = \{ V' \mid \exists U \in C, V \in D_U, \widetilde{U'} \subseteq U, \widetilde{V'} \subseteq V \}$ is a Cauchy cover in $X$ for every $U' \in C'$.
-By \axref{CS}, the set $E' = \{ U' \cap V' \mid U' \in C', \exists U \in C, V \in D_U, \widetilde{U'} \subseteq U, \widetilde{V'} \subseteq V \}$ is a Cauchy cover in $X$.
+By \axref{CG}, the set $E' = \{ U' \cap V' \mid U' \in C', \exists U \in C, V \in D_U, \widetilde{U'} \subseteq U, \widetilde{V'} \subseteq V \}$ is a Cauchy cover in $X$.
 Now, $E$ is Cauchy since it is refined by $\{ \widetilde{W'} \mid W' \in E' \}$.
 
 To prove \axref{CR}, we first need to show that $\widetilde{V} \rb_{C(X)} \widetilde{U}$ whenever $V \rb_X U$.
@@ -1039,11 +1034,11 @@ For every locale $M$, the pair $(P(M),\mathcal{C}_{P(M)})$ is a precover space.
 \end{prop}
 \begin{proof}
 First, let us check that given every $C$ such that $\bigvee \{ \varepsilon_*(U) \mid U \in C \} = \top$ is indeed a cover.
-If $F$ is a point of $M$, then there exist a set $U \in C$ and an open $a \in F$ such that $\varepsilon^(a) \subseteq U$.
+If $F$ is a point of $M$, then there exist a set $U \in C$ and an open $a \in F$ such that $\varepsilon^*(a) \subseteq U$.
 This implies that $F$ belongs to $U$.
 
 Condition \axref{CT} is obvious and \axref{CE} easily follows from the fact that $\varepsilon_*$ is monotone.
-Condition \axref{CS} follows from distributivity and the fact that $\varepsilon_*$ preserves meets.
+Condition \axref{CG} follows from distributivity and the fact that $\varepsilon_*$ preserves meets.
 \end{proof}
 
 The following simple lemma gives a useful characterization of Cauchy covers in $P(M)$:
@@ -1102,7 +1097,7 @@ This means that $\widetilde{F}$ contains $a_j$, which concludes the proof that $
 \end{proof}
 
 Another property of locales that we will need is the denseness of its set of points.
-We will say that a locale \emph{has a strongly dense set of points} if $\varepsilon_*(\bigcup \{ \top \mid * \in Q \}) = \bigvee \{ \top \mid * \in Q \}$ for every subsingleton $Q \subseteq \{ * \}$.
+We will say that a locale \emph{has a strongly dense set of points} if, for every open $a$, $a \leq \bigvee \{ \top \mid \exists x \in \varepsilon^*(a) \}$.
 Every spatial locale has a strongly dense set of points, but not all locales with a dense set of points are spatial.
 There is also a weaker condition: a locale \emph{has a dense set of points} if $\varepsilon_*(\varnothing) = \bot$.
 Classically, these conditions are equivalent, but constructively the former is stronger.
@@ -1123,15 +1118,16 @@ If $M$ has a strongly dense set of points, then $P(M)$ has a dense set of points
 Suppose that $M$ has a dense set of points and that $C \cup \{ \varnothing \}$ is a Cauchy cover in $P(M)$.
 Then $\top = \bigvee \{ \varepsilon_*(U) \mid U \in C \} \vee \varepsilon_*(\varnothing) = \bigvee \{ \varepsilon_*(U) \mid U \in C \}$, so $C$ is also a Cauchy cover.
 Now, suppose that $M$ has a strongly dense set of points and that $C$ is a Cauchy cover in $P(M)$.
-Then, for every $U \in C$, we have that $\varepsilon_*(U) = \varepsilon_*(U) \wedge \varepsilon_*(\{ \top \mid \exists x \in U \}) = \varepsilon_*(U) \wedge \bigvee \{ \top \mid \exists x \in U \} = \bigvee \{ \varepsilon_*(U) \mid \exists x \in U \} \leq \bigvee \{ \varepsilon_*(V) \mid V \in C, \exists x \in V \}$.
-Thus, the set of inhabited elements of $C$ is also a Cauchy cover.
+To prove that the set of inhabited elements of $C$ is also a Cauchy cover, it is enough to show that $\bigvee \{ \varepsilon_*(U) \mid U \in C \} \leq \bigvee \{ \varepsilon_*(U) \mid U \in C, \exists x \in U \}$.
+Thus, we need to show that $\varepsilon_*(U) \leq \bigvee \{ \varepsilon_*(U) \mid U \in C, \exists x \in U \}$ for all $U \in C$.
+Since $M$ has a dense set of points, we can assume that there is a point $x$ containing $\varepsilon_*(U)$.
+It follows that $x$ belongs to $U$, which completes the proof.
 \end{proof}
 
 We will also need the following simple lemma:
 
 \begin{lem}[locale-dense]
 A locale has a dense set of points if and only if the only open that does not have points is the bottom one.
-A locale has a strongly dense set of points if and only if, for every $Q \subseteq \{ * \}$ and open $a$, the following implication holds: $\varepsilon^*(a) \subseteq \bigcup \{ \top \mid * \in Q \} \implies a \leq \bigvee \{ \top \mid * \in Q \}$.
 \end{lem}
 \begin{proof}
 Immediate from the definition of $\varepsilon_*(\varnothing)$.
@@ -1237,7 +1233,7 @@ Then $\{ X \backslash U'\} \cup \{ V_j \mid j \in J \}$ is a Cauchy cover of $X$
 The proof is by induction on the generation of $U \triangleleft \{ V_j \mid j \in J \}$.
 First, let us consider the base case $\triangleleft_0$:
 \begin{itemize}
-\item If $\{ V_j \mid j \in J \} = \{ U \cap V \mid V \in C \}$ for a Cauchy cover $C$, then $\{ (X \backslash U') \cap V \mid V \in C \} \cup \{ U \cap V \mid V \in C \}$ is a Cauchy cover by \axref{CS} and this cover refines $\{ X \backslash U' \} \cup \{ U \cap V \mid V \in C \}$.
+\item If $\{ V_j \mid j \in J \} = \{ U \cap V \mid V \in C \}$ for a Cauchy cover $C$, then $\{ (X \backslash U') \cap V \mid V \in C \} \cup \{ U \cap V \mid V \in C \}$ is a Cauchy cover by \axref{CG} and this cover refines $\{ X \backslash U' \} \cup \{ U \cap V \mid V \in C \}$.
 \item Let $\{ V_j \mid j \in J \} = \{ V \mid V \rb^s_X U \}$. Then $\{ X \backslash U' \} \cup \{ V \mid V \rb^s_X U \}$ is Cauchy since $X$ is strongly regular.
 \item If $U = \varnothing$ and $\{ V_j \mid j \in J \} = \{ V \mid V \rb^s_X U \} = \varnothing$, then $U'$ is also equal to $\varnothing$ and $\{ X \backslash U' \}$ is Cauchy by \axref{CT}.
 \end{itemize}
@@ -1253,7 +1249,7 @@ Indeed, if $W = X \backslash U'$, then $D_W$ is Cauchy since it refines $\{ X \}
 Otherwise, there exists $i \in I$ such that $W \rb^s_X W_i$.
 Then $D_W$ is Cauchy by induction hypothesis.
 
-By \axref{CS}, the set $\{ W \cap V \mid W \in C, V \in D_W \}$ is a Cauchy cover.
+By \axref{CG}, the set $\{ W \cap V \mid W \in C, V \in D_W \}$ is a Cauchy cover.
 Let us show that it refines $\{ X \backslash U'\} \cup \{ V_j \mid j \in J \}$.
 If $W = X \backslash U'$, then $W \cap V \subseteq X \backslash U'$.
 Otherwise, there exists $i \in I$ such that $W \rb^s_X W_i$.
@@ -1301,13 +1297,11 @@ Thus, $[V_j]$ belongs to $\eta_X(x)$, so $\eta_X(x)$ is a completely prime filte
 
 By \rlem{cover-locale-regular}, $L(X)$ is regular.
 Now, we can show that it also has a strongly dense set of points.
-By \rlem{locale-dense}, we need to show that $[U] \leq \bigvee \{ \top \mid * \in Q \}$ assuming $\varepsilon^*([U]) \subseteq \bigcup \{ \top \mid * \in Q \}$.
-Since $[U] \leq \bigvee \{ [V] \mid V \rb^s U \}$, it is enough to show that $[V] \leq \bigvee \{ \top \mid * \in Q \}$ for some $V \rb^s U$.
+It is enough to show that $[U] \leq \bigvee \{ \top \mid \exists x \in \varepsilon^*([U]) \}$.
+Since $[U] \leq \bigvee \{ [V] \mid V \rb^s U \}$, it is enough to show that $[V] \leq \bigvee \{ \top \mid \exists x \in \varepsilon^*([U]) \}$ for all $V \rb^s U$.
 Since $X$ is strongly dense, the set $\{ X \backslash V \} \cup \{ U' \mid U' \rb U, \exists x \in U' \}$ is a Cauchy cover.
 It follows that $[V] \leq \bigvee \{ [U] \mid \exists x \in X, \{ x \} \rb U \}$.
-Thus, we just need to show that $[U] \leq \bigvee \{ \top \mid * \in Q \}$ assuming that $U$ is a neighborhood of some point $x$.
-But then $[U]$ belongs to $\eta_X(x)$ and, by assumption, $* \in Q$, so $[U] \leq \top = \bigvee \{ \top \mid * \in Q \}$.
-This concludes the proof that $L(X)$ is regular.
+Now, if $\{ x \} \rb U$, then $\eta_X(x) \in \varepsilon^*([U])$, which concludes the proof that $L(X)$ has a strongly dense set of points.
 
 Now, we just need to prove that $\eta_X$ is a dense embedding.
 First, we need to show that it is a cover map.
@@ -1390,7 +1384,7 @@ Then $X$ is generated by finite intersections of sets in $\bigcup \mathcal{B}_X$
 \begin{proof}
 Let $B$ be the set of finite intersections of sets in $\bigcup \mathcal{B}_X$.
 We prove by induction on the generation of $\overline{\mathcal{B}_X}$ that every cover $C$ in this set is refined by some Cauchy cover $C' \subseteq B$.
-The only non-trivial case is \axref{CS}.
+The only non-trivial case is \axref{CG}.
 Let $C$ be a set in $\overline{\mathcal{B}_X}$ and $\{ D_U \}_{U \in C}$ be a collection of sets in $\overline{\mathcal{B}_X}$.
 We need to show that $E = \{ U \cap V \mid U \in C, V \in D_U \}$ is refined by some Cauchy cover $E' \subseteq B$.
 By induction hypothesis, there exists a Cauchy cover $C' \subseteq B$ that refines $C$.
@@ -1436,27 +1430,33 @@ Since $\mathbb{R}$ is also complete and strongly regular, \rthm{locale-equiv} im
 
 This proposition implies that there is a bijection between localic maps $M \to \mathbb{R}_l$ and cover maps $P(M) \to \mathbb{R}$ for regular locales $M$ that have a dense set of points.
 Thus, this proposition provides a convenient way of constructing localic real-valued maps.
-For example, any locally uniform map $P(M) \to \mathbb{R}$ is a cover map and, hence, corresponds to some localic map $M \to \mathbb{R}_l$.
-Since local uniformness is a very common and useful condition, we define it explicitly for metric spaces as follows:
+In general, it might be difficult to check that a function is a cover map, but for uniform spaces there are simpler conditions that we can check.
+One of them is \emph{local uniformness}:
 
-\begin{defn}[locally-uniform]
-Let $X$ and $Y$ be metric spaces.
-Then a function $f : X \to Y$ is \emph{locally uniform} if, for every $\varepsilon > 0$, there exists $\delta_1 > 0$ such that,
-for every $x_1 \in X$, there exists $\delta_2 > 0$ such that, for every $x_2 \in X$, there exists $y \in Y$ such that $B_{\delta_1}(x_1) \cap B_{\delta_2}(x_2) \subseteq f^{-1}(B_\varepsilon(y))$.
+\begin{defn}
+Let $X$ and $Y$ be uniform spaces.
+Then a function $f : X \to Y$ is \emph{locally uniform} if, for every $E \in \mathcal{U}_Y$, there exists $C \in \mathcal{U}_X$ such that, for every $U \in C$, the set $\{ V \mid \exists W \in E, U \cap V \subseteq f^{-1}(W) \}$ is a uniform cover of $X$.
 \end{defn}
+
+Unfolding the definition of uniform covers of metric spaces we obtain the following proposition:
+
+\begin{prop}
+Let $X$ and $Y$ be metric spaces.
+Then a function $f : X \to Y$ is locally uniform if and only if, for every $\varepsilon > 0$, there exists $\delta_1 > 0$ such that,
+for every $x_1 \in X$, there exists $\delta_2 > 0$ such that, for every $x_2 \in X$, there exists $y \in Y$ such that $B_{\delta_1}(x_1) \cap B_{\delta_2}(x_2) \subseteq f^{-1}(B_\varepsilon(y))$.
+\end{prop}
+
+The following proposition shows that every locally uniform function is a cover map and we will see in the following section that for certain uniform spaces the converse is also true.
 
 \begin{prop}[locally-uniform-cover-map]
 Every locally uniform function between metric spaces is a cover map.
 \end{prop}
 \begin{proof}
 Let $f : X \to Y$ be a locally uniform function.
-Then it is enough to show that, for every $\varepsilon > 0$, there exists a Cauchy cover $E$ on $X$ such that every set in $E$ is mapped to an open ball of radius $\varepsilon$.
-Let $\varepsilon$ be a positive real number.
-Then we have $\delta_1 > 0$ as in \rdefn{locally-uniform}.
-Let $C$ be the uniform cover of $X$ consisting of open balls of radius $\delta_1$.
-Let $D_U = \{ V \mid \exists x_1,x_2 \in X, \exists \delta_2 > 0, \exists y \in Y, U = B_{\delta_1}(x_1), V = B_{\delta_2}(x_2), U \cap V \subseteq f^{-1}(B_\varepsilon(y)) \}$.
-Then, for every open ball $U = B_{\delta_1}(x_1) \in C$, there exists $\delta_2 > 0$ as in \rdefn{locally-uniform} and $D_U$ is refined by the uniform cover consisting of open balls of radius $\delta_2$.
-It follows that $E = \{ U \cap V \mid U \in C, V \in D_U \}$ is the required Cauchy cover.
+It is enough to show that, for every $E \in \mathcal{U}_Y$, the cover $\{ f^{-1}(W) \mid W \in E \}$ is Cauchy.
+Let $E$ be a uniform cover of $Y$.
+Then we have a uniform cover $C \in \mathcal{U}_X$ such that $D_U = \{ V \mid \exists W \in E, U \cap V \subseteq f^{-1}(W) \}$ is a uniform cover of $X$ for every $U \in C$.
+Since the Cauchy cover $\{ U \cap V \mid U \in C, V \in D_U \}$ refines $\{ f^{-1}(W) \mid W \in E \}$, this completes the proof.
 \end{proof}
 
 Finally, we will show that the field operations on $\mathbb{R}$ are cover maps.
@@ -1550,7 +1550,6 @@ Then the following conditions are equivalent:
 \item \label{it:inv-srb} $V \rb^s_\mathbb{R} \mathbb{R}_*$.
 \item \label{it:inv-rb} $V \rb_\mathbb{R} \mathbb{R}_*$.
 \item \label{it:inv-char} There exists a rational $\varepsilon > 0$ such that $V$ does not intersect $B_\varepsilon(0)$.
-\item \label{it:inv-crb} $V \rb^c_\mathbb{R} \mathbb{R}_*$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
@@ -1561,16 +1560,13 @@ Thus, there exists a neighborhood $W$ of $0$ such that the implication $\overlap
 Since $0$ does not belong to $\mathbb{R}_*$, this neighborhood does not intersect $V$.
 So, we showed that there is an open ball with center in $0$ that does not intersect $V$.
 
-Since \eqref{it:inv-crb} implies \eqref{it:inv-rb}, it is enough to show that \eqref{it:inv-char} implies \eqref{it:inv-crb} and \eqref{it:inv-srb}.
-To do this, we define a relation $R$ on subsets of $\mathbb{R}$ as follows:
-\[ R(V,U) \Leftrightarrow \exists \varepsilon_1 > \varepsilon_2 > 0, V \cap B_{\varepsilon_1}(0) = \varnothing, (- \infty, - \varepsilon_2) \cup (\varepsilon_2, \infty) \subseteq U. \]
-This relation is interpolative.
-Indeed, if $R(V,U)$, then we define $W = (- \infty, - \frac{\varepsilon_1 + \varepsilon_2}{2}) \cup (\frac{\varepsilon_1 + \varepsilon_2}{2}, \infty)$.
-Then clearly $R(V,W)$ and $R(W,U)$.
-
-If $R(V,U)$, then $\{ \mathbb{R} \backslash V, U \}$ is refined by the uniform cover consisting of open balls of radius $\frac{\varepsilon_1 - \varepsilon_2}{2}$.
-Thus, $R(V,U)$ implies $V \rb^s_\mathbb{R} U$ and $V \rb^c_\mathbb{R} U$.
-Since \eqref{it:inv-char} implies $R(V,\mathbb{R}_*)$, this completes the proof.
+Finally, let us show that \eqref{it:inv-char} implies \eqref{it:inv-srb}.
+To do this, it is enough to show that the Cauchy cover $\{ B_{\varepsilon/4}(x) \mid x \in \mathbb{R} \}$ refines $\{ \mathbb{R} \backslash V, \mathbb{R}_* \}$.
+Let $x$ be a real number.
+By \axref{DS}, either $-\varepsilon/2 < x < \varepsilon/2$, or $x < -\varepsilon/4$, or $\varepsilon/4 < x$.
+If $-\varepsilon/2 < x < \varepsilon/2$, then $B_{\varepsilon/4}(x) \subseteq \mathbb{R} \backslash V$.
+If $x < -\varepsilon/4$ or $\varepsilon/4 < x$, then $B_{\varepsilon/4}(x) \subseteq \mathbb{R}_*$.
+This completes the proof.
 \end{proof}
 
 \begin{prop}
@@ -1589,7 +1585,7 @@ The inverse function $\mathbb{R}_* \to \mathbb{R}_*$ is a cover map.
 \end{prop}
 \begin{proof}
 We will denote this function by $e : \mathbb{R}_* \to \mathbb{R}_*$.
-First, note that $\{ e^{-1}((- \infty, - \varepsilon) \cup (\varepsilon, \infty)) \mid \varepsilon > 0 \}$ is refined by the uniform cover consisting of open balls of radius $1$.
+First, note that the cover $\{ e^{-1}((- \infty, - \varepsilon) \cup (\varepsilon, \infty)) \mid \varepsilon > 0 \}$ is refined by the uniform cover consisting of open balls of radius $1$.
 Thus, we just need to prove that $\{ e^{-1}(B_\varepsilon(y) \cap \mathbb{R}_*) \mid y \in \mathbb{Q}, y \neq 0 \}$ is a Cauchy cover for every $\varepsilon > 0$.
 We will show that it is refined by the Cauchy cover $\{ ((- \infty, - \delta) \cup (\delta, \infty)) \cap B_{\frac{\varepsilon \delta^2}{1 + \varepsilon \delta}}(x) \mid \delta > 0, x \in \mathbb{Q}, x \neq 0 \}$.
 To do this, it is enough to show that $((- \infty, - \delta) \cup (\delta, \infty)) \cap B_{\frac{\varepsilon \delta^2}{1 + \varepsilon \delta}}(x) \subseteq e^{-1}(B_\varepsilon(\frac{1}{x}) \cap \mathbb{R}_*)$.
@@ -1599,7 +1595,237 @@ First, note that $\abs{x} \geq \abs{z} - \abs{z - x} > \delta - \frac{\varepsilo
 Now, we can finish the proof: $\abs{\frac{1}{z} - \frac{1}{x}} = \frac{\abs{z - x}}{\abs{z} \abs{x}} < \varepsilon$.
 \end{proof}
 
-\section{Limits of functions}
+\section{Compactness}
+
+In this section, we define compact and totally bounded spaces and use these notions to give a characterization of cover maps for certain uniform spaces.
+
+We will say that a cover space is \emph{totally bounded} if, for every Cauchy cover $C$, there exists a Kuratowski-finite Cauchy subcover of $C$.
+Explicitly, this means that there exist sets $U_1, \ldots U_n \in C$ such that $\{ U_1, \ldots U_n \}$ is still a Cauchy cover.
+A cover space is called \emph{compact} if it is complete and totally bounded.
+
+If $X$ is a totally bounded uniform space, it is often true that all Cauchy covers of $X$ are uniform.
+To prove this, we need an additional assumption on $X$ which is called \emph{properness}.
+We will say that a uniform space $X$ is \emph{proper} if, for every uniform cover $C$ of $X$, the subset of $C$ consisting of inhabitted sets is also a uniform cover of $X$.
+Some authors include this condition in the definition of uniform spaces % TODO: Give reference
+, but doing so has some unfortunate consequences.
+For example, the transferred uniform structure might not be proper even if the original is.
+There is always a universal proper transferred structure, but its underlying cover structure might differ from the transferred cover structure.
+To avoid these problems, we do not include properness in the definition of uniform spaces.
+
+Before we proceed, we need to give a few definitions and prove a simple lemma.
+If $V$ and $U$ are subsets of a uniform space, we will say that $V$ is \emph{uniformly rather below} $U$,
+written $V \rb^* U$, if the set $\{ W \mid \overlap{W}{V} \implies W \subseteq U \}$ is a uniform cover of $X$.
+Clearly, $V \rb^* U$ implies $V \rb U$.
+Also, this relation satisfies the usual properties of the ``rather below'' relation given in \rprop{rb-props}.
+
+\begin{lem}[star-cauchy-reg]
+If $X$ is a unifor space and $C$ is a Cauchy cover of $X$, then the set $\{ V \mid \exists U \in C, V \rb^* U \}$ is also a Cauchy cover of $X$.
+\end{lem}
+\begin{proof}
+The proof is the same as the proof of \rprop{subbase-regular} using the fact that the required property holds for uniform covers $C$ by \axref{UU}.
+\end{proof}
+
+Now, we are ready to prove that Cauchy covers are uniform in proper totally bounded uniform spaces:
+
+\begin{prop}[tb-cauchy]
+Let $X$ be a proper totally bounded uniform space.
+Then every Cauchy cover of $X$ is uniform.
+\end{prop}
+\begin{proof}
+Let $C$ be a Cauchy cover.
+By \rlem{star-cauchy-reg}, the set $\{ V \mid \exists U \in C, V \rb^* U \}$ is also a Cauchy cover.
+Since $X$ is totally bounded, there exist sets $V_1, \ldots V_n$ and sets $U_1, \ldots U_n \in C$ such that $\{ V_1, \ldots V_n \}$ is a Cauchy cover and $V_i \rb^* U_i$ for all $i$.
+By \axref{UI} and properness of $X$, the set $E = \{ W_1 \cap \ldots \cap W_n \mid (\forall i, \overlap{W_i}{V_i} \implies W_i \subseteq U_i), \exists x \in \bigcap_i W_i \}$ is a uniform cover.
+Let us prove that $E$ refines $C$.
+
+Let $W_1, \ldots W_n$ be sets such that $\overlap{W_i}{V_i} \implies W_i \subseteq U_i$ for all $i$ and there exists a point $x \in \bigcap_i W_i$.
+Since $\{ V_1, \ldots V_n \}$ is a cover, there exists $i$ such that $x \in V_i$.
+It follows that $W_1 \cap \ldots \cap W_n \subseteq W_i \subseteq U_i \in C$, which shows that $E$ refines $C$.
+\end{proof}
+
+Since the properness condition might be difficult to check, we will prove a version of the previous proposition that applies to weakly proper and strongly regular uniform spaces.
+We will say that a uniform space $X$ is \emph{weakly proper} if a set $C$ is a uniform cover of $X$ whenever $C \cup \{ \varnothing \}$ is.
+Clearly, every proper uniform space is weakly proper.
+Also, every inhabitted uniform space is weakly proper since $C \cup \{ \varnothing \}$ refines $C$ in this case.
+We will say that $X$ is strongly regular if, for every uniform cover $C$, the set $\{ V \mid \exists U \in C, V \rb^{*s} U \}$ is also a uniform cover,
+where $V \rb^{*s} U$ if and only if $\{ X \backslash V, U \}$ is a uniform cover.
+
+\begin{example}
+Every metric space is proper strongly regular uniform space.
+\end{example}
+
+Now, we can show a version of \rprop{tb-cauchy} for weakly proper strongly regular uniform spaces:
+
+\begin{prop}[tb-ws-cauchy]
+Let $X$ be a weakly proper strongly regular totally bounded uniform space.
+Then every Cauchy cover of $X$ is uniform.
+\end{prop}
+\begin{proof}
+Let $C$ be a Cauchy cover.
+An argument similar to \rlem{star-cauchy-reg} shows that the set $\{ V \mid \exists U \in C, V \rb^{*s} U \}$ is also a Cauchy cover.
+Since $X$ is totally bounded, there exist sets $V_1, \ldots V_n$ and sets $U_1, \ldots U_n \in C$ such that $\{ V_1, \ldots V_n \}$ is a Cauchy cover and $V_i \rb^{*s} U_i$ for all $i$.
+By \axref{UI}, the set $E = \{ W_1 \cap \ldots \cap W_n \mid \forall i, W_i \in \{ X \backslash V_i, U_i \} \}$ is a uniform cover.
+Since $X$ is weakly proper, it is enough to show that $E$ refines $C \cup \{ \varnothing \}$.
+If $W_1 \cap \ldots \cap W_n \in E$, then either $W_i = X \backslash V_i$ for every $i$ or there exists $i$ such that $W_i = U_i$.
+In the former case, $W_i \cap \ldots \cap W_n = \varnothing$ since $\{ V_1, \ldots V_n \}$ is a cover.
+In the latter case, $W_i \cap \ldots \cap W_n \subseteq W_i = U_i \in C$, which completes the proof.
+\end{proof}
+
+The following lemma can be used to show that certain uniform spaces are totally bounded:
+
+\begin{lem}[tb-aux]
+Let $X$ be a uniform space such that, for every uniform cover $C$ of $X$, there exists a Kuratowski-finite Cauchy subcover of $C$.
+Then $X$ is totally bounded.
+\end{lem}
+\begin{proof}
+We prove by induction on construction of a cover $C \in \overline{\mathcal{U}_X}$ that there exists a Kuratowski-finite Cauchy subcover of $C$.
+If $C \in \mathcal{U}_X$, then this is true by assumption.
+If $C = \{ X \}$, then $C$ is itself a finite Cauchy cover.
+If $C$ is refined by some $D \in \overline{\mathcal{U}_X}$, then there exist sets $V_1, \ldots V_n \in D$ such that $\{ V_1, \ldots V_n \}$ is a Cauchy cover.
+By the finite axiom of choice, there exist sets $U_1, \ldots U_n \in C$ such that $V_i \subseteq U_i$ for all $i$.
+It follows that $\{ U_1, \ldots U_n \}$ is a Cauchy cover since it is refined by $\{ V_1, \ldots V_n \}$.
+
+Finally, suppose that $C = \{ V \cap W \mid V \in D, W \in D_V \}$, where $D \in \overline{\mathcal{U}_X}$ and $E_V \in \overline{\mathcal{U}_X}$ for every $V \in D$.
+Then there exist sets $V_1, \ldots V_n \in D$ such that $\{ V_1, \ldots V_n \}$ is a Cauchy cover.
+By the finite axiom of choice, we also have sets $W_{i,1}, \ldots W_{i,m_i} \in E_{V_i}$ such that $\{ W_{i,1}, \ldots W_{i,m_i} \}$ is a Cauchy cover.
+Then the common refinement of all of these covers together with the cover $\{ V_1, \ldots V_n \}$ is a Cauchy cover that refines $C$.
+Thus, $C$ is also a Cauchy cover, which completes the proof.
+\end{proof}
+
+The following proposition gives a useful characterization of totally bounded uniform spaces under appropriate assumptions:
+
+\begin{prop}[tb-covers]
+Let $X$ be a uniform space.
+If $X$ is either proper or weakly proper and strongly regular, then the following conditions are equivalent:
+\begin{enumerate}
+\item \label{it:tb-tb} $X$ is totally bounded.
+\item \label{it:tb-uni-uni} For every uniform cover $C$ of $X$, there exists a Kuratowski-finite uniform subcover of $C$.
+\item \label{it:tb-uni-cauchy} For every uniform cover $C$ of $X$, there exists a Kuratowski-finite Cauchy subcover of $C$.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+By \rprop{tb-cauchy} and \rprop{tb-ws-cauchy}, if $X$ is totally bounded, then Cauchy covers coincide with uniform covers.
+Thus, \eqref{it:tb-tb} implies \eqref{it:tb-uni-uni}.
+Also, \eqref{it:tb-uni-uni} clearly implies \eqref{it:tb-uni-cauchy}.
+\rlem{tb-aux} shows that \eqref{it:tb-uni-cauchy} implies \eqref{it:tb-tb}.
+\end{proof}
+
+Now, we will discuss totally bounded subsets of cover spaces.
+A subset $S$ of a cover space is \emph{totally bounded} if the transferred cover space structure on $S$ is totally bounded.
+The following proposition gives a characterization for totally bounded sets:
+
+\begin{prop}[tb-set-char]
+A subset $S$ of a cover space $X$ is totally bounded if and only if, for every Cauchy cover $C$ of $X$, there exist sets $U_1, \ldots U_n \in C$ such that the set $\{ W \mid \exists i, S \cap W \subseteq U_i \}$ is a Cauchy cover of $X$.
+\end{prop}
+\begin{proof}
+A cover $C$ of $S$ is Cauchy if and only if $\{ W \mid \exists U \in C, S \cap W \subseteq U \}$ is a Cauchy cover of $X$.
+First, let us prove the ``if'' direction.
+Let $C$ be a Cauchy cover of $S$.
+Since $\{ W \mid \exists U \in C, S \cap W \subseteq U \}$ is a Cauchy cover of $X$, there exist sets $U_1, \ldots U_n \in C$ and $V_1, \ldots V_n$ such that $S \cap V_i \subseteq U_i$ and the set $\{ W \mid \exists i, S \cap W \subseteq V_i \}$ is a Cauchy cover of $X$.
+Since this set is a subset of $\{ W \mid \exists i, S \cap W \subseteq U_i \}$, the latter set is also a Cauchy cover of $X$, which implies that $\{ U_1, \ldots U_n \}$ is a Cauchy cover of $S$.
+
+Now, let us prove the ``only if'' direction.
+Suppose that $S$ is totally bounded and let $C$ be a Cauchy cover of $X$.
+Since $C$ is a subset of $\{ W \mid \exists U \in C, S \cap W \subseteq U \}$, the latter set is also a Cauchy cover of $X$.
+This implies that $C$ is a Cauchy cover of $S$.
+Since $S$ is totally bounded, there exist sets $U_1, \ldots U_n \in C$ such that $\{ U_1, \ldots U_n \}$ is a Cauchy cover of $S$.
+It follows that $\{ W \mid \exists i, S \cap W \subseteq U_i \}$ is a Cauchy cover of $X$, which completes the proof.
+\end{proof}
+
+For uniform spaces, we can give a further characterization of totally bounded sets:
+
+\begin{prop}
+A subset $S$ of a uniform space $X$ is totally bounded if and only if, for every uniform cover $C$ of $X$, there exist sets $U_1, \ldots U_n \in C$ such that the set $\{ W \mid \exists i, S \cap W \subseteq U_i \}$ is a Cauchy cover of $X$.
+\end{prop}
+\begin{proof}
+The ``only if'' direction follows from \rprop{tb-set-char}.
+To prove the ``if'' direction, we apply \rlem{tb-aux}.
+A cover $C$ of $S$ is uniform if and only if $\{ V \mid \exists U \in C, S \cap V \subseteq U \}$ is a uniform cover of $X$.
+Let $C$ be a uniform cover of $S$.
+By assumption, there exist sets $V_1, \ldots V_n$ and sets $U_1, \ldots U_n \in C$ such that $S \cap V_i \subseteq U_i$ for all $i$ and the set $\{ W \mid \exists i, S \cap W \subseteq V_i \}$ is a Cauchy cover of $X$.
+It follows that $\{ U_1, \ldots U_n \}$ is a Cauchy subcover of $C$.
+\end{proof}
+
+\begin{cor}[tb-metric]
+A subset $S$ of a metric space $X$ is totally bounded if and only if, for every $\varepsilon > 0$, there exist points $x_1, \ldots x_n \in X$ such that the set $\{ W \mid \exists i, S \cap W \subseteq B_\varepsilon(x_i) \}$ is a Cauchy cover of $X$.
+\end{cor}
+
+\begin{example}
+It is easy to see that every bounded subset of $\mathbb{R}$ satisfies conditions of \rcor{tb-metric}.
+Thus, a subset of $\mathbb{R}$ is totally bounded if and only if it is bounded.
+\end{example}
+
+The following proposition gives a useful characterization of Cauchy covers in a uniform space under appropriate assumptions:
+
+\begin{prop}
+Let $X$ be a strongly regular uniform space and $C$ be a Cauchy cover of $X$ consisting of totally bounded inhabitted sets.
+Then a set $E$ is a Cauchy cover of $X$ if and only if the set $\{ V \mid \exists W \in E, U \cap V \subseteq W \}$ is a uniform cover of $X$ for every $U \in C$.
+\end{prop}
+\begin{proof}
+If $\{ V \mid \exists W \in E, U \cap V \subseteq W \}$ is a uniform cover for every $U \in C$, then \axref{CG} implies tht $E$ is a Cauchy cover.
+Coversely, suppose that $E$ is a Cauchy cover and let $U$ be a set in $C$.
+Since $U$ is inhabitted and $X$ is strongly regular, the transferred uniform structure on $U$ is weakly proper and strongly regular.
+By \rprop{tb-covers}, the set $\{ U \cap W \mid W \in E \}$ is a uniform cover of $U$.
+This means that the set $\{ V \mid \exists W \in E, U \cap V \subseteq U \cap W \}$ is a uniform cover of $X$, which implies the required property.
+\end{proof}
+
+\begin{cor}
+Let $X$ be a strongly regular uniform space such that the set of totally bounded inhabitted sets is a uniform cover of $X$.
+Then every cover map $X \to Y$ is locally uniform.
+\end{cor}
+
+\begin{cor}
+Let $X$ be a metric space in which every bounded set is totally bounded.
+Then every cover map $X \to Y$ is locally uniform.
+\end{cor}
+
+\begin{cor}
+A function $\mathbb{R} \to \mathbb{R}$ is a cover map if and only if it is locally uniform.
+\end{cor}
+
+We finish this section with a characterization of compact subspaces.
+Recall that a subspace of a cover space is closed if it contains all of its limit points.
+The following proposition gives a characterization of complete subspaces of a complete cover space:
+
+\begin{prop}
+A subspace of a complete cover space is complete if and only if it is closed.
+\end{prop}
+\begin{proof}
+First, suppose that $S$ is a closed subspace of a complete space $X$.
+By \rprop{embedding-injective}, $S$ is separated.
+Let us prove that it is complete.
+Let $F$ be a Cauchy filter on $S$.
+Then $G = \{ U \mid U \cap S \in F \}$ is a Cauchy filter on $X$.
+Let us show that $G^\vee$ belongs to $S$.
+Since $S$ is closed, it is enough to show that $G^\vee$ is a limit point of $S$.
+Let $U$ be a neighborhood of $G^\vee$.
+By \rlem{filter-point-char}, there exists $V \in G$ such that $V \rb_X U$.
+Since $F$ is proper and $V \cap S \in F$, there exists a point $x \in V \cap S$.
+Thus, $U$ and $S$ intersect and, hence, $G^\vee$ is a limit point of $S$.
+
+We also need to show that $\{ G^\vee \} \rb_S V$ implies $V \in F$ for all $V$.
+Condition $\{ G^\vee \} \rb_S V$ implies that $\{ W \mid \exists W', S \cap W \subseteq W', (G^\vee \in W' \implies W' \subseteq V) \}$ is a Cauchy cover of $X$.
+Thus, there exist sets $W$ and $W'$ such that $\{ G^\vee \} \rb_X W$, $S \cap W \subseteq W'$, and $W' \subseteq V$.
+\rlem{filter-point-char} implies that there exists $W'' \in G$ such that $W'' \rb_X W'$.
+It follows that $V$ belongs to $F$.
+
+Now, let us prove the converse.
+Suppose that $S$ is complete and let $x$ be a limit point of $S$.
+Then $F = \{ V \mid \exists W, \{ x \} \rb_X W, U \cap S \subseteq V \}$ is a Cauchy filter on $S$.
+The fact that $F$ is proper follows from the fact that $x$ is a limit point of $S$ and other properties of Cauchy filters are obvious.
+To prove that $x$ belongs to $S$, it is enough to show that $x = F^\vee$.
+By \rlem{separated-char}, it is enough to show that any pair of neighborhoods of $x$ and $F^\vee$ intersect.
+Let $U$ be a neighborhood of $x$ and $V$ be a neighborhood of $F^\vee$.
+\rlem{filter-point-char} implies that $V \in F$, which means that there exists a set $W$ such that $\{ x \} \rb_X W$ and $W \cap S \subseteq V$.
+Since $x$ is a limit point of $S$ and $U \cap W$ is a neighborhood of $x$, there exists a point $y \in U \cap W \cap S$.
+Thus, $U$ and $V$ intersect, which completes the proof.
+\end{proof}
+
+\begin{cor}
+A subspace of a complete cover space is compact if and only if it is closed and totally bounded.
+\end{cor}
+
+\section{Limits}
 
 Limits of functions are closely related to lifting problem for cover spaces.
 In this section, we show how various kinds of limits and are related and can be expressed in terms of liftings.
