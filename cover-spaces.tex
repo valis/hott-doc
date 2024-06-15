@@ -441,7 +441,7 @@ This filter will be denoted by $x^\wedge$.
 
 If a cover space is equipped with a subbase, then it is easier to check when a proper filter is Cauchy:
 
-\begin{prop}
+\begin{prop}[cauchy-filter]
 If $\mathcal{B}_X$ is a subbase for a cover space $X$, then a proper filter $F$ is Cauchy if and only if it intersects with every cover from $\mathcal{B}_X$.
 \end{prop}
 \begin{proof}
@@ -1877,6 +1877,56 @@ Moreover, $f : \mathbb{N} \to X$ is a Cauchy sequence if and only if it is a cov
 If $X$ is a complete cover space, then \rthm{dense-lift} implies that a sequence $f : \mathbb{N} \to X$ is Cauchy if and only if it extends to a cover map $\widetilde{f} : \mathbb{N}_\infty \to X$.
 Then the limit of $f$ is defined as $\widetilde{f}(\infty)$.
 
+We can generalize this discussion to arbitrary directed sets which can be used to give a general notion of a limit. % TODO: Give a reference
+A \emph{directed set} $I$ is a preordered set in which every finite set has an upper bound.
+If $N$ is an element of $I$, we will write $I_{\geq N}$ for the set $\{ n \in I \mid n \geq N \}$.
+There is a precover space structure on $I$ in which a cover $C$ is Cauchy if and only if there exist $U \in C$ and $N \in I$ such that $I_{\geq N} \subseteq U$.
+It is straightforward to check that this definition satisfies \axref{CT}, \axref{CE}, and \axref{CG}, but it might not satisfy \axref{CR}.
+So, in general, we define the cover space structure on $I$ as the reflection of this precover space structure.
+
+\begin{defn}
+Let $I$ be a directed set $X$ be a cover space.
+We will say that a function $f : I \to X$ \emph{converges} if it is a cover map.
+\end{defn}
+
+A \emph{limit} of a function $f : I \to X$ is a point $x \in X$ such that, for every neighborhood $U$ of $x$, there exists $N \in I$ such that $I_{\geq N} \subseteq f^{-1}(U)$.
+If a function has a limit, then it convergence.
+Conversely, if $X$ is complete and $f$ converges, then it has a limit.
+Indeed, the completion $I_\infty$ of $I$ has a point $\infty$ corresponding to the Cauchy cover $\{ U \mid \exists N \in I, \forall n \geq N, n \in U \}$.
+If $X$ is complete and $f$ converges, then it extends to a function from the completion of $I$ to $X$ and the limit of $f$ is given by the image of $\infty$.
+
+The following proposition gives an explicit characterization of convergence:
+
+\begin{prop}
+Let $I$ be a directed set $X$ be a cover space.
+Then a function $f : I \to X$ converges if and only if, for every Cauchy cover $C$ of $X$, there exist $U \in C$ and $N \in I$ such that $I_{\geq N} \subseteq f^{-1}(U)$.
+\end{prop}
+\begin{proof}
+Since $X$ is a cover space, $f$ converges if and only if, for every Cauchy cover $C$ of $X$, the set $\{ f^{-1}(U) \mid U \in C \}$ is a Cauchy cover in the precover space structure on $I$.
+Unfolding the definitions, we get the required condition.
+\end{proof}
+
+If $X$ is a uniform space, we can simplify the condition in the previous proposition:
+
+\begin{prop}
+Let $I$ be a directed set $X$ be a uniform space.
+Then a function $f : I \to X$ converges if and only if, for every uniform cover $C$ of $X$, there exist $U \in C$ and $N \in I$ such that $I_{\geq N} \subseteq f^{-1}(U)$.
+\end{prop}
+\begin{proof}
+If $f$ converges, then the required condition holds by the previous proposition.
+Conversely, assume that this condition holds and let us prove that $f$ converges.
+Let $F = \{ U \mid \exists N \in I, \forall n \geq N, f(n) \in U \}$.
+By assumption, this proper filter intersects with every uniform cover.
+By \rprop{cauchy-filter}, it intersects with every Cauchy cover, which implies that $f$ is a cover map.
+\end{proof}
+
+This gives the usual definition of convergence for metric spaces:
+
+\begin{cor}
+Let $I$ be a directed set $X$ be a metric space.
+Then a function $f : I \to X$ converges if and only if, for every $\varepsilon > 0$, there exists $N \in I$ such that $d(f(n),f(N)) < \varepsilon$ for all $n \geq N$.
+\end{cor}
+
 Now, we will discuss limits of sequences of functions.
 It is well-known that the limit of a pointwise convergent sequence of continuous maps may not be continuous.
 The same is true for cover maps.
@@ -1884,9 +1934,70 @@ The problem becomes obvious when expressed in terms of the lifting property.
 Indeed, a sequence of functions $X \to Y$ can be represented by a function $f : \mathbb{N} \times X \to Y$.
 Now, even if $f(n,-)$ is a cover map for all $n \in \mathbb{N}$ and $f(-,x)$ is a cover map for all $x \in X$, this does not imply that $f$ is a cover map.
 In other words, if $f$ represents a pointwise convergent sequence of cover maps, $f$ may not be a cover map itself.
-So, it is natural to say that a sequence of functions between precover spaces $X$ and $Y$ is \emph{Cauchy} if the corresponding function $\mathbb{N} \times X \to Y$ is a cover map.
-As before, if $Y$ is a complete cover space, then $f$ is Cauchy if and only if it extends to a map $\widetilde{f} : \mathbb{N}_\infty \times X \to Y$.
+So, it is natural to require the corresponding function $\mathbb{N} \times X \to Y$ to be a cover map.
+More generally, we might consider cover maps of the form $I \times X \to Y$ for an arbitrary directed set $I$.
+As before, if $Y$ is a complete cover space, then $f$ is a cover map if and only if it extends to a map $\widetilde{f} : I_\infty \times X \to Y$.
 Then the limit of $f$ is defined as $\widetilde{f}(\infty,-)$.
+
+The following proposition gives a characterization for convergence of functions of the form $I \times X \to Y$:
+
+\begin{prop}
+Let $I$ be a directed set and $X$ and $Y$ be cover spaces.
+Then $f : I \times X \to Y$ is a cover map if and only if $f(n,-)$ is a cover map for all $n \in I$ and, for every Cauchy cover $D$ of $Y$, the set $\{ U \mid \exists N \in I, \exists V \in D, I_{\geq N} \times U \subseteq f^{-1}(V) \}$ is a Cauchy cover of $X$.
+\end{prop}
+\begin{proof}
+To prove this proposition, we need to give a characterization of Cauchy covers of $I \times X$, where $I$ is equipped with the precover space structure.
+We will show that a set $C$ is a Cauchy cover of $I \times X$ if and only if the following conditions hold:
+\begin{enumerate}
+\item \label{it:dir-char} The set $\{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U \}$ is a Cauchy cover of $X$.
+\item \label{it:dir-cover} For every $n \in I$, the set $\{ U' \mid \exists U \in C, \forall x \in U', (n,x) \in U \}$ is a Cauchy cover of $X$.
+\end{enumerate}
+First, let us show that covers satisfying these two conditions form a precover space structure on $I \times X$.
+Axioms \axref{CT} and \axref{CE} are obvious, so let us check \axref{CG}.
+Let $C$ be a set and $\{ D_U \}_{U \in C}$ be a collection of sets such that $C$ and $D_U$ satisfy conditions \eqref{it:dir-char} and \eqref{it:dir-cover}.
+We need to show that $E = \{ U \cap V \mid U \in C, V \in D_U \}$ also satisfies these conditions.
+By assumption, $C' = \{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U \}$ is a Cauchy cover of $X$.
+Let $D'_{U'} = \{ V' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U, \exists V \in D_U, I_{\geq N} \times V' \subseteq V \}$.
+Clearly, $D'_{U'}$ is a Cauchy cover of $X$ for every $U' \in C'$.
+Since $\{ U' \cap V' \mid U' \in C', V' \in D'_{U'} \}$ is a subset of $\{ W' \mid \exists N \in I, \exists W \in E, I_{\geq N} \times W' \subseteq W \}$, the latter set is also a Cauchy cover of $X$.
+Thus, \eqref{it:dir-char} holds for $E$.
+
+Let us show that $E$ satisfies \eqref{it:dir-cover}.
+Let $n$ be an element of $I$.
+Then $C' = \{ U' \mid \exists U \in C, \forall x \in U', (n,x) \in U \}$ is a Cauchy cover of $X$.
+Let $D'_{U'} = \{ V' \mid \exists U \in C, \exists V \in D_U, (\forall x \in U', (n,x) \in U), (\forall x \in V', (n,x) \in V)\}$.
+Clearly, $D'_{U'}$ is a Cauchy cover of $X$ for every $U' \in C'$.
+Since $\{ U' \cap V' \mid U' \in C', V' \in D'_{U'} \}$ is a subset of $\{ W' \mid \exists W \in E, \forall x \in W', (n,x) \in W \}$, the latter set is also a Cauchy cover of $X$.
+Thus, \eqref{it:dir-cover} also holds for $E$.
+
+To prove that every Cauchy cover of $I \times X$ satisfies conditions \eqref{it:dir-char} and \eqref{it:dir-cover}, it is enough to consider only basic Cauchy covers,
+that is, covers of the form $\{ \pi_1^{-1}(U) \mid U \in C \}$ and $\{ \pi_2^{-1}(V) \mid V \in D \}$ for Cauchy covers $C$ of $I$ and $D$ of $X$.
+This is easy for covers of the form $\{ \pi_1^{-1}(U) \mid U \in C \}$ since both $\{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq \pi_1^{-1}(U) \}$
+and $\{ U' \mid \exists U \in C, \forall x \in U', (n,x) \in \pi_1^{-1}(U) \}$ are refined by $\{ \top \}$.
+This is also easy for covers of the form $\{ \pi_2^{-1}(V) \mid V \in D \}$ since both $\{ V' \mid \exists N \in I, \exists V \in D, I_{\geq N} \times V' \subseteq \pi_2^{-1}(V) \}$
+and $\{ V' \mid \exists V \in D, \forall x \in V', (n,x) \in \pi_2^{-1}(V) \}$ are refined by $D$.
+
+Now, let us prove that every set $C$ satisfying \eqref{it:dir-char} and \eqref{it:dir-cover} is a Cauchy cover of $I \times X$.
+Let $D = \{ \pi_2^{-1}(U') \mid U' \in C' \}$, where $C'$ is the Cauchy cover $\{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U \}$.
+Let $E_V = \{ W \mid \exists U' \subseteq X, \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U, V = \pi_2^{-1}(U'), (W \subseteq \pi_1^{-1}(I_{\geq N})) \lor (\exists W_1 \in C, W \subseteq W_1) \}$.
+Since $\{ V \cap W \mid V \in D, W \in E_V \}$ refines $C$ and $D$ is a Cauchy cover of $I \times X$, it is enough to check that $E_V$ is a Cauchy cover of $I \times X$ for every $V \in D$.
+Let $U' \in C'$, $N \in I$, and $U \in C$ be such that $V = \pi_2^{-1}(U')$ and $I_{\geq N} \times U' \subseteq U$.
+Let $F = \{ \pi_1^{-1}(S') \mid S' \in F' \}$, where $F' = \{ I_{\geq N} \} \cup \{ \{ n \} \mid n \in I \}$.
+Let $G_S = \{ T \mid \exists S' \subseteq I, S = \pi_1^{-1}(S'), (S' = I_{\geq N}) \lor (\exists n \in I, S' = \{ n \}, \exists U_1' \subseteq X, \exists U_1 \in C, \{ n \} \times U_1' \subseteq U_1, T = \pi_2^{-1}(U_1')) \}$.
+Since $\{ S \cap T \mid S \in F, T \in G_S \}$ is a subset of $E_V$ and $F$ is a Cauchy cover of $I \times X$, it is enough to check that $G_S$ is a Cauchy cover of $I \times X$ for every $S \in F$.
+Let $S' \in F'$ be such that $S = \pi_1^{-1}(S')$.
+Then either $S' = I_{\geq N}$ or $S' = \{ n \}$ for some $n \in I$.
+In the former case, $G_S$ is Cauchy since it is refined by $\{ \top \}$.
+In the latter case, $G_S$ is Cauchy since it is refined by the Cauchy cover $\{ \pi_2^{-1}(U'') \mid U'' \in C'' \}$,
+where $C''$ is the Cauchy cover $\{ U'' \mid \exists U \in C, \forall x \in U'', (n,x) \in U \}$.
+
+This finishes the proof of characterization of Cauchy covers of $I \times X$.
+Finally, we are ready to prove the proposition.
+Since the reflector preserves products, a function $f : I \times X \to Y$ is a cover map for the cover space structure on $I$ if and only if it is a cover map for the precover space structure on $I$.
+Thus, it is a cover map if and only if, for every Cauchy cover $D$ on $Y$, the set $\{ f^{-1}(V) \mid V \in D \}$ satisfies conditions \eqref{it:dir-char} and \eqref{it:dir-cover}.
+This is simply a reformulation of conditions in the statement of this proposition.
+Thus, the proof is completed.
+\end{proof}
 
 Unfolding the definition of a cover map, we get simple conditions which imply that a sequence of functions is Cauchy.
 A sequence of functions $f_n : X \to Y$ is said to be \emph{uniformly convergent} if,
