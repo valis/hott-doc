@@ -73,7 +73,7 @@ First, we need to give a few basic definitions:
 \item Two subsets $U,V$ of a set $X$ \emph{intersect}, written $\overlap{U}{V}$, if there exists an element of $X$ which belongs to both subsets.
 \item A set $C$ of subsets of a set $X$ is called a \emph{cover} if $\bigcup C = X$. If $C$ is a cover of $X$, we will also say that $C$ \emph{covers} $X$ and that $X$ \emph{is covered by} $C$.
 \item A cover $C$ \emph{refines} a cover $D$ if every element of $C$ is a subset of some element of $D$.
-\item If $U$ and $V$ are subsets of a topological space $X$, we will say that $V$ is \emph{rather below} $U$, written $V \rb_X U$ or, for short, $V \rb U$, if $X$ is covered by opens $W$ satisfying implication $\overlap{W}{V} \implies W \subseteq U$.
+\item If $U$ and $V$ are subsets of a topological space $X$, we will say that $V$ is \emph{rather below} $U$, written $V \rb_X U$ or, for short, $V \rb U$, if $X$ is covered by opens $W$ satisfying the implication $\overlap{W}{V} \implies W \subseteq U$.
 \item A topological space is \emph{regular} if every open $U$ is covered by opens which are rather below $U$.
 \end{itemize}
 
@@ -253,7 +253,7 @@ Recall that a uniform space is a set $X$ together with a set of covers $\mathcal
 \item[(UE)] If $C \in \mathcal{U}_X$ and $C$ refines $D$, then $D \in \mathcal{U}_X$
 \item[(UI)] \axitem{UI} If $C,D \in \mathcal{U}_X$, then $\{ U \cap V \mid U \in C, V \in D \} \in \mathcal{U}_X$.
 \item[(UU)] \axitem{UU} If $C \in \mathcal{U}_X$, then there exists $D \in \mathcal{U}_X$ such that, for every $V \in D$,
-there exists $U \in C$ such that every $W \in D$ satisfies implication $\overlap{W}{V} \implies W \subseteq U$.
+there exists $U \in C$ such that every $W \in D$ satisfies the implication $\overlap{W}{V} \implies W \subseteq U$.
 \end{itemize}
 Elements of $\mathcal{U}_X$ are called \emph{uniform covers} of $X$.
 
@@ -1939,19 +1939,18 @@ More generally, we might consider cover maps of the form $I \times X \to Y$ for 
 As before, if $Y$ is a complete cover space, then $f$ is a cover map if and only if it extends to a map $\widetilde{f} : I_\infty \times X \to Y$.
 Then the limit of $f$ is defined as $\widetilde{f}(\infty,-)$.
 
-The following proposition gives a characterization for convergence of functions of the form $I \times X \to Y$:
+It will be convenient to have an explicit description of Cauchy covers of $I \times X$ for the following discussion.
+The following lemma provides such a description:
 
-\begin{prop}
-Let $I$ be a directed set and $X$ and $Y$ be cover spaces.
-Then $f : I \times X \to Y$ is a cover map if and only if $f(n,-)$ is a cover map for all $n \in I$ and, for every Cauchy cover $D$ of $Y$, the set $\{ U \mid \exists N \in I, \exists V \in D, I_{\geq N} \times U \subseteq f^{-1}(V) \}$ is a Cauchy cover of $X$.
-\end{prop}
-\begin{proof}
-To prove this proposition, we need to give a characterization of Cauchy covers of $I \times X$, where $I$ is equipped with the precover space structure.
-We will show that a set $C$ is a Cauchy cover of $I \times X$ if and only if the following conditions hold:
+\begin{lem}[dir-prod-char]
+Let $I$ be a directed set equipped with the precover space structure and $X$ be a cover space.
+Then a set $C$ is a Cauchy cover of $I \times X$ if and only if the following conditions hold:
 \begin{enumerate}
 \item \label{it:dir-char} The set $\{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U \}$ is a Cauchy cover of $X$.
 \item \label{it:dir-cover} For every $n \in I$, the set $\{ U' \mid \exists U \in C, \forall x \in U', (n,x) \in U \}$ is a Cauchy cover of $X$.
 \end{enumerate}
+\end{lem}
+\begin{proof}
 First, let us show that covers satisfying these two conditions form a precover space structure on $I \times X$.
 Axioms \axref{CT} and \axref{CE} are obvious, so let us check \axref{CG}.
 Let $C$ be a set and $\{ D_U \}_{U \in C}$ be a collection of sets such that $C$ and $D_U$ satisfy conditions \eqref{it:dir-char} and \eqref{it:dir-cover}.
@@ -1990,24 +1989,66 @@ Then either $S' = I_{\geq N}$ or $S' = \{ n \}$ for some $n \in I$.
 In the former case, $G_S$ is Cauchy since it is refined by $\{ \top \}$.
 In the latter case, $G_S$ is Cauchy since it is refined by the Cauchy cover $\{ \pi_2^{-1}(U'') \mid U'' \in C'' \}$,
 where $C''$ is the Cauchy cover $\{ U'' \mid \exists U \in C, \forall x \in U'', (n,x) \in U \}$.
-
-This finishes the proof of characterization of Cauchy covers of $I \times X$.
-Finally, we are ready to prove the proposition.
-Since the reflector preserves products, a function $f : I \times X \to Y$ is a cover map for the cover space structure on $I$ if and only if it is a cover map for the precover space structure on $I$.
-Thus, it is a cover map if and only if, for every Cauchy cover $D$ on $Y$, the set $\{ f^{-1}(V) \mid V \in D \}$ satisfies conditions \eqref{it:dir-char} and \eqref{it:dir-cover}.
-This is simply a reformulation of conditions in the statement of this proposition.
-Thus, the proof is completed.
+This completes the proof.
 \end{proof}
 
-Unfolding the definition of a cover map, we get simple conditions which imply that a sequence of functions is Cauchy.
-A sequence of functions $f_n : X \to Y$ is said to be \emph{uniformly convergent} if,
-for every Cauchy cover $D$ on $Y$, there exist $N \in \mathbb{N}$ and $V \in D$ such that, for all $n \geq N$ and $x \in X$, $f_n(x) \in V$.
-More generally, a sequence of functions $f_n : X \to Y$ is said to be \emph{locally uniformly convergent} if it consists of cover maps and,
-for every Cauchy cover $D$ on $Y$, the following set is a Cauchy cover on $X$:
-\[ \{ U \mid \exists N \in \mathbb{N}, \exists V \in D, \forall n \geq N, \forall x \in U, f_n(x) \in V \}. \]
+The following proposition gives a characterization for convergence of functions of the form $I \times X \to Y$:
 
-It is easy to see that uniformly convergent sequences are locally uniformly convergent and locally uniformly convergent sequences are Cauchy.
-Thus, these two definitions provide explicit conditions that imply the existence of the limit of a sequence of functions when their codomain is complete.
+\begin{prop}[func-conv-char]
+Let $I$ be a directed set and $X$ and $Y$ be cover spaces.
+Then $f : I \times X \to Y$ is a cover map if and only if $f(n,-)$ is a cover map for all $n \in I$ and, for every Cauchy cover $D$ of $Y$, the set $\{ U \mid \exists N \in I, \exists V \in D, I_{\geq N} \times U \subseteq f^{-1}(V) \}$ is a Cauchy cover of $X$.
+\end{prop}
+\begin{proof}
+Since the reflector preserves products, a function $f : I \times X \to Y$ is a cover map for the cover space structure on $I$ if and only if it is a cover map for the precover space structure on $I$.
+Thus, it is a cover map if and only if, for every Cauchy cover $D$ on $Y$, the set $\{ f^{-1}(V) \mid V \in D \}$ satisfies conditions \eqref{it:dir-char} and \eqref{it:dir-cover} of \rlem{dir-prod-char}.
+This completes the proof since these conditions are simply a reformulation of conditions in the statement of this proposition.
+\end{proof}
+
+If $Y$ is a uniform space, we can improve this characterization:
+
+\begin{prop}
+Let $I$ be a directed set, $X$ be a cover space, and $Y$ be a uniform space.
+Then $f : I \times X \to Y$ is a cover map if and only if $f(n,-)$ is a cover map for all $n \in I$ and, for every uniform cover $D$ of $Y$,
+the set $\{ U \mid \exists N \in I, \forall x \in U, \exists V \in D, \forall n \geq N, f(n,x) \in V \}$ is a Cauchy cover of $X$.
+\end{prop}
+\begin{proof}
+The ``only if'' direction immediately follows from \rprop{func-conv-char}.
+Let us prove the converse.
+To do this, we will show that, for every uniform cover $E$ of $Y$, there exists a Cauchy cover $C$ of $X$ such that, for every $U \in C$, there exists $N \in I$ and a Cauchy cover $D$ of $X$
+such that, for every $V \in D$, there exists $W \in E$ such that $I_{\geq N} \times (U \cap V) \subseteq f^{-1}(W)$.
+
+By \axref{UU}, there exists a uniform cover $E'$ of $Y$ such that, for every $W' \in E'$,
+there exists $W \in E$ such that every $W'' \in E'$ satisfies the implication $\overlap{W''}{W'} \implies W'' \subseteq W$.
+By assumption, $C = \{ U \mid \exists N \in I, \forall x \in U, \exists W' \in E', \forall n \geq N, f(n,x) \in W' \}$ is a Cauchy cover of $X$.
+Let $U$ be an element of $C$.
+Then there exists $N \in I$ such that $\forall x \in U, \exists W' \in E', \forall n \geq N, f(n,x) \in W'$.
+The set $D = \{ f(N,-)^{-1}(W') \mid W' \in E' \}$ is a Cauchy cover by assumption.
+We need to show that, for every $W'$ be an element of $E'$, there exists $W \in E$ such that $I_{\geq N} \times (U \cap f(N,-)^{-1}(W')) \subseteq f^{-1}(W)$.
+Let $W$ be an element of $E$ such that every $W'' \in E'$ satisfies the implication $\overlap{W''}{W'} \implies W'' \subseteq W$.
+Let $n$ be an element of $I$ such that $n \geq N$ and $x$ be an element of $U$ such that $f(N,x) \in W'$.
+Then there exists $W'' \in E'$ such that, for every $n \geq N$, $f(n,x) \in W''$.
+Since $f(N,x) \in W'' \cap W'$, we have that $W'' \subseteq W$.
+Since $f(n,x) \in W''$, we get that $f(n,x) \in W$, which completes the proof of the intermediate step.
+
+Finally, let us prove that $f : I \times X \to Y$ is a cover map.
+It is enough to show that, for every uniform cover $E$ of $Y$, the set $\{ f^{-1}(W) \mid W \in E \}$ is a Cauchy cover of $I \times X$.
+By \rlem{dir-prod-char}, we need to show that the set $C' = \{ U \mid \exists N \in I, \exists W \in E, I_{\geq N} \times U \subseteq f^{-1}(W) \}$ is a Cauchy cover of $X$.
+Let $C$ be a Cauchy cover of $X$ such that, for every $U \in C$, there exists $N \in I$ and a Cauchy cover $D$ of $X$
+such that, for every $V \in D$, there exists $W \in E$ such that $I_{\geq N} \times (U \cap V) \subseteq f^{-1}(W)$.
+Then the set $D_U = \{ V \mid \exists N \in I, \exists W \in E, I_{\geq N} \times (U \cap V) \subseteq f^{-1}(W) \}$ is a Cauchy cover for every $U \in C$.
+This completes the proof since $C'$ is refined by the Cauchy cover $\{ U \cap V \mid U \in C, V \in D_U \}$.
+\end{proof}
+
+\begin{cor}[func-conv-metric-char]
+Let $I$ be a directed set, $X$ be a cover space, and $Y$ be a metric space.
+Then $f : I \times X \to Y$ is a cover map if and only if $f(n,-)$ is a cover map for all $n \in I$ and, for every $\varepsilon > 0$,
+the set $\{ U \mid \exists N \in I, \forall x \in U, \forall n \geq N, d_Y(f(n,x),f(N,x)) < \varepsilon \}$ is a Cauchy cover of $X$.
+\end{cor}
+
+If $a_n$ is a sequence of real numbers, we will say that a series $\sum\limits_{n = 0}^\infty a_n$ \emph{converges} if the sequence $s_k = \sum\limits_{n = 0}^k a_n$ of partial sums converges.
+If $\sum\limits_{n = 0}^\infty a_n x^n$ converges for all $x$, then standard techniques imply that it converges uniformly on bounded subsets.
+Now, \rcor{func-conv-metric-char} implies that the function $x \mapsto \sum\limits_{n = 0}^\infty a_n x^n$ is a cover map in this case.
+This can be used to define various cover maps such as the exponential function, sine, cosine, and so forth.
 
 Finally, we will discuss limits of functions of the form $f : \mathbb{R}_* \to \mathbb{R}$.
 As usual, we will say that $y$ is a \emph{limit} of $f$ at $0$ if, for every $\varepsilon > 0$,
