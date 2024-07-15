@@ -51,21 +51,75 @@
 
 \begin{document}
 
-\title{Completion of Spaces in Constructive Mathematics}
+\title{A Constructive Approach to Complete Spaces}
 
 \author{Valery Isaev}
 
 \begin{abstract}
-TODO
+In this paper, we present a constructive generalization of metric and uniform spaces by introducing a new class of spaces, called cover spaces.
+They form a topological concrete category which has a full reflective subcategory of complete spaces.
+This subcategory is closely related to a particular subcategory of locales, providing an alternative approach to localic completion.
+Additionally, we demonstrate how this framework provides simple constructive definitions of compact spaces, uniform convergence, and limits of nets.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
 
-TODO
+This paper explores the concepts of completeness, continuous mappings, and other topological notions within the framework of constructive mathematics.
+The traditional topological notion of continuity between real numbers is often deemed unsuitable in a constructive context.
+For instance, Bishop defined continuous maps as locally uniformly continuous maps \cite[Chapter 2, Definition 9]{bishop},
+a perspective that does not generalize well to spaces that are not locally compact.
+
+Another prevalent constructive approach to general topology involves locale theory.
+Palmgren demonstrated that locally uniform maps between real numbers correspond to localic endomorphisms on the locale of real numbers \cite{palmgren-cont}.
+Furthermore, locally compact metric spaces can be fully and faithfully embedded into the category of locales \cite{palmgren-metric-locales}.
+In this paper, we propose an alternative approach that generalizes these results to spaces that are not locally compact.
+
+We introduce a topological concrete category of \emph{cover spaces}.
+Every metric space, and more generally, every uniform space, can be viewed as a cover space.
+We will establish that there exists a full reflective subcategory of complete cover spaces (\rcor{complete-reflective}),
+and that a certain full subcategory of locales is equivalent to a full subcategory of complete cover spaces,
+encompassing a broad class of complete metric spaces (\rthm{locale-equiv}).
+This serves as an alternative to localic completion \cite{localic-completion}.
+
+The definition of cover spaces also enables us to generalize the Cauchy condition for sequences and, more broadly, nets (\rprop{conv-char}).
+This condition provides a motivation for defining cover spaces.
+Classically, if $x : \mathbb{N} \to \mathbb{R}$ is a Cauchy sequence, every open cover of $\mathbb{R}$ contains a set that eventually includes all $x_n$.
+However, this does not hold for sequences of rational numbers.
+For example, if $x : \mathbb{N} \to \mathbb{Q}$ approaches $\sqrt{2}$ from both sides, the cover $\{ (-\infty,\sqrt{2}), (\sqrt{2},\infty) \}$ does not have this property.
+Informally speaking, the problem is that this cover does not cover all the points in the completion of $\mathbb{Q}$.
+We can remedy this by adding more sets, such as in the cover ${ (-\infty, \sqrt{2}), (\sqrt{2}, \infty), (1,2) }$, which satisfies the condition for all Cauchy sequences.
+
+In general, we can choose a class of good covers of $\mathbb{Q}$, which we call \emph{Cauchy covers},
+for which it is true that a sequence is Cauchy if and only if every Cauchy cover contains a set that the sequence eventually belongs to.
+A \emph{cover space} is simply a set together with a choice of Cauchy covers satisfying certain closure conditions.
+A \emph{complete cover space} is one where every Cauchy sequence (or filter) converges to a point.
+Constructively, there might be fewer Cauchy covers of a complete cover space than neighborhood covers, making the concept of a Cauchy cover significant even for complete spaces.
+
+This concept parallels the cover relation in locales and can be employed to make various classical definitions and theorems constructive.
+For example, we can say that a complete cover space is \emph{compact} if every Cauchy cover has a finite subcover.
+We will demonstrate that the Heine-Borel theorem holds under this definition of compactness.
+
+Cover spaces also provide a convenient framework for defining convergence for arbitrary nets.
+In Section~\ref{sec:limits}, we will show how to put a cover space structure on an arbitrary directed set $I$ in such a way that a map $I \to X$ converges if and only if it is a morphism of cover spaces.
+We will also illustrate how Cauchy covers can be used to give simple and elegant conditions for the convergence of a sequence of functions, generalizing uniform convergence.
+
+The paper is organized as follows.
+Section~\ref{sec:top} defines cover spaces and explores their basic topological properties.
+Section~\ref{sec:cat} presents the category of cover spaces and its basic properties.
+Section~\ref{sec:filters} introduces Cauchy filters, used to define complete cover spaces.
+In Section~\ref{sec:completion}, we define the completion of cover spaces and prove its universal property.
+Section~\ref{sec:locales} constructs an equivalence between certain full subcategories of locales and complete cover spaces.
+Section~\ref{sec:reals} discusses the cover space of real numbers in detail. 
+Section~\ref{sec:compact} defines compact cover spaces and proves that morphisms of locally compact cover spaces are precisely locally uniform maps.
+In Section~\ref{sec:limits}, we discuss limits in cover spaces and provide several criteria for their existence.
+
+All the results in this paper are constructive, in the sense that they are true in the internal language of an elementary topos.
+They have also been formalized in the Arend proof assistant.
 
 \section{Topological properties}
+\label{sec:top}
 
 In this section, we define cover spaces and and study their topological properties.
 First, we need to give a few basic definitions:
@@ -310,6 +364,7 @@ In particular, every metric spaces determines a cover space.
 This is our main source of examples of cover spaces.
 
 \section{Categorical properties}
+\label{sec:cat}
 
 In this section, we define the category of cover spaces and prove its various properties.
 It will also be convenient to define the category of precover spaces.
@@ -345,7 +400,7 @@ The unit and the counit of the adjunction are both given by the identity functio
 The fact that the counit $T(S(X)) \to X$ is a cover map follows from the fact that any Cauchy cover contains a neighborhood of every point.
 Thus, $\cat{Top}_\mathrm{reg}$ is equivalent to a full coreflective subcategory of $\cat{Cov}$.
 
-Now, we will show that the category of precover spaces is topological. % TODO: Give a reference for topological categories.
+Now, we will show that the category of precover spaces is topological \cite[Definition~21.7]{joy-cats}.
 To do this, we will show that the set of precover space structures on a given set $X$ forms a complete lattice under inclusion.
 Indeed, if $\{ \mathcal{C}_i \}_{i \in I}$ is a set of precover space structures on $X$, then $\overline{\bigcup_{i \in I} \mathcal{C}_i}$ is the join of these structures.
 Also, we need to define the transferred precover space structure.
@@ -423,6 +478,7 @@ Since these covers refine $\{ V \mid \exists U \in C, (f \times g)^{-1}(V) \subs
 \end{proof}
 
 \section{Cauchy filters}
+\label{sec:filters}
 
 In the next section, we will define complete cover spaces.
 To do this, we need to introduce the notion of a Cauchy filter, which we define and study in this section.
@@ -453,7 +509,7 @@ The other direction is an easy induction on the consruction of a Cauchy cover.
 If $X$ is a metric space, then a proper filter is Cauchy if and only if it contains an open ball of size $\varepsilon$ for every $\varepsilon > 0$.
 \end{cor}
 
-The notion of a Cauchy filter makes every cover space into a Cauchy space. % TODO: Give references
+The notion of a Cauchy filter makes every cover space into a Cauchy space \cite[Definition~1.3.1]{cauchy-spaces}.
 We will not use this abstraction and instead give the necessary constructions and definitions directly for cover spaces.
 
 Given a function $f : X \to Y$ and a filter $F$ on $X$, we will write $f(F)$ for the filter $\{ V \mid f^{-1}(V) \in F \}$ on $Y$.
@@ -854,7 +910,7 @@ We just proved that, for every neighborhood $V$ of $F$, the set $\eta_X^{-1}(V)$
 This means that $F^\wedge$ is a subset of $\eta_X(F)$, so they are equivalent.
 \end{proof}
 
-\begin{cor}
+\begin{cor}[complete-reflective]
 Complete cover spaces is a reflective subcategory of $\cat{Cov}$.
 \end{cor}
 
@@ -1007,6 +1063,7 @@ The forgetful functor from the category of cover spaces and Cauchy maps to the c
 \end{proof}
 
 \section{Locales}
+\label{sec:locales}
 
 In the previous section, we showed that the category of strongly regular complete cover spaces and Cauchy maps is equivalent to the category of strongly regular topological spaces.
 In this section, we prove a similar result for the category of cover spaces and cover maps instead of Cauchy maps.
@@ -1181,7 +1238,7 @@ In the latter case, we get that $a \in P(g)(F)$, which concludes the proof.
 \end{proof}
 
 Next, we need to construct a locale from a precover space.
-We define the frame of opens of this locale by a method described in Section~2.11 of \cite{stone-spaces} and Section~0.1.3 of \cite{locales-tychonoff}, which we briefly recall here.
+We define the frame of opens of this locale by a method described in Section~2.11 of \cite{stone-spaces} and Section~0.1.3 of \cite{vickers-compact}, which we briefly recall here.
 A \emph{coverage} on a meet-semilattice $P$ is a relation $\triangleleft_0$ between elements of $P$ and subsets of $P$ satisfying the following conditions:
 \begin{itemize}
 \item If $a \triangleleft_0 U$, then $b \leq a$ for every $b \in U$.
@@ -1596,6 +1653,7 @@ Now, we can finish the proof: $\abs{\frac{1}{z} - \frac{1}{x}} = \frac{\abs{z - 
 \end{proof}
 
 \section{Compactness}
+\label{sec:compact}
 
 In this section, we define compact and totally bounded spaces and use these notions to give a characterization of cover maps for certain uniform spaces.
 
@@ -1606,8 +1664,7 @@ A cover space is called \emph{compact} if it is complete and totally bounded.
 If $X$ is a totally bounded uniform space, it is often true that all Cauchy covers of $X$ are uniform.
 To prove this, we need an additional assumption on $X$ which is called \emph{properness}.
 We will say that a uniform space $X$ is \emph{proper} if, for every uniform cover $C$ of $X$, the subset of $C$ consisting of inhabitted sets is also a uniform cover of $X$.
-Some authors include this condition in the definition of uniform spaces % TODO: Give reference
-, but doing so has some unfortunate consequences.
+Some authors include this condition in the definition of uniform spaces \cite{uniform-locales}, but doing so has some unfortunate consequences.
 For example, the transferred uniform structure might not be proper even if the original is.
 There is always a universal proper transferred structure, but its underlying cover structure might differ from the transferred cover structure.
 To avoid these problems, we do not include properness in the definition of uniform spaces.
@@ -1826,6 +1883,7 @@ A subspace of a complete cover space is compact if and only if it is closed and 
 \end{cor}
 
 \section{Limits}
+\label{sec:limits}
 
 Limits of functions are closely related to lifting problem for cover spaces.
 In this section, we show how various kinds of limits and are related and can be expressed in terms of liftings.
@@ -1877,7 +1935,7 @@ Moreover, $f : \mathbb{N} \to X$ is a Cauchy sequence if and only if it is a cov
 If $X$ is a complete cover space, then \rthm{dense-lift} implies that a sequence $f : \mathbb{N} \to X$ is Cauchy if and only if it extends to a cover map $\widetilde{f} : \mathbb{N}_\infty \to X$.
 Then the limit of $f$ is defined as $\widetilde{f}(\infty)$.
 
-We can generalize this discussion to arbitrary directed sets which can be used to give a general notion of a limit. % TODO: Give a reference
+We can generalize this discussion to arbitrary directed sets which can be used to give a general notion of a limit \cite{limits}.
 A \emph{directed set} $I$ is a preordered set in which every finite set has an upper bound.
 If $N$ is an element of $I$, we will write $I_{\geq N}$ for the set $\{ n \in I \mid n \geq N \}$.
 There is a precover space structure on $I$ in which a cover $C$ is Cauchy if and only if there exist $U \in C$ and $N \in I$ such that $I_{\geq N} \subseteq U$.
@@ -1897,7 +1955,7 @@ If $X$ is complete and $f$ converges, then it extends to a function from the com
 
 The following proposition gives an explicit characterization of convergence:
 
-\begin{prop}
+\begin{prop}[conv-char]
 Let $I$ be a directed set $X$ be a cover space.
 Then a function $f : I \to X$ converges if and only if, for every Cauchy cover $C$ of $X$, there exist $U \in C$ and $N \in I$ such that $I_{\geq N} \subseteq f^{-1}(U)$.
 \end{prop}
