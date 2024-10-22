@@ -110,7 +110,8 @@ Section~\ref{sec:top} defines cover spaces and explores their basic topological 
 Section~\ref{sec:cat} presents the category of cover spaces and its basic properties.
 Section~\ref{sec:filters} introduces Cauchy filters, used to define complete cover spaces.
 In Section~\ref{sec:completion}, we define the completion of cover spaces and prove its universal property.
-Section~\ref{sec:locales} constructs an equivalence between certain full subcategories of locales and complete cover spaces.
+In Section~\ref{sec:strongly-regular}, we define a strong regularity and strong completeness properties, which are useful for establishing correspondences between cover space, sober topological spaces, and locales.
+Section~\ref{sec:locales} constructs an equivalence between certain full subcategories of locales and strongly complete cover spaces.
 Section~\ref{sec:reals} discusses the cover space of real numbers in detail. 
 Section~\ref{sec:compact} defines compact cover spaces and proves that morphisms of locally compact cover spaces are precisely locally uniform maps.
 In Section~\ref{sec:limits}, we discuss limits in cover spaces and provide several criteria for their existence.
@@ -304,7 +305,7 @@ Many examples of cover spaces come from uniform spaces.
 Recall that a uniform space is a set $X$ together with a set of covers $\mathcal{U}_X$ such that the following conditions hold:
 \begin{itemize}
 \item[(UT)] $\{ X \} \in \mathcal{U}_X$
-\item[(UE)] If $C \in \mathcal{U}_X$ and $C$ refines $D$, then $D \in \mathcal{U}_X$
+\item[(UE)] \axitem{UE} If $C \in \mathcal{U}_X$ and $C$ refines $D$, then $D \in \mathcal{U}_X$
 \item[(UI)] \axitem{UI} If $C,D \in \mathcal{U}_X$, then $\{ U \cap V \mid U \in C, V \in D \} \in \mathcal{U}_X$.
 \item[(UU)] \axitem{UU} If $C \in \mathcal{U}_X$, then there exists $D \in \mathcal{U}_X$ such that, for every $V \in D$,
 there exists $U \in C$ such that every $W \in D$ satisfies the implication $\overlap{W}{V} \implies W \subseteq U$.
@@ -405,7 +406,7 @@ To do this, we will show that the set of precover space structures on a given se
 Indeed, if $\{ \mathcal{C}_i \}_{i \in I}$ is a set of precover space structures on $X$, then $\overline{\bigcup_{i \in I} \mathcal{C}_i}$ is the join of these structures.
 Also, we need to define the transferred precover space structure.
 Given a set $X$, a precover space $Y$, and a function $f : X \to Y$, we can define the smallest precover space structure on $X$ for which this function is a cover map.
-A cover of $X$ is Cauchy in this structure if and only if $\{ V \mid \exists U \in C, f^{-1}(V) \subseteq U \}$ is a Cauchy cover of $Y$.
+A cover $C$ of $X$ is Cauchy in this structure if and only if $\{ V \mid \exists U \in C, f^{-1}(V) \subseteq U \}$ is a Cauchy cover of $Y$.
 These constructions together imply that $\cat{Precov}$ is a topological category.
 
 Cover spaces are closed under joins in the lattice of precover space structures on a set $X$.
@@ -487,7 +488,8 @@ We will also show that Cauchy filters on $\mathbb{Q}$ correspond to Dedekind rea
 \begin{defn}
 A \emph{filter} on a set $X$ is an upward closed set of subsets of $X$ closed under finite intersections.
 A \emph{proper filter} is a filter consisting of inhabited sets.
-A \emph{Cauchy filter} on a cover space $X$ is a proper filter that intersects with every Cauchy cover.
+A filter on a cover space satisfies the \emph{Cauchy condition} if it intersects with every Cauchy cover.
+A \emph{Cauchy filter} on a cover space $X$ is a proper filter that satisfies the Cauchy condition.
 \end{defn}
 
 \begin{example}
@@ -501,8 +503,7 @@ If a cover space is equipped with a subbase, then it is easier to check when a p
 If $\mathcal{B}_X$ is a subbase for a cover space $X$, then a proper filter $F$ is Cauchy if and only if it intersects with every cover from $\mathcal{B}_X$.
 \end{prop}
 \begin{proof}
-The ``only if'' direction is obvious.
-The other direction is an easy induction on the consruction of a Cauchy cover.
+This follows from \rlem{closure-filter}.
 \end{proof}
 
 \begin{cor}[metric-cauchy-filter]
@@ -544,7 +545,7 @@ It follows that $W \subseteq U$.
 Thus, $U \in G$
 \end{proof}
 
-\begin{prop}
+\begin{prop}[cauchy-filter-equiv]
 The equivalence of Cauchy filters is indeed an equivalence relation.
 \end{prop}
 \begin{proof}
@@ -575,7 +576,7 @@ Since $F$ is regular, there is a set $V \in F$ such that $V \rb U$.
 By \rlem{cauchy-filter-rb}, $U$ belongs to $G$.
 \end{proof}
 
-\begin{prop}
+\begin{prop}[regular-filter-repr]
 Let $F$ be a Cauchy filter.
 The intersection of all Cauchy subfilters of $F$ is a regular Cauchy filter.
 It is a unique regular filter equivalent to $F$.
@@ -612,7 +613,7 @@ A \emph{Dedekind cut} is a pair $(L,U)$ of subsets of $\mathbb{Q}$ satisfying th
 \end{itemize}
 
 Dedekind reals can be alternatively represented by filters.
-A proper filter $F$ on $\mathbb{Q}$ will be called a \emph{Dedekind filter} if it satisfies the following conditions:
+A filter $F$ on $\mathbb{Q}$ will be called a \emph{Dedekind filter} if it satisfies the following conditions:
 \begin{itemize}
 \item[(DE)] \axitem{DE} For every rational $\varepsilon > 0$, there exists $a \in \mathbb{Q}$ such that the open interval $(a, a + \varepsilon)$ belongs to $F$.
 \item[(DR)] \axitem{DR} If $F$ contains an open interval $(a,d)$, then $F$ also contains an open interval $(b,c)$ such that $a < b < c < d$.
@@ -624,7 +625,7 @@ There is a bijection between the set of Dedekind cuts and the set of Dedekind fi
 \end{prop}
 \begin{proof}
 If $(L,U)$ is a Dedekind real, then we define $F(L,U)$ as the set of those $V$ for which there exist $a \in L$ and $b \in U$ such that the open interval $(a,b)$ is a subset of $V$.
-Clearly, it is a filter that satisfies \axref{DT}, \axref{DI} implies that it is proper, and \axref{DL} and \axref{DU} imply \axref{DR}.
+Clearly, it is a filter that satisfies \axref{DT} and axioms \axref{DL} and \axref{DU} imply \axref{DR}.
 Let us prove \axref{DE}.
 By \axref{DI}, \axref{DD}, and \axref{DL}, there exist $a \in L$ and $b \in U$ such that $a < b$.
 Let $a' = a + \frac{b - a}{3}$ and $b' = b - \frac{b - a}{3}$.
@@ -634,7 +635,7 @@ Thus, we can get an arbitrary small open interval in a finite number of steps, w
 
 Now, let $F$ be a Dedekind filter.
 If we define $L_F = \{ a \in \mathbb{Q} \mid \exists b \in \mathbb{Q}, (a,b) \in F \}$ and $U_F = \{ b \in \mathbb{Q} \mid \exists a \in \mathbb{Q}, (a,b) \in F \}$,
-then \axref{DE} implies \axref{DI} and \axref{DS}, \axref{DR} implies \axref{DL} and \axref{DU}, and properness of $F$ implies \axref{DD}.
+then \axref{DE} implies \axref{DI} and \axref{DS}, \axref{DR} implies \axref{DL} and \axref{DU}, and \axref{DT} implies \axref{DD}.
 
 It is easy to see that $L_{F(L,U)} = L$ and $U_{F(L,U)} = U$ and the fact that $F(L_F,U_F) = F$ follows from \axref{DT}.
 \end{proof}
@@ -759,7 +760,7 @@ Then $F^{\vee \wedge} = \{ U \mid \exists V \in F, V \rb U \}$.
 Since $F^{\vee \wedge}$ and $F$ are equivalent, if $V \in F$ and $V \rb U$, then $U \in F^{\vee \wedge}$ by \rlem{cauchy-filter-rb}.
 Conversely, suppose that $U \in F^{\vee \wedge}$.
 By \rlem{rb-point}, there is a neighborhood $V$ of $F^\vee$ such that $V \rb U$.
-Since $F^{\vee \wedge}$, we also have that $V \in F$.
+Since $F^{\vee \wedge} \subseteq F$, we also have that $V \in F$, which completes the proof.
 \end{proof}
 
 Now, we will show that cover maps to complete cover spaces extend uniquely along dense embeddings.
@@ -847,7 +848,7 @@ Indeed, let $y$ be a point in $V''$.
 Then we need to show that $W$ is a neighborhood of $g(G_y)^\vee$, but this follows from \rlem{filter-point-char} and the definition of $G_y$.
 \end{proof}
 
-A \emph{completion} of a cover space $X$ is a complete cover space $Y$ together with a dense embedding.
+A \emph{completion} of a cover space $X$ is a complete cover space $Y$ together with a dense embedding $X \to Y$.
 \rthm{dense-lift} implies that completion is unique up to isomorphism.
 Now, we can show that every cover space has a completion:
 
@@ -857,7 +858,7 @@ For every cover space $X$, there is a complete cover space $C(X)$ and a dense em
 \begin{proof}
 Let $C(X)$ be the set of regular Cauchy filters in $X$.
 For every set $U \subseteq X$, let $\widetilde{U} \subseteq C(X)$ be the set of all regular Cauchy filters containing $U$.
-The set Cauchy covers of $C(X)$ is defined as the set of those $C$ which are refined by the set $\{ \widetilde{U'} \mid U' \in C' \}$ for some Cauchy cover $C'$ in $X$.
+The set of Cauchy covers of $C(X)$ is defined as the set of those $C$ which are refined by the set $\{ \widetilde{U'} \mid U' \in C' \}$ for some Cauchy cover $C'$ in $X$.
 Every such $C$ is a cover.
 Indeed, given a regular Cauchy filter $F$, there is a set $U \in F \cap C'$.
 Thus, we have $V \in C$ such that $F \in \widetilde{U} \subseteq V$.
@@ -887,7 +888,7 @@ This follows from the fact that this cover is refined by $\{ V' \mid \exists U' 
 
 It is clear that $\eta_X : X \to C(X)$ is an embedding.
 Let us prove that it is dense.
-Let $F$ be a regular Cauchy filter and $V$ be a neighborhood of $V$ in $C(X)$.
+Let $F$ be a regular Cauchy filter and $V$ be a neighborhood of $F$ in $C(X)$.
 We need to show that there exists $x \in X$ such that $\eta_X(x) \in V$.
 It is enough to show that $\{ x \in X \mid \eta_X(x) \in V \} \in F$ since $F$ is proper.
 Since $\{ F \} \rb_{C(X)} V$, there exists a Cauchy cover $C'$ in $X$ sucht that $\{ \widetilde{U'} \mid U' \in C' \}$ refines $\{ W \mid F \in W \implies W \subseteq V \}$.
@@ -899,7 +900,7 @@ Then $U'$ is a neighborhood of $x$, so we have $\eta_X(x) = x^\wedge \in \wideti
 It follows that $\eta_X(x) \in V$.
 This complete the proof that $\eta_X$ is dense.
 
-Now, let us check that $C(X)$ it is separated.
+Now, let us check that $C(X)$ is separated.
 Let $F$ and $G$ be regular Cauchy filters on $X$ such that every Cauchy cover in $C(X)$ contains a set which contins both $F$ and $G$.
 This implies that, for every Cauchy cover $C'$ in $X$, there is a set $U' \in C'$ such that $F,G \in \widetilde{U'}$.
 This means that $F$ and $G$ are equivalent Cauchy filters and, since they are regular, they are equal.
@@ -911,7 +912,7 @@ This means that $F^\wedge$ is a subset of $\eta_X(F)$, so they are equivalent.
 \end{proof}
 
 \begin{cor}[complete-reflective]
-Complete cover spaces is a reflective subcategory of $\cat{Cov}$.
+Complete cover spaces form a reflective subcategory of $\cat{Cov}$.
 \end{cor}
 
 The embedding $\eta_X$ might not be injective in general, but it is for separated cover spaces.
@@ -923,13 +924,13 @@ Given a cover space $X$, the following conditions are equivalent:
 \item \label{ei:sep} $X$ is a separated cover space.
 \item \label{ei:any} Every embedding $X \to Y$ is injective.
 \item \label{ei:eta} The embedding $\eta_X : X \to C(X)$ is injective.
-\item \label{ei:ex} There exists a separated cover space $Y$ and an injective cover map $X \to Y$.
+\item \label{ei:ex} There is an injective Cauchy map $X \to Y$ into a separated cover space $Y$.
 \end{enumerate}
 \end{prop}
 \begin{proof}
 Conditions \eqref{ei:sep} and \eqref{ei:eta} are equivalent by the definition of separated cover spaces.
 It is also clear that $\eqref{ei:any}$ implies \eqref{ei:eta} and \eqref{ei:eta} implies \eqref{ei:ex}.
-To see that \eqref{ei:ex} implies \eqref{ei:eta}, note that if a cover map $f : X \to Y$ and the map $\eta_Y : Y \to C(Y)$ are injective,
+To see that \eqref{ei:ex} implies \eqref{ei:eta}, note that if a Cauchy map $f : X \to Y$ and the map $\eta_Y : Y \to C(Y)$ are injective,
 then $\eta_X : X \to C(X)$ is also injective by naturality of $\eta$.
 
 Finally, let us show that \eqref{ei:sep} implies \eqref{ei:any}.
@@ -940,50 +941,17 @@ In particular, it is a cover, so there exist sets $V$ and $W$ such that $f(x) = 
 But the first two conditions imply that both $x$ and $x'$ belong to $W$ and the last one implies that $W \subseteq U$, so we have that $x' \in U$.
 \end{proof}
 
-Finally, we will discuss Cauchy maps.
-\rthm{dense-lift} implies that complete cover spaces form a reflective subcategory in the category of cover spaces and Cauchy maps.
-We will show that this subcategory is equivalent to a subcategory of the category of topological spaces.
+\section{Strongly regular spaces}
+\label{sec:strongly-regular}
 
-\begin{prop}[u-fully-faithful]
-Let $X$ be a complete cover space and $Y$ be a cover space.
-Then a map $f : X \to Y$ is Cauchy if and only if it is continuous.
-\end{prop}
-\begin{proof}
-The ``only if'' direction was proved in \rprop{cauchy-continuous}.
-Let us prove the other direction.
-Suppose that $f$ is continuous.
-Let $F$ be a Cauchy filter on $X$ and $C$ be a Cauchy cover of $Y$.
-We need to show that there exists $U \in C$ such that $f^{-1}(U) \in F$.
-Since $X$ is complete, there exists a point $x \in X$ such that $x^\wedge \subseteq F$.
-Since $C$ is a Cauchy cover, there exists $U \in C$ such that $\{ f(x) \} \rb U$.
-Since $f$ is continuous, $f^{-1}(U)$ is a neighborhood of $x$.
-Since $x^\wedge \subseteq F$, we get that $f^{-1}(U) \in F$.
-\end{proof}
+In this section, we define another regularity condition for cover spaces.
+Classically, it is equivalent to \axref{CR}, but constructively it is stronger.
+There is also a stronger version of completeness for strongly regular cover spaces.
+We will show that there is a close relationship between strongly complete strongly regular cover spaces and strongly regular sober topological spaces.
 
-Let $X$ be a topological space.
-A filter $F$ on $X$ is called \emph{open} if, for every $U \in F$, there exists an open $V \in F$ such that $V \subseteq U$.
-An open filter $F$ is called \emph{completely prime} if, for every set of opens $\{ U_i \}_{i \in I}$, if $\bigcup_{i \in I} U_i \in F$, then $U_i \in F$ for some $i \in I$.
-If $x$ is a point in $X$, then the neighborhood filter $x^\wedge$ is a completely prime open filter.
-A topological space is called \emph{sober} if every completely prime open filter is of the form $x^\wedge$ for a unique point $x \in X$.
-
-\begin{prop}[u-sober]
-If $X$ is a complete cover space, then its underlying topological space is sober.
-\end{prop}
-\begin{proof}
-Let $F$ be a completely prime open filter.
-Clearly, it is also Cauchy.
-\rlem{rb-point} implies that, for every open $U$, we have $U = \bigcup \{ V \mid V \rb_X U \}$.
-It follows that $F$ is regular.
-By completeness of $X$, there exists a unique $x \in X$ such that $F = x^\wedge$.
-\end{proof}
-
-Recall that if $X$ is a regular topological space, then we write $T(X)$ for the cover space consisting of all \emph{neighborhood covers} of $X$, that is, covers that contain a neighborhood of every point.
-Classically, if $X$ is sober, then $T(X)$ is complete, but we do not know if this is true constructively.
-To fix this problem, we define another version of regularity, which is classically equivalent to the one we had before, but constructively it is stronger.
-
-If $U$ and $V$ are subsets of a topological space $X$, we will say that $V$ is \emph{strongly rather below} $U$, written $V \rb^s U$, if $X = (X \backslash V) \cup U$.
+If $U$ and $V$ are open subsets of a topological space $X$, we will say that $V$ is \emph{strongly rather below} $U$, written $V \rb^s U$, if $X = \mathrm{int}(X \backslash V) \cup U$.
 A topological space is \emph{strongly regular} if every open $U$ is the union of opens which are strongly rather below $U$.
-There is also a stronger version of regularity for precover spaces.
+Strong regularity for precover spaces is defined similarly.
 Given subsets $V$ and $U$ of a precover space $X$, we will say that $V$ is \emph{strongly rather below} $U$, written $V \rb^s U$, if the set $\{ X \backslash V, U \}$ is a Cauchy cover.
 This relation satisfies conditions analogous to conditions in \rprop{rb-props}:
 
@@ -1000,12 +968,31 @@ The following is true for subsets $U,V,U',V'$ of a precover space $X$:
 
 A precover space is called \emph{strongly regular} if, for every Cauchy cover $C$, the set $\{ V \mid \exists U \in C, V \rb^s U \}$ is a Cauchy cover.
 Since $V \rb^s U$ implies $V \rb U$, every strongly regular precover space is a cover space.
-Every metric space is strongly regular.
-The completion of a strongly regular cover space is strongly regular.
-The proof is the same as in \rthm{completion}.
-Also, strongly regular cover spaces are reflective in the category of cover spaces.
+
+\begin{example}
+Recall that if $X$ is a topological space, then $T(X)$ is a precover space in which a cover is Cauchy if it contains a neighborhood of every point.
+Clearly, if $X$ is a strongly regular topological space, then $T(X)$ is a strongly regular cover space.
+\end{example}
+
+\begin{example}
+Every metric space is strongly regular as a cover space.
+\end{example}
+
+\begin{example}
+More generally, we will say that a uniform space $X$ is \emph{strongly regular} if it satisfies the following stronger version of \axref{UU}.
+For every $C \in \mathcal{U}_X$, there exists $D \in \mathcal{U}_X$ such that, for every $V \in D$,
+there exists $U \in C$ such that, for every $W \in D$, either $W$ does not intersect $V$ or $W$ is a subset of $U$.
+
+With this definition, every metric space is a strongly regular uniform space and every strongly regular uniform space is a strongly regular cover space.
+\end{example}
+
+\begin{example}
+Strongly regular cover spaces are reflective in the category of cover spaces.
 The proof is the same as the proof of \rprop{regular-reflective}.
-We will also need the following lemma later:
+Thus, every cover space can be turned into a strongly regular cover space.
+\end{example}
+
+The following lemma implies that conditions $\{ x \} \rb U$ and $\{ x \} \rb^s U$ are equivalent in a strongly regular cover space:
 
 \begin{lem}[rbs-point]
 If $U$ is a neighborhood of a point $x$ in a strongly regular cover space, then there exists a neighborhood $V$ of $x$ such that $V \rb^s U$.
@@ -1014,7 +1001,7 @@ If $U$ is a neighborhood of a point $x$ in a strongly regular cover space, then 
 The proof is essentially the same as the proof of \rlem{rb-point}.
 \end{proof}
 
-Finally, we can show that the category of strongly regular complete cover spaces and Cauchy maps is equivalent to the category of strongly regular sober spaces.
+The following proposition shows how the conditions of strong regularity for topological and cover spaces are related:
 
 \begin{prop}[u-strongly-regular]
 If $X$ is a strongly regular cover space, then its underlying topological space is strongly regular.
@@ -1023,51 +1010,272 @@ If $X$ is a strongly regular cover space, then its underlying topological space 
 The proof is the same as the proof of \rprop{top-regular} using \rlem{rbs-point}.
 \end{proof}
 
+Separated strongly regular cover spaces satisfy a stronger Hausdorff condition.
+We will say that a topological space $X$ is \emph{strongly Hausdorff} if, for every pair of points $x,y \in X$, if the intersection of every neighborhood of $x$ with every neighborhood of $y$ is not empty, then $x$ and $y$ are equal.
+
+\begin{lem}
+Every separated strongly regular cover space is strongly Hausdorff.
+\end{lem}
+\begin{proof}
+Let $x$ and $y$ be points such that the intersection of every neighborhood of $x$ with every neighborhood of $y$ is not empty.
+We need to show that every Cauchy cover $C$ contains a set that contains both $x$ and $y$.
+By \rlem{rbs-point}, there exist $U \in C$ and a neighborhood $V$ of $x$ such that $V \rb^s U$.
+Then either $y \in U$ or the complement of $V$ is a neighborhood of $y$.
+The latter case is impossible since then $V$ is a neighborhood of $V$ that does not intersect a neighborhood of $y$.
+Thus, the result holds.
+\end{proof}
+
+A continuous function with values in a Haudorff space is determined by its values on a dense subsets.
+For strongly Hausdorff spaces, it is enough to assume a weaker condition on this subset.
+A subset $S$ of a topological space is \emph{weakly dense} if every open subset that does not intersect with $S$ is empty.
+A function is \emph{weakly dense} if its image is weakly dense.
+Now, we can prove a version of \rprop{dense-unique} for strongly Hausdorff spaces:
+
+\begin{prop}[weakly-dense-unique]
+Let $Y$ be a strongly Hausdorff topological space, $S$ be a weakly dense subset of a topological space $X$, and $f,g : X \to Y$ be continuous functions.
+If $f$ and $g$ are equal on every point in $S$, then $f = g$.
+\end{prop}
+\begin{proof}
+Let $x$ be a point in $X$.
+Let $U$ be a neighborhood of $f(x)$ and $V$ be a neighborhood of $g(x)$.
+To prove that $f(x) = g(x)$, it is enough to show that the inresection of $U$ and $V$ is not empty.
+Let us assume that it is.
+Then $f^{-1}(U) \cap g^{-1}(V)$ is a neighborhood of $x$.
+Since $S$ is weakly dense, we can assume that this neighborhood contains a point $x' \in S$.
+Thus, $U$ and $V$ both contain $f(x') = g(x')$, which is a contradiction.
+\end{proof}
+
+To define strongly complete spaces, we first need to discuss weakly proper filters.
+
+\begin{defn}
+A \emph{weakly proper filter} is a filter that does not contain the empty set.
+A \emph{weakly Cauchy filter} on a cover space $X$ is a weakly proper filter that intersects with every Cauchy cover.
+\end{defn}
+
+\begin{remark}
+Classically, weakly proper and weakly Cauchy filters are the same as proper and Cauchy filters, but constructively these conditions are weaker.
+\end{remark}
+
+We will say that a function between cover spaces is a \emph{strongly Cauchy map} if it preserves weakly Cauchy filters.
+Clearly, every cover map is strongly Cauchy and every strongly Cauchy map is Cauchy.
+
+The equivalence of weakly Cauchy filters is defined as before:
+two weakly Cauchy fitlers are \emph{equivalent} if every Cauchy cover contains an element from both filters.
+As before, weakly Cauchy filters are equivalent if and only if their intersection is a weakly Cauchy filter.
+In particular, if one weakly Cauchy filter is a subset of another one, they are equivalent.
+We have an analogue of \rlem{cauchy-filter-rb}:
+
+\begin{lem}[weakly-cauchy-filter-rb]
+Let $X$ be a cover space, $F$ and $G$ be equivalent weakly Cauchy filters on $X$, and $U$ and $V$ be subsets of $X$ such that $V \rb^s U$.
+If $V$ belongs to $F$, then $U$ belongs to $G$.
+\end{lem}
+\begin{proof}
+Since $V \rb^s U$, either $U \in F \cap G$ or $(X \backslash V) \in F \cap G$.
+The latter case is impossible since $V \in $F and $\varnothing \notin F$.
+Thus, $U$ belongs to $G$.
+\end{proof}
+
+\begin{prop}
+The equivalence of Cauchy filters is indeed an equivalence relation.
+\end{prop}
+\begin{proof}
+The proof is the same as in \rprop{cauchy-filter-equiv}.
+\end{proof}
+
+A weakly Cauchy filter $F$ is called \emph{strongly regular} if, for every $U \in F$, there is a set $V \in F$ such that $V \rb^s U$.
+Strongly regular weakly Cauchy filters play the role of regular Cauchy filters in the context of strongly regular cover spaces: they are unique representatives of their equivalence classes.
+
+\begin{example}
+For every point $x$ in a strongly regular cover space, the neighborhood filter $x^\wedge$ is strongly regular.
+This follows from \rlem{rbs-point}.
+\end{example}
+
+The following propositions show that every weakly Cauchy filter is equivalent to a unique strongly regular one:
+
+\begin{prop}[strongly-regular-minimal]
+Let $F$ and $G$ be equivalent weakly Cauchy filters.
+If $F$ is strongly regular, then $F \subseteq G$.
+\end{prop}
+\begin{proof}
+The proof is the same as in \rprop{regular-minimal}.
+\end{proof}
+
+\begin{prop}
+Let $F$ be a weakly Cauchy filter.
+The intersection of all weakly Cauchy subfilters of $F$ is a strongly regular weakly Cauchy filter.
+It is a unique strongly regular filter equivalent to $F$.
+\end{prop}
+\begin{proof}
+The proof is the same as in \rprop{regular-filter-repr}.
+\end{proof}
+
+Now, we can discuss strongly complete cover spaces.
+
+\begin{defn}
+A strongly regular cover space is \emph{strongly complete} if it is separated and every weakly Cauchy filter is equivalent to the neighborhood filter of some point.
+\end{defn}
+
+The following lemmas are similar to the ones we had for regular spaces:
+
+\begin{lem}[weak-filter-point-char]
+Let $F$ be a weakly Cauchy filter in a strongly complete cover space.
+Then $F^{\vee \wedge} = \{ U \mid \exists V \in F, V \rb^s U \}$.
+\end{lem}
+\begin{proof}
+The proof is the same as in \rlem{filter-point-char}.
+\end{proof}
+
+\begin{lem}[weak-filter-lift]
+Let $f : X \to Y$ be a weakly dense embedding between cover spaces and $F$ be a weakly Cauchy filter on $Y$.
+Then $G = \{ U \mid \exists V,V' \subseteq Y, f^{-1}(V) \subseteq U, V' \rb V, V' \in F \}$ is a weakly Cauchy filter on $X$ such that $f(G)$ is equivalent to $F$.
+\end{lem}
+\begin{proof}
+We already proved in \rlem{filter-lift} that this filter satisfies the Cauchy condition.
+Thus, we just need to show that it is weakly proper.
+If $\varnothing \in G$, then there exist sets $V$ and $V'$ such that $f^{-1}(V) \subseteq \varnothing$, $V' \rb V$, and $V' \in F$.
+Let us show that $V'$ is empty, which is a contradiction since $F$ is weakly proper.
+If $y$ be an element of $V'$, then it belongs to the interior of $V$.
+Since $f$ is weakly dense and the interior of $V$ is inhabitted, we can assume that it intersects with the image of $f$, but this contradicts the fact that $f^{-1}(V) \subseteq \varnothing$.
+\end{proof}
+
+\begin{lem}[strongly-complete-part]
+Let $X$ be a strongly regular cover space, $Y$ be a separated strongly regular cover space, and $f : X \to Y$ be a weakly dense embedding.
+Then $Y$ is complete if and only if, for every strongly regular Cauchy filter $F$ on $X$, there is a point $y \in Y$ such that $f(F)$ is equivalent to the neighborhood filter of $y$.
+\end{lem}
+\begin{proof}
+The ``only if'' direction is obvious.
+The coverse follows from \rlem{weak-filter-lift}.
+\end{proof}
+
+With these lemmas, we can prove an analogue of \rthm{dense-lift}:
+
+\begin{thm}[weakly-dense-lift]
+For every cover space $X$, every strongly regular cover space $Y$, every strongly complete cover space $Z$, every dense embedding $f : X \to Y$ between cover spaces, and every strongly Cauchy map $g : X \to Z$,
+there exists a unique strongly Cauchy map $\widetilde{g} : Y \to Z$ such that $\widetilde{g} \circ f = g$.
+If $g$ is a cover map, then so is $\widetilde{g}$.
+\end{thm}
+\begin{proof}
+The uniqueness follows from \rprop{weakly-dense-unique} and \rprop{cauchy-continuous}.
+The proof of existence is the same as in \rthm{dense-lift} using \rlem{weak-filter-point-char} and \rlem{weak-filter-lift}.
+\end{proof}
+
+A \emph{strong completion} of a strongly regular cover space $X$ is a strongly complete cover space $Y$ together with a weakly dense embedding $X \to Y$.
+\rthm{weakly-dense-lift} implies that completion is unique up to isomorphism.
+Just as before, we can show that every strongly regular cover space has a strong completion:
+
+\begin{thm}[strong-completion]
+For every strongly regular cover space $X$, there is a strongly complete cover space $C(X)$ and a weakly dense embedding $\eta_X : X \to C(X)$.
+\end{thm}
+\begin{proof}
+Let $C(X)$ be the set of strongly regular weakly Cauchy filters in $X$.
+For every set $U \subseteq X$, let $\widetilde{U} \subseteq C(X)$ be the set of all strongly regular weakly Cauchy filters containing $U$.
+The set of Cauchy covers of $C(X)$ is defined as the set of those $C$ which are refined by the set $\{ \widetilde{U'} \mid U' \in C' \}$ for some Cauchy cover $C'$ in $X$.
+The proof that $C(X)$ is a precover space is the same as in \rthm{completion}.
+
+Let us show that $\widetilde{V} \rb^s_{C(X)} \widetilde{U}$ whenever $V \rb^s_X U$.
+Note that $\widetilde{X \backslash V}$ does not intersect with $\widetilde{V}$.
+Indeed, if $F$ belongs to their intersection, then it contains both $X \backslash V$ and $V$, which is impossible since it is a weakly proper filter.
+This implies that $\{ \widetilde{X \backslash V}, \widetilde{U} \}$ refines $\{ C(X) \backslash \widetilde{V}, \widetilde{U} \}$.
+Thus, $V \rb^s_X U$ indeed implies that $\widetilde{V} \rb^s_{C(X)} \widetilde{U}$.
+This observation implies that $C(X)$ is strongly regular.
+
+Now, we can define $\eta_X(x)$ as $x^\wedge$.
+We can show thhat $\eta_X$ is an embedding of cover spaces just as before.
+Let us prove that it is weakly dense.
+Let $V$ be an open set in $C(X)$ that does not intersect with the image of $\eta_X$.
+We need to show that $V$ is empty.
+Let $F$ be an element of $V$.
+We already proved that the set $\{ x \in X \mid \eta_X(x) \in V \}$ belongs to $F$ in \rthm{completion}, but this set is empty by assumption, which contradicts weak properness of $F$.
+This complete the proof that $\eta_X$ is dense.
+
+Finally, completeness of $C(X)$ is proved as in \rthm{completion} using \rlem{strongly-complete-part}.
+\end{proof}
+
+\begin{cor}[strongly-complete-reflective]
+Strongly complete cover spaces form a reflective subcategory of strongly regular cover spaces.
+\end{cor}
+
+Now, let us discuss the relationship between strongly complete cover spaces and sober topological spaces.
+First, let us recall the definition of sober topological spaces.
+Let $X$ be a topological space.
+A filter $F$ on $X$ is called \emph{open} if, for every $U \in F$, there exists an open $V \in F$ such that $V \subseteq U$.
+An open filter $F$ is called \emph{completely prime} if, for every set of opens $\{ U_i \}_{i \in I}$, if $\bigcup_{i \in I} U_i \in F$, then $U_i \in F$ for some $i \in I$.
+If $x$ is a point in $X$, then the neighborhood filter $x^\wedge$ is a completely prime open filter.
+A topological space is called \emph{sober} if every completely prime open filter is of the form $x^\wedge$ for a unique point $x \in X$.
+
+\begin{prop}[u-sober]
+If $X$ is a strongly complete cover space, then its underlying topological space is sober.
+\end{prop}
+\begin{proof}
+Let $F$ be a completely prime open filter.
+Clearly, it is also weakly Cauchy.
+\rlem{rbs-point} implies that, for every open $U$, we have $U = \bigcup \{ V \mid V \rb^s_X U \}$.
+It follows that $F$ is strongly regular.
+By completeness of $X$, there exists a unique $x \in X$ such that $F = x^\wedge$.
+\end{proof}
+
+Let us prove the converse of this proposition.
+
 \begin{lem}[strongly-regular-filter]
-Let $F$ be a regular Cauchy filter in a strongly regular cover space $X$.
+Let $F$ be a strongly regular weakly Cauchy filter in a strongly regular cover space $X$.
 Then, for every $U \in F$, there exists $V \in F$ such that $V \rb^s U$.
 \end{lem}
 \begin{proof}
 Consider the set $G = \{ U \mid \exists V \in F, V \rb^s U \}$.
-\rprop{rbs-props} implies that it is a proper filter.
-Moreover, since $X$ is strongly regular, $G$ is a Cauchy filter.
-Since $G \subseteq F$ and $F$ is regular, \rprop{regular-minimal} implies that $F \subseteq G$, which finishes the proof.
+Since $X$ is strongly regular, $G$ is a weakly Cauchy filter.
+Since $G \subseteq F$ and $F$ is strongly regular, \rprop{strongly-regular-minimal} implies that $F \subseteq G$, which finishes the proof.
 \end{proof}
 
-\begin{prop}[u-surjective]
-If $X$ is a strongly regular sober space, then $T(X)$ is a strongly regular complete cover space.
+\begin{prop}[t-complete]
+If $X$ is a strongly regular sober space, then $T(X)$ is a strongly complete cover space.
 \end{prop}
 \begin{proof}
-Let $C$ be a neighborhood cover of $X$.
-Then, for every point $x \in X$, there is a neighborhood $U$ of $x$ in $C$.
-By \rlem{rbs-point}, there exists a neighborhood $V$ of $x$ such that $V \rb^s U$.
-This means that $\{ V \mid \exists U \in C, V \rb^s U\}$ is a neighborhood cover of $X$.
-Thus, $T(X)$ is strongly regular.
-
-To prove that $T(X)$ is complete, it is enough to show that every regular Cauchy filter is completely prime.
-Let $F$ be a regular Cauchy filter.
+It is enough to show that every strongly regular weakly Cauchy filter is completely prime.
+Let $F$ be a strongly regular weakly Cauchy filter.
 Let $\{ U_i \}_{i \in I}$ be a set of opens such that $\bigcup_{i \in I} U_i \in F$.
 By \rlem{strongly-regular-filter}, there exists a set $V \in F$ such that $V \rb^s \bigcup_{i \in I} U_i$.
 It follows that $\{ X \backslash V \} \cup \{ U_i \mid i \in I \}$ is a neighborhood cover of $X$.
-Since $F$ is a proper filter and $V \in F$, the set $X \backslash V$ does not belong to $F$.
+Since $F$ is a weakly proper filter and $V \in F$, the set $X \backslash V$ does not belong to $F$.
 It follows that $U_i$ belongs to $F$ for some $i \in I$ since $F$ is a Cauchy filter.
 This completes the proof.
 \end{proof}
 
+Now, we can show that the sets of Cauchy maps, strongly Cauchy maps, and continuous maps between strongly complete cover spaces coincide:
+
+\begin{prop}[u-fully-faithful]
+Let $X$ be a complete cover space and $Y$ be a cover space.
+Then a map $f : X \to Y$ is Cauchy if and only if it is continuous.
+If $X$ is strongly complete, then such a map is also strongly Cauchy.
+\end{prop}
+\begin{proof}
+If $f$ is Cauchy, then it is continuous by \rprop{cauchy-continuous}.
+Conversely, let us assume that $f$ is continuous.
+Let $F$ be a Cauchy filter on $X$ and $C$ be a Cauchy cover of $Y$.
+We need to show that there exists $U \in C$ such that $f^{-1}(U) \in F$.
+Since $X$ is complete, there exists a point $x \in X$ such that $x^\wedge \subseteq F$.
+Since $C$ is a Cauchy cover, there exists $U \in C$ such that $\{ f(x) \} \rb U$.
+Since $f$ is continuous, $f^{-1}(U)$ is a neighborhood of $x$.
+Since $x^\wedge \subseteq F$, we get that $f^{-1}(U) \in F$.
+
+If $X$ is strongly complete, the same proof shows that $f$ preserves weakly Cauchy filters.
+\end{proof}
+
+Finally, we can prove that the category of strongly complete cover spaces is equivalent to the category of strongly regular sober spaces:
+
 \begin{thm}[cover-cauchy-top]
-The forgetful functor from the category of cover spaces and Cauchy maps to the category of topological spaces restricts to an equivalence between the category of strongly regular complete cover spaces and Cauchy maps and the category of strongly regular sober spaces.
+The forgetful functor from the category of cover spaces and strongly Cauchy maps to the category of topological spaces restricts to an equivalence between the category of strongly complete cover spaces and strongly Cauchy maps and the category of strongly regular sober spaces.
 \end{thm}
 \begin{proof}
-\rprop{top-regular}, \rprop{u-strongly-regular}, \rprop{u-sober}, \rprop{cauchy-continuous} imply that we indeed have such a functor.
-\rprop{u-fully-faithful} implies that this functor is fully faithful and \rprop{u-surjective} implies that it is essentially surjective on objects.
+\rprop{u-strongly-regular}, \rprop{u-sober}, and \rprop{u-fully-faithful} imply that we indeed have such a functor and that it is fully faithful.
+\rprop{t-complete} implies that it is essentially surjective on objects.
 \end{proof}
 
 \section{Locales}
 \label{sec:locales}
 
-In the previous section, we showed that the category of strongly regular complete cover spaces and Cauchy maps is equivalent to the category of strongly regular topological spaces.
-In this section, we prove a similar result for the category of cover spaces and cover maps instead of Cauchy maps.
-To do this, we need to replace the category of topological spaces with the category of locales.
+In the previous section, we showed that the category of strongly complete cover spaces and strongly Cauchy maps is equivalent to the category of strongly regular sober topological spaces.
+In this section, we prove a similar result for the category of strongly complete cover spaces and cover maps instead of strongly Cauchy maps.
+To do this, we need to replace the category of sober topological spaces with the category of locales.
 
 Recall that a \emph{frame} is a complete distributive lattice.
 A map of frames is a function that preserves finite meets and arbitrary joins.
@@ -1120,7 +1328,7 @@ A locale $M$ is called \emph{regular} if, for every open $a \in O_M$, we have $a
 The following proposition shows that every regular locale gives rise to a strongly regular cover space:
 
 \begin{prop}[locale-regular]
-If $M$ is a regular locale, then $P(M)$ is a complete strongly regular cover space.
+If $M$ is a regular locale, then $P(M)$ is a strongly complete cover space.
 \end{prop}
 \begin{proof}
 First, let us show that if $a,b$ is a pair of opens such that $b \rb a$, then $\varepsilon^*(b) \rb^s \varepsilon^*(a)$.
@@ -1136,49 +1344,35 @@ Let us show that every open $a$ in $F$ belongs to $G$.
 Since $M$ is regular, we have $a \leq \bigvee \{ b \mid b \rb a \}$.
 Thus, there exists an open $b \in F$ such that $b \rb a$.
 Then we have $\varepsilon^*(b) \rb \varepsilon^*(a)$.
-Since $F \subseteq \varepsilon^*(b)$, the set $\varepsilon^*(a)$ is a neighborhood of $F$.
+Since $F \in \varepsilon^*(b)$, the set $\varepsilon^*(a)$ is a neighborhood of $F$.
 It follows that $a$ belongs to $G$.
 Thus, $F$ is a subset of $G$ and vice versa, so $P(M)$ is separated.
 
-Finally, let us prove that $P(M)$ is complete.
-For every Cauchy filter $F$ in $P(M)$, we define a point $\widetilde{F}$ in $M$.
+Finally, let us prove that $P(M)$ is strongly complete.
+For every weak Cauchy filter $F$ in $P(M)$, we define a point $\widetilde{F}$ in $M$.
 This point consists of those opens $a$ for which there is an open $b$ such that $b \rb a$ and $F$ contains $\varepsilon^*(b)$.
 It is easy to see that this is indeed a filter.
 Let us show that it is completely prime.
 Suppose that $\widetilde{F}$ contains a join $\bigvee_{j \in J} a_j$.
 Then there is an open $b$ such that $b \rb \bigvee_{j \in J} a_j$ and $\varepsilon^*(b) \in F$.
 It follows that $C = \{ \varepsilon^*(\neg b) \} \cup \{ \varepsilon^*(b') \mid \exists j \in J, b' \rb a_j \}$ is a Cauchy cover.
-If $F$ contains $\varepsilon^*(\neg b)$, then it also contains $\varepsilon^*(\neg b) \cap \varepsilon^*(b) = \varepsilon^*(\bot) = \varnothing$, which is impossible since $F$ is proper.
+If $F$ contains $\varepsilon^*(\neg b)$, then it also contains $\varepsilon^*(\neg b) \cap \varepsilon^*(b) = \varepsilon^*(\bot) = \varnothing$, which is impossible since $F$ is weakly proper.
 Thus, there exists an open $b'$ such that $F$ contains $\varepsilon^*(b')$ and $b' \rb a_j$ for some $j \in J$.
 This means that $\widetilde{F}$ contains $a_j$, which concludes the proof that $P(M)$ is complete.
 \end{proof}
 
 Another property of locales that we will need is the denseness of its set of points.
-We will say that a locale \emph{has a strongly dense set of points} if, for every open $a$, $a \leq \bigvee \{ \top \mid \exists x \in \varepsilon^*(a) \}$.
-Every spatial locale has a strongly dense set of points, but not all locales with a dense set of points are spatial.
-There is also a weaker condition: a locale \emph{has a dense set of points} if $\varepsilon_*(\varnothing) = \bot$.
-Classically, these conditions are equivalent, but constructively the former is stronger.
-
+We will say that a locale \emph{has a dense set of points} if $\varepsilon_*(\varnothing) = \bot$.
 We also have a corresponding property for precover spaces.
-We will say that a precover space \emph{has a dense set of points} if, for every Cauchy cover $C$, the subset of $C$ consisting of inhabited sets is also a Cauchy cover.
-Classically, this is almost always true: assuming the law of excluded middle, the only precover space that does not have a dense set of points is $(\varnothing, \{ \{ \varnothing \} \})$.
-Constructively, this property is more subtle.
-We will discuss it in more detail in Section~\ref{sec:reals}.
-We also have a weak version of this condition: a precover space \emph{has a weakly dense set of points} if $C$ is a Cauchy cover whenever $C \cup \{ \varnothing \}$ is.
-The following proposition shows how these properties are related to corresponding properties for locales:
+We will say that a precover space \emph{has a dense set of points} if $C$ is a Cauchy cover whenever $C \cup \{ \varnothing \}$ is.
+The following proposition shows how these properties are related:
 
 \begin{prop}[locale-cover-dense]
-If $M$ is a locale with a dense set of points, then $P(M)$ has a weakly dense set of points.
-If $M$ has a strongly dense set of points, then $P(M)$ has a dense set of points.
+If $M$ is a locale with a dense set of points, then $P(M)$ also has a dense set of points.
 \end{prop}
 \begin{proof}
 Suppose that $M$ has a dense set of points and that $C \cup \{ \varnothing \}$ is a Cauchy cover in $P(M)$.
 Then $\top = \bigvee \{ \varepsilon_*(U) \mid U \in C \} \vee \varepsilon_*(\varnothing) = \bigvee \{ \varepsilon_*(U) \mid U \in C \}$, so $C$ is also a Cauchy cover.
-Now, suppose that $M$ has a strongly dense set of points and that $C$ is a Cauchy cover in $P(M)$.
-To prove that the set of inhabited elements of $C$ is also a Cauchy cover, it is enough to show that $\bigvee \{ \varepsilon_*(U) \mid U \in C \} \leq \bigvee \{ \varepsilon_*(U) \mid U \in C, \exists x \in U \}$.
-Thus, we need to show that $\varepsilon_*(U) \leq \bigvee \{ \varepsilon_*(U) \mid U \in C, \exists x \in U \}$ for all $U \in C$.
-Since $M$ has a dense set of points, we can assume that there is a point $x$ containing $\varepsilon_*(U)$.
-It follows that $x$ belongs to $U$, which completes the proof.
 \end{proof}
 
 We will also need the following simple lemma:
@@ -1190,7 +1384,7 @@ A locale has a dense set of points if and only if the only open that does not ha
 Immediate from the definition of $\varepsilon_*(\varnothing)$.
 \end{proof}
 
-The following proposition shows that $P : \cat{Loc} \to \cat{Precov}$ restricts to a fully faithful embedding from the category of regular locales with a strongly dense set of points to the category of cover spaces:
+The following proposition shows that $P : \cat{Loc} \to \cat{Precov}$ restricts to a fully faithful embedding from the category of regular locales with a dense set of points to the category of cover spaces:
 
 \begin{prop}[locale-ff]
 If $M$ is a locale with a dense set of points and $N$ is a regular locale, then the function $P : \cat{Loc}(M,N) \to \cat{Cov}(P(M),P(N))$ is a bijection.
@@ -1205,7 +1399,7 @@ Since $\top = \neg b \vee a$, we have that $f^*(b) = f^*(b) \wedge (g^*(\neg b) 
 Thus, it is enough to show that $f^*(b) \wedge g^*(\neg b) = \bot$.
 By \rlem{locale-dense}, it is enough to show that the open $f^*(b) \wedge g^*(\neg b)$ does not have points.
 Indeed, if $F$ is a completely prime filter that contains this open, then $F$ contains $f^*(b)$ and $g^*(\neg b)$.
-This implies that $P(f)(F) = P(g)(F)$ contains both $b$ and $\neg b$, which is impossible since this filter is proper.
+This implies that $P(f)(F) = P(g)(F)$ contains both $b$ and $\neg b$, which is impossible since this filter is completely prime.
 
 Now, we will prove surjectivity.
 Let $f : P(M) \to P(N)$ be a cover map.
@@ -1233,7 +1427,7 @@ By \rlem{locale-cauchy}, the set $\{ \varepsilon^*(\neg c), \varepsilon^*(b) \}$
 Since $f$ is a cover map, $\{ f^{-1}(\varepsilon^*(\neg c)), f^{-1}(\varepsilon^*(b)) \}$ is also a Cauchy cover.
 Thus, we get that $\top = \varepsilon_*(f^{-1}(\varepsilon^*(\neg c))) \vee \varepsilon_*(f^{-1}(\varepsilon^*(b)))$.
 Since $F$ is a completely prime filter, either $\varepsilon_*(f^{-1}(\varepsilon^*(\neg c)))$ or $\varepsilon_*(f^{-1}(\varepsilon^*(b)))$ belongs to $F$.
-The former is impossible since then $\neg c$ belongs to $F$ and this contradicts the fact that $c$ belongs to $F$.
+The former is impossible since then $\neg c$ belongs to $f(F)$ and this contradicts the fact that $c$ belongs to $f(F)$.
 In the latter case, we get that $a \in P(g)(F)$, which concludes the proof.
 \end{proof}
 
@@ -1318,12 +1512,12 @@ This shows that $\{ X \backslash U'\} \cup \{ V_j \mid j \in J \}$ is a Cauchy c
 
 The following two lemmas easily follows from the previous one:
 \begin{lem}[locale-top-cover]
-If $X$ is a strongly regular cover space with a weakly dense set of points, then a set $C$ is a Cauchy cover of $X$ if and only if $\bigvee \{ [U] \mid U \in C \} = \top$.
+If $X$ is a strongly regular cover space with a dense set of points, then a set $C$ is a Cauchy cover of $X$ if and only if $\bigvee \{ [U] \mid U \in C \} = \top$.
 \end{lem}
 \begin{proof}
 The ``only if'' direction is obvious by the definition of $L(X)$.
 Conversely, if $\bigvee \{ [U] \mid U \in C \} = \top$, then, by \rlem{locale-cover}, the set $C \cup \{ \varnothing \}$ is a Cauchy cover.
-Since $X$ has a weakly dense set of points, $C$ is also a Cauchy cover.
+Since $X$ has a dense set of points, $C$ is also a Cauchy cover.
 \end{proof}
 
 \begin{lem}[locale-point-cover]
@@ -1339,7 +1533,7 @@ Thus, $V_j$ is a neighborhood of $x$.
 Finally, we are ready to prove the main result of this section:
 
 \begin{thm}[locale-equiv]
-The functor $P : \cat{Loc} \to \cat{Precov}$ restricts to an equivalence between the category of regular locales with a strongly dense set of points and the category of complete strongly regular cover spaces with a dense set of points.
+The functor $P : \cat{Loc} \to \cat{Precov}$ restricts to an equivalence between the category of regular locales with a dense set of points and the category of strongly complete cover spaces with a dense set of points.
 \end{thm}
 \begin{proof}
 By \rprop{locale-ff}, \rprop{locale-regular}, and \rprop{locale-cover-dense}, this functor restricts to a fully faithful functor between the required categories.
@@ -1353,14 +1547,14 @@ By \rlem{locale-point-cover}, $V_j$ is a neighborhood of $x$ for some $j \in J$.
 Thus, $[V_j]$ belongs to $\eta_X(x)$, so $\eta_X(x)$ is a completely prime filter.
 
 By \rlem{cover-locale-regular}, $L(X)$ is regular.
-Now, we can show that it also has a strongly dense set of points.
-It is enough to show that $[U] \leq \bigvee \{ \top \mid \exists x \in \varepsilon^*([U]) \}$.
-Since $[U] \leq \bigvee \{ [V] \mid V \rb^s U \}$, it is enough to show that $[V] \leq \bigvee \{ \top \mid \exists x \in \varepsilon^*([U]) \}$ for all $V \rb^s U$.
-Since $X$ is strongly dense, the set $\{ X \backslash V \} \cup \{ U' \mid U' \rb U, \exists x \in U' \}$ is a Cauchy cover.
-It follows that $[V] \leq \bigvee \{ [U] \mid \exists x \in X, \{ x \} \rb U \}$.
-Now, if $\{ x \} \rb U$, then $\eta_X(x) \in \varepsilon^*([U])$, which concludes the proof that $L(X)$ has a strongly dense set of points.
+Now, we can show that it also has a dense set of points.
+It is enough to show that $[U] = \bot$ whenever $[U]$ does not have points.
+Since $[U] \leq \bigvee \{ [V] \mid V \rb^s_X U \}$, it is enough to show that $[V] \leq \bot$ whenever $V \rb^s_X U$.
+If $x$ is a point of $V$, then $\eta_X(x)$ is a point of $[U]$, which contradicts the assumption on $U$.
+It follows that $V$ is empty and that $[V] \leq \bot$.
+Thus, $L(X)$ has a dense set of points.
 
-Now, we just need to prove that $\eta_X$ is a dense embedding.
+Now, we just need to prove that $\eta_X$ is a weakly dense embedding.
 First, we need to show that it is a cover map.
 Let $C$ be a Cauchy cover of $P(L(X))$.
 By definition, this means that $\top = \bigvee \{ \varepsilon_*(W) \mid W \in C \} = \bigvee \{ [U] \mid \exists W \in C, \varepsilon^*([U]) \subseteq W \}$.
@@ -1372,13 +1566,18 @@ It follows that $\eta_X(x)$ belongs to $W$.
 Thus, $V \subseteq \eta_X^{-1}(W)$.
 This completes the proof that $\eta_X$ is a cover map.
 
-Let us prove that $\eta_X$ is dense.
-If $\{ y \} \rb_{P(L(X))} U$, then $\bigvee \{ [V] \mid \exists W, \varepsilon^*([V]) \subseteq W, (y \in W \implies W \subseteq U) \} = \top$.
-Since $X$ has a strongly dense set of points, \rlem{locale-top-cover} implies that $\{ V' \mid V' \rb_X V, \exists x \in V', \exists W, \varepsilon^*([V]) \subseteq W, (y \in W \implies W \subseteq U) \}$ is a Cauchy cover of $X$.
-Since $y$ is a completely prime filter, there exist sets $V'$, $V$, $W$ and a point $x \in V'$ such that $V' \rb_X V$, $\varepsilon^*([V]) \subseteq W$, and $W \subseteq U$.
-Since $V$ is a neighborhood of $x$, we get that $\eta_X(x) \in \varepsilon^*([V])$.
-It follows that $\eta_X(x)$ belongs to $U$.
-Thus, $\eta_X$ is dense.
+Let us prove that $\eta_X$ is weakly dense.
+Let $U$ be an open in $P(L(X))$ that does not intersect the image of $\eta_X$.
+We need to show that $U$ is empty.
+Suppose that $U$ contains a point $F$.
+Since $\{ F \} \rb^s_{P(L(X))} U$, we get that $\bigvee \{ [V] \mid \varepsilon^*([V]) \subseteq U \} \vee \bigvee \{ b \mid F \notin \varepsilon^*(b) \} = \top$.
+Since $F$ is completely prime and $F$ cannot contain an open $b$ such that $F \notin \varepsilon^*(b)$, it contains an open $[V]$ such that $\varepsilon^*([V]) \subseteq U$.
+Since $[V] \leq \bigvee \{ [V'] \mid V' \rb^s_X V \}$, it also contains an open $[V']$ such that $V' \rb^s_X V$.
+Since $F$ is completely prime, $V'$ cannot be empty.
+Thus, we may assume that there is a point $x \in V'$.
+Since $\{ x \} \rb_X V$, we get that $[V]$ belongs to $\eta_X(x)$.
+This implies that $\eta_X(x)$ belongs to $\varepsilon^*([V])$ and also to $U$, which contradicts the assumption on $U$.
+This completes the proof that $\eta_X$ is dense.
 
 Let us prove that $\eta_X$ is an embedding.
 We need to show that, for every Cauchy cover $C$ of $X$, the set $\{ V \mid \exists U \in C, \eta_X^{-1}(V) \subseteq U \}$ is a Cauchy cover of $P(L(X))$.
@@ -1386,7 +1585,7 @@ By \rlem{locale-top-cover}, this set is a Cauchy cover if and only if $\{ W \mid
 This is true because it is refined by $C$.
 Thus, $\eta_X$ is an embedding.
 
-Finally, if $X$ is complete, then \rthm{dense-lift} implies that $\eta_X$ is an isomorphism since it is a dense embedding.
+Finally, if $X$ is strongly complete, then \rthm{weakly-dense-lift} implies that $\eta_X$ is an isomorphism since it is a weakly dense embedding.
 This concludes the proof.
 \end{proof}
 
@@ -1413,11 +1612,31 @@ The inclusion $i : \mathbb{Q} \to \mathbb{R}$ is also an embedding by definition
 Since the underlying cover space of a metric space is always separated, \rlem{complete-part} and \rprop{dedekind-cauchy} imply that $\mathbb{R}$ is complete.
 \end{proof}
 
-It is often useful to be able to control of which elements consist Cauchy covers.
+In the previous section, we defined a stronger version of completeness.
+It turns out that for certain spaces it actually coincides with the weak version.
+We will say that a cover space \emph{has a strongly dense set of points} if, for every Cauchy cover $C$, the subset of $C$ consisting of inhabited sets is also a Cauchy cover.
+Classically, this is equivalent to having a dense set of points, but constructively this property is more subtle.
+
+\begin{prop}
+If a cover space $X$ has a strongly dense set of points, then every strongly regular weakly Cauchy filter is Cauchy.
+\end{prop}
+\begin{proof}
+Let $U$ be an element of a regular weakly Cauchy filter $F$.
+Since $F$ is strongly regular, there exists $V \in F$ such that $V \rb^s U$.
+Since $X$ has strongly dense set of points and $F$ satisfies the Cauchy condition, either $U$ is inhabitted or $F$ contains the complement of $V$.
+Since $F$ is weakly proper, the latter case is impossible.
+This concludes the proof.
+\end{proof}
+
+\begin{cor}[complete-strongly-complete]
+If a complete strongly regular cover space has a strongly dense set of points, then it is strongly complete.
+\end{cor}
+
+For a prove that a cover space has a strongly dense set of points, it is often useful to be able to control of which elements Cauchy covers consist.
 To simplify this discussion, we introduce an auxiliary notion.
 For a precover space $X$, we will say that a set $B$ of subsets of $X$ \emph{generates} $X$ if every Cauchy cover is refined by a Cauchy cover that consists of elements of $B$.
 We can rephrase the property that $X$ has a dense set of points using this new notion.
-Indeed, it is clear that $X$ is generated by a set of inhabited sets if and only if it has a dense set of points.
+Indeed, it is clear that $X$ is generated by a set of inhabited sets if and only if it has a strongly dense set of points.
 Another useful application of this notion is the following lemma, which also motivates the terminology:
 
 \begin{lem}[locale-gen]
@@ -1481,11 +1700,10 @@ It is clear that $f^*$ respects the coverage relation.
 To prove that it is an isomorphism, it is enough to show that it is bijective.
 It is clearly injective and \rlem{locale-gen} and \rlem{rat-gen} imply that it is surjective.
 
-\rlem{rat-gen} also implies that $\mathbb{R}$ has a dense set of points.
-Since $\mathbb{R}$ is also complete and strongly regular, \rthm{locale-equiv} implies that $\mathbb{R} \simeq P(L(\mathbb{R})) \simeq P(\mathbb{R}_l)$.
+\rlem{rat-gen} and \rcor{complete-strongly-complete} also imply that $\mathbb{R}$ is strongly complete and \rthm{locale-equiv} implies that $\mathbb{R} \simeq P(L(\mathbb{R})) \simeq P(\mathbb{R}_l)$.
 \end{proof}
 
-This proposition implies that there is a bijection between localic maps $M \to \mathbb{R}_l$ and cover maps $P(M) \to \mathbb{R}$ for regular locales $M$ that have a dense set of points.
+This proposition implies that there is a bijection between localic maps $M \to \mathbb{R}_l$ and cover maps $P(M) \to \mathbb{R}$ for locales $M$ that have a dense set of points.
 Thus, this proposition provides a convenient way of constructing localic real-valued maps.
 In general, it might be difficult to check that a function is a cover map, but for uniform spaces there are simpler conditions that we can check.
 One of them is \emph{local uniformness}:
@@ -1676,7 +1894,7 @@ Clearly, $V \rb^* U$ implies $V \rb U$.
 Also, this relation satisfies the usual properties of the ``rather below'' relation given in \rprop{rb-props}.
 
 \begin{lem}[star-cauchy-reg]
-If $X$ is a unifor space and $C$ is a Cauchy cover of $X$, then the set $\{ V \mid \exists U \in C, V \rb^* U \}$ is also a Cauchy cover of $X$.
+If $X$ is a uniform space and $C$ is a Cauchy cover of $X$, then the set $\{ V \mid \exists U \in C, V \rb^* U \}$ is also a Cauchy cover of $X$.
 \end{lem}
 \begin{proof}
 The proof is the same as the proof of \rprop{subbase-regular} using the fact that the required property holds for uniform covers $C$ by \axref{UU}.
@@ -1832,7 +2050,7 @@ Then every cover map $X \to Y$ is locally uniform.
 \end{cor}
 
 \begin{cor}
-Let $X$ be a metric space in which every bounded set is totally bounded.
+Let $X$ be a metric space in which every bounded inhabitted set is totally bounded.
 Then every cover map $X \to Y$ is locally uniform.
 \end{cor}
 
@@ -1886,8 +2104,8 @@ A subspace of a complete cover space is compact if and only if it is closed and 
 \label{sec:limits}
 
 Limits of functions are closely related to lifting problem for cover spaces.
-In this section, we show how various kinds of limits and are related and can be expressed in terms of liftings.
-In general, a kind of limits can be represented by a dense cover map $X \to \widetilde{X}$.
+In this section, we show how various kinds of limits can be expressed in terms of liftings.
+In general, a dense cover map $X \to \widetilde{X}$ represents a form of limits.
 Then a data of a limit in a precover space $Y$ is given by a function $f : X \to Y$.
 Then we can say that the limit of $f$ exists if this function extends to a cover map $\widetilde{f} : \widetilde{X} \to Y$.
 The limit itself is given by the image of $\widetilde{f}$ at some point in $\widetilde{X}$.
@@ -1950,7 +2168,7 @@ We will say that a function $f : I \to X$ \emph{converges} if it is a cover map.
 A \emph{limit} of a function $f : I \to X$ is a point $x \in X$ such that, for every neighborhood $U$ of $x$, there exists $N \in I$ such that $I_{\geq N} \subseteq f^{-1}(U)$.
 If a function has a limit, then it convergence.
 Conversely, if $X$ is complete and $f$ converges, then it has a limit.
-Indeed, the completion $I_\infty$ of $I$ has a point $\infty$ corresponding to the Cauchy cover $\{ U \mid \exists N \in I, \forall n \geq N, n \in U \}$.
+Indeed, the completion $I_\infty$ of $I$ has a point $\infty$ corresponding to the Cauchy filter $\{ U \mid \exists N \in I, I_{\geq N} \subseteq U \}$.
 If $X$ is complete and $f$ converges, then it extends to a function from the completion of $I$ to $X$ and the limit of $f$ is given by the image of $\infty$.
 
 The following proposition gives an explicit characterization of convergence:
@@ -2107,6 +2325,7 @@ If $a_n$ is a sequence of real numbers, we will say that a series $\sum\limits_{
 If $\sum\limits_{n = 0}^\infty a_n x^n$ converges for all $x$, then standard techniques imply that it converges uniformly on bounded subsets.
 Now, \rcor{func-conv-metric-char} implies that the function $x \mapsto \sum\limits_{n = 0}^\infty a_n x^n$ is a cover map in this case.
 This can be used to define various cover maps such as the exponential function, sine, cosine, and so forth.
+% TODO: Since cover maps correspond to morphisms of locales, this provides an alternative approach for construction of these maps to the one described in \cite{}.
 
 Finally, we will discuss limits of functions of the form $f : \mathbb{R}_* \to \mathbb{R}$.
 As usual, we will say that $y$ is a \emph{limit} of $f$ at $0$ if, for every $\varepsilon > 0$,
@@ -2125,7 +2344,7 @@ It follows that $\widetilde{f}(0)$ is a limit of $f$ at $0$.
 
 Now, assume that $L$ is a limit of $f$ at $0$.
 Let $\mathbb{R}'_*$ be the set of invertible real number with the transferred cover space structure.
-Since it is densely embeds into $\mathbb{R}$, every cover map $\mathbb{R}'_* \to \mathbb{R}$ extends to a unique map $\mathbb{R} \to \mathbb{R}$.
+Since it densely embeds into $\mathbb{R}$, every cover map $\mathbb{R}'_* \to \mathbb{R}$ extends to a unique map $\mathbb{R} \to \mathbb{R}$.
 Thus, we just need to show that $f : \mathbb{R}_* \to \mathbb{R}$ is a cover map from $\mathbb{R}'_*$ to $\mathbb{R}$.
 That is, we need to show that, for every $\varepsilon > 0$, the set $\{ f^{-1}(B_\varepsilon(x)) \mid x \in \mathbb{Q} \}$ is a Cauchy cover of $\mathbb{R}'_*$.
 
