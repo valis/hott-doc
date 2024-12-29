@@ -100,7 +100,7 @@ Constructively, there may be fewer Cauchy covers in a complete cover space than 
 
 Cauchy covers share similarities with the cover relation in locale theory and can be utilized to constructively reformulate various classical definitions and theorems.
 For instance, a complete cover space can be defined as \emph{compact} if every Cauchy cover admits a finite subcover.
-Under this notion of compactness, we will prove the constructive version of the Heine-Borel theorem.
+Under this notion of compactness, we will prove constructive versions of the Heine-Borel theorem and the Tychonoff theorem.
 
 Cover spaces provide a convenient framework for defining convergence for arbitrary nets.
 In Section~\ref{sec:limits}, we demonstrate how to put a cover space structure on an arbitrary directed set $I$ in such a way that a map $I \to X$ converges if and only if it is a morphism of cover spaces.
@@ -144,7 +144,7 @@ A \emph{cover space} is a set $X$ equipped with a collection $\mathcal{C}_X$ of 
 \item[(CG)] \axitem{CG} If $C \in \mathcal{C}_X$ and $\{ D_U \}_{U \in C}$ is a collection of covers such that $D_U \in \mathcal{C}_X$ for all $U \in C$,
             then $\{ U \cap V \mid U \in C, V \in D_U \} \in \mathcal{C}_X$.
 \item[(CR)] \axitem{CR} If $C \in \mathcal{C}_X$, then $\{ V \subseteq X \mid \exists U \in C, V \rb_X U \} \in \mathcal{C}_X$,
-	    where $V \rb_X U$ (or, for short, $V \rb U$) means that $\{ W \subseteq X \mid \overlap{W}{V} \implies W \subseteq U \} \in \mathcal{C}_X$.
+            where $V \rb_X U$ (or, for short, $V \rb U$) means that $\{ W \subseteq X \mid \overlap{W}{V} \implies W \subseteq U \} \in \mathcal{C}_X$.
 \end{itemize}
 Elements of $\mathcal{C}_X$ are called \emph{Cauchy covers} of $X$.
 \end{defn}
@@ -322,13 +322,13 @@ Recall that a uniform space is a set $X$ equipped with a collection of covers $\
 \item[(UE)] \axitem{UE} If $C \in \mathcal{U}_X$ and $C$ refines $D$, then $D \in \mathcal{U}_X$.
 \item[(UI)] \axitem{UI} If $C,D \in \mathcal{U}_X$, then $\{ U \cap V \mid U \in C, V \in D \} \in \mathcal{U}_X$.
 \item[(UU)] \axitem{UU} For every $C \in \mathcal{U}_X$, there exists $D \in \mathcal{U}_X$ such that, for every $V \in D$,
-there exists $U \in C$ such that any $W \in D$ that intersects $V$ is a subset of $U$.
+there exists $U \in C$ such that $D \subseteq \{ W \mid \overlap{W}{V} \implies W \subseteq U \}$.
 \end{itemize}
 The elements of $\mathcal{U}_X$ are called \emph{uniform covers} of $X$.
 
 \begin{example}
 Every metric space induces a uniform structure.
-Specifically, a cover $C$ of a metric space $X$ is uniform if there exists $\varepsilon > 0$ such that every open ball of radius $\varepsilon$ is a subset of some set in $C$.
+Specifically, a cover of a metric space $X$ is uniform if it refines the cover $\{ B_\varepsilon(x) \mid x \in X \}$ for some $\varepsilon > 0$.
 \end{example}
 
 We now demonstrate how every uniform space gives rise to a cover space.
@@ -358,28 +358,67 @@ If $F$ intersects every set in $\mathcal{B}_X$, then it also intersects every se
 The proof follows by induction on the steps used to generate $\overline{\mathcal{B}_X}$.
 \end{proof}
 
-Thus, $\overline{\mathcal{B}_X}$ is the minimal precover space structure containing $\mathcal{B}_X$.
-However, the pair $(X, \overline{\mathcal{B}_X})$ is a cover space only if $\mathcal{B}_X$ satisfies an additional regularity condition:
+Thus, $\overline{\mathcal{B}_X}$ is the minimal precover space structure that contains $\mathcal{B}_X$.
+However, the pair $(X, \overline{\mathcal{B}_X})$ is not necessarily a cover space.
+The following lemma provides a useful tool for extending regularity conditions from a subbase to the entire space:
 
-\begin{defn}
-A subbase $\mathcal{B}_X$ is \emph{regular} if, for every $C \in \mathcal{B}_X$, the collection $\{ V \mid \exists U \in C, V \rb_{(X, \overline{\mathcal{B}_X})} U \}$ belongs to $\overline{\mathcal{B}_X}$.
-\end{defn}
-
-\begin{prop}[subbase-regular]
-If $\mathcal{B}_X$ is a regular subbase, then $(X, \overline{\mathcal{B}_X})$ is a cover space.
-\end{prop}
+\begin{lem}[subbase-regular]
+Let $\mathcal{B}_X$ be a subbase, and let $\rb$ be a binary relation on subsets of $X$ satisfying the following conditions:
+\begin{itemize}
+\item $X \rb X$.
+\item If $W \rb V \subseteq U$, then $W \rb U$ for all subsets $W,V,U$.
+\item If $V \rb U$ and $V' \rb U'$, then $V \cap V' \rb U \cap U'$ for all subsets $V,V',U,U'$.
+\end{itemize}
+Suppose that, for every cover $C \in \mathcal{B}_X$, the collection $\{ V \mid \exists U \in C, V \rb U \}$ belongs to $\overline{\mathcal{B}_X}$.
+Then the same property holds for every cover $C \in \overline{\mathcal{B}_X}$.
+\end{lem}
 \begin{proof}
-We prove by induction on the generation of $\overline{\mathcal{B}_X}$ that, for every $C \in \overline{\mathcal{B}_X}$, the cover $\{ W' \mid \exists W \in C, W' \rb W \}$ also belongs to $\overline{\mathcal{B}_X}$.
-The result holds for all elements of $\mathcal{B}_X$ due to the regularity assumption.
-The only non-trivial case arises from \axref{CG}.
+We prove this by induction on the generation of $\overline{\mathcal{B}_X}$.
+Specifically, we show that for every $C \in \overline{\mathcal{B}_X}$, the cover $\{ W' \mid \exists W \in C, W' \rb W \}$ also belongs to $\overline{\mathcal{B}_X}$.
+The only non-trivial case arises from the axiom \axref{CG}.
 
-Suppose $C = \{ U \cap V \mid U \in D, V \in E_U \} \in \mathcal{C}_X$, where $D \in \overline{\mathcal{B}_X}$ and $\{ E_U \in \overline{\mathcal{B}_X} \}_{U \in D}$.
-By the induction hypothesis, we have $D' = \{ U' \mid \exists U \in D, U' \rb U \} \in \overline{\mathcal{B}_X}$ and $E'_{U'} = \{ V' \mid \exists U \in D, V \in E_U, V' \rb V, U' \rb U \} \in \overline{\mathcal{B}_X}$ for every $U' \in D'$.
+Assume $C = \{ U \cap V \mid U \in D, V \in E_U \} \in \overline{\mathcal{B}_X}$, where $D \in \overline{\mathcal{B}_X}$ and $\{ E_U \in \overline{\mathcal{B}_X} \}_{U \in D}$.
+By the induction hypothesis, we know:
+\begin{align*}
+D' & = \{ U' \mid \exists U \in D, U' \rb U \} \in \overline{\mathcal{B}_X} \\
+E'_{U'} & = \{ V' \mid \exists U \in D, V \in E_U, V' \rb V, U' \rb U \} \in \overline{\mathcal{B}_X} \text{ for every } U' \in D'
+\end{align*}
 Since $\{ W' \mid \exists W \in C, W' \rb W \}$ is refined by $\{ U' \cap V' \mid U' \in D', V' \in E'_{U'} \}$, the proof is complete.
 \end{proof}
 
-Axioms \axref{UU} and \axref{UE} ensure that $\mathcal{U}_X$ is a regular subbase for any uniform space structure $\mathcal{U}_X$.
-Consequently, every uniform space $(X, \mathcal{U}_X)$ determines a cover space $(X, \overline{\mathcal{U}_X})$.
+We will see later that a stronger condition on a subbase is often useful:
+
+\begin{defn}
+A \emph{base} for a precover space structure is a collection $\mathcal{B}$ of covers of $X$ satisfying the following axioms:
+\begin{itemize}
+\item[(BT)] \axitem{BT} The trivial cover $\{ X \}$ belongs to $\mathcal{B}$.
+\item[(BE)] \axitem{BE} If $C \in \mathcal{B}$ and $C$ refines $D$, then $D \in \mathcal{B}$.
+\item[(BI)] \axitem{BI} If $C,D \in \mathcal{B}$, then $\{ U \cap V \mid U \in C, V \in D \} \in \mathcal{B}$.
+\end{itemize}
+Let $U,V$ be subsets of $X$.
+We say that $V$ is \emph{$\mathcal{B}$-rather below} $U$, written $V \rb_\mathcal{B} U$, if $\{ W \subseteq X \mid \overlap{W}{V} \implies W \subseteq U \} \in \mathcal{B}$.
+A base $\mathcal{B}$ is called \emph{regular} if it satisfies the following condition:
+\begin{itemize}
+\item[(BR)] \axitem{BR} For every $C \in \mathcal{B}$, we have $\{ V \mid \exists U \in C, V \rb_\mathcal{B} U \} \in \overline{\mathcal{B}}$.
+\end{itemize}
+\end{defn}
+
+\begin{remark}
+The conditions of \rlem{subbase-regular} apply to the relation $\rb_\mathcal{B}$.
+It follows that the precover space generated by a base $\mathcal{B}$ is not only a cover space but also satisfies a stronger regularity condition:
+if $C$ is a Cauchy cover, then $\{ V \mid \exists U \in C, V \rb_\mathcal{B} U \}$ is also a Cauchy cover.
+\end{remark}
+
+\begin{example}
+The collection of all Cauchy covers of a cover space forms a regular base.
+\end{example}
+
+\begin{example}
+If $X$ is a uniform space, then the collection of uniform covers is a regular base.
+The regularity axiom \axref{BR} follows from \axref{UU}.
+\end{example}
+
+The previous example shows that every uniform space $(X, \mathcal{U}_X)$ determines a cover space $(X, \overline{\mathcal{U}_X})$.
 In particular, every metric space defines a cover space.
 These are fundamental examples of cover spaces.
 
@@ -447,7 +486,7 @@ A cover $C$ of $X$ is Cauchy if and only if $\{ V \mid \exists U \in C, f^{-1}(V
 These constructions collectively establish that $\cat{Precov}$ is a topological category.
 
 Cover spaces are closed under joins in the lattice of precover space structures on a set $X$.
-This property follows directly from \rprop{subbase-regular}.
+This property follows directly from \rlem{subbase-regular}.
 Additionally, if $Y$ is a cover space and $f : X \to Y$ is a function, then the transferred precover structure on $X$ is, in fact, a cover structure.
 Consequently, the category of cover spaces is reflective in $\cat{Precov}$:
 
@@ -466,7 +505,7 @@ Hence, $f$ is a cover map from $R(X)$ to $Y$.
 The category of cover spaces is a topological category.
 \end{cor}
 
-We conclude this section with a discussion of embeddings.  
+We conclude this section with a discussion of embeddings.
 A cover map $f : X \to Y$ is called an \emph{embedding} if, for every $C \in \mathcal{C}_X$,
 the set $\{ V \mid \exists U \in C, f^{-1}(V) \subseteq U \}$ is a Cauchy cover of $Y$.
 Note that a cover map $f : X \to Y$ is an embedding if and only if the precover space structure on $X$ is the transferred precover space structure.
@@ -481,19 +520,19 @@ Similarly, a cover map between cover spaces is a regular monomorphism in $\cat{C
 \end{prop}
 \begin{proof}
 Suppose $f : X \to Y$ is a regular monomorphism in $\cat{Precov}$.
-Then $f$ is injective, and it is straightforward to verify that the precover space structure on $X$ is the transferred structure.  
+Then $f$ is injective, and it is straightforward to verify that the precover space structure on $X$ is the transferred structure.
 
 Conversely, let $f : X \to Y$ be an injective embedding.
 Then $f : X \to Y$ is an equalizer of some functions $g,h : Y \to Z$ in $\cat{Set}$.
 Assign the indiscrete structure to $Z$, making $g$ and $h$ cover maps, and it is easy to see that $f$ is their equalizer.
-The same reasoning applies in $\cat{Cov}$ for cover spaces.  
+The same reasoning applies in $\cat{Cov}$ for cover spaces.
 \end{proof}
 
-We will later need the fact that embeddings are closed under products.  
-To establish this, we first prove the following lemma:  
+We will later need the fact that embeddings are closed under products.
+To establish this, we first prove the following lemma:
 
 \begin{lem}
-Let $\mathcal{B}_X$ be a subbase for a precover space structure on $X$, and let $Y$ be a precover space.  
+Let $\mathcal{B}_X$ be a subbase for a precover space structure on $X$, and let $Y$ be a precover space.
 Let $f : X \to Y$ be a cover map such that, for every $C \in \mathcal{B}_X$, the set $\{ V \mid \exists U \in C, f^{-1}(V) \subseteq U \}$ is a Cauchy cover of $Y$.
 Then $f$ is an embedding.
 \end{lem}
@@ -501,19 +540,19 @@ Then $f$ is an embedding.
 We will show, by induction on the generation of a cover $E \in \overline{\mathcal{B}_X}$, that $\{ U' \mid \exists U \in E, f^{-1}(U') \subseteq U \}$ is a Cauchy cover of $Y$.
 
 The base case holds by assumption.
-The cases \axref{CT} and \axref{CE} are straightforward.  
+The cases \axref{CT} and \axref{CE} are straightforward.
 Now, consider \axref{CG}.
 Let $C$ be a Cauchy cover of $X$, and let $\{ D_U \}_{U \in C}$ be a collection of Cauchy covers of $X$ such that $E = \{ U \cap V \mid U \in C, V \in D_U \}$.
 By the induction hypothesis, $C' = \{ U' \mid \exists U \in C, f^{-1}(U') \subseteq U \}$ is a Cauchy cover of $Y$.
 
 For each $U' \in C'$, define
 \[ D'_{U'} = \{ V' \mid \exists U \in C, \exists V \in D_U, f^{-1}(U') \subseteq U, f^{-1}(V') \subseteq V \}. \]
-Then $D'_{U'}$ is a Cauchy cover of $Y$.  
-Since $\{ U' \cap V' \mid U' \in C', V' \in D'_{U'} \}$ refines $\{ W' \mid \exists W \in E, f^{-1}(W') \subseteq W \}$, the proof is complete.  
+Then $D'_{U'}$ is a Cauchy cover of $Y$.
+Since $\{ U' \cap V' \mid U' \in C', V' \in D'_{U'} \}$ refines $\{ W' \mid \exists W \in E, f^{-1}(W') \subseteq W \}$, the proof is complete.
 \end{proof}
 
 \begin{lem}[prod-embedding]
-If $f : X \to Y$ and $g : X' \to Y'$ are embeddings, then $f \times g : X \times X' \to Y \times Y'$ is also an embedding.  
+If $f : X \to Y$ and $g : X' \to Y'$ are embeddings, then $f \times g : X \times X' \to Y \times Y'$ is also an embedding.
 \end{lem}
 \begin{proof}
 The precover space structure on $X \times X'$ is generated by covers of the form $\{ \pi_1^{-1}(U) \mid U \in C \}$ and $\{ \pi_2^{-1}(U') \mid U' \in C' \}$,
@@ -523,73 +562,73 @@ Since $f$ and $g$ are embeddings, the sets $\{ \pi_1^{-1}(V) \mid \exists U \in 
 and $\{ \pi_2^{-1}(V') \mid \exists U' \in C', f^{-1}(V') \subseteq U' \}$ are Cauchy covers on $Y$ and $Y'$, respectively.
 These covers refine $\{ V \mid \exists U \in C, (f \times g)^{-1}(V) \subseteq \pi_1^{-1}(U) \}$
 and $\{ V' \mid \exists U' \in C', (f \times g)^{-1}(V') \subseteq \pi_2^{-1}(U') \}$.
-By the previous lemma, $f \times g$ is an embedding.  
+By the previous lemma, $f \times g$ is an embedding.
 \end{proof}
 
 \section{Cauchy filters}
 \label{sec:filters}
 
 In the next section, we will define complete cover spaces.
-To do this, we first introduce the notion of a Cauchy filter, which we define and study in this section.  
-Additionally, we will show that Cauchy filters on $\mathbb{Q}$ correspond to Dedekind real numbers.  
+To do this, we first introduce the notion of a Cauchy filter, which we define and study in this section.
+Additionally, we will show that Cauchy filters on $\mathbb{Q}$ correspond to Dedekind real numbers.
 
 \begin{defn}
-A \emph{filter} on a set $X$ is an upward-closed set of subsets of $X$ that is closed under finite intersections.  
+A \emph{filter} on a set $X$ is an upward-closed set of subsets of $X$ that is closed under finite intersections.
 A \emph{proper filter} is a filter consisting of inhabited sets.
 A filter on a cover space satisfies the \emph{Cauchy condition} if it intersects with every Cauchy cover.
 A \emph{Cauchy filter} on a cover space $X$ is a proper filter that satisfies the Cauchy condition.
 \end{defn}
 
 \begin{example}
-For every point $x$ in a cover space $X$, the set of neighborhoods of $x$ forms a Cauchy filter on $X$.  
-This filter is denoted by $x^\wedge$.  
+For every point $x$ in a cover space $X$, the set of neighborhoods of $x$ forms a Cauchy filter on $X$.
+This filter is denoted by $x^\wedge$.
 \end{example}
 
-If a cover space is equipped with a subbase, it becomes easier to determine when a proper filter is Cauchy:  
+If a cover space is equipped with a subbase, it becomes easier to determine when a proper filter is Cauchy:
 
 \begin{prop}[cauchy-filter]
-If $\mathcal{B}_X$ is a subbase for a cover space $X$, then a proper filter $F$ is Cauchy if and only if it intersects with every cover in $\mathcal{B}_X$.  
+If $\mathcal{B}_X$ is a subbase for a cover space $X$, then a proper filter $F$ is Cauchy if and only if it intersects with every cover in $\mathcal{B}_X$.
 \end{prop}
 \begin{proof}
-This follows directly from \rlem{closure-filter}.  
+This follows directly from \rlem{closure-filter}.
 \end{proof}
 
 \begin{cor}[metric-cauchy-filter]
-If $X$ is a metric space, then a proper filter is Cauchy if and only if it contains an open ball of radius $\varepsilon$ for every $\varepsilon > 0$.  
+If $X$ is a metric space, then a proper filter is Cauchy if and only if it contains an open ball of radius $\varepsilon$ for every $\varepsilon > 0$.
 \end{cor}
 
 The notion of a Cauchy filter makes every cover space into a Cauchy space \cite[Definition~1.3.1]{cauchy-spaces}.
-However, we will not use this abstraction; instead, we provide the necessary constructions and definitions directly for cover spaces.  
+However, we will not use this abstraction; instead, we provide the necessary constructions and definitions directly for cover spaces.
 
 Given a function $f : X \to Y$ and a filter $F$ on $X$, we write $f(F)$ for the filter $\{ V \mid f^{-1}(V) \in F \}$ on $Y$.
 We say that $f$ is a \emph{Cauchy map} if it preserves Cauchy filters.
 Clearly, every cover map is Cauchy.
-It is also straightforward to verify that Cauchy maps are continuous:  
+It is also straightforward to verify that Cauchy maps are continuous:
 
 \begin{prop}[cauchy-continuous]
 Every Cauchy map $f : X \to Y$ is a continuous function.
 \end{prop}
 \begin{proof}
-Let $U$ be an open subset of $Y$, and let $x \in X$ be such that $f(x) \in U$.  
-Since $f(x^\wedge)$ is a Cauchy filter and $\{ f(x) \} \rb U$, there exists a set $V \in f(x^\wedge)$ such that $f(x) \in V \implies V \subseteq U$.  
+Let $U$ be an open subset of $Y$, and let $x \in X$ be such that $f(x) \in U$.
+Since $f(x^\wedge)$ is a Cauchy filter and $\{ f(x) \} \rb U$, there exists a set $V \in f(x^\wedge)$ such that $f(x) \in V \implies V \subseteq U$.
 The first condition implies that $f^{-1}(V)$ is a neighborhood of $x$, and the second condition implies that $f^{-1}(V) \subseteq f^{-1}(U)$.
 Thus, $f^{-1}(U)$ is also a neighborhood of $x$.
 \end{proof}
 
 There is an equivalence relation on Cauchy filters.
 Two Cauchy fitlers are \emph{equivalent} if every Cauchy cover contains an element from both filters.
-Equivalently, Cauchy filters are equivalent if and only if their intersection is a Cauchy filter.  
+Equivalently, Cauchy filters are equivalent if and only if their intersection is a Cauchy filter.
 In particular, if one Cauchy filter is a subset of another, they are equivalent.
 
 Now, we prove a key lemma about Cauchy filters:
 
 \begin{lem}[cauchy-filter-rb]
 Let $X$ be a cover space, $F$ and $G$ be equivalent Cauchy filters on $X$, and $U$ and $V$ be subsets of $X$ such that $V \rb U$.
-If $V \in F$, then $U \in G$.  
+If $V \in F$, then $U \in G$.
 \end{lem}
 \begin{proof}
 Since $V \rb U$, there exists a set $W \in F \cap G$ such that $\overlap{W}{V} \implies W \subseteq U$.
-As $W,V \in F$, their intersection also belongs to $F$, hence it is inhabited.  
+As $W,V \in F$, their intersection also belongs to $F$, hence it is inhabited.
 It follows that $W \subseteq U$.
 Thus, $U \in G$
 \end{proof}
@@ -599,7 +638,7 @@ The equivalence of Cauchy filters is indeed an equivalence relation.
 \end{prop}
 \begin{proof}
 The only non-trivial part is transitivity.
-Let $F$, $G$, and $H$ be Cauchy filters such that $F$ is equivalent to $G$ and $G$ is equivalent to $H$.  
+Let $F$, $G$, and $H$ be Cauchy filters such that $F$ is equivalent to $G$ and $G$ is equivalent to $H$.
 Let $C$ be a Cauchy cover.
 By \axref{CR}, there exist sets $U$ and $V$ such that $V \rb U$, $U \in C$, and $V \in F \cap G$.
 By \rlem{cauchy-filter-rb}, $U$ belongs to both $F$ and $H$.
@@ -620,7 +659,7 @@ Let $F$ and $G$ be equivalent Cauchy filters.
 If $F$ is regular, then $F \subseteq G$.
 \end{prop}
 \begin{proof}
-Let $U \in F$.  
+Let $U \in F$.
 Since $F$ is regular, there exists a set $V \in F$ such that $V \rb U$.
 By \rlem{cauchy-filter-rb}, $U$ belongs to $G$.
 \end{proof}
@@ -628,28 +667,28 @@ By \rlem{cauchy-filter-rb}, $U$ belongs to $G$.
 \begin{prop}[regular-filter-repr]
 Let $F$ be a Cauchy filter.
 The intersection of all Cauchy subfilters of $F$ is a regular Cauchy filter.
-It is the unique regular filter equivalent to $F$.  
+It is the unique regular filter equivalent to $F$.
 \end{prop}
 \begin{proof}
 We denote the intersection of all Cauchy subfilters of $F$ by $M$.
 
-First, note that the intersection of an inhabitted set of proper filters is a proper filter.  
-To see that $M$ is a Cauchy filter, let $C$ be a Cauchy cover.  
+First, note that the intersection of an inhabited set of proper filters is a proper filter.
+To see that $M$ is a Cauchy filter, let $C$ be a Cauchy cover.
 By \axref{CR}, there exist sets $V \in F$ and $U \in C$ such that $V \rb U$.
 By \rlem{cauchy-filter-rb}, every Cauchy filter equivalent to $F$ contains $U$.
-Thus, $U$ belongs to $M$, showing that $M$ is Cauchy.  
+Thus, $U$ belongs to $M$, showing that $M$ is Cauchy.
 
-Next, we prove that $M$ is regular.  
+Next, we prove that $M$ is regular.
 Define $G = \{ U \mid \exists W \in F, \exists V, W \rb V, V \rb U \}$.
 By \rprop{rb-props}, $G$ is a proper filter, and by \axref{CR}, it is Cauchy.
 Since $G \subseteq F$, we have $M \subseteq G$.
-Now, let $U \in M$.  
-Then there exist sets $W \in F$ and $V$ such that $W \rb V$ and $V \rb U$.  
+Now, let $U \in M$.
+Then there exist sets $W \in F$ and $V$ such that $W \rb V$ and $V \rb U$.
 Since $F$ and $M$ are equivalent, \rlem{cauchy-filter-rb} implies $V \in M$.
-This shows that $M$ is regular.  
+This shows that $M$ is regular.
 
-Finally, since $M \subseteq F$, it is equivalent to $F$.  
-Uniqueness follows from \rprop{regular-minimal}.  
+Finally, since $M \subseteq F$, it is equivalent to $F$.
+Uniqueness follows from \rprop{regular-minimal}.
 \end{proof}
 
 Now, we will construct a bijection between regular Cauchy filters and Dedekind reals.
@@ -663,7 +702,7 @@ A \emph{Dedekind cut} is a pair $(L,U)$ of subsets of $\mathbb{Q}$ satisfying th
 \item[(DS)] \axitem{DS} If $a < b$, then either $a \in L$ or $b \in U$.
 \end{itemize}
 
-Dedekind reals can alternatively be represented by filters.  
+Dedekind reals can alternatively be represented by filters.
 A filter $F$ on $\mathbb{Q}$ will be called a \emph{Dedekind filter} if it satisfies the following conditions:
 \begin{itemize}
 \item[(DE)] \axitem{DE} For every rational $\varepsilon > 0$, there exists $a \in \mathbb{Q}$ such that the open interval $(a, a + \varepsilon)$ belongs to $F$.
@@ -676,25 +715,25 @@ There is a bijection between the set of Dedekind cuts and the set of Dedekind fi
 \end{prop}
 \begin{proof}
 If $(L,U)$ is a Dedekind real, define $F(L,U)$ as the set of all $V$ such that there exist $a \in L$ and $b \in U$ such that $(a,b) \subseteq V$.
-Clearly, this is a filter that satisfies \axref{DT}.  
-Axioms \axref{DL} and \axref{DU} imply \axref{DR}.  
+Clearly, this is a filter that satisfies \axref{DT}.
+Axioms \axref{DL} and \axref{DU} imply \axref{DR}.
 
 Let us prove \axref{DE}.
 By \axref{DI}, \axref{DD}, and \axref{DL}, there exist $a \in L$ and $b \in U$ such that $a < b$.
 Let $a' = a + \frac{b - a}{3}$ and $b' = b - \frac{b - a}{3}$.
-By \axref{DS}, either $a' \in L$ or $b' \in U$.  
-Thus, the open interval $(a,b)$ can be reduced by a factor of $1.5$.  
-Repeating this process, we can obtain an arbitrarily small open interval in a finite number of steps, proving \axref{DE}.  
+By \axref{DS}, either $a' \in L$ or $b' \in U$.
+Thus, the open interval $(a,b)$ can be reduced by a factor of $1.5$.
+Repeating this process, we can obtain an arbitrarily small open interval in a finite number of steps, proving \axref{DE}.
 
 Now, let $F$ be a Dedekind filter.
-Define:  
+Define:
 \[ L_F = \{ a \in \mathbb{Q} \mid \exists b \in \mathbb{Q}, (a,b) \in F \}, \quad U_F = \{ b \in \mathbb{Q} \mid \exists a \in \mathbb{Q}, (a,b) \in F \}. \]
-Axiom \axref{DE} implies \axref{DI} and \axref{DS}.  
-Axiom \axref{DR} implies \axref{DL} and \axref{DU}.  
-Finally, \axref{DT} implies \axref{DD}.  
+Axiom \axref{DE} implies \axref{DI} and \axref{DS}.
+Axiom \axref{DR} implies \axref{DL} and \axref{DU}.
+Finally, \axref{DT} implies \axref{DD}.
 
-It is straightforward to verify that $L_{F(L,U)} = L$ and $U_{F(L,U)} = U$.  
-The fact that $F(L_F,U_F) = F$ follows directly from \axref{DT}.  
+It is straightforward to verify that $L_{F(L,U)} = L$ and $U_{F(L,U)} = U$.
+The fact that $F(L_F,U_F) = F$ follows directly from \axref{DT}.
 \end{proof}
 
 The cover space of rational numbers $\mathbb{Q}$ is defined as the one induced by the usual Euclidean metric space structure on $\mathbb{Q}$.
@@ -704,7 +743,7 @@ Now, we can show that regular Cauchy filters on this cover space correspond to D
 A filter on $\mathbb{Q}$ is a Dedekind filter if and only if it is a regular Cauchy filter.
 \end{prop}
 \begin{proof}
-By \rcor{metric-cauchy-filter}, a proper filter on $\mathbb{Q}$ satisfies \axref{DE} if and only if it is a Cauchy filter.  
+By \rcor{metric-cauchy-filter}, a proper filter on $\mathbb{Q}$ satisfies \axref{DE} if and only if it is a Cauchy filter.
 Thus, we need to show that a Cauchy filter is regular if and only if it satisfies \axref{DR} and \axref{DT}.
 
 If a Cauchy filter $F$ satisfies \axref{DR} and \axref{DT}, then, for every $U \in F$, there exist $a < b < c < d$ such that $(b,c) \subseteq (a,d) \subseteq U$ and $(b,c) \in F$.
@@ -713,7 +752,7 @@ Since $(b,c) \rb (a,d)$, this shows that $F$ is regular.
 Conversely, suppose that $F$ is regular.
 Define
 \[ F' = \{ U \in F \mid \exists (a,b) \in F, (a,b) \subseteq U \}. \]
-By \rcor{metric-cauchy-filter}, $F'$ is a Cauchy filter.  
+By \rcor{metric-cauchy-filter}, $F'$ is a Cauchy filter.
 Since $F' \subseteq F$ and $F$ is regular, \rprop{regular-minimal} implies that $F = F'$.
 Thus, $F$ satisfies \axref{DT}.
 
@@ -723,11 +762,11 @@ By \axref{DT}, we also have an open interval $(c,d) \in F$ such that $(c,d) \sub
 \rprop{rb-closure} implies that $a < c$ and $d < b$.
 This concludes the proof.
 
-To show \axref{DR}, suppose $(a,b) \in F$.  
-Because $F$ is regular, there exists $U \in F$ such that $U \rb (a,b)$.  
-By \axref{DT}, we can find an open interval $(c,d) \in F$ such that $(c,d) \subseteq U$.  
-Using \rprop{rb-closure}, we conclude that $a < c < d < b$, verifying \axref{DR}.  
-This completes the proof.  
+To show \axref{DR}, suppose $(a,b) \in F$.
+Because $F$ is regular, there exists $U \in F$ such that $U \rb (a,b)$.
+By \axref{DT}, we can find an open interval $(c,d) \in F$ such that $(c,d) \subseteq U$.
+Using \rprop{rb-closure}, we conclude that $a < c < d < b$, verifying \axref{DR}.
+This completes the proof.
 \end{proof}
 
 \section{Completion}
@@ -1091,7 +1130,7 @@ Every metric space is strongly regular as a cover space.
 \end{example}
 
 \begin{example}
-More generally, a uniform space $X$ is said to be \emph{strongly regular} if it satisfies the following strengthened version of \axref{UU}:  
+More generally, a uniform space $X$ is said to be \emph{strongly regular} if it satisfies the following strengthened version of \axref{UU}:
 For every $C \in \mathcal{U}_X$, there exists $D \in \mathcal{U}_X$ such that, for every $V \in D$,
 there exists $U \in C$ satisfying the following: for every $W \in D$, either $W$ does not intersect $V$, or $W$ is a subset of $U$.
 
@@ -1122,7 +1161,7 @@ If $X$ is a strongly regular cover space, then its underlying topological space 
 The proof follows from \rlem{rbs-point} and is analogous to the proof of \rprop{top-regular}.
 \end{proof}
 
-We define a topological space $X$ to be \emph{strongly Hausdorff} if, for every pair of points $x,y \in X$, the following holds:  
+We define a topological space $X$ to be \emph{strongly Hausdorff} if, for every pair of points $x,y \in X$, the following holds:
 If the intersection of every neighborhood of $x$ with every neighborhood of $y$ is not empty, then $x = y$.
 
 \begin{lem}
@@ -1168,7 +1207,9 @@ A \emph{weakly Cauchy filter} on a cover space $X$ is a weakly proper filter tha
 \end{defn}
 
 \begin{remark}
-Classically, weakly proper and weakly Cauchy filters are the same as proper and Cauchy filters, respectively. However, constructively, these conditions are weaker.
+Classically, weakly proper filters and weakly Cauchy filters coincide with proper filters and Cauchy filters, respectively.
+Constructively, however, these conditions are generally weaker.
+Nevertheless, as we will see in Section~\ref{sec:reals}, there are cases where weakly Cauchy filters coincide with Cauchy filters even in the constructive setting.
 \end{remark}
 
 We define a function between cover spaces as a \emph{strongly Cauchy map} if it preserves weakly Cauchy filters.
@@ -1244,28 +1285,28 @@ The proof is analogous to that of \rlem{filter-point-char}.
 \end{proof}
 
 \begin{lem}[weak-filter-lift]
-Let $f : X \to Y$ be a weakly dense embedding between cover spaces, and let $F$ be a weakly Cauchy filter on $Y$.  
+Let $f : X \to Y$ be a weakly dense embedding between cover spaces, and let $F$ be a weakly Cauchy filter on $Y$.
 Then
 \[ G = \{ U \mid \exists V,V' \subseteq Y, f^{-1}(V) \subseteq U, V' \rb V, V' \in F \} \]
 is a weakly Cauchy filter on $X$ such that $f(G)$ is equivalent to $F$.
 \end{lem}
 \begin{proof}
-We have already shown in \rlem{filter-lift} that this filter satisfies the Cauchy condition.  
-It remains to show that $G$ is weakly proper.  
+We have already shown in \rlem{filter-lift} that this filter satisfies the Cauchy condition.
+It remains to show that $G$ is weakly proper.
 
-Assume, for contradiction, that $\varnothing \in G$.  
-Then there exist sets $V$ and $V'$ such that $f^{-1}(V) \subseteq \varnothing$, $V' \rb V$, and $V' \in F$.  
-We will show that $V'$ is empty, which contradicts the fact that $F$ is weakly proper.  
+Assume, for contradiction, that $\varnothing \in G$.
+Then there exist sets $V$ and $V'$ such that $f^{-1}(V) \subseteq \varnothing$, $V' \rb V$, and $V' \in F$.
+We will show that $V'$ is empty, which contradicts the fact that $F$ is weakly proper.
 
 Suppose $y \in V'$.
-Then $y$ belongs to the interior of $V$.  
-Since $f$ is weakly dense and the interior of $V$ is inhabited, we can assume that $V$ intersects the image of $f$.  
-This contradicts the condition $f^{-1}(V) \subseteq \varnothing$.  
+Then $y$ belongs to the interior of $V$.
+Since $f$ is weakly dense and the interior of $V$ is inhabited, we can assume that $V$ intersects the image of $f$.
+This contradicts the condition $f^{-1}(V) \subseteq \varnothing$.
 Thus, $G$ is weakly proper.
 \end{proof}
 
 \begin{lem}[strongly-complete-part]
-Let $X$ be a strongly regular cover space, $Y$ a separated strongly regular cover space, and $f : X \to Y$ a weakly dense embedding.  
+Let $X$ be a strongly regular cover space, $Y$ a separated strongly regular cover space, and $f : X \to Y$ a weakly dense embedding.
 Then $Y$ is strongly complete if and only if, for every strongly regular Cauchy filter $F$ on $X$, there exists a point $y \in Y$ such that $f(F)$ is equivalent to the neighborhood filter of $y$.
 \end{lem}
 \begin{proof}
@@ -1293,21 +1334,21 @@ As before, we can show that every strongly regular cover space has a strong comp
 For every strongly regular cover space $X$, there exists a strongly complete cover space $C(X)$ and a weakly dense embedding $\eta_X : X \to C(X)$.
 \end{thm}
 \begin{proof}
-Define $C(X)$ as the set of strongly regular weakly Cauchy filters on $X$.  
-For every subset $U \subseteq X$, define $\widetilde{U} \subseteq C(X)$ as the set of all strongly regular weakly Cauchy filters containing $U$.  
-The Cauchy covers of $C(X)$ are defined as the set of covers $C$ that are refined by $\{ \widetilde{U'} \mid U' \in C' \}$ for some Cauchy cover $C'$ of $X$.  
+Define $C(X)$ as the set of strongly regular weakly Cauchy filters on $X$.
+For every subset $U \subseteq X$, define $\widetilde{U} \subseteq C(X)$ as the set of all strongly regular weakly Cauchy filters containing $U$.
+The Cauchy covers of $C(X)$ are defined as the set of covers $C$ that are refined by $\{ \widetilde{U'} \mid U' \in C' \}$ for some Cauchy cover $C'$ of $X$.
 The proof that $C(X)$ forms a precover space is analogous to that in \rthm{completion}.
 
-To prove that $\widetilde{V} \rb^s_{C(X)} \widetilde{U}$ whenever $V \rb^s_X U$, note that $\widetilde{X \backslash V}$ does not intersect $\widetilde{V}$.  
-Indeed, if a filter $F \in C(X)$ belonged to their intersection, it would contain both $X \backslash V$ and $V$, which is impossible since $F$ is weakly proper.  
-This implies that $\{ \widetilde{X \backslash V}, \widetilde{U} \}$ refines $\{ C(X) \backslash \widetilde{V}, \widetilde{U} \}$.  
+To prove that $\widetilde{V} \rb^s_{C(X)} \widetilde{U}$ whenever $V \rb^s_X U$, note that $\widetilde{X \backslash V}$ does not intersect $\widetilde{V}$.
+Indeed, if a filter $F \in C(X)$ belonged to their intersection, it would contain both $X \backslash V$ and $V$, which is impossible since $F$ is weakly proper.
+This implies that $\{ \widetilde{X \backslash V}, \widetilde{U} \}$ refines $\{ C(X) \backslash \widetilde{V}, \widetilde{U} \}$.
 Thus, $V \rb^s_X U$ implies $\widetilde{V} \rb^s_{C(X)} \widetilde{U}$, showing that $C(X)$ is strongly regular.
 
-Next, define $\eta_X(x)$ as the neighborhood filter $x^\wedge$.  
-We can prove that $\eta_X$ is an embedding of cover spaces as in \rthm{completion}.  
-To show that $\eta_X$ is weakly dense, let $V$ be an open subset of $C(X)$ that does not intersect the image of $\eta_X$.  
-We need to prove that $V$ is empty.  
-Suppose $F \in V$.  
+Next, define $\eta_X(x)$ as the neighborhood filter $x^\wedge$.
+We can prove that $\eta_X$ is an embedding of cover spaces as in \rthm{completion}.
+To show that $\eta_X$ is weakly dense, let $V$ be an open subset of $C(X)$ that does not intersect the image of $\eta_X$.
+We need to prove that $V$ is empty.
+Suppose $F \in V$.
 In \rthm{completion}, we already proved that the set $\{ x \in X \mid \eta_X(x) \in V \}$ belongs to $F$, but this set is empty by assumption, contradicting the weak properness of $F$.
 Thus, $V$ must be empty, proving that $\eta_X$ is dense.
 
@@ -1320,7 +1361,7 @@ The category of strongly complete cover spaces forms a reflective subcategory of
 
 Now, let us discuss the relationship between strongly complete cover spaces and sober topological spaces.
 First, recall the definition of sober topological spaces.
-Let $X$ be a topological space.  
+Let $X$ be a topological space.
 
 A filter $F$ on $X$ is called \emph{open} if, for every $U \in F$, there exists an open set $V \in F$ such that $V \subseteq U$.
 An open filter $F$ is called \emph{completely prime} if, for every family of open sets $\{ U_i \}_{i \in I}$, the condition $\bigcup_{i \in I} U_i \in F$ implies $U_i \in F$ for some $i \in I$.
@@ -1333,35 +1374,25 @@ If $X$ is a strongly complete cover space, then its underlying topological space
 \end{prop}
 \begin{proof}
 Let $F$ be a completely prime open filter.
-Clearly, $F$ is also weakly Cauchy.  
+Clearly, $F$ is also weakly Cauchy.
 By \rlem{rbs-point}, for every open set $U$, we have $U = \bigcup \{ V \mid V \rb^s_X U \}$.
-It follows that $F$ is strongly regular.  
+It follows that $F$ is strongly regular.
 By the completeness of $X$, there exists a unique point $x \in X$ such that $F = x^\wedge$.
 \end{proof}
 
 Next, we prove the converse of this proposition.
-
-\begin{lem}[strongly-regular-filter]
-Let $F$ be a strongly regular weakly Cauchy filter in a strongly regular cover space $X$.
-Then, for every $U \in F$, there exists $V \in F$ such that $V \rb^s U$.
-\end{lem}
-\begin{proof}
-Consider the set $G = \{ U \mid \exists V \in F, V \rb^s U \}$.
-Since $X$ is strongly regular, $G$ is a weakly Cauchy filter.
-Because $G \subseteq F$ and $F$ is strongly regular, \rprop{strongly-regular-minimal} implies $F \subseteq G$, completing the proof.
-\end{proof}
 
 \begin{prop}[t-complete]
 If $X$ is a strongly regular sober space, then $T(X)$ is a strongly complete cover space.
 \end{prop}
 \begin{proof}
 It suffices to show that every strongly regular weakly Cauchy filter is completely prime.
-Let $F$ be a strongly regular weakly Cauchy filter, and let $\{ U_i \}_{i \in I}$ be a family of open sets such that $\bigcup_{i \in I} U_i \in F$.  
-By \rlem{strongly-regular-filter}, there exists $V \in F$ such that $V \rb^s \bigcup_{i \in I} U_i$.  
+Let $F$ be a strongly regular weakly Cauchy filter, and let $\{ U_i \}_{i \in I}$ be a family of open sets such that $\bigcup_{i \in I} U_i \in F$.
+Since $F$ is strongly regular, there exists $V \in F$ such that $V \rb^s \bigcup_{i \in I} U_i$.
 This implies that $\{ X \backslash V \} \cup \{ U_i \mid i \in I \}$ is a neighborhood cover of $X$.
 
 Since $F$ is a weakly proper filter and $V \in F$, the set $X \backslash V$ does not belong to $F$.
-Thus, there exists some $i \in I$ such that $U_i \in F$, because $F$ is a Cauchy filter.  
+Thus, there exists some $i \in I$ such that $U_i \in F$, because $F$ is a Cauchy filter.
 This completes the proof.
 \end{proof}
 
@@ -1373,15 +1404,15 @@ Then a map $f : X \to Y$ is Cauchy if and only if it is continuous.
 If $X$ is strongly complete, then such a map is also strongly Cauchy.
 \end{prop}
 \begin{proof}
-If $f$ is Cauchy, then it is continuous by \rprop{cauchy-continuous}.  
-Conversely, assume that $f$ is continuous.  
-Let $F$ be a Cauchy filter on $X$, and let $C$ be a Cauchy cover of $Y$.  
-We need to show that there exists $U \in C$ such that $f^{-1}(U) \in F$.  
+If $f$ is Cauchy, then it is continuous by \rprop{cauchy-continuous}.
+Conversely, assume that $f$ is continuous.
+Let $F$ be a Cauchy filter on $X$, and let $C$ be a Cauchy cover of $Y$.
+We need to show that there exists $U \in C$ such that $f^{-1}(U) \in F$.
 
-Since $X$ is complete, there exists a point $x \in X$ such that $x^\wedge \subseteq F$.  
-As $C$ is a Cauchy cover, there exists $U \in C$ such that $\{ f(x) \} \rb U$.  
-Since $f$ is continuous, $f^{-1}(U)$ is a neighborhood of $x$.  
-Because $x^\wedge \subseteq F$, we conclude that $f^{-1}(U) \in F$.  
+Since $X$ is complete, there exists a point $x \in X$ such that $x^\wedge \subseteq F$.
+As $C$ is a Cauchy cover, there exists $U \in C$ such that $\{ f(x) \} \rb U$.
+Since $f$ is continuous, $f^{-1}(U)$ is a neighborhood of $x$.
+Because $x^\wedge \subseteq F$, we conclude that $f^{-1}(U) \in F$.
 
 If $X$ is strongly complete, the same proof shows that $f$ preserves weakly Cauchy filters, making $f$ strongly Cauchy.
 \end{proof}
@@ -1392,8 +1423,8 @@ Finally, we can prove that the category of strongly complete cover spaces is equ
 The forgetful functor from the category of cover spaces and strongly Cauchy maps to the category of topological spaces restricts to an equivalence between the category of strongly complete cover spaces with strongly Cauchy maps and the category of strongly regular sober spaces.
 \end{thm}
 \begin{proof}
-By \rprop{u-strongly-regular}, \rprop{u-sober}, and \rprop{u-fully-faithful}, we have a functor that is fully faithful.  
-Additionally, \rprop{t-complete} implies that this functor is essentially surjective on objects.  
+By \rprop{u-strongly-regular}, \rprop{u-sober}, and \rprop{u-fully-faithful}, we have a functor that is fully faithful.
+Additionally, \rprop{t-complete} implies that this functor is essentially surjective on objects.
 Thus, the forgetful functor restricts to an equivalence between the two categories.
 \end{proof}
 
@@ -1407,7 +1438,7 @@ To achieve this, we replace the category of sober topological spaces with the ca
 Recall that a \emph{frame} is a complete distributive lattice.
 A map of frames is a function that preserves finite meets and arbitrary joins.
 The category of locales is the opposite of the category of frames.
-Given a locale $M$, we denote its underlying frame by $O_M$.  
+Given a locale $M$, we denote its underlying frame by $O_M$.
 Elements of $O_M$ are called \emph{opens} of $M$.
 For a map of locales $f : M \to N$, the corresponding frame map is written as $f^* : O_N \to O_M$.
 
@@ -1467,15 +1498,15 @@ This completes the proof.
 
 Every map of locales $f : M \to N$ induces a function on points, $P(f) : P(M) \to P(N)$, defined by:
 \[ P(f)(F) = \{ a \in O_N \mid f^*(a) \in F \}. \]
-It is straightforward to verify that $P(f)$ is a cover map.  
+It is straightforward to verify that $P(f)$ is a cover map.
 Thus, we obtain a functor $P : \cat{Loc} \to \cat{Precov}$.
 
-For every open $b$ in a locale $M$, there exists the largest open $\neg b$ satisfying equation $b \wedge \neg b = \bot$.  
+For every open $b$ in a locale $M$, there exists the largest open $\neg b$ satisfying equation $b \wedge \neg b = \bot$.
 This open is given by the formula:
 \[ \neg b = \bigvee \{ a \in O_M \mid b \wedge a = \bot \}. \]
 
 \begin{defn}
-Given two opens $b,a \in O_M$ in a locale $M$, we say that $b$ is \emph{rather below} $a$, written $b \rb a$, if $\neg b \vee a = \top$.  
+Given two opens $b,a \in O_M$ in a locale $M$, we say that $b$ is \emph{rather below} $a$, written $b \rb a$, if $\neg b \vee a = \top$.
 A locale $M$ is called \emph{regular} if, for every open $a \in O_M$, we have $a = \bigvee \{ b \in O_M \mid b \rb a \}$.
 \end{defn}
 
@@ -1487,22 +1518,22 @@ If $M$ is a regular locale, then $P(M)$ is a strongly complete cover space.
 \begin{proof}
 \textbf{Step 1: $P(M)$ is strongly regular.}
 First, we show that if $a,b \in O_M$ are such that $b \rb a$, then $\varepsilon^*(b) \rb^s \varepsilon^*(a)$.
-Suppose $b \rb a$, i.e., $\top \leq \neg b \vee a$.  
+Suppose $b \rb a$, i.e., $\top \leq \neg b \vee a$.
 Then the set $\{ \varepsilon^*(\neg b), \varepsilon^*(a) \}$ is a Cauchy cover.
-It suffices to show that $\varepsilon^*(\neg b)$ is a subset of $X \backslash \varepsilon^*(b)$.  
+It suffices to show that $\varepsilon^*(\neg b)$ is a subset of $X \backslash \varepsilon^*(b)$.
 This follows because every point of $M$ is a proper filter: if a point contains both $\neg b$ and $b$, it must also contain $\bot$, which is impossible.
 Thus, $\varepsilon^*(b) \rb^s \varepsilon^*(a)$, and regularity of $M$ implies that $P(M)$ is strongly regular.
 
 \textbf{Step 2: $P(M)$ is separated.}
 Let $F$ and $G$ be a pair of equivalent points in $P(M)$.
 By \rlem{separated-char}, every neighborhood $U$ of $F$ contains $G$, and vice versa.
-We now show that $F \subseteq G$.  
+We now show that $F \subseteq G$.
 
 Let $a \in F$.
 Since $M$ is regular, $a = \bigvee \{ b \mid b \rb a \}$.
 Thus, there exists some $b \in F$ such that $b \rb a$.
-This implies $\varepsilon^*(b) \rb \varepsilon^*(a)$, and since $F \in \varepsilon^*(b)$, the set $\varepsilon^*(a)$ is a neighborhood of $F$.  
-By equivalence, $G \in \varepsilon^*(a)$, which implies $a \in G$.  
+This implies $\varepsilon^*(b) \rb \varepsilon^*(a)$, and since $F \in \varepsilon^*(b)$, the set $\varepsilon^*(a)$ is a neighborhood of $F$.
+By equivalence, $G \in \varepsilon^*(a)$, which implies $a \in G$.
 Similarly, every $a \in G$ belongs to $F$, so $F = G$.
 Hence, $P(M)$ is separated.
 
@@ -1513,86 +1544,86 @@ For every weakly Cauchy filter $F$ in $P(M)$, define a point $\widetilde{F}$ in 
 \]
 It is straightforward to verify that $\widetilde{F}$ is a filter in $O_M$.
 
-To show that $\widetilde{F}$ is completely prime, suppose $\widetilde{F}$ contains $\bigvee_{j \in J} a_j$.  
-Then there exists some $b \in O_M$ such that $b \rb \bigvee_{j \in J} a_j$ and $\varepsilon^*(b) \in F$.  
+To show that $\widetilde{F}$ is completely prime, suppose $\widetilde{F}$ contains $\bigvee_{j \in J} a_j$.
+Then there exists some $b \in O_M$ such that $b \rb \bigvee_{j \in J} a_j$ and $\varepsilon^*(b) \in F$.
 The set 
 \[
 \{ \varepsilon^*(\neg b) \} \cup \{ \varepsilon^*(b') \mid \exists j \in J, \, b' \rb a_j \}
 \]
-is a Cauchy cover.  
+is a Cauchy cover.
 If $F$ contains $\varepsilon^*(\neg b)$, then it also contains
 $\varepsilon^*(\neg b) \cap \varepsilon^*(b) = \varepsilon^*(\bot) = \varnothing$,
-contradicting the fact that $F$ is weakly proper.  
-Thus, there exists some $b' \in O_M$ such that $\varepsilon^*(b') \in F$ and $b' \rb a_j$ for some $j \in J$.  
-This implies $a_j \in \widetilde{F}$, proving that $\widetilde{F}$ is completely prime.  
+contradicting the fact that $F$ is weakly proper.
+Thus, there exists some $b' \in O_M$ such that $\varepsilon^*(b') \in F$ and $b' \rb a_j$ for some $j \in J$.
+This implies $a_j \in \widetilde{F}$, proving that $\widetilde{F}$ is completely prime.
 
 Finally, to show that $\widetilde{F}^\wedge$ is equivalent to $F$, consider any neighborhood $U$ of $\widetilde{F}$ in $P(M)$.
 By \rlem{locale-cover-neighborhood}, there exist opens $a,b \in O_M$ such that $b \rb a$, $\varepsilon^*(b) \in F$, and $\varepsilon^*(a) \subseteq U$.
 This implies $U \in F$, completing the proof that $P(M)$ is strongly complete.
 \end{proof}
 
-Another property of locales that we will require is the denseness of their set of points.
-A locale $M$ is said to \emph{have a dense set of points} if $\varepsilon_*(\varnothing) = \bot$.
+Another property of locales that we will require is properness.
+A locale $M$ is called \emph{proper} if $\varepsilon_*(\varnothing) = \bot$.
 This notion also has a corresponding interpretation in the context of precover spaces.
-A precover space is said to \emph{have a dense set of points} if $C$ is a Cauchy cover whenever $C \cup \{ \varnothing \}$ is a Cauchy cover.
+A precover space is called \emph{proper} if $C$ is a Cauchy cover whenever $C \cup \{ \varnothing \}$ is a Cauchy cover.
 
 The following proposition establishes a connection between these two notions:
 
-\begin{prop}[locale-cover-dense]
-If a locale $M$ has a dense set of points, then the precover space $P(M)$ also has a dense set of points.
+\begin{prop}[locale-cover-proper]
+If a locale $M$ is proper, then the precover space $P(M)$ is also proper.
 \end{prop}
 \begin{proof}
-Assume that $M$ has a dense set of points and that $C \cup \{ \varnothing \}$ is a Cauchy cover of $P(M)$.
+Assume that $M$ is proper and that $C \cup \{ \varnothing \}$ is a Cauchy cover of $P(M)$.
 By definition, this implies $\top = \bigvee \{ \varepsilon_*(U) \mid U \in C \} \vee \varepsilon_*(\varnothing)$.
-Since $M$ has a dense set of points, $\varepsilon_*(\varnothing) = \bot$, so we obtain $\top = \bigvee \{ \varepsilon_*(U) \mid U \in C \}$.
+Since $M$ is proper, $\varepsilon_*(\varnothing) = \bot$, so we obtain $\top = \bigvee \{ \varepsilon_*(U) \mid U \in C \}$.
 Thus, $C$ is also a Cauchy cover, completing the proof.
 \end{proof}
 
-The following simple lemma provides a useful characterization of the denseness property for locales:
+The following simple lemma provides a useful characterization of the properness property for locales:
 
-\begin{lem}[locale-dense]
-A locale has a dense set of points if and only if the only open that has no points is the bottom element $\bot$.
+\begin{lem}[locale-proper]
+A locale is proper if and only if the only open that has no points is the bottom element $\bot$.
 \end{lem}
 \begin{proof}
 This result follows immediately from the definition of $\varepsilon_*(\varnothing)$.
 \end{proof}
 
-The following proposition demonstrates that the functor $P : \cat{Loc} \to \cat{Precov}$ restricts to a fully faithful embedding from the category of regular locales with a dense set of points to the category of cover spaces:
+The following proposition demonstrates that the functor $P : \cat{Loc} \to \cat{Precov}$ restricts to a fully faithful embedding from the category of proper regular locales to the category of cover spaces:
 
 \begin{prop}[locale-ff]
-If $M$ is a locale with a dense set of points and $N$ is a regular locale, then the function $P : \cat{Loc}(M,N) \to \cat{Cov}(P(M),P(N))$ is a bijection.
+If $M$ is a proper locale and $N$ is a regular locale, then the function $P : \cat{Loc}(M,N) \to \cat{Cov}(P(M),P(N))$ is a bijection.
 \end{prop}
 \begin{proof}
-We first prove injectivity.  
+We first prove injectivity.
 Let $f,g : M \to N$ be locale maps such that $P(f) = P(g)$.
 To prove $f = g$, it suffices to show $f^*(a) \leq g^*(a)$ for every $a \in O_N$, by symmetry.
 
-Since $N$ is regular, we can write $a = \bigvee \{ b \in O_N \mid b \rb a \}$.  
+Since $N$ is regular, we can write $a = \bigvee \{ b \in O_N \mid b \rb a \}$.
 Thus, it is enough to show $f^*(b) \leq g^*(a)$ for every $b \rb a$.
 From $\top = \neg b \vee a$, we have:
 \[
 f^*(b) = f^*(b) \wedge (g^*(\neg b) \vee g^*(a)).
 \]
-Therefore, it suffices to show that $f^*(b) \wedge g^*(\neg b) = \bot$.  
-By \rlem{locale-dense}, it is enough to show that the open $f^*(b) \wedge g^*(\neg b)$ has no points.
-Suppose, for contradiction, that there is a completely prime filter $F$ containing $f^*(b) \wedge g^*(\neg b)$.  
+Therefore, it suffices to show that $f^*(b) \wedge g^*(\neg b) = \bot$.
+By \rlem{locale-proper}, it is enough to show that the open $f^*(b) \wedge g^*(\neg b)$ has no points.
+Suppose, for contradiction, that there is a completely prime filter $F$ containing $f^*(b) \wedge g^*(\neg b)$.
 Then $F$ contains both $f^*(b)$ and $g^*(\neg b)$, which implies $P(f)(F) = P(g)(F)$ contains both $b$ and $\neg b$, which is a contradiction.
 This proves injectivity.
 
-Next, we prove surjectivity.  
+Next, we prove surjectivity.
 Let $f : P(M) \to P(N)$ be a cover map.
 Define $g : M \to N$ as follows:
 \[
 g^*(a) = \bigvee \{ \varepsilon_*(f^{-1}(\varepsilon^*(b))) \mid b \rb a \}.
 \]
-It is straightforward to verify that $g^*$ preserves finite meets because $\varepsilon_*(f^{-1}(\varepsilon^*(-)))$ does.  
+It is straightforward to verify that $g^*$ preserves finite meets because $\varepsilon_*(f^{-1}(\varepsilon^*(-)))$ does.
 
 To show that $g^*$ preserves joins, it suffices to prove: $g^*(\bigvee_{j \in J} a_j) \leq \bigvee_{j \in J} g^*(a_j)$.
 This amounts to showing:
 \[
 \varepsilon_*(f^{-1}(\varepsilon^*(b))) \leq \bigvee \{ \varepsilon_*(f^{-1}(\varepsilon^*(b'))) \mid \exists j \in J, b' \rb a_j \},
 \]
-for every $b \in O_N$ such that $b \rb \bigvee_{j \in J} a_j$.  
+for every $b \in O_N$ such that $b \rb \bigvee_{j \in J} a_j$.
 
 Since $N$ is regular, we have:
 \[
@@ -1602,12 +1633,12 @@ By \rlem{locale-cauchy}, the set
 \[
 \{ \varepsilon^*(\neg b) \} \cup \bigcup \{ \varepsilon^*(b') \mid \exists j \in J, b' \rb a_j \}
 \]
-is a Cauchy cover in $P(N)$.  
+is a Cauchy cover in $P(N)$.
 Since $f$ is a cover map, the set
 \[
 \{ f^{-1}(\varepsilon^*(\neg b)) \} \cup \bigcup \{ f^{-1}(\varepsilon^*(b')) \mid \exists j \in J, b' \rb a_j \}
 \]
-is a Cauchy cover in $P(M)$.  
+is a Cauchy cover in $P(M)$.
 Thus:
 \[
 \varepsilon_*(f^{-1}(\varepsilon^*(\neg b))) \vee \bigvee \{ \varepsilon_*(f^{-1}(\varepsilon^*(b'))) \mid \exists j \in J, b' \rb a_j \} = \top.
@@ -1616,22 +1647,22 @@ It remains to show:
 \[
 \varepsilon_*(f^{-1}(\varepsilon^*(\neg b))) \wedge \varepsilon_*(f^{-1}(\varepsilon^*(b))) = \bot.
 \]
-This follows because $\varepsilon_*(f^{-1}(\varepsilon^*(-)))$ preserves meets and $M$ has a dense set of points:
+This follows because $\varepsilon_*(f^{-1}(\varepsilon^*(-)))$ preserves meets and $M$ is proper:
 $\varepsilon_*(f^{-1}(\varepsilon^*(\neg b))) \wedge \varepsilon_*(f^{-1}(\varepsilon^*(b))) = \varepsilon_*(f^{-1}(\varepsilon^*(\neg b \wedge b))) = \varepsilon_*(f^{-1}(\varepsilon^*(\bot))) = \varepsilon_*(f^{-1}(\varnothing)) = \varepsilon_*(\varnothing) = \bot$.
 This completes the proof that $g^*$ preserves joins.
 
-Finally, we show $P(g) = f$.  
+Finally, we show $P(g) = f$.
 For any point $F \in P(M)$, we have:
 \[
 P(g)(F) = \{ a \in O_N \mid \exists b \rb a, \varepsilon_*(f^{-1}(\varepsilon^*(b))) \in F \}.
 \]
-First, we show $P(g)(F) \subseteq f(F)$.  
+First, we show $P(g)(F) \subseteq f(F)$.
 Suppose $a \in P(g)(F)$.
 Then there exists $b \rb a$ such that $\varepsilon_*(f^{-1}(\varepsilon^*(b))) \in F$.
 Since $\varepsilon^*(\varepsilon_*(f^{-1}(\varepsilon^*(b)))) \subseteq f^{-1}(\varepsilon^*(b))$, it follows that $F \in f^{-1}(\varepsilon^*(b))$.
-Thus, $a \in f(F)$.  
+Thus, $a \in f(F)$.
 
-Conversely, let $a \in f(F)$.  
+Conversely, let $a \in f(F)$.
 Since $N$ is regular, there exist opens $c,b \in f(F)$ such that $c \rb b$ and $b \rb a$.
 By \rlem{locale-cauchy}, $\{ \varepsilon^*(\neg c), \varepsilon^*(b) \}$ is a Cauchy cover.
 Since $f$ is a cover map, $\{ f^{-1}(\varepsilon^*(\neg c)), f^{-1}(\varepsilon^*(b)) \}$ is also a Cauchy cover.
@@ -1640,11 +1671,11 @@ Thus:
 \top = \varepsilon_*(f^{-1}(\varepsilon^*(\neg c))) \vee \varepsilon_*(f^{-1}(\varepsilon^*(b))).
 \]
 Since $F$ is a completely prime filter, either $\varepsilon_*(f^{-1}(\varepsilon^*(\neg c)))$ or $\varepsilon_*(f^{-1}(\varepsilon^*(b)))$ belongs to $F$.
-The former is impossible because $\neg c \notin f(F)$, so $a \in P(g)(F)$.  
+The former is impossible because $\neg c \notin f(F)$, so $a \in P(g)(F)$.
 This concludes the proof.
 \end{proof}
 
-Next, we construct a locale from a precover space.  
+Next, we construct a locale from a precover space.
 We define the frame of opens of this locale using a method described in Section~2.11 of \cite{stone-spaces} and Section~0.1.3 of \cite{vickers-compact}, which we briefly recall here.
 
 A \emph{coverage} on a meet-semilattice $P$ is a relation $\triangleleft_0$ between elements of $P$ and subsets of $P$, satisfying the following conditions:
@@ -1742,20 +1773,20 @@ This shows that $\{ X \backslash U'\} \cup \{ V_j \mid j \in J \}$ is a Cauchy c
 The following two lemmas follow easily from the previous one:
 
 \begin{lem}[locale-top-cover]
-If $X$ is a strongly regular cover space with a dense set of points, then a set $C$ is a Cauchy cover of $X$ if and only if $\bigvee \{ [U] \mid U \in C \} = \top$.
+If $X$ is a proper strongly regular cover space, then a set $C$ is a Cauchy cover of $X$ if and only if $\bigvee \{ [U] \mid U \in C \} = \top$.
 \end{lem}
 \begin{proof}
 The ``only if'' direction is immediate from the definition of $L(X)$.
 Conversely, suppose $\bigvee \{ [U] \mid U \in C \} = \top$.
 Then, by \rlem{locale-cover}, the set $C \cup \{ \varnothing \}$ is a Cauchy cover.
-Since $X$ has a dense set of points, $C$ itself must also be a Cauchy cover.
+Since $X$ is proper, $C$ itself must also be a Cauchy cover.
 \end{proof}
 
 \begin{lem}[locale-point-cover]
 If $U$ is a neighborhood of a point $x$ in a strongly regular cover space and $[U] \leq \bigvee_{j \in J} [V_j]$, then $V_j$ is a neighborhood of $x$ for some $j \in J$.
 \end{lem}
 \begin{proof}
-By \rlem{rbs-point}, we have $\{ x \} \rb^s U$.  
+By \rlem{rbs-point}, we have $\{ x \} \rb^s U$.
 From \rlem{locale-cover} and \axref{CR}, it follows that the set $\{ X \setminus \{ x \} \} \cup \{ V' \mid \exists j \in J, V' \rb V_j \}$ is a Cauchy cover.
 Since $x \notin X \setminus \{ x \}$, it must belong to some $V'$ such that $V' \rb V_j$ for some $j \in J$.
 Thus, $V_j$ is a neighborhood of $x$.
@@ -1764,13 +1795,13 @@ Thus, $V_j$ is a neighborhood of $x$.
 Finally, we are ready to prove the main result of this section:
 
 \begin{thm}[locale-equiv]
-The functor $P : \cat{Loc} \to \cat{Precov}$ restricts to an equivalence between the category of regular locales with a dense set of points and the category of strongly complete cover spaces with a dense set of points.
+The functor $P : \cat{Loc} \to \cat{Precov}$ restricts to an equivalence between the category of proper regular locales and the category of proper strongly complete cover spaces.
 \end{thm}
 \begin{proof}
-By \rprop{locale-ff}, \rprop{locale-regular}, and \rprop{locale-cover-dense}, the functor $P$ restricts to a fully faithful functor between the required categories.
+By \rprop{locale-ff}, \rprop{locale-regular}, and \rprop{locale-cover-proper}, the functor $P$ restricts to a fully faithful functor between the required categories.
 We only need to show that it is essentially surjective on objects.
 
-Let $X$ be a strongly regular cover space with a dense set of points.
+Let $X$ be a proper strongly regular cover space with.
 Define a function $\eta_X : X \to P(L(X))$ by
 \[ \eta_X(x) = \{ C \mid \exists U, \{ x \} \rb_X U, [U] \leq C \}. \]
 It is clear that $\eta_X(x)$ is a filter.
@@ -1780,12 +1811,12 @@ By \rlem{locale-point-cover}, $V_j$ is a neighborhood of $x$ for some $j \in J$.
 Thus, $[V_j]$ belongs to $\eta_X(x)$, proving that $\eta_X(x)$ is a completely prime filter.
 
 By \rlem{cover-locale-regular}, $L(X)$ is regular.
-We now show that it also has a dense set of points.
+We now show that it is proper.
 It suffices to prove that $[U] = \bot$ whenever $[U]$ has no points.
 Since $[U] \leq \bigvee \{ [V] \mid V \rb^s_X U \}$, it is enough to show that $[V] \leq \bot$ whenever $V \rb^s_X U$.
 If $x$ is a point of $V$, then $\eta_X(x)$ is a point of $[U]$, contradicting the assumption on $U$.
 Hence, $V$ must be empty, implying $[V] \leq \bot$.
-Thus, $L(X)$ has a dense set of points.
+Thus, $L(X)$ is proper.
 
 To show that $\eta_X$ is a weakly dense embedding, we first verify that it is a cover map.
 Let $C$ be a Cauchy cover of $P(L(X))$.
@@ -1838,7 +1869,7 @@ This concludes the proof.
 \label{sec:reals}
 
 The aim of this section is to study the cover space of real numbers.
-We will define this cover space, demonstrate that it is complete, and show that it corresponds to the locale of real numbers through the equivalence described in the previous section.
+We will define this cover space, demonstrate that it is strongly complete, and show that it corresponds to the locale of real numbers through the equivalence described in the previous section.
 Additionally, we will prove that the field operations on real numbers are cover maps.
 
 The cover space of real numbers $\mathbb{R}$ is defined as the one induced by the usual Euclidean metric space structure on $\mathbb{R}$.
@@ -1848,7 +1879,7 @@ Using the identification from \rprop{dedekind-cuts-filters}, a set $U$ is a neig
 There is an inclusion $\mathbb{Q} \to \mathbb{R}$ that maps each rational number to its neighborhood filter.
 It is straightforward to verify that the cover space structure on $\mathbb{Q}$, induced by the metric space structure, is isomorphic to the transferred structure.
 
-\begin{prop}
+\begin{prop}[real-completion]
 The cover space of real numbers is the completion of $\mathbb{Q}$.
 \end{prop}
 \begin{proof}
@@ -1859,122 +1890,155 @@ Moreover, because the underlying cover space of any metric space is always separ
 
 In Section~\ref{sec:strongly-regular}, we defined a stronger version of completeness.
 Interestingly, for certain spaces, this stronger version coincides with the weaker one.
-We say that a cover space \emph{has a strongly dense set of points} if, for every Cauchy cover $C$, the subset of $C$ consisting of inhabited sets is also a Cauchy cover.
-Classically, this property is equivalent to having a dense set of points, but constructively, it is more subtle.
+To demonstrate this, we first introduce a few definitions:
+
+\begin{defn}
+Let $\mathcal{B}$ be a base of a cover space $X$, and let $U,V$ be subsets of $X$.
+We say that $V$ is \emph{strongly $\mathcal{B}$-rather below} $U$, written $V \rb^s_\mathcal{B} U$, if $\{ X \backslash V, U \} \in \mathcal{B}$.
+
+A base $\mathcal{B}$ is called \emph{strongly regular} if, for every $C \in \mathcal{B}$,
+the collection $\{ V \mid \exists U \in C, V \rb^s_\mathcal{B} U \}$ is a Cauchy cover.
+\end{defn}
+
+\begin{remark}
+If a cover space $X$ has a strongly regular base, then $X$ is strongly regular.
+Conversely, the collection of all Cauchy covers of a strongly regular cover space forms a strongly regular base.
+\end{remark}
+
+\begin{example}
+The collection of uniform covers of a metric space is a strongly regular base.
+\end{example}
+
+\begin{defn}
+Let $\mathcal{B}$ be a base for a cover space $X$.
+We say that $\mathcal{B}$ is \emph{strongly proper} if, for every cover $C \in \mathcal{B}$, the subset of $C$ consisting of inhabited sets belongs to $\mathcal{B}$.
+\end{defn}
+
+\begin{remark}
+If the collection of all Cauchy covers of a cover space $X$ forms a strongly proper base, then $X$ is proper.
+Classically, the converse is also true, but constructively, this is not always the case.
+\end{remark}
+
+\begin{example}
+The collection of uniform covers of a metric space is a strongly proper base.
+\end{example}
+
+The following lemma demonstrates that strongly regular weakly Cauchy covers in a cover space $X$ satisfy a stronger regularity condition if $X$ has a strongly regular base:
+
+\begin{lem}[cauchy-filter-base]
+Let $X$ be a cover space with a strongly regular base $\mathcal{B}$, and let $F$ be a strongly regular weakly Cauchy cover in $X$.
+Then, for every $U \in F$, there exists $V \in F$ such that $V \rb^s_\mathcal{B} U$.
+\end{lem}
+\begin{proof}
+Since $F$ is strongly regular, there exists $V \in F$ such that $V \rb^s U$.
+Because $\mathcal{B}$ is strongly regular, \rlem{subbase-regular} implies that the collection $\{ X \backslash V \} \cup \{ W \mid W \rb^s_\mathcal{B} U \}$ is a Cauchy cover.
+As $F$ is a weakly Cauchy filter, there exists $W \in F$ such that $W \rb^s_\mathcal{B} U$.
+\end{proof}
+
+We can show that strongly regular weakly Cauchy filters are Cauchy under appropriate conditions:
 
 \begin{prop}
-If a cover space $X$ has a strongly dense set of points, then every strongly regular weakly Cauchy filter is Cauchy.
+If a cover space $X$ has a strongly proper strongly regular base $\mathcal{B}$, then every strongly regular weakly Cauchy filter is Cauchy.
 \end{prop}
 \begin{proof}
-Let $U$ be an element of a regular weakly Cauchy filter $F$.
-Since $F$ is strongly regular, there exists $V \in F$ such that $V \rb^s U$.
-Because $X$ has a strongly dense set of points and $F$ satisfies the Cauchy condition, either $U$ is inhabited or $F$ contains the complement of $V$.
-Since $F$ is weakly proper, the latter case is impossible.
-Thus, $U$ must be inhabited, completing the proof.
+Let $F$ be a strongly regular weakly Cauchy filter, and suppose $U \in F$.
+By \rlem{cauchy-filter-base}, there exists $V \in F$ such that $V \rb^s_\mathcal{B} U$.
+Since $\mathcal{B}$ is strongly proper, the collection $\{ X \backslash V \} \cup \{ U \mid \exists x \in U \}$ is a Cauchy cover.
+As $F$ satisfies the Cauchy condition, either $U$ is inhabited or $F$ contains the complement of $V$.
+However, since $F$ is weakly proper, the latter case is impossible.
+Therefore, $U$ must be inhabited, completing the proof.
 \end{proof}
 
-\begin{cor}[complete-strongly-complete]
-If a complete strongly regular cover space has a strongly dense set of points, then it is strongly complete.
+\begin{cor}
+If a complete cover space has a strongly proper strongly regular base, then it is strongly complete.
 \end{cor}
 
-To prove that a cover space has a strongly dense set of points, it is often useful to control the elements that Cauchy covers consist of.
-To simplify this discussion, we introduce an auxiliary notion.
+\begin{cor}[metric-complete]
+A metric space is complete if and only if it is strongly complete.
+\end{cor}
 
-For a precover space $X$, we say that a set $B$ of subsets of $X$ \emph{generates} $X$ if every Cauchy cover is refined by a Cauchy cover consisting entirely of elements from $B$.
-Using this notion, we can rephrase the property that $X$ has a strongly dense set of points.
-Specifically, $X$ is generated by a set of inhabited sets if and only if it has a strongly dense set of points.
-
-This concept has further applications.
-For instance, the following lemma shows how generation translates into a property of the locale associated with $X$, which also motivates the terminology.
-
-\begin{lem}[locale-gen]
-Let $X$ be a precover space generated by a set $B$.
-Then $L(X)$ is generated under joins by elements of the form $[b]$ for $b \in B$.
-\end{lem}
-\begin{proof}
-Since $L(X)$ is generated by elements of the form $[U]$ for $U \subseteq X$, it suffices to show that every such element is a join of elements of the form $[b]$ for $b \in B$.
-For any $U \subseteq X$, we have $[U] = \bigvee \{ [V] \mid V \rb^s U \}$.
-If $V \rb^s U$, then $\{ X \backslash V \} \cup \{ [b] \mid b \in B, b \subseteq U \}$ is a Cauchy cover.
-It follows that $[V] \leq \bigvee \{ [b] \mid b \in B, b \subseteq U \}$.
-Thus, $[U] = \bigvee \{ [b] \mid b \in B, b \subseteq U \}$, completing the proof.
-\end{proof}
-
-The following lemma provides a convenient way to obtain a generating set for a precover space:
-
-\begin{lem}[subbase-gen]
-Let $\mathcal{B}_X$ be a subbase for a precover space $X$.
-Then $X$ is generated by finite intersections of sets in $\bigcup \mathcal{B}_X$.
-\end{lem}
-\begin{proof}
-Let $B$ denote the set of finite intersections of sets in $\bigcup \mathcal{B}_X$.
-We will prove by induction on the generation of $\overline{\mathcal{B}_X}$ that every cover $C \in \overline{\mathcal{B}_X}$ is refined by a Cauchy cover $C' \subseteq B$.
-
-The only non-trivial case is \axref{CG}.
-Suppose $C \in \overline{\mathcal{B}_X}$ and $\{ D_U \}_{U \in C}$ is a collection of covers in $\overline{\mathcal{B}_X}$.
-We need to show that $E = \{ U \cap V \mid U \in C, V \in D_U \}$ is refined by a Cauchy cover $E' \subseteq B$.
-
-By the induction hypothesis, there exists a Cauchy cover $C' \subseteq B$ that refines $C$.
-For each $U' \in C'$, define 
-\[
-D'_{U'} = \{ V' \in B \mid \exists U \in C, V \in D_U, U' \subseteq U, V' \subseteq V \}.
-\]
-Since $D_U$ is refined by a Cauchy cover consisting of sets from $B$, the set $D'_{U'}$ is also a Cauchy cover for every $U' \in C'$.
-Define $E' = \{ U' \cap V' \mid U' \in C', V' \in D'_{U'} \}$.
-It is clear that $E'$ is a Cauchy cover, $E' \subseteq B$, and $E'$ refines $E$.
-This completes the proof.
-\end{proof}
-
-We can further simplify the generating condition in the above lemma for $\mathbb{Q}$ and $\mathbb{R}$:
-
-\begin{lem}[rat-gen]
-Both $\mathbb{Q}$ and $\mathbb{R}$ are generated by open balls with rational centers and rational radii.
-\end{lem}
-\begin{proof}
-Since $\mathbb{Q}$ is dense in $\mathbb{R}$, \rlem{subbase-gen} implies that both of these cover spaces are generated by finite intersections of open balls with rational centers and rational radii.
-Each such intersection is either empty, the entire space, or an open ball of the specified form.
-
-Let $C$ be a Cauchy cover.
-By the previous lemma, $C$ is refined by a cover $C'$ consisting of finite intersections of open balls as described.
-Define
-\[ C'' = \{ U \cap B_1(x) \mid U \in C', x \in \mathbb{Q}, \overlap{U}{B_1(x)} \}. \]
-Clearly, $C''$ is a Cauchy cover, it refines $C'$, and it consists entirely of open balls with rational centers and rational radii.
-This completes the proof.
-\end{proof}
-
-Now, we will show that the localic reals correspond to the cover space of real numbers described earlier.
-Recall that the frame of opens of the locale $\mathbb{R}_l$ of real numbers is generated by the set of open intervals of rational numbers, along with the empty set, under the following coverage relation:
+Next, we show that the localic reals correspond to the cover space of real numbers.
+Recall that the frame of opens of the locale $\mathbb{R}_l$ of real numbers is generated by the set of open intervals with rational endpoints, along with the empty set, under the following coverage relation:
 \begin{itemize}
 \item $(a,d) \triangleleft_0 \{ (a,c), (b,d) \}$ for all rational numbers $a < b < c < d$.
 \item $(a,d) \triangleleft_0 \{ (b,c) \mid a < b < c < d \}$ for all rational numbers $a < d$.
 \item $\varnothing \triangleleft_0 \varnothing$.
 \end{itemize}
 
-\begin{prop}
-The cover space of real numbers is isomorphic to $P(\mathbb{R}_l)$.
-\end{prop}
-\begin{proof}
-We will prove that $L(\mathbb{R})$ is isomorphic to $\mathbb{R}_l$.
-First, define a map $f : L(\mathbb{R}) \to \mathbb{R}_l$ by setting:
-\[ f^*((a,b)) = \{ x \in \mathbb{R} \mid a < x < b \}, \quad f^*(\varnothing) = \varnothing. \]
-It is straightforward to verify that $f^*$ respects the coverage relation on $\mathbb{R}_l$.
-To prove that $f$ is an isomorphism, it is enough to show that $f^*$ is bijective.
-It is clearly injective by construction, as distinct intervals map to distinct sets.
-By \rlem{locale-gen} and \rlem{rat-gen}, it is also surjective.
-Finally, \rlem{rat-gen} and \rcor{complete-strongly-complete} imply that $\mathbb{R}$ is strongly complete, and \rthm{locale-equiv} implies that $\mathbb{R} \simeq P(L(\mathbb{R})) \simeq P(\mathbb{R}_l)$.
-\end{proof}
-
-This proposition establishes a bijection between localic maps $M \to \mathbb{R}_l$ and cover maps $P(M) \to \mathbb{R}$ for locales $M$ that have a dense set of points.
-Consequently, it provides a convenient framework for constructing localic real-valued maps.
-
-In practice, checking that a function is a cover map can be challenging.
-However, for uniform spaces, there are simpler conditions that can be verified.
-One such condition is \emph{local uniformity}:
+While the locale $L(\mathbb{R})$ is generated by all subsets of $\mathbb{R}$, the locale $\mathbb{R}_l$ is generated by a much smaller set of open intervals with rational endpoints.
+To establish an isomorphism between these locales, it is convenient to identify a smaller generating set for $L(\mathbb{R})$.
+To achieve this, we introduce the following definition:
 
 \begin{defn}
-Let $X$ and $Y$ be uniform spaces.
-A function $f : X \to Y$ is \emph{locally uniform} if, for every $E \in \mathcal{U}_Y$, there exists $C \in \mathcal{U}_X$ such that, for every $U \in C$, the set $\{ V \mid \exists W \in E, U \cap V \subseteq f^{-1}(W) \}$ is a uniform cover of $X$.
+Let $\mathcal{G}$ be a set of subsets of a strongly regular cover space $X$.
+We say that $\mathcal{G}$ \emph{generates} $X$ if there exists a strongly regular base $\mathcal{B}$ such that every cover in $\mathcal{B}$ is refined by a Cauchy cover consisting entirely of elements from $\mathcal{G}$.
 \end{defn}
 
+\begin{example}
+Any metric space is generated by the set of open balls.
+\end{example}
+
+The following lemma shows that stronger regularity conditions on a cover space imply stronger regularity properties for the corresponding locale:
+
+\begin{lem}[gen-regular]
+Let $\mathcal{B}$ be a strongly regular base of a cover space $X$.
+Then, for every $U \subseteq X$, we have $[U] = \bigvee \{ [V] \mid V \rb^s_\mathcal{B} U \}$ in $L(X)$.
+\end{lem}
+\begin{proof}
+By the coverage relation of $L(X)$, we know that $[U] = \bigvee \{ [V] \mid V \rb^s U \}$.
+Thus, it suffices to show that $[V] \leq \bigvee \{ [W] \mid W \rb^s_\mathcal{B} U \}$ for every $V \rb^s U$.
+Since $\mathcal{B}$ is strongly regular, the set $\{ X \backslash V \} \cup \{ W \mid W \rb^s_\mathcal{B} U \}$ is a Cauchy cover.
+The coverage relation of $L(X)$ then implies the desired equation.
+\end{proof}
+
+The following lemma demonstrates how the concept of generation translates into a property of the locale associated with $X$, providing further motivation for the terminology.
+
+\begin{lem}[locale-gen]
+Let $X$ be a precover space generated by a set $\mathcal{G}$.
+Then $L(X)$ is generated under joins by elements of the form $[G]$ for $G \in \mathcal{G}$.
+\end{lem}
+\begin{proof}
+Since $L(X)$ is generated by elements of the form $[U]$ for $U \subseteq X$, it suffices to show that every such element can be expressed as a join of elements of the form $[G]$ for $G \in \mathcal{G}$.
+By \rlem{gen-regular}, we know that $[U] = \bigvee \{ [V] \mid V \rb^s_\mathcal{B} U \}$ for any $U \subseteq X$.
+If $V \rb^s_\mathcal{B} U$, then by the defining property of $\mathcal{B}$, the collection $\{ X \backslash V \} \cup \{ G \in \mathcal{G} \mid G \subseteq U \}$ is a Cauchy cover.
+Consequently, $[V] \leq \bigvee \{ [G] \mid G \in \mathcal{G}, G \subseteq U \}$.
+Thus, $[U] = \bigvee \{ [G] \mid G \in \mathcal{G}, G \subseteq U \}$, completing the proof.
+\end{proof}
+
+\begin{prop}
+The locale of real numbers $\mathbb{R}_l$ is isomorphic to $L(\mathbb{R})$.
+\end{prop}
+\begin{proof}
+Define a map $f : L(\mathbb{R}) \to \mathbb{R}_l$ by:
+\[ f^*((a,b)) = [\{ x \in \mathbb{R} \mid a < x < b \}], \quad f^*(\varnothing) = [\varnothing]. \]
+It is straightforward to verify that $f^*$ respects the coverage relation on $\mathbb{R}_l$.
+To prove that $f$ is an isomorphism, it suffices to show that $f^*$ is bijective.
+
+The map $f^*$ is clearly injective by construction, as distinct intervals map to distinct sets.
+By \rlem{locale-gen}, the locale $L(\mathbb{R})$ is generated by elements of the form $[B_\varepsilon(x)]$, which implies that $f^*$ is surjective.
+\end{proof}
+
+\begin{cor}
+The cover space of real numbers is isomorphic to $P(\mathbb{R}_l)$.
+\end{cor}
+\begin{proof}
+By \rprop{real-completion} and \rcor{metric-complete}, the cover space $\mathbb{R}$ is strongly complete.
+By \rthm{locale-equiv} and the previous proposition, we have the isomorphism $\mathbb{R} \simeq P(L(\mathbb{R})) \simeq P(\mathbb{R}_l)$.
+\end{proof}
+
+This corollary establishes a bijection between localic maps $M \to \mathbb{R}_l$ and cover maps $P(M) \to \mathbb{R}$ for proper locales $M$.
+Consequently, it provides a convenient framework for constructing localic real-valued maps.
+In general, the condition for a function $f : X \to \mathbb{R}$ to be a cover map can appear complicated.
+However, there often exists a simple sufficient condition that ensures a function is a cover map.
+
+\begin{defn}
+Let $X$ and $Y$ be cover spaces, and let $\mathcal{B}_X$ be a subbase for $X$.
+A function $f : X \to Y$ is said to be \emph{locally uniform} (relative to $\mathcal{B}_X$) if, for every Cauchy cover $E$ of $Y$,
+there exists $C \in \mathcal{B}_X$ such that, for every $U \in C$, we have
+\[ \{ V \mid \exists W \in E, U \cap V \subseteq f^{-1}(W) \} \in \mathcal{B}_X. \]
+\end{defn}
+
+If $X$ is a uniform space, we will always consider locally uniform functions relative to the subbase of uniform covers.
 Unfolding the definition of uniform covers in metric spaces, we obtain the following proposition:
 
 \begin{prop}
@@ -1984,18 +2048,18 @@ for every $x_1 \in X$, there exists $\delta_2 > 0$ such that, for every $x_2 \in
 \end{prop}
 
 The next proposition establishes that every locally uniform function is a cover map.
-In the following section, we will see that for certain uniform spaces, the converse is also true.
+In the following section, we will see that for certain cover spaces, the converse is also true.
 
 \begin{prop}[locally-uniform-cover-map]
-Every locally uniform function between metric spaces is a cover map.
+Every locally uniform function is a cover map.
 \end{prop}
 \begin{proof}
 Let $f : X \to Y$ be a locally uniform function.
-It suffices to show that for every $E \in \mathcal{U}_Y$, the cover $\{ f^{-1}(W) \mid W \in E \}$ is Cauchy.
-Let $E$ be a uniform cover of $Y$.
-By the definition of local uniformity, there exists a uniform cover $C \in \mathcal{U}_X$ such that, for every $U \in C$, the set 
+It suffices to show that for every Cauchy cover $E$ of $Y$, the cover $\{ f^{-1}(W) \mid W \in E \}$ is Cauchy.
+Let $E$ be a Cauchy cover of $Y$.
+By the definition of local uniformity, there exists a Cauchy cover $C \in \mathcal{B}_X$ such that, for every $U \in C$, the set
 $D_U = \{ V \mid \exists W \in E, U \cap V \subseteq f^{-1}(W) \}$
-is a uniform cover of $X$.
+belongs to $\mathcal{B}_X$.
 It follows that the cover $\{ U \cap V \mid U \in C, V \in D_U \}$ is Cauchy.
 Since it refines $\{ f^{-1}(W) \mid W \in E \}$, the proof is completed.
 \end{proof}
@@ -2043,13 +2107,13 @@ We define the following subbase on $S$:
 
 \begin{lem}
 Let $S$ be an open subset of a cover space $X$.
-Then $\mathcal{B}_S$ is a regular subbase on $S$.
+Then $(S,\overline{\mathcal{B}_S})$ is a cover space.
 \end{lem}
 \begin{proof}
 First, observe that $\mathcal{B}_S$ consists of covers.
 For sets of the form $\{ V \cap S \mid V \in D \}$, this follows from the fact that $D$ is a cover of $X$.
 For sets of the form $\{ V \mid V = V_1 \rb_X \ldots \rb_X V_n = S \}$, this follows from \rlem{rb-point} and the openness of $S$.
-The regularity of this subbase is immediate from its definition.
+The regularity of $(S,\overline{\mathcal{B}_S})$ follows from \rlem{subbase-regular} since covers in $\mathcal{B}_S$ satisfy the conditions of this lemma by construction.
 \end{proof}
 
 The following lemma establishes that neighborhoods in $(S,\overline{\mathcal{B}_X})$ coincide with those in $X$:
@@ -2139,9 +2203,9 @@ First, observe that the cover $\{ e^{-1}((- \infty, - \varepsilon) \cup (\vareps
 Thus, it suffices to show that $\{ e^{-1}(B_\varepsilon(y) \cap \mathbb{R}_*) \mid y \in \mathbb{Q}, y \neq 0 \}$ is a Cauchy cover for every $\varepsilon > 0$.
 
 We will prove that this cover is refined by the Cauchy cover
-\[ \{ ((- \infty, - \delta) \cup (\delta, \infty)) \cap B_{\frac{\varepsilon \delta^2}{1 + \varepsilon \delta}}(x) \mid \delta > 0, x \in \mathbb{Q}, x \neq 0 \}. \]
+\[ \left\{ ((- \infty, - \delta) \cup (\delta, \infty)) \cap B_{\frac{\varepsilon \delta^2}{1 + \varepsilon \delta}}(x) \mid \delta > 0, x \in \mathbb{Q}, x \neq 0 \right\}. \]
 To establish this, we need to show that
-\[ ((- \infty, - \delta) \cup (\delta, \infty)) \cap B_{\frac{\varepsilon \delta^2}{1 + \varepsilon \delta}}(x) \subseteq e^{-1}(B_\varepsilon(\frac{1}{x}) \cap \mathbb{R}_*). \]
+\[ ((- \infty, - \delta) \cup (\delta, \infty)) \cap B_{\frac{\varepsilon \delta^2}{1 + \varepsilon \delta}}(x) \subseteq e^{-1}\left(B_\varepsilon\left(\frac{1}{x}\right) \cap \mathbb{R}_*\right). \]
 
 Let $z$ be a real number such that $\abs{z} > \delta$ and $\abs{z - x} < \frac{\varepsilon \delta^2}{1 + \varepsilon \delta}$.
 We need to show that $\abs{\frac{1}{z} - \frac{1}{x}} < \varepsilon$.
@@ -2152,244 +2216,173 @@ Finally, we can complete the proof: $\abs{\frac{1}{z} - \frac{1}{x}} = \frac{\ab
 \section{Compactness}
 \label{sec:compact}
 
-In this section, we define compact and totally bounded spaces and use these notions to characterize cover maps for certain uniform spaces.
+In this section, we define compact and totally bounded spaces and use these notions to characterize cover maps for certain cover spaces.
 
 A cover space $X$ is said to be \emph{totally bounded} if, for every Cauchy cover $C$, there exists a finite subcover of $C$.
 Explicitly, this means there exist sets $U_1, \ldots, U_n \in C$ such that $X = U_1 \cup \ldots \cup U_n$.
 A cover space is called \emph{compact} if it is both complete and totally bounded.
 
 Note that we do not require the finite subcover $\{ U_1, \ldots, U_n \}$ to be Cauchy.
-If $X$ has a strongly dense set of points, then we can always choose such a finite Cauchy subcover:
+However, under mild additional assumptions, we can choose a finite Cauchy subcover:
 
 \begin{prop}[cauchy-fin]
-Let $X$ be a cover space with a strongly dense set of points.
-Then $X$ is totally bounded if and only if every Cauchy cover of $X$ has a finite Cauchy subcover.
+Let $X$ be a cover space with a strongly proper regular base $\mathcal{B}$.
+Then $X$ is totally bounded if and only if every Cauchy cover of $X$ has a finite subcover that belongs to $\mathcal{B}$.
 \end{prop}
 \begin{proof}
-The ``if'' direction is trivial.
+The ``if'' direction is obvious.
 To prove the converse, suppose $C$ is a Cauchy cover of $X$.
-By the regularity, the set $\{ V \mid \exists U \in C, V \rb U \}$ is also a Cauchy cover.
-Since $X$ is totally bounded, there exist sets $V_1, \ldots, V_n$ and corresponding sets $U_1, \ldots, U_n \in C$ such that $\{ V_1, \ldots, V_n \}$ is a cover of $X$ and $V_i \rb U_i$ for all $i$.
-Now, \axref{CG} and the fact that $X$ has a storngly dense set of points imply that the set
+Since $\mathcal{B}$ is regular, the set $\{ V \mid \exists U \in C, V \rb_\mathcal{B} U \}$ is also a Cauchy cover.
+As $X$ is totally bounded, there exist sets $V_1, \ldots, V_n$ and corresponding sets $U_1, \ldots, U_n \in C$ such that $\{ V_1, \ldots, V_n \}$ is a cover of $X$ and $V_i \rb_\mathcal{B} U_i$ for all $i$.
+Now, by \axref{BI} and the fact that $\mathcal{B}$ is strongly proper, the set
 \[ E = \{ W_1 \cap \ldots \cap W_n \mid (\forall i, \overlap{W_i}{V_i} \implies W_i \subseteq U_i), \exists x \in \bigcap_i W_i \} \]
-is a Cauchy cover.
-To complete the proof, we will show that $E$ refines $\{ U_1, \ldots, U_n \}$.
+belongs to $\mathcal{B}$.
 
+To complete the proof, we show that $E$ refines $\{ U_1, \ldots, U_n \}$.
 Let $W_1, \ldots, W_n$ be sets satisfying $\overlap{W_i}{V_i} \implies W_i \subseteq U_i$ for all $i$, and suppose there exists a point $x \in \bigcap_i W_i$.
 Since $\{ V_1, \ldots, V_n \}$ is a cover of $X$, there exists some $i$ such that $x \in V_i$.
 It follows that $W_1 \cap \ldots \cap W_n \subseteq W_i \subseteq U_i$, which proves that $E$ refines $\{ U_1, \ldots, U_n \}$.
 \end{proof}
 
-For strongly regular cover spaces we can relax the conditions of the previous proposition:
+For strongly regular bases, the conditions of the previous proposition can be relaxed.
+To achieve this, we introduce the following definition:
+
+\begin{defn}
+Let $\mathcal{B}$ be a base for a cover space $X$.
+We say that $\mathcal{B}$ is \emph{proper} if $C \cup \{ \varnothing \} \in \mathcal{B}$ implies $C \in \mathcal{B}$ for every cover $C$.
+\end{defn}
+
+\begin{example}
+A cover space $X$ is proper if and only if the collection of all Cauchy covers of $X$ is a proper base.
+\end{example}
+
+\begin{example}
+Any base of an inhabited cover space is proper.
+\end{example}
+
+Now, we are ready to prove a version of \rprop{cauchy-fin} for strongly regular bases:
 
 \begin{prop}[cauchy-ws-fin]
-Let $X$ be a strongly regular cover space with a dense set of points.
-Then $X$ is totally bounded if and only if every Cauchy cover of $X$ has a finite Cauchy subcover.
+Let $X$ be a cover space with a proper strongly regular base $\mathcal{B}$.
+Then $X$ is totally bounded if and only if every Cauchy cover of $X$ has a finite subcover that belongs to $\mathcal{B}$.
 \end{prop}
 \begin{proof}
-The ``if'' direction is trivial.
+The ``if'' direction is obvious.
 To prove the converse, suppose $C$ is a Cauchy cover of $X$.
-By the strong regularity, the set $\{ V \mid \exists U \in C, V \rb^s U \}$ is also a Cauchy cover.
-Since $X$ is totally bounded, there exist sets $V_1, \ldots, V_n$ and corresponding sets $U_1, \ldots, U_n \in C$ such that $\{ V_1, \ldots, V_n \}$ is a cover of $X$ and $V_i \rb^s U_i$ for all $i$.
-By \axref{CG}, the set
+Since $\mathcal{B}$ is strongly regular, the set $\{ V \mid \exists U \in C, V \rb^s_\mathcal{B} U \}$ is also a Cauchy cover.
+As $X$ is totally bounded, there exist sets $V_1, \ldots, V_n$ and corresponding sets $U_1, \ldots, U_n \in C$ such that $\{ V_1, \ldots, V_n \}$ forms a cover of $X$ and $V_i \rb^s_\mathcal{B} U_i$ for all $i$.
+By \axref{BI}, the set
 \[ E = \{ W_1 \cap \ldots \cap W_n \mid \forall i, W_i \in \{ X \backslash V_i, U_i \} \} \]
-is a Cauchy cover.
+belongs to $\mathcal{B}$.
 
-Since $X$ has a dense set of points, it suffices to show that $E$ refines $\{ U_1, \ldots, U_n \varnothing \}$.
-If $W_1 \cap \ldots \cap W_n \in E$, then either $W_i = X \backslash V_i$ for every $i$ or there exists $i$ such that $W_i = U_i$.
+Since $\mathcal{B}$ is proper, it suffices to show that $E$ refines $\{ U_1, \ldots, U_n, \varnothing \}$.
+Consider an element $W_1 \cap \ldots \cap W_n \in E$.
+Either $W_i = X \backslash V_i$ for every $i$ or there exists $i$ such that $W_i = U_i$.
 In the former case, $W_i \cap \ldots \cap W_n = \varnothing$ since $\{ V_1, \ldots, V_n \}$ is a cover.
-In the latter case, $W_i \cap \ldots \cap W_n \subseteq W_i = U_i$, which completes the proof.
+In the latter case, $W_i \cap \ldots \cap W_n \subseteq W_i = U_i$.
+Thus, $E$ refines $\{ U_1, \ldots, U_n, \varnothing \}$, completing the proof.
 \end{proof}
 
-If $X$ is a uniform space, we can strengthen previous propositions even further.
-To do this, we require an additional assumption on $X$, known as \emph{properness}.
-A uniform space $X$ is said to be \emph{proper} if, for every uniform cover $C$ of $X$, the subset of $C$ consisting of inhabited sets is also a uniform cover of $X$. 
-
-Some authors include properness as part of the definition of uniform spaces \cite{uniform-locales}, but doing so has certain drawbacks.
-For instance, the transferred uniform structure might fail to be proper, even if the original structure is.
-While there always exists a universal proper transferred structure, its underlying cover structure might differ from the transferred cover structure.
-To circumvent these issues, we do not include properness in our definition of uniform spaces.
-
-Before proceeding, we introduce a few definitions and prove a simple lemma.
-Let $V$ and $U$ be subsets of a uniform space.
-We say that $V$ is \emph{uniformly rather below} $U$, written $V \rb^* U$, if the set $\{ W \mid \overlap{W}{V} \implies W \subseteq U \}$ is a uniform cover of $X$.
-Clearly, $V \rb^* U$ implies $V \rb U$.
-Moreover, this relation satisfies the usual properties of the ``rather below'' relation, as described in \rprop{rb-props}.
-
-\begin{lem}[star-cauchy-reg]
-Let $X$ be a uniform space, and let $C$ be a Cauchy cover of $X$.
-Then the set $\{ V \mid \exists U \in C, V \rb^* U \}$ is also a Cauchy cover of $X$.
-\end{lem}
-\begin{proof}
-The proof follows the same reasoning as the proof of \rprop{subbase-regular}, using the fact that the required property holds for uniform covers $C$ by \axref{UU}.
-\end{proof}
-
-The following lemma is an analogue of \rprop{cauchy-fin} for uniform covers:
-
-\begin{lem}[tb-cauchy]
-Let $X$ be a proper uniform space.
-Suppose that every uniform cover of $X$ has a finite subcover.
-Then every uniform cover of $X$ has a finite uniform subcover.
-\end{lem}
-\begin{proof}
-The proof is identical to \rprop{cauchy-fin}, where we use \rlem{star-cauchy-reg} instead of the regularity condition, the properness of $X$ instead of its strong denseness of points, and \axref{UI} instead of \axref{CG}.
-\end{proof}
-
-Since the properness condition might be difficult to check, we will prove a version of the previous lemma that applies to weakly proper and strongly regular uniform spaces.
-We will say that a uniform space $X$ is \emph{weakly proper} if a set $C$ is a uniform cover of $X$ whenever $C \cup \{ \varnothing \}$ is.
-Clearly, every proper uniform space is weakly proper.
-Also, every inhabitted uniform space is weakly proper since $C \cup \{ \varnothing \}$ refines $C$ in this case.
-We will say that $X$ is strongly regular if, for every uniform cover $C$, the set $\{ V \mid \exists U \in C, V \rb^{*s} U \}$ is also a uniform cover,
-where $V \rb^{*s} U$ if and only if $\{ X \backslash V, U \}$ is a uniform cover.
-
-\begin{example}
-Every metric space is proper strongly regular uniform space.
-\end{example}
-
-Now, we can show a version of \rlem{tb-cauchy} for weakly proper strongly regular uniform spaces:
-
-\begin{lem}[tb-ws-cauchy]
-Let $X$ be a weakly proper, strongly regular uniform space.
-Suppose that every uniform cover of $X$ has a finite subcover.
-Then every uniform cover of $X$ has a finite uniform subcover.
-\end{lem}
-\begin{proof}
-The proof is identical to \rprop{cauchy-ws-fin}, where we use a version of \rlem{star-cauchy-reg} instead of the strong regularity condition, the weak properness of $X$ instead of the denseness of points, and \axref{UI} instead of \axref{CG}.
-\end{proof}
-
-The following lemma is useful for constructing finite subcovers of Cauchy covers in uniform spaces:
-
-\begin{lem}[tb-aux]
-Let $X$ be a uniform space such that, for every uniform cover $C$ of $X$, there exists a finite (resp., Cauchy, uniform) subcover of $C$.
-Then every Cauchy cover of $X$ has a finite (resp., Cauchy uniform) subcover.
-\end{lem}
-\begin{proof}
-We will prove this lemma for finite uniform subcovers.
-For finite Cauchy and arbitrary finite subcovers, the proof is analogous.
-
-We prove by induction on construction of a cover $C \in \overline{\mathcal{U}_X}$ that there exists a finite uniform subcover of $C$.
-If $C \in \mathcal{U}_X$, then this is true by assumption.
-If $C = \{ X \}$, then $C$ is itself a finite uniform cover.
-If $C$ is refined by some $D \in \overline{\mathcal{U}_X}$, then there exist sets $V_1, \ldots, V_n \in D$ such that $\{ V_1, \ldots, V_n \}$ is a uniform cover.
-By the finite axiom of choice, there exist sets $U_1, \ldots, U_n \in C$ such that $V_i \subseteq U_i$ for all $i$.
-It follows that $\{ U_1, \ldots, U_n \}$ is a uniform cover since it is refined by $\{ V_1, \ldots, V_n \}$.
-
-Finally, suppose that $C = \{ V \cap W \mid V \in D, W \in E_V \}$, where $D \in \overline{\mathcal{U}_X}$ and $E_V \in \overline{\mathcal{U}_X}$ for every $V \in D$.
-Then there exist sets $V_1, \ldots, V_n \in D$ such that $\{ V_1, \ldots, V_n \}$ is a uniform cover.
-By the finite axiom of choice, we also have sets $W_{i,1}, \ldots, W_{i,m_i} \in E_{V_i}$ such that $\{ W_{i,1}, \ldots, W_{i,m_i} \}$ is a uniform cover.
-Then the common refinement of all of these covers together with the cover $\{ V_1, \ldots, V_n \}$ is a uniform cover that refines $C$.
-Thus, $C$ is also a uniform cover.
-This completes the proof.
-\end{proof}
-
-The previous lemma implies a usual characterization of totally bounded uniform spaces:
-
-\begin{cor}[tb-uni-char]
-A uniform space $X$ is totally bounded if and only if every uniform coverf of $X$ has a finite subcover.
-\end{cor}
-
-The following proposition gives a useful characterization of totally bounded uniform spaces under appropriate assumptions:
-
-\begin{prop}[tb-covers]
-Let $X$ be a uniform space.
-Suppose that $X$ is either proper or weakly proper and strongly regular.
-Then the following conditions are equivalent:
-\begin{enumerate}
-\item \label{it:tb-tb} $X$ is totally bounded.
-\item \label{it:tb-cauchy-uni} For every Cauchy cover $C$ of $X$, there exists a finite uniform subcover of $C$.
-\item \label{it:tb-cauchy-cauchy} For every Cauchy cover $C$ of $X$, there exists a finite Cauchy subcover of $C$.
-\item \label{it:tb-uni-uni} For every uniform cover $C$ of $X$, there exists a finite uniform subcover of $C$.
-\item \label{it:tb-uni-cauchy} For every uniform cover $C$ of $X$, there exists a finite Cauchy subcover of $C$.
-\item \label{it:tb-uni-cover} For every uniform cover $C$ of $X$, there exists a finite subcover of $C$.
-\end{enumerate}
-\end{prop}
-\begin{proof}
-Clearly, \eqref{it:tb-cauchy-uni} is the strongest condition, and \eqref{it:tb-uni-cover} is the weakest.
-Thus, we just need to prove that the latter implies the former.
-By \rlem{tb-cauchy} and \rlem{tb-ws-cauchy}, \eqref{it:tb-uni-cover} implies \eqref{it:tb-uni-uni}.
-\rlem{tb-aux} shows that \eqref{it:tb-uni-uni} implies \eqref{it:tb-cauchy-uni}, completing the proof.
-\end{proof}
+The previous two propositions imply that Cauchy covers often take a simpler form in totally bounded cover spaces:
 
 \begin{cor}[tb-cauchy-uni]
-Let $X$ be a tottaly bounded uniform space.
-If $X$ is either proper or weakly proper and strongly regular, then uniform covers of $X$ coincide with Cauchy covers.
+Let $X$ be a totally bounded cover space, and let $\mathcal{B}$ be a base for $X$ which is either strongly proper and regular or proper and strongly regular.
+Then the collection of Cauchy covers of $X$ coincides with $\mathcal{B}$.
 \end{cor}
-\begin{proof}
-By \rprop{tb-covers}, every Cauchy cover $C$ of $X$ is refined by a finite uniform subcover of $C$, making $C$ itself uniform.
-\end{proof}
 
-Now, we will discuss totally bounded subsets of cover spaces.
-A subset $S$ of a cover space is \emph{totally bounded} if the transferred cover space structure on $S$ is totally bounded.
-The following proposition provides a characterization for totally bounded sets:
+\begin{cor}
+In a totally bounded metric space, Cauchy covers coincide with uniform covers.
+\end{cor}
 
-\begin{prop}[tb-set-char]
-A subset $S$ of a cover space $X$ is totally bounded if and only if, for every Cauchy cover $C$ of $X$, there exist sets $U_1, \ldots, U_n \in C$ such that the set $S \subseteq U_1 \cup \ldots \cup U_n$.
+The following proposition provides a useful characterization of totally bounded cover spaces:
+
+\begin{prop}[tb-aux]
+Let $\mathcal{B}_X$ be a subbase for a cover space $X$.
+Then $X$ is totally bounded if and only if every Cauchy cover in $\mathcal{B}_X$ has a finite subcover.
 \end{prop}
 \begin{proof}
-A cover $C$ of $S$ is Cauchy if and only if $\{ W \mid \exists U \in C, S \cap W \subseteq U \}$ is a Cauchy cover of $X$.
-First, we prove the ``if'' direction.
-Let $C$ be a Cauchy cover of $S$.
-Since $\{ W \mid \exists U \in C, S \cap W \subseteq U \}$ is a Cauchy cover of $X$, there exist sets $U_1, \ldots, U_n \in C$ and a cover $\{ W_1, \ldots, W_n \}$ of $X$ such that $S \cap W_i \subseteq U_i$.
-It follows that $\{ U_1, \ldots, U_n \}$ covers $S$.
-
-Now, let us prove the ``only if'' direction.
-Suppose that $S$ is totally bounded and let $C$ be a Cauchy cover of $X$.
-Then $C' = \{ U \cap S \mid U \in C \}$ is a Cauchy cover of $S$.
-Hence, there exist sets $U_1, \ldots, U_n \in C$ such that $\{ U_1 \cap S, \ldots, U_n \cap S \}$ covers $S$.
-This implies that $S \subseteq U_1 \cup \ldots \cup U_n$.
+The proof follows directly by induction on the construction of $\overline{\mathcal{B}}$.
 \end{proof}
 
-For uniform spaces, we can give a further characterization of totally bounded sets:
+This proposition yields the usual definition of total boundedness in the cases of uniform spaces and metric spaces:
 
-\begin{prop}
-A subset $S$ of a uniform space $X$ is totally bounded if and only if, for every uniform cover $C$ of $X$, there exist sets $U_1, \ldots, U_n \in C$ such that the set $S \subseteq U_1 \cup \ldots \cup U_n$.
-\end{prop}
-\begin{proof}
-The ``only if'' direction follows from \rprop{tb-set-char}.
-To prove the ``if'' direction, after we apply \rcor{tb-uni-char}, the argument is similar to \rprop{tb-set-char}.
-\end{proof}
+\begin{cor}
+A uniform space is totally bounded if and only if every uniform cover has a finite subcover.
+\end{cor}
 
 \begin{cor}[tb-metric]
-A subset $S$ of a metric space $X$ is totally bounded if and only if, for every $\varepsilon > 0$,
-there exist points $x_1, \ldots, x_n \in X$ such that every point of $S$ is $\varepsilon$-close to one of the points $x_1$, \ldots, $x_n$.
+A metric space $X$ is totally bounded if and only if, for every $\varepsilon > 0$,
+there exist points $x_1, \ldots, x_n \in X$ such that every point of $X$ is $\varepsilon$-close to one of the points $x_1, \ldots, x_n$.
 \end{cor}
 
 \begin{example}
-It is easy to see that every bounded subset of $\mathbb{R}$ satisfies conditions of \rcor{tb-metric}.
-Thus, a subset of $\mathbb{R}$ is totally bounded if and only if it is bounded.
+Every bounded subset of $\mathbb{R}^n$ satisfies the conditions of \rcor{tb-metric}.
+Therefore, a subset of $\mathbb{R}^n$ is totally bounded if and only if it is bounded.
 \end{example}
 
-The following proposition gives a useful characterization of Cauchy covers in a uniform space under appropriate assumptions:
+We can derive the Tychonoff theorem as an immediate consequence of the previous propositions.
+While the theorem is not constructively true for topological spaces, it does hold for locales, albeit with a non-trivial proof (see \cite{vickers-tychonoff,vickers-compact}).
+In the context of cover spaces, the result becomes straightforward:
 
 \begin{prop}
-Let $X$ be a strongly regular uniform space, and let $C$ be a Cauchy cover of $X$ consisting of totally bounded inhabitted sets.
-Then a set $E$ is a Cauchy cover of $X$ if and only if the set $\{ V \mid \exists W \in E, U \cap V \subseteq W \}$ is a uniform cover of $X$ for every $U \in C$.
+Let $\{ X_i \}_{i \in I}$ be a collection of totally bounded cover spaces.
+Then the product $\prod_{i \in I} X_i$ is also totally bounded.
 \end{prop}
 \begin{proof}
-If $\{ V \mid \exists W \in E, U \cap V \subseteq W \}$ is a uniform cover for every $U \in C$, then \axref{CG} implies tht $E$ is a Cauchy cover.
-Conversely, suppose that $E$ is a Cauchy cover and let $U$ be a set in $C$.
-Since $U$ is inhabitted and $X$ is strongly regular, the transferred uniform structure on $U$ is weakly proper and strongly regular.
-By \rcor{tb-cauchy-uni}, the set $\{ U \cap W \mid W \in E \}$ is a uniform cover of $U$.
-This means that the set $\{ V \mid \exists W \in E, U \cap V \subseteq U \cap W \}$ is a uniform cover of $X$, which implies the required property.
+The cover space structure on $\prod_{i \in I} X_i$ is generated by covers of the form $C' = \{ \pi_i^{-1}(U) \mid U \in C \}$, where  $i \in I$ and $C$ is a Cauchy cover of $X_i$.
+By \rprop{tb-aux}, it suffices to show that $C'$ has a finite subcover.
+Since $X_i$ is totally bounded, there exist sets $U_1, \ldots, U_n \in C$ that cover $X_i$.
+Then $\pi_i^{-1}(U_1), \ldots, \pi_i^{-1}(U_n)$ form a finite subcover of $C'$, completing the proof.
 \end{proof}
 
 \begin{cor}
-Let $X$ be a strongly regular uniform space such that the set of totally bounded inhabitted sets is a uniform cover of $X$.
-Then every cover map $X \to Y$ is locally uniform.
+Let $\{ X_i \}_{i \in I}$ be a collection of compact cover spaces.
+Then the product $\prod_{i \in I} X_i$ is also compact.
+\end{cor}
+\begin{proof}
+The subcategory of complete cover spaces is reflective in the category of cover spaces, which implies that it is closed under products.
+Therefore, the result follows directly from the previous proposition.
+\end{proof}
+
+The following proposition provides a useful characterization of Cauchy covers under appropriate assumptions:
+
+\begin{prop}
+Let $X$ be a cover space with a strongly regular base $\mathcal{B}$, and let $C$ be a Cauchy cover of $X$ consisting of totally bounded inhabited sets.
+Then a set $E$ is a Cauchy cover of $X$ if and only if $\{ V \mid \exists W \in E, U \cap V \subseteq W \} \in \mathcal{B}$, for every $U \in C$.
+\end{prop}
+\begin{proof}
+If $\{ V \mid \exists W \in E, U \cap V \subseteq W \} \in \mathcal{B}$ for every $U \in C$, then \axref{CG} implies that $E$ is a Cauchy cover.
+Conversely, suppose that $E$ is a Cauchy cover, and let $U \in C$.
+The strongly regular base $\mathcal{B}$ can be transferred to $U$ in the same way that cover space structures are transferred.
+Since $U$ is inhabited, the transferred base $\mathcal{B}_U$ is proper.
+By \rcor{tb-cauchy-uni}, we have $\{ U \cap W \mid W \in E \} \in \mathcal{B}_U$.
+This means that $\{ V \mid \exists W \in E, U \cap V \subseteq U \cap W \} \in \mathcal{B}$, which establishes the desired property.
+\end{proof}
+
+\begin{example}
+Let $X$ be a metric space in which bounded sets are totally bounded, and let $\delta_1 > 0$.
+Define $C$ as the set of open balls of radius $\delta_1$.
+Then a set $E$ is a Cauchy cover of $X$ if and only if, for every $x_1 \in X$, there exists $\delta_2 > 0$ such that, for every $x_2 \in X$,
+there exists $W \in E$ such that $B_{\delta_1}(x_1) \cap B_{\delta_2}(x_2) \subseteq W$.
+\end{example}
+
+\begin{cor}
+Let $X$ be a cover space with a strongly regular base $\mathcal{B}$ such that the set of totally bounded inhabited sets belongs to $\mathcal{B}$.
+Then a function $X \to Y$ is a cover map if and only if it is locally uniform with respect to $\mathcal{B}$.
 \end{cor}
 
 \begin{cor}
-Let $X$ be a metric space in which every bounded inhabitted set is totally bounded.
-Then every cover map $X \to Y$ is locally uniform.
+Let $X$ be a metric space in which every bounded inhabited set is totally bounded.
+Then a function $X \to Y$ is a cover map if and only if it is locally uniform.
 \end{cor}
 
 \begin{cor}
-A function $\mathbb{R} \to \mathbb{R}$ is a cover map if and only if it is locally uniform.
+A function $\mathbb{R}^n \to Y$ is a cover map if and only if it is locally uniform.
 \end{cor}
 
-We finish this section with a characterization of compact subspaces.
+We conclude this section with a characterization of compact subspaces.
 Recall that a subspace of a cover space is closed if it contains all of its limit points.
-The following proposition gives a characterization of complete subspaces of a complete cover space:
+The following proposition provides a characterization of complete subspaces within a complete cover space:
 
 \begin{prop}
 A subspace of a complete cover space is complete if and only if it is closed.
@@ -2400,155 +2393,180 @@ By \rprop{embedding-injective}, $S$ is separated.
 Let us prove that it is complete.
 Let $F$ be a Cauchy filter on $S$.
 Then $G = \{ U \mid U \cap S \in F \}$ is a Cauchy filter on $X$.
-Let us show that $G^\vee$ belongs to $S$.
-Since $S$ is closed, it is enough to show that $G^\vee$ is a limit point of $S$.
+
+To show that $G^\vee$ belongs to $S$, it suffices to prove that $G^\vee$ is a limit point of $S$ since $S$ is closed.
 Let $U$ be a neighborhood of $G^\vee$.
 By \rlem{filter-point-char}, there exists $V \in G$ such that $V \rb_X U$.
 Since $F$ is proper and $V \cap S \in F$, there exists a point $x \in V \cap S$.
-Thus, $U$ and $S$ intersect and, hence, $G^\vee$ is a limit point of $S$.
+Thus, $U$ and $S$ intersect, which implies that $G^\vee$ is a limit point of $S$.
 
-We also need to show that $\{ G^\vee \} \rb_S V$ implies $V \in F$ for all $V$.
-Condition $\{ G^\vee \} \rb_S V$ implies that $\{ W \mid \exists W', S \cap W \subseteq W', (G^\vee \in W' \implies W' \subseteq V) \}$ is a Cauchy cover of $X$.
+Next, we need to prove that $\{ G^\vee \} \rb_S V$ implies $V \in F$ for all $V$.
+The condition $\{ G^\vee \} \rb_S V$ implies that the collection
+\[ \{ W \mid \exists W', S \cap W \subseteq W', (G^\vee \in W' \implies W' \subseteq V) \} \]
+is a Cauchy cover of $X$.
 Thus, there exist sets $W$ and $W'$ such that $\{ G^\vee \} \rb_X W$, $S \cap W \subseteq W'$, and $W' \subseteq V$.
-\rlem{filter-point-char} implies that there exists $W'' \in G$ such that $W'' \rb_X W'$.
-It follows that $V$ belongs to $F$.
+By \rlem{filter-point-char}, there exists $W'' \in G$ such that $W'' \rb_X W'$.
+It follows that $V \in F$.
 
 Now, let us prove the converse.
 Suppose that $S$ is complete and let $x$ be a limit point of $S$.
-Then $F = \{ V \mid \exists W, \{ x \} \rb_X W, U \cap S \subseteq V \}$ is a Cauchy filter on $S$.
-The fact that $F$ is proper follows from the fact that $x$ is a limit point of $S$ and other properties of Cauchy filters are obvious.
-To prove that $x$ belongs to $S$, it is enough to show that $x = F^\vee$.
+Define $F = \{ V \mid \exists W, \{ x \} \rb_X W, U \cap S \subseteq V \}$.
+Then $F$ is a Cauchy filter on $S$.
+The fact that $F$ is proper follows from the assumption that $x$ is a limit point of $S$, and the other properties of Cauchy filters are straightforward to verify.
+To show that $x \in S$, it suffices to prove that $x = F^\vee$.
+
 By \rlem{separated-char}, it is enough to show that any pair of neighborhoods of $x$ and $F^\vee$ intersect.
-Let $U$ be a neighborhood of $x$ and $V$ be a neighborhood of $F^\vee$.
-\rlem{filter-point-char} implies that $V \in F$, which means that there exists a set $W$ such that $\{ x \} \rb_X W$ and $W \cap S \subseteq V$.
+Let $U$ be a neighborhood of $x$, and let $V$ be a neighborhood of $F^\vee$.
+By \rlem{filter-point-char}, $V \in F$, which means there exists a set $W$ such that $\{ x \} \rb_X W$ and $W \cap S \subseteq V$.
 Since $x$ is a limit point of $S$ and $U \cap W$ is a neighborhood of $x$, there exists a point $y \in U \cap W \cap S$.
-Thus, $U$ and $V$ intersect, which completes the proof.
+Thus, $U$ and $V$ intersect, completing the proof.
 \end{proof}
 
-\begin{cor}
+\begin{cor}[closed-compact]
 A subspace of a complete cover space is compact if and only if it is closed and totally bounded.
 \end{cor}
+
+As a consequence, we obtain a constructive version of the Heine-Borel theorem:
+
+\begin{cor}
+A subspace of $\mathbb{R}^n$ is compact if and only if it is closed and bounded.
+\end{cor}
+\begin{proof}
+This follows from \rcor{tb-metric} and \rcor{closed-compact}.
+\end{proof}
 
 \section{Limits}
 \label{sec:limits}
 
-Limits of functions are closely related to lifting problem for cover spaces.
-In this section, we show how various kinds of limits can be expressed in terms of liftings.
-In general, a dense cover map $X \to \widetilde{X}$ represents a form of limits.
-Then a data of a limit in a precover space $Y$ is given by a function $f : X \to Y$.
-Then we can say that the limit of $f$ exists if this function extends to a cover map $\widetilde{f} : \widetilde{X} \to Y$.
-The limit itself is given by the image of $\widetilde{f}$ at some point in $\widetilde{X}$.
+Limits of functions are closely related to the lifting problem for cover spaces.
+In this section, we show how various types of limits can be expressed in terms of liftings.
+Generally, a dense cover map $X \to \widetilde{X}$ represents a form of limit.
+The data of a limit in a precover space $Y$ is given by a function $f : X \to Y$.
+We say that the limit of $f$ exists if this function extends to a cover map $\widetilde{f} : \widetilde{X} \to Y$.
+The limit itself is then given by the image of $\widetilde{f}$ at some point in $\widetilde{X}$.
 
-Let us demonstrate how these definitions apply to the case of sequential limits.
+To demonstrate, let us consider sequential limits.
 First, we define a uniform space structure on $\mathbb{N}$.
-A cover $C$ of $\mathbb{N}$ is uniform if there exist $N \in \mathbb{N}$ and $U \in C$ such that $U$ contains every $n \geq N$.
-It is easy to check that this indeed defines a uniform space structure on $\mathbb{N}$.
+A cover $C$ of $\mathbb{N}$ is uniform if there exist $N \in \mathbb{N}$ and $U \in C$ such that $U$ contains all $n \geq N$.
+It is straightforward to verify that this indeed defines a uniform space structure on $\mathbb{N}$.
 
-Cauchy filters correspond to so-called extended natural numbers.
-An \emph{extended natural number} is a sequence $x$ of binary digits, that is, elements of $\{ 0, 1 \}$, such that $x_n = 1$ for at most one $n \in \mathbb{N}$.
-The set of extended natural numbers will be denoted by $\mathbb{N}_\infty$.
-There is a map $\mathbb{N} \amalg \{ \infty \} \to \mathbb{N}_\infty$ that maps $n \in \mathbb{N}$ to the sequence $x$ with $x_n = 1$ and maps $\infty$ to the sequence consisting of $0$.
-Classically, this map is bijective, but it is only injective constructively.
+Cauchy filters in this space correspond to what are known as extended natural numbers.
+An \emph{extended natural number} is a sequence $x$ of binary digits, i.e., elements of $\{ 0, 1 \}$, such that $x_n = 1$ for at most one $n \in \mathbb{N}$.
+The set of extended natural numbers is denoted by $\mathbb{N}_\infty$.
+There exists a function $\mathbb{N} \amalg \{ \infty \} \to \mathbb{N}_\infty$, which maps $n \in \mathbb{N}$ to the sequence $x$ with $x_n = 1$, and maps $\infty$ to the sequence consisting entirely of zeros.
+Classically, this function is bijective, but constructively, it is only injective.
 
 \begin{prop}
 There is a bijection between the set of regular Cauchy filters on $\mathbb{N}$ and the set of extended natural numbers.
 \end{prop}
 \begin{proof}
 A proper filter $F$ on $\mathbb{N}$ is Cauchy if and only if, for every $N \in \mathbb{N}$, either there exists $n < N$ such that $\{ n \} \in F$ or $[N,\infty) \in F$.
-Let us show that the relation $\{ n \} \in F$ is decidable.
+Let us show that the membership $\{ n \} \in F$ is decidable.
 We proceed by induction on $n$.
-If $\{ k \}$ belongs to $F$ for some $k < n$, then $\{ n \}$ does not belong to $F$ since $F$ is proper.
+
+If $\{ k \} \in F$ for some $k < n$, then $\{ n \} \notin F$ since $F$ is proper.
 Otherwise, either $\{ n \} \in F$ or $[N + 1, \infty) \in F$.
-The latter case implies that $\{ n \} \notin F$.
-Thus, we can decide whether $\{ n \}$ belongs to $F$ or not.
+The latter case implies $\{ n \} \notin F$.
+Hence, we can decide whether $\{ n \} \in F$.
 
-Now, we can define a function $s$ from the set of Cauchy filters to $\mathbb{N}_\infty$ as follows: $s(F)_n = 1$ if and only if $\{ n \} \in F$.
-Since $\{ n \}$ belongs to $F$ for at most one $n$, this sequence is indeed an extended natural number.
-We also define a function $f$ from $\mathbb{N}_\infty$ to the set of Cauchy filters:
+Now, we define a function $s$ from the set of Cauchy filters on $\mathbb{N}$ to $\mathbb{N}_\infty$ as follows:
+\[ 
+s(F)_n = 
+\begin{cases} 
+1 & \text{if } \{ n \} \in F, \\
+0 & \text{otherwise}.
+\end{cases}
+\]
+Since $\{ n \} \in F$ for at most one $n$, the sequence $s(F)$ is indeed an extended natural number.
+
+Conversely, we define a function $f$ from $\mathbb{N}_\infty$ to the set of Cauchy filters on $\mathbb{N}$ by:
 \[ f(x) = \{ U \mid (\exists n \in U, x_n = 1) \lor (\exists N \in \mathbb{N}, [N,\infty) \subseteq U, \forall n < N, x_n = 0) \}. \]
-It is easy to check that $f(x)$ is indeed a Cauchy filter.
+It is straightforward to verify that $f(x)$ is indeed a Cauchy filter.
 
-It is also easy to see that $s(f(x)) = x$ and that $f(s(F)) \subseteq F$.
-Thus, $f(s(F))$ is equivalent to $F$.
+Finally, we observe that $s(f(x)) = x$ and $f(s(F)) \subseteq F$, which implies $f(s(F))$ is equivalent to $F$.
 Also, it is clear that $s(F) = s(G)$ whenever $F \subseteq G$, which implies that $s$ respects the equivalence of Cauchy filters.
-Thus, we get a bijection between $\mathbb{N}_\infty$ and equivalence classes of Cauchy filters.
-Since regular Cauchy filters are unique representatives of their equivalence classes, we also have the required bijection.
+Thus, we get a bijection between $\mathbb{N}_\infty$ and the equivalence classes of Cauchy filters.
+Since regular Cauchy filters are unique representatives of their equivalence classes, we obtain the desired bijection.
 \end{proof}
 
-We will say that a sequence $f : \mathbb{N} \to X$ in a precover space $X$ is \emph{Cauchy} if, for every Cauchy cover $C$ of $X$, there exist $N \in \mathbb{N}$ and $U \in C$ such that, for every $n \geq N$, $f_n \in U$.
-If $X$ is a metric space, this is indeed equivalent to the usual definition of a Cauchy sequence.
-Thus, we get a generalization of Cauchy sequences for arbitrary precover spaces.
-Moreover, $f : \mathbb{N} \to X$ is a Cauchy sequence if and only if it is a cover map for the uniform structure on $\mathbb{N}$ we defined above.
-If $X$ is a complete cover space, then \rthm{dense-lift} implies that a sequence $f : \mathbb{N} \to X$ is Cauchy if and only if it extends to a cover map $\widetilde{f} : \mathbb{N}_\infty \to X$.
-Then the limit of $f$ is defined as $\widetilde{f}(\infty)$.
+We say that a sequence $f : \mathbb{N} \to X$ in a precover space $X$ is \emph{Cauchy} if, for every Cauchy cover $C$ of $X$, there exist $N \in \mathbb{N}$ and $U \in C$ such that, for every $n \geq N$, $f_n \in U$.
+If $X$ is a metric space, this definition is equivalent to the usual notion of a Cauchy sequence.
+Thus, this approach generalizes Cauchy sequences to arbitrary precover spaces.
 
-We can generalize this discussion to arbitrary directed sets which can be used to give a general notion of a limit \cite{limits}.
-A \emph{directed set} $I$ is a preordered set in which every finite set has an upper bound.
-If $N$ is an element of $I$, we will write $I_{\geq N}$ for the set $\{ n \in I \mid n \geq N \}$.
-There is a precover space structure on $I$ in which a cover $C$ is Cauchy if and only if there exist $U \in C$ and $N \in I$ such that $I_{\geq N} \subseteq U$.
-It is straightforward to check that this definition satisfies \axref{CT}, \axref{CE}, and \axref{CG}, but it might not satisfy \axref{CR}.
-So, in general, we define the cover space structure on $I$ as the reflection of this precover space structure.
+Moreover, $f : \mathbb{N} \to X$ is a Cauchy sequence if and only if it is a cover map with respect to the uniform structure on $\mathbb{N}$ that we defined earlier.
+If $X$ is a complete cover space, then \rthm{dense-lift} implies that $f : \mathbb{N} \to X$ is a Cauchy sequence if and only if it extends to a cover map $\widetilde{f} : \mathbb{N}_\infty \to X$.
+In this case, the limit of $f$ is defined as $\widetilde{f}(\infty)$.
+
+This concept can be generalized to arbitrary directed sets, leading to a more general notion of limits \cite{limits}.
+A \emph{directed set} $I$ is a preordered set in which every finite subset has an upper bound.
+For an element $N \in I$, we write $I_{\geq N}$ to denote the set $\{ n \in I \mid n \geq N \}$.
+There is a precover space structure on $I$ where a cover $C$ is Cauchy if and only if there exist $U \in C$ and $N \in I$ such that $I_{\geq N} \subseteq U$.
+It is straightforward to verify that this definition satisfies \axref{CT}, \axref{CE}, and \axref{CG}, though it may not satisfy \axref{CR}.
+In general, the cover space structure on $I$ is defined as the reflection of this precover space structure.
 
 \begin{defn}
-Let $I$ be a directed set $X$ be a cover space.
-We will say that a function $f : I \to X$ \emph{converges} if it is a cover map.
+Let $I$ be a directed set and $X$ a cover space.
+We say that a function $f : I \to X$ \emph{converges} if it is a cover map.
 \end{defn}
 
 A \emph{limit} of a function $f : I \to X$ is a point $x \in X$ such that, for every neighborhood $U$ of $x$, there exists $N \in I$ such that $I_{\geq N} \subseteq f^{-1}(U)$.
-If a function has a limit, then it convergence.
+If a function has a limit, then it converges.
 Conversely, if $X$ is complete and $f$ converges, then it has a limit.
-Indeed, the completion $I_\infty$ of $I$ has a point $\infty$ corresponding to the Cauchy filter $\{ U \mid \exists N \in I, I_{\geq N} \subseteq U \}$.
-If $X$ is complete and $f$ converges, then it extends to a function from the completion of $I$ to $X$ and the limit of $f$ is given by the image of $\infty$.
+Indeed, the completion $I_\infty$ of $I$ contains a point $\infty$ corresponding to the Cauchy filter $\{ U \mid \exists N \in I, I_{\geq N} \subseteq U \}$.
+If $X$ is complete and $f$ converges, then $f$ extends to a function from the completion of $I$ to $X$, and the limit of $f$ is given by the image of $\infty$.
 
-The following proposition gives an explicit characterization of convergence:
+The following proposition provides an explicit characterization of convergence:
 
 \begin{prop}[conv-char]
-Let $I$ be a directed set $X$ be a cover space.
+Let $I$ be a directed set and $X$ a cover space.
 Then a function $f : I \to X$ converges if and only if, for every Cauchy cover $C$ of $X$, there exist $U \in C$ and $N \in I$ such that $I_{\geq N} \subseteq f^{-1}(U)$.
 \end{prop}
 \begin{proof}
-Since $X$ is a cover space, $f$ converges if and only if, for every Cauchy cover $C$ of $X$, the set $\{ f^{-1}(U) \mid U \in C \}$ is a Cauchy cover in the precover space structure on $I$.
-Unfolding the definitions, we get the required condition.
+Since $X$ is a cover space, $f$ converges if and only if, for every Cauchy cover $C$ of $X$, the family $\{ f^{-1}(U) \mid U \in C \}$ is a Cauchy cover in the precover space structure on $I$.
+Unpacking the definitions, we obtain the required condition.
 \end{proof}
 
 If $X$ is a uniform space, we can simplify the condition in the previous proposition:
 
 \begin{prop}
-Let $I$ be a directed set $X$ be a uniform space.
+Let $I$ be a directed set and $X$ a uniform space.
 Then a function $f : I \to X$ converges if and only if, for every uniform cover $C$ of $X$, there exist $U \in C$ and $N \in I$ such that $I_{\geq N} \subseteq f^{-1}(U)$.
 \end{prop}
 \begin{proof}
 If $f$ converges, then the required condition holds by the previous proposition.
-Conversely, assume that this condition holds and let us prove that $f$ converges.
-Let $F = \{ U \mid \exists N \in I, \forall n \geq N, f(n) \in U \}$.
-By assumption, this proper filter intersects with every uniform cover.
-By \rprop{cauchy-filter}, it intersects with every Cauchy cover, which implies that $f$ is a cover map.
+Conversely, assume that this condition holds, and let us prove that $f$ converges.
+Define the filter $F = \{ U \mid \exists N \in I, \forall n \geq N, f(n) \in U \}$.
+By assumption, this proper filter intersects with every uniform cover of $X$.
+By \rprop{cauchy-filter}, $F$ also intersects with every Cauchy cover of $X$.
+Hence, $f$ is a cover map, as required.
 \end{proof}
 
-This gives the usual definition of convergence for metric spaces:
+This result gives the usual definition of convergence for metric spaces:
 
 \begin{cor}
-Let $I$ be a directed set $X$ be a metric space.
+Let $I$ be a directed set and $X$ a metric space.
 Then a function $f : I \to X$ converges if and only if, for every $\varepsilon > 0$, there exists $N \in I$ such that $d(f(n),f(N)) < \varepsilon$ for all $n \geq N$.
 \end{cor}
 
-Now, we will discuss limits of sequences of functions.
-It is well-known that the limit of a pointwise convergent sequence of continuous maps may not be continuous.
-The same is true for cover maps.
-The problem becomes obvious when expressed in terms of the lifting property.
-Indeed, a sequence of functions $X \to Y$ can be represented by a function $f : \mathbb{N} \times X \to Y$.
-Now, even if $f(n,-)$ is a cover map for all $n \in \mathbb{N}$ and $f(-,x)$ is a cover map for all $x \in X$, this does not imply that $f$ is a cover map.
-In other words, if $f$ represents a pointwise convergent sequence of cover maps, $f$ may not be a cover map itself.
-So, it is natural to require the corresponding function $\mathbb{N} \times X \to Y$ to be a cover map.
-More generally, we might consider cover maps of the form $I \times X \to Y$ for an arbitrary directed set $I$.
-As before, if $Y$ is a complete cover space, then $f$ is a cover map if and only if it extends to a map $\widetilde{f} : I_\infty \times X \to Y$.
-Then the limit of $f$ is defined as $\widetilde{f}(\infty,-)$.
+Now, we discuss limits of sequences of functions.
+It is well-known that the pointwise limit of a sequence of continuous maps may not be continuous.
+The same issue arises for cover maps.
+This limitation becomes clear when expressed in terms of the lifting property.
+
+Indeed, a sequence of functions $X \to Y$ can be represented by a single function $f : \mathbb{N} \times X \to Y$.
+Even if $f(n,-)$ is a cover map for all $n \in \mathbb{N}$ and $f(-,x)$ is a cover map for all $x \in X$, this does not imply that $f$ is a cover map.
+In other words, if $f$ represents a pointwise convergent sequence of cover maps, it does not guarantee that $f$ itself is a cover map.
+
+Thus, it is natural to require that the corresponding function $\mathbb{N} \times X \to Y$ is a cover map.
+More generally, for an arbitrary directed set $I$, we might consider cover maps of the form $I \times X \to Y$. 
+As before, if $Y$ is a complete cover space, then $f : I \times X \to Y$ is a cover map if and only if it extends to a map $\widetilde{f} : I_\infty \times X \to Y$.
+In this case, the limit of $f$ is defined as $\widetilde{f}(\infty, -)$.
 
 It will be convenient to have an explicit description of Cauchy covers of $I \times X$ for the following discussion.
 The following lemma provides such a description:
 
 \begin{lem}[dir-prod-char]
-Let $I$ be a directed set equipped with the precover space structure and $X$ be a cover space.
+Let $I$ be a directed set equipped with the precover space structure, and let $X$ be a cover space.
 Then a set $C$ is a Cauchy cover of $I \times X$ if and only if the following conditions hold:
 \begin{enumerate}
 \item \label{it:dir-char} The set $\{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U \}$ is a Cauchy cover of $X$.
@@ -2556,40 +2574,69 @@ Then a set $C$ is a Cauchy cover of $I \times X$ if and only if the following co
 \end{enumerate}
 \end{lem}
 \begin{proof}
-First, let us show that covers satisfying these two conditions form a precover space structure on $I \times X$.
-Axioms \axref{CT} and \axref{CE} are obvious, so let us check \axref{CG}.
-Let $C$ be a set and $\{ D_U \}_{U \in C}$ be a collection of sets such that $C$ and $D_U$ satisfy conditions \eqref{it:dir-char} and \eqref{it:dir-cover}.
+
+We begin by proving that covers satisfying these two conditions form a precover space structure on $I \times X$.
+Axioms \axref{CT} and \axref{CE} are easily verified, so we focus on checking axiom \axref{CG}.
+Let $C$ be a set, and let $\{ D_U \}_{U \in C}$ be a collection of sets such that $C$ and $D_U$ satisfy conditions \eqref{it:dir-char} and \eqref{it:dir-cover}.
 We need to show that $E = \{ U \cap V \mid U \in C, V \in D_U \}$ also satisfies these conditions.
-By assumption, $C' = \{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U \}$ is a Cauchy cover of $X$.
-Let $D'_{U'} = \{ V' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U, \exists V \in D_U, I_{\geq N} \times V' \subseteq V \}$.
-Clearly, $D'_{U'}$ is a Cauchy cover of $X$ for every $U' \in C'$.
-Since $\{ U' \cap V' \mid U' \in C', V' \in D'_{U'} \}$ is a subset of $\{ W' \mid \exists N \in I, \exists W \in E, I_{\geq N} \times W' \subseteq W \}$, the latter set is also a Cauchy cover of $X$.
+
+\textbf{Condition \eqref{it:dir-char}:}
+Define
+\begin{align*}
+C' & = \{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U \}, \\
+D'_{U'} & = \{ V' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U, \exists V \in D_U, I_{\geq N} \times V' \subseteq V \}.
+\end{align*}
+By assumption, $C'$ is a Cauchy cover of $X$.
+Clearly, $D'_{U'}$ is also a Cauchy cover of $X$ for every $U' \in C'$.
+Since $\{ U' \cap V' \mid U' \in C', V' \in D'_{U'} \}$ is a subset of $\{ W' \mid \exists N \in I, \exists W \in E, I_{\geq N} \times W' \subseteq W \}$, it follows that the latter set is a Cauchy cover of $X$.
 Thus, \eqref{it:dir-char} holds for $E$.
 
-Let us show that $E$ satisfies \eqref{it:dir-cover}.
-Let $n$ be an element of $I$.
-Then $C' = \{ U' \mid \exists U \in C, \forall x \in U', (n,x) \in U \}$ is a Cauchy cover of $X$.
-Let $D'_{U'} = \{ V' \mid \exists U \in C, \exists V \in D_U, (\forall x \in U', (n,x) \in U), (\forall x \in V', (n,x) \in V)\}$.
-Clearly, $D'_{U'}$ is a Cauchy cover of $X$ for every $U' \in C'$.
-Since $\{ U' \cap V' \mid U' \in C', V' \in D'_{U'} \}$ is a subset of $\{ W' \mid \exists W \in E, \forall x \in W', (n,x) \in W \}$, the latter set is also a Cauchy cover of $X$.
-Thus, \eqref{it:dir-cover} also holds for $E$.
+\textbf{Condition \eqref{it:dir-cover}:}
+Let $n \in I$. Define
+\begin{align*}
+C' & = \{ U' \mid \exists U \in C, \forall x \in U', (n,x) \in U \}, \\
+D'_{U'} & = \{ V' \mid \exists U \in C, \exists V \in D_U, (\forall x \in U', (n,x) \in U), (\forall x \in V', (n,x) \in V) \}.
+\end{align*}
+Clearly, $C'$ and $D'_{U'}$ are Cauchy covers of $X$.
+Since $\{ U' \cap V' \mid U' \in C', V' \in D'_{U'} \}$ is a subset of $\{ W' \mid \exists W \in E, \forall x \in W', (n,x) \in W \}$, the latter set is a Cauchy cover of $X$.
+Thus, \eqref{it:dir-cover} holds for $E$.
 
-To prove that every Cauchy cover of $I \times X$ satisfies conditions \eqref{it:dir-char} and \eqref{it:dir-cover}, it is enough to consider only basic Cauchy covers,
-that is, covers of the form $\{ \pi_1^{-1}(U) \mid U \in C \}$ and $\{ \pi_2^{-1}(V) \mid V \in D \}$ for Cauchy covers $C$ of $I$ and $D$ of $X$.
-This is easy for covers of the form $\{ \pi_1^{-1}(U) \mid U \in C \}$ since both $\{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq \pi_1^{-1}(U) \}$
-and $\{ U' \mid \exists U \in C, \forall x \in U', (n,x) \in \pi_1^{-1}(U) \}$ are refined by $\{ \top \}$.
-This is also easy for covers of the form $\{ \pi_2^{-1}(V) \mid V \in D \}$ since both $\{ V' \mid \exists N \in I, \exists V \in D, I_{\geq N} \times V' \subseteq \pi_2^{-1}(V) \}$
-and $\{ V' \mid \exists V \in D, \forall x \in V', (n,x) \in \pi_2^{-1}(V) \}$ are refined by $D$.
+To prove that every Cauchy cover of $I \times X$ satisfies conditions \eqref{it:dir-char} and \eqref{it:dir-cover}, it suffices to consider basic Cauchy covers,
+i.e., covers of the form $\{ \pi_1^{-1}(U) \mid U \in C \}$ and $\{ \pi_2^{-1}(V) \mid V \in D \}$, where $C$ is a Cauchy cover of $I$ and $D$ is a Cauchy cover of $X$.
 
-Now, let us prove that every set $C$ satisfying \eqref{it:dir-char} and \eqref{it:dir-cover} is a Cauchy cover of $I \times X$.
-Let $D = \{ \pi_2^{-1}(U') \mid U' \in C' \}$, where $C'$ is the Cauchy cover $\{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U \}$.
-Let $E_V = \{ W \mid \exists U' \subseteq X, \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U, V = \pi_2^{-1}(U'), (W \subseteq \pi_1^{-1}(I_{\geq N})) \lor (\exists W_1 \in C, W \subseteq W_1) \}$.
-Since $\{ V \cap W \mid V \in D, W \in E_V \}$ refines $C$ and $D$ is a Cauchy cover of $I \times X$, it is enough to check that $E_V$ is a Cauchy cover of $I \times X$ for every $V \in D$.
-Let $U' \in C'$, $N \in I$, and $U \in C$ be such that $V = \pi_2^{-1}(U')$ and $I_{\geq N} \times U' \subseteq U$.
-Let $F = \{ \pi_1^{-1}(S') \mid S' \in F' \}$, where $F' = \{ I_{\geq N} \} \cup \{ \{ n \} \mid n \in I \}$.
-Let $G_S = \{ T \mid \exists S' \subseteq I, S = \pi_1^{-1}(S'), (S' = I_{\geq N}) \lor (\exists n \in I, S' = \{ n \}, \exists U_1' \subseteq X, \exists U_1 \in C, \{ n \} \times U_1' \subseteq U_1, T = \pi_2^{-1}(U_1')) \}$.
-Since $\{ S \cap T \mid S \in F, T \in G_S \}$ is a subset of $E_V$ and $F$ is a Cauchy cover of $I \times X$, it is enough to check that $G_S$ is a Cauchy cover of $I \times X$ for every $S \in F$.
-Let $S' \in F'$ be such that $S = \pi_1^{-1}(S')$.
+Covers of the form $\{ \pi_1^{-1}(U) \mid U \in C \}$ satisfy the conditions because both of the following covers are refined by $\{ \top \}$:
+\begin{align*}
+& \{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq \pi_1^{-1}(U) \}, \\
+& \{ U' \mid \exists U \in C, \forall x \in U', (n,x) \in \pi_1^{-1}(U) \}.
+\end{align*}
+Similarly, covers of the form $\{ \pi_2^{-1}(V) \mid V \in D \}$ satisfy the conditions because both of the following covers are refined by $D$:
+\begin{align*}
+& \{ V' \mid \exists N \in I, \exists V \in D, I_{\geq N} \times V' \subseteq \pi_2^{-1}(V) \}, \\
+& \{ V' \mid \exists V \in D, \forall x \in V', (n,x) \in \pi_2^{-1}(V) \}.
+\end{align*}
+
+Finally, we prove that every set $C$ satisfying conditions \eqref{it:dir-char} and \eqref{it:dir-cover} is a Cauchy cover of $I \times X$.
+Define
+\begin{align*}
+C' & = \{ U' \mid \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U \}, \\
+D & = \{ \pi_2^{-1}(U') \mid U' \in C' \}, \\
+E_V & = \{ W \mid \exists U' \subseteq X, \exists N \in I, \exists U \in C, I_{\geq N} \times U' \subseteq U, V = \pi_2^{-1}(U'), \\
+& \qquad \qquad (W \subseteq \pi_1^{-1}(I_{\geq N})) \lor (\exists W_1 \in C, W \subseteq W_1) \}.
+\end{align*}
+
+Since $\{ V \cap W \mid V \in D, W \in E_V \}$ refines $C$, and $D$ is a Cauchy cover of $I \times X$, it suffices to check that $E_V$ is a Cauchy cover of $I \times X$ for every $V \in D$.
+Let $U' \in C'$, $N \in I$, and $U \in C$ such that $V = \pi_2^{-1}(U')$ and $I_{\geq N} \times U' \subseteq U$.
+Define
+\begin{align*}
+F' & = \{ I_{\geq N} \} \cup \{ \{ n \} \mid n \in I \}, \\
+F & = \{ \pi_1^{-1}(S') \mid S' \in F' \}, \\
+G_S & = \{ T \mid \exists S' \subseteq I, S = \pi_1^{-1}(S'), (S' = I_{\geq N}) \lor \\
+& \qquad \qquad (\exists n \in I, S' = \{ n \}, \exists U_1' \subseteq X, \exists U_1 \in C, \{ n \} \times U_1' \subseteq U_1, T = \pi_2^{-1}(U_1')) \}.
+\end{align*}
+
+Since $\{ S \cap T \mid S \in F, T \in G_S \} \subseteq E_V$ and $F$ is a Cauchy cover of $I \times X$,
+it suffices to verify that $G_S$ is a Cauchy cover of $I \times X$ for every $S \in F$.
+Let $S' \in F'$ such that $S = \pi_1^{-1}(S')$.
 Then either $S' = I_{\geq N}$ or $S' = \{ n \}$ for some $n \in I$.
 In the former case, $G_S$ is Cauchy since it is refined by $\{ \top \}$.
 In the latter case, $G_S$ is Cauchy since it is refined by the Cauchy cover $\{ \pi_2^{-1}(U'') \mid U'' \in C'' \}$,
@@ -2597,67 +2644,102 @@ where $C''$ is the Cauchy cover $\{ U'' \mid \exists U \in C, \forall x \in U'',
 This completes the proof.
 \end{proof}
 
-The following proposition gives a characterization for convergence of functions of the form $I \times X \to Y$:
+The following proposition provides a characterization for the convergence of functions of the form $I \times X \to Y$:
 
 \begin{prop}[func-conv-char]
-Let $I$ be a directed set and $X$ and $Y$ be cover spaces.
-Then $f : I \times X \to Y$ is a cover map if and only if $f(n,-)$ is a cover map for all $n \in I$ and, for every Cauchy cover $D$ of $Y$, the set $\{ U \mid \exists N \in I, \exists V \in D, I_{\geq N} \times U \subseteq f^{-1}(V) \}$ is a Cauchy cover of $X$.
+Let $I$ be a directed set, and let $X$ and $Y$ be cover spaces.
+A function $f : I \times X \to Y$ is a cover map if and only if the following conditions hold:
+\begin{enumerate}
+\item For every $n \in I$, the map $f(n, -) : X \to Y$ is a cover map.
+\item For every Cauchy cover $D$ of $Y$, the set
+        \[ \{ U \mid \exists N \in I, \exists V \in D, I_{\geq N} \times U \subseteq f^{-1}(V) \} \]
+        is a Cauchy cover of $X$.
+\end{enumerate}
 \end{prop}
 \begin{proof}
-Since the reflector preserves products, a function $f : I \times X \to Y$ is a cover map for the cover space structure on $I$ if and only if it is a cover map for the precover space structure on $I$.
-Thus, it is a cover map if and only if, for every Cauchy cover $D$ on $Y$, the set $\{ f^{-1}(V) \mid V \in D \}$ satisfies conditions \eqref{it:dir-char} and \eqref{it:dir-cover} of \rlem{dir-prod-char}.
-This completes the proof since these conditions are simply a reformulation of conditions in the statement of this proposition.
+Since the reflector preserves products, the function $f : I \times X \to Y$ is a cover map for the cover space structure on $I$ if and only if it is a cover map for the precover space structure on $I$.
+Thus, $f$ is a cover map if and only if, for every Cauchy cover $D$ on $Y$, the collection $\{ f^{-1}(V) \mid V \in D \}$ satisfies conditions \eqref{it:dir-char} and \eqref{it:dir-cover} of \rlem{dir-prod-char}.
+These conditions are equivalent to the ones stated in the proposition, completing the proof.
 \end{proof}
 
-If $Y$ is a uniform space, we can improve this characterization:
+If $Y$ is a uniform space, we can improve the characterization as follows:
 
 \begin{prop}
-Let $I$ be a directed set, $X$ be a cover space, and $Y$ be a uniform space.
-Then $f : I \times X \to Y$ is a cover map if and only if $f(n,-)$ is a cover map for all $n \in I$ and, for every uniform cover $D$ of $Y$,
-the set $\{ U \mid \exists N \in I, \forall x \in U, \exists V \in D, \forall n \geq N, f(n,x) \in V \}$ is a Cauchy cover of $X$.
+Let $I$ be a directed set, $X$ a cover space, and $Y$ a uniform space.
+Then $f : I \times X \to Y$ is a cover map if and only if the following conditions hold:
+\begin{enumerate}
+\item For every $n \in I$, the map $f(n, -) : X \to Y$ is a cover map.
+\item For every uniform cover $D$ of $Y$, the set
+        \[ \{ U \mid \exists N \in I, \forall x \in U, \exists V \in D, \forall n \geq N, f(n, x) \in V \} \]
+        is a Cauchy cover of $X$.
+\end{enumerate}
 \end{prop}
 \begin{proof}
-The ``only if'' direction immediately follows from \rprop{func-conv-char}.
-Let us prove the converse.
-To do this, we will show that, for every uniform cover $E$ of $Y$, there exists a Cauchy cover $C$ of $X$ such that, for every $U \in C$, there exists $N \in I$ and a Cauchy cover $D$ of $X$
-such that, for every $V \in D$, there exists $W \in E$ such that $I_{\geq N} \times (U \cap V) \subseteq f^{-1}(W)$.
+The ``only if'' direction follows immediately from \rprop{func-conv-char}.
+To prove the converse, we show that, for every uniform cover $E$ of $Y$, there exists a Cauchy cover $C$ of $X$ such that, for every $U \in C$,
+there exist $N \in I$ and a Cauchy cover $D$ of $X$ with the property that, for every $V \in D$, there exists $W \in E$ satisfying
+$I_{\geq N} \times (U \cap V) \subseteq f^{-1}(W)$.
 
-By \axref{UU}, there exists a uniform cover $E'$ of $Y$ such that, for every $W' \in E'$,
-there exists $W \in E$ such that every $W'' \in E'$ satisfies the implication $\overlap{W''}{W'} \implies W'' \subseteq W$.
-By assumption, $C = \{ U \mid \exists N \in I, \forall x \in U, \exists W' \in E', \forall n \geq N, f(n,x) \in W' \}$ is a Cauchy cover of $X$.
-Let $U$ be an element of $C$.
-Then there exists $N \in I$ such that $\forall x \in U, \exists W' \in E', \forall n \geq N, f(n,x) \in W'$.
-The set $D = \{ f(N,-)^{-1}(W') \mid W' \in E' \}$ is a Cauchy cover by assumption.
-We need to show that, for every $W'$ be an element of $E'$, there exists $W \in E$ such that $I_{\geq N} \times (U \cap f(N,-)^{-1}(W')) \subseteq f^{-1}(W)$.
-Let $W$ be an element of $E$ such that every $W'' \in E'$ satisfies the implication $\overlap{W''}{W'} \implies W'' \subseteq W$.
-Let $n$ be an element of $I$ such that $n \geq N$ and $x$ be an element of $U$ such that $f(N,x) \in W'$.
-Then there exists $W'' \in E'$ such that, for every $n \geq N$, $f(n,x) \in W''$.
-Since $f(N,x) \in W'' \cap W'$, we have that $W'' \subseteq W$.
-Since $f(n,x) \in W''$, we get that $f(n,x) \in W$, which completes the proof of the intermediate step.
+By \axref{UU}, there exists a uniform cover $E'$ of $Y$ such that, for every $W' \in E'$, there exists $W \in E$ such that, for all $W'' \in E'$, we know $\overlap{W''}{W'} \implies W'' \subseteq W$.
+By assumption, the set
+\[ C = \{ U \mid \exists N \in I, \forall x \in U, \exists W' \in E', \forall n \geq N, f(n, x) \in W' \} \]
+is a Cauchy cover of $X$.
+Let $U \in C$.
+Then there exists $N \in I$ such that
+\[ \forall x \in U, \exists W' \in E', \forall n \geq N, f(n, x) \in W'. \]
+Define the set
+\[ D = \{ f(N, -)^{-1}(W') \mid W' \in E' \}, \]
+which is a Cauchy cover by assumption.
 
-Finally, let us prove that $f : I \times X \to Y$ is a cover map.
-It is enough to show that, for every uniform cover $E$ of $Y$, the set $\{ f^{-1}(W) \mid W \in E \}$ is a Cauchy cover of $I \times X$.
-By \rlem{dir-prod-char}, we need to show that the set $C' = \{ U \mid \exists N \in I, \exists W \in E, I_{\geq N} \times U \subseteq f^{-1}(W) \}$ is a Cauchy cover of $X$.
-Let $C$ be a Cauchy cover of $X$ such that, for every $U \in C$, there exists $N \in I$ and a Cauchy cover $D$ of $X$
-such that, for every $V \in D$, there exists $W \in E$ such that $I_{\geq N} \times (U \cap V) \subseteq f^{-1}(W)$.
-Then the set $D_U = \{ V \mid \exists N \in I, \exists W \in E, I_{\geq N} \times (U \cap V) \subseteq f^{-1}(W) \}$ is a Cauchy cover for every $U \in C$.
-This completes the proof since $C'$ is refined by the Cauchy cover $\{ U \cap V \mid U \in C, V \in D_U \}$.
+We now show that, for every $W' \in E'$, there exists $W \in E$ such that
+\[ I_{\geq N} \times (U \cap f(N, -)^{-1}(W')) \subseteq f^{-1}(W). \]
+Let $W \in E$ satisfy the condition that, for every $W'' \in E'$, we have
+$\overlap{W''}{W'} \implies W'' \subseteq W$.
+Let $n \in I$ with $n \geq N$ and $x \in U$ such that $f(N, x) \in W'$. Then there exists $W'' \in E'$ such that, for every $n \geq N$, $f(n, x) \in W''$.
+Since $f(N, x) \in W'' \cap W'$, it follows that $W'' \subseteq W$. Thus, $f(n, x) \in W$, completing the proof of this intermediate step.
+
+Finally, we prove that $f : I \times X \to Y$ is a cover map.
+It suffices to show that, for every uniform cover $E$ of $Y$, the set $\{ f^{-1}(W) \mid W \in E \}$ is a Cauchy cover of $I \times X$.
+By Lemma~\ref{lem:dir-prod-char}, we need to show that the set
+\[
+C' = \{ U \mid \exists N \in I, \exists W \in E, I_{\geq N} \times U \subseteq f^{-1}(W) \}
+\]
+is a Cauchy cover of $X$.
+
+Let $C$ be a Cauchy cover of $X$ such that, for every $U \in C$, there exist $N \in I$ and a Cauchy cover $D$ of $X$ satisfying
+\[
+\forall V \in D, \exists W \in E, I_{\geq N} \times (U \cap V) \subseteq f^{-1}(W).
+\]
+Then, for every $U \in C$, the set
+\[
+D_U = \{ V \mid \exists N \in I, \exists W \in E, I_{\geq N} \times (U \cap V) \subseteq f^{-1}(W) \}
+\]
+is a Cauchy cover. This completes the proof since $C'$ is refined by the Cauchy cover
+$\{ U \cap V \mid U \in C, V \in D_U \}$.
 \end{proof}
 
 \begin{cor}[func-conv-metric-char]
-Let $I$ be a directed set, $X$ be a cover space, and $Y$ be a metric space.
-Then $f : I \times X \to Y$ is a cover map if and only if $f(n,-)$ is a cover map for all $n \in I$ and, for every $\varepsilon > 0$,
-the set $\{ U \mid \exists N \in I, \forall x \in U, \forall n \geq N, d_Y(f(n,x),f(N,x)) < \varepsilon \}$ is a Cauchy cover of $X$.
+Let $I$ be a directed set, $X$ a cover space, and $Y$ a metric space.
+Then $f : I \times X \to Y$ is a cover map if and only if the following conditions hold:
+\begin{enumerate}
+\item For every $n \in I$, the map $f(n, -) : X \to Y$ is a cover map.
+\item For every $\varepsilon > 0$, the set
+        \[ \{ U \mid \exists N \in I, \forall x \in U, \forall n \geq N, d_Y(f(n, x), f(N, x)) < \varepsilon \} \]
+        is a Cauchy cover of $X$.
+\end{enumerate}
 \end{cor}
 
-If $a_n$ is a sequence of real numbers, we will say that a series $\sum\limits_{n = 0}^\infty a_n$ \emph{converges} if the sequence $s_k = \sum\limits_{n = 0}^k a_n$ of partial sums converges.
-If $\sum\limits_{n = 0}^\infty a_n x^n$ converges for all $x$, then standard techniques imply that it converges uniformly on bounded subsets.
-Now, \rcor{func-conv-metric-char} implies that the function $x \mapsto \sum\limits_{n = 0}^\infty a_n x^n$ is a cover map in this case.
-This can be used to define various cover maps such as the exponential function, sine, cosine, and so forth.
-% TODO: Since cover maps correspond to morphisms of locales, this provides an alternative approach for construction of these maps to the one described in \cite{}.
+If $(a_n)$ is a sequence of real numbers, we say that the series $\sum\limits_{n=0}^\infty a_n$ \emph{converges} if the sequence of partial sums, $s_k = \sum\limits_{n=0}^k a_n$, converges.
+If the power series $\sum\limits_{n=0}^\infty a_n x^n$ converges for all $x$, then standard techniques imply that it converges uniformly on bounded subsets.
+By \rcor{func-conv-metric-char}, it follows that the function $x \mapsto \sum\limits_{n=0}^\infty a_n x^n$ is a cover map in this case.
+This result can be used to define various cover maps such as the exponential function, sine, cosine, and other similar functions.
 
-Finally, we will discuss limits of functions of the form $f : \mathbb{R}_* \to \mathbb{R}$.
-As usual, we will say that $y$ is a \emph{limit} of $f$ at $0$ if, for every $\varepsilon > 0$,
+Constructing these maps as morphisms of locales, however, may be somewhat challenging (see, for example, \cite{vickers-exp}).
+Since cover maps correspond to localic maps, the framework of cover spaces provides an alternative approach for the construction of such maps.
+This approach is much closer to the usual classical presentation.
+
+Finally, we discuss the limits of functions of the form $f : \mathbb{R}_* \to \mathbb{R}$.
+As usual, we say that $y$ is a \emph{limit} of $f$ at $0$ if, for every $\varepsilon > 0$,
 there exists $\delta > 0$ such that, for every $x \in \mathbb{R}_*$, if $\abs{x} < \delta$, then $\abs{f(x) - y} < \varepsilon$.
 The relationship between this notion and a lifting property is given by the following proposition:
 
@@ -2668,26 +2750,30 @@ The limit is then equal to $\widetilde{f}(0)$.
 \end{prop}
 \begin{proof}
 Assume that $f$ extends to $\widetilde{f}$.
-\rlem{cover-map-rb} implies that, for every $\varepsilon > 0$, the set $\widetilde{f}^{-1}(B_\varepsilon(\widetilde{f}(0)))$ is a neighborhood of $0$.
-It follows that $\widetilde{f}(0)$ is a limit of $f$ at $0$.
+By \rlem{cover-map-rb}, for every $\varepsilon > 0$, the set $\widetilde{f}^{-1}(B_\varepsilon(\widetilde{f}(0)))$ is a neighborhood of $0$.
+It follows that $\widetilde{f}(0)$ is the limit of $f$ at $0$.
 
-Now, assume that $L$ is a limit of $f$ at $0$.
-Let $\mathbb{R}'_*$ be the set of invertible real number with the transferred cover space structure.
-Since it densely embeds into $\mathbb{R}$, every cover map $\mathbb{R}'_* \to \mathbb{R}$ extends to a unique map $\mathbb{R} \to \mathbb{R}$.
-Thus, we just need to show that $f : \mathbb{R}_* \to \mathbb{R}$ is a cover map from $\mathbb{R}'_*$ to $\mathbb{R}$.
-That is, we need to show that, for every $\varepsilon > 0$, the set $\{ f^{-1}(B_\varepsilon(x)) \mid x \in \mathbb{Q} \}$ is a Cauchy cover of $\mathbb{R}'_*$.
+Now assume that $L$ is the limit of $f$ at $0$.
+Let $\mathbb{R}'_*$ denote the set of invertible real numbers, equipped with the transferred cover space structure.
+Since $\mathbb{R}'_*$ embeds densely into $\mathbb{R}$, every cover map $\mathbb{R}'_* \to \mathbb{R}$ uniquely extends to a map $\mathbb{R} \to \mathbb{R}$.
+Thus, it suffices to show that $f : \mathbb{R}_* \to \mathbb{R}$ is a cover map when regarded as a map $\mathbb{R}'_* \to \mathbb{R}$.
+That is, we need to prove that, for every $\varepsilon > 0$, the family $\{ f^{-1}(B_\varepsilon(x)) \mid x \in \mathbb{Q} \}$ is a Cauchy cover of $\mathbb{R}'_*$.
 
 For every $\varepsilon > 0$, there exists $\delta > 0$ such that $B_\delta(0) \cap \mathbb{R}_* \subseteq f^{-1}(B_\varepsilon(L))$.
-Now, endow $V = \left(- \infty, - \frac{\delta}{3} \right) \cup \left(\frac{\delta}{3}, \infty \right)$ with the transferred cover space structure.
-It does not matter if we transfer it from $\mathbb{R}_*$ or $\mathbb{R}$ since the result is the same.
-Since the composite $V \to \mathbb{R}_* \overset{f}\to \mathbb{R}$ is a cover map,
+Now, define $V = \left(-\infty, -\frac{\delta}{3}\right) \cup \left(\frac{\delta}{3}, \infty\right)$, equipped with the transferred cover space structure.
+It does not matter whether this structure is transferred from $\mathbb{R}_*$ or $\mathbb{R}$, as the result is the same.
+Since the composite $V \to \mathbb{R}_* \overset{f}{\to} \mathbb{R}$ is a cover map,
 there exists a Cauchy cover $C$ of $\mathbb{R}$ such that $\{ U \cap V \mid U \in C \}$ refines $\{ f^{-1}(B_\varepsilon(y)) \mid y \in \mathbb{Q} \}$.
 
 Since $\{ U \cap B_{\delta/3}(x) \cap \mathbb{R}_* \mid U \in C, x \in \mathbb{Q} \}$ is a Cauchy cover of $\mathbb{R}'_*$,
 it is enough to show that it refines $\{ f^{-1}(B_\varepsilon(x)) \mid x \in \mathbb{Q} \}$.
-Let $U$ be a set in $C$ and $x$ be a rational number.
-If $\abs{x} \geq \frac{2}{3} \delta$, then $U \cap B_{\delta/3}(x) \cap \mathbb{R}_*$ is a subset of $U \cap V$ and, hence, it is a subset of $f^{-1}(B_\varepsilon(y))$ for some $y \in \mathbb{Q}$.
-If $\abs{x} \leq \frac{2}{3} \delta$, then $U \cap B_{\delta/3}(x) \cap \mathbb{R}_* \subseteq B_\delta(0) \cap \mathbb{R}_* \subseteq f^{-1}(B_\varepsilon(L))$.
+Let $U \in C$ and $x \in \mathbb{Q}$.
+Consider two cases:
+\begin{itemize}
+\item If $\abs{x} \geq \frac{2}{3} \delta$, then $U \cap B_{\delta/3}(x) \cap \mathbb{R}_* \subseteq U \cap V$,
+so $U \cap B_{\delta/3}(x) \cap \mathbb{R}_* \subseteq f^{-1}(B_\varepsilon(y))$ for some $y \in \mathbb{Q}$.
+\item If $\abs{x} \leq \frac{2}{3} \delta$, then $U \cap B_{\delta/3}(x) \cap \mathbb{R}_* \subseteq B_\delta(0) \cap \mathbb{R}_* \subseteq f^{-1}(B_\varepsilon(L))$.
+\end{itemize}
 This completes the proof.
 \end{proof}
 
