@@ -1,0 +1,590 @@
+\documentclass[reqno]{amsart}
+
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{ifthen}
+\usepackage{xargs}
+\usepackage[all]{xy}
+\usepackage{mathtools}
+
+\hypersetup{colorlinks=true,linkcolor=blue}
+
+\newcommand{\axlabel}[1]{(#1) \phantomsection \label{ax:#1}}
+\newcommand{\axitem}[1]{\phantomsection \label{ax:#1}}
+\newcommand{\axref}[1]{(\hyperref[ax:#1]{#1})}
+
+\newcommand{\newref}[4][]{
+\ifthenelse{\equal{#1}{}}{\newtheorem{h#2}[hthm]{#4}}{\newtheorem{h#2}{#4}[#1]}
+\expandafter\newcommand\csname r#2\endcsname[1]{#3~\ref{#2:##1}}
+\expandafter\newcommand\csname R#2\endcsname[1]{#4~\ref{#2:##1}}
+\expandafter\newcommand\csname n#2\endcsname[1]{\ref{#2:##1}}
+\newenvironmentx{#2}[2][1=,2=]{
+\ifthenelse{\equal{##2}{}}{\begin{h#2}}{\begin{h#2}[##2]}
+\ifthenelse{\equal{##1}{}}{}{\label{#2:##1}}
+}{\end{h#2}}
+}
+
+\newref[section]{thm}{Theorem}{Theorem}
+\newref{lem}{Lemma}{Lemma}
+\newref{prop}{Proposition}{Proposition}
+\newref{cor}{Corollary}{Corollary}
+\newref{cond}{Condition}{Condition}
+
+\theoremstyle{definition}
+\newref{defn}{Definition}{Definition}
+\newref{example}{Example}{Example}
+
+\theoremstyle{remark}
+\newref{remark}{Remark}{Remark}
+
+\numberwithin{figure}{section}
+
+\newcommand{\cover}{\triangleleft}
+\newcommand{\cat}[1]{\mathbf{#1}}
+\renewcommand{\deg}[1]{\mathrm{deg}(#1)}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+\makeatother
+
+\begin{document}
+
+\title{A Simple and Constructive Approach to Schemes}
+
+\author{Valery Isaev}
+
+\begin{abstract}
+TODO
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+Scheme theory, introduced by Grothendieck in the 1960s \cite{EGA1}, provides a far-reaching generalization of classical algebraic geometry by systematically incorporating nilpotent elements and enabling a flexible functorial viewpoint.
+While this framework has proved extraordinarily powerful, it is inherently abstract and technically demanding, and these difficulties arise already at the level of the definition:
+a scheme is formulated in terms of several layers of sophisticated concepts, including sheaves, locally ringed spaces, and the spectrum of a ring.
+
+Moreover, even when working with concrete examples such as $\mathrm{Spec}(R)$, one encounters an additional layer of subtlety.
+The structure sheaf is defined explicitly only on a basis of open sets, while its values on arbitrary open subsets are obtained indirectly via the sheaf condition.
+In practice, computations and constructions are carried out almost exclusively on these basic open sets.
+
+Let us recall how this works in the case of $\mathrm{Spec}(R)$.
+Consider the standard basis of principal open subsets $D(a) \subseteq \mathrm{Spec}(R)$. The structure sheaf is explicitly given on these opens by
+\[ \mathcal{O}(D(a)) = R[a^{-1}], \]
+the localization of $R$ at $a$. If $D(b) \subseteq D(a)$, the restriction map
+\[ \mathcal{O}(D(a)) \to \mathcal{O}(D(b)) \]
+is simply the canonical localization map $R[a^{-1}] \to R[b^{-1}]$.
+Thus, on this basis, everything is described in purely algebraic terms using localizations.
+
+On the other hand, for an arbitrary open subset $U \subseteq \mathrm{Spec}(R)$,
+the ring $\mathcal{O}(U)$ is not given directly, but rather defined as the set of compatible families of sections over coverings of $U$ by principal opens.
+In other words, its definition relies entirely on the sheaf condition, and it does not introduce essentially new algebraic data beyond what is already present on the basic opens.
+
+This observation motivates the main idea of the present paper: the role of the sheaf condition is primarily to ensure that sections over arbitrary open sets are uniquely determined by their values on a generating family.
+Consequently, a scheme carries a significant amount of redundant data, since much of the structure is uniquely recoverable from a considerably smaller collection of information.
+
+By eliminating this redundancy, one can not only simplify the underlying data but also streamline several technical aspects of the definition of a scheme.
+In this paper, we demonstrate that schemes can be described in a more elementary and convenient way, avoiding much of the traditional formal overhead.
+
+Our approach may be particularly useful for beginners, as it reduces the conceptual barrier to entry, and it is also well-suited for formalization.
+In fact, the entire development presented here has been fully formalized in the proof assistant Arend.
+Furthermore, our construction is entirely constructive.
+
+The central notion we introduce is that of a \emph{scheme site}.
+Informally, a scheme site can be thought of as a scheme together with a chosen atlas of affine open subsets.
+More precisely, it consists of a preorder equipped with a presheaf of rings satisfying a small number of simple conditions (see \rdefn{scheme-site}).
+
+From the perspective of scheme sites, the example of $\mathrm{Spec}(R)$ can be reformulated as follows.
+One considers the preorder whose underlying set is $R$, with the relation
+\[
+b \leq a \quad \text{if and only if} \quad a \mid b.
+\]
+The structure presheaf $\mathcal{O}$ is defined as
+\[
+\mathcal{O}_a = R[a^{-1}],
+\]
+for an element $a \in R$, with restriction maps given by the canonical localizations.
+This is the complete description of the underlying data of a scheme site.
+The defining properties of a scheme site then follow directly from basic properties of localization (see \rexample{spec}).
+
+Every scheme site gives rise to a scheme, and conversely, every scheme can be represented by a scheme site, although this representation is not unique.
+We also define morphisms of scheme sites in such a way that they correspond exactly to morphisms of the associated schemes.
+As a result, scheme sites form a category equivalent to the category of schemes.
+Thus, scheme sites provide a more elementary and constructive alternative to the classical notion of a scheme.
+
+\subsection{Related work}
+
+The Lean formalization of schemes presented in \cite{schemes-lean} has undergone several iterations.
+In that work, the authors observe that it is more convenient to work with an abstract notion of localization of rings rather than with explicit constructions; this insight is equally applicable in our setting.
+However, our framework is more elementary, since we do not need to introduce either sheaves or locally ringed spaces at all.
+Moreover, our development is entirely constructive.
+
+In constructive approaches to scheme theory, it is common to replace topological spaces with locales \cite{blechschmidt}, formal topologies \cite{schemes-schuster}, or lattices \cite{schemes-zeuner,schemes-coquand}.
+We go further by working with arbitrary preorders, making the theory not only constructive and predicative, but also considerably simpler.
+
+% TODO: Дальше организация статьи.
+
+\section{Scheme sites}
+
+In this section, we introduce our central notion of scheme sites and construct the fundamental examples of scheme sites,
+namely the spectrum of a ring $\mathrm{Spec}(R)$ and the projective spectrum of a graded ring $\mathrm{Proj}(R)$.
+The only categorical and algebraic prerequisites required in this development are presheaves on preorders and localizations of rings.
+In particular, in this section, we do not assume any prior knowledge of sheaves or locally ringed spaces.
+Throughout the paper, all rings are assumed to be commutative with unit, and all ring homomorphisms preserve the unit.
+
+We begin by recalling the necessary definitions.
+A \emph{preorder} is a set equipped with a reflexive and transitive relation.
+Let $X$ be a preorder.
+A \emph{presheaf of rings} $\mathcal{O}^X$ on $X$ consists of the following data:
+\begin{itemize}
+\item for every $a \in X$, a ring $\mathcal{O}^X_a$,
+\item for every $b \leq a$, a ring homomorphism
+\[
+\mathcal{O}^X_{b,a} : \mathcal{O}^X_a \to \mathcal{O}^X_b,
+\]
+called the \emph{restriction map},
+\end{itemize}
+such that
+\begin{itemize}
+\item for every $a \in P$, we have $\mathcal{O}^X_{a,a} = \mathrm{id}_{\mathcal{O}^X_a}$,
+\item for every $c \leq b \leq a$, we have
+\[
+\mathcal{O}^X_{c,b} \circ \mathcal{O}^X_{b,a} = \mathcal{O}^X_{c,a}.
+\]
+\end{itemize}
+
+Finally, we recall the notion of localization of a ring.
+As observed in~\cite[Section~4.1]{schemes-lean}, it is convenient to work with an abstract characterization of localizations rather than a specific construction such as $R[S^{-1}]$.
+
+\begin{defn}[ring-loc]
+Let $f : R \to T$ be a homomorphism of rings.
+Let $S$ be a multiplicative submonoid of $R$.
+We say that $f$ is a \emph{localization} at $S$ if the following conditions hold:
+\begin{enumerate}
+\item For every $x \in S$, the element $f(x)$ is invertible.
+\item For every $z \in T$, there exist $y \in R$ and $x \in S$ such that $z f(x) = f(y)$.
+\item For every $y \in R$, if $f(y) = 0$, then there exists $x \in S$ such that $y x = 0$.
+\end{enumerate}
+\end{defn}
+
+The last two conditions are equivalent to the usual universal property of localizations:
+for every homomorphism of rings $g : R \to T'$ such that $g(x)$ is invertible for every $x \in S$,
+there exists a unique homomorphism $\widetilde{g} : T \to T'$ satisfying $\widetilde{g} \circ f = g$.
+
+The localization at $S$ always exists and is unique up to an isomorphism.
+The canonical localization $R[S^{-1}]$ is defined as the set of equivalence classes of pairs $(y,x)$, where $y \in R$ and $x \in S$.
+Two pairs $(y_1,x_1)$ and $(y_2,x_2)$ are equivalent if there exists $z \in S$ such that $y_1 x_2 z = y_2 x_1 z$.
+We denote the equivalence class of a pair $(y,x)$ by $y/x$.
+The map $R \to R[S^{-1}]$ is given by $y \mapsto y/1$.
+We will work only with localizations at sets of the form $S_x = \{ x^n \mid n \in \mathbb{N} \}$ for some $x \in R$.
+The canonical localization $R[S_x^{-1}]$ will be denoted by $R[x^{-1}]$.
+
+We collect several standard facts about localizations that will be used throughout the paper.
+Proofs are straightforward and can be found in the literature, so we omit them.
+
+\begin{lem}[loc-comp]
+Let $f : R \to T$ and $g : T \to U$ be homomorphisms of rings.
+If $f$ is a localization at $x \in R$ and $g$ is a localization at $f(y)$ for some $y \in R$, then $g \circ f$ is a localization at $x y$.
+\end{lem}
+
+\begin{lem}[loc-factor]
+Let $f : R \to T$ and $g : T \to U$ be homomorphisms of rings.
+If $f$ is a localization at $S \subseteq R$ and $g \circ f$ is a localization at $x \in R$, then $g$ is a localization at $f(x)$.
+\end{lem}
+
+\begin{lem}[loc-transport]
+Let $f : R \to T$ be a localization at $x \in R$.
+Then $f$ is also a localization at $y \in R$ if and only if there exist $n,k \in \mathbb{N}$ such that
+\[ x \mid y^n \quad \text{and} \quad y \mid x^k. \]
+\end{lem}
+
+\begin{lem}[loc-ideal]
+Let $f : R \to T$ be a localization at $S \subseteq R$.
+Let $U$ be a subset of $R$.
+Then the ideal of $T$ generated by the set $f(U)$ is the unit ideal if and only if the ideal generated by $U$ contains an element of $S$.
+\end{lem}
+
+\subsection{Definition of scheme sites}
+
+We are now ready to introduce the central notion of this paper.
+
+\begin{defn}[scheme-site]
+A \emph{scheme site} is a preorder $X$ together with a presheaf of rings $\mathcal{O}^X$ on $X$, called \emph{the structure presheaf}, satisfying the following conditions:
+\begin{enumerate}
+\item[(SE)] \axitem{SE} For every $a \in X$ and $x \in \mathcal{O}^X_a$, there exists $b \leq a$ such that $\mathcal{O}^X_{b,a}$ is a localization at $x$.
+\item[(SC)] \axitem{SC} For every $a',a,b \in X$ such that $a' \leq a$ and $b \leq a$, there exist $x \in \mathcal{O}^X_a$ and $b' \in X$ such that
+    $b' \leq a'$, $b' \leq b$, $\mathcal{O}^X_{b,a}$ is a localization at $x$, and $\mathcal{O}^X_{b',a'}$ is a localization at $\mathcal{O}^X_{a',a}(x)$.
+\end{enumerate}
+We call elements of $X$ \emph{affine opens} of the scheme site.
+\end{defn}
+
+The elements of a scheme site $X$ should be thought of as affine open subsets of the corresponding scheme, although not every affine open is required to belong to $X$.
+If $b \leq a$, then the affine open corresponding to $b$ is contained within the one corresponding to $a$,
+but the converse does not necessarily hold: inclusion of affine opens is only partially reflected by the preorder structure.
+
+Condition \axref{SE} means that we have enough affine opens: every localization can be realized as a restriction to some affine open.
+Condition \axref{SC} can be visualized as the following diagram, where labels on arrows denote elements with respect to which the corresponding restriction maps are localizations.
+\[ \xymatrix{ b' \ar@{-->}[r] \ar@{-->}[d]_{\mathcal{O}^X_{a',a}(x)} & b \ar[d]^x \\
+              a' \ar[r]                                              & a
+	    } \]
+
+This condition combines two properties.
+The first property is that all restriction maps are localizations.
+The second property is the existence of intersections: the element $b'$ plays the role of the intersection of $a'$ and $b$.
+In fact, we can show that it is equivalent two the combination of these properties:
+
+\begin{prop}
+In the context of \rdefn{scheme-site}, condition \axref{SC} is equivalent to the following conditions:
+\begin{enumerate}
+\item[(SR)] \axitem{SR} For every $a \in X$ and $b \leq a$, the map $\mathcal{O}^X_{b,a} : \mathcal{O}^X_a \to \mathcal{O}^X_b$ is a localization at some $x \in \mathcal{O}^X_a$.
+\item[(SS)] \axitem{SS} For every $a',a,b \in X$ such that $a' \leq a$ and $b \leq a$, if $\mathcal{O}^X_{b,a}$ is a localization at some $x \in \mathcal{O}^X_a$,
+then there exists $b' \in X$ such that $b' \leq a'$, $b' \leq b$, and $\mathcal{O}^X_{b',a'}$ is a localization at $\mathcal{O}^X_{a',a}(x)$.
+\end{enumerate}
+\end{prop}
+\begin{proof}
+Clearly, \axref{SR} and \axref{SS} together imply \axref{SC}.
+In the opposite direction, \axref{SR} follows from \axref{SC} if we take $a' = a$.
+Finally, \axref{SC} implies \axref{SS} by \rlem{loc-transport}.
+\end{proof}
+
+\begin{example}[spec]
+Let $R$ be a ring.
+We define \emph{the spectrum of $R$}, denoted $\mathrm{Spec}(R)$, as the following scheme site:
+\begin{itemize}
+\item The underlying preorder of $\mathrm{Spec}(R)$ is $(R,\leq)$, where $b \leq a$ if and only if $a$ divides $b$.
+\item The structure presheaf $\mathcal{O}^R_a$ is defined as $R[a^{-1}]$.
+\item If $b \leq a$, then $\mathcal{O}^R_{b,a} : R[a^{-1}] \to R[b^{-1}]$ is defined by the universal property of $R[a^{-1}]$.
+\end{itemize}
+Let us verify the conditions of \rdefn{scheme-site}:
+\begin{enumerate}
+\item[\axref{SE}] Let $x/a^n$ be an element of $\mathcal{O}^R_a$. Define $b$ as $x a$.
+                  Then $b \leq a$ and \rlem{loc-factor} implies that $\mathcal{O}^R_{b,a}$ is a localization at $b/1$.
+                  By \rlem{loc-transport}, this map is also a localization at $x/a^n$.
+\item[\axref{SS}] Let $a',a,b$ be elements of $R$ such that $a' \leq a$ and $b \leq a$.
+                  Then there exist $c,d \in R$ such that $a' = a c$ and $b = a d$.
+                  Define $b'$ as $a c d$.
+                  Then $b' \leq a'$ and $b' \leq b$.
+                  By \rlem{loc-factor}, $\mathcal{O}^R_{b,a}$ is a localization at $b/1$ and $\mathcal{O}^R_{b',a'}$ is a localization at $b'/1$.
+                  By \rlem{loc-transport}, $\mathcal{O}^R_{b',a'}$ is also a localization at $\mathcal{O}^R_{a',a}(b/1) = b/1$.
+\end{enumerate}
+\end{example}
+
+In the classical approach, the definition of schemes depends on the construction of $\mathrm{Spec}(R)$.
+More precisely, one first introduces locally ringed spaces, then defines $\mathrm{Spec}(R)$ as a particular example of such a space,
+and only afterwards defines schemes and verifies that $\mathrm{Spec}(R)$ is indeed a scheme.
+
+In contrast, in our approach the definition of scheme sites is independent of $\mathrm{Spec}(R)$.
+As a result, we obtain a more direct and streamlined sequence of definitions.
+
+\subsection{Projective spectrum}
+
+The projective spectrum of a graded ring is another fundamental example of schemes.
+To define the corresponding scheme site, we first recall the necessary definitions.
+
+A \emph{graded ring} is a ring $R$ together with a sequence of additive submonoids $R_n \subseteq R$ satisfying the following conditions:
+\begin{itemize}
+\item Every element of $R$ can be expressed as a sum $x_0 + \ldots + x_k$, where $x_i \in R_i$ for each $i$.
+\item If $x_0 + \ldots + x_k = 0$ and $x_i \in R_i$ for each $i$, then $x_i = 0$ for each $i$.
+\item For all $x \in R_n$ and $y \in R_m$, we have $xy \in R_{n+m}$.
+\end{itemize}
+Elements of $R_n$ are called \emph{homogeneous} elements of degree $n$.
+
+If $x$ is a homogeneous element, we will write $\deg{x} \in \mathbb{N}$ for its degree.
+Note that the degree of a homogeneous element is not unique, so $\deg{x}$ is not a function of $x$.
+Instead, $\deg{x}$ is just a convenient notation for some natural number such that $x \in R_{\deg{x}}$.
+
+We list necessary standard lemmas about graded rings without proofs.
+
+\begin{lem}
+If $a$ is a homogeneous element of degree $n$, then $a^k$ is a homogeneous element of degree $n k$.
+\end{lem}
+
+\begin{lem}[homogen-degree]
+If $x$ is a homogeneous element of degree $n$ and of degree $m$, then either $x = 0$ or $n = m$.
+\end{lem}
+
+\begin{lem}[homogen-div]
+If $a$ and $b$ are homogeneous elements such that $a \mid b$, then there exists a homogeneous element $c$ such that $b = a c$.
+\end{lem}
+
+\begin{lem}[homogen-loc-inv]
+Let $R$ be a graded ring, and let $a \in R$ be a homogeneous element.
+If an element $x \in R[a^{-1}]_0$ is invertible in $R[a^{-1}]$, then its inverse belongs to $R[a^{-1}]_0$.
+\end{lem}
+% \begin{proof}
+% By assumption, there exists a representation $y/a^n$ of $x$ such that $\deg{y} = \deg{a^n}$.
+% We also know that there exists $z/a^k$ such that $yz/a^{n+k} = 1$, which means there exists $m \in \mathbb{N}$ such that $yza^m = a^{n+k+m}$.
+% By \rlem{homogen-div}, we may assume that $z$ is homogeneous.
+% By \rlem{homogen-degree}, either $a^{n+k+m} = 0$ or
+% \[ \deg{y} + \deg{z} + m \deg{a} = (n+k+m) \deg{a}. \]
+% 
+% In the former case, the ring $R[a^{-1}]$ is trivial, so the conclusion is obvious.
+% In the latter case, the equation above implies that $\deg{z} = \deg{a^k}$, so $z/a^k$ belongs to $R[a^{-1}]_0$.
+% \end{proof}
+
+Let $S$ be a multiplicative submonoid of a graded ring $R$.
+We will write $R[S^{-1}]_0$ for the subring of $R[S^{-1}]$ consisting of elements that can be presented in the form $x/y$ with $x$ and $y$ homogeneous of the same degree.
+
+Now, we are ready to define the projective spectrum of a graded ring:
+
+\begin{example}[proj]
+Let $R$ be a graded ring.
+We define \emph{the projective spectrum of $R$}, denoted $\mathrm{Proj}(R)$, as the following scheme site:
+\begin{itemize}
+\item The underlying preorder of $\mathrm{Spec}(R)$ consists of homogeneous elements of positive degree with $b \leq a$ if and only if $a$ divides $b$.
+\item The structure presheaf $\mathcal{O}^{(0)}_a$ is defined as $R[a^{-1}]_0$.
+\item If $b \leq a$, then the restriction of $\mathcal{O}^R_{b,a} : R[a^{-1}] \to R[b^{-1}]$ to $R[a^{-1}]_0$ has the image inside $R[b^{-1}]_0$.
+Indeed, by \rlem{homogen-div}, there exists a homogeneous element $c$ such that $b = a c$.
+If $x/a^n$ is an element of $R[a^{-1}]_0$ such that $\deg{x} = \deg{a^n}$,
+then $\mathcal{O}^R_{b,a}(x/a^n) = x c^n / b^n$ belongs to $R[b^{-1}]_0$ since $\deg{x c^n} = \deg{x} + n \deg{c} = n(\deg{a} + \deg{c}) = \deg{b^n}$.
+
+Thus, we can define $\mathcal{O}^{(0)}_{b,a} : R[a^{-1}]_0 \to R[b^{-1}]_0$ as the restriction of $\mathcal{O}^R_{b,a}$.
+\end{itemize}
+\end{example}
+
+To verify the conditions of \rdefn{scheme-site}, we will need a few simple lemmas:
+
+\begin{lem}[homogen-func-conv]
+Let $R$ be a graded ring, and let $b,a \in R$ be homogeneous elements of positive degrees such that $b \leq a$.
+Let $x \in R[a^{-1}]$ be an element such that $\mathcal{O}^R_{b,a}(x)$ belongs to $R[b^{-1}]_0$.
+Then there exists $y \in R[a^{-1}]_0$ such that $\mathcal{O}^R_{b,a}(x) = \mathcal{O}^{(0)}_{b,a}(y)$.
+\end{lem}
+\begin{proof}
+By \rlem{homogen-div}, there exists a homogeneous element $c$ such that $b = a c$.
+Now, if $x = x'/a^n$, then $\mathcal{O}^R_{b,a}(x) = x' c^n / b^n$.
+By assumption, there exists a fraction $y'/b^k$ such that $\deg{y'} = \deg{b^k}$ and $x' c^n / b^n = y'/b^k$.
+This implies that there exists $m \in \mathbb{N}$ such that $x' c^n b^{k+m} = y' b^{n+m}$.
+By \rlem{homogen-div}, there exists a homogeneous $x''$ such that $x'' c^n b^{k+m} = y' b^{n+m}$.
+By \rlem{homogen-degree}, either $y' b^{n+m} = 0$ or
+\[ \deg{x''} + n \deg{c} + (k + m) \deg{b} = \deg{y'} + (n + m) \deg{b}. \]
+
+In the former case, we have $\mathcal{O}^R_{b,a}(x) = 0$, so we can just take $y = 0$.
+In the latter case, define $y$ as $x'' / a^n$.
+The equation above implies that $\deg{x''} = \deg{a^n}$, and we have $\mathcal{O}^R_{b,a}(x) = x' c^n / b^n = x'' c^n / b^n = \mathcal{O}^{(0)}_{b,a}(y)$.
+\end{proof}
+
+\begin{lem}[proj-loc]
+Let $R$ be a graded ring, and let $b,a \in R$ be homogeneous elements of positive degrees such that $b \leq a$.
+Let $x \in R[a^{-1}]_0$ be an element such that $\mathcal{O}^R_{b,a}$ is a localization at $x$.
+Then $\mathcal{O}^{(0)}_{b,a}$ is also a localization at $x$.
+\end{lem}
+\begin{proof}
+Let us verify conditions of \rdefn{ring-loc}:
+\begin{enumerate}
+\item Since $\mathcal{O}^R_{b,a}(x)$ is invertible, by \rlem{homogen-loc-inv}, $\mathcal{O}^R_{b,a}(x)$ is also invertible.
+\item This follows from \rlem{homogen-func-conv} and the corresponding property of the localization map $\mathcal{O}^R_{b,a}$.
+\item This follows immediately from the corresponding property of the localization map $\mathcal{O}^R_{b,a}$.
+\end{enumerate}
+\end{proof}
+
+Now, we can prove that $\mathrm{Proj}(R)$ is a scheme site:
+
+\begin{prop}
+The construction in \rexample{proj} satisfies axioms of scheme sites.
+\end{prop}
+\begin{proof}
+Let us verify conditions of \rdefn{scheme-site}:
+\begin{enumerate}
+\item[\axref{SE}]
+Let $x/a^n$ be an element of $R[a^{-1}]_0$. Define $b$ as $x a$.
+As shown in \rexample{spec}, the map $\mathcal{O}^R_{b,a}$ is a localization at $x/a^n$.
+By \rlem{proj-loc}, the map $\mathcal{O}^{(0)}_{b,a}$ is also a localization at $x/a^n$.
+\item[\axref{SS}]
+Let $a',a,b$ be homogeneous elements of positive degree such that $a' \leq a$ and $b \leq a$.
+Then there exist homogeneous $c,d \in R$ such that $a' = a c$ and $b = a d$.
+Define $b'$ as $a c d$.
+
+As shown in \rexample{spec}, the map $\mathcal{O}^R_{b,a}$ is a localization at $b/1$.
+By \rlem{loc-transport}, it is also a localization at $b^{\deg{a}}/a^{\deg{b}}$.
+By \rlem{proj-loc}, the map $\mathcal{O}^{(0)}_{b,a}$ is also a localization at this element.
+
+Similarly, $\mathcal{O}^R_{b',a'}$ is a localization at $b/1$.
+By \rlem{loc-transport}, it is also a localization at $\mathcal{O}^R_{a',a}(b^{\deg{a}}/a^{\deg{b}}) = b^{\deg{a}} c^{\deg{b}}/a'^{\deg{b}}$.
+By \rlem{proj-loc}, the map $\mathcal{O}^{(0)}_{b',a'}$ is also a localization at this element.
+\end{enumerate}
+\end{proof}
+
+\section{Morphisms of scheme sites}
+
+In this section, we define morphisms of scheme sites making them into a category.
+Later, we will prove that this category is equivalent to the category of schemes.
+
+\subsection{Coverings}
+
+In order to define morphisms of scheme sites, we first introduce an auxiliary notion of coverings for affine opens of a scheme site.
+This notion will also play an important role in subsequent developments, in particular in the construction of the scheme associated to a scheme site.
+
+\begin{defn}[cover]
+Let $(X, \mathcal{O}^X)$ be a scheme site, let $a$ be an affine open of $X$, and let $U$ be a subset of $X$.
+We denote by $C(a,U)$ the following set:
+\[ \{ x \in \mathcal{O}^X_a \mid \exists c \in U, \exists b \in X, b \leq a, b \leq c, \mathcal{O}^X_{b,a} \text{ is a localization at } x \}. \]
+We say that $U$ \emph{covers} $a$, written $a \cover U$, if the ideal of $\mathcal{O}^X_a$ generated by $C(a,U)$ is the unit ideal.
+\end{defn}
+
+The intuition behind this definition is simple: if we think of affine opens as open subsets of a scheme,
+then an element $a$ is covered by a family $U$ precisely when the corresponding open subset is contained within the union of $U$.
+
+Let us demonstrate how this definition works in the case of affine schemes.
+Let $D(a)$ be a principal open subset, and let $U$ be a family of principal opens $D(b)$.
+For simplicity, we assume that principal opens $D(b)$ in $U$ are subsets of $D(a)$.
+Then $D(a)$ is covered by $U$ if and only if $a$ lies in the radical of the ideal generated by the elements $b \in U$.
+This is equivalent to saying that the ideal of the ring $\mathcal{O}_a$ generated by the elements $b/1$ for $b \in U$ is the unit ideal.
+
+Alternatively, instead of the elements $b/1$, one may use elements $x \in \mathcal{O}_a$ such that the map $\mathcal{O}_{b,a}$ is a localization at $x$.
+In the case of affine schemes, this leads to an equivalent definition, but this formulation also works with arbitrary schemes.
+Therefore, we can use it as the definition of the covering relation for scheme sites.
+Since we do not assume that elements of $U$ are less than or equal to $a$,
+instead of taking $b$ directly from $U$, we allow $b$ to be an arbitrary lower bound of $a$ and an element of $U$.
+Thus, we get the condition from \rdefn{cover}.
+
+We now prove that the relation $\cover$ indeed behaves like a covering relation.
+
+\begin{lem}
+The covering relation $\cover$ satisfies the following properties:
+\begin{enumerate}
+\item \label{cover:refl} If $a \in U$, then $a \cover U$.
+\item \label{cover:left} If $a' \leq a$ and $a \cover U$, then $a' \cover U$.
+\item \label{cover:trans} If $a \cover V$ and for every $c \in V$ we have $c \cover U$, then $a \cover U$.
+\end{enumerate}
+\end{lem}
+\begin{proof}
+\
+
+\eqref{cover:refl} This is obvious since $C(a,U)$ contains $1$ if $a$ belongs to $U$.
+
+\eqref{cover:left} It is enough to show that for every $x \in C(a,U)$, the element $\mathcal{O}^X_{a',a}(x)$ belongs to $C(a',U)$.
+Let $x$ be an element of $C(a,U)$.
+Then there exist $c \in U$ and $b \in X$ such that $b \leq a$, $b \leq c$, and $\mathcal{O}^X_{b,a}$ is a localization at $x$.
+By \axref{SS}, there exists $b' \in X$ such that $b' \leq a'$, $b' \leq b$, and $\mathcal{O}^X_{b',a'}$ is a localization at $\mathcal{O}^X_{a',a}(x)$.
+This shows that $\mathcal{O}^X_{a',a}(x)$ belongs to $C(a',U)$.
+
+\eqref{cover:trans} Since $a \cover V$, there exist elements $x_1, \ldots, x_n \in C(a,V)$ such that $1$ is a linear combination of $x_1, \ldots, x_n$.
+Then $1$ is also a linear combination of arbitrary powers of these elements.
+Therefore, it is enough to show that for every $x \in C(a,V)$, the ideal generated by $C(a,U)$ contains some power of $x$.
+
+Let $x$ be an element of $C(a,V)$.
+Then there exist $c \in V$ and $b \in X$ such that $b \leq a$, $b \leq c$, and $\mathcal{O}^X_{b,a}$ is a localization at $x$.
+By \rlem{loc-ideal}, the ideal generated by $C(a,U)$ contains a power of $x$ if and only if the ideal generated by $\mathcal{O}^X_{b,a}(C(a,U))$ contains $1$.
+Let us denote by $I$ the ideal generated by $\mathcal{O}^X_{b,a}(C(a,U))$.
+By \eqref{cover:left}, we know that $b \cover U$.
+Thus, it is enough to show that every element of $C(b,U)$ belongs to $I$.
+
+Let $y$ be an element of $C(b,U)$.
+Then there exist $c' \in U$ and $b' \in X$ such that $b' \leq b$, $b' \leq c'$, and $\mathcal{O}^X_{b',b}$ is a localization at $y$.
+We also know that $y = \mathcal{O}^X_{b,a}(z) \mathcal{O}^X_{b,a}(x^m)^{-1}$ for some $z \in \mathcal{O}^X_a$ and $m \in \mathbb{N}$.
+By \rlem{loc-transport}, the map $\mathcal{O}^X_{b',b}$ is a localization at $\mathcal{O}^X_{b,a}(z)$.
+By \rlem{loc-comp}, the map $\mathcal{O}^X_{b',a}$ is a localization at $x z$.
+This implies that $x z$ belongs to $C(a,U)$.
+It follows that $y$ belongs to $I$.
+This completes the proof.
+\end{proof}
+
+\subsection{Premorphisms of scheme sites}
+
+We begin by introducing the notion of a premorphism of scheme sites.
+Later, morphisms of scheme sites will be defined either as equivalence classes of premorphisms or as premorphisms satisfying a certain completeness condition.
+Thus, premorphisms can be viewed as a convenient way of representing morphisms.
+
+Let $X$ and $Y$ be scheme sites.
+Naively, one might try to define a (pre)morphism between $X$ and $Y$ as a pair $(f^*,f^\#)$,
+where $f^* : Y \to X$ and $f^\#$ is a natural transformation between $\mathcal{O}^Y$ and $\mathcal{O}^X \circ f^*$.
+This definition is too restrictive since $f^*$ always maps affine opens to affine opens, but arbitrary morphisms of schemes do not have to satisfy this property.
+Therefore, instead of taking a function $f^* : Y \to X$, we require only a relation $\leq_f$ on $X \times Y$.
+Intuitively, $b \leq_f a$ holds if and only if the image of $b$ is contained within $a$.
+
+\begin{defn}
+Let $X$ and $Y$ be scheme sites.
+A \emph{premorphism} $f$ between $X$ and $Y$ is a pair $(\leq_f,f^\#)$, where $\leq_f$ is a relation on $X \times Y$ and $f^\#_{b,a} : \mathcal{O}^Y_a \to \mathcal{O}^X_b$ is a ring homomorphism defined for all $b,a$ satisfying $b \leq_f a$.
+This pair is required to satisfy the following conditions:
+\begin{enumerate}
+\item \label{ssm:comp} For all $b,b' \in X$ and $a,a' \in Y$, if $b' \leq b$, $b \leq_f a$, and $a \leq a'$, then $b' \leq_f a'$.
+\item \label{ssm:nat} For all $b,b' \in X$, $a,a' \in Y$, and $x \in \mathcal{O}^Y_{a'}$, if $b' \leq b$, $b \leq_f a$, and $a \leq a'$, then $f^\#_{b',a}(\mathcal{O}^Y_{a,a'}(x)) = \mathcal{O}^X_{b',b}(f^\#_{b,a'}(x))$.
+\item \label{ssm:top} For every $b \in X$, we have
+\[ b \cover \{ b' \in X \mid \exists a \in Y, b' \leq_f a \}. \]
+\item \label{ssm:meet} For all $b \in X$ and $a_1,a_2 \in Y$, if $b \leq_f a_1$ and $b \leq_f a_2$, then
+\[ b \cover \{ b' \in X \mid \exists a \in Y, a \leq a_1, a \leq a_2, b' \leq_f a \}. \]
+\item \label{ssm:loc} For all $b \in X$ and $a,a' \in Y$, if $a' \leq a$ and $b \leq_f a$, then there exist $b' \in X$ and $x \in \mathcal{O}^Y_a$
+such that $b' \leq b$, $b' \leq_f a'$, $\mathcal{O}^Y_{a',a}$ is a localization at $x$, and $\mathcal{O}^X_{b',b}$ is a localization at $f^\#_{b,a}(x)$.
+\end{enumerate}
+\end{defn}
+
+Condition~\eqref{ssm:comp} expresses a natural compatibility of the relation $\leq_f$ with the preorder structures on $X$ and $Y$.
+Condition~\eqref{ssm:nat} expresses the naturality of $f^\#$.
+
+Conditions~\eqref{ssm:top} and~\eqref{ssm:meet} require more discussion.
+Informally, they express that the inverse image operation associated to $f$ preserves finite meets.
+Since the underlying preorders of scheme sites are not assumed to admit finite meets, this property cannot be formulated directly.
+Instead, we impose covering conditions that serve as a substitute.
+
+These conditions are closely related to the notion of flatness for functors between sites (see, for example, \cite[Definition~4.1]{shulman-flat}).
+Indeed, one can associate to every scheme site a site in the usual sense, and a premorphism of scheme sites induces a functor between the corresponding sites.
+Conditions~\eqref{ssm:top} and~\eqref{ssm:meet} are precisely those needed to ensure that this functor is flat.
+In this paper, however, we do not use this approach.
+
+Finally, condition~\eqref{ssm:loc} is formally similar to condition~\axref{SC} in the definition of scheme sites.
+It can be visualized with a similar diagram as before, with the horizontal arrows corresponding to the relation $\leq_f$ rather than $\leq$:
+\[ \xymatrix{ b' \ar@{-->}[r] \ar@{-->}[d]_{f^\#_{b,a}(x)} & a' \ar[d]^x \\
+              b \ar[r]                                     & a
+            } \]
+From a more geometric perspective, this condition corresponds to the locality condition for morphisms of locally ringed locales.
+
+We now define the identity premorphism and the composition of premorphisms, and show that scheme sites together with premorphisms form a category.
+
+\begin{defn}
+Let $X$ be a scheme site. The \emph{identity premorphism} $\mathrm{id}_X$ is defined by
+\[
+b \leq_{\mathrm{id}_X} a \;\;\text{if and only if}\;\; b \leq a,
+\]
+and
+\[
+(\mathrm{id}_X)^\#_{b,a} = \mathcal{O}^X_{b,a}.
+\]
+\end{defn}
+
+It is straightforward to see that $\mathrm{id}_X$ satisfies the axioms of premorphisms.
+
+\begin{defn}
+Let $f : X \to Y$ and $g : Y \to Z$ be premorphisms. Their \emph{composition} $g \circ f : X \to Z$ is defined as follows:
+\begin{itemize}
+\item For $c \in X$ and $a \in Z$, we set $c \leq_{g \circ f} a$ if there exists $b \in Y$ such that
+\[
+c \leq_f b \quad \text{and} \quad b \leq_g a.
+\]
+\item For such $c,b,a$, define
+\[
+(g \circ f)^\#_{c,a} = f^\#_{c,b} \circ g^\#_{b,a}.
+\]
+\end{itemize}
+\end{defn}
+
+\begin{lem}
+The composition is well-defined, that is, the map $(g \circ f)^\#_{c,a}$ does not depend on the choice of $b$.
+\end{lem}
+\begin{proof}
+TODO
+\end{proof}
+
+\begin{lem}
+The composition satisfies the axioms of premorphisms.
+\end{lem}
+\begin{proof}
+TODO
+\end{proof}
+
+\begin{lem}
+Premorphisms of scheme sites form a category with respect to the identity premorphisms and composition defined above.
+\end{lem}
+\begin{proof}
+TODO
+\end{proof}
+
+\section{Equivalence with schemes}
+
+\bibliographystyle{amsplain}
+\bibliography{ref}
+
+\end{document}
