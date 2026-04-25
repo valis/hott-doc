@@ -1014,8 +1014,8 @@ By the sheaf condition, we have
 \mathcal{O}^L_{\psi(f)^*(U)} & \simeq \lim_{a \in U} \mathcal{O}^L_{f^*(a)}.
 \end{align*}
 Thus, we can define $\psi(f)^\sharp$ as the unique arrow that fits in the following diagram for all $a \in U$:
-\[ \xymatrix{ \widetilde{\mathcal{O}^Y}_U \ar[r]^-{\psi(f)^\sharp} \ar[d]_{\pi_a \circ \widetilde{\mathcal{O}^Y}_{\overline{a},U}} & \mathcal{O}^L_{\psi(f)^*(U)} \ar[d]^{\mathcal{O}^L_{f^*(a),\psi(f)^*(U)}} \\
-              \mathcal{O}^Y_a \ar[r]_-{f^\sharp_a}                                                                                 & \mathcal{O}^L_{f^*(a)}
+\[ \xymatrix{ \widetilde{\mathcal{O}^Y}_U \ar[r]^-{\psi(f)^\sharp_U} \ar[d]_{\pi_a} & \mathcal{O}^L_{\psi(f)^*(U)} \ar[d]^{\mathcal{O}^L_{f^*(a),\psi(f)^*(U)}} \\
+              \mathcal{O}^Y_a \ar[r]_-{f^\sharp_a}                                  & \mathcal{O}^L_{f^*(a)}
             } \]
 
 \begin{lem}
@@ -1042,12 +1042,101 @@ It follows that $b \leq f^*(a') \leq f^*(c) \leq \bigvee_{c \in U} f^*(c)$.
 The fact that $\psi(f)$ is a morphism of locally ringed locales follows from \rdefn{pres-map}.\eqref{pres:loc} and \axref{SE}.
 \end{proof}
 
-\begin{lem}
+\begin{lem}[psi-bij]
 The above constructions define a bijection between morphisms of locally ringed locales $L \to \widetilde{Y}$ and presentation morphisms $L \to Y$.
 \end{lem}
 \begin{proof}
 It is clear that $\psi'(\psi(f)) = f$ for every $f : L \to Y$.
 The other direction follows from the facts that $Y$ is a dense subsite of $\widetilde{Y}$ and that the extension of a sheaf from a dense subsite to the whole site is unique.
+\end{proof}
+
+We now construct a bijection between morphisms of scheme sites $X \to Y$ and presentation morphisms $\widetilde{X} \to Y$.
+To do this, it is convenient to introduce an alternative description of morphisms of scheme sites.
+
+Let $f : X \to Y$ be a premorphism. We say that $f$ is \emph{complete} if
+\[ b \cover \{ b' \mid b' \leq_f a \} \Rightarrow b \leq_f a.  \]
+It is easy to see that equivalent complete premorphisms are equal.
+
+Moreover, for every premorphism $f$ we can construct an equivalent complete premorphism $\overline{f}$ by setting
+\[ b \leq_{\overline{f}} a \text{ if and only if } b \cover \{ b' \mid b' \leq_f a \}, \]
+and defining $\overline{f}^\sharp_{b,a}$ as the unique map fitting in the following diagram for every $b'$ such that $b' \leq b$ and $b' \leq_f a$:
+\[ \xymatrix{ \mathcal{O}^Y_a \ar[r]^{\overline{f}^\sharp_{b,a}} \ar[dr]_{f^\sharp_{b',a}} & \mathcal{O}^X_b \ar[d]^{\mathcal{O}^X_{b',b}} \\
+                                                                                           & \mathcal{O}^X_{b'}
+            } \]
+
+Thus, complete premorphisms are unique representatives of their equivalence classes.
+Consequently, morphisms of scheme sites can be defined as complete premorphisms rather than equivalence classes of premorphisms.
+
+Now, given a complete premorphism of scheme sites $f : X \to Y$, we define the corresponding presentation morphism $\varphi(f) : \overline{X} \to Y$.
+For each $a \in Y$, we define $\varphi(f)^*(a)$ as $\{ b \mid b \leq_f a \}$.
+Thus subset is a $\cover$-ideal since $f$ is complete.
+The map $\varphi(f)^\sharp_a$ is defined as the unique map that fits in the following diagram for every $b$ such that $b \leq_f a$:
+\[ \xymatrix{ \mathcal{O}^Y_a \ar[r]^-{\varphi(f)^\sharp_a} \ar[dr]_{f^\sharp_{b,a}} & \widetilde{\mathcal{O}^X}_{\varphi(f)^*(a)} \ar[d]^{\pi_b} \\
+                                                                                     & \mathcal{O}^X_b
+            } \]
+Conditions~\eqref{pres:top}, \eqref{pres:meet}, and \eqref{pres:loc} of \rdefn{pres-map} follow
+from conditions~\eqref{ssm:top}, \eqref{ssm:meet}, and \eqref{ssm:loc} of \rdefn{ssm}, respectively.
+
+Conversely, given a presentation morphism $f : \widetilde{X} \to Y$, we construct a complete premorphism $\varphi'(f) : X \to Y$.
+We define $b \leq_{\varphi'(f)} a$ if and only if $b \in f^*(a)$, and set $\varphi'(f)^\sharp_{b,a} = \pi_b \circ f^\sharp_a$.
+The conditions of \rdefn{ssm} follow from the corresponding conditions of \rdefn{pres-map}.
+
+\begin{lem}[phi-bij]
+The constructions $\varphi$ and $\varphi'$ are mutually inverse.
+\end{lem}
+\begin{proof}
+This follows directly from the definitions.
+\end{proof}
+
+Thus, we obtain a bijection $\psi \circ \varphi$ from the set of morphisms of scheme sites to the set of morphisms of schemes.
+To show that this bijection preserves composition, it is convenient to introduce auxiliary composition functions of presentation morphisms with premorphisms of scheme sites on the right, and with morphisms of locally ringed locales on the left.
+
+Let $f : (L,\mathcal{O}^L) \to (M,\mathcal{O}^M)$ be a morphism of locally ringed locales, and let $g : (M,\mathcal{O}^M) \to Y$ be a presentation morphism.
+Define $g \circ_l f : (L,\mathcal{O}^L) \to Y$ as follows:
+\begin{align*}
+(g \circ_l f)^*(a) & = f^*(g^*(a)), \\
+(g \circ_l f)^\sharp_a & = f^\sharp_{g^*(a)} \circ g^\sharp_a.
+\end{align*}
+
+Let $f : (L,\mathcal{O}^L) \to X$ be a presentation morphism, and let $g : X \to Y$ be a premorphism of scheme sites.
+We define $g \circ_r f : (L,\mathcal{O}^L) \to Y$.
+For every $a \in O_L$, we set
+$(g \circ_r f)^*(a) = \bigvee \{ f^*(b) \mid b \leq_g a \}$.
+The homomorphism $(g \circ_r f)^\sharp_a$ is defined as the unique map that fits in the following diagram for every $b \leq_g a$:
+\[ \xymatrix{ \mathcal{O}^Y_a \ar[rr]^-{(g \circ_r f)^\sharp a} \ar[d]_{g^\sharp_{b,a}} & & \mathcal{O}^L_{(g \circ_r f)^*(a)} \ar[d]^{\mathcal{O}^L_{f^*(b),(g \circ_r f)^*(a)}} \\
+              \mathcal{O}^X_b \ar[rr]_-{f^\sharp_b}                                     & & \mathcal{O}^L_{f^*(b)}
+            } \]
+
+\begin{lem}[func-comp]
+The operations $\circ_l$ and $\circ_r$ are well-defined and satisfy the following compatibility conditions:
+\begin{itemize}
+\item For all morphisms of scheme sites $f : X \to Y$ and $g : Y \to Z$, we have $\varphi(g \circ f) = g \circ_r \varphi(f)$.
+\item For all presentation morphisms $f : (L,\mathcal{O}^L) \to X$ and $g : \widetilde{X} \to Y$, we have $g \circ_l \psi(f) = \varphi'(g) \circ_r f$.
+\item For every morphism of locally ringed locales $f : (L,\mathcal{O}^L) \to (M,\mathcal{O}^M)$ and every presentation morphism $g : (M,\mathcal{O}^M) \to Y$, we have $\psi(g \circ_l f) = \psi(g) \circ f$.
+\end{itemize}
+\end{lem}
+\begin{proof}
+This follows by a straightforward verification from the definitions.
+\end{proof}
+
+Now, we can prove that the category of scheme sites embeds fully faithfully into the category of schemes:
+
+\begin{prop}
+The following mappings determine a fully faithful functor from $\cat{SchSite}$ to $\cat{Sch}$:
+\begin{align*}
+X & \mapsto \widetilde{X}, \\
+f & \mapsto \psi(\varphi(f)).
+\end{align*}
+\end{prop}
+\begin{proof}
+It is straightforward to see that $\varphi(\mathrm{id}_X) = \psi'(\mathrm{id}_{\widetilde{X}})$, which implies that $\psi \circ \varphi$ preserves identity morphisms.
+The fact that it also preserves composition follows from \rlem{func-comp}:
+\begin{align*}
+& \psi(\varphi(g \circ f)) = \psi(g \circ_r \varphi(f)) = \psi(\varphi'(\varphi(g)) \circ_r \varphi(f)) = \\
+& \psi(\varphi(g) \circ_l \psi(\varphi(f))) = \psi(\varphi(g)) \circ \psi(\varphi(f)).
+\end{align*}
+Thus, we indeed get a functor $\cat{SchSite} \to \cat{Sch}$.
+\rlem{psi-bij} and \rlem{phi-bij} imply that it is fully faithful.
 \end{proof}
 
 \subsection{From schemes to scheme sites}
