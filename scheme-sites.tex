@@ -57,7 +57,13 @@
 \author{Valery Isaev}
 
 \begin{abstract}
-TODO
+We introduce a new, elementary, and fully constructive approach to schemes based on the notion of a \emph{scheme site}.
+A scheme site is a preorder equipped with a presheaf of rings satisfying simple axioms expressed in terms of localizations.
+This framework avoids the use of topological spaces, sheaves, and locally ringed spaces in the foundational definition, while retaining the essential geometric content.
+
+We show that scheme sites form a category and prove that it is equivalent to the category of schemes.
+A key feature of our approach is that the underlying space of a scheme can be recovered from a covering relation determined by the presheaf of rings.
+As a consequence, the sheaf condition does not need to be imposed separately, but follows automatically from the algebraic structure.
 \end{abstract}
 
 \maketitle
@@ -126,9 +132,22 @@ Moreover, our development is entirely constructive.
 In constructive approaches to scheme theory, it is common to replace topological spaces with locales \cite{blechschmidt}, formal topologies \cite{schemes-schuster}, or lattices \cite{schemes-zeuner,schemes-coquand}.
 We go further by working with arbitrary preorders, making the theory not only constructive and predicative, but also considerably simpler.
 
-% TODO: Дальше организация статьи.
+\subsection{Structure of the paper}
+
+In Section~\ref{sec:scheme-site}, we introduce the central notion of this paper, namely scheme sites.
+We also present two fundamental examples: the spectrum of a ring and the projective spectrum of a graded ring.
+In Section~\ref{sec:morphisms}, we define morphisms of scheme sites, thereby obtaining the category $\mathbf{SchSite}$.
+These two sections require only minimal background, namely the notions of presheaves and localizations of rings.
+
+Section~\ref{sec:equivalence} is devoted to proving that $\mathbf{SchSite}$ is equivalent to the category of schemes $\mathbf{Sch}$.
+This section requires additional notions, in particular locales, sheaves, and locally ringed locales.
+In Section~\ref{sec:scheme-site-to-scheme}, we construct the scheme associated to a scheme site.
+Section~\ref{sec:affine-opens} is devoted to the characterization of affine opens.
+In Section~\ref{sec:functor}, we prove that the construction of Section~\ref{sec:scheme-site-to-scheme} is functorial and show that the resulting functor is fully faithful.
+Finally, in Section~\ref{sec:scheme-to-scheme-site}, we complete the proof of the equivalence by constructing a scheme site associated to a scheme.
 
 \section{Scheme sites}
+\label{sec:scheme-site}
 
 In this section, we introduce our central notion of scheme sites and construct the fundamental examples of scheme sites,
 namely the spectrum of a ring $\mathrm{Spec}(R)$ and the projective spectrum of a graded ring $\mathrm{Proj}(R)$.
@@ -259,18 +278,20 @@ We define \emph{the spectrum of $R$}, denoted $\mathrm{Spec}(R)$, as the followi
 \item The structure presheaf $\mathcal{O}^R_a$ is defined as $R[a^{-1}]$.
 \item If $b \leq a$, then $\mathcal{O}^R_{b,a} : R[a^{-1}] \to R[b^{-1}]$ is defined by the universal property of $R[a^{-1}]$.
 \end{itemize}
-Let us verify the conditions of \rdefn{scheme-site}:
-\begin{enumerate}
-\item[\axref{SE}] Let $x/a^n$ be an element of $\mathcal{O}^R_a$. Define $b$ as $x a$.
-                  Then $b \leq a$ and \rlem{loc-factor} implies that $\mathcal{O}^R_{b,a}$ is a localization at $b/1$.
-                  By \rlem{loc-transport}, this map is also a localization at $x/a^n$.
-\item[\axref{SS}] Let $a',a,b$ be elements of $R$ such that $a' \leq a$ and $b \leq a$.
-                  Then there exist $c,d \in R$ such that $a' = a c$ and $b = a d$.
-                  Define $b'$ as $a c d$.
-                  Then $b' \leq a'$ and $b' \leq b$.
-                  By \rlem{loc-factor}, $\mathcal{O}^R_{b,a}$ is a localization at $b/1$ and $\mathcal{O}^R_{b',a'}$ is a localization at $b'/1$.
-                  By \rlem{loc-transport}, $\mathcal{O}^R_{b',a'}$ is also a localization at $\mathcal{O}^R_{a',a}(b/1) = b/1$.
-\end{enumerate}
+We verify the conditions of \rdefn{scheme-site}.
+
+\axref{SE}
+Let $x/a^n$ be an element of $\mathcal{O}^R_a$. Define $b$ as $x a$.
+Then $b \leq a$ and \rlem{loc-factor} implies that $\mathcal{O}^R_{b,a}$ is a localization at $b/1$.
+By \rlem{loc-transport}, this map is also a localization at $x/a^n$.
+
+\axref{SS}
+Let $a',a,b$ be elements of $R$ such that $a' \leq a$ and $b \leq a$.
+Then there exist $c,d \in R$ such that $a' = a c$ and $b = a d$.
+Define $b'$ as $a c d$.
+Then $b' \leq a'$ and $b' \leq b$.
+By \rlem{loc-factor}, $\mathcal{O}^R_{b,a}$ is a localization at $b/1$ and $\mathcal{O}^R_{b',a'}$ is a localization at $b'/1$.
+By \rlem{loc-transport}, $\mathcal{O}^R_{b',a'}$ is also a localization at $\mathcal{O}^R_{a',a}(b/1) = b/1$.
 \end{example}
 
 In the classical approach, the definition of schemes depends on the construction of $\mathrm{Spec}(R)$.
@@ -387,13 +408,14 @@ Now, we can prove that $\mathrm{Proj}(R)$ is a scheme site:
 The construction in \rexample{proj} satisfies axioms of scheme sites.
 \end{prop}
 \begin{proof}
-Let us verify conditions of \rdefn{scheme-site}:
-\begin{enumerate}
-\item[\axref{SE}]
+We verify conditions of \rdefn{scheme-site}.
+
+\axref{SE}
 Let $x/a^n$ be an element of $R[a^{-1}]_0$. Define $b$ as $x a$.
 As shown in \rexample{spec}, the map $\mathcal{O}^R_{b,a}$ is a localization at $x/a^n$.
 By \rlem{proj-loc}, the map $\mathcal{O}^{(0)}_{b,a}$ is also a localization at $x/a^n$.
-\item[\axref{SS}]
+
+\axref{SS}
 Let $a',a,b$ be homogeneous elements of positive degree such that $a' \leq a$ and $b \leq a$.
 Then there exist homogeneous $c,d \in R$ such that $a' = a c$ and $b = a d$.
 Define $b'$ as $a c d$.
@@ -405,10 +427,10 @@ By \rlem{proj-loc}, the map $\mathcal{O}^{(0)}_{b,a}$ is also a localization at 
 Similarly, $\mathcal{O}^R_{b',a'}$ is a localization at $b/1$.
 By \rlem{loc-transport}, it is also a localization at $\mathcal{O}^R_{a',a}(b^{\deg{a}}/a^{\deg{b}}) = b^{\deg{a}} c^{\deg{b}}/a'^{\deg{b}}$.
 By \rlem{proj-loc}, the map $\mathcal{O}^{(0)}_{b',a'}$ is also a localization at this element.
-\end{enumerate}
 \end{proof}
 
 \section{Morphisms of scheme sites}
+\label{sec:morphisms}
 
 In this section, we define morphisms of scheme sites making them into a category.
 Later, we will prove that this category is equivalent to the category of schemes.
@@ -716,6 +738,7 @@ but this follows from the equality $f^\sharp_{c',b} = g^\sharp_{c',b}$.
 It follows that scheme sites together with their morphisms form a category, which we denote by $\cat{SchSite}$.
 
 \section{Equivalence with schemes}
+\label{sec:equivalence}
 
 In this section, we prove that the category of scheme sites is equivalent to the category of schemes.
 Since we work constructively, we define schemes as locally ringed locales instead of locally ringed spaces.
@@ -775,7 +798,7 @@ Morphisms of schemes are just morphisms of underlying locally ringed locales.
 We denote the category of schemes by $\cat{Sch}$.
 
 \subsection{From scheme sites to schemes}
-\label{sec:scheme-site-to-schme}
+\label{sec:scheme-site-to-scheme}
 
 We now turn to the construction of a scheme from a scheme site.
 As a first step, we need to show that the structure presheaf is a sheaf with respect to the covering relation $\cover$.
@@ -894,6 +917,7 @@ This concludes the proof.
 \end{proof}
 
 \subsection{Affine opens}
+\label{sec:affine-opens}
 
 Affine opens are usually defined in terms of spectra of rings.
 We now show that our definition is equivalent to the standard one.
@@ -979,8 +1003,9 @@ This completes the proof.
 \end{proof}
 
 \subsection{Functoriality}
+\label{sec:functor}
 
-In Section~\ref{sec:scheme-site-to-schme}, we constructed a scheme $\widetilde{X}$ from a scheme site $X$.
+In Section~\ref{sec:scheme-site-to-scheme}, we constructed a scheme $\widetilde{X}$ from a scheme site $X$.
 Now, we show that this construction is functorial.
 
 To define this functor, it is convenient to introduce an auxiliary notion of a presentation morphism from a locally ringed locale to a scheme site:
@@ -1141,6 +1166,7 @@ Thus, we indeed get a functor $\cat{SchSite} \to \cat{Sch}$.
 \end{proof}
 
 \subsection{From schemes to scheme sites}
+\label{sec:scheme-to-scheme-site}
 
 We now construct a scheme site associated to a scheme. In fact, the construction is more general and applies to any ringed locale.
 
