@@ -58,10 +58,12 @@
 
 \begin{abstract}
 We introduce a new, elementary, and fully constructive approach to schemes based on the notion of a \emph{scheme site}.
-A scheme site is a preorder equipped with a presheaf of rings satisfying simple axioms expressed in terms of localizations.
+A scheme site is a preorder equipped with a presheaf of rings satisfying a simple axiom expressed in terms of localizations.
 This framework avoids the use of topological spaces, sheaves, and locally ringed spaces in the foundational definition, while retaining the essential geometric content.
 
-We show that scheme sites form a category and prove that it is equivalent to the category of schemes.
+We show that scheme sites form a category.
+Scheme sites satisfying an additional saturation condition form a coreflective subcategory, equivalent to the category of schemes.
+Consequently, every scheme site presents a scheme, namely the scheme of its saturation.
 A key feature of our approach is that the underlying space of a scheme can be recovered from a covering relation determined by the presheaf of rings.
 As a consequence, the sheaf condition does not need to be imposed separately, but follows automatically from the algebraic structure.
 \end{abstract}
@@ -100,12 +102,16 @@ Our approach may be particularly useful for beginners, as it reduces the concept
 In fact, the entire development presented here has been fully formalized in the proof assistant Arend.
 Furthermore, our construction is entirely constructive.
 
-The central notion we introduce is that of a \emph{scheme site}.
+The central notion we introduce is that of a \emph{(saturated) scheme site}.
 Informally, a scheme site can be thought of as a scheme together with a chosen atlas of affine open subsets.
-More precisely, it consists of a preorder equipped with a presheaf of rings satisfying a small number of simple conditions (see \rdefn{scheme-site}).
+More precisely, it consists of a preorder equipped with a presheaf of rings satisfying a single simple condition (see \rdefn{scheme-site}).
+A scheme site is \emph{saturated} if it satisfies one more condition, which says that it contains enough affine opens (see \rdefn{sat-scheme-site}).
+The main objects of interest in this paper are saturated scheme sites; the more general notion of a scheme site is used to construct them through a process called \emph{saturation} (\rdefn{sat}).
 
-From the perspective of scheme sites, the example of $\mathrm{Spec}(R)$ can be reformulated as follows.
-One considers the preorder whose underlying set is $R$, with the relation
+From the perspective of scheme sites, the example of $\mathrm{Spec}(R)$ becomes trivial:
+it is presented by the scheme site with a single element whose ring of sections is $R$.
+Applying the saturation construction to this scheme site, we obtain the following description of $\mathrm{Spec}(R)$ as a saturated scheme site.
+Its underlying preorder is $R$, with the relation
 \[
 b \leq a \quad \text{if and only if} \quad a \mid b.
 \]
@@ -113,13 +119,12 @@ The structure presheaf $\mathcal{O}$ is defined as
 \[
 \mathcal{O}_a = R[a^{-1}],
 \]
-for an element $a \in R$, with restriction maps given by the canonical localizations.
-This is the complete description of the underlying data of a scheme site.
-The defining properties of a scheme site then follow directly from basic properties of localization (see \rexample{spec}).
+for an element $a \in R$, with restriction maps given by the canonical localizations (see \rexample{spec}).
 
-Every scheme site gives rise to a scheme, and conversely, every scheme can be represented by a scheme site, although this representation is not unique.
-We also define morphisms of scheme sites in such a way that they correspond exactly to morphisms of the associated schemes.
-As a result, scheme sites form a category equivalent to the category of schemes.
+Every saturated scheme site gives rise to a scheme, and conversely, every scheme can be represented by a saturated scheme site, although this representation is not unique.
+We also define morphisms of scheme sites in such a way that morphisms between saturated scheme sites correspond exactly to morphisms of the associated schemes.
+As a result, saturated scheme sites form a category equivalent to the category of schemes.
+Moreover, this category is a coreflective subcategory of the category of all scheme sites, the coreflector being the saturation.
 Thus, scheme sites provide a more elementary and constructive alternative to the classical notion of a scheme.
 
 \subsection{Related work}
@@ -135,16 +140,18 @@ We go further by working with arbitrary preorders, making the theory not only co
 \subsection{Structure of the paper}
 
 In Section~\ref{sec:scheme-site}, we introduce the central notion of this paper, namely scheme sites.
-We also present two fundamental examples: the spectrum of a ring and the projective spectrum of a graded ring.
-In Section~\ref{sec:morphisms}, we define morphisms of scheme sites, thereby obtaining the category $\mathbf{SchSite}$.
+We also define saturated scheme sites and the saturation of a scheme site,
+and present two fundamental examples: the spectrum of a ring and the projective spectrum of a graded ring.
+In Section~\ref{sec:morphisms}, we define morphisms of scheme sites, thereby obtaining the category $\mathbf{SchSite}$ and its full subcategory $\mathbf{SatSchSite}$ of saturated scheme sites.
+We also show that the saturation is right adjoint to the inclusion $\mathbf{SatSchSite} \to \mathbf{SchSite}$.
 These two sections require only minimal background, namely the notions of presheaves and localizations of rings.
 
-Section~\ref{sec:equivalence} is devoted to proving that $\mathbf{SchSite}$ is equivalent to the category of schemes $\mathbf{Sch}$.
+Section~\ref{sec:equivalence} is devoted to proving that $\mathbf{SatSchSite}$ is equivalent to the category of schemes $\mathbf{Sch}$.
 This section requires additional notions, in particular locales, sheaves, and locally ringed locales.
-In Section~\ref{sec:scheme-site-to-scheme}, we construct the scheme associated to a scheme site.
+In Section~\ref{sec:scheme-site-to-scheme}, we construct the scheme associated to a saturated scheme site.
 Section~\ref{sec:affine-opens} is devoted to the characterization of affine opens.
 In Section~\ref{sec:functor}, we prove that the construction of Section~\ref{sec:scheme-site-to-scheme} is functorial and show that the resulting functor is fully faithful.
-Finally, in Section~\ref{sec:scheme-to-scheme-site}, we complete the proof of the equivalence by constructing a scheme site associated to a scheme.
+Finally, in Section~\ref{sec:scheme-to-scheme-site}, we complete the proof of the equivalence by constructing a saturated scheme site associated to a scheme.
 
 \section{Scheme sites}
 \label{sec:scheme-site}
@@ -232,9 +239,8 @@ Then the ideal of $T$ generated by the set $f(U)$ is the unit ideal if and only 
 We are now ready to introduce the central notion of this paper.
 
 \begin{defn}[scheme-site]
-A \emph{scheme site} is a preorder $X$ together with a presheaf of rings $\mathcal{O}^X$ on $X$, called \emph{the structure presheaf}, satisfying the following conditions:
+A \emph{scheme site} is a preorder $X$ together with a presheaf of rings $\mathcal{O}^X$ on $X$, called \emph{the structure presheaf}, satisfying the following condition:
 \begin{enumerate}
-\item[(SE)] \axitem{SE} For every $a \in X$ and $x \in \mathcal{O}^X_a$, there exists $b \leq a$ such that $\mathcal{O}^X_{b,a}$ is a localization at $x$.
 \item[(SC)] \axitem{SC} For every $a',a,b \in X$ such that $a' \leq a$ and $b \leq a$, there exist $x \in \mathcal{O}^X_a$ and $b' \in X$ such that
     $b' \leq a'$, $b' \leq b$, $\mathcal{O}^X_{b,a}$ is a localization at $x$, and $\mathcal{O}^X_{b',a'}$ is a localization at $\mathcal{O}^X_{a',a}(x)$.
 \end{enumerate}
@@ -245,7 +251,6 @@ The elements of a scheme site $X$ should be thought of as affine open subsets of
 If $b \leq a$, then the affine open corresponding to $b$ is contained within the one corresponding to $a$,
 but the converse does not necessarily hold: inclusion of affine opens is only partially reflected by the preorder structure.
 
-Condition \axref{SE} means that we have enough affine opens: every localization can be realized as a restriction to some affine open.
 Condition \axref{SC} can be visualized as the following diagram, where labels on arrows denote elements with respect to which the corresponding restriction maps are localizations.
 \[ \xymatrix{ b' \ar@{-->}[r] \ar@{-->}[d]_{\mathcal{O}^X_{a',a}(x)} & b \ar[d]^x \\
               a' \ar[r]                                              & a
@@ -254,7 +259,7 @@ Condition \axref{SC} can be visualized as the following diagram, where labels on
 This condition combines two properties.
 The first property is that all restriction maps are localizations.
 The second property is the existence of intersections: the element $b'$ plays the role of the intersection of $a'$ and $b$.
-In fact, we can show that it is equivalent two the combination of these properties:
+In fact, we can show that it is equivalent to the combination of these properties:
 
 \begin{prop}
 In the context of \rdefn{scheme-site}, condition \axref{SC} is equivalent to the following conditions:
@@ -270,28 +275,112 @@ In the opposite direction, \axref{SR} follows from \axref{SC} if we take $a' = a
 Finally, \axref{SC} implies \axref{SS} by \rlem{loc-transport}.
 \end{proof}
 
+A scheme site is not required to contain all the affine opens of the scheme it presents.
+For example, if $a$ is an affine open of a scheme, then every element $x$ of the ring of sections $\mathcal{O}_a$ determines an affine subopen of $a$ with the ring of sections $\mathcal{O}_a[x^{-1}]$.
+This subopen is called the \emph{principal open} of $x$ and usually denoted by $D(x)$.
+Scheme sites do not have to contain principal opens.
+The ones that do contain them play a special role:
+
+\begin{defn}[sat-scheme-site]
+A scheme site $X$ is \emph{saturated} if it satisfies the following condition:
+\begin{enumerate}
+\item[(SE)] \axitem{SE} For every $a \in X$ and $x \in \mathcal{O}^X_a$, there exists $b \leq a$ such that $\mathcal{O}^X_{b,a}$ is a localization at $x$.
+\end{enumerate}
+\end{defn}
+
+Condition \axref{SE} means that $X$ contains all principal affine opens: the open $b$ plays the role of $D(x)$.
+As we will see, only saturated scheme sites give rise to schemes directly.
+Nevertheless, every scheme site can be completed to a saturated one (see Section~\ref{sec:saturation}),
+and non-saturated scheme sites are often much more economical.
+
+\begin{example}[point]
+Let $R$ be a ring.
+We denote by $\mathrm{pt}_R$ the scheme site with a single element $\ast$ such that $\mathcal{O}_\ast = R$.
+Condition \axref{SC} holds with $x = 1$ and $b' = \ast$.
+This scheme site is not saturated unless $R$ is trivial since \axref{SE} implies that every element of $R$ is invertible.
+We will see that $\mathrm{pt}_R$ presents the affine scheme $\mathrm{Spec}(R)$.
+\end{example}
+
+\subsection{Saturation}
+\label{sec:saturation}
+
+We now describe a construction that turns an arbitrary scheme site into a saturated one.
+Intuitively, we add all principal opens of affine opens of the scheme site.
+
+\begin{defn}[sat]
+Let $X$ be a scheme site.
+The \emph{saturation} of $X$ is the scheme site $\mathrm{Sat}(X)$ defined as follows:
+\begin{itemize}
+\item The elements of $\mathrm{Sat}(X)$ are pairs $(a,x)$, where $a \in X$ and $x \in \mathcal{O}^X_a$.
+\item We have $(b,y) \leq (a,x)$ if and only if $b \leq a$ and $\mathcal{O}^X_{b,a}(x)$ divides $y$.
+\item The structure presheaf is given by $\mathcal{O}^{\mathrm{Sat}(X)}_{(a,x)} = \mathcal{O}^X_a[x^{-1}]$.
+\item If $(b,y) \leq (a,x)$, then the restriction map $\mathcal{O}^{\mathrm{Sat}(X)}_{(b,y),(a,x)} : \mathcal{O}^X_a[x^{-1}] \to \mathcal{O}^X_b[y^{-1}]$
+is the unique map extending the composite $\mathcal{O}^X_a \to \mathcal{O}^X_b \to \mathcal{O}^X_b[y^{-1}]$.
+It exists since $\mathcal{O}^X_{b,a}(x)$ divides $y$, so its image in $\mathcal{O}^X_b[y^{-1}]$ is invertible.
+\end{itemize}
+\end{defn}
+
+The relation $\leq$ is clearly reflexive.
+It is also transitive: if $(c,z) \leq (b,y) \leq (a,x)$, then $\mathcal{O}^X_{c,a}(x) = \mathcal{O}^X_{c,b}(\mathcal{O}^X_{b,a}(x))$ divides $\mathcal{O}^X_{c,b}(y)$, which divides $z$.
+Functoriality of $\mathcal{O}^{\mathrm{Sat}(X)}$ follows from the universal property of localizations.
+Note that $\mathcal{O}^{\mathrm{Sat}(X)}_{(a,1)}$ is canonically isomorphic to $\mathcal{O}^X_a$, so $X$ can be thought of as a part of $\mathrm{Sat}(X)$.
+
+To show that $\mathrm{Sat}(X)$ is a saturated scheme site, we need the following lemma that allows us to compute restriction maps of $\mathrm{Sat}(X)$.
+
+\begin{lem}[sat-loc]
+Let $X$ be a scheme site, and let $(b,y) \leq (a,x)$ be elements of $\mathrm{Sat}(X)$.
+Suppose that $\mathcal{O}^X_{b,a}$ is a localization at $z \in \mathcal{O}^X_a$, and let $w,c \in \mathcal{O}^X_a$ be elements such that $c$ is a power of $z$ and $y \cdot \mathcal{O}^X_{b,a}(c) = \mathcal{O}^X_{b,a}(w)$.
+Then $\mathcal{O}^{\mathrm{Sat}(X)}_{(b,y),(a,x)}$ is a localization at $z w / 1$.
+\end{lem}
+\begin{proof}
+Consider the following commutative square:
+\[ \xymatrix{ \mathcal{O}^X_a \ar[r]^-{l_x} \ar[d]_{\mathcal{O}^X_{b,a}} & \mathcal{O}^X_a[x^{-1}] \ar[d]^{\mathcal{O}^{\mathrm{Sat}(X)}_{(b,y),(a,x)}} \\
+	      \mathcal{O}^X_b \ar[r]_-{l_y} & \mathcal{O}^X_b[y^{-1}].
+            } \]
+
+Since $\mathcal{O}^X_{b,a}(c)$ is invertible in $\mathcal{O}^X_b$, the elements $y$ and $\mathcal{O}^X_{b,a}(w)$ differ by a unit.
+By \rlem{loc-transport}, $l_y$ is also a localization at $\mathcal{O}^X_{b,a}(w)$.
+By \rlem{loc-comp}, the composite $l_y \circ \mathcal{O}^X_{b,a} = \mathcal{O}^{\mathrm{Sat}(X)}_{(b,y),(a,x)} \circ l_x$ is a localization at $z w$.
+The claim follows from \rlem{loc-factor}.
+\end{proof}
+
+\begin{prop}[sat-saturated]
+For every scheme site $X$, its saturation $\mathrm{Sat}(X)$ is a saturated scheme site.
+\end{prop}
+\begin{proof}
+\axref{SE}
+Let $(a,x)$ be an element of $\mathrm{Sat}(X)$, and let $y/x^n$ be an element of $\mathcal{O}^X_a[x^{-1}]$.
+Then $(a, x y) \leq (a,x)$.
+By \rlem{sat-loc} applied to $z = c = 1$ and $w = x y$, the map $\mathcal{O}^{\mathrm{Sat}(X)}_{(a,xy),(a,x)}$ is a localization at $x y / 1$.
+Since $x y / 1 = (y/x^n) \cdot (x^{n+1}/1)$ and $x^{n+1}/1$ is invertible, \rlem{loc-transport} implies that this map is also a localization at $y/x^n$.
+
+\axref{SC}
+Let $(a',x'), (a,x), (b,y)$ be elements of $\mathrm{Sat}(X)$ such that $(a',x') \leq (a,x)$ and $(b,y) \leq (a,x)$.
+By \axref{SC} for $X$, there exist $z \in \mathcal{O}^X_a$ and $b' \in X$ such that $b' \leq a'$, $b' \leq b$,
+$\mathcal{O}^X_{b,a}$ is a localization at $z$, and $\mathcal{O}^X_{b',a'}$ is a localization at $\mathcal{O}^X_{a',a}(z)$.
+By \rdefn{ring-loc}.\eqref{loc:surj}, there exist $w \in \mathcal{O}^X_a$ and $c = z^n$ such that $y \cdot \mathcal{O}^X_{b,a}(c) = \mathcal{O}^X_{b,a}(w)$.
+By \rlem{sat-loc}, $\mathcal{O}^{\mathrm{Sat}(X)}_{(b,y),(a,x)}$ is a localization at $z w / 1$.
+
+Define $y' = \mathcal{O}^X_{b',a'}(x') \cdot \mathcal{O}^X_{b',b}(y)$.
+Then $(b',y') \leq (a',x')$ and $(b',y') \leq (b,y)$.
+We have
+\[ y' \cdot \mathcal{O}^X_{b',a'}(\mathcal{O}^X_{a',a}(c)) = \mathcal{O}^X_{b',a'}(x') \cdot \mathcal{O}^X_{b',b}(y \cdot \mathcal{O}^X_{b,a}(c)) = \mathcal{O}^X_{b',a'}(x' \cdot \mathcal{O}^X_{a',a}(w)). \]
+By \rlem{sat-loc} applied to $(b',y') \leq (a',x')$, the map $\mathcal{O}^{\mathrm{Sat}(X)}_{(b',y'),(a',x')}$ is a localization at
+\[ \mathcal{O}^X_{a',a}(z) \cdot x' \cdot \mathcal{O}^X_{a',a}(w) / 1 = (x'/1) \cdot \mathcal{O}^{\mathrm{Sat}(X)}_{(a',x'),(a,x)}(z w / 1). \]
+Since $x'/1$ is invertible in $\mathcal{O}^X_{a'}[x'^{-1}]$, \rlem{loc-transport} implies that this map is also a localization at $\mathcal{O}^{\mathrm{Sat}(X)}_{(a',x'),(a,x)}(z w / 1)$.
+\end{proof}
+
 \begin{example}[spec]
 Let $R$ be a ring.
-We define \emph{the spectrum of $R$}, denoted $\mathrm{Spec}(R)$, as the following scheme site:
+We define \emph{the spectrum of $R$}, denoted $\mathrm{Spec}(R)$, as the saturated scheme site $\mathrm{Sat}(\mathrm{pt}_R)$.
+Explicitly, it can be described as follows:
 \begin{itemize}
 \item The underlying preorder of $\mathrm{Spec}(R)$ is $(R,\leq)$, where $b \leq a$ if and only if $a$ divides $b$.
 \item The structure presheaf $\mathcal{O}^R_a$ is defined as $R[a^{-1}]$.
 \item If $b \leq a$, then $\mathcal{O}^R_{b,a} : R[a^{-1}] \to R[b^{-1}]$ is defined by the universal property of $R[a^{-1}]$.
 \end{itemize}
-We verify the conditions of \rdefn{scheme-site}.
-
-\axref{SE}
-Let $x/a^n$ be an element of $\mathcal{O}^R_a$. Define $b$ as $x a$.
-Then $b \leq a$ and \rlem{loc-factor} implies that $\mathcal{O}^R_{b,a}$ is a localization at $b/1$.
-By \rlem{loc-transport}, this map is also a localization at $x/a^n$.
-
-\axref{SS}
-Let $a',a,b$ be elements of $R$ such that $a' \leq a$ and $b \leq a$.
-Then there exist $c,d \in R$ such that $a' = a c$ and $b = a d$.
-Define $b'$ as $a c d$.
-Then $b' \leq a'$ and $b' \leq b$.
-By \rlem{loc-factor}, $\mathcal{O}^R_{b,a}$ is a localization at $b/1$ and $\mathcal{O}^R_{b',a'}$ is a localization at $b'/1$.
-By \rlem{loc-transport}, $\mathcal{O}^R_{b',a'}$ is also a localization at $\mathcal{O}^R_{a',a}(b/1) = b/1$.
+By \rprop{sat-saturated}, it is a saturated scheme site.
+Moreover, \rlem{sat-loc} implies that if $b = a d$, then $\mathcal{O}^R_{b,a}$ is a localization at $b/1$ and also at $d/1$.
 \end{example}
 
 In the classical approach, the definition of schemes depends on the construction of $\mathrm{Spec}(R)$.
@@ -317,6 +406,9 @@ Elements of $R_n$ are called \emph{homogeneous} elements of degree $n$.
 If $x$ is a homogeneous element, we will write $\deg{x} \in \mathbb{N}$ for its degree.
 Note that the degree of a homogeneous element is not unique, so $\deg{x}$ is not a function of $x$.
 Instead, $\deg{x}$ is just a convenient notation for some natural number such that $x \in R_{\deg{x}}$.
+
+Let $S$ be a multiplicative submonoid of a graded ring $R$.
+We will write $R[S^{-1}]_0$ for the subring of $R[S^{-1}]$ consisting of elements that can be presented in the form $x/y$ with $x$ and $y$ homogeneous of the same degree.
 
 We list necessary standard lemmas about graded rings without proofs.
 
@@ -347,16 +439,13 @@ If an element $x \in R[a^{-1}]_0$ is invertible in $R[a^{-1}]$, then its inverse
 % In the latter case, the equation above implies that $\deg{z} = \deg{a^k}$, so $z/a^k$ belongs to $R[a^{-1}]_0$.
 % \end{proof}
 
-Let $S$ be a multiplicative submonoid of a graded ring $R$.
-We will write $R[S^{-1}]_0$ for the subring of $R[S^{-1}]$ consisting of elements that can be presented in the form $x/y$ with $x$ and $y$ homogeneous of the same degree.
-
 Now, we are ready to define the projective spectrum of a graded ring:
 
 \begin{example}[proj]
 Let $R$ be a graded ring.
-We define \emph{the projective spectrum of $R$}, denoted $\mathrm{Proj}(R)$, as the following scheme site:
+We define \emph{the projective spectrum of $R$}, denoted $\mathrm{Proj}(R)$, as the following saturated scheme site:
 \begin{itemize}
-\item The underlying preorder of $\mathrm{Spec}(R)$ consists of homogeneous elements of positive degree with $b \leq a$ if and only if $a$ divides $b$.
+\item The underlying preorder of $\mathrm{Proj}(R)$ consists of homogeneous elements of positive degree with $b \leq a$ if and only if $a$ divides $b$.
 \item The structure presheaf $\mathcal{O}^{(0)}_a$ is defined as $R[a^{-1}]_0$.
 \item If $b \leq a$, then the restriction of $\mathcal{O}^R_{b,a} : R[a^{-1}] \to R[b^{-1}]$ to $R[a^{-1}]_0$ has the image inside $R[b^{-1}]_0$.
 Indeed, by \rlem{homogen-div}, there exists a homogeneous element $c$ such that $b = a c$.
@@ -367,7 +456,7 @@ Thus, we can define $\mathcal{O}^{(0)}_{b,a} : R[a^{-1}]_0 \to R[b^{-1}]_0$ as t
 \end{itemize}
 \end{example}
 
-To verify the conditions of \rdefn{scheme-site}, we will need a few simple lemmas:
+To verify that $\mathrm{Proj}(R)$ is indeed a saturated scheme site, we will need a few simple lemmas:
 
 \begin{lem}[homogen-func-conv]
 Let $R$ be a graded ring, and let $b,a \in R$ be homogeneous elements of positive degrees such that $b \leq a$.
@@ -396,26 +485,27 @@ Then $\mathcal{O}^{(0)}_{b,a}$ is also a localization at $x$.
 \begin{proof}
 Let us verify conditions of \rdefn{ring-loc}:
 \begin{enumerate}
-\item Since $\mathcal{O}^R_{b,a}(x)$ is invertible, by \rlem{homogen-loc-inv}, $\mathcal{O}^R_{b,a}(x)$ is also invertible.
+\item Since $\mathcal{O}^R_{b,a}(x)$ is invertible, by \rlem{homogen-loc-inv}, $\mathcal{O}^{(0)}_{b,a}(x)$ is also invertible.
 \item This follows from \rlem{homogen-func-conv} and the corresponding property of the localization map $\mathcal{O}^R_{b,a}$.
 \item This follows immediately from the corresponding property of the localization map $\mathcal{O}^R_{b,a}$.
 \end{enumerate}
 \end{proof}
 
-Now, we can prove that $\mathrm{Proj}(R)$ is a scheme site:
+Now, we can prove that $\mathrm{Proj}(R)$ is a saturated scheme site:
 
 \begin{prop}
-The construction in \rexample{proj} satisfies axioms of scheme sites.
+For every graded ring $R$, the construction of $\mathrm{Prof}(R)$ from \rexample{proj} satisfies the axioms of saturated scheme sites.
 \end{prop}
 \begin{proof}
-We verify conditions of \rdefn{scheme-site}.
+We verify conditions \axref{SE} and \axref{SC}.
 
 \axref{SE}
 Let $x/a^n$ be an element of $R[a^{-1}]_0$. Define $b$ as $x a$.
-As shown in \rexample{spec}, the map $\mathcal{O}^R_{b,a}$ is a localization at $x/a^n$.
+As shown in \rexample{spec}, the map $\mathcal{O}^R_{b,a}$ is a localization at $b/1$.
+By \rlem{loc-transport}, it is also a localization at $x/a^n$.
 By \rlem{proj-loc}, the map $\mathcal{O}^{(0)}_{b,a}$ is also a localization at $x/a^n$.
 
-\axref{SS}
+\axref{SC}
 Let $a',a,b$ be homogeneous elements of positive degree such that $a' \leq a$ and $b \leq a$.
 Then there exist homogeneous $c,d \in R$ such that $a' = a c$ and $b = a d$.
 Define $b'$ as $a c d$.
@@ -432,8 +522,9 @@ By \rlem{proj-loc}, the map $\mathcal{O}^{(0)}_{b',a'}$ is also a localization a
 \section{Morphisms of scheme sites}
 \label{sec:morphisms}
 
-In this section, we define morphisms of scheme sites making them into a category.
-Later, we will prove that this category is equivalent to the category of schemes.
+In this section, we define morphisms of scheme sites making them into a category $\cat{SchSite}$.
+Saturated scheme sites form a full subcategory $\cat{SatSchSite}$ of this category.
+We show that it is coreflective, and later, we will prove that it is equivalent to the category of schemes.
 
 \subsection{Coverings}
 
@@ -474,14 +565,21 @@ We now prove that the relation $\cover$ indeed behaves like a covering relation.
 The covering relation $\cover$ satisfies the following properties:
 \begin{enumerate}
 \item \label{cover:refl} If $a \in U$, then $a \cover U$.
+\item \label{cover:mono} If $U \subseteq V$ and $a \cover U$, then $a \cover V$.
+\item \label{cover:restrict} If $a \cover U$, then $a \cover \{ b \in X \mid b \leq a, \exists c \in U, b \leq c \}$.
 \item \label{cover:left} If $a' \leq a$ and $a \cover U$, then $a' \cover U$.
 \item \label{cover:trans} If $a \cover V$ and for every $c \in V$ we have $c \cover U$, then $a \cover U$.
+\item \label{cover:meet} If $a \cover U$ and $a \cover V$, then $a \cover \{ c \in X \mid \exists u \in U, \exists v \in V, c \leq u, c \leq v \}$.
 \end{enumerate}
 \end{lem}
 \begin{proof}
 \
 
 \eqref{cover:refl} This is obvious since $C(a,U)$ contains $1$ whenever $a$ belongs to $U$.
+
+\eqref{cover:mono} This is obvious since $C(a,U) \subseteq C(a,V)$.
+
+\eqref{cover:restrict} This follows from the equality $C(a,U) = C(a, \{ b \in X \mid b \leq a, \exists c \in U, b \leq c \})$, which holds by definition.
 
 \eqref{cover:left} It is enough to show that for every $x \in C(a,U)$, the element $\mathcal{O}^X_{a',a}(x)$ belongs to $C(a',U)$.
 Let $x$ be an element of $C(a,U)$.
@@ -507,7 +605,13 @@ By \rlem{loc-transport}, the map $\mathcal{O}^X_{b',b}$ is a localization at $\m
 By \rlem{loc-comp}, the map $\mathcal{O}^X_{b',a}$ is a localization at $x z$.
 This implies that $x z$ belongs to $C(a,U)$.
 It follows that $y$ belongs to $I$.
-This completes the proof.
+
+\eqref{cover:meet} Denote the set in the conclusion by $W$.
+By \eqref{cover:restrict}, we have $a \cover \{ u' \mid \exists u \in U, u' \leq u \}$.
+By \eqref{cover:trans}, it is enough to show that $u' \cover W$ for every $u' \leq u \in U$.
+By \eqref{cover:left}, we have $u' \cover V$.
+By \eqref{cover:restrict}, we have $u' \cover \{ v' \mid v' \leq u', \exists v \in V, v' \leq v \}$.
+Every element of the latter set belongs to $W$, which completes the proof by \eqref{cover:mono}.
 \end{proof}
 
 The following lemma proves that the structure presheaf is always separated with respect to the covering relation.
@@ -523,6 +627,18 @@ This means that for each $i$, we have $c_i \in U$ and $b_i \in X$ such that $b_i
 By assumption, we know that $\mathcal{O}^X_{b_i,a}(x) = \mathcal{O}^X_{b_i,a}(y)$.
 By \rdefn{ring-loc}.\eqref{loc:inj}, there exists $k_i \in \mathbb{N}$ such that $(x - y) z_i^{k_i} = 0$.
 Since $z_1^{k_1}, \ldots, z_n^{k_n}$ generate the unit ideal, we get that $x - y = 0$.
+\end{proof}
+
+We will also need the following simple criterion for coverings.
+
+\begin{lem}[inv-cover]
+Let $b,c \leq a$ be elements of a scheme site $X$, and let $x \in \mathcal{O}^X_a$ be an element such that $\mathcal{O}^X_{c,a}$ is a localization at $x$.
+If $\mathcal{O}^X_{b,a}(x)$ is invertible, then $b \cover \{ c \}$.
+\end{lem}
+\begin{proof}
+By \axref{SS}, there exists $d \in X$ such that $d \leq b$, $d \leq c$, and $\mathcal{O}^X_{d,b}$ is a localization at $\mathcal{O}^X_{b,a}(x)$.
+Since this element is invertible, $\mathcal{O}^X_{d,b}$ is also a localization at $1$.
+It follows that $1$ belongs to $C(b, \{ c \})$ and that $b \cover \{ c \}$.
 \end{proof}
 
 \subsection{Premorphisms of scheme sites}
@@ -549,8 +665,8 @@ This pair is required to satisfy the following conditions:
 \[ b \cover \{ b' \in X \mid \exists a \in Y, b' \leq_f a \}. \]
 \item \label{ssm:meet} For all $b \in X$ and $a_1,a_2 \in Y$, if $b \leq_f a_1$ and $b \leq_f a_2$, then
 \[ b \cover \{ b' \in X \mid \exists a \in Y, a \leq a_1, a \leq a_2, b' \leq_f a \}. \]
-\item \label{ssm:loc} For all $b \in X$ and $a,a' \in Y$, if $a' \leq a$ and $b \leq_f a$, then there exist $b' \in X$ and $x \in \mathcal{O}^Y_a$
-such that $b' \leq b$, $b' \leq_f a'$, $\mathcal{O}^Y_{a',a}$ is a localization at $x$, and $\mathcal{O}^X_{b',b}$ is a localization at $f^\sharp_{b,a}(x)$.
+\item \label{ssm:loc} For all $b \in X$ and $a,a' \in Y$, if $a' \leq a$ and $b \leq_f a$, then $b \cover L_f(a,a')$, where $L_f(a,a')$ is the set of elements $b_0 \in X$ such that
+$b_0 \leq_f a$ and there exist $b' \in X$ and $x \in \mathcal{O}^Y_a$ satisfying $b' \leq b_0$, $b' \leq_f a'$, $\mathcal{O}^Y_{a',a}$ is a localization at $x$, and $\mathcal{O}^X_{b',b_0}$ is a localization at $f^\sharp_{b_0,a}(x)$.
 \end{enumerate}
 \end{defn}
 
@@ -568,11 +684,31 @@ Conditions~\eqref{ssm:top} and~\eqref{ssm:meet} are precisely those needed to en
 In this paper, however, we do not use this approach.
 
 Finally, condition~\eqref{ssm:loc} is formally similar to condition~\axref{SC} in the definition of scheme sites.
-It can be visualized with a similar diagram as before, with the horizontal arrows corresponding to the relation $\leq_f$ rather than $\leq$:
-\[ \xymatrix{ b' \ar@{-->}[r] \ar@{-->}[d]_{f^\sharp_{b,a}(x)} & a' \ar[d]^x \\
-              b \ar[r]                                     & a
+Elements $b_0 \in L_f(a,a')$ are those for which the following diagram can be completed, where the horizontal arrows correspond to the relation $\leq_f$ rather than $\leq$:
+\[ \xymatrix{ b' \ar@{-->}[r] \ar@{-->}[d]_{f^\sharp_{b_0,a}(x)} & a' \ar[d]^x \\
+              b_0 \ar[r]                                       & a
             } \]
 From a more geometric perspective, this condition corresponds to the locality condition for morphisms of locally ringed locales.
+Note that we do not require that such a diagram exists for $b$ itself, but only that $b$ is covered by elements for which it exists.
+The stronger condition would be too restrictive if the domain $X$ is not saturated:
+an element $b' \leq b$ such that $\mathcal{O}^X_{b',b}$ is a localization at a given element $f^\sharp_{b,a}(x)$ might not exist at all.
+
+The element $x$ in condition~\eqref{ssm:loc} can be chosen arbitrarily, and we may also assume that the elements of the covering are less than or equal to $b$:
+
+\begin{lem}[loc-forall]
+Let $f : X \to Y$ be a premorphism of scheme sites.
+Let $b \in X$ and $a,a' \in Y$ be such that $a' \leq a$ and $b \leq_f a$, and let $x \in \mathcal{O}^Y_a$ be an element such that $\mathcal{O}^Y_{a',a}$ is a localization at $x$.
+Then $b$ is covered by the set of elements $e \leq b$ for which there exists $e' \in X$ such that $e' \leq e$, $e' \leq_f a'$, and $\mathcal{O}^X_{e',e}$ is a localization at $f^\sharp_{e,a}(x)$.
+\end{lem}
+\begin{proof}
+By condition~\eqref{ssm:loc} and \rlem{cover-prop}.\eqref{cover:restrict}, $b$ is covered by the set of elements $e \leq b$ such that $e \leq b_0$ for some $b_0 \in L_f(a,a')$.
+Let $e$ be such an element, and let $b'$ and $y$ be the elements corresponding to $b_0$.
+Since $\mathcal{O}^Y_{a',a}$ is a localization at both $x$ and $y$, by \rlem{loc-transport}, $x$ divides a power of $y$ and $y$ divides a power of $x$.
+The homomorphism $f^\sharp_{b_0,a}$ preserves these divisibility relations.
+Thus, \rlem{loc-transport} implies that $\mathcal{O}^X_{b',b_0}$ is also a localization at $f^\sharp_{b_0,a}(x)$.
+By \axref{SS}, there exists $e' \in X$ such that $e' \leq e$, $e' \leq b'$, and $\mathcal{O}^X_{e',e}$ is a localization at $\mathcal{O}^X_{e,b_0}(f^\sharp_{b_0,a}(x)) = f^\sharp_{e,a}(x)$.
+Since $e' \leq b' \leq_f a'$, we have $e' \leq_f a'$.
+\end{proof}
 
 The following lemma shows that premorphisms of scheme sites preserve the covering relation in a certain sense:
 
@@ -583,12 +719,32 @@ Then we have
 \[ b \cover \{ b' \in X \mid \exists a' \in U, b' \leq_f a' \}. \]
 \end{lem}
 \begin{proof}
+Denote the set in the conclusion by $T$.
 Since $a \cover U$, there exist $y_1, \ldots, y_n \in C(a,U)$ such that $1$ is a linear combination of $y_1, \ldots, y_n$.
 For each $i$, there exist $c_i \in U$ and $a_i \in Y$ such that $a_i \leq a$, $a_i \leq c_i$, and $\mathcal{O}^Y_{a_i,a}$ is a localization at $y_i$.
+By \rlem{loc-forall}, $b$ is covered by the set $V_i$ of elements $e \leq b$ for which there exists $e' \leq e$ such that $e' \leq_f a_i$ and $\mathcal{O}^X_{e',e}$ is a localization at $f^\sharp_{e,a}(y_i)$.
+Applying \rlem{cover-prop}.\eqref{cover:meet} several times (together with $b \cover \{ b \}$), we see that $b$ is covered by the set $W$ of elements $c \leq b$ such that for every $i$, there exists $e_i \in V_i$ satisfying $c \leq e_i$.
+By \rlem{cover-prop}.\eqref{cover:trans}, it is enough to show that $c \cover T$ for every $c \in W$.
 
-By \eqref{ssm:loc}, there exists $b_i \in X$ such that $b_i \leq b$, $b_i \leq a_i$, and $\mathcal{O}^X_{b_i,b}$ is a localization at $f^\sharp_{b,a}(y_i)$.
-This implies that $f^\sharp_{b,a}(y_i)$ belongs to $C(b, \{ b' \in X \mid \exists a' \in U, b' \leq_f a' \})$.
-This completes the proof since $1$ is a linear combination of $f^\sharp_{b,a}(y_1), \ldots, f^\sharp_{b,a}(y_n)$.
+Fix $c \in W$. Then $c \leq_f a$.
+For each $i$, choose $e_i \in V_i$ such that $c \leq e_i$, and let $e'_i$ be the corresponding element.
+By \axref{SS}, there exists $d_i \in X$ such that $d_i \leq c$, $d_i \leq e'_i$, and $\mathcal{O}^X_{d_i,c}$ is a localization at $\mathcal{O}^X_{c,e_i}(f^\sharp_{e_i,a}(y_i)) = f^\sharp_{c,a}(y_i)$.
+Since $d_i \leq e'_i \leq_f a_i \leq c_i$, we have $d_i \in T$.
+Thus, $f^\sharp_{c,a}(y_i) \in C(c,T)$.
+This completes the proof since $1$ is a linear combination of $f^\sharp_{c,a}(y_1), \ldots, f^\sharp_{c,a}(y_n)$.
+\end{proof}
+
+We will also need the following consequence of condition~\eqref{ssm:loc}:
+
+\begin{lem}[restrict]
+Let $f : X \to Y$ be a premorphism of scheme sites.
+Let $b \in X$ and $a',a \in Y$ be such that $a' \leq a$ and $b \leq_f a$, and let $x \in \mathcal{O}^Y_a$ be an element such that $\mathcal{O}^Y_{a',a}$ is a localization at $x$.
+If $f^\sharp_{b,a}(x)$ is invertible, then $b \cover \{ b' \mid b' \leq_f a' \}$.
+\end{lem}
+\begin{proof}
+By \rlem{loc-forall}, $b$ is covered by the set of elements $e \leq b$ for which there exists $e' \leq e$ such that $e' \leq_f a'$ and $\mathcal{O}^X_{e',e}$ is a localization at $f^\sharp_{e,a}(x)$.
+Since $f^\sharp_{e,a}(x) = \mathcal{O}^X_{e,b}(f^\sharp_{b,a}(x))$ is invertible, \rlem{inv-cover} implies that $e \cover \{ e' \}$.
+Now, the claim follows from \rlem{cover-prop}.\eqref{cover:trans} and \eqref{cover:mono}.
 \end{proof}
 
 We now define the identity premorphism and the composition of premorphisms, and show that scheme sites together with premorphisms form a category.
@@ -632,7 +788,7 @@ for every $c' \leq c$ such that there exists $b$ satisfying $b \leq b_1$, $b \le
 
 Consider the following diagram:
 \[ \xymatrix{                                                                       & \mathcal{O}^Y_{b_1} \ar[rr]^{\mathcal{O}^Y_{b,b_1}} \ar[dr]^{f^\sharp_{c,b_1}}  & & \mathcal{O}^Y_b \ar[rd]^{f^\sharp_{c',b}} \\
-              \mathcal{O}^Z_a \ar[ur]^{g^\sharp_{b_1,a}} \ar[dr]_{g^\sharp_{b_2,a}} &                                                                                 & \mathcal{O}^X_c \ar[rr]^{\mathcal{O}^Y_{c',c}} & & \mathcal{O}^X_{c'} \\
+              \mathcal{O}^Z_a \ar[ur]^{g^\sharp_{b_1,a}} \ar[dr]_{g^\sharp_{b_2,a}} &                                                                                 & \mathcal{O}^X_c \ar[rr]^{\mathcal{O}^X_{c',c}} & & \mathcal{O}^X_{c'} \\
                                                                                     & \mathcal{O}^Y_{b_2} \ar[rr]_{\mathcal{O}^Y_{b,b_2}}  \ar[ur]_{f^\sharp_{c,b_2}} & & \mathcal{O}^Y_b \ar[ur]_{f^\sharp_{c',b}}  
             } \]
 The outer hexagon commutes by naturality of $g^\sharp$.
@@ -644,8 +800,8 @@ This implies the required equality.
 The composition satisfies the axioms of premorphisms.
 \end{lem}
 \begin{proof}
-Let $f : X \to Y$ and $g : Y \to Z$ be premorphisms of site schemes.
-Conditions \eqref{ssm:comp}, \eqref{ssm:nat}, and \eqref{ssm:loc} easily follow from the corresponding properties for $f$ and $g$.
+Let $f : X \to Y$ and $g : Y \to Z$ be premorphisms of scheme sites.
+Conditions \eqref{ssm:comp} and \eqref{ssm:nat} easily follow from the corresponding properties for $f$ and $g$.
 Let us verify condition~\eqref{ssm:top}.
 
 We need to show that $c \cover \{ c'' \mid \exists a \in Z, c'' \leq_{g \circ f} a \}$.
@@ -656,6 +812,15 @@ By \rlem{map-cover}, we get the required property:
 \[ c' \cover \{ c'' \mid \exists b' \in Y, \exists a \in Z, c'' \leq_f b', b' \leq_g a \} = \{ c'' \mid \exists a \in Z, c'' \leq_{g \circ f} a \}. \]
 
 Condition~\eqref{ssm:meet} is verified similarly.
+
+Finally, let us verify condition~\eqref{ssm:loc}.
+Let $c \leq_f b \leq_g a$ and $a' \leq a$.
+By condition~\eqref{ssm:loc} for $g$, we have $b \cover L_g(a,a')$.
+By \rlem{map-cover}, $c$ is covered by the set of elements $d$ such that $d \leq_f t$ for some $t \in L_g(a,a')$.
+By \rlem{cover-prop}.\eqref{cover:trans}, it is enough to show that every such $d$ is covered by $L_{g \circ f}(a,a')$.
+So, let $d \leq_f t$, where $t \leq_g a$, $t' \leq t$, $t' \leq_g a'$, $\mathcal{O}^Z_{a',a}$ is a localization at $x$, and $\mathcal{O}^Y_{t',t}$ is a localization at $g^\sharp_{t,a}(x)$.
+By \rlem{loc-forall}, $d$ is covered by the set of elements $e \leq d$ for which there exists $s \leq e$ such that $s \leq_f t'$ and $\mathcal{O}^X_{s,e}$ is a localization at $f^\sharp_{e,t}(g^\sharp_{t,a}(x)) = (g \circ f)^\sharp_{e,a}(x)$.
+Since $e \leq_{g \circ f} a$ and $s \leq_{g \circ f} a'$, every such $e$ belongs to $L_{g \circ f}(a,a')$.
 \end{proof}
 
 It is straightforward to verify that the identity premorphisms and the composition defined above satisfy the usual associativity and unit laws.
@@ -685,7 +850,7 @@ b \leq_f a & \Rightarrow b \cover \{ b' \mid b' \leq_g a \}, \\
 b \leq_g a & \Rightarrow b \cover \{ b' \mid b' \leq_f a \}, \\
 b \leq_f a, b \leq_g a & \Rightarrow f^\sharp_{b,a} = g^\sharp_{b,a}.
 \end{align*}
-A \emph{morphism} of scheme sites is an equivalence class of premorphisms under the relation of inducing the same morphism on the associated schemes.
+A \emph{morphism} of scheme sites is an equivalence class of premorphisms under the relation $\sim$.
 \end{defn}
 
 \begin{lem}
@@ -695,11 +860,12 @@ The relation $\sim$ on premorphisms is an equivalence relation.
 Reflexivity and symmetry are clear.
 Let us verify transitivity.
 Suppose $f \sim g$ and $g \sim h$.
+The first two implications follow from \rlem{cover-prop}.\eqref{cover:trans}.
 The only non-trivial part is to prove the implication
 \[ b \leq_f a, b \leq_h a \Rightarrow f^\sharp_{b,a} = h^\sharp_{b,a}. \]
 
 Assume that $b \leq_f a$ and $b \leq_h a$.
-Then we have $b \cover \{ b' \leq b \mid b' \leq_g a \}$.
+By \rlem{cover-prop}.\eqref{cover:restrict} and condition~\eqref{ssm:comp}, we have $b \cover \{ b' \leq b \mid b' \leq_g a \}$.
 By \rlem{str-sep}, it is enough to prove $\mathcal{O}^X_{b',b} \circ f^\sharp_{b,a} = \mathcal{O}^X_{b',b} \circ h^\sharp_{b,a}$ for every $b'$ such that $b' \leq b$ and $b' \leq_g a$.
 So, fix such an element $b'$.
 Then we have the required equality by the naturality of $f^\sharp$ and $h^\sharp$:
@@ -728,19 +894,133 @@ Let $f,g : X \to Y$ be equivalent premorphisms of scheme sites, and let $h : Y \
 The first two implications are straightforward.
 We prove the last one.
 
-Assume $c \leq_{h \circ f} a$ and $c \leq_{h \circ g} a$
+Assume $c \leq_{h \circ f} a$ and $c \leq_{h \circ g} a$.
 Then there exists $b \in Y$ such that $c \leq_f b$ and $b \leq_h a$.
 Since $f \sim g$, we have $c \cover \{ c' \leq c \mid c' \leq_g b \}$.
-By \rlem{str-sep}, it is enough to show that for every $c' \leq c$ such that $c' \leq_g b$, we have $h^\sharp_{b,a} \circ f^\sharp_{c',b} = h^\sharp_{b,a} \circ g^\sharp_{c',b}$,
+By \rlem{str-sep}, it is enough to show that for every $c' \leq c$ such that $c' \leq_g b$, we have $f^\sharp_{c',b} \circ h^\sharp_{b,a} = g^\sharp_{c',b} \circ h^\sharp_{b,a}$,
 but this follows from the equality $f^\sharp_{c',b} = g^\sharp_{c',b}$.
 \end{proof}
 
 It follows that scheme sites together with their morphisms form a category, which we denote by $\cat{SchSite}$.
+We denote by $\cat{SatSchSite}$ the full subcategory of $\cat{SchSite}$ consisting of saturated scheme sites.
+We will usually denote a morphism by one of its representatives.
+
+\subsection{Saturation as a coreflection}
+
+In this subsection, we show that $\cat{SatSchSite}$ is a coreflective subcategory of $\cat{SchSite}$ and that the coreflector is given by the saturation.
+
+Let $X$ be a scheme site.
+We define a premorphism $\varepsilon_X : \mathrm{Sat}(X) \to X$ as follows:
+\begin{align*}
+(b,y) \leq_{\varepsilon_X} a & \text{ if and only if } b \leq a, \\
+(\varepsilon_X)^\sharp_{(b,y),a} & = l_y \circ \mathcal{O}^X_{b,a},
+\end{align*}
+where $l_y : \mathcal{O}^X_b \to \mathcal{O}^X_b[y^{-1}]$ is the canonical map.
+Conditions~\eqref{ssm:comp}, \eqref{ssm:nat}, \eqref{ssm:top}, and \eqref{ssm:meet} of \rdefn{ssm} are obvious.
+To verify condition~\eqref{ssm:loc}, let $(b,y) \leq_{\varepsilon_X} a$ and $a' \leq a$.
+By \axref{SC}, there exist $b' \in X$ and $x \in \mathcal{O}^X_a$ such that $b' \leq b$, $b' \leq a'$, $\mathcal{O}^X_{a',a}$ is a localization at $x$, and $\mathcal{O}^X_{b',b}$ is a localization at $\mathcal{O}^X_{b,a}(x)$.
+Then $(b', \mathcal{O}^X_{b',b}(y)) \leq (b,y)$, and \rlem{sat-loc} (applied to $z = \mathcal{O}^X_{b,a}(x)$, $c = 1$, and $w = y$) implies that
+$\mathcal{O}^{\mathrm{Sat}(X)}_{(b',\mathcal{O}^X_{b',b}(y)),(b,y)}$ is a localization at $\mathcal{O}^X_{b,a}(x) y / 1$.
+Since $y/1$ is invertible, by \rlem{loc-transport}, it is also a localization at $l_y(\mathcal{O}^X_{b,a}(x)) = (\varepsilon_X)^\sharp_{(b,y),a}(x)$.
+Thus, $(b,y) \in L_{\varepsilon_X}(a,a')$.
+
+Now, let $X$ be a saturated scheme site, let $Y$ be a scheme site, and let $f : X \to Y$ be a premorphism.
+We define a premorphism $\widehat{f} : X \to \mathrm{Sat}(Y)$ as follows:
+\begin{itemize}
+\item $b \leq_{\widehat{f}} (a,y)$ if and only if $b \leq_f a$ and $f^\sharp_{b,a}(y)$ is invertible;
+\item $\widehat{f}^\sharp_{b,(a,y)} : \mathcal{O}^Y_a[y^{-1}] \to \mathcal{O}^X_b$ is the unique homomorphism extending $f^\sharp_{b,a}$.
+\end{itemize}
+
+\begin{lem}[lift]
+The pair $\widehat{f}$ is a premorphism of scheme sites.
+If $f \sim g$, then $\widehat{f} \sim \widehat{g}$.
+\end{lem}
+\begin{proof}
+Condition~\eqref{ssm:comp} is clear: if $(a,y) \leq (a_1,y_1)$, then $f^\sharp_{b,a_1}(y_1) = f^\sharp_{b,a}(\mathcal{O}^Y_{a,a_1}(y_1))$ divides $f^\sharp_{b,a}(y)$, so it is invertible whenever $f^\sharp_{b,a}(y)$ is.
+Condition~\eqref{ssm:nat} follows from the uniqueness part of the universal property of localizations.
+Condition~\eqref{ssm:top} follows from the corresponding condition for $f$ since $b \leq_f a$ implies $b \leq_{\widehat{f}} (a,1)$.
+
+Let us verify condition~\eqref{ssm:meet}.
+Suppose that $b \leq_{\widehat{f}} (a_1,y_1)$ and $b \leq_{\widehat{f}} (a_2,y_2)$.
+By condition~\eqref{ssm:meet} for $f$ and \rlem{cover-prop}.\eqref{cover:restrict}, $b$ is covered by elements $b' \leq b$ such that $b' \leq_f a$ for some $a \leq a_1, a_2$.
+For such $b'$, we have $b' \leq_{\widehat{f}} (a, \mathcal{O}^Y_{a,a_1}(y_1) \mathcal{O}^Y_{a,a_2}(y_2))$ and $(a, \mathcal{O}^Y_{a,a_1}(y_1) \mathcal{O}^Y_{a,a_2}(y_2)) \leq (a_i,y_i)$ for $i = 1,2$.
+
+Let us verify condition~\eqref{ssm:loc}.
+Let $(a',y') \leq (a,y)$ and $b \leq_{\widehat{f}} (a,y)$.
+By \axref{SR}, $\mathcal{O}^Y_{a',a}$ is a localization at some $z \in \mathcal{O}^Y_a$.
+By \rdefn{ring-loc}.\eqref{loc:surj}, there exist $w \in \mathcal{O}^Y_a$ and $c \in S_z$ such that $y' \cdot \mathcal{O}^Y_{a',a}(c) = \mathcal{O}^Y_{a',a}(w)$.
+By \rlem{sat-loc}, $\mathcal{O}^{\mathrm{Sat}(Y)}_{(a',y'),(a,y)}$ is a localization at $z w / 1$.
+By \rlem{loc-forall}, $b$ is covered by the set of elements $e \leq b$ for which there exists $e' \leq e$ such that $e' \leq_f a'$ and $\mathcal{O}^X_{e',e}$ is a localization at $f^\sharp_{e,a}(z)$.
+We claim that every such $e$ belongs to $L_{\widehat{f}}((a,y),(a',y'))$.
+Since $e \leq b$, we have $e \leq_{\widehat{f}} (a,y)$.
+By \axref{SE}, there exists $e'' \leq e'$ such that $\mathcal{O}^X_{e'',e'}$ is a localization at $f^\sharp_{e',a'}(\mathcal{O}^Y_{a',a}(w)) = \mathcal{O}^X_{e',e}(f^\sharp_{e,a}(w))$.
+By \rlem{loc-comp}, the map $\mathcal{O}^X_{e'',e}$ is a localization at $f^\sharp_{e,a}(z w) = \widehat{f}^\sharp_{e,(a,y)}(z w / 1)$.
+Finally, $e'' \leq_{\widehat{f}} (a',y')$ since $e'' \leq_f a'$ and $f^\sharp_{e'',a'}(y')$ divides $f^\sharp_{e'',a'}(\mathcal{O}^Y_{a',a}(w))$, which is invertible.
+
+Now, suppose that $f \sim g$, and let $b \leq_{\widehat{f}} (a,y)$.
+Then $b \cover \{ b' \mid b' \leq_g a \}$, so, by \rlem{cover-prop}.\eqref{cover:restrict} and condition~\eqref{ssm:comp}, $b$ is covered by elements $b' \leq b$ such that $b' \leq_g a$.
+For every such $b'$, we have $b' \leq_f a$, so $g^\sharp_{b',a}(y) = f^\sharp_{b',a}(y) = \mathcal{O}^X_{b',b}(f^\sharp_{b,a}(y))$ is invertible.
+Thus, $b' \leq_{\widehat{g}} (a,y)$.
+Finally, if $b \leq_{\widehat{f}} (a,y)$ and $b \leq_{\widehat{g}} (a,y)$, then $\widehat{f}^\sharp_{b,(a,y)} = \widehat{g}^\sharp_{b,(a,y)}$ since both extend $f^\sharp_{b,a} = g^\sharp_{b,a}$.
+\end{proof}
+
+\begin{lem}[counit-lift]
+Let $X$ be a saturated scheme site, and let $f : X \to Y$ be a premorphism.
+Then $\varepsilon_Y \circ \widehat{f} = f$.
+\end{lem}
+\begin{proof}
+If $b \leq_{\widehat{f}} (a',y') \leq_{\varepsilon_Y} a$, then $b \leq_f a' \leq a$, so $b \leq_f a$.
+Conversely, if $b \leq_f a$, then $b \leq_{\widehat{f}} (a,1) \leq_{\varepsilon_Y} a$.
+Finally, the homomorphisms coincide since $\widehat{f}^\sharp_{b,(a',y')} \circ l_{y'} \circ \mathcal{O}^Y_{a',a} = f^\sharp_{b,a'} \circ \mathcal{O}^Y_{a',a} = f^\sharp_{b,a}$.
+\end{proof}
+
+\begin{lem}[counit-mono]
+Let $X$ and $Y$ be scheme sites, and let $f,g : X \to \mathrm{Sat}(Y)$ be premorphisms such that $\varepsilon_Y \circ f \sim \varepsilon_Y \circ g$.
+Then $f \sim g$.
+\end{lem}
+\begin{proof}
+Note that $(a',y') \leq (a,1)$ whenever $a' \leq a$, and that $l_1$ is an isomorphism.
+Thus, if $b \leq_f (a,1)$ and $b \leq_g (a,1)$, then $b \leq_{\varepsilon_Y \circ f} a$, $b \leq_{\varepsilon_Y \circ g} a$, and
+\[ f^\sharp_{b,(a,1)} \circ l_1 = (\varepsilon_Y \circ f)^\sharp_{b,a} = (\varepsilon_Y \circ g)^\sharp_{b,a} = g^\sharp_{b,(a,1)} \circ l_1, \]
+so $f^\sharp_{b,(a,1)} = g^\sharp_{b,(a,1)}$.
+
+Let $b \leq_f (a,y)$.
+Then $b \leq_{\varepsilon_Y \circ f} a$, so $b$ is covered by the set of elements $b'$ such that $b' \leq_{\varepsilon_Y \circ g} a$.
+Every such $b'$ satisfies $b' \leq_g (a,1)$.
+By \rlem{cover-prop}.\eqref{cover:restrict} and condition~\eqref{ssm:comp}, $b$ is covered by the set of elements $b' \leq b$ such that $b' \leq_g (a,1)$.
+By \rlem{cover-prop}.\eqref{cover:trans}, it is enough to show that every such $b'$ is covered by $\{ b'' \mid b'' \leq_g (a,y) \}$.
+We have $b' \leq_f (a,y) \leq (a,1)$.
+By \rlem{sat-loc}, $\mathcal{O}^{\mathrm{Sat}(Y)}_{(a,y),(a,1)}$ is a localization at $y/1$.
+The element $g^\sharp_{b',(a,1)}(y/1) = f^\sharp_{b',(a,1)}(y/1) = f^\sharp_{b',(a,y)}(y/1)$ is invertible, so the required property follows from \rlem{restrict}.
+The symmetric implication is proved in the same way.
+
+Finally, if $b \leq_f (a,y)$ and $b \leq_g (a,y)$, then
+\[ f^\sharp_{b,(a,y)} \circ \mathcal{O}^{\mathrm{Sat}(Y)}_{(a,y),(a,1)} = f^\sharp_{b,(a,1)} = g^\sharp_{b,(a,1)} = g^\sharp_{b,(a,y)} \circ \mathcal{O}^{\mathrm{Sat}(Y)}_{(a,y),(a,1)}. \]
+Since localizations are epimorphisms, we have $f^\sharp_{b,(a,y)} = g^\sharp_{b,(a,y)}$.
+\end{proof}
+
+\begin{thm}[coreflection]
+For every saturated scheme site $X$ and every scheme site $Y$, the maps $f \mapsto \widehat{f}$ and $h \mapsto \varepsilon_Y \circ h$
+are mutually inverse bijections between morphisms $X \to Y$ and morphisms $X \to \mathrm{Sat}(Y)$.
+Consequently, $\cat{SatSchSite}$ is a coreflective subcategory of $\cat{SchSite}$:
+the saturation extends to a functor $\mathrm{Sat} : \cat{SchSite} \to \cat{SatSchSite}$ right adjoint to the inclusion, with counit $\varepsilon$.
+\end{thm}
+\begin{proof}
+By \rlem{lift}, the map $f \mapsto \widehat{f}$ is well-defined on equivalence classes.
+By \rlem{counit-lift}, $\varepsilon_Y \circ \widehat{f} = f$.
+Conversely, for every premorphism $h : X \to \mathrm{Sat}(Y)$, we have $\varepsilon_Y \circ \widehat{\varepsilon_Y \circ h} = \varepsilon_Y \circ h$ by \rlem{counit-lift},
+so $\widehat{\varepsilon_Y \circ h} \sim h$ by \rlem{counit-mono}.
+The bijection $h \mapsto \varepsilon_Y \circ h$ is clearly natural in $X$.
+Thus, $\varepsilon_Y$ is a coreflection of $Y$ into $\cat{SatSchSite}$.
+\end{proof}
+
+Explicitly, the action of the functor $\mathrm{Sat}$ on a morphism $f : X \to Y$ is given by $\mathrm{Sat}(f) = \widehat{f \circ \varepsilon_X}$.
 
 \section{Equivalence with schemes}
 \label{sec:equivalence}
 
-In this section, we prove that the category of scheme sites is equivalent to the category of schemes.
+In this section, we prove that the category $\cat{SatSchSite}$ of saturated scheme sites is equivalent to the category of schemes.
+Together with \rthm{coreflection}, this implies that the category of schemes is equivalent to a coreflective subcategory of $\cat{SchSite}$.
 Since we work constructively, we define schemes as locally ringed locales instead of locally ringed spaces.
 Classically, these approaches are equivalent, but constructively only the localic approach works well.
 
@@ -800,7 +1080,7 @@ We denote the category of schemes by $\cat{Sch}$.
 \subsection{From scheme sites to schemes}
 \label{sec:scheme-site-to-scheme}
 
-We now turn to the construction of a scheme from a scheme site.
+We now turn to the construction of a scheme from a saturated scheme site.
 As a first step, we need to show that the structure presheaf is a sheaf with respect to the covering relation $\cover$.
 For this, we will use the following standard algebraic lemma.
 
@@ -813,19 +1093,19 @@ Then there exists a unique element $x \in R$ such that for every $i \in I$, the 
 For simplicity, we have formulated this lemma for standard localizations of the form $R[b_i^{-1}]$.
 However, it remains valid for arbitrary localizations in the sense of \rdefn{ring-loc}.
 
-\begin{lem}
+\begin{lem}[str-sheaf]
 Let $X$ be a scheme site.
 Then the presheaf $\mathcal{O}^X$ is a sheaf with respect to the covering relation $\cover$.
 More precisely, for every $a \in X$ and every covering $a \cover U$ such that elements of $U$ are less than or equal to $a$, the following holds.
 
 If for each $b \in U$ we are given an element $x_b \in \mathcal{O}^X_b$ such that
 for all $b_1,b_2 \in U$ and all $c \leq b_1,b_2$ we have $\mathcal{O}^X_{c,b_1}(x_{b_1}) = \mathcal{O}^X_{c,b_2}(x_{b_2})$,
-then there exists a unique element $x \in \mathcal{O}_a$ such that for every $b \in U$ we have $\mathcal{O}^X_{b,a}(x) = x_b$.
+then there exists a unique element $x \in \mathcal{O}^X_a$ such that for every $b \in U$ we have $\mathcal{O}^X_{b,a}(x) = x_b$.
 \end{lem}
 \begin{proof}
 To apply \rlem{loc-amalg}, we need to show that the family $\{ x_b \}_{b \in U}$ satisfies the required compatibility condition.
-To do this, it is enough to check that localizations $\mathcal{O}_a[(b_1 b_2)^{-1}]$ can be represented as $\mathcal{O}_c$ for some $c \leq b_1,b_2$.
-This follows directly from \axref{SS}, which ensures that such a $c$ exists and that $\mathcal{O}_c$ is obtained from $\mathcal{O}_a$ by localizing at $b_1 b_2$.
+To do this, it is enough to check that localizations $\mathcal{O}^X_a[(b_1 b_2)^{-1}]$ can be represented as $\mathcal{O}^X_c$ for some $c \leq b_1,b_2$.
+This follows directly from \axref{SS}, which ensures that such a $c$ exists and that $\mathcal{O}^X_c$ is obtained from $\mathcal{O}^X_a$ by localizing at $b_1 b_2$.
 \end{proof}
 
 Now, given a scheme site $X$, we construct the corresponding locale and a structure sheaf on it.
@@ -852,7 +1132,7 @@ Thus, starting from a scheme site $(X,\mathcal{O}^X)$, we obtain a ringed locale
 We now show that it is a scheme.
 
 \begin{lem}
-For every scheme site $(X,\mathcal{O}^X)$, the ringed locale $(\widetilde{X},\widetilde{\mathcal{O}^X})$ is locally ringed.
+For every saturated scheme site $(X,\mathcal{O}^X)$, the ringed locale $(\widetilde{X},\widetilde{\mathcal{O}^X})$ is locally ringed.
 \end{lem}
 \begin{proof}
 We verify this property only for basic opens since the generalization to arbitrary opens is straightforward.
@@ -874,13 +1154,11 @@ Hence $\overline{b} \leq P(\overline{a},x)$.
 
 To prove that $P(\overline{a},x) \leq \overline{b}$, we need to show that for every $c \in X$
 such that $c \leq a$ and $\mathcal{O}^X_{c,a}(\pi_a(x))$ is invertible, we have $c \cover \{ b \}$.
-By \axref{SS}, there exists $d \in X$ such that $d \leq c$, $d \leq b$, and $\mathcal{O}^X_{d,c}$ is a localization at $\mathcal{O}^X_{c,a}(\pi_a(x))$.
-Since this element is invertible, $\mathcal{O}^X_{d,c}$ is also a localization at $1$.
-It follows that $1$ belongs to $C(c, \{ b \})$ and that $c \cover \{ b \}$.
+This follows from \rlem{inv-cover}.
 \end{proof}
 
 \begin{prop}
-For every scheme site $(X,\mathcal{O}^X)$, the locally ringed locale $(\widetilde{X},\widetilde{\mathcal{O}^X})$ is a scheme.
+For every saturated scheme site $(X,\mathcal{O}^X)$, the locally ringed locale $(\widetilde{X},\widetilde{\mathcal{O}^X})$ is a scheme.
 \end{prop}
 \begin{proof}
 It is enough to show that basic opens are affine since every open is a join of basic opens.
@@ -923,7 +1201,7 @@ Affine opens are usually defined in terms of spectra of rings.
 We now show that our definition is equivalent to the standard one.
 To do this, we first recall a few standard definitions and lemmas.
 
-The \emph{spectrum} of a ring $R$ is the scheme $\widetilde{\mathrm{Spec}(R)}$ associated to the site $\mathrm{Spec}(R)$ defined in \rexample{spec}.
+The \emph{spectrum} of a ring $R$ is the scheme $\widetilde{\mathrm{Spec}(R)}$ associated to the saturated scheme site $\mathrm{Spec}(R) = \mathrm{Sat}(\mathrm{pt}_R)$ defined in \rexample{spec}.
 This construction gives us a functor $\mathrm{Spec} : \cat{CRing}^{\mathrm{op}} \to \cat{Sch}$.
 This functor has a left adjoint $\Gamma : \cat{Sch} \to \cat{CRing}^{\mathrm{op}}$ defined by $\Gamma(X) = \mathcal{O}^X_\top$,
 where $\top$ is the largest open of the underlying locale.
@@ -1005,13 +1283,13 @@ This completes the proof.
 \subsection{Functoriality}
 \label{sec:functor}
 
-In Section~\ref{sec:scheme-site-to-scheme}, we constructed a scheme $\widetilde{X}$ from a scheme site $X$.
+In Section~\ref{sec:scheme-site-to-scheme}, we constructed a scheme $\widetilde{X}$ from a saturated scheme site $X$.
 Now, we show that this construction is functorial.
 
 To define this functor, it is convenient to introduce an auxiliary notion of a presentation morphism from a locally ringed locale to a scheme site:
 
 \begin{defn}[pres-map]
-Let $(L,\mathcal{O}^L)$ be a locally ringed locale, and let $Y$ be a scheme site.
+Let $(L,\mathcal{O}^L)$ be a locally ringed locale, and let $Y$ be a saturated scheme site.
 A \emph{presentation morphism} from $(L,\mathcal{O}^L)$ to $Y$ is a pair $(f^*,f^\sharp)$ consisting of a monotone map $f^* : Y \to O_L$
 and a natural transformation $f^\sharp_a : \mathcal{O}^Y_a \to \mathcal{O}^L_{f^*(a)}$ satisfying the following conditions:
 \begin{enumerate}
@@ -1076,36 +1354,84 @@ It is clear that $\psi'(\psi(f)) = f$ for every $f : L \to Y$.
 The other direction follows from the facts that $Y$ is a dense subsite of $\widetilde{Y}$ and that the extension of a sheaf from a dense subsite to the whole site is unique.
 \end{proof}
 
-We now construct a bijection between morphisms of scheme sites $X \to Y$ and presentation morphisms $\widetilde{X} \to Y$.
+We now construct a bijection between morphisms of saturated scheme sites $X \to Y$ and presentation morphisms $\widetilde{X} \to Y$.
 To do this, it is convenient to introduce an alternative description of morphisms of scheme sites.
 
-Let $f : X \to Y$ be a premorphism. We say that $f$ is \emph{complete} if
-\[ b \cover \{ b' \mid b' \leq_f a \} \Rightarrow b \leq_f a.  \]
-It is easy to see that equivalent complete premorphisms are equal.
+\begin{defn}[complete]
+A premorphism $f : X \to Y$ is \emph{complete} if, for all $b \in X$ and $a \in Y$,
+\[ b \cover \{ b' \mid b' \leq_f a \} \Rightarrow b \leq_f a. \]
+\end{defn}
 
-Moreover, for every premorphism $f$ we can construct an equivalent complete premorphism $\overline{f}$ by setting
+\begin{lem}[closure]
+Let $f : X \to Y$ be a premorphism.
+Then there is a complete premorphism $\overline{f}$ such that
 \[ b \leq_{\overline{f}} a \text{ if and only if } b \cover \{ b' \mid b' \leq_f a \}, \]
-and defining $\overline{f}^\sharp_{b,a}$ as the unique map fitting in the following diagram for every $b'$ such that $b' \leq b$ and $b' \leq_f a$:
+and $\overline{f}^\sharp_{b,a}$ is the unique map fitting in the following diagram for every $b'$ such that $b' \leq b$ and $b' \leq_f a$:
 \[ \xymatrix{ \mathcal{O}^Y_a \ar[r]^{\overline{f}^\sharp_{b,a}} \ar[dr]_{f^\sharp_{b',a}} & \mathcal{O}^X_b \ar[d]^{\mathcal{O}^X_{b',b}} \\
                                                                                            & \mathcal{O}^X_{b'}
             } \]
+Moreover, $f \sim \overline{f}$, and equivalent complete premorphisms are equal.
+\end{lem}
+\begin{proof}
+First, let us show that $\overline{f}^\sharp_{b,a}$ is well-defined.
+By \rlem{cover-prop}.\eqref{cover:restrict} and condition~\eqref{ssm:comp}, $b$ is covered by the set of elements $b' \leq b$ such that $b' \leq_f a$.
+For every $x \in \mathcal{O}^Y_a$, the family $f^\sharp_{b',a}(x)$ is compatible by condition~\eqref{ssm:nat}.
+By \rlem{str-sheaf}, there exists a unique element $\overline{f}^\sharp_{b,a}(x)$ making the diagram commute.
+Uniqueness implies that $\overline{f}^\sharp_{b,a}$ is a ring homomorphism.
+If $b \leq_f a$, then $f^\sharp_{b,a}$ satisfies the same condition by \eqref{ssm:nat}, so $\overline{f}^\sharp_{b,a} = f^\sharp_{b,a}$.
+In particular, $\leq_f$ is contained in $\leq_{\overline{f}}$, and $f \sim \overline{f}$.
+
+Now, we verify the conditions of \rdefn{ssm}.
+Condition~\eqref{ssm:comp} follows from \rlem{cover-prop}.\eqref{cover:left} and \eqref{cover:mono},
+and completeness of $\overline{f}$ follows from \rlem{cover-prop}.\eqref{cover:trans}.
+Condition~\eqref{ssm:nat} follows from \rlem{str-sep}.
+Condition~\eqref{ssm:top} holds since $\leq_f$ is contained in $\leq_{\overline{f}}$.
+
+Let us verify condition~\eqref{ssm:meet}.
+Suppose that $b \leq_{\overline{f}} a_1$ and $b \leq_{\overline{f}} a_2$.
+By \rlem{cover-prop}.\eqref{cover:meet} and condition~\eqref{ssm:comp} for $f$, we have $b \cover \{ c \mid c \leq_f a_1, c \leq_f a_2 \}$.
+By condition~\eqref{ssm:meet} for $f$, every such $c$ is covered by $\{ c' \mid \exists a \in Y, a \leq a_1, a \leq a_2, c' \leq_f a \}$.
+Since $\leq_f$ is contained in $\leq_{\overline{f}}$, the required property follows from \rlem{cover-prop}.\eqref{cover:trans}.
+
+Let us verify condition~\eqref{ssm:loc}.
+Suppose that $b \leq_{\overline{f}} a$ and $a' \leq a$.
+Then $b \cover \{ b_1 \mid b_1 \leq_f a \}$, and every such $b_1$ is covered by $L_f(a,a')$.
+Since $\leq_f$ is contained in $\leq_{\overline{f}}$ and the maps $\overline{f}^\sharp$ and $f^\sharp$ coincide on $\leq_f$,
+we have $L_f(a,a') \subseteq L_{\overline{f}}(a,a')$.
+Thus, the required property follows from \rlem{cover-prop}.\eqref{cover:trans}.
+
+Finally, if $f$ and $g$ are complete and $f \sim g$, then $b \leq_f a$ implies $b \cover \{ b' \mid b' \leq_g a \}$, so $b \leq_g a$, and vice versa.
+Thus, the relations $\leq_f$ and $\leq_g$ coincide, and $f^\sharp = g^\sharp$ by the definition of $\sim$.
+\end{proof}
 
 Thus, complete premorphisms are unique representatives of their equivalence classes.
 Consequently, morphisms of scheme sites can be defined as complete premorphisms rather than equivalence classes of premorphisms.
+In the rest of this section, we always represent morphisms by complete premorphisms.
+Note that the complete representative of the composition of morphisms $f$ and $g$ is $\overline{g \circ f}$,
+and the complete representative of the identity morphism is given by $b \leq_{\overline{\mathrm{id}_X}} a$ if and only if $b \cover \{ a \}$.
 
-Now, given a complete premorphism of scheme sites $f : X \to Y$, we define the corresponding presentation morphism $\varphi(f) : \overline{X} \to Y$.
+Given a complete premorphism of saturated scheme sites $f : X \to Y$, we define the corresponding presentation morphism $\varphi(f) : \widetilde{X} \to Y$.
 For each $a \in Y$, we define $\varphi(f)^*(a)$ as $\{ b \mid b \leq_f a \}$.
-Thus subset is a $\cover$-ideal since $f$ is complete.
+This subset is a $\cover$-ideal since $f$ is complete.
 The map $\varphi(f)^\sharp_a$ is defined as the unique map that fits in the following diagram for every $b$ such that $b \leq_f a$:
 \[ \xymatrix{ \mathcal{O}^Y_a \ar[r]^-{\varphi(f)^\sharp_a} \ar[dr]_{f^\sharp_{b,a}} & \widetilde{\mathcal{O}^X}_{\varphi(f)^*(a)} \ar[d]^{\pi_b} \\
                                                                                      & \mathcal{O}^X_b
             } \]
-Conditions~\eqref{pres:top}, \eqref{pres:meet}, and \eqref{pres:loc} of \rdefn{pres-map} follow
-from conditions~\eqref{ssm:top}, \eqref{ssm:meet}, and \eqref{ssm:loc} of \rdefn{ssm}, respectively.
+Conditions~\eqref{pres:top} and \eqref{pres:meet} of \rdefn{pres-map} follow
+from conditions~\eqref{ssm:top} and \eqref{ssm:meet} of \rdefn{ssm}, respectively.
+To verify condition~\eqref{pres:loc}, let $a' \leq a$, let $\mathcal{O}^Y_{a',a}$ be a localization at $x$, and let $U \leq \varphi(f)^*(a)$ be an open such that the restriction of $\varphi(f)^\sharp_a(x)$ to $U$ is invertible.
+Then for every $b \in U$, we have $b \leq_f a$ and $f^\sharp_{b,a}(x)$ is invertible.
+By \rlem{restrict}, we have $b \cover \{ b' \mid b' \leq_f a' \}$, so $b \leq_f a'$ since $f$ is complete.
+Thus, $U \leq \varphi(f)^*(a')$.
 
 Conversely, given a presentation morphism $f : \widetilde{X} \to Y$, we construct a complete premorphism $\varphi'(f) : X \to Y$.
 We define $b \leq_{\varphi'(f)} a$ if and only if $b \in f^*(a)$, and set $\varphi'(f)^\sharp_{b,a} = \pi_b \circ f^\sharp_a$.
-The conditions of \rdefn{ssm} follow from the corresponding conditions of \rdefn{pres-map}.
+It is complete since $f^*(a)$ is a $\cover$-ideal.
+Conditions \eqref{ssm:comp}, \eqref{ssm:nat}, \eqref{ssm:top}, and \eqref{ssm:meet} of \rdefn{ssm} follow from the corresponding conditions of \rdefn{pres-map}.
+To verify condition~\eqref{ssm:loc}, let $b \in f^*(a)$ and $a' \leq a$, and let $\mathcal{O}^Y_{a',a}$ be a localization at $x$.
+By \axref{SE} for $X$, there exists $b' \leq b$ such that $\mathcal{O}^X_{b',b}$ is a localization at $\pi_b(f^\sharp_a(x))$.
+Then the restriction of $f^\sharp_a(x)$ to $\overline{b'}$ is invertible, so \rdefn{pres-map}.\eqref{pres:loc} implies that $b' \in f^*(a')$.
+Thus, $b \in L_{\varphi'(f)}(a,a')$.
 
 \begin{lem}[phi-bij]
 The constructions $\varphi$ and $\varphi'$ are mutually inverse.
@@ -1114,7 +1440,7 @@ The constructions $\varphi$ and $\varphi'$ are mutually inverse.
 This follows directly from the definitions.
 \end{proof}
 
-Thus, we obtain a bijection $\psi \circ \varphi$ from the set of morphisms of scheme sites to the set of morphisms of schemes.
+Thus, we obtain a bijection $\psi \circ \varphi$ from the set of morphisms of saturated scheme sites $X \to Y$ to the set of morphisms of schemes $\widetilde{X} \to \widetilde{Y}$.
 To show that this bijection preserves composition, it is convenient to introduce auxiliary composition functions of presentation morphisms with premorphisms of scheme sites on the right, and with morphisms of locally ringed locales on the left.
 
 Let $f : (L,\mathcal{O}^L) \to (M,\mathcal{O}^M)$ be a morphism of locally ringed locales, and let $g : (M,\mathcal{O}^M) \to Y$ be a presentation morphism.
@@ -1124,7 +1450,7 @@ Define $g \circ_l f : (L,\mathcal{O}^L) \to Y$ as follows:
 (g \circ_l f)^\sharp_a & = f^\sharp_{g^*(a)} \circ g^\sharp_a.
 \end{align*}
 
-Let $f : (L,\mathcal{O}^L) \to X$ be a presentation morphism, and let $g : X \to Y$ be a premorphism of scheme sites.
+Let $f : (L,\mathcal{O}^L) \to X$ be a presentation morphism, and let $g : X \to Y$ be a premorphism of saturated scheme sites.
 We define $g \circ_r f : (L,\mathcal{O}^L) \to Y$.
 For every $a \in O_L$, we set
 $(g \circ_r f)^*(a) = \bigvee \{ f^*(b) \mid b \leq_g a \}$.
@@ -1136,39 +1462,42 @@ The homomorphism $(g \circ_r f)^\sharp_a$ is defined as the unique map that fits
 \begin{lem}[func-comp]
 The operations $\circ_l$ and $\circ_r$ are well-defined and satisfy the following compatibility conditions:
 \begin{itemize}
-\item For all morphisms of scheme sites $f : X \to Y$ and $g : Y \to Z$, we have $\varphi(g \circ f) = g \circ_r \varphi(f)$.
+\item For every presentation morphism $f : (L,\mathcal{O}^L) \to X$ and all premorphisms $g,g' : X \to Y$, if $g \sim g'$, then $g \circ_r f = g' \circ_r f$.
+\item For every complete premorphism $f : X \to Y$ and every premorphism $g : Y \to Z$ of saturated scheme sites, we have $\varphi(\overline{g \circ f}) = g \circ_r \varphi(f)$.
 \item For all presentation morphisms $f : (L,\mathcal{O}^L) \to X$ and $g : \widetilde{X} \to Y$, we have $g \circ_l \psi(f) = \varphi'(g) \circ_r f$.
 \item For every morphism of locally ringed locales $f : (L,\mathcal{O}^L) \to (M,\mathcal{O}^M)$ and every presentation morphism $g : (M,\mathcal{O}^M) \to Y$, we have $\psi(g \circ_l f) = \psi(g) \circ f$.
 \end{itemize}
 \end{lem}
 \begin{proof}
 This follows by a straightforward verification from the definitions.
+To prove that $g \circ_r f$ is a presentation morphism, we use \rlem{loc-forall} and \rlem{map-cover} to verify condition~\eqref{pres:loc}.
+The first two compatibility conditions follow from the fact that $f^*$ preserves covers (see the proof of the previous lemma).
 \end{proof}
 
-Now, we can prove that the category of scheme sites embeds fully faithfully into the category of schemes:
+Now, we can prove that the category of saturated scheme sites embeds fully faithfully into the category of schemes:
 
 \begin{prop}[fff]
-The following mappings determine a fully faithful functor from $\cat{SchSite}$ to $\cat{Sch}$:
+The following mappings determine a fully faithful functor from $\cat{SatSchSite}$ to $\cat{Sch}$:
 \begin{align*}
 X & \mapsto \widetilde{X}, \\
 f & \mapsto \psi(\varphi(f)).
 \end{align*}
 \end{prop}
 \begin{proof}
-It is straightforward to see that $\varphi(\mathrm{id}_X) = \psi'(\mathrm{id}_{\widetilde{X}})$, which implies that $\psi \circ \varphi$ preserves identity morphisms.
+Since $b \leq_{\overline{\mathrm{id}_X}} a$ if and only if $b \cover \{ a \}$, that is, $b \in \overline{a}$, it is straightforward to see that $\varphi(\overline{\mathrm{id}_X}) = \psi'(\mathrm{id}_{\widetilde{X}})$, which implies that $\psi \circ \varphi$ preserves identity morphisms.
 The fact that it also preserves composition follows from \rlem{func-comp}:
 \begin{align*}
-& \psi(\varphi(g \circ f)) = \psi(g \circ_r \varphi(f)) = \psi(\varphi'(\varphi(g)) \circ_r \varphi(f)) = \\
+& \psi(\varphi(\overline{g \circ f})) = \psi(g \circ_r \varphi(f)) = \psi(\varphi'(\varphi(g)) \circ_r \varphi(f)) = \\
 & \psi(\varphi(g) \circ_l \psi(\varphi(f))) = \psi(\varphi(g)) \circ \psi(\varphi(f)).
 \end{align*}
-Thus, we indeed get a functor $\cat{SchSite} \to \cat{Sch}$.
+Thus, we indeed get a functor $\cat{SatSchSite} \to \cat{Sch}$.
 \rlem{psi-bij} and \rlem{phi-bij} imply that it is fully faithful.
 \end{proof}
 
 \subsection{From schemes to scheme sites}
 \label{sec:scheme-to-scheme-site}
 
-We now construct a scheme site associated to a scheme. In fact, the construction is more general and applies to any ringed locale.
+We now construct a saturated scheme site associated to a scheme. In fact, the construction is more general and applies to any ringed locale.
 
 First, we prove two simple lemmas about principal opens.
 
@@ -1201,7 +1530,7 @@ This follows directly from the definition of principal opens.
 
 Let $(L,\mathcal{O}^L)$ be a ringed locale, and let $C \subseteq O_L$ be a set of affine opens such that
 for all $a \in C$ and $x \in \mathcal{O}^L_a$, the principal open $P(a,x)$ also belongs to $C$.
-Then we construct a scheme site $S(L,\mathcal{O}^L,C)$.
+Then we construct a saturated scheme site $S(L,\mathcal{O}^L,C)$.
 Its underlying set is $C$.
 The preorder is defined by declaring that
 \[
@@ -1287,11 +1616,11 @@ It follows that it is an isomorphism on all opens by the sheaf condition.
 
 Finally, we are ready to prove the main result of this section.
 
-\begin{thm}
-The categories $\cat{SchSite}$ and $\cat{Sch}$ are equivalent.
+\begin{thm}[main]
+The categories $\cat{SatSchSite}$ and $\cat{Sch}$ are equivalent.
 \end{thm}
 \begin{proof}
-By \rprop{fff}, we have a fully faithful functor $\cat{SchSite} \to \cat{Sch}$.
+By \rprop{fff}, we have a fully faithful functor $\cat{SatSchSite} \to \cat{Sch}$.
 By \rprop{surj-obj}, this functor is essentially surjective on objects.
 Thus, it is an equivalence of categories.
 \end{proof}
