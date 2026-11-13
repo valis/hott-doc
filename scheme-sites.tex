@@ -77,7 +77,8 @@ While this framework has proved extraordinarily powerful, it is inherently abstr
 a scheme is formulated in terms of several layers of sophisticated concepts, including sheaves, locally ringed spaces, and the spectrum of a ring.
 
 Moreover, even when working with concrete examples such as $\mathrm{Spec}(R)$, one encounters an additional layer of subtlety.
-The structure sheaf is defined explicitly only on a basis of open sets, while its values on arbitrary open subsets are obtained indirectly via the sheaf condition.
+The structure sheaf is defined explicitly only on a basis of open sets,
+while its values on arbitrary open subsets are obtained indirectly via the sheaf condition (see \cite[Definition~1.3.4]{EGA1} and \cite[Tag~01HR]{stacks}).
 In practice, computations and constructions are carried out almost exclusively on these basic open sets.
 
 Let us recall how this works in the case of $\mathrm{Spec}(R)$.
@@ -99,7 +100,8 @@ By eliminating this redundancy, one can not only simplify the underlying data bu
 In this paper, we demonstrate that schemes can be described in a more elementary and convenient way, avoiding much of the traditional formal overhead.
 
 Our approach may be particularly useful for beginners, as it reduces the conceptual barrier to entry, and it is also well-suited for formalization.
-In fact, the entire development presented here has been fully formalized in the proof assistant Arend.
+In fact, the entire development presented here has been fully formalized in the proof assistant Arend \cite{arend};
+the formalization is part of its standard library \cite{arend-lib} (module \texttt{AG.SchemeSite} and its submodules).
 Furthermore, our construction is entirely constructive.
 
 The central notion we introduce is that of a \emph{(saturated) scheme site}.
@@ -135,7 +137,9 @@ However, our framework is more elementary, since we do not need to introduce eit
 Moreover, our development is entirely constructive.
 
 In constructive approaches to scheme theory, it is common to replace topological spaces with locales \cite{blechschmidt}, formal topologies \cite{schemes-schuster}, or lattices \cite{schemes-zeuner,schemes-coquand}.
-We go further by working with arbitrary preorders, making the theory not only constructive and predicative, but also considerably simpler.
+The lattice-theoretic approaches are based on the constructive Zariski spectrum, which goes back to \cite{joyal-spectrum}.
+We go further by working with arbitrary preorders, making the theory not only constructive, but also considerably simpler.
+A different, synthetic approach to constructive algebraic geometry in homotopy type theory is developed in \cite{synthetic-ag}.
 
 \subsection{Structure of the paper}
 
@@ -210,7 +214,7 @@ We will work only with localizations at sets of the form $S_x = \{ x^n \mid n \i
 The canonical localization $R[S_x^{-1}]$ will be denoted by $R[x^{-1}]$.
 
 We collect several standard facts about localizations that will be used throughout the paper.
-Proofs are straightforward and can be found in the literature, so we omit them.
+Proofs are straightforward and can be found in the literature (see, for example, \cite[Chapter~3]{atiyah-macdonald} and \cite[Tag~00CM]{stacks}, or \cite{constructive-algebra,cacm} for constructive treatments), so we omit them.
 
 \begin{lem}[loc-comp]
 Let $f : R \to T$ and $g : T \to U$ be homomorphisms of rings.
@@ -410,7 +414,7 @@ Instead, $\deg{x}$ is just a convenient notation for some natural number such th
 Let $S$ be a multiplicative submonoid of a graded ring $R$.
 We will write $R[S^{-1}]_0$ for the subring of $R[S^{-1}]$ consisting of elements that can be presented in the form $x/y$ with $x$ and $y$ homogeneous of the same degree.
 
-We list necessary standard lemmas about graded rings without proofs.
+We list necessary standard lemmas about graded rings without proofs (see, for example, \cite[Tag~00JL]{stacks}).
 
 \begin{lem}
 If $a$ is a homogeneous element of degree $n$, then $a^k$ is a homogeneous element of degree $n k$.
@@ -439,7 +443,7 @@ If an element $x \in R[a^{-1}]_0$ is invertible in $R[a^{-1}]$, then its inverse
 % In the latter case, the equation above implies that $\deg{z} = \deg{a^k}$, so $z/a^k$ belongs to $R[a^{-1}]_0$.
 % \end{proof}
 
-Now, we are ready to define the projective spectrum of a graded ring:
+Now, we are ready to define the projective spectrum of a graded ring (for the classical construction, see \cite[Section~2]{EGA2}, \cite[Section~II.2]{hartshorne}, or \cite[Tag~01M3]{stacks}):
 
 \begin{example}[proj]
 Let $R$ be a graded ring.
@@ -1025,6 +1029,7 @@ Since we work constructively, we define schemes as locally ringed locales instea
 Classically, these approaches are equivalent, but constructively only the localic approach works well.
 
 We recall necessary definitions first.
+For background on locales and sheaves on them, see \cite[Chapter~II]{stone-spaces}, \cite[Part~C]{elephant}, and \cite{maclane-moerdijk}.
 A \emph{frame} is a complete distributive lattice.
 A map of frames is a function that preserves finite meets and arbitrary joins.
 The category of locales is the opposite of the category of frames.
@@ -1045,6 +1050,8 @@ for all $b \in O_L$, $a \in O_M$, and $x \in \mathcal{O}^M_a$, such that $b \leq
 \[ b \leq \bigvee \{ f^*(a') \mid a' \leq a, \mathcal{O}^M_{a',a}(x) \text{ is invertible} \}. \]
 We denote the category of locally ringed locales by $\cat{LRL}$.
 \end{defn}
+
+Locally ringed locales (and, more generally, locally ringed toposes) go back to \cite{hakim}; see also \cite{blechschmidt}.
 
 Schemes are usually defined as locally ringed locales which are locally affine.
 The condition of being locally affine is typically formulated in terms of spectra of rings.
@@ -1119,7 +1126,7 @@ a \cover U \Rightarrow a \in U.
 For every element $a \in X$, we write $\overline{a}$ for the $\cover$-ideal $\{ x \in X \mid x \cover \{a\} \}$.
 We call elements of the form $\overline{a}$ \emph{basic opens}.
 The map $a \mapsto \overline{a} : X \to \widetilde{X}$ is a dense morphism of sites (see, for example, \cite[Section~11]{shulman-flat} or \cite[Section~9.4]{minichiello} for the definition and properties of dense morphisms of sites).
-In particular, it induces an equivalence between the category of sheaves on $\widetilde{X}$ and the category of sheaves on $X$.
+In particular, it induces an equivalence between the category of sheaves on $\widetilde{X}$ and the category of sheaves on $X$ (this is an instance of the comparison lemma; see \cite[Theorem~C2.2.3]{elephant}).
 Consequently, every sheaf $\mathcal{F}$ on $X$ uniquely extends to a sheaf $\widetilde{\mathcal{F}}$ on $\widetilde{X}$:
 \[ \xymatrix{ X \ar[r]^-{\mathcal{F}} \ar[d] & \cat{CRing} \\
               \widetilde{X} \ar@{-->}[ur]_{\widetilde{\mathcal{F}}}
